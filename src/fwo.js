@@ -4,8 +4,13 @@ const Extra = require('telegraf/extra')
 const Markup = require('telegraf/markup')
 const Stage = require('telegraf/stage')
 const Scene = require('telegraf/scenes/base')
+const db = require('./models')
 const { leave } = Stage
 
+
+// DB connection
+
+db.connection.on('open',() => console.log('db online'))
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 const greeter = new Scene('greeter')

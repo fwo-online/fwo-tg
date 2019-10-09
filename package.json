@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/catHD/fwo-tg#readme",
   "dependencies": {
+    "mongoose": "^5.7.3",
     "telegraf": "^3.32.0"
   },
   "devDependencies": {
