@@ -1,4 +1,4 @@
-var CharModel = require("../models/character");
+const CharModel = require("../models/character");
 
 async function regChar (id, prof, sex, cb) {
     createNewChar(id, prof, sex, cb);
@@ -8,7 +8,7 @@ const createNewChar = async function (tg_id, prof, sex, cb) {
     let h;
     switch (prof) {
         case 'Воин':
- 
+
          h = {
           prof: 'w',
           str: 10,
@@ -22,9 +22,9 @@ const createNewChar = async function (tg_id, prof, sex, cb) {
           }],
          }
          break;
- 
+
         case 'Лучник':
- 
+
          h = {
           prof: 'l',
           str: 3,
@@ -38,9 +38,9 @@ const createNewChar = async function (tg_id, prof, sex, cb) {
           }],
          }
          break;
- 
+
         case 'Маг':
- 
+
          h = {
           prof: 'm',
           str: 3,
@@ -57,9 +57,9 @@ const createNewChar = async function (tg_id, prof, sex, cb) {
           }],
          }
          break;
- 
+
         case 'Лекарь':
- 
+
          h = {
           prof: 'p',
           str: 3,
@@ -76,7 +76,7 @@ const createNewChar = async function (tg_id, prof, sex, cb) {
           }],
          }
          break;
- 
+
         default:
          cb('prof error', null);
          break;
@@ -95,6 +95,6 @@ const createNewChar = async function (tg_id, prof, sex, cb) {
         } catch {(e =>
             console.log(e))
         }
-}
+};
 
 module.exports.regChar = regChar;
