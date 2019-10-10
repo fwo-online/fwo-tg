@@ -7,8 +7,7 @@ const stage = require('./scenes/stage.js');
 
 // eslint-disable-next-line no-console
 db.connection.on('open', () => console.log('db online'));
-// const bot = new Telegraf(process.env.BOT_TOKEN);
-const bot = new Telegraf('870195325:AAFplj6OBq-Y8Dog68bqlZeTyeUNK2VMO-M');
+const bot = new Telegraf(process.env.BOT_TOKEN);
 
 bot.use(session());
 bot.use(stage.middleware());
