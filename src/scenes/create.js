@@ -1,11 +1,9 @@
-
+const Stage = require('telegraf/stage');
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
-const Stage = require('telegraf/stage');
-
-const { leave } = Stage;
 const loginHelper = require('../helpers/loginHelper');
 
+const { leave } = Stage;
 const create = new Scene('create');
 const charDescr = {
   Лучник: 'ахуенный', Маг: 'волшебный', Воин: 'стронг', Лекарь: 'хилит',
