@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const character = new Schema({
-  tg_id: {
+  tgid: {
     type: Number, index: true, unique: true, required: true,
   },
   nickname: {

@@ -5,7 +5,6 @@ const { leave } = Stage;
 
 const lobby = new Scene('lobby');
 
-
 lobby.enter(({ reply }) => reply('Лобби! Отсюда можно выйти /exit'));
 
 lobby.command('/exit', ({ scene }) => {

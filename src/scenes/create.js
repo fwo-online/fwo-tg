@@ -1,8 +1,7 @@
+
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
 const Stage = require('telegraf/stage');
-const CharModel = require('../models/character');
-
 
 const { leave } = Stage;
 const loginHelper = require('../helpers/loginHelper');
@@ -18,9 +17,9 @@ const selectRole = (reply) => {
     Markup.keyboard(['Маг', 'Лучник', 'Воин', 'Лекарь']).oneTime().resize().extra());
 };
 create.enter(async ({ update, reply }) => {
-  const resp = await CharModel.findOne({ tg_id: update.message.from.id });
-  if (resp && resp.tg_id === update.message.from.id) {
-    reply(`У тебя уже есть персонаж класса ${l}.
+  const resp = await loginHelper.check(update.message.from.id);
+  if (resp && resp.tgid === update.message.from.id) {
+    reply(`У тебя уже есть персонаж класса ${resp.prof}.
         Ты можешь удалить его, а затем создать нового,
         либо войти в лобби`,
     Markup.keyboard([['Войти', 'Удалить']]).oneTime().resize().extra());
@@ -43,6 +42,7 @@ create.on('text', ({
   }
 
   if (message.text.match(/Выбрать/gi)) {
+    // eslint-disable-next-line no-console
     loginHelper.regChar(from.id, selectedRole, 'm', (e) => { console.log(e); });
     reply(
       `Твой класс — ${selectedRole}. Теперь ты можешь войти в лобби`,
