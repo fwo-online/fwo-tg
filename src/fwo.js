@@ -1,6 +1,5 @@
 const Telegraf = require('telegraf');
 const session = require('telegraf/session');
-// const Extra = require('telegraf/extra');
 const db = require('./models');
 const stage = require('./scenes/stage.js');
 
@@ -15,4 +14,5 @@ bot.start(({ scene }) => scene.enter('greeter'));
 bot.command('greeter', (ctx) => ctx.scene.enter('greeter'));
 bot.command('create', (ctx) => ctx.scene.enter('create'));
 bot.command('select', (ctx) => ctx.scene.enter('select'));
+bot.command('lobby', (ctx) => ctx.scene.enter('lobby'));
 bot.launch();
