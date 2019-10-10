@@ -3,81 +3,88 @@ const session = require('telegraf/session');
 // const Extra = require('telegraf/extra');
 const Markup = require('telegraf/markup');
 const Stage = require('telegraf/stage');
+const { leave } = Stage;
 const Scene = require('telegraf/scenes/base');
 const db = require('./models');
+const CharModel = require('./models/character');
 
-const { leave } = Stage;
+const create = require('./controllers/create');
+const lobby = require('./controllers/lobby');
+
 
 // DB connection
 
 db.connection.on('open', () => console.log('db online'));
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
+let isFindOne = false;
 const greeter = new Scene('greeter');
-greeter.enter(({ reply }) => reply(
-  'бла бла бла, сраный путник, '
-    + 'бла бла бла. Выбери персонажа или создай нового',
-  Markup.keyboard(['Выбрать', 'Создать']).oneTime().resize().extra(),
-));
-greeter.hears('Выбрать', ({ scene }) => {
-  leave();
-  scene.enter('select');
+greeter.enter(async ( {update, reply} ) => {
+  let resp = await CharModel.findOne({tg_id: update.message.from.id})
+  if (resp && resp.tg_id === update.message.from.id) {
+    isFindOne = true;
+    reply(
+      `Здравствуй, сраный путник. Я вижу ты здесь не первый раз. 
+      У тебя есть персонаж класса ${resp.prof}.
+      Бла бла бла.
+      Вот две кнопки. Одна удалит твоего персонажа, 
+      вторая отправит его в мир`, 
+      Markup.keyboard([['Войти', 'Удалить']]).oneTime().resize().extra()
+    )
+  } else {
+    isFindOne = false;
+    reply(
+      `Здравствуй, сраный путник. Я вижу ты здесь впервые.
+      Бла бла бла.
+      Вот кнопка, чтобы создать персонажа.`, 
+      Markup.keyboard(['Создать']).oneTime().resize().extra()
+    )
+  }
 });
+
+greeter.hears('Удалить', async ({ scene, reply, from }) => {
+    let resp = await CharModel.findOneAndDelete({tg_id: from.id})
+    if (resp) {
+      reply (
+        `Твой персонаж был удалён!`
+      )
+      leave();
+      scene.enter('greeter');
+    } else {
+      reply (
+        `Произошда ошибка`
+      )
+      leave()
+      scene.enter('geeter');
+    }
+});
+
+greeter.hears('Войти', ({ scene, reply }) => {
+  if (!isFindOne) {
+    reply('Сначала тебе нужно создать персонажа')
+    leave();
+    scene.enter('create');
+  }
+  leave();
+  scene.enter('lobby');
+});
+
 greeter.hears('Создать', ({ scene }) => {
   leave();
   scene.enter('create');
 });
 
-const create = new Scene('create');
-const charDescr = {
-  Лучник: 'ахуенный', Маг: 'волшебный', Воин: 'стронг', Лекарь: 'хилит',
-};
-let selectedRole = null;
-const selectRole = (reply) => reply('Вот тебе 4 кнопки.',
-  Markup.keyboard(['Маг', 'Лучник', 'Воин', 'Лекарь'])
-    .oneTime()
-    .resize()
-    .extra());
-create.enter(({ reply }) => selectRole(reply));
-
-create.on('text', ({ reply, message }) => {
-  if (message.text.match(/Лучник|Воин|Маг|Лекарь/gi)) {
-    selectedRole = message.text;
-    reply(
-      `Ты выбрал класс ${message.text}.
-        ${message.text} – ${charDescr[message.text]}. 
-        Выбрать или вернуться назад?`,
-      Markup.keyboard(['Выбрать', 'Назад']).oneTime().resize().extra(),
-    );
-  }
-  if (message.text.match(/Выбрать/gi)) {
-    reply(
-      `Твой класс — ${selectedRole}. Дальше ничего нет. Можешь не пытаться.`,
-      Markup.keyboard(['/start']).oneTime().resize().extra(),
-    );
-  }
-  if (message.text.match(/Назад/gi)) {
-    selectRole(reply);
-  }
-});
-
-const select = new Scene('select');
-select.enter(
-  ({ reply }) => reply('Тут ничего нет.', Markup.keyboard(['/todo'])),
-);
-select.command('todo', ({ reply }) => reply('TODO'));
 
 const stage = new Stage();
-stage.command('cancel', leave());
-
 // Scene registration
 stage.register(greeter);
-stage.register(select);
 stage.register(create);
+stage.register(lobby);
 bot.use(session());
 bot.use(stage.middleware());
 bot.start(({ scene }) => scene.enter('greeter'));
 bot.command('greeter', (ctx) => ctx.scene.enter('greeter'));
 bot.command('create', (ctx) => ctx.scene.enter('create'));
 bot.command('select', (ctx) => ctx.scene.enter('select'));
+bot.command('lobby', (ctx) => ctx.scene.enter('lobby'));
 bot.launch();
