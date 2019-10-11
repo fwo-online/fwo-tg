@@ -13,7 +13,4 @@ bot.use(session());
 bot.use(stage.middleware());
 bot.start(({ scene }) => scene.enter('greeter'));
 bot.command('greeter', (ctx) => ctx.scene.enter('greeter'));
-bot.command('create', (ctx) => ctx.scene.enter('create'));
-bot.command('select', (ctx) => ctx.scene.enter('select'));
-bot.command('lobby', (ctx) => ctx.scene.enter('lobby'));
 bot.launch();

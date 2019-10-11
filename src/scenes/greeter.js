@@ -4,23 +4,15 @@ const Markup = require('telegraf/markup');
 const loginHelper = require('../helpers/loginHelper');
 
 const { leave } = Stage;
-let isFindOne = false;
 const greeter = new Scene('greeter');
 
-greeter.enter(async ({ update, reply }) => {
+greeter.enter(async ({ update, reply, scene, session }) => {
   const resp = await loginHelper.check(update.message.from.id);
   if (resp) {
-    isFindOne = true;
-    reply(
-      `Здравствуй, сраный путник. Я вижу ты здесь не первый раз. 
-      У тебя есть персонаж класса ${resp.prof}.
-      Бла бла бла.
-      Вот две кнопки. Одна удалит твоего персонажа, 
-      вторая отправит его в мир`,
-      Markup.keyboard([['Войти', 'Удалить']]).oneTime().resize().extra(),
-    );
+    session.character = resp;
+    leave();
+    scene.enter('lobby');
   } else {
-    isFindOne = false;
     reply(
       `Здравствуй, сраный путник. Я вижу ты здесь впервые.
       Бла бла бла.
@@ -47,14 +39,15 @@ greeter.hears('Удалить', async ({ scene, reply, from }) => {
   }
 });
 
-greeter.hears('Войти', ({ scene, reply }) => {
-  if (!isFindOne) {
+greeter.hears('Войти', async ({ scene, reply, session }) => {
+  if (session.character) {
     reply('Сначала тебе нужно создать персонажа');
     leave();
     scene.enter('create');
+  } else {
+    leave();
+    scene.enter('lobby');
   }
-  leave();
-  scene.enter('lobby');
 });
 
 greeter.hears('Создать', ({ scene }) => {

@@ -26,8 +26,8 @@ create.enter(async ({ update, reply }) => {
   }
 });
 
-create.on('text', ({
-  reply, message, from, scene,
+create.on('text', async ({
+  reply, message, from, scene, session
 }) => {
   if (message.text.match(/Лучник|Воин|Маг|Лекарь/gi)) {
     selectedRole = message.text;
@@ -41,11 +41,14 @@ create.on('text', ({
 
   if (message.text.match(/Выбрать/gi)) {
     // eslint-disable-next-line no-console
-    loginHelper.regChar(from.id, selectedRole, 'm', (e) => { console.log(e); });
-    reply(
-      `Твой класс — ${selectedRole}. Теперь ты можешь войти в лобби`,
-      Markup.keyboard(['Войти']).oneTime().resize().extra(),
-    );
+    const resp = await loginHelper.regChar(from.id, selectedRole, 'm', (e) => { console.log(e); });
+    if (resp) {
+      session.character = resp;
+      reply(
+        `Твой класс — ${selectedRole}. Теперь ты можешь войти в лобби`,
+        Markup.keyboard(['Войти']).oneTime().resize().extra(),
+      );
+    }
   }
 
   if (message.text.match(/Назад/gi)) {

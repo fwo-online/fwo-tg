@@ -1,16 +1,15 @@
 const CharModel = require('../models/character');
 
-async function checkId(id) {
+async function check (id) {
   try {
     return await CharModel.findOne({ tgid: id });
   } catch (e) {
     // eslint-disable-next-line no-console
     console.log(e);
-    return false;
   }
 }
 
-async function createNewChar(tgid, prof, sex, cb) {
+async function regChar (tgid, prof, sex, cb) {
   let h;
   switch (prof) {
     case 'Воин':
@@ -93,22 +92,24 @@ async function createNewChar(tgid, prof, sex, cb) {
   try {
     const newChar = new CharModel(h);
     await newChar.save();
+    return await CharModel.findOne({ tgid: tgid });
   } catch (e) {
   // eslint-disable-next-line no-console
     console.log(e);
   }
 }
 
-async function removeChar(id) {
+async function remove (id) {
   try {
     return await CharModel.findOneAndDelete({ tgid: id });
   } catch (e) {
     // eslint-disable-next-line no-console
     console.log(e);
-    return false;
   }
 }
 
-module.exports.regChar = createNewChar;
-module.exports.check = checkId;
-module.exports.remove = removeChar;
+module.exports = {
+  check,
+  remove,
+  regChar
+};
