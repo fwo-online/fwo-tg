@@ -1,6 +1,5 @@
 const Stage = require('telegraf/stage');
 const Scene = require('telegraf/scenes/base');
-const Markup = require('telegraf/markup');
 const loginHelper = require('../helpers/loginHelper');
 
 const { leave } = Stage;
@@ -9,16 +8,15 @@ const greeter = new Scene('greeter');
 greeter.enter(async ({ update, reply, scene, session }) => {
   const resp = await loginHelper.check(update.message.from.id);
   if (resp) {
+    // eslint-disable-next-line no-param-reassign
+    // @todo вот тут под вопросом
     session.character = resp;
+    reply('Привет');
     leave();
     scene.enter('lobby');
   } else {
-    reply(
-      `Здравствуй, сраный путник. Я вижу ты здесь впервые.
-      Бла бла бла.
-      Вот кнопка, чтобы создать персонажа.`,
-      Markup.keyboard(['Создать']).oneTime().resize().extra(),
-    );
+    leave();
+    scene.enter('create');
   }
 });
 

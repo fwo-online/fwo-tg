@@ -3,13 +3,13 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const character = new Schema({
-  tgid: {
+  tgId: {
     type: Number, index: true, unique: true, required: true,
   },
   nickname: {
     type: String, index: true, unique: true, required: true,
   },
-  birthdate: { type: Date, default: Date.now },
+  birthday: { type: Date, default: Date.now },
   prof: { type: String, default: 'w' },
   exp: { type: Number, default: 0 },
   str: { type: Number, default: 0 },
@@ -23,7 +23,7 @@ const character = new Schema({
   lvl: { type: Number, default: 1 },
   sex: { type: String, default: 'm' },
   kills: { type: Number, default: 0 },
-  lastfight: { type: Date, default: null },
+  lastFight: { type: Date, default: null },
   death: { type: Number, default: 0 },
   inventory: { type: Object, default: [] },
   psr: { type: Number, default: 1500 },
@@ -32,6 +32,7 @@ const character = new Schema({
   skills: { type: Object, default: {} },
   clan: { type: String, default: null },
   panel: { type: Object, default: {} },
+  deleted: { type: Boolean, default: false },
 });
 
 

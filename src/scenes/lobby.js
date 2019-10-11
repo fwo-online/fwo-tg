@@ -8,8 +8,8 @@ const loginHelper = require('../helpers/loginHelper');
 lobby.enter(({ reply, session }) => {
   reply(
     `Лобби! Отсюда можно выйти /exit /remove
-    Твой персонаж имеет класс "${session.character.prof}"`
-  )
+    Твой персонаж имеет класс "${session.character.prof}"`,
+  );
 });
 
 lobby.command('/exit', ({ scene }) => {
@@ -32,7 +32,7 @@ lobby.command('/remove', async ({ scene, reply, from }) => {
     leave();
     scene.enter('greeter');
   }
-})
+});
 
 
 module.exports = lobby;
