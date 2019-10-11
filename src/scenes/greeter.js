@@ -5,11 +5,12 @@ const loginHelper = require('../helpers/loginHelper');
 const { leave } = Stage;
 const greeter = new Scene('greeter');
 
-greeter.enter(async ({ update, reply, scene, session }) => {
+greeter.enter(async ({
+  update, reply, scene, session,
+}) => {
   const resp = await loginHelper.check(update.message.from.id);
   if (resp) {
     // eslint-disable-next-line no-param-reassign
-    // @todo вот тут под вопросом
     session.character = resp;
     reply('Привет');
     leave();

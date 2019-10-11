@@ -8,7 +8,7 @@ const loginHelper = require('../helpers/loginHelper');
 lobby.enter(({ reply, session }) => {
   reply(
     `Лобби! Отсюда можно выйти /exit /remove
-    Твой персонаж имеет класс "${session.character.prof}"`,
+    Твой персонаж имеет класс "${session.charProf}"`,
   );
 });
 
