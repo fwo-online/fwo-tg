@@ -99,7 +99,8 @@ module.exports = {
     await newChar.save();
   },
 
-  async remove(id) {
-    await CharModel.findOneAndDelete({ tgId: id });
+  async remove(tgId) {
+    const resp = await CharModel.findOneAndDelete({ tgId });
+    return resp;
   },
 };

@@ -16,6 +16,8 @@ greeter.enter(async ({
     leave();
     scene.enter('lobby');
   } else {
+    // eslint-disable-next-line no-param-reassign
+    session.character = {};
     leave();
     scene.enter('create');
   }
@@ -37,22 +39,5 @@ greeter.hears('Удалить', async ({ scene, reply, from }) => {
     scene.enter('greeter');
   }
 });
-
-greeter.hears('Войти', async ({ scene, reply, session }) => {
-  if (session.character) {
-    reply('Сначала тебе нужно создать персонажа');
-    leave();
-    scene.enter('create');
-  } else {
-    leave();
-    scene.enter('lobby');
-  }
-});
-
-greeter.hears('Создать', ({ scene }) => {
-  leave();
-  scene.enter('create');
-});
-
 
 module.exports = greeter;

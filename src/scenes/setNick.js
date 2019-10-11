@@ -12,29 +12,27 @@ async function valid(nickname) {
     throw new Error('Напрягись, ещё пару символов!');
   }
 
-  try {
-    const resp = await loginHelper.checkNick(nickname);
-    if (resp) {
-      throw new Error('Кто-то придумал это до тебя!');
-    } else {
-      return nickname;
-    }
-  } catch (e) {
-    throw new Error('Упс, что-то сломалось. Попробуй ещё раз');
+  const resp = await loginHelper.checkNick(nickname);
+  if (resp) {
+    throw new Error('Кто-то придумал это до тебя!');
+  } else {
+    return nickname;
   }
 }
 
-setNick.enter(async ({ reply }) => {
+setNick.enter(({ reply }) => {
   reply('Как будут звать тебя о великий воен?');
 });
 
-setNick.on('text', async ({ from, reply, message, session, scene }) => {
+setNick.on('text', async ({
+  from, reply, message, session, scene,
+}) => {
   try {
     const tempNick = await valid(message.text);
     // eslint-disable-next-line no-param-reassign
-    session.charNick = tempNick;
-    await loginHelper.regChar(from.id, session.charProf, session.charNick, 'm');
-    reply(`Так так, значит ты "${session.charNick}"`);
+    session.character.nickname = tempNick;
+    await loginHelper.regChar(from.id, session.character.prof, session.character.nickname, 'm');
+    reply(`Так так, значит ты "${session.character.nickname}"`);
 
     leave();
     scene.enter('lobby');

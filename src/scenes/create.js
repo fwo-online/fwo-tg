@@ -8,7 +8,7 @@ const charDescr = {
   Лучник: 'ахуенный', Маг: 'волшебный', Воин: 'стронг', Лекарь: 'хилит',
 };
 
-create.enter(async ({ reply }) => {
+create.enter(({ reply }) => {
   reply(
     `Здравствуй, сраный путник. Я вижу ты здесь впервые.
       Бла бла бла.Вот кнопка, чтобы создать персонажа.`,
@@ -21,14 +21,9 @@ create.hears('Создать', ({ reply }) => {
     Markup.keyboard(['Маг', 'Лучник', 'Воин', 'Лекарь']).oneTime().resize().extra());
 });
 
-create.hears('Ник', ({ scene }) => {
-  leave();
-  scene.enter('setNick');
-});
-
 create.hears(/Лучник|Воин|Маг|Лекарь/gi, ({ reply, message, session }) => {
   // eslint-disable-next-line no-param-reassign
-  session.charProf = message.text;
+  session.character.prof = message.text;
   reply(
     `Ты выбрал класс ${message.text}.
       ${message.text} – ${charDescr[message.text]}. 
@@ -37,15 +32,16 @@ create.hears(/Лучник|Воин|Маг|Лекарь/gi, ({ reply, message, s
   );
 });
 
-create.hears('Выбрать', async ({ reply, session }) => {
-  if (!session.charProf) {
+create.hears('Выбрать', ({ reply, session, scene }) => {
+  if (!session.character.prof) {
     reply('Не понятно, какой то ты странный',
       Markup.keyboard(['Маг', 'Лучник', 'Воин', 'Лекарь']).oneTime().resize().extra());
   } else {
     reply(
-      `Твой класс — ${session.charProf}. Теперь нужно определиться с ником`,
-      Markup.keyboard(['Ник']).oneTime().resize().extra(),
+      `Твой класс — ${session.character.prof}. Теперь нужно определиться с ником`,
     );
+    leave();
+    scene.enter('setNick');
   }
 });
 
