@@ -1,6 +1,5 @@
 const Scene = require('telegraf/scenes/base');
 const Stage = require('telegraf/stage');
-const Markup = require('telegraf/markup');
 const loginHelper = require('../helpers/loginHelper');
 
 const { leave } = Stage;
