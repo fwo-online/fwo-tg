@@ -1,16 +1,19 @@
-const CharModel = require('../models/character');
+const db = require('./dataBase');
 
 module.exports = {
-  async check(tgId) {
-    const resp = await CharModel.findOne({ tgId, deleted: false });
-    return resp;
-  },
-
+  /*
+  @func проверка ника
+  @return Boolean Наличие живого ника в базе
+   */
   async checkNick(nickname) {
-    const resp = CharModel.findOne({ nickname, deleted: false });
-    return resp;
+    const re = await db.char.findNick(nickname);
+    return !!(re);
   },
-
+  /*
+  @func регистрация чара
+  @param {Number} tgId идентификатор телеграмма
+  @param {String} prof id чара
+   */
   async regChar(tgId, prof, nickname, sex) {
     let h;
     switch (prof) {
@@ -94,13 +97,14 @@ module.exports = {
     h.sex = sex;
     h.tgId = tgId;
     h.nickname = nickname;
-
-    const newChar = new CharModel(h);
-    await newChar.save();
+    db.char.create(h);
   },
-
+  /*
+  @func удаления
+  @return Boolean
+   */
   async remove(tgId) {
-    const resp = await CharModel.findOneAndDelete({ tgId });
-    return resp;
+    const resp = await db.char.remove(tgId);
+    return !!resp;
   },
 };
