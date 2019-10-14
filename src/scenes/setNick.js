@@ -32,7 +32,6 @@ setNick.on('text', async ({
   try {
     // eslint-disable-next-line no-param-reassign
     session.character.nickname = await valid(message.text);
-    console.log(from.id, session.character.prof, session.character.nickname, 'm');
     await loginHelper.regChar(from.id, session.character.prof, session.character.nickname, 'm');
     leave();
     scene.enter('lobby');
