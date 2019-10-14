@@ -22,8 +22,7 @@ async function valid(nickname) {
 
 setNick.enter(({ reply, session }) => {
   reply(
-    `Твой класс — ${session.character.prof}. Теперь нужно определиться с ником.
-  Как будут звать тебя о великий воен?`,
+    `Твой класс — ${session.character.prof}. Теперь нужно определиться с ником. Как будут звать тебя о великий воен?`,
   );
 });
 
@@ -31,9 +30,8 @@ setNick.on('text', async ({
   from, reply, message, session, scene,
 }) => {
   try {
-    const tempNick = await valid(message.text);
     // eslint-disable-next-line no-param-reassign
-    session.character.nickname = tempNick;
+    session.character.nickname = await valid(message.text);
     console.log(from.id, session.character.prof, session.character.nickname, 'm');
     await loginHelper.regChar(from.id, session.character.prof, session.character.nickname, 'm');
     leave();

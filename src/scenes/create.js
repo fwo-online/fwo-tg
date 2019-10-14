@@ -37,6 +37,7 @@ create.hears('Выбрать', ({ reply, session, scene }) => {
     reply('Не понятно, какой то ты странный',
       Markup.keyboard(['Маг', 'Лучник', 'Воин', 'Лекарь']).oneTime().resize().extra());
   } else {
+    reply('', Markup.keyboard().oneTime().resize().extra());
     leave();
     scene.enter('setNick');
   }
