@@ -93,7 +93,7 @@ profile.action('confirm', async ({ session, scene }) => {
 
 profile.action('reset', async ({ session, reply, update }) => {
   // eslint-disable-next-line no-param-reassign
-  session.character = await loginHelper.getChar(update.message.from.id);
+  // session.character = await loginHelper.getChar(update.message.from.id);
   reply(JSON.stringify(update));
   // const { free } = session.character;
   // editMessageText(
