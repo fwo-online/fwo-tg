@@ -7,7 +7,7 @@ const character = new Schema({
     type: Number, index: true, unique: true, required: true,
   },
   nickname: {
-    type: String, index: true, unique: true, required: true,
+    type: String, required: true,
   },
   birthday: { type: Date, default: Date.now },
   prof: { type: String, default: 'w' },
