@@ -14,13 +14,13 @@ const HARK_NAMES = {
   con: 'Телосложение',
 };
 
-const getInlineButton = (session, hark) => [
+const getInlineButton = ({ character }, hark) => [
   {
-    text: `${HARK_NAMES[hark]}: ${session[hark]}`,
+    text: `${HARK_NAMES[hark]}: ${character[hark]}`,
     callback_data: 'do_nothing',
   },
   {
-    text: `+${session[`${hark}Temp`] ? session[`${hark}Temp`] - session[hark] : ''}`,
+    text: `+${character[`${hark}Temp`] ? character[`${hark}Temp`] - character[hark] : ''}`,
     callback_data: `increase_${hark}`,
   },
 ];
