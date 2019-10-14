@@ -44,9 +44,10 @@ module.exports = {
     /*
     @param Nick string имя персонажа
      */
+    // eslint-disable-next-line consistent-return
     async findNick(nickname) {
       try {
-        await CharModel.findOne({ nickname, deleted: false });
+        return await CharModel.findOne({ nickname, deleted: false });
       } catch (e) {
         dbErr(e);
       }
