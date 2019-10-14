@@ -20,10 +20,6 @@ const getInlineButton = (value, hark) => [
     callback_data: 'do_nothing',
   },
   {
-    text: '-',
-    callback_data: `decrease_${hark}`,
-  },
-  {
     text: '+',
     callback_data: `increase_${hark}`,
   },
