@@ -21,14 +21,14 @@ profile.hears('Характиристики', ({ reply, session }) => {
         text: `Сила: ${str}`,
         callback_data: 'do_nothing',
       }],
-      [{
+      [[{
         text: '-',
         callback_data: 'decrease_str',
       }],
       [{
         text: '+',
         callback_data: 'increase_str',
-      }],
+      }]],
     ]).resize().extra(),
   );
 });
