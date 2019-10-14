@@ -8,7 +8,7 @@ const profile = new Scene('profile');
 profile.enter(({ reply, session }) => {
   reply(
     `Твой профиль, ${session.character.nickname}`,
-    Markup.keyboard(['Характиристики']).oneTime().resize().extra(),
+    Markup.keyboard(['Характеристики']).oneTime().resize().extra(),
   );
 });
 
