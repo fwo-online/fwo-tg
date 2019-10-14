@@ -12,15 +12,15 @@ profile.enter(({ reply, session }) => {
   );
 });
 
-profile.hears('Характиристики', ({ reply, session }) => {
+profile.hears('Характеристики', ({ reply, session }) => {
   const { free, str } = session.character;
   reply(
     `Свободных очков ${free}`,
     Markup.inlineKeyboard([
-      [{
+      [[{
         text: `Сила: ${str}`,
         callback_data: 'do_nothing',
-      }],
+      }]],
       [[{
         text: '-',
         callback_data: 'decrease_str',
