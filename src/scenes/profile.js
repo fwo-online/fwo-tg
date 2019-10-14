@@ -5,6 +5,31 @@ const Markup = require('telegraf/markup');
 const { leave } = Stage;
 const profile = new Scene('profile');
 
+const HARK_NAMES = {
+  str: ['Сила', 'str'],
+  dex: ['Ловкость', 'dex'],
+  wis: ['Мудрость', 'wis'],
+  int: ['Интелект', 'int'],
+  con: ['Телосложение', 'con'],
+};
+
+const getInlineButton = (hark) => {
+  return [
+    {
+      text: `${HARK_NAMES.hark[0]}: ${hark}`,
+      callback_data: 'do_nothing',
+    },
+    {
+      text: '-',
+      callback_data: `decrease_${HARK_NAMES.hark[1]}`,
+    },
+    {
+      text: '+',
+      callback_data: `increase_${HARK_NAMES.hark[1]}`,
+    }
+  ]
+};
+
 profile.enter(({ reply, session }) => {
   reply(
     `Твой профиль, ${session.character.nickname}`,
@@ -13,22 +38,15 @@ profile.enter(({ reply, session }) => {
 });
 
 profile.hears('Характеристики', ({ reply, session }) => {
-  const { free, str } = session.character;
+  const { free, str, dex, wis, int, con } = session.character;
   reply(
     `Свободных очков ${free}`,
     Markup.inlineKeyboard([
-      [{
-        text: `Сила: ${str}`,
-        callback_data: 'do_nothing',
-      },
-      {
-        text: '-',
-        callback_data: 'decrease_str',
-      },
-      {
-        text: '+',
-        callback_data: 'increase_str',
-      }],
+      getInlineButton(str),
+      getInlineButton(dex),
+      getInlineButton(wis),
+      getInlineButton(int),
+      getInlineButton(con),
     ]).resize().extra(),
   );
 });
@@ -36,24 +54,17 @@ profile.hears('Характеристики', ({ reply, session }) => {
 profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
   const [, hark] = match.input.split('_');
   // eslint-disable-next-line no-param-reassign
-  session.character.str += 1;
+  session.character[hark] += 1;
   // eslint-disable-next-line no-param-reassign
   session.character.free -= 1;
   editMessageText(
-    `Свободных очков ${session.character.free}`,
+    `Свободных очков ${free}`,
     Markup.inlineKeyboard([
-      [{
-        text: `Сила: ${session.character.str}`,
-        callback_data: 'do_nothing',
-      }],
-      [{
-        text: '-',
-        callback_data: `decrease_${hark}`,
-      }],
-      [{
-        text: '+',
-        callback_data: `increase_${hark}`,
-      }],
+      getInlineButton(str),
+      getInlineButton(dex),
+      getInlineButton(wis),
+      getInlineButton(int),
+      getInlineButton(con),
     ]).resize().extra(),
   );
 });
@@ -61,24 +72,17 @@ profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
 profile.action(/decrease(?=_)/, ({ session, editMessageText, match }) => {
   const [, hark] = match.input.split('_');
   // eslint-disable-next-line no-param-reassign
-  session.character.str -= 1;
+  session.character[hark] -= 1;
   // eslint-disable-next-line no-param-reassign
   session.character.free += 1;
   editMessageText(
-    `Свободных очков ${session.character.free}`,
+    `Свободных очков ${free}`,
     Markup.inlineKeyboard([
-      [{
-        text: `Сила: ${session.character.str}`,
-        callback_data: 'do_nothing',
-      }],
-      [{
-        text: '-',
-        callback_data: `decrease_${hark}`,
-      }],
-      [{
-        text: '+',
-        callback_data: `increase_${hark}`,
-      }],
+      getInlineButton(str),
+      getInlineButton(dex),
+      getInlineButton(wis),
+      getInlineButton(int),
+      getInlineButton(con),
     ]).resize().extra(),
   );
 });
