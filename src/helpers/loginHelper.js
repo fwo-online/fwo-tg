@@ -120,6 +120,7 @@ module.exports = {
    * @function
    * @return {Object} обьект персонажа
    */
+  // eslint-disable-next-line consistent-return
   async getChar(tgId) {
     try {
       return await db.char.find(tgId);
