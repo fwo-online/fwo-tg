@@ -8,17 +8,22 @@ const loginHelper = require('../helpers/loginHelper');
 lobby.enter(({ reply, session }) => {
   reply(
     `Так так, значит ты "${session.character.nickname}"
-    Лобби! Отсюда можно выйти /exit /remove
+    Лобби! Отсюда можно выйти /exit /remove /profile
     Твой персонаж имеет класс "${session.character.prof}"`,
   );
 });
 
-lobby.command('/exit', ({ scene }) => {
+lobby.command('exit', ({ scene }) => {
   leave();
   scene.enter('greeter');
 });
 
-lobby.command('/remove', async ({ scene, reply, from }) => {
+lobby.command('profile', ({ scene }) => {
+  leave();
+  scene.enter('profile');
+});
+
+lobby.command('remove', async ({ scene, reply, from }) => {
   const resp = await loginHelper.remove(from.id);
   if (resp) {
     reply(
