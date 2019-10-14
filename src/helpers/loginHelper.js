@@ -2,12 +2,20 @@ const db = require('./dataBase');
 
 module.exports = {
   /*
+  @func проверка наличия персонажа у заданного tgId (пользователя телеги)
+  @return Boolean
+   */
+  async check(tgId) {
+    const re = await db.char.find(tgId);
+    return !!re;
+  },
+  /*
   @func проверка ника
   @return Boolean Наличие живого ника в базе
    */
   async checkNick(nickname) {
     const re = await db.char.findNick(nickname);
-    return !!(re);
+    return !!re;
   },
   /*
   @func регистрация чара
