@@ -91,7 +91,7 @@ profile.action('confirm', async ({ session, scene }) => {
   scene.enter('profile');
 });
 
-profile.action('reset', async ({ session, reply, update }) => {
+profile.action('reset', async ({ reply, update }) => {
   // eslint-disable-next-line no-param-reassign
   // session.character = await loginHelper.getChar(update.message.from.id);
   reply(JSON.stringify(update));
