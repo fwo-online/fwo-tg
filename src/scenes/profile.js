@@ -91,29 +91,28 @@ profile.action('confirm', async ({ session, scene }) => {
   scene.enter('profile');
 });
 
-profile.action('reset', async ({ reply, update }) => {
+profile.action('reset', async ({ session, editMessageText, update }) => {
   // eslint-disable-next-line no-param-reassign
-  // session.character = await loginHelper.getChar(update.message.from.id);
-  reply(JSON.stringify(update));
-  // const { free } = session.character;
-  // editMessageText(
-  //   `Свободных очков ${free}`,
-  //   Markup.inlineKeyboard([
-  //     getInlineButton(session, 'str'),
-  //     getInlineButton(session, 'dex'),
-  //     getInlineButton(session, 'wis'),
-  //     getInlineButton(session, 'int'),
-  //     getInlineButton(session, 'con'),
-  //     [{
-  //       text: 'Сбросить',
-  //       callback_data: 'reset',
-  //     }],
-  //     [{
-  //       text: 'Подтвердить',
-  //       callback_data: 'confirm',
-  //     }],
-  //   ]).resize().extra(),
-  // );
+  session.character = await loginHelper.getChar(update.callback_query.from.id);
+  const { free } = session.character;
+  editMessageText(
+    `Свободных очков ${free}`,
+    Markup.inlineKeyboard([
+      getInlineButton(session, 'str'),
+      getInlineButton(session, 'dex'),
+      getInlineButton(session, 'wis'),
+      getInlineButton(session, 'int'),
+      getInlineButton(session, 'con'),
+      [{
+        text: 'Сбросить',
+        callback_data: 'reset',
+      }],
+      [{
+        text: 'Подтвердить',
+        callback_data: 'confirm',
+      }],
+    ]).resize().extra(),
+  );
 });
 
 profile.command('exix', ({ scene }) => {
