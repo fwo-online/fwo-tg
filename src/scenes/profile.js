@@ -34,8 +34,10 @@ profile.hears('Характиристики', ({ reply, session }) => {
 });
 
 profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
-  const [ , hark] = match.input.split('_');
+  const [, hark] = match.input.split('_');
+  // eslint-disable-next-line no-param-reassign
   session.character.str += 1;
+  // eslint-disable-next-line no-param-reassign
   session.character.free -= 1;
   editMessageText(
     `Свободных очков ${session.character.free}`,
@@ -57,8 +59,10 @@ profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
 });
 
 profile.action(/decrease(?=_)/, ({ session, editMessageText, match }) => {
-  const [ , hark] = match.input.split('_');
+  const [, hark] = match.input.split('_');
+  // eslint-disable-next-line no-param-reassign
   session.character.str -= 1;
+  // eslint-disable-next-line no-param-reassign
   session.character.free += 1;
   editMessageText(
     `Свободных очков ${session.character.free}`,
