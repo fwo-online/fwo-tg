@@ -36,7 +36,9 @@ module.exports = {
     // eslint-disable-next-line consistent-return
     async create(charObj) {
       try {
-        return await new CharModel(charObj).save();
+        const x = new CharModel(charObj);
+        x.save();
+        return x;
       } catch (e) {
         dbErr(e);
       }
