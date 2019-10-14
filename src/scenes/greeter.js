@@ -23,21 +23,4 @@ greeter.enter(async ({
   }
 });
 
-greeter.hears('Удалить', async ({ scene, reply, from }) => {
-  const resp = await loginHelper.remove(from.id);
-  if (resp) {
-    reply(
-      'Твой персонаж был удалён!',
-    );
-    leave();
-    scene.enter('greeter');
-  } else {
-    reply(
-      'Произошла ошибка',
-    );
-    leave();
-    scene.enter('greeter');
-  }
-});
-
 module.exports = greeter;

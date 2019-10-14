@@ -5,52 +5,75 @@ const Markup = require('telegraf/markup');
 const { leave } = Stage;
 const profile = new Scene('profile');
 
-profile.enter((ctx) => {
-  ctx.reply(
-    `Твой профиль, ${ctx.session.character.nickname}`,
+profile.enter(({ reply, session }) => {
+  reply(
+    `Твой профиль, ${session.character.nickname}`,
     Markup.keyboard(['Характиристики']).oneTime().resize().extra(),
   );
 });
 
 profile.hears('Характиристики', ({ reply, session }) => {
-  const { str } = session.character;
+  const { free, str } = session.character;
   reply(
-    'свободных очков "n"',
+    `Свободных очков ${free}`,
     Markup.inlineKeyboard([
       [{
-        text: `str: ${str}`,
+        text: `Сила: ${str}`,
         callback_data: 'do_nothing',
       }],
       [{
         text: '-',
-        callback_data: '-str',
+        callback_data: 'decrease_str',
       }],
       [{
         text: '+',
-        callback_data: '+str',
+        callback_data: 'increase_str',
       }],
     ]).resize().extra(),
   );
 });
 
-profile.action('+str', ({ session, editMessageText }) => {
-  // console.log(ctx);
-  const { str } = session.character;
-  // ctx.editMessageText('Новый текст')
+profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
+  const [ , hark] = match.input.split('_');
+  session.character.str += 1;
+  session.character.free -= 1;
   editMessageText(
-    'Свободных очков "n-1"',
+    `Свободных очков ${session.character.free}`,
     Markup.inlineKeyboard([
       [{
-        text: `str: ${str - 1}`,
+        text: `Сила: ${session.character.str}`,
         callback_data: 'do_nothing',
       }],
       [{
         text: '-',
-        callback_data: '-str',
+        callback_data: `decrease_${hark}`,
       }],
       [{
         text: '+',
-        callback_data: '+str',
+        callback_data: `increase_${hark}`,
+      }],
+    ]).resize().extra(),
+  );
+});
+
+profile.action(/decrease(?=_)/, ({ session, editMessageText, match }) => {
+  const [ , hark] = match.input.split('_');
+  session.character.str -= 1;
+  session.character.free += 1;
+  editMessageText(
+    `Свободных очков ${session.character.free}`,
+    Markup.inlineKeyboard([
+      [{
+        text: `Сила: ${session.character.str}`,
+        callback_data: 'do_nothing',
+      }],
+      [{
+        text: '-',
+        callback_data: `decrease_${hark}`,
+      }],
+      [{
+        text: '+',
+        callback_data: `increase_${hark}`,
       }],
     ]).resize().extra(),
   );
