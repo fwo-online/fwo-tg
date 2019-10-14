@@ -10,9 +10,10 @@ function dbErr(e) {
 
 module.exports = {
   char: {
+    // eslint-disable-next-line consistent-return
     async find(tgId) {
       try {
-        await CharModel.findOne({ tgId, deleted: false });
+        return await CharModel.findOne({ tgId, deleted: false });
       } catch (e) {
         dbErr(e);
       }
@@ -32,9 +33,10 @@ module.exports = {
         dbErr(e);
       }
     },
+    // eslint-disable-next-line consistent-return
     async create(charObj) {
       try {
-        await CharModel.create({ charObj }).save();
+        return await CharModel.create({ charObj }).save();
       } catch (e) {
         dbErr(e);
       }

@@ -12,7 +12,7 @@ profile.enter((ctx) => {
   );
 });
 
-profile.hears('Навыки', ({ reply, session }) => {
+profile.hears('Характиристики', ({ reply, session }) => {
   const { str } = session.character;
   reply(
     'свободных очков "n"',
