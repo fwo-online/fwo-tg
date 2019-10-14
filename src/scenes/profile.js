@@ -6,25 +6,25 @@ const { leave } = Stage;
 const profile = new Scene('profile');
 
 const HARK_NAMES = {
-  str: ['Сила', 'str'],
-  dex: ['Ловкость', 'dex'],
-  wis: ['Мудрость', 'wis'],
-  int: ['Интелект', 'int'],
-  con: ['Телосложение', 'con'],
+  str: 'Сила',
+  dex: 'Ловкость',
+  wis: 'Мудрость',
+  int: 'Интелект',
+  con: 'Телосложение',
 };
 
-const getInlineButton = (hark) => [
+const getInlineButton = (value, hark) => [
   {
-    text: `${HARK_NAMES[hark][0]}: ${hark}`,
+    text: `${HARK_NAMES[hark]}: ${value}`,
     callback_data: 'do_nothing',
   },
   {
     text: '-',
-    callback_data: `decrease_${HARK_NAMES[hark][1]}`,
+    callback_data: `decrease_${hark}`,
   },
   {
     text: '+',
-    callback_data: `increase_${HARK_NAMES[hark][1]}`,
+    callback_data: `increase_${hark}`,
   },
 ];
 
@@ -42,11 +42,11 @@ profile.hears('Характеристики', ({ reply, session }) => {
   reply(
     `Свободных очков ${free}`,
     Markup.inlineKeyboard([
-      getInlineButton(str),
-      getInlineButton(dex),
-      getInlineButton(wis),
-      getInlineButton(int),
-      getInlineButton(con),
+      getInlineButton(str, 'str'),
+      getInlineButton(dex, 'dex'),
+      getInlineButton(wis, 'dex'),
+      getInlineButton(int, 'int'),
+      getInlineButton(con, 'con'),
     ]).resize().extra(),
   );
 });
@@ -63,11 +63,11 @@ profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
   editMessageText(
     `Свободных очков ${free}`,
     Markup.inlineKeyboard([
-      getInlineButton(str),
-      getInlineButton(dex),
-      getInlineButton(wis),
-      getInlineButton(int),
-      getInlineButton(con),
+      getInlineButton(str, 'str'),
+      getInlineButton(dex, 'dex'),
+      getInlineButton(wis, 'dex'),
+      getInlineButton(int, 'int'),
+      getInlineButton(con, 'con'),
     ]).resize().extra(),
   );
 });
@@ -84,11 +84,11 @@ profile.action(/decrease(?=_)/, ({ session, editMessageText, match }) => {
   editMessageText(
     `Свободных очков ${free}`,
     Markup.inlineKeyboard([
-      getInlineButton(str),
-      getInlineButton(dex),
-      getInlineButton(wis),
-      getInlineButton(int),
-      getInlineButton(con),
+      getInlineButton(str, 'str'),
+      getInlineButton(dex, 'dex'),
+      getInlineButton(wis, 'dex'),
+      getInlineButton(int, 'int'),
+      getInlineButton(con, 'con'),
     ]).resize().extra(),
   );
 });
