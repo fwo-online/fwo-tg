@@ -15,16 +15,16 @@ const HARK_NAMES = {
 
 const getInlineButton = (hark) => [
   {
-    text: `${HARK_NAMES.hark[0]}: ${hark}`,
+    text: `${HARK_NAMES[hark][0]}: ${hark}`,
     callback_data: 'do_nothing',
   },
   {
     text: '-',
-    callback_data: `decrease_${HARK_NAMES.hark[1]}`,
+    callback_data: `decrease_${HARK_NAMES[hark][1]}`,
   },
   {
     text: '+',
-    callback_data: `increase_${HARK_NAMES.hark[1]}`,
+    callback_data: `increase_${HARK_NAMES[hark][1]}`,
   },
 ];
 
