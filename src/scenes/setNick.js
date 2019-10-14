@@ -20,8 +20,11 @@ async function valid(nickname) {
   }
 }
 
-setNick.enter(({ reply }) => {
-  reply('Как будут звать тебя о великий воен?');
+setNick.enter(({ reply, session }) => {
+  reply(
+    `Твой класс — ${session.character.prof}. Теперь нужно определиться с ником.
+  Как будут звать тебя о великий воен?`,
+  );
 });
 
 setNick.on('text', async ({
@@ -32,8 +35,6 @@ setNick.on('text', async ({
     // eslint-disable-next-line no-param-reassign
     session.character.nickname = tempNick;
     await loginHelper.regChar(from.id, session.character.prof, session.character.nickname, 'm');
-    reply(`Так так, значит ты "${session.character.nickname}"`);
-
     leave();
     scene.enter('lobby');
   } catch (e) {
