@@ -105,7 +105,8 @@ module.exports = {
     h.sex = sex;
     h.tgId = tgId;
     h.nickname = nickname;
-    db.char.create(h);
+    // eslint-disable-next-line consistent-return
+    return db.char.create(h);
   },
   /*
   @func удаления
