@@ -58,7 +58,6 @@ profile.hears('Характеристики', ({ reply, session }) => {
 profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
   if (session.character.free === 0) return;
   const [, hark] = match.input.split('_');
-  const { free } = session.character;
   // eslint-disable-next-line no-param-reassign
   session.character[`${hark}Temp`] = session.character[`${hark}Temp`] || session.character[hark];
   // eslint-disable-next-line no-param-reassign
@@ -66,7 +65,7 @@ profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
   // eslint-disable-next-line no-param-reassign
   session.character.free -= 1;
   editMessageText(
-    `Свободных очков ${free}`,
+    `Свободных очков ${session.character.free}`,
     Markup.inlineKeyboard([
       getInlineButton(session, 'str'),
       getInlineButton(session, 'dex'),
