@@ -13,22 +13,20 @@ const HARK_NAMES = {
   con: ['Телосложение', 'con'],
 };
 
-const getInlineButton = (hark) => {
-  return [
-    {
-      text: `${HARK_NAMES.hark[0]}: ${hark}`,
-      callback_data: 'do_nothing',
-    },
-    {
-      text: '-',
-      callback_data: `decrease_${HARK_NAMES.hark[1]}`,
-    },
-    {
-      text: '+',
-      callback_data: `increase_${HARK_NAMES.hark[1]}`,
-    }
-  ]
-};
+const getInlineButton = (hark) => [
+  {
+    text: `${HARK_NAMES.hark[0]}: ${hark}`,
+    callback_data: 'do_nothing',
+  },
+  {
+    text: '-',
+    callback_data: `decrease_${HARK_NAMES.hark[1]}`,
+  },
+  {
+    text: '+',
+    callback_data: `increase_${HARK_NAMES.hark[1]}`,
+  },
+];
 
 profile.enter(({ reply, session }) => {
   reply(
@@ -38,7 +36,9 @@ profile.enter(({ reply, session }) => {
 });
 
 profile.hears('Характеристики', ({ reply, session }) => {
-  const { free, str, dex, wis, int, con } = session.character;
+  const {
+    free, str, dex, wis, int, con,
+  } = session.character;
   reply(
     `Свободных очков ${free}`,
     Markup.inlineKeyboard([
@@ -53,6 +53,9 @@ profile.hears('Характеристики', ({ reply, session }) => {
 
 profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
   const [, hark] = match.input.split('_');
+  const {
+    free, str, dex, wis, int, con,
+  } = session.character;
   // eslint-disable-next-line no-param-reassign
   session.character[hark] += 1;
   // eslint-disable-next-line no-param-reassign
@@ -71,6 +74,9 @@ profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
 
 profile.action(/decrease(?=_)/, ({ session, editMessageText, match }) => {
   const [, hark] = match.input.split('_');
+  const {
+    free, str, dex, wis, int, con,
+  } = session.character;
   // eslint-disable-next-line no-param-reassign
   session.character[hark] -= 1;
   // eslint-disable-next-line no-param-reassign
