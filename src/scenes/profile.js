@@ -14,13 +14,13 @@ const HARK_NAMES = {
   con: 'Телосложение',
 };
 
-const getInlineButton = (value, hark) => [
+const getInlineButton = (session, hark) => [
   {
-    text: `${HARK_NAMES[hark]}: ${value}`,
+    text: `${HARK_NAMES[hark]}: ${session[hark]}`,
     callback_data: 'do_nothing',
   },
   {
-    text: '+',
+    text: `+${session[`${hark}Temp`] ? session[`${hark}Temp`] - session[hark] : ''}`,
     callback_data: `increase_${hark}`,
   },
 ];
@@ -33,17 +33,16 @@ profile.enter(({ reply, session }) => {
 });
 
 profile.hears('Характеристики', ({ reply, session }) => {
-  const {
-    free, str, dex, wis, int, con,
-  } = session.character;
+  const { free } = session.character;
+
   reply(
     `Свободных очков ${free}`,
     Markup.inlineKeyboard([
-      getInlineButton(str, 'str'),
-      getInlineButton(dex, 'dex'),
-      getInlineButton(wis, 'wis'),
-      getInlineButton(int, 'int'),
-      getInlineButton(con, 'con'),
+      getInlineButton(session, 'str'),
+      getInlineButton(session, 'dex'),
+      getInlineButton(session, 'wis'),
+      getInlineButton(session, 'int'),
+      getInlineButton(session, 'con'),
       [{
         text: 'Сбросить',
         callback_data: 'reset',
@@ -59,9 +58,9 @@ profile.hears('Характеристики', ({ reply, session }) => {
 profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
   if (session.character.free === 0) return;
   const [, hark] = match.input.split('_');
-  const {
-    free, str, dex, wis, int, con,
-  } = session.character;
+  const { free } = session.character;
+  // eslint-disable-next-line no-param-reassign
+  session.character[`${hark}Temp`] = session.character[`${hark}Temp`] || session.character[hark];
   // eslint-disable-next-line no-param-reassign
   session.character[hark] += 1;
   // eslint-disable-next-line no-param-reassign
@@ -69,11 +68,11 @@ profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
   editMessageText(
     `Свободных очков ${free}`,
     Markup.inlineKeyboard([
-      getInlineButton(str, 'str'),
-      getInlineButton(dex, 'dex'),
-      getInlineButton(wis, 'wis'),
-      getInlineButton(int, 'int'),
-      getInlineButton(con, 'con'),
+      getInlineButton(session, 'str'),
+      getInlineButton(session, 'dex'),
+      getInlineButton(session, 'wis'),
+      getInlineButton(session, 'int'),
+      getInlineButton(session, 'con'),
       [{
         text: 'Сбросить',
         callback_data: 'reset',
@@ -95,17 +94,15 @@ profile.action('confirm', async ({ session, scene }) => {
 profile.action('reset', async ({ session, editMessageText, update }) => {
   // eslint-disable-next-line no-param-reassign
   session.character = await loginHelper.getChar(update.message.from.id);
-  const {
-    free, str, dex, wis, int, con,
-  } = session.character;
+  const { free } = session.character;
   editMessageText(
     `Свободных очков ${free}`,
     Markup.inlineKeyboard([
-      getInlineButton(str, 'str'),
-      getInlineButton(dex, 'dex'),
-      getInlineButton(wis, 'wis'),
-      getInlineButton(int, 'int'),
-      getInlineButton(con, 'con'),
+      getInlineButton(session, 'str'),
+      getInlineButton(session, 'dex'),
+      getInlineButton(session, 'wis'),
+      getInlineButton(session, 'int'),
+      getInlineButton(session, 'con'),
       [{
         text: 'Сбросить',
         callback_data: 'reset',
