@@ -116,4 +116,16 @@ module.exports = {
     const resp = await db.char.remove(tgId);
     return !!resp;
   },
+  /**
+   * @function
+   * @return {Object} обьект персонажа
+   */
+  async getChar(tgId) {
+    try {
+      return await db.char.find(tgId);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(e);
+    }
+  },
 };
