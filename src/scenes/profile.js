@@ -6,6 +6,7 @@ const loginHelper = require('../helpers/loginHelper');
 const { leave } = Stage;
 const profile = new Scene('profile');
 
+const allHarks = ['str', 'dex', 'wis', 'int', 'con'];
 const HARK_NAMES = {
   str: 'Сила',
   dex: 'Ловкость',
@@ -14,7 +15,7 @@ const HARK_NAMES = {
   con: 'Телосложение',
 };
 
-const getInlineButton = ({ character }, hark) => [
+const getInlineButton = (character, hark) => [
   {
     text: `${HARK_NAMES[hark]}: ${character[hark]}`,
     callback_data: 'do_nothing',
@@ -24,6 +25,27 @@ const getInlineButton = ({ character }, hark) => [
     callback_data: `increase_${hark}`,
   },
 ];
+
+const getInlineConfirmButton = () => [{
+  text: 'Подтвердить',
+  callback_data: 'confirm',
+}];
+
+const getInlineResetButton = () => [{
+  text: 'Сбросить',
+  callback_data: 'reset',
+}];
+
+
+const getInlineKeyboard = (character) => {
+  const inlineKeyboardArr = [];
+
+  allHarks.forEach(hark => inlineKeyboardArr.push(getInlineButton(character, hark)));
+  inlineKeyboardArr.push(getInlineResetButton());
+  inlineKeyboardArr.push(getInlineConfirmButton());
+
+  return inlineKeyboardArr;
+}
 
 profile.enter(({ reply, session }) => {
   reply(
@@ -38,19 +60,7 @@ profile.hears('Характеристики', ({ reply, session }) => {
   reply(
     `Свободных очков ${free}`,
     Markup.inlineKeyboard([
-      getInlineButton(session, 'str'),
-      getInlineButton(session, 'dex'),
-      getInlineButton(session, 'wis'),
-      getInlineButton(session, 'int'),
-      getInlineButton(session, 'con'),
-      [{
-        text: 'Сбросить',
-        callback_data: 'reset',
-      }],
-      [{
-        text: 'Подтвердить',
-        callback_data: 'confirm',
-      }],
+      ...getInlineKeyboard(session.character)
     ]).resize().extra(),
   );
 });
@@ -64,28 +74,18 @@ profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
   session.character[hark] += 1;
   // eslint-disable-next-line no-param-reassign
   session.character.free -= 1;
+  
   editMessageText(
     `Свободных очков ${session.character.free}`,
     Markup.inlineKeyboard([
-      getInlineButton(session, 'str'),
-      getInlineButton(session, 'dex'),
-      getInlineButton(session, 'wis'),
-      getInlineButton(session, 'int'),
-      getInlineButton(session, 'con'),
-      [{
-        text: 'Сбросить',
-        callback_data: 'reset',
-      }],
-      [{
-        text: 'Подтвердить',
-        callback_data: 'confirm',
-      }],
+      ...getInlineKeyboard(session.character)
     ]).resize().extra(),
   );
 });
 
 profile.action('confirm', async ({ session, scene, update }) => {
   await loginHelper.saveHarks(update.callback_query.from.id, session.character);
+  allHarks.forEach(hark => delete session.character[`${hark}Temp`]);
   leave();
   scene.enter('profile');
 });
@@ -94,22 +94,11 @@ profile.action('reset', async ({ session, editMessageText, update }) => {
   // eslint-disable-next-line no-param-reassign
   session.character = await loginHelper.getChar(update.callback_query.from.id);
   const { free } = session.character;
+
   editMessageText(
     `Свободных очков ${free}`,
     Markup.inlineKeyboard([
-      getInlineButton(session, 'str'),
-      getInlineButton(session, 'dex'),
-      getInlineButton(session, 'wis'),
-      getInlineButton(session, 'int'),
-      getInlineButton(session, 'con'),
-      [{
-        text: 'Сбросить',
-        callback_data: 'reset',
-      }],
-      [{
-        text: 'Подтвердить',
-        callback_data: 'confirm',
-      }],
+      ...getInlineKeyboard(session.character)
     ]).resize().extra(),
   );
 });
