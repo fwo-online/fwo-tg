@@ -84,8 +84,8 @@ profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
   );
 });
 
-profile.action('confirm', async ({ session, scene }) => {
-  await loginHelper.saveHarks(session.character);
+profile.action('confirm', async ({ session, scene, update }) => {
+  await loginHelper.saveHarks(update.callback_query.from.id, session.character);
   leave();
   scene.enter('profile');
 });
@@ -114,7 +114,7 @@ profile.action('reset', async ({ session, editMessageText, update }) => {
   );
 });
 
-profile.command('exix', ({ scene }) => {
+profile.command('exit', ({ scene }) => {
   leave();
   scene.enter('lobby');
 });

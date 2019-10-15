@@ -26,9 +26,10 @@ module.exports = {
         dbErr(e);
       }
     },
+    // eslint-disable-next-line consistent-return
     async remove(tgId) {
       try {
-        await CharModel.findOneAndUpdate({ tgId, deleted: false }).save();
+        return await CharModel.findOneAndRemove({ tgId });
       } catch (e) {
         dbErr(e);
       }
@@ -50,6 +51,14 @@ module.exports = {
     async findNick(nickname) {
       try {
         return await CharModel.findOne({ nickname, deleted: false });
+      } catch (e) {
+        dbErr(e);
+      }
+    },
+    // eslint-disable-next-line consistent-return
+    async update(tgId, params) {
+      try {
+        return await CharModel.findOneAndUpdate({ tgId, deleted: false }, params);
       } catch (e) {
         dbErr(e);
       }

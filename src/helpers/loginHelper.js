@@ -129,7 +129,14 @@ module.exports = {
       console.log(e);
     }
   },
-  async saveHarks() {
-    return false;
+  // eslint-disable-next-line consistent-return
+  async saveHarks(tgId, params) {
+    try {
+      const resp = await db.char.update(tgId, params);
+      return !!resp;
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(e);
+    }
   },
 };
