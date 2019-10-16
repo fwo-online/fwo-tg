@@ -32,6 +32,7 @@ module.exports = {
           dex: 8,
           int: 3,
           wis: 3,
+          con: 6,
           inventory: [
             {
               code: 'waa',
@@ -48,6 +49,7 @@ module.exports = {
           dex: 8,
           int: 10,
           wis: 3,
+          con: 6,
           inventory: [
             {
               code: 'wab',
@@ -64,6 +66,7 @@ module.exports = {
           dex: 3,
           int: 8,
           wis: 10,
+          con: 6,
           mag: {
             magic_arrow: 1,
           },
@@ -83,6 +86,7 @@ module.exports = {
           dex: 3,
           int: 10,
           wis: 8,
+          con: 6,
           mag: {
             light_heal: 1,
           },
