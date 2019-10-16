@@ -23,7 +23,7 @@ module.exports = {
   @param {String} prof id чара
    */
   async regChar(tgId, prof, nickname, sex) {
-    let h;
+    const h = {};
     switch (prof) {
       case 'Воин':
         h.prof = 'w';
