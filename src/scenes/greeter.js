@@ -5,20 +5,21 @@ const loginHelper = require('../helpers/loginHelper');
 const { leave } = Stage;
 const greeter = new Scene('greeter');
 
-greeter.enter(async (ctx) => {
-  const resp = await loginHelper.check(ctx.update.message.from.id);
+greeter.enter(async ({
+  update, reply, scene, session,
+}) => {
+  const resp = await loginHelper.check(update.message.from.id);
   if (resp) {
     // eslint-disable-next-line no-param-reassign
-    ctx.session.character = await loginHelper.getChar(ctx.update.message.from.id);
-    // reply('Привет');
-    ctx.reply(JSON.stringify(ctx));
+    session.character = await loginHelper.getChar(update.message.from.id);
+    reply(`chat: ${JSON.stringify(update.message.chat)}`);
     leave();
-    ctx.scene.enter('lobby');
+    scene.enter('lobby');
   } else {
     // eslint-disable-next-line no-param-reassign
-    ctx.session.character = {};
+    session.character = {};
     leave();
-    ctx.scene.enter('create');
+    scene.enter('create');
   }
 });
 
