@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 
 const character = new Schema({
   tgId: {
-    type: Number, index: true, unique: true, required: true,
+    type: Number, required: true,
   },
   nickname: {
     type: String, required: true,
