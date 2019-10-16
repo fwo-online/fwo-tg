@@ -1,1 +1,2 @@
+global.arena = {};
 module.exports = {};

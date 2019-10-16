@@ -3,6 +3,7 @@
  * Модуль обработки боя
  * @todo wip
  */
+const { arena } = global;
 arena.magics = require('./magics');
 
 const ACTIONS = arena.magics;
@@ -12,7 +13,7 @@ const STAGES = sails.config.arena.stages;
 /**
  * @param {Object} gameObj Обьект игры
  * @return {Boolean} true
- **/
+ * */
 async function engine(gameObj) {
   try {
     if (!gameObj) {
@@ -21,7 +22,7 @@ async function engine(gameObj) {
       await CharacterService.loading(2);
       const gameObj = new GameService([1, 2]);
       await gameObj.createGame();
-      gameObj.orders = {ordersList: testGame.orders};
+      gameObj.orders = { ordersList: testGame.orders };
       return runStage(STAGES, gameObj);
     }
     return runStage(STAGES, gameObj);
@@ -39,17 +40,17 @@ async function engine(gameObj) {
  */
 function runStage(ar, gameObj) {
   const act = _.clone(ACTIONS);
-  let ord = sortOrders(gameObj.orders.ordersList);
+  const ord = sortOrders(gameObj.orders.ordersList);
   ar.forEach((x) => {
     if (typeof x !== 'string') {
       runStage(x, gameObj);
     } else {
       sails.log('stage run:', x);
       if (act[x] && ord[x]) {
-        let ordObj = ord[x];
+        const ordObj = ord[x];
         ordObj.forEach((o) => {
-          let initiator = gameObj.players[o.initiator];
-          let target = gameObj.players[o.target];
+          const initiator = gameObj.players[o.initiator];
+          const target = gameObj.players[o.target];
           initiator.proc = o.proc / 100;
           act[x].cast(initiator, target, gameObj);
         });

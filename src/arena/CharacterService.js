@@ -1,3 +1,4 @@
+const Inventory = require('../models/Inventory');
 /**
  * Конструктор персонажа
  * @todo сюда нужны будет get/set функции для intreface части
