@@ -26,7 +26,7 @@ module.exports = {
     let h;
     switch (prof) {
       case 'Воин':
-        h = {
+        h.harks = {
           prof: 'w',
           str: 10,
           dex: 8,
@@ -42,7 +42,7 @@ module.exports = {
         break;
 
       case 'Лучник':
-        h = {
+        h.harks = {
           prof: 'l',
           str: 3,
           dex: 8,
@@ -58,7 +58,7 @@ module.exports = {
         break;
 
       case 'Маг':
-        h = {
+        h.harks = {
           prof: 'm',
           str: 3,
           dex: 3,
@@ -77,7 +77,7 @@ module.exports = {
         break;
 
       case 'Лекарь':
-        h = {
+        h.harks = {
           prof: 'p',
           str: 3,
           dex: 3,
@@ -97,11 +97,11 @@ module.exports = {
 
       default:
         // eslint-disable-next-line no-console
-        console.log('prof error');
+        console.log('prof was', prof);
         break;
     }
 
-    if (!h) return;
+    if (!h) throw new Error('prof error');
     h.sex = sex;
     h.tgId = tgId;
     h.nickname = nickname;
