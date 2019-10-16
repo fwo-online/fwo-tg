@@ -17,7 +17,7 @@ const HARK_NAMES = {
 
 const getInlineButton = (character, hark) => [
   {
-    text: `${HARK_NAMES[hark]}: ${character[hark]}`,
+    text: `${HARK_NAMES[hark]}: ${character.harks[hark]}`,
     callback_data: 'do_nothing',
   },
   {
@@ -49,7 +49,11 @@ const getInlineKeyboard = (character) => {
 
 profile.enter(({ reply, session }) => {
   reply(
-    `Твой профиль, ${session.character.nickname}`,
+    `Твой профиль, ${session.character.nickname}
+Статистика:
+    Игр: ${session.character.statistics.games}
+    Убийств: ${session.character.statistics.kills}
+    `,
     Markup.keyboard(['Характеристики']).oneTime().resize().extra(),
   );
 });
@@ -69,9 +73,9 @@ profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
   if (session.character.free === 0) return;
   const [, hark] = match.input.split('_');
   // eslint-disable-next-line no-param-reassign
-  session.character[`${hark}Temp`] = session.character[`${hark}Temp`] || session.character[hark];
+  session.character.harks[`${hark}Temp`] = session.character.harks[`${hark}Temp`] || session.character.harks[hark];
   // eslint-disable-next-line no-param-reassign
-  session.character[hark] += 1;
+  session.character.harks[hark] += 1;
   // eslint-disable-next-line no-param-reassign
   session.character.free -= 1;
 

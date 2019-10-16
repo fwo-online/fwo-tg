@@ -36,7 +36,9 @@ setNick.on('text', async ({
     leave();
     scene.enter('lobby');
   } catch (e) {
-    reply(e.message);
+    await reply(e.message);
+    leave();
+    scene.enter('greeter');
   }
 });
 

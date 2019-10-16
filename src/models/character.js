@@ -12,26 +12,60 @@ const character = new Schema({
   birthday: { type: Date, default: Date.now },
   prof: { type: String, default: 'w' },
   exp: { type: Number, default: 0 },
-  str: { type: Number, default: 0 },
-  dex: { type: Number, default: 0 },
-  wis: { type: Number, default: 0 },
-  int: { type: Number, default: 0 },
-  con: { type: Number, default: 6 },
+  harks: {
+    type: Object,
+    default: {
+      str: 0, dex: 0, wis: 0, int: 0, con: 6,
+    },
+  },
+  statistics: {
+    type: Object,
+    default: {
+      games: 0,
+      kills: 0,
+      death: 0,
+      runs: 0,
+    },
+  },
   gold: { type: Number, default: 100 },
   free: { type: Number, default: 10 },
   weapon: { type: Object, default: {} },
   lvl: { type: Number, default: 1 },
   sex: { type: String, default: 'm' },
-  kills: { type: Number, default: 0 },
   lastFight: { type: Date, default: null },
-  death: { type: Number, default: 0 },
   inventory: { type: Object, default: [] },
   psr: { type: Number, default: 1500 },
-  mag: { type: Object, default: {} },
+  magics: { type: Object, default: {} },
   bonus: { type: Number, default: 0 },
   skills: { type: Object, default: {} },
   clan: { type: String, default: null },
+  modifiers: {
+    type: Object,
+    default: {
+      crit: 0,
+      agile: 0,
+      block: 0,
+      luck: 0,
+    },
+  },
   panel: { type: Object, default: {} },
+  resists: {
+    type: Object,
+    default: {
+      ice: 0,
+      fire: 0,
+      light: 0,
+      acid: 0,
+    },
+  },
+  statical: {
+    type: Object,
+    default: {
+      heal: 0,
+      mp: 0,
+      physDef: 0,
+    },
+  },
   deleted: { type: Boolean, default: false },
 });
 
