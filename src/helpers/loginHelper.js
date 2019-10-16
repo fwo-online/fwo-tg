@@ -26,8 +26,8 @@ module.exports = {
     let h;
     switch (prof) {
       case 'Воин':
+        h.prof = 'w';
         h.harks = {
-          prof: 'w',
           str: 10,
           dex: 8,
           int: 3,
@@ -43,8 +43,8 @@ module.exports = {
         break;
 
       case 'Лучник':
+        h.prof = 'l';
         h.harks = {
-          prof: 'l',
           str: 3,
           dex: 8,
           int: 10,
@@ -60,8 +60,8 @@ module.exports = {
         break;
 
       case 'Маг':
+        h.prof = 'm';
         h.harks = {
-          prof: 'm',
           str: 3,
           dex: 3,
           int: 8,
@@ -80,8 +80,8 @@ module.exports = {
         break;
 
       case 'Лекарь':
+        h.prof = 'p';
         h.harks = {
-          prof: 'p',
           str: 3,
           dex: 3,
           int: 10,
