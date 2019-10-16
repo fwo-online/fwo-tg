@@ -8,6 +8,7 @@ const profile = require('./profile');
 const stage = new Stage();
 const { leave } = Stage;
 
+// Глобальная команда выхода из сцен
 stage.command('cancel', leave());
 // Scene registration
 stage.register(greeter);

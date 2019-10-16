@@ -30,13 +30,15 @@ setNick.on('text', async ({
   from, reply, message, session, scene,
 }) => {
   try {
+    const nickname = await valid(message.text);
     // eslint-disable-next-line no-param-reassign
-    session.character.nickname = await valid(message.text);
-    await loginHelper.regChar(from.id, session.character.prof, session.character.nickname, 'm');
+    session.character = await loginHelper.regChar(from.id, session.character.prof, nickname, 'm');
     leave();
     scene.enter('lobby');
   } catch (e) {
-    reply(e.message);
+    await reply(e.message);
+    leave();
+    scene.enter('greeter');
   }
 });
 

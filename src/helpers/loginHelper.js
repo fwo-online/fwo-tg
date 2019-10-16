@@ -23,15 +23,16 @@ module.exports = {
   @param {String} prof id чара
    */
   async regChar(tgId, prof, nickname, sex) {
-    let h;
+    const h = {};
     switch (prof) {
       case 'Воин':
-        h = {
-          prof: 'w',
+        h.prof = 'w';
+        h.harks = {
           str: 10,
           dex: 8,
           int: 3,
           wis: 3,
+          con: 6,
           inventory: [
             {
               code: 'waa',
@@ -42,12 +43,13 @@ module.exports = {
         break;
 
       case 'Лучник':
-        h = {
-          prof: 'l',
+        h.prof = 'l';
+        h.harks = {
           str: 3,
           dex: 8,
           int: 10,
           wis: 3,
+          con: 6,
           inventory: [
             {
               code: 'wab',
@@ -58,12 +60,13 @@ module.exports = {
         break;
 
       case 'Маг':
-        h = {
-          prof: 'm',
+        h.prof = 'm';
+        h.harks = {
           str: 3,
           dex: 3,
           int: 8,
           wis: 10,
+          con: 6,
           mag: {
             magic_arrow: 1,
           },
@@ -77,12 +80,13 @@ module.exports = {
         break;
 
       case 'Лекарь':
-        h = {
-          prof: 'p',
+        h.prof = 'p';
+        h.harks = {
           str: 3,
           dex: 3,
           int: 10,
           wis: 8,
+          con: 6,
           mag: {
             light_heal: 1,
           },
@@ -97,11 +101,11 @@ module.exports = {
 
       default:
         // eslint-disable-next-line no-console
-        console.log('prof error');
+        console.log('prof was', prof);
         break;
     }
 
-    if (!h) return;
+    if (!h) throw new Error('prof error');
     h.sex = sex;
     h.tgId = tgId;
     h.nickname = nickname;
@@ -124,6 +128,16 @@ module.exports = {
   async getChar(tgId) {
     try {
       return await db.char.find(tgId);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(e);
+    }
+  },
+  // eslint-disable-next-line consistent-return
+  async saveHarks(tgId, params) {
+    try {
+      const resp = await db.char.update(tgId, params);
+      return !!resp;
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log(e);
