@@ -17,8 +17,8 @@ const charDescr = {
 // });
 
 create.enter((ctx) => {
-  reply(
-    JSON.stringify(ctx)
+  ctx.reply(
+    JSON.stringify(ctx),
   );
 });
 
