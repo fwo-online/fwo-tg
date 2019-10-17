@@ -12,40 +12,67 @@ create.enter(({ reply }) => {
   reply(
     `Здравствуй, сраный путник. Я вижу ты здесь впервые.
       Бла бла бла.Вот кнопка, чтобы создать персонажа.`,
-    Markup.keyboard(['Создать']).oneTime().resize().extra(),
+    Markup.inlineKeyboard([
+      Markup.callbackButton('Создать', 'create'),
+    ]).resize().extra(),
   );
 });
 
-create.hears('Создать', ({ reply }) => {
-  reply('Странные упыри ползут со всех сторон, нам нужны бойцы, кем ты желаешь стать в этом мире?',
-    Markup.keyboard(['Маг', 'Лучник', 'Воин', 'Лекарь']).oneTime().resize().extra());
+create.action('create', ({ editMessageText }) => {
+  editMessageText(
+    'Странные упыри ползут со всех сторон, нам нужны бойцы, кем ты желаешь стать в этом мире?',
+    Markup.inlineKeyboard([
+      Markup.callbackButton('Маг', 'select_Маг'),
+      Markup.callbackButton('Лучник', 'select_Лучник'),
+      Markup.callbackButton('Воин', 'select_Воин'),
+      Markup.callbackButton('Лекарь', 'select_Лекарь'),
+    ]).resize().extra(),
+  );
 });
 
-create.hears(/Лучник|Воин|Маг|Лекарь/gi, ({ reply, message, session }) => {
+create.action(/select(?=_)/, ({ editMessageText, session, match }) => {
+  const [, prof] = match.input.split('_');
   // eslint-disable-next-line no-param-reassign
-  session.character.prof = message.text;
-  reply(
-    `Ты выбрал класс ${message.text}.
-      ${message.text} – ${charDescr[message.text]}. 
+  session.character.prof = prof;
+  editMessageText(
+    `Ты выбрал класс ${prof}.
+      ${prof} – ${charDescr[prof]}. 
       Выбрать или вернуться назад?`,
-    Markup.keyboard(['Выбрать', 'Назад']).oneTime().resize().extra(),
+    Markup.inlineKeyboard([
+      Markup.callbackButton('Выбрать', 'select'),
+      Markup.callbackButton('Назад', 'back'),
+    ]).resize().extra(),
   );
 });
 
-create.hears('Выбрать', ({ reply, session, scene }) => {
+create.action('select', ({ editMessageText, session, scene }) => {
   if (!session.character.prof) {
-    reply('Не понятно, какой то ты странный',
-      Markup.keyboard(['Маг', 'Лучник', 'Воин', 'Лекарь']).oneTime().resize().extra());
+    editMessageText(
+      'Не понятно, какой то ты странный',
+      Markup.inlineKeyboard([
+        Markup.callbackButton('Маг', 'select_Маг'),
+        Markup.callbackButton('Лучник', 'select_Лучник'),
+        Markup.callbackButton('Воин', 'select_Воин'),
+        Markup.callbackButton('Лекарь', 'select_Лекарь'),
+      ]).resize().extra(),
+    );
   } else {
-    reply('Отлично', Markup.keyboard().oneTime().resize().extra());
+    editMessageText('Отлично', Markup.inlineKeyboard([]));
     leave();
     scene.enter('setNick');
   }
 });
 
-create.hears('Назад', ({ reply }) => {
-  reply('Думаешь лучше попробовать кем то другим?',
-    Markup.keyboard(['Маг', 'Лучник', 'Воин', 'Лекарь']).oneTime().resize().extra());
+create.action('back', ({ editMessageText }) => {
+  editMessageText(
+    'Думаешь лучше попробовать кем то другим?',
+    Markup.inlineKeyboard([
+      Markup.callbackButton('Маг', 'select_Маг'),
+      Markup.callbackButton('Лучник', 'select_Лучник'),
+      Markup.callbackButton('Воин', 'select_Воин'),
+      Markup.callbackButton('Лекарь', 'select_Лекарь'),
+    ]).resize().extra(),
+  );
 });
 
 module.exports = create;
