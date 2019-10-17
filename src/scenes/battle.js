@@ -8,6 +8,12 @@ const game = require('../arena');
 
 const battleScene = new Scene('battleScene');
 battleScene.enter(({ reply }) => {
-  reply(game.aliveList(),
-    Markup.keyboard(['Атака', 'Защита', 'Магии']).oneTime().resize().extra());
+  reply(
+    game.aliveList(),
+    Markup.inlineKeyboard([
+      Markup.callbackButton('Атака', 'Атака'),
+      Markup.callbackButton('Защита', 'Защита'),
+      Markup.callbackButton('Магии', 'Магии'),
+    ]).resize().extra()
+  )
 });
