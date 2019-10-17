@@ -5,7 +5,7 @@ const Markup = require('telegraf/markup');
 const { leave } = Stage;
 const create = new Scene('create');
 const charDescr = {
-  l: 'ахуенный', m: 'волшебный', w: 'стронг', p: 'хилит',
+  Лучник: 'ахуенный', Маг: 'волшебный', Воин: 'стронг', Лекарь: 'хилит',
 };
 
 create.enter(({ reply }) => {
@@ -22,10 +22,10 @@ create.action('create', ({ editMessageText }) => {
   editMessageText(
     'Странные упыри ползут со всех сторон, нам нужны бойцы, кем ты желаешь стать в этом мире?',
     Markup.inlineKeyboard([
-      Markup.callbackButton('Маг', 'select_m'),
-      Markup.callbackButton('Лучник', 'select_l'),
-      Markup.callbackButton('Воин', 'select_w'),
-      Markup.callbackButton('Лекарь', 'select_p'),
+      Markup.callbackButton('Маг', 'select_Маг'),
+      Markup.callbackButton('Лучник', 'select_Лучник'),
+      Markup.callbackButton('Воин', 'select_Воин'),
+      Markup.callbackButton('Лекарь', 'select_Лекарь'),
     ]).resize().extra(),
   );
 });

@@ -12,7 +12,7 @@ greeter.enter(async ({
   if (resp) {
     // eslint-disable-next-line no-param-reassign
     session.character = await loginHelper.getChar(update.message.from.id);
-    reply(`chat: ${JSON.stringify(update.message.chat)}`);
+    await reply('Привет');
     leave();
     scene.enter('lobby');
   } else {
