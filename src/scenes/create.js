@@ -13,8 +13,8 @@ create.enter(({ reply }) => {
     `Здравствуй, сраный путник. Я вижу ты здесь впервые.
       Бла бла бла.Вот кнопка, чтобы создать персонажа.`,
     Markup.inlineKeyboard([
-      Markup.callbackButton('Создать', 'create')
-    ]).resize().extra()
+      Markup.callbackButton('Создать', 'create'),
+    ]).resize().extra(),
   );
 });
 
@@ -26,22 +26,22 @@ create.action('create', ({ editMessageText }) => {
       Markup.callbackButton('Лучник', 'select_l'),
       Markup.callbackButton('Воин', 'select_w'),
       Markup.callbackButton('Лекарь', 'select_p'),
-    ]).resize().extra()
-  )
+    ]).resize().extra(),
+  );
 });
 
 create.action(/select(?=_)/, ({ editMessageText, session, match }) => {
-  // eslint-disable-next-line no-param-reassign
   const [, prof] = match.input.split('_');
+  // eslint-disable-next-line no-param-reassign
   session.character.prof = prof;
   editMessageText(
     `Ты выбрал класс ${prof}.
       ${prof} – ${charDescr[prof]}. 
       Выбрать или вернуться назад?`,
-      Markup.inlineKeyboard([
-        Markup.callbackButton('Выбрать', 'select'),
-        Markup.callbackButton('Назад', 'back'),
-      ]).resize().extra()
+    Markup.inlineKeyboard([
+      Markup.callbackButton('Выбрать', 'select'),
+      Markup.callbackButton('Назад', 'back'),
+    ]).resize().extra(),
   );
 });
 
@@ -54,7 +54,7 @@ create.action('select', ({ editMessageText, session, scene }) => {
         Markup.callbackButton('Лучник', 'select_l'),
         Markup.callbackButton('Воин', 'select_w'),
         Markup.callbackButton('Лекарь', 'select_p'),
-      ]).resize().extra()
+      ]).resize().extra(),
     );
   } else {
     editMessageText('Отлично', Markup.inlineKeyboard([]));
@@ -71,8 +71,8 @@ create.action('back', ({ editMessageText }) => {
       Markup.callbackButton('Лучник', 'select_l'),
       Markup.callbackButton('Воин', 'select_w'),
       Markup.callbackButton('Лекарь', 'select_p'),
-    ]).resize().extra()
-  )
+    ]).resize().extra(),
+  );
 });
 
 module.exports = create;
