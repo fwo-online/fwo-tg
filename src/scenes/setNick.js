@@ -6,17 +6,20 @@ const { leave } = Stage;
 const setNick = new Scene('setNick');
 
 async function valid(nickname) {
-  if (nickname.length > 16) {
+  const trimNickname = nickname;
+  if (trimNickname.length > 16) {
     throw new Error('Слишком длинный. Попробуй короче');
-  } else if (nickname.length < 3) {
+  } else if (trimNickname.length < 3) {
     throw new Error('Напрягись, ещё пару символов!');
+  } else if (trimNickname.charAt(0) === '/') {
+    throw new Error('Запрещено начинать ник с "/" ');
   }
 
-  const resp = await loginHelper.checkNick(nickname);
+  const resp = await loginHelper.checkNick(trimNickname);
   if (resp) {
     throw new Error('Кто-то придумал это до тебя!');
   } else {
-    return nickname;
+    return trimNickname;
   }
 }
 

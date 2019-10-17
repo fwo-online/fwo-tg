@@ -15,26 +15,24 @@ const HARK_NAMES = {
   con: 'Телосложение',
 };
 
-const getInlineButton = (character, hark) => [
-  {
-    text: `${HARK_NAMES[hark]}: ${character.harks[hark]}`,
-    callback_data: 'do_nothing',
-  },
-  {
-    text: `+${character[`${hark}Temp`] ? character[hark] - character[`${hark}Temp`] : ''}`,
-    callback_data: `increase_${hark}`,
-  },
+const getInlineButton = ({ harks }, hark) => [
+  Markup.callbackButton(
+    `${HARK_NAMES[hark]}: ${harks[hark]}`,
+    'do_nothing',
+  ),
+  Markup.callbackButton(
+    `+${harks[`${hark}Temp`] ? harks[hark] - harks[`${hark}Temp`] : ''}`,
+    `increase_${hark}`,
+  ),
 ];
 
-const getInlineConfirmButton = () => [{
-  text: 'Подтвердить',
-  callback_data: 'confirm',
-}];
+const getInlineConfirmButton = () => [
+  Markup.callbackButton('Подтвердить', 'confirm'),
+];
 
-const getInlineResetButton = () => [{
-  text: 'Сбросить',
-  callback_data: 'reset',
-}];
+const getInlineResetButton = () => [
+  Markup.callbackButton('Сбросить', 'reset'),
+];
 
 
 const getInlineKeyboard = (character) => {
@@ -54,14 +52,16 @@ profile.enter(({ reply, session }) => {
     Игр: ${session.character.statistics.games}
     Убийств: ${session.character.statistics.kills}
     `,
-    Markup.keyboard(['Характеристики']).oneTime().resize().extra(),
+    Markup.inlineKeyboard([
+      Markup.callbackButton('Характеристики', 'harks'),
+    ]).resize().extra(),
   );
 });
 
-profile.hears('Характеристики', ({ reply, session }) => {
+profile.action('harks', ({ editMessageText, session }) => {
   const { free } = session.character;
 
-  reply(
+  editMessageText(
     `Свободных очков ${free}`,
     Markup.inlineKeyboard([
       ...getInlineKeyboard(session.character),
@@ -87,12 +87,20 @@ profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
   );
 });
 
-profile.action('confirm', async ({ session, scene, update }) => {
+profile.action('confirm', async ({ session, update, editMessageText }) => {
   await loginHelper.saveHarks(update.callback_query.from.id, session.character);
   // eslint-disable-next-line no-param-reassign
   allHarks.forEach((hark) => delete session.character[`${hark}Temp`]);
-  leave();
-  scene.enter('profile');
+  editMessageText(
+    `Твой профиль, ${session.character.nickname}
+Статистика:
+    Игр: ${session.character.statistics.games}
+    Убийств: ${session.character.statistics.kills}
+    `,
+    Markup.inlineKeyboard([
+      Markup.callbackButton('Характеристики', 'harks'),
+    ]).resize().extra(),
+  );
 });
 
 profile.action('reset', async ({ session, editMessageText, update }) => {
