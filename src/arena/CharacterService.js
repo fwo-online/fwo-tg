@@ -108,7 +108,7 @@ class Char {
   async saveToDb() {
     try {
       sails.log('Saving char :: id', this.id);
-      const _this = _.clone(this);
+      const _this = Object.assign({}, this);
       delete _this.inventory;
       await Character.update({id: this.id}, _this);
     } catch (e) {

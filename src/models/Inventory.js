@@ -31,9 +31,9 @@ module.exports = {
   getAllHarks: async(charId) => {
     try {
       let allItems = await Inventory.getPutOned(charId);
-      return _.reduce(allItems, (ob, i) => {
+      return allItems.reduce((ob, i) => {
         let f = Item.getHarks(i.code);
-        return _.merge(ob, f);
+        return Object.assign(ob, f);
       }, {});
     } catch (e) {
       sails.log.error('fail in harks', e);
@@ -45,7 +45,7 @@ module.exports = {
    */
   getPutOned: async(charId) => {
     let invObj = await Inventory.findOne({owner: charId}) || {};
-    return _.filter(invObj.items, {'putOn': true});
+    return invObj.items.filter(el => el['putOn'] === true);
   },
 
   /**
@@ -66,7 +66,8 @@ module.exports = {
       code: itemCode,
     });
     let items = invObj.items;
-    let lastKey = _.findLastKey(items) || -1;
+    let keys = Object.keys(items);
+    let lastKey = keys[keys.length - 1] || -1;
     items[+lastKey + 1] = {
       code: itemCode, putOn: false, durable: {
         val: 10, default: 10,

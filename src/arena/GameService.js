@@ -44,9 +44,7 @@ class Game {
    */
   static aliveArr(gameId) {
     const game = arena.games[gameId];
-    return _.filter(game.players, {
-      alive: true,
-    });
+    return game.players.filter(player => player.alive);
   }
 
   /**
@@ -56,7 +54,7 @@ class Game {
    */
   static randomAlive(gameId) {
     const aliveArr = Game.aliveArr(gameId);
-    return aliveArr[_.random(0, aliveArr.length)];
+    return aliveArr[Math.random() * aliveArr.length];
   }
 
   /**
@@ -208,7 +206,7 @@ class Game {
    * Сбрасываем всем игрокам кол-во доступных процентов на 100
    */
   resetProc() {
-    _.forEach(this.players, (p) => p.proc = 100);
+    this.players.forEach(player => player.proc = 100);
   }
 
   /**
@@ -270,7 +268,7 @@ class Game {
   saveGame() {
     try {
       const charArr = arena.players;
-      _.forEach(this.info.players, (p) => {
+      this.info.players.forEach((p) => {
         charArr[p].exp += this.players[p].stats.collect.exp;
         charArr[p].gold += this.players[p].stats.collect.gold;
         charArr[p].saveToDb();
@@ -286,9 +284,9 @@ class Game {
    */
   statistic() {
     const winners = Game.aliveArr(this.info.id);
-    _.forEach(winners, (p) => p.stats.addGold(5));
+    winners.forEach((p) => p.stats.addGold(5));
     let res = `Statistic: Game ${this.info.id} `;
-    _.forEach(this.players, (p) => {
+    this.players.forEach((p) => {
       const s = p.stats.collect;
       res += `Player ${p.nick}: exp[${s.exp}] gold[${s.gold}] `;
     });
@@ -299,7 +297,7 @@ class Game {
    * Функция выставляет "смерть" для игроков имеющих hp < 0;
    */
   sortDead() {
-    _.forEach(this.players, (p) => {
+    this.players.forEach((p) => {
       if (p.stats.val('hp') <= 0) {
         // eslint-disable-next-line no-param-reassign
         p.alive = false;
@@ -311,7 +309,7 @@ class Game {
    * Сброс состояния игроков
    */
   refrashPlayer() {
-    _.forEach(this.players, (p) => {
+    this.players.forEach((p) => {
       p.stats.refresh();
       p.flags.refresh();
     });
@@ -322,7 +320,7 @@ class Game {
    * @param {function} f функция применяющая ко всем игрокам в игре
    */
   forAllPlayers(f) {
-    _.forEach(this.players, (p) => f(p));
+    this.players.forEach((p) => f(p));
   }
 
   /**
@@ -330,10 +328,8 @@ class Game {
    * @param {function} f функция применяющая
    */
   forAllAlivePlayers(f) {
-    const aliveArr = _.filter(this.players, {
-      alive: true,
-    });
-    _.forEach(aliveArr, (p) => f(p, this));
+    const aliveArr = this.players.filter(player => player.alive);
+    aliveArr.forEach((p) => f(p, this));
   }
 
   /**
@@ -343,7 +339,7 @@ class Game {
    */
   sendStatus(player, game) {
     let team = game.playerArr.getMyTeam(player.clan);
-    if (_.isEmpty(team)) {
+    if (!Object.keys(team).length) {
       team.push(player);
     }
     const enemies = _.difference(game.playerArr.arr, team);

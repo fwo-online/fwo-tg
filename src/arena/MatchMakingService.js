@@ -29,7 +29,7 @@ class MatchMaking extends EventEmitter {
    * @param {Number} charId id чара в поиске
    */
   pull(charId) {
-    let obj = _.find(this.mmQueue, {charId: charId});
+    let obj = this.mmQueue.find(el => el.charId === charId);
     this.mmQueue.splice(this.mmQueue.indexOf(obj), 1);
     // @todo убрать просле дебага
     sails.log('mm pull debug', this.mmQueue);

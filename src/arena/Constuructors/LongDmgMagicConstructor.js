@@ -84,7 +84,7 @@ class LongDmgMagic extends DmgMagic {
     // [ { initiator: 2, target: 1, duration: 1, round: 0, proc: 1 } ]
     // выполняем обычный запуск магии
     const longArray = game.longActions[this.name];
-    _.forEach(longArray, (a) => {
+    longArray.forEach((a) => {
       if (a.duration < 1) return;
       try {
         a.duration--;

@@ -10,7 +10,7 @@ class PhysConstructor {
    * @param {String} atkAct имя actions
    */
   constructor(atkAct) {
-    _.assign(this, atkAct);
+    Object.assign(this, atkAct);
     this.status = {};
     this.status.failReason = undefined; // причина провала атаки
   }
@@ -139,7 +139,7 @@ class PhysConstructor {
   checkTargetIsDead() {
     let t = this.params.target;
     let hpNow = t.stats.val('hp').val;
-    if (hpNow <= 0 && _.isEmpty(t.flags.isDead)) {
+    if (hpNow <= 0 && !Object.keys(t.flags.isDead).length) {
       t.flags.isDead = ({
         action: this.name, initiator: this.params.initiator.id,
       });

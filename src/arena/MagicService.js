@@ -13,12 +13,12 @@ module.exports = {
    * @return {Object} {круг_магии:[id_магии:{описание}},...]
    */
   list: (lvl, prof) => {
-    let magicList = _.filter(arena.magics, (m) => {
+    let magicList = arena.magics.filter((m) => {
       if (m.lvl === 0) return true; else if (m.profList) {
         return m.profList.indexOf(prof) + 1;
       }
     });
-    magicList = _.map(magicList, (m) => {
+    magicList = magicList.map((m) => {
       return ({name: m.name, lvl: m.lvl, orderType: m.orderType, desc: m.desc});
     });
     magicList = _.groupBy(magicList, 'lvl');

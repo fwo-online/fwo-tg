@@ -108,7 +108,8 @@ class Orders {
    * Очищаем массив заказов
    */
   reset() {
-    let lastKey = _.findLastKey(this.hist);
+    let keys = Object.keys(this.hist);
+    let lastKey = keys[keys.length - 1];
     this.hist[lastKey + 1] = this.ordersList;
     if (!this.testOrdersList) {
       this.ordersList = [];

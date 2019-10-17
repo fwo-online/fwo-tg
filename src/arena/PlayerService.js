@@ -143,11 +143,11 @@ class Stats {
    * Функция обнуления состояние inRound Object
    */
   refresh() {
-    let oldData = _.clone(this.inRound); // ссылаемся на внешний обьект
+    let oldData = Object.assign({}, this.inRound); // ссылаемся на внешний обьект
     if (oldData.exp) {
       this.collect.exp += +oldData.exp;
     }
-    this.inRound = _.clone(this.defStat);
+    this.inRound = Object.assign({}, this.defStat);
     // выставляем ману и хп на начало раунда
     this.inRound.hp = oldData.hp || this.defStat.maxHp; // @todo hardcord
     this.inRound.mp = oldData.mp || this.defStat.maxMp; // @todo hardcord

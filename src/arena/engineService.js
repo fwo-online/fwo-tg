@@ -39,7 +39,7 @@ async function engine(gameObj) {
  * @return {Object} измененный обьет игры
  */
 function runStage(ar, gameObj) {
-  const act = _.clone(ACTIONS);
+  const act = Object.assign({}, ACTIONS);
   const ord = sortOrders(gameObj.orders.ordersList);
   ar.forEach((x) => {
     if (typeof x !== 'string') {

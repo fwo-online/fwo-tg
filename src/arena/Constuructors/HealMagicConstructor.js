@@ -7,7 +7,7 @@ class Heal {
    * @param {Object} params экшена
    */
   constructor(params) {
-    _.assign(this, params);
+    Object.assign(this, params);
     this.status = {};
   }
 

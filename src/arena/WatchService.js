@@ -27,7 +27,7 @@ class WatchConstructor {
    *
    */
   cleaner() {
-    _.forEach(arena.wch, (o) => {
+    arena.wch.forEach((o) => {
       if (o.status === 'closed') delete arena.wch[o];
     });
   }

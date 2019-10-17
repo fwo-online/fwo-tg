@@ -7,7 +7,7 @@ class Skill {
    * @param {Skill} params параметры создания нового скилла
    */
   constructor(params) {
-    _.assign(this, params);
+    Object.assign(this, params);
   }
 
   /**

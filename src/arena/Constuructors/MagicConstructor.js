@@ -16,7 +16,7 @@ class Magic {
    * target/targetAoe/all/allNoinitiator/team/self
    */
   constructor(magObj) {
-    _.assign(this, magObj);
+    Object.assign(this, magObj);
     this.status = {};
   }
 

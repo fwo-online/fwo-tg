@@ -4,6 +4,7 @@ const create = require('./create');
 const lobby = require('./lobby');
 const setNick = require('./setNick');
 const profile = require('./profile');
+const battleScene = require('./battle')
 
 const stage = new Stage();
 const { leave } = Stage;
@@ -16,5 +17,6 @@ stage.register(create);
 stage.register(lobby);
 stage.register(setNick);
 stage.register(profile);
+stage.register(battleScene);
 
 module.exports = stage;

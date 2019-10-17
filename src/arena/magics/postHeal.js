@@ -14,12 +14,12 @@ module.exports = {
      */
     function giveExpForHeal(target) {
       const healers = target.flags.isHealed;
-      if (_.isEmpty(healers)) return;
+      if (!Object.keys(healers).length) return;
       const maxHp = target.stats.val('maxHp');
       const curHp = target.stats.val('hp');
       let exp = 0;
       // healObj = {initiator: i.id, val: this.status.val,}
-      let allHeal = _.reduce(healers, (sum, h) => {
+      let allHeal = healers.reduce((sum, h) => {
         sum = sum || 0;
         return sum + h.val;
       }, 0);
@@ -32,7 +32,7 @@ module.exports = {
         exp = Math.round(allHeal * 8);
         target.stats.mode('up', 'hp', allHeal);
       }
-      _.forEach(healers, (healObj) => {
+      healers.forEach((healObj) => {
         const healVal = +healObj.val;
         const initiator = Game.getPlayerById(healObj.initiator);
         const hpProc = Math.round(healVal * 100 / allHeal);
