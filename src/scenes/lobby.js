@@ -28,7 +28,7 @@ lobby.command('profile', ({ scene }) => {
 lobby.command('battle', ({ scene }) => {
   leave();
   scene.enter('battleScene');
-})
+});
 
 lobby.command('remove', async ({ scene, reply, from }) => {
   const resp = await loginHelper.remove(from.id);

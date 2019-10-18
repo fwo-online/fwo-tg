@@ -23,7 +23,7 @@ const blessing = new CommonMagic({
  * @param {Object} initiator Обьект кастера
  * @param {Object} target Обьект цели
  */
-blessing.run = function blessing(initiator, target) {
+blessing.run = (initiator, target) => {
   target.stats.mode('up', 'patk', this.effectVal(initiator));
   target.stats.mode('up', 'pdef', this.effectVal(initiator));
 };

@@ -45,13 +45,13 @@ class LongMagic extends Common {
     // [ { initiator: 2, target: 1, duration: 1, round: 0, proc: 1 } ]
     // выполняем обычный запуск магии
     const longArray = game.longActions[this.name];
-    longArray.forEach( (a) => {
+    longArray.forEach((a) => {
       if (a.duration < 1) return;
       try {
         a.duration--;
-        let i = game.getPlayerById(a.initiator);
-        let t = game.getPlayerById(a.target);
-        this.params = {initiator: i, target: t, game: game};
+        const i = game.getPlayerById(a.initiator);
+        const t = game.getPlayerById(a.target);
+        this.params = { initiator: i, target: t, game };
         this.params.initiator.proc = a.proc;
         this.checkPreAffects(i, t, game);
         if (game.round.count !== a.round) {
@@ -65,7 +65,6 @@ class LongMagic extends Common {
         game.battleLog.log(e);
       }
     });
-
   }
 
   /**
@@ -80,8 +79,8 @@ class LongMagic extends Common {
     this.buff.push({
       initiator: this.params.initiator.id || i.id,
       target: this.params.target.id || t.id,
-      duration: this.params.initiator.stats.val('lspell') ||
-      i.stats.val('lspell'),
+      duration: this.params.initiator.stats.val('lspell')
+      || i.stats.val('lspell'),
       round: this.params.game.round.count || g.round.count,
       proc: this.params.initiator.proc || i.proc,
     });

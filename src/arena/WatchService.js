@@ -40,7 +40,7 @@ module.exports = {
    */
   take(gameObj) {
     try {
-      let watcher = new WatchConstructor(gameObj);
+      const watcher = new WatchConstructor(gameObj);
       arena.games[gameObj.info.id] = gameObj;
       arena.wch[watcher.gameId] = watcher;
       watcher.cleaner();

@@ -30,14 +30,14 @@ class DmgMagic extends Magic {
    * @return {number}
    */
   effectVal() {
-    let i = this.params.initiator;
-    let t = this.params.target;
-    let initiatorMagicLvl = i.magics[this.name];
+    const i = this.params.initiator;
+    const t = this.params.target;
+    const initiatorMagicLvl = i.magics[this.name];
     let eff = MiscService.dice(this.effect[initiatorMagicLvl - 1]) * i.proc;
     if (this.dmgType !== 'clear') {
       // правим урон от mgp цели и mga кастера
-      eff = eff * (1 + 0.004 * i.stats.val('mga')) *
-        (1 - 0.002 * t.stats.val('mgp'));
+      eff = eff * (1 + 0.004 * i.stats.val('mga'))
+        * (1 - 0.002 * t.stats.val('mgp'));
     }
     this.status.hit = eff;
     return eff;
@@ -50,7 +50,7 @@ class DmgMagic extends Magic {
    * @param {Object} initiator Обьект кастера
    */
   getExp(initiator) {
-    let dmgExp = Math.round(this.status.hit * 8) + this.baseExp;
+    const dmgExp = Math.round(this.status.hit * 8) + this.baseExp;
     this.status.exp = dmgExp;
     initiator.stats.mode('up', 'exp', dmgExp);
   }

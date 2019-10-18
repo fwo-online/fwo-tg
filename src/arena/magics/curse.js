@@ -22,7 +22,7 @@ const curse = new CommonMagic({
  * @param {Object} initiator Обьект кастера
  * @param {Object} target Обьект цели
  */
-curse.longRun = function curse(initiator, target) {
+curse.longRun = (initiator, target) => {
   target.stats.mode('down', 'patk', this.effectVal(initiator));
   target.stats.mode('down', 'pdef', this.effectVal(initiator));
 };

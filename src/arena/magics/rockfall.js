@@ -23,7 +23,7 @@ const rockfall = new DmgMagic({
  * @param {Object} initiator Обьект кастера
  * @param {Object} target Обьект цели
  */
-rockfall.run = function rockfall(initiator, target) {
+rockfall.run = (initiator, target) => {
   target.stats.mode('down', 'hp', this.effectVal(initiator));
 };
 module.exports = rockfall;

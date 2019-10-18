@@ -28,27 +28,27 @@ const postHeal = require('./postHeal');
 const berserk = require('../skills/berserk');
 
 module.exports = {
-  blessing: blessing,
-  chainLightning: chainLightning,
-  magicDefense: magicDefense,
-  glitch: glitch,
-  silence: silence,
-  attack: attack,
-  protect: protect, // regen: regen,
-  handsHeal: handsHeal,
-  magicArrow: magicArrow,
-  curse: curse,
-  entangle: entangle,
-  frostTouch: frostTouch,
-  poisonBreath: poisonBreath,
-  rockfall: rockfall,
-  lightHeal: lightHeal,
-  magicArmor: magicArmor,
-  stoneSkin: stoneSkin,
-  smallAura: smallAura,
-  regeneration: regeneration,
-  postHeal: postHeal, /**
+  blessing,
+  chainLightning,
+  magicDefense,
+  glitch,
+  silence,
+  attack,
+  protect, // regen: regen,
+  handsHeal,
+  magicArrow,
+  curse,
+  entangle,
+  frostTouch,
+  poisonBreath,
+  rockfall,
+  lightHeal,
+  magicArmor,
+  stoneSkin,
+  smallAura,
+  regeneration,
+  postHeal, /**
    * Skills
    */
-  berserk: berserk,
+  berserk,
 };

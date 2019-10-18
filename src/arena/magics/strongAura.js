@@ -22,7 +22,7 @@ const smallAura = new LongMagic({
  * @param {Object} initiator Обьект кастера
  * @param {Object} target Обьект цели
  */
-smallAura.longRun = function smallAura(initiator, target) {
+smallAura.longRun = (initiator, target) => {
   target.stats.mode('up', 'pdef', this.effectVal(initiator));
 };
 module.exports = smallAura;

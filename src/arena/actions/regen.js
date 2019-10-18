@@ -20,7 +20,7 @@ class Regen {
    * @param {Object} game Обьект игры (не обязателен)
    */
   cast(initiator, target, game) {
-    let val = initiator.stats.val('manaReg') * initiator.proc; // размер восстан
+    const val = initiator.stats.val('manaReg') * initiator.proc; // размер восстан
     initiator.stats.mode('up', 'mp', val);
   }
 }

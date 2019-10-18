@@ -15,16 +15,17 @@ const lightHeal = new CommonMagic({
   aoeType: 'target',
   magType: 'good',
   chance: [100, 100, 100],
-  effect: ['1d2', '1d2+1', '1d2+2'], profList: ['m', 'p'],
+  effect: ['1d2', '1d2+1', '1d2+2'],
+  profList: ['m', 'p'],
 });
 /**
  * Основная функция запуска магии
  * @param {Object} initiator Обьект кастера
  * @param {Object} target Обьект цели
  */
-lightHeal.run = function lightHeal(initiator, target) {
-  let maxHP = target.stats.val('maxHp'); // показатель максимального HP
-  let realHP = target.stats.val('hp'); // показатель текущего HP
+lightHeal.run = (initiator, target) => {
+  const maxHP = target.stats.val('maxHp'); // показатель максимального HP
+  const realHP = target.stats.val('hp'); // показатель текущего HP
   this.status.effect = this.effectVal(); // показатель хила
   if ((+this.status.effect + realHP) > maxHP) {
     this.status.effect = +maxHP - realHP;

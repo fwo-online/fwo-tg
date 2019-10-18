@@ -19,7 +19,7 @@ class Groups {
    * @param {Number} charId Id чара которого приглашают в группу
    */
   invite(charId) {
-    //sendGroupInvite ? (groupLiderId ?)
+    // sendGroupInvite ? (groupLiderId ?)
 
   }
 

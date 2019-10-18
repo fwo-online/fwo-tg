@@ -12,7 +12,7 @@ const ee = require('events');
 class RoundConstructor extends ee {
   /**
    * Конструктор
-   **/
+   * */
   constructor() {
     super();
     this.count = 0;
@@ -31,7 +31,7 @@ class RoundConstructor extends ee {
 
   /**
    * @param {Object} data
-   **/
+   * */
   write(data) {
     this.emit('Round', data);
   }
@@ -77,7 +77,7 @@ class RoundConstructor extends ee {
     // сюда нужны таймауты проверки на end и т.п
     sails.log.debug('RC debug:: end');
     this.status = 'ending';
-    this.write({event: 'endRound'});
+    this.write({ event: 'endRound' });
   }
 
   /**
@@ -87,8 +87,8 @@ class RoundConstructor extends ee {
   engine() {
     this.status = 'engine';
     sails.log.debug('Round State: waiting');
-    this.write({event: 'endOrders', round: this.count, state: this.status});
-    this.write({event: 'engine', round: this.count, state: this.status});
+    this.write({ event: 'endOrders', round: this.count, state: this.status });
+    this.write({ event: 'engine', round: this.count, state: this.status });
     this.goNext('ending');
   }
 
@@ -99,7 +99,7 @@ class RoundConstructor extends ee {
    *
    */
   nextState(newState) {
-    let state = newState || this.status;
+    const state = newState || this.status;
     switch (state) {
       case 'init':
         // Состояние инициации раунда после создани игры
@@ -141,9 +141,9 @@ class RoundConstructor extends ee {
    * @param {Number} timeout  число в мс, через которое следует выполнить
    */
   goNext(newState, timeout) {
-    let defaultTimer = timeout || sails.config.arena.roundTimeout;
-    let _this = this;
-    let x = setTimeout(function() {
+    const defaultTimer = timeout || sails.config.arena.roundTimeout;
+    const _this = this;
+    const x = setTimeout(() => {
       _this.nextState(newState);
       clearTimeout(x);
     }, defaultTimer);

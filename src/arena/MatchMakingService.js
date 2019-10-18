@@ -3,9 +3,10 @@
  * @module Service/MatchMaking
  * @description Класс обьекта MM, для сбора игр
  * */
-const EventEmitter = require('events').EventEmitter;
-const maxIter = sails.config.arena.maxIter;
-const roundPlayersLimit = sails.config.arena.roundPlayersLimit;
+const { EventEmitter } = require('events');
+
+const { maxIter } = sails.config.arena;
+const { roundPlayersLimit } = sails.config.arena;
 
 /**
  * Общий класс обьекта MatchMaking
@@ -29,7 +30,7 @@ class MatchMaking extends EventEmitter {
    * @param {Number} charId id чара в поиске
    */
   pull(charId) {
-    let obj = this.mmQueue.find(el => el.charId === charId);
+    const obj = this.mmQueue.find((el) => el.charId === charId);
     this.mmQueue.splice(this.mmQueue.indexOf(obj), 1);
     // @todo убрать просле дебага
     sails.log('mm pull debug', this.mmQueue);
@@ -55,7 +56,7 @@ class MatchMaking extends EventEmitter {
    * Основная функция запуска поиска внутри системы MatchMaking
    */
   start() {
-    let _this = this;
+    const _this = this;
     this.timerId = setInterval(() => {
       _this.main();
     }, _this.prefs.checkinterval);
@@ -68,24 +69,22 @@ class MatchMaking extends EventEmitter {
     let iter = 0;
     let queue;
     while ((this.mmQueue.length >= 2) && (iter < maxIter)) {
-      let mmLength = this.mmQueue.length - 1;
+      const mmLength = this.mmQueue.length - 1;
       for (let i = mmLength; i >= 0; i--) {
         // @todo нужно перейти на lodash
-        let searcher = this.mmQueue[i];
+        const searcher = this.mmQueue[i];
         if (!searcher) break;
         // пробуем перебрать польз из очереди в одну из уже созданных очередей
         if (this.allQueue.length > 10) {
           // сюда нужна функция чистки allQueue от уже собранных очередей.
           sails.log.debug('length>10');
-          for (let xx in this.allQueue) {
+          for (const xx in this.allQueue) {
             if (!this.allQueue[xx].open) {
               this.allQueue.splice(xx, 1);
             }
           }
         } else {
-          queue = this.allQueue.find((qu) => {
-            return (qu.policy(searcher) && qu.open);
-          });
+          queue = this.allQueue.find((qu) => (qu.policy(searcher) && qu.open));
           if (!queue) {
             queue = new Queue();
             this.allQueue.push(queue);
@@ -134,7 +133,7 @@ class Queue {
    * @return {Boolean}
    */
   policy(searcherObj) {
-    let playerPsr = searcherObj.psr;
+    const playerPsr = searcherObj.psr;
     return (!this.length) || (playerPsr > (this.psr / this.length + 50));
   }
 
@@ -153,7 +152,7 @@ class Queue {
    */
   async goStartGame() {
     try {
-      let newGame = new GameService(this.players.map((pl) => pl.charId));
+      const newGame = new GameService(this.players.map((pl) => pl.charId));
       await newGame.createGame();
       WatchService.take(newGame);
       this.open = false;

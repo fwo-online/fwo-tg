@@ -8,7 +8,7 @@ const ORDERS = [
   }, {
     initiator: '2', target: '1', proc: 20, action: 'silence',
   }, {
-    initiator: '1', target: '2', proc: 100, action: 'chainLightning',  
+    initiator: '1', target: '2', proc: 100, action: 'chainLightning',
   }, {
     initiator: '1', target: '2', proc: 100, action: 'regen',
   }, {

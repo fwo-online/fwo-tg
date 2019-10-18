@@ -6,7 +6,80 @@ const Inventory = require('../models/Inventory');
  * нужно переработать
  */
 const harkArr = ['str', 'dex', 'int', 'wis', 'con'];
+/**
+ * Функция возвращающая дефолтные параметры чара в зависимости от профы
+ * @param {String} prof строка профессии
+ * @return {Object} обьект harks {str:x,dex:x,wis:x,int:x,con:x}
+ */
+function defHarks(prof) {
+  return MiscService.prof[prof];
+}
 
+/**
+ * Возвращает список динамических характеристик
+ * @param {Object} charObj обьект персонажа из базы
+ * @return {{patk: number, pdef: number, maxHp: number, maxMp: number,
+ * maxEn: number,mga: number, mgp: number, hl: {min: *, max: *}, manaReg: *,
+ * enReg: number, hit: boolean, maxTarget: number, lspell: number}}
+ */
+function getDynHarks(charObj) {
+  const harks = charObj.hark;
+  const patk = (charObj.prof === 'l')
+    ? floatNumber(harks.dex + (harks.int * 0.5))
+    : floatNumber(harks.dex + (harks.str * 0.4));
+  const pdef = ((harks.con * 0.6) + (harks.dex * 0.4));
+  const maxHp = floatNumber(6 + (harks.con / 3));
+  const maxMp = floatNumber(harks.wis * 1.5);
+  const maxEn = (charObj.prof === 'l') ? (harks.dex + harks.int * 0.5
+    + harks.con * 0.25) : (harks.dex + harks.str * 0.5 + harks.con * 0.25);
+
+  const mga = (harks.wis * 0.6) + (harks.int * 0.4);
+  const mgp = (harks.wis * 0.6) + (harks.int * 0.4);
+  const hl = ({
+    min: floatNumber(harks.int / 10), max: floatNumber(harks.int / 5),
+  });
+
+  const manaReg = floatNumber((harks.wis * 4 / 10) + (harks.int * 6 / 10));
+
+  const enReg = floatNumber((harks.con * 4 / 10) + (harks.dex * 6 / 10));
+  const hit = calcHit();
+
+  /**
+   * Функция расчета наносимого урона
+   * @return {Object} {min:xx,max:xx}
+   */
+  function calcHit() {
+    const h = {};
+    if (charObj.prof === 'l') {
+      const intDmg = (harks.int - 2) / 10;
+      h.min = floatNumber(intDmg + +charObj.harksFromItems.hit.min);
+      h.max = floatNumber(intDmg + +charObj.harksFromItems.hit.max);
+    } else {
+      const strDmg = (harks.str - 3) / 10;
+      h.min = floatNumber(strDmg + +charObj.harksFromItems.hit.min);
+      h.max = floatNumber(strDmg + +charObj.harksFromItems.hit.max);
+    }
+    return h;
+  }
+
+  const maxTarget = (charObj.prof === 'l') ? Math.round(charObj.lvl + 3 / 2) : 1;
+  const lspell = (charObj.prof === 'l') ? Math.round((harks.int - 4) / 3) : 0;
+  return {
+    patk,
+    pdef,
+    maxHp,
+    maxMp,
+    maxEn,
+    mga,
+    mgp,
+    hl,
+    manaReg,
+    enReg,
+    hit,
+    maxTarget,
+    lspell,
+  };
+}
 /**
  * Класс описывающий персонажа внутри игры
  */
@@ -17,9 +90,9 @@ class Char {
    * @param {String} prof имя профессии персонажа
    * @param {Object} charObj обьект персонажа из базы
    */
-  constructor(nickName, prof, charObj) {
+  constructor(nickName, prof) {
     this.nickname = nickName;
-    let defaults = defHarks(prof);
+    const defaults = defHarks(prof);
     this.clearHarks = defaults.hark;
     this.prof = defaults.prof;
   }
@@ -49,9 +122,9 @@ class Char {
     /**
      * @todo организовать нормальную загрузку
      */
-    let harksFromItems = await Inventory.getAllHarks(charId) ||
-      {hit: {min: 0, max: 0}};
-    let p = await Character.findOne({
+    const harksFromItems = await Inventory.getAllHarks(charId)
+      || { hit: { min: 0, max: 0 } };
+    const p = await Character.findOne({
       id: charId,
     });
     p.harksFromItems = harksFromItems;
@@ -68,10 +141,10 @@ class Char {
    * @todo нужно перенести это не в static а во внутрь экземпляра класса
    */
   static getGameFromCharId(charId) {
-    let gameId = arena.players[charId].mm;
+    const gameId = arena.players[charId].mm;
     if (arena.games[gameId]) {
       return arena.games[gameId];
-    } else throw Error('gameId_error');
+    } throw Error('gameId_error');
   }
 
   /**
@@ -108,88 +181,13 @@ class Char {
   async saveToDb() {
     try {
       sails.log('Saving char :: id', this.id);
-      const _this = Object.assign({}, this);
+      const _this = { ...this };
       delete _this.inventory;
-      await Character.update({id: this.id}, _this);
+      await Character.update({ id: this.id }, _this);
     } catch (e) {
       sails.log.error('Fail on CharSave:', e);
     }
   }
-}
-
-/**
- * Функция возвращающая дефолтные параметры чара в зависимости от профы
- * @param {String} prof строка профессии
- * @return {Object} обьект harks {str:x,dex:x,wis:x,int:x,con:x}
- */
-function defHarks(prof) {
-  return MiscService.prof[prof];
-}
-
-/**
- * Возвращает список динамических характеристик
- * @param {Object} charObj обьект персонажа из базы
- * @return {{patk: number, pdef: number, maxHp: number, maxMp: number,
- * maxEn: number,mga: number, mgp: number, hl: {min: *, max: *}, manaReg: *,
- * enReg: number, hit: boolean, maxTarget: number, lspell: number}}
- */
-function getDynHarks(charObj) {
-  let harks = charObj.hark;
-  let patk = (charObj.prof === 'l')
-    ? floatNumber(harks.dex + (harks.int * 0.5))
-    : floatNumber(harks.dex + (harks.str * 0.4));
-  let pdef = ((harks.con * 0.6) + (harks.dex * 0.4));
-  let maxHp = floatNumber(6 + (harks.con / 3));
-  let maxMp = floatNumber(harks.wis * 1.5);
-  let maxEn = (charObj.prof === 'l') ? (harks.dex + harks.int * 0.5 +
-    harks.con * 0.25) : (harks.dex + harks.str * 0.5 + harks.con * 0.25);
-
-  let mga = (harks.wis * 0.6) + (harks.int * 0.4);
-  let mgp = (harks.wis * 0.6) + (harks.int * 0.4);
-  let hl = ({
-    min: floatNumber(harks.int / 10), max: floatNumber(harks.int / 5),
-  });
-
-  let manaReg = floatNumber((harks.wis * 4 / 10) + (harks.int * 6 / 10));
-
-  let enReg = floatNumber((harks.con * 4 / 10) + (harks.dex * 6 / 10));
-  let hit = calcHit();
-
-  /**
-   * Функция расчета наносимого урона
-   * @return {Object} {min:xx,max:xx}
-   */
-  function calcHit() {
-    let h = {};
-    if (charObj.prof === 'l') {
-      let intDmg = (harks.int - 2) / 10;
-      h.min = floatNumber(intDmg + +charObj.harksFromItems.hit.min);
-      h.max = floatNumber(intDmg + +charObj.harksFromItems.hit.max);
-    } else {
-      let strDmg = (harks.str - 3) / 10;
-      h.min = floatNumber(strDmg + +charObj.harksFromItems.hit.min);
-      h.max = floatNumber(strDmg + +charObj.harksFromItems.hit.max);
-    }
-    return h;
-  }
-
-  let maxTarget = (charObj.prof === 'l') ? Math.round(charObj.lvl + 3 / 2) : 1;
-  let lspell = (charObj.prof === 'l') ? Math.round((harks.int - 4) / 3) : 0;
-  return {
-    patk,
-    pdef,
-    maxHp,
-    maxMp,
-    maxEn,
-    mga,
-    mgp,
-    hl,
-    manaReg,
-    enReg,
-    hit,
-    maxTarget,
-    lspell,
-  };
 }
 
 module.exports = Char;

@@ -52,8 +52,8 @@ class Skill {
    * @return {Number} шанс прохождения
    */
   getChance() {
-    let initiator = this.params.initiator;
-    let initiatorSkillLvl = initiator.skills[this.name];
+    const { initiator } = this.params;
+    const initiatorSkillLvl = initiator.skills[this.name];
     return this.chance[initiatorSkillLvl - 1];
   }
 
@@ -82,13 +82,12 @@ class Skill {
    */
   breaks(e) {
     sails.log(e);
-    let msg = {
+    const msg = {
       action: this.name,
     };
     this.params.game.battleLog.log(msg);
     this.params = null;
   }
-
 }
 
 module.exports = Skill;

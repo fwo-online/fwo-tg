@@ -10,7 +10,7 @@ const attack = new PhysConstructor({
  */
 attack.run = function run() {
   // пока делаю только 1 руку
-  let target = this.params.target;
+  const { target } = this.params;
   target.stats.mode('down', 'hp', this.status.hit);
   this.getExp();
 };

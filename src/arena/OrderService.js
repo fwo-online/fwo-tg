@@ -34,7 +34,7 @@ class Orders {
       action = action.name;
     }
     // формируем список заказа для ника
-    let Game = CharacterService.getGameFromCharId(charId);
+    const Game = CharacterService.getGameFromCharId(charId);
     // @todo Нужны константы для i18n
     if (!Game) {
       throw Error('Вы не в игре');
@@ -51,8 +51,8 @@ class Orders {
     } else if (isValidAct(action)) {
       // временный хак для атаки руками
       // @todo нужно дописать структуру атаки руками
-      let a = {
-        initiator: charId, target: target, action: action, proc: atcproc,
+      const a = {
+        initiator: charId, target, action, proc: atcproc,
       };
       // if (action === 'attack') {
       //   a.hand = 'righthand';
@@ -76,15 +76,15 @@ class Orders {
     if (charId) {
       // ord - обьект заказа
       this.ordersList.forEach((ord) => {
-        let initiator = ord.initiator.id;
-        let action = ord.action;
+        const initiator = ord.initiator.id;
+        const { action } = ord;
         if (!MiscService.isMagic(action) && initiator === charId) {
           ord.target = GameService.randomAlive(ord.initiator.getGameId());
         }
       });
     } else {
       this.ordersList.forEach((ord) => {
-        let action = ord.action;
+        const { action } = ord;
         if (!MiscService.isMagic(action)) {
           ord.target = GameService.randomAlive(ord.initiator.getGameId());
         }
@@ -108,8 +108,8 @@ class Orders {
    * Очищаем массив заказов
    */
   reset() {
-    let keys = Object.keys(this.hist);
-    let lastKey = keys[keys.length - 1];
+    const keys = Object.keys(this.hist);
+    const lastKey = keys[keys.length - 1];
     this.hist[lastKey + 1] = this.ordersList;
     if (!this.testOrdersList) {
       this.ordersList = [];

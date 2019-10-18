@@ -24,7 +24,7 @@ const silence = new CommonMagic({
  * @param {Object} game Обьект игры (не обязателен)
  */
 silence.run = (initiator, target, game) => {
-  let s = target.flags.isSilenced || [];
+  const s = target.flags.isSilenced || [];
   s.push({
     initiator: initiator.name,
     action: 'silence',

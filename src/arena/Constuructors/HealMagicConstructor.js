@@ -21,7 +21,7 @@ class Heal {
    */
   cast(initiator, target, game) {
     this.params = {
-      initiator: initiator, target: target, game: game,
+      initiator, target, game,
     };
 
     try {
@@ -59,9 +59,9 @@ class Heal {
    * @return {Number} размер хила
    */
   effectVal() {
-    let i = this.params.initiator;
-    let proc = i.proc || 0;
-    let eff = MiscService.randInt(i.stats.val('hl').min, i.stats.val('hl').max);
+    const i = this.params.initiator;
+    const proc = i.proc || 0;
+    const eff = MiscService.randInt(i.stats.val('hl').min, i.stats.val('hl').max);
     return floatNumber(eff * proc);
   }
 
@@ -74,9 +74,9 @@ class Heal {
    * Функция положительного прохождения
    */
   next() {
-    let target = this.params.target;
-    let initiator = this.params.initiator;
-    let bl = this.params.game.battleLog;
+    const { target } = this.params;
+    const { initiator } = this.params;
+    const bl = this.params.game.battleLog;
     bl.success({
       exp: this.status.exp,
       action: this.name,

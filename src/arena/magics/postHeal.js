@@ -19,10 +19,7 @@ module.exports = {
       const curHp = target.stats.val('hp');
       let exp = 0;
       // healObj = {initiator: i.id, val: this.status.val,}
-      let allHeal = healers.reduce((sum, h) => {
-        sum = sum || 0;
-        return sum + h.val;
-      }, 0);
+      let allHeal = healers.reduce((sum = 0, h) => sum + h.val, 0);
       allHeal = floatNumber(allHeal);
       const sumHeal = floatNumber(allHeal + curHp);
       if (sumHeal >= maxHp) {
@@ -36,13 +33,14 @@ module.exports = {
         const healVal = +healObj.val;
         const initiator = Game.getPlayerById(healObj.initiator);
         const hpProc = Math.round(healVal * 100 / allHeal);
-        // В случае если хил вышел за границу максимального HP
-        // Exp будет выдано только за кол-во до максимума
+        /* В случае если хил вышел за границу максимального HP
+        Exp будет выдано только за кол-во до максимума */
         const playerExpForHeal = Math.round(exp * (hpProc / 100));
         initiator.stats.mode('up', 'exp', playerExpForHeal);
         healmsg += `[${initiator.nick} +hp:${healVal}/+e:${playerExpForHeal}] `;
       });
-      sails.log(`${target.nick} был вылечен на ${allHeal} | ${healmsg}`);
+      // eslint-disable-next-line no-console
+      console.log(`${target.nick} был вылечен на ${allHeal} | ${healmsg}`);
       Game.sendBattleLog(`${target.nick} был вылечен на ${allHeal}|${healmsg}`);
     }
   },

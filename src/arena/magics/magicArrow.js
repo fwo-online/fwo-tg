@@ -23,7 +23,7 @@ const magicArrow = new DmgMagic({
  * @param {Object} initiator Обьект кастера
  * @param {Object} target Обьект цели
  */
-magicArrow.run = function magicArrow(initiator, target) {
+magicArrow.run = (initiator, target) => {
   target.stats.mode('down', 'hp', this.effectVal(initiator));
 };
 module.exports = magicArrow;

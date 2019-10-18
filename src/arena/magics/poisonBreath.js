@@ -23,7 +23,7 @@ const poisonBreath = new DmgMagic({
  * @param {Object} initiator Обьект кастера
  * @param {Object} target Обьект цели
  */
-poisonBreath.run = function poisonBreath(initiator, target) {
+poisonBreath.run = (initiator, target) => {
   target.stats.mode('down', 'hp', this.effectVal(initiator));
 };
 module.exports = poisonBreath;

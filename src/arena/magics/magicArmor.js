@@ -22,7 +22,7 @@ const magicArmor = new CommonMagic({
  * @param {Object} initiator Обьект кастера
  * @param {Object} target Обьект цели
  */
-magicArmor.run = function magicArmor(initiator, target) {
+magicArmor.run = (initiator, target) => {
   target.stats.mode('up', 'pdef', this.effectVal(initiator));
 };
 module.exports = magicArmor;

@@ -3,7 +3,7 @@
  * (возможно физ скилы)
  * @todo Сейчас при осутствие защиты на целе, не учитывается статик протект(
  * ???) Т.е если цель не защищается атака по ней на 95% удачна
- **/
+ * */
 class PhysConstructor {
   /**
    * Конструктор атаки
@@ -25,7 +25,7 @@ class PhysConstructor {
    */
   cast(initiator, target, game) {
     this.params = {
-      initiator: initiator, target: target, game: game,
+      initiator, target, game,
     };
     const bl = this.params.game.battleLog;
     try {
@@ -63,18 +63,18 @@ class PhysConstructor {
    * атака прошла
    */
   protectCheck() {
-    let i = this.params.initiator;
-    let t = this.params.target;
-    let atc = i.stats.val('patk') * i.proc;
-    let prt = t.flags.isProtected.length > 0 ? t.stats.val('pdef') : 0.1;
-    let at = floatNumber(Math.round(atc / prt));
+    const i = this.params.initiator;
+    const t = this.params.target;
+    const atc = i.stats.val('patk') * i.proc;
+    const prt = t.flags.isProtected.length > 0 ? t.stats.val('pdef') : 0.1;
+    const at = floatNumber(Math.round(atc / prt));
     sails.log('at', at);
-    let r = MiscService.rndm('1d100');
-    let c = Math.round(Math.sqrt(at) + (10 * at) + 5);
-    let result = c > r;
+    const r = MiscService.rndm('1d100');
+    const c = Math.round(Math.sqrt(at) + (10 * at) + 5);
+    const result = c > r;
     sails.log('left', c, 'right', r, 'result', result);
-    let initiatorHitParam = i.stats.val('hit');
-    let hitval = MiscService.randInt(initiatorHitParam.min,
+    const initiatorHitParam = i.stats.val('hit');
+    const hitval = MiscService.randInt(initiatorHitParam.min,
       initiatorHitParam.max);
     this.status.hit = floatNumber(hitval * i.proc);
     if (result) {
@@ -104,9 +104,9 @@ class PhysConstructor {
    * Функция агрегации данных после выполнениния действия
    */
   next() {
-    let target = this.params.target;
-    let initiator = this.params.initiator;
-    let bl = this.params.game.battleLog;
+    const { target } = this.params;
+    const { initiator } = this.params;
+    const bl = this.params.game.battleLog;
     let msg = '';
     if (this.status.failReason) {
       msg = ({
@@ -137,8 +137,8 @@ class PhysConstructor {
    * общую проверку
    */
   checkTargetIsDead() {
-    let t = this.params.target;
-    let hpNow = t.stats.val('hp').val;
+    const t = this.params.target;
+    const hpNow = t.stats.val('hp').val;
     if (hpNow <= 0 && !Object.keys(t.flags.isDead).length) {
       t.flags.isDead = ({
         action: this.name, initiator: this.params.initiator.id,
@@ -150,8 +150,8 @@ class PhysConstructor {
    * Расчитываем полученный exp
    */
   getExp() {
-    let i = this.params.initiator.stats;
-    let e = this.status.hit * 8;
+    const i = this.params.initiator.stats;
+    const e = this.status.hit * 8;
     this.status.exp = Math.round(e);
     i.mode('up', 'exp', this.status.exp);
   }
@@ -163,8 +163,8 @@ class PhysConstructor {
    * за протектом
    */
   protectorsGetExp() {
-    let t = this.params.target; // Обьект цеои
-    let f = t.flags.isProtected; // Коллекция защищающих [{id,кол-во дефа},..]
+    const t = this.params.target; // Обьект цеои
+    const f = t.flags.isProtected; // Коллекция защищающих [{id,кол-во дефа},..]
     const G = this.params.game; // Обьект игры
     const prt = t.stats.val('def'); // общий показатель защиты цели
     f.forEach((p) => {

@@ -25,8 +25,8 @@ class Magic {
    * @return {boolean}
    */
   get isLong() {
-    return this.constructor.name === 'LongMagic' || this.constructor.name ===
-      'LongDmgMagic';
+    return this.constructor.name === 'LongMagic' || this.constructor.name
+      === 'LongDmgMagic';
   }
 
   // Дальше идут общие методы для всех магий
@@ -39,7 +39,7 @@ class Magic {
    */
   cast(initiator, target, game) {
     this.params = {
-      initiator: initiator, target: target, game: game,
+      initiator, target, game,
     };
     try {
       this.checkPreAffects(initiator, target, game);
@@ -55,7 +55,6 @@ class Magic {
       if (this.isLong) throw (failMsg);
       bl.log(failMsg);
       this.params = null;
-
     }
   }
 
@@ -66,8 +65,8 @@ class Magic {
    * @param {Object} initiator Обьект кастера
    */
   getCost(initiator) {
-    let costValue = parseFloat(initiator.stats.val(this.costType) -
-      parseFloat(this.cost));
+    const costValue = parseFloat(initiator.stats.val(this.costType)
+      - parseFloat(this.cost));
     if (costValue >= 0) {
       initiator.stats[this.costType] = +costValue;
     } else {
@@ -92,8 +91,8 @@ class Magic {
    * @return {Number} dice число эффекта
    */
   effectVal(initiator) {
-    let i = initiator || this.params.initiator;
-    let initiatorMagicLvl = i.magics[this.name];
+    const i = initiator || this.params.initiator;
+    const initiatorMagicLvl = i.magics[this.name];
     return MiscService.dice(this.effect[initiatorMagicLvl - 1]) * i.proc;
   }
 
@@ -117,10 +116,9 @@ class Magic {
       if (this.godCheck()) {
         // Боги помогают
         return true;
-      } else {
-        // Магия остается феловой
-        throw this.breaks('CHANCE_FAIL');
       }
+      // Магия остается феловой
+      throw this.breaks('CHANCE_FAIL');
     }
   }
 
@@ -131,12 +129,12 @@ class Magic {
    * @todo Всё ниже рассчитывается дла бафов и не учитывает mdef/mga
    */
   getChance() {
-    let initiator = this.params.initiator;
-    let target = this.params.target;
-    let initiatorMagicLvl = initiator.magics[this.name];
+    const { initiator } = this.params;
+    const { target } = this.params;
+    const initiatorMagicLvl = initiator.magics[this.name];
     sails.log('getChance:magicLvl:', initiatorMagicLvl);
-    let imc = initiator.modifiers.castChance; // мод шанс прохождения
-    let acm = initiator.modifiers.magics[this.name] || 0; // мод action'а
+    const imc = initiator.modifiers.castChance; // мод шанс прохождения
+    const acm = initiator.modifiers.magics[this.name] || 0; // мод action'а
     let chance = this.chance[initiatorMagicLvl - 1];
     if (typeof chance === 'string') {
       chance = MiscService.rndm(chance);
@@ -150,8 +148,8 @@ class Magic {
     }
     // тут нужно взять получившийся шанс и проверить ещё отношение mga цели
     if (this.magType === 'bad') {
-      let x = (initiator.stats.val('mga') / target.stats.val('mgp'));
-      result = result * x;
+      const x = (initiator.stats.val('mga') / target.stats.val('mgp'));
+      result *= x;
     }
     return result * initiator.proc;
   }
@@ -187,8 +185,8 @@ class Magic {
    * @todo нужно вынести этот метод в orders
    */
   checkPreAffects(initiator, target, game) {
-    let isSilenced = initiator.flags.isSilenced;
-    if (isSilenced && isSilenced.some((e) => e['action'] !== this.name)) {
+    const { isSilenced } = initiator.flags;
+    if (isSilenced && isSilenced.some((e) => e.action !== this.name)) {
       // если кастер находится под безмолвием/бунтом богов
       throw this.breaks('SILENCED');
     }
@@ -221,7 +219,8 @@ class Magic {
       action: this.name,
       actionType: 'magic',
       target: target.nick,
-      initiator: initiator.nick, effect: this.status.effect,
+      initiator: initiator.nick,
+      effect: this.status.effect,
     });
     this.params = null;
   }

@@ -1,3 +1,17 @@
+
+/**
+ * getDefaultItem
+ * @param {String} prof ID профы w/l/m/p
+ * @return {String} itemCode код дефолтного итема для данной профы
+ * @description Получаем код дефолтного итема для данной профы
+ *
+ */
+function getDefaultItem(prof) {
+  // eslint-disable-next-line no-console
+  return arena.defaultItems[prof]
+    || console.log('no prof in getDefaultItem');
+}
+
 /**
  * Inventory
  *
@@ -28,24 +42,25 @@ module.exports = {
    * а затем суммирует все полученные данны в единый обьект.
    *
    * */
-  getAllHarks: async(charId) => {
+  async getAllHarks(charId) {
     try {
-      let allItems = await Inventory.getPutOned(charId);
+      const allItems = await this.getPutOned(charId);
       return allItems.reduce((ob, i) => {
-        let f = Item.getHarks(i.code);
+        const f = Item.getHarks(i.code);
         return Object.assign(ob, f);
       }, {});
     } catch (e) {
-      sails.log.error('fail in harks', e);
+      // eslint-disable-next-line no-console
+      console.log('fail in harks', e);
     }
   }, /**
    * Возвращает массив одетых вещей в инвентаре
    * @param {Number} charId
    * @return {Promise<Array>} [item,item,item]
    */
-  getPutOned: async(charId) => {
-    let invObj = await Inventory.findOne({owner: charId}) || {};
-    return invObj.items.filter(el => el['putOn'] === true);
+  async getPutOned(charId) {
+    const invObj = await this.findOne({ owner: charId }) || {};
+    return invObj.items.filter((el) => el.putOn === true);
   },
 
   /**
@@ -57,27 +72,32 @@ module.exports = {
    * @return {Array} Обьект нового инвентаря
    * @todo на входе должно быть 2 параметра charId && itemCode
    */
-  addItem: async(charId, itemCode) => {
-    let invObj = await Inventory.findOne({
+  async addItem(charId, itemCode) {
+    const invObj = await this.findOne({
       owner: charId,
     });
     // Проверка на наличие итема в базе
     await Item.findOne({
       code: itemCode,
     });
-    let items = invObj.items;
-    let keys = Object.keys(items);
-    let lastKey = keys[keys.length - 1] || -1;
+    const { items } = invObj;
+    const keys = Object.keys(items);
+    const lastKey = keys[keys.length - 1] || -1;
     items[+lastKey + 1] = {
-      code: itemCode, putOn: false, durable: {
+      code: itemCode,
+      putOn: false,
+      durable: {
         val: 10, default: 10,
-      }, stack: false, val: 1,
+      },
+      stack: false,
+      val: 1,
     };
-    return await Inventory.update({
+    const resp = await this.update({
       owner: charId,
     }, {
-      items: items,
+      items,
     });
+    return resp;
   },
 
   /**
@@ -89,16 +109,17 @@ module.exports = {
    * @todo сделать!
    */
 
-  delItem: async(charId, slotId) => {
-    let inv = await Inventory.findOne({
-      'owner': charId,
+  async delItem(charId, slotId) {
+    const inv = await this.findOne({
+      owner: charId,
     });
-    delete(inv.items[slotId]);
-    return await Inventory.update({
-      'owner': charId,
+    delete (inv.items[slotId]);
+    const resp = await this.update({
+      owner: charId,
     }, {
       items: inv.items,
     });
+    return resp;
   },
 
   /**
@@ -111,13 +132,13 @@ module.exports = {
    * @param {String} prof идентификатор итема в инвенторе
    * @todo переделать после допила addItem
    */
-  firstCreate: async(charId, prof) => {
-    await Inventory.create({
+  async firstCreate(charId, prof) {
+    await this.create({
       owner: charId,
     });
-    let defItemCode = getDefaultItem(prof);
-    await Inventory.addItem(charId, defItemCode);
-    await Inventory.putOnItem(charId, 0);
+    const defItemCode = getDefaultItem(prof);
+    await this.addItem(charId, defItemCode);
+    await this.putOnItem(charId, 0);
   }, /**
    * putOnItem
    * @description Пытаемся одеть указанный итем.
@@ -125,16 +146,17 @@ module.exports = {
    * @param {Number} slotId Идентификатор итема внутри инвенторя пользователя
    * @return {Array} Массив нового инвентаря
    */
-  putOnItem: async(charId, slotId) => {
-    let inv = await Inventory.findOne({
-      'owner': charId,
+  async putOnItem(charId, slotId) {
+    const inv = await this.findOne({
+      owner: charId,
     });
     inv.items[slotId].putOn = true;
-    return await Inventory.update({
-      'owner': charId,
+    const resp = await this.update({
+      owner: charId,
     }, {
       items: inv.items,
     });
+    return resp;
   }, /**
    * putOffItem
    * @description Пытаемся снять указанный итем.
@@ -143,27 +165,16 @@ module.exports = {
    * @return {Array} Массив нового инвентаря
    * @todo переделать!
    */
-  putOffItem: async(charId, slotId) => {
-    let inv = await Inventory.findOne({
-      'owner': charId,
+  async putOffItem(charId, slotId) {
+    const inv = await this.findOne({
+      owner: charId,
     });
     inv.items[slotId].putOn = false;
-    return await Inventory.update({
-      'owner': charId,
+    const resp = await this.update({
+      owner: charId,
     }, {
       items: inv.items,
     });
+    return resp;
   },
 };
-
-/**
- * getDefaultItem
- * @param {String} prof ID профы w/l/m/p
- * @return {String} itemCode код дефолтного итема для данной профы
- * @description Получаем код дефолтного итема для данной профы
- *
- */
-function getDefaultItem(prof) {
-  return sails.config.arena.defaultItems[prof] ||
-    sails.log.error('no prof in getDefaultItem');
-}

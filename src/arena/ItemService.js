@@ -11,9 +11,9 @@ module.exports = {
   * @param {Object} data параметры вещи из базы
   * @return {Object} обьект стандартизированных параметров вещи
   */
-  itemAtrParser: (data) => {
+  itemAtrParser: (data) =>
   // eslint-disable-next-line consistent-return
-    return JSON.parse(JSON.stringify(data), (key, value) => {
+    JSON.parse(JSON.stringify(data), (key, value) => {
       const minmaxarr = [
         'hp_drain',
         'mp_drain',
@@ -37,8 +37,7 @@ module.exports = {
         });
       }
       if (value !== '') return value;
-    });
-  },
+    }),
   /**
   * @param {String} nick
   * @param {Number} itemCode ID итема

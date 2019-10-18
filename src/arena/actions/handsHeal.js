@@ -9,10 +9,10 @@ const params = {
 const handsHeal = new HealMagicConstructor(params);
 
 handsHeal.run = function run() {
-  let i = this.params.initiator;
-  let t = this.params.target;
+  const i = this.params.initiator;
+  const t = this.params.target;
   if (Object.keys(t.flags.isHited).length) {
-    throw ({message: 'HEAL_FAIL', action: this.name});
+    throw ({ message: 'HEAL_FAIL', action: this.name });
   } else {
     this.status.val = this.effectVal();
     t.flags.isHealed.push({

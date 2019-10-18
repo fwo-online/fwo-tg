@@ -14,12 +14,14 @@ battleScene.enter(({ reply }) => {
       Markup.callbackButton('Атака', 'Атака'),
       Markup.callbackButton('Защита', 'Защита'),
       Markup.callbackButton('Магии', 'Магии'),
-    ]).resize().extra()
-  )
+    ]).resize().extra(),
+  );
 });
 
 battleScene.action('Атака', ({ reply }) => {
-  reply(JSON.stringify(game))
+  // eslint-disable-next-line no-console
+  console.log(game);
+  reply('Атака');
 });
 
-module.exports = battleScene
+module.exports = battleScene;

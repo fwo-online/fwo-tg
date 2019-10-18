@@ -23,7 +23,7 @@ class Player {
     this.stats = new Stats(params.def);
     this.flags = new Flags();
     // @todo закладка для вычисляемых статов
-    this.modifiers = params.modifiers || {magics: {}, castChance: 0}; // Обьект
+    this.modifiers = params.modifiers || { magics: {}, castChance: 0 }; // Обьект
     // модификаторов
     this.resists = params.resists || {}; // Обьект резистов
     this.skills = params.skills || {}; // Обькт доступных скилов
@@ -49,10 +49,10 @@ class Player {
    */
   getStatus() {
     return {
-      'id': this.id,
-      'nick': this.nick,
-      'prof': this.prof,
-      'hp': this.stats.val('hp'),
+      id: this.id,
+      nick: this.nick,
+      prof: this.prof,
+      hp: this.stats.val('hp'),
     };
   }
 
@@ -62,11 +62,11 @@ class Player {
    */
   getFullStatus() {
     return {
-      'id': this.id,
-      'nick': this.nick,
-      'prof': this.prof,
-      'hp': this.stats.val('hp'),
-      'mp': this.stats.val('mp'),
+      id: this.id,
+      nick: this.nick,
+      prof: this.prof,
+      hp: this.stats.val('hp'),
+      mp: this.stats.val('mp'),
     };
   }
 
@@ -75,7 +75,7 @@ class Player {
    * @param {Object} data обьект для отправки пользователю
    */
   notify(data) {
-    let pack = {event: 'startGame', payload: data};
+    const pack = { event: 'startGame', payload: data };
     sails.sockets.broadcast(arena.players[this.id].socketId, 'GameEvent', pack);
   }
 }
@@ -95,7 +95,7 @@ class Stats {
     // хранение всех статов тут
     this.defStat = obj || {};
     // собранные в результате раундов exp/gold ( + данные для статист)
-    this.collect = ({'exp': 0, 'gold': 0});
+    this.collect = ({ exp: 0, gold: 0 });
     this.refresh();
     return this;
   }
@@ -143,11 +143,11 @@ class Stats {
    * Функция обнуления состояние inRound Object
    */
   refresh() {
-    let oldData = Object.assign({}, this.inRound); // ссылаемся на внешний обьект
+    const oldData = { ...this.inRound }; // ссылаемся на внешний обьект
     if (oldData.exp) {
       this.collect.exp += +oldData.exp;
     }
-    this.inRound = Object.assign({}, this.defStat);
+    this.inRound = { ...this.defStat };
     // выставляем ману и хп на начало раунда
     this.inRound.hp = oldData.hp || this.defStat.maxHp; // @todo hardcord
     this.inRound.mp = oldData.mp || this.defStat.maxMp; // @todo hardcord
@@ -161,12 +161,11 @@ class Stats {
    * @return {floatNumber}
    */
   val(atr) {
-    let a = this.inRound[atr];
+    const a = this.inRound[atr];
     if (_.isNumber(a)) {
       return floatNumber(a);
-    } else {
-      return a;
     }
+    return a;
   }
 
   /**

@@ -4,6 +4,7 @@
 // const magicList = arena.magics;
 arena.magics = require('./magics');
 _ = require('lodash');
+
 const chance = sails.config.arena.magic.learnChance;
 module.exports = {
   /**
@@ -14,15 +15,15 @@ module.exports = {
    */
   list: (lvl, prof) => {
     let magicList = arena.magics.filter((m) => {
-      if (m.lvl === 0) return true; else if (m.profList) {
+      if (m.lvl === 0) return true; if (m.profList) {
         return m.profList.indexOf(prof) + 1;
       }
     });
-    magicList = magicList.map((m) => {
-      return ({name: m.name, lvl: m.lvl, orderType: m.orderType, desc: m.desc});
-    });
+    magicList = magicList.map((m) => ({
+      name: m.name, lvl: m.lvl, orderType: m.orderType, desc: m.desc,
+    }));
     magicList = _.groupBy(magicList, 'lvl');
-    if (lvl === 'all') return magicList; else return magicList[lvl];
+    if (lvl === 'all') return magicList; return magicList[lvl];
   }, /**
    * Пручка магии с шансом
    * @param {Number} charId идентификатор персонажа
@@ -41,7 +42,7 @@ module.exports = {
       throw Error('bonus_error');
     }
     // массив различий
-    let def = hasMagicToLearn(charId, lvl);
+    const def = hasMagicToLearn(charId, lvl);
     if (def.length < 1) {
       throw Error('no_magic_to_learn');
     }
@@ -51,8 +52,8 @@ module.exports = {
     // списываем бонусы
     charObj.bonus -= lvl;
     // выбираем магию
-    let r = MiscService.rndm('1d' + def.length) - 1;
-    let charMagLvl = charObj.mag[def[r]] || 0;
+    const r = MiscService.rndm(`1d${def.length}`) - 1;
+    const charMagLvl = charObj.mag[def[r]] || 0;
     charObj.learnMagic(def[r], charMagLvl + 1);
     // CharacterService.learnMagic(charId, def[r], charMagLvl + 1);
     return charObj.mag;
@@ -63,8 +64,8 @@ module.exports = {
    * @return {*}
    */
   show: (magId) => {
-    let a = arena.magics[magId];
-    return {name: a.name, desc: a.desc};
+    const a = arena.magics[magId];
+    return { name: a.name, desc: a.desc };
   },
 };
 
@@ -77,16 +78,14 @@ module.exports = {
 function hasMagicToLearn(charId, lvl) {
   const charObj = arena.players[charId];
   // берем массив всех магий в игре на данном уровне для этой профы
-  let list = module.exports.list(lvl, charObj.prof);
+  const list = module.exports.list(lvl, charObj.prof);
   // массив всех доступных магий в игре на этом круге
-  let globalList = Object.keys(_.keyBy(list, 'name'));
+  const globalList = Object.keys(_.keyBy(list, 'name'));
   // массив всех магий в круге у чара
-  let charMag = Object.keys(charObj.mag);
+  const charMag = Object.keys(charObj.mag);
   // разница между
-  let arrayOfDiff = _.difference(globalList, charMag);
-  let not3lvl = charMag.filter((e) => {
-    return charObj.mag[e] < 3;
-  });
+  let arrayOfDiff = globalList.filter((m) => !charMag.includes(m));
+  const not3lvl = charMag.filter((e) => charObj.mag[e] < 3);
   if (arrayOfDiff.length < 1) {
     // Нет новых магий в круге, проверяем а есть ли что учить
     arrayOfDiff = not3lvl;

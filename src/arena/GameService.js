@@ -44,7 +44,7 @@ class Game {
    */
   static aliveArr(gameId) {
     const game = arena.games[gameId];
-    return game.players.filter(player => player.alive);
+    return game.players.filter((player) => player.alive);
   }
 
   /**
@@ -206,7 +206,7 @@ class Game {
    * Сбрасываем всем игрокам кол-во доступных процентов на 100
    */
   resetProc() {
-    this.players.forEach(player => player.proc = 100);
+    this.players.forEach((player) => player.proc = 100);
   }
 
   /**
@@ -328,7 +328,7 @@ class Game {
    * @param {function} f функция применяющая
    */
   forAllAlivePlayers(f) {
-    const aliveArr = this.players.filter(player => player.alive);
+    const aliveArr = this.players.filter((player) => player.alive);
     aliveArr.forEach((p) => f(p, this));
   }
 
@@ -342,7 +342,7 @@ class Game {
     if (!Object.keys(team).length) {
       team.push(player);
     }
-    const enemies = _.difference(game.playerArr.arr, team);
+    const enemies = game.playerArr.arr.filter((player) => !team.includes(player));
     team = team.map((p) => {
       if (player.id === p.id) {
         return player;
