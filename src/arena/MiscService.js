@@ -85,7 +85,8 @@ module.exports = {
     try {
       await Online.update({}, { online: false });
     } catch (e) {
-      sails.log.error(e);
+      // eslint-disable-next-line no-console
+      console.error(e);
     }
   }, /**
    * @description Проверяем является ли req GET && isSocket

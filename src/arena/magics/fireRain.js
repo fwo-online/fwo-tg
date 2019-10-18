@@ -23,7 +23,7 @@ const fireRain = new DmgMagic({
  * @param {Object} initiator Обьект кастера
  * @param {Object} target Обьект цели
  */
-fireRain.run = function fireRain(initiator, target) {
+fireRain.run = (initiator, target) => {
   // Наносит урон всем участникам команды цели
 };
 module.exports = fireRain;

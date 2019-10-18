@@ -64,7 +64,8 @@ class Game {
     this.info.status = 'preload';
     const _this = this;
     const allSockets = this.sockets();
-    console.log.info(allSockets);
+    // eslint-disable-next-line no-console
+    console.info(allSockets);
     allSockets.forEach((s) => {
       sails.sockets.join(s, `gameId${_this.info.id}`);
     });
@@ -87,7 +88,8 @@ class Game {
    * Старт игры
    */
   startGame() {
-    console.log.debug('GC debug:: startGame', 'gameId:', this.info.id);
+    // eslint-disable-next-line no-console
+    console.debug('GC debug:: startGame', 'gameId:', this.info.id);
     // рассылаем статусы хп команды и врагов
     this.sendToAll({
       event: 'preload',
@@ -105,7 +107,8 @@ class Game {
    *
    */
   sendBattleLog(data) {
-    console.log.debug('GC debug:: SBL', 'gameId:', this.info.id, 'data:', data);
+    // eslint-disable-next-line no-console
+    console.debug('GC debug:: SBL', 'gameId:', this.info.id, 'data:', data);
     sails.sockets.broadcast(`gameId${this.info.id}`, 'BattleLog', data);
   }
 
@@ -113,7 +116,8 @@ class Game {
    * @param {Object} data Обьект содержащий {event,msg}
    */
   sendToAll(data) {
-    console.log.debug('GC debug:: sendToAll', this.info.id);
+    // eslint-disable-next-line no-console
+    console.debug('GC debug:: sendToAll', this.info.id);
     sails.sockets.broadcast(`gameId${this.info.id}`, 'GameEvent', data);
   }
 
@@ -121,7 +125,8 @@ class Game {
    *@todo Остановка игры
    */
   pauseGame() {
-    console.log.debug(this.info.id);
+    // eslint-disable-next-line no-console
+    console.debug(this.info.id);
   }
 
   /**
@@ -141,6 +146,7 @@ class Game {
    */
   preKick(nick) {
     const player = this.players[nick];
+    // eslint-disable-next-line no-console
     if (!player) return console.log('GC debug:: preKick', nick, 'no player');
     player.isKicked = true;
   }
@@ -153,6 +159,7 @@ class Game {
    */
   kick(nick) {
     const player = this.players[nick];
+    // eslint-disable-next-line no-console
     if (!player) return console.log('GC debug:: kick', nick, 'no player');
     this.players.splice(this.players.indexOf(nick), 1);
   }
@@ -162,6 +169,7 @@ class Game {
    *
    */
   endGame() {
+    // eslint-disable-next-line no-console
     console.log('GC debug:: endGame', this.info.id);
     this.info.players.forEach((charId) => {
       if (arena.players[charId]) arena.players[charId].mm = false;
@@ -217,6 +225,7 @@ class Game {
     this.round.on('Round', async (data) => {
       switch (data.event) {
         case 'startRound': {
+          // eslint-disable-next-line no-console
           console.log('Handler: ', data);
           this.sendToAll(data);
           this.resetProc();
@@ -249,6 +258,7 @@ class Game {
           break;
         }
         default: {
+          // eslint-disable-next-line no-console
           console.log('InitHandler:', data.event, 'undef event');
         }
       }
@@ -256,6 +266,7 @@ class Game {
     // Обработка сообщений от BattleLog Module
     // @todo пока прокидываем напрямую из battlelog
     this.battleLog.on('BattleLog', async (data) => {
+      // eslint-disable-next-line no-console
       console.log('BattleLog:', data);
       this.sendBattleLog(data);
     });
@@ -274,6 +285,7 @@ class Game {
         charArr[p].saveToDb();
       });
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.log('Game:', e);
     }
   }

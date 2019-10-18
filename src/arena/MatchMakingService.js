@@ -1,9 +1,12 @@
+const { EventEmitter } = require('events');
+const GameService = require('./GameService');
+const WatchService = require('./WatchService');
+
 /**
  * MatchMaking system
  * @module Service/MatchMaking
  * @description Класс обьекта MM, для сбора игр
  * */
-const { EventEmitter } = require('events');
 
 const { maxIter } = sails.config.arena;
 const { roundPlayersLimit } = sails.config.arena;
@@ -33,7 +36,8 @@ class MatchMaking extends EventEmitter {
     const obj = this.mmQueue.find((el) => el.charId === charId);
     this.mmQueue.splice(this.mmQueue.indexOf(obj), 1);
     // @todo убрать просле дебага
-    sails.log('mm pull debug', this.mmQueue);
+    // eslint-disable-next-line no-console
+    console.log('mm pull debug', this.mmQueue);
   }
 
   /**
@@ -77,7 +81,8 @@ class MatchMaking extends EventEmitter {
         // пробуем перебрать польз из очереди в одну из уже созданных очередей
         if (this.allQueue.length > 10) {
           // сюда нужна функция чистки allQueue от уже собранных очередей.
-          sails.log.debug('length>10');
+          // eslint-disable-next-line no-console
+          console.debug('length>10');
           for (const xx in this.allQueue) {
             if (!this.allQueue[xx].open) {
               this.allQueue.splice(xx, 1);
@@ -93,7 +98,7 @@ class MatchMaking extends EventEmitter {
           this.pull(searcher);
         }
       }
-      iter++;
+      iter += 1;
     }
   }
 }
@@ -123,7 +128,8 @@ class Queue {
         await this.goStartGame();
       }
     } catch (e) {
-      sails.log.error(e);
+      // eslint-disable-next-line no-console
+      console.error(e);
     }
   }
 
@@ -157,7 +163,8 @@ class Queue {
       WatchService.take(newGame);
       this.open = false;
     } catch (e) {
-      sails.log.error(e);
+      // eslint-disable-next-line no-console
+      console.error(e);
     }
   }
 }

@@ -1,5 +1,7 @@
+const floatNumber = require('../floatNumber');
 /**
- *[1,2 из 6] BOND заклинанием <Усыхание> состарил ReaL, и лишил его 28.33hp. (h:-28.33/1.31, e:+13/650)
+ *[1,2 из 6] BOND заклинанием <Усыхание> состарил ReaL,
+ *и лишил его 28.33hp. (h:-28.33/1.31, e:+13/650)
  */
 // import Magic from './MagicConstructor';
 const DmgMagic = require('./DmgMagicConstructor');
@@ -80,7 +82,8 @@ class LongDmgMagic extends DmgMagic {
     // осуществлять Game, т.е при смерти кастера или таргета, нужно вычищать,
     // обьект longActions и удалять касты связанные с трупами
     if (!game.longActions[this.name]) return;
-    sails.log('longMagic:debug:Array:', game.longActions[this.name]);
+    // eslint-disable-next-line no-console
+    console.log('longMagic:debug:Array:', game.longActions[this.name]);
     // [ { initiator: 2, target: 1, duration: 1, round: 0, proc: 1 } ]
     // выполняем обычный запуск магии
     const longArray = game.longActions[this.name];
@@ -112,7 +115,8 @@ class LongDmgMagic extends DmgMagic {
    * buff = { frostTouch = [{initiator,target,duration},{}] }
    */
   postRun(i, t, g) {
-    sails.log('postRun');
+    // eslint-disable-next-line no-console
+    console.log('postRun');
     if (!this.buff) this.buff = [];
     this.buff.push({
       initiator: this.params.initiator.id || i.id,

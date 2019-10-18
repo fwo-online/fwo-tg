@@ -23,7 +23,7 @@ const acidSpittle = new DmgMagic({
  * @param {Object} initiator Обьект кастера
  * @param {Object} target Обьект цели
  */
-acidSpittle.run = function acidSpittle(initiator, target) {
+acidSpittle.run = (initiator, target) => {
   target.stats.mode('down', 'hp', this.effectVal(initiator));
 };
 module.exports = acidSpittle;

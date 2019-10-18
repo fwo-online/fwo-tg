@@ -1,3 +1,6 @@
+const floatNumber = require('../floatNumber');
+const MiscService = require('../MiscService');
+
 /**
  * Конструктор физической атаки
  * (возможно физ скилы)
@@ -68,11 +71,13 @@ class PhysConstructor {
     const atc = i.stats.val('patk') * i.proc;
     const prt = t.flags.isProtected.length > 0 ? t.stats.val('pdef') : 0.1;
     const at = floatNumber(Math.round(atc / prt));
-    sails.log('at', at);
+    // eslint-disable-next-line no-console
+    console.log('at', at);
     const r = MiscService.rndm('1d100');
     const c = Math.round(Math.sqrt(at) + (10 * at) + 5);
     const result = c > r;
-    sails.log('left', c, 'right', r, 'result', result);
+    // eslint-disable-next-line no-console
+    console.log('left', c, 'right', r, 'result', result);
     const initiatorHitParam = i.stats.val('hit');
     const hitval = MiscService.randInt(initiatorHitParam.min,
       initiatorHitParam.max);

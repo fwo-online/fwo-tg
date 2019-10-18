@@ -45,6 +45,7 @@ module.exports = {
       arena.wch[watcher.gameId] = watcher;
       watcher.cleaner();
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.log(e);
     }
   },
