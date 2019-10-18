@@ -1,3 +1,5 @@
+const arena = require('./index');
+const MiscService = require('./MiscService');
 /**
  * Сервис работы с магиями
  */
@@ -23,7 +25,8 @@ module.exports = {
       name: m.name, lvl: m.lvl, orderType: m.orderType, desc: m.desc,
     }));
     magicList = _.groupBy(magicList, 'lvl');
-    if (lvl === 'all') return magicList; return magicList[lvl];
+    if (lvl === 'all') return magicList;
+    return magicList[lvl];
   }, /**
    * Пручка магии с шансом
    * @param {Number} charId идентификатор персонажа

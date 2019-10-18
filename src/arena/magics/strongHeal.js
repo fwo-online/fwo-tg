@@ -1,5 +1,6 @@
 // @todo сильное лечение так же должно исцелять от чумы
 const CommonMagic = require('../Constuructors/CommonMagicConstructor');
+const floatNumber = require('../floatNumber');
 /**
  * Сильное лечение
  * Основное описание магии общее требовани есть в конструкторе

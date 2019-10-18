@@ -1,3 +1,4 @@
+const arena = require('./index');
 /**
  * getDefaultItem
  * @param {String} prof ID профы w/l/m/p

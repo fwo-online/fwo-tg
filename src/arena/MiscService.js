@@ -1,3 +1,4 @@
+const arena = require('./index');
 /**
  * @description Просто мусорка с кастомными функциями
  * @module Service/Misc
@@ -74,9 +75,9 @@ const STORES = {
  * @return {Number} Рандомное floatNumber значение
  */
 function randInt(min, max) {
-  max = +max;
-  min = +min;
-  return (Math.random() * (max - min) + min);
+  const tempMax = +max;
+  const tempMin = +min;
+  return (Math.random() * (tempMax - tempMin) + tempMin);
 }
 
 module.exports = {

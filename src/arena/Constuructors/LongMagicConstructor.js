@@ -49,7 +49,7 @@ class LongMagic extends Common {
     longArray.forEach((a) => {
       if (a.duration < 1) return;
       try {
-        a.duration--;
+        a.duration -= 1;
         const i = game.getPlayerById(a.initiator);
         const t = game.getPlayerById(a.target);
         this.params = { initiator: i, target: t, game };

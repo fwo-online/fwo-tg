@@ -1,3 +1,4 @@
+const PlayerService = require('./PlayerService');
 /**
  * Класс контроля игроков внутри созданной игры
  */

@@ -68,10 +68,10 @@ async function engine(gameObj) {
       // кастылик для запуска debug fight
       await CharacterService.loading(1); // загрузка 2х чаров
       await CharacterService.loading(2);
-      gameObj = new GameService([1, 2]);
-      await gameObj.createGame();
-      gameObj.orders = { ordersList: testGame.orders };
-      return runStage(STAGES, gameObj);
+      const gameObject = new GameService([1, 2]);
+      await gameObject.createGame();
+      gameObject.orders = { ordersList: testGame.orders };
+      return runStage(STAGES, gameObject);
     }
     return runStage(STAGES, gameObj);
   } catch (e) {

@@ -41,7 +41,7 @@ class RoundConstructor extends ee {
    */
   start() {
     this.status = 'starting';
-    this.count++;
+    this.coun += 1;
     this.write({
       event: 'startRound',
       round: this.count,

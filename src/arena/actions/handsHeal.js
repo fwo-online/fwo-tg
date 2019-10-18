@@ -12,7 +12,7 @@ handsHeal.run = function run() {
   const i = this.params.initiator;
   const t = this.params.target;
   if (Object.keys(t.flags.isHited).length) {
-    throw ({ message: 'HEAL_FAIL', action: this.name });
+    throw new Error({ message: 'HEAL_FAIL', action: this.name });
   } else {
     this.status.val = this.effectVal();
     t.flags.isHealed.push({

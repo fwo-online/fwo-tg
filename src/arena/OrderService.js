@@ -26,7 +26,7 @@ class Orders {
    * @param {String} action действие
    * @param {Number} atcproc процент действия
    */
-  orderAction(charId, target, action, atcproc) {
+  orderAction(charId, target, actionParam, atcproc) {
     // eslint-disable-next-line no-console
     console.log('orderAction >', charId);
     /**
@@ -35,8 +35,10 @@ class Orders {
      * proc: 10,
      * action: 'handsHeal',
      */
-    if (_.isObject(action)) {
-      action = action.name;
+    let action = actionParam;
+
+    if (_.isObject(actionParam)) {
+      action = actionParam.name;
     }
     // формируем список заказа для ника
     const Game = CharacterService.getGameFromCharId(charId);

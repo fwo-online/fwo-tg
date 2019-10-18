@@ -48,17 +48,23 @@ class PhysConstructor {
   /**
    * Проверка флагаов влияющих на физический урон
    */
-  checkPreAffects() {}
+  checkPreAffects() {
+    return true;
+  }
 
   /**
    * Проверка флагаов влияющих на физический урон
    */
-  fitsCheck() {}
+  fitsCheck() {
+    return true;
+  }
 
   /**
    * Проверка флагаов влияющих на выбор цели
    */
-  isblurredMind() {}
+  isblurredMind() {
+    return true;
+  }
 
   /**
    * Проверка прохождения защиты цели
@@ -98,12 +104,16 @@ class PhysConstructor {
   /**
    * Запуск работы actions
    */
-  run() {}
+  run() {
+    return true;
+  }
 
   /**
    * Проверка postEffector от Fits
    */
-  checkPostEffect() {}
+  checkPostEffect() {
+    return true;
+  }
 
   /**
    * Функция агрегации данных после выполнениния действия
@@ -174,7 +184,7 @@ class PhysConstructor {
     const prt = t.stats.val('def'); // общий показатель защиты цели
     f.forEach((p) => {
       const pr = Math.floor(parseFloat(p.val) * 100 / parseFloat(prt));
-      const e = Math.round(this.status.hit * 8 * pr / 100);
+      const e = Math.round(this.status.hit * 0.8 * pr);
       G.getPlayerById(p.initiator).stats.mode('up', 'exp', e);
     });
   }

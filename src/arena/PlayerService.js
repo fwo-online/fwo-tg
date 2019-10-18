@@ -1,3 +1,4 @@
+const arena = require('./index');
 const floatNumber = require('./floatNumber');
 /**
  * PlayerService
@@ -176,8 +177,7 @@ class Stats {
    * Добавление голда игроку
    * @param {Number} n кол-во gold
    */
-  addGold(n) {
-    n = n || 0;
+  addGold(n = 0) {
     this.collect.gold += +n;
   }
 }

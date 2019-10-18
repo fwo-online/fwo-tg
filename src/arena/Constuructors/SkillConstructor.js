@@ -1,3 +1,4 @@
+const MiscService = require('../MiscService');
 /**
  * Основной конструктор класса скилов (войны/лучники)
  */

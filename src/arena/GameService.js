@@ -1,3 +1,4 @@
+const arena = require('./index');
 /**
  * GameService
  *

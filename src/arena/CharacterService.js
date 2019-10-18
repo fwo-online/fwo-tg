@@ -1,3 +1,4 @@
+const arena = require('./index');
 const Inventory = require('../models/Inventory');
 const MiscService = require('./MiscService');
 const floatNumber = require('./floatNumber');
@@ -184,9 +185,9 @@ class Char {
     try {
       // eslint-disable-next-line no-console
       console.log('Saving char :: id', this.id);
-      const _this = { ...this };
-      delete _this.inventory;
-      await Character.update({ id: this.id }, _this);
+      const self = { ...this };
+      delete self.inventory;
+      await Character.update({ id: this.id }, self);
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error('Fail on CharSave:', e);

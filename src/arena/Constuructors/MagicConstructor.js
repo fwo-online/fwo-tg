@@ -165,7 +165,9 @@ class Magic {
     return MiscService.rndm('1d100') <= 5;
   }
 
-  run() {}
+  run() {
+    return true;
+  }
 
   /**
    * Проверка на запудревание мозгов
