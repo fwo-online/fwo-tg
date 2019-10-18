@@ -116,7 +116,7 @@ class Stats {
       console.error('mode atr error', atr);
       this.inRound[atr] = 0;
     }
-    if (_.isObject(a)) {
+    if (typeof a === 'object') {
       a = this.inRound[atr].max;
     }
     switch (type) {
@@ -167,7 +167,7 @@ class Stats {
    */
   val(atr) {
     const a = this.inRound[atr];
-    if (_.isNumber(a)) {
+    if (typeof a === 'number') {
       return floatNumber(a);
     }
     return a;

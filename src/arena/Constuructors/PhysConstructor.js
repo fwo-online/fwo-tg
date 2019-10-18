@@ -49,21 +49,21 @@ class PhysConstructor {
    * Проверка флагаов влияющих на физический урон
    */
   checkPreAffects() {
-    return true;
+    return this;
   }
 
   /**
    * Проверка флагаов влияющих на физический урон
    */
   fitsCheck() {
-    return true;
+    return this;
   }
 
   /**
    * Проверка флагаов влияющих на выбор цели
    */
   isblurredMind() {
-    return true;
+    return this;
   }
 
   /**
@@ -105,14 +105,14 @@ class PhysConstructor {
    * Запуск работы actions
    */
   run() {
-    return true;
+    return this;
   }
 
   /**
    * Проверка postEffector от Fits
    */
   checkPostEffect() {
-    return true;
+    return this;
   }
 
   /**
@@ -183,7 +183,7 @@ class PhysConstructor {
     const G = this.params.game; // Обьект игры
     const prt = t.stats.val('def'); // общий показатель защиты цели
     f.forEach((p) => {
-      const pr = Math.floor(parseFloat(p.val) * 100 / parseFloat(prt));
+      const pr = (Math.floor(parseFloat(p.val) * 100) / parseFloat(prt));
       const e = Math.round(this.status.hit * 0.8 * pr);
       G.getPlayerById(p.initiator).stats.mode('up', 'exp', e);
     });

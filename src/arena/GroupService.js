@@ -1,4 +1,4 @@
-const MiscService = require('./MiscService')
+const MiscService = require('./MiscService');
 /**
  * Сервис создания групп
  */

@@ -1,4 +1,6 @@
 const arena = require('./index');
+const BattleLog = require('./BattleLog');
+const engineService = require('./engineService');
 /**
  * GameService
  *
@@ -9,7 +11,6 @@ const arena = require('./index');
  * переподключился к игре после disconnect(разрыв соединения)
  */
 global.arena.games = {};
-const _ = require('lodash');
 const RoundService = require('./RoundService');
 const PlayersArr = require('./PlayerService');
 const OrderService = require('./OrderService');
@@ -143,7 +144,6 @@ class Game {
    * @description Прекик, помечаем что пользователь не выполнил заказ и дальше
    * будет выброшен
    * @param {String} nick ник игрока который будет помочен как бездействующий
-   * @return {Boolean}
    */
   preKick(nick) {
     const player = this.players[nick];
@@ -156,7 +156,6 @@ class Game {
    * @description Функция "выброса игрока" из игры,
    * без сохранения накопленных статов
    * @param {String} nick имя персонажа в игре
-   * @return {Boolean}
    */
   kick(nick) {
     const player = this.players[nick];
@@ -355,7 +354,7 @@ class Game {
     if (!Object.keys(team).length) {
       team.push(player);
     }
-    const enemies = game.playerArr.arr.filter((player) => !team.includes(player));
+    const enemies = game.playerArr.arr.filter((p) => !team.includes(p));
     team = team.map((p) => {
       if (player.id === p.id) {
         return player;

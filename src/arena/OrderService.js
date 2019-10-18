@@ -37,7 +37,7 @@ class Orders {
      */
     let action = actionParam;
 
-    if (_.isObject(actionParam)) {
+    if (typeof actionParam === 'object') {
       action = actionParam.name;
     }
     // формируем список заказа для ника
