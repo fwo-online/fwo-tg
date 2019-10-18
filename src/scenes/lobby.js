@@ -7,11 +7,12 @@ const loginHelper = require('../helpers/loginHelper');
 
 lobby.enter(({ reply, session }) => {
   reply(
-    `*Lobby*
-    Так так, значит ты "${session.character.nickname}"
-    Отсюда можно выйти /exit /remove /profile /battle
-    
-    Твой персонаж имеет класс "${session.character.prof}"`,
+    `Lobby
+Так так, значит ты "${session.character.nickname}"
+Отсюда можно выйти: /exit 
+Или удалить персонажа: /remove 
+/profile /battle
+`,
   );
 });
 
