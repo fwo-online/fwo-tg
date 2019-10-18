@@ -1,3 +1,4 @@
+const { stages } = require('./config');
 const CharacterService = require('./CharacterService');
 const GameService = require('./GameService');
 const testGame = require('./testGame');
@@ -56,7 +57,7 @@ arena.magics = require('./magics');
 
 const ACTIONS = arena.magics;
 
-const STAGES = sails.config.arena.stages;
+const STAGES = stages;
 
 /**
  * @param {Object} gameObj Обьект игры

@@ -1,15 +1,13 @@
 const { EventEmitter } = require('events');
 const GameService = require('./GameService');
 const WatchService = require('./WatchService');
+const { maxIter, roundPlayersLimit } = require('./config');
 
 /**
  * MatchMaking system
  * @module Service/MatchMaking
  * @description Класс обьекта MM, для сбора игр
  * */
-
-const { maxIter } = sails.config.arena;
-const { roundPlayersLimit } = sails.config.arena;
 
 /**
  * Общий класс обьекта MatchMaking

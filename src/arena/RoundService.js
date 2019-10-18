@@ -1,4 +1,5 @@
 const ee = require('events');
+const { roundTimeout } = require('./config');
 
 /**
  * RoundService
@@ -47,7 +48,7 @@ class RoundConstructor extends ee {
       round: this.count,
       state: this.status,
       timestamp: ts(),
-      timer: sails.config.arena.roundTimeout,
+      timer: roundTimeout,
     });
     // eslint-disable-next-line no-console
     console.debug('RC debug:: start round:', this.count);
@@ -66,7 +67,7 @@ class RoundConstructor extends ee {
       round: this.count,
       state: this.status,
       timestamp: ts(),
-      timer: sails.config.arena.roundTimeout,
+      timer: roundTimeout,
     });
     this.goNext('waiting');
   }
@@ -149,7 +150,7 @@ class RoundConstructor extends ee {
    * @param {Number} timeout  число в мс, через которое следует выполнить
    */
   goNext(newState, timeout) {
-    const defaultTimer = timeout || sails.config.arena.roundTimeout;
+    const defaultTimer = timeout || roundTimeout;
     const _this = this;
     const x = setTimeout(() => {
       _this.nextState(newState);

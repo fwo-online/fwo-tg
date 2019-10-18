@@ -1,13 +1,13 @@
 const arena = require('./index');
 const MiscService = require('./MiscService');
+const { magic } = require('./config');
 /**
  * Сервис работы с магиями
  */
 // const magicList = arena.magics;
 arena.magics = require('./magics');
-_ = require('lodash');
 
-const chance = sails.config.arena.magic.learnChance;
+const chance = magic.learnChance;
 module.exports = {
   /**
    * Список доступных магий для профы на заданном круге
