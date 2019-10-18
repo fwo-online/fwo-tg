@@ -1,3 +1,5 @@
+const floatNumber = require('../floatNumber');
+const MiscService = require('../MiscService');
 /**
  * Heal Class
  */

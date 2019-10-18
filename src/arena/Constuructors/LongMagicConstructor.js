@@ -1,6 +1,6 @@
 // import Magic from './MagicConstructor';
 const Common = require('./CommonMagicConstructor');
-
+const floatNumber = require('../floatNumber');
 /**
  * Общий конструктор не длительных магий
  */
@@ -41,7 +41,8 @@ class LongMagic extends Common {
     // осуществлять Game, т.е при смерти кастера или таргета, нужно вычищать,
     // обьект longActions и удалять касты связанные с трупами
     if (!game.longActions[this.name]) return;
-    sails.log('longMagic:debug:Array:', game.longActions[this.name]);
+    // eslint-disable-next-line no-console
+    console.log('longMagic:debug:Array:', game.longActions[this.name]);
     // [ { initiator: 2, target: 1, duration: 1, round: 0, proc: 1 } ]
     // выполняем обычный запуск магии
     const longArray = game.longActions[this.name];
@@ -74,7 +75,8 @@ class LongMagic extends Common {
    * @todo нужно разрулить этот треш ибо оно работает ужасно
    */
   postRun(i, t, g) {
-    sails.log('postRun');
+    // eslint-disable-next-line no-console
+    console.log('postRun');
     if (!this.buff) this.buff = [];
     this.buff.push({
       initiator: this.params.initiator.id || i.id,

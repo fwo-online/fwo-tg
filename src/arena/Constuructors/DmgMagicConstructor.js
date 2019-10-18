@@ -1,4 +1,6 @@
 const Magic = require('./MagicConstructor');
+const floatNumber = require('../floatNumber');
+const MiscService = require('../MiscService');
 
 /**
  * Общий конструктор не длительных магий

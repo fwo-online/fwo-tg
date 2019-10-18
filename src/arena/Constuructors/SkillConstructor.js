@@ -81,7 +81,8 @@ class Skill {
    * Обработка провала магии
    */
   breaks(e) {
-    sails.log(e);
+    // eslint-disable-next-line no-console
+    console.log(e);
     const msg = {
       action: this.name,
     };

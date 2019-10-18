@@ -1,4 +1,3 @@
-
 /**
  * getDefaultItem
  * @param {String} prof ID профы w/l/m/p
@@ -8,8 +7,7 @@
  */
 function getDefaultItem(prof) {
   // eslint-disable-next-line no-console
-  return arena.defaultItems[prof]
-    || console.log('no prof in getDefaultItem');
+  return arena.defaultItems[prof] || console.log('no prof in getDefaultItem');
 }
 
 /**

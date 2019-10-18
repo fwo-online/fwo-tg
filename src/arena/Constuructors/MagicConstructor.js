@@ -1,3 +1,5 @@
+const MiscService = require('../MiscService');
+
 /**
  * Конструктор магии
  */
@@ -132,7 +134,8 @@ class Magic {
     const { initiator } = this.params;
     const { target } = this.params;
     const initiatorMagicLvl = initiator.magics[this.name];
-    sails.log('getChance:magicLvl:', initiatorMagicLvl);
+    // eslint-disable-next-line no-console
+    console.log('getChance:magicLvl:', initiatorMagicLvl);
     const imc = initiator.modifiers.castChance; // мод шанс прохождения
     const acm = initiator.modifiers.magics[this.name] || 0; // мод action'а
     let chance = this.chance[initiatorMagicLvl - 1];
@@ -173,7 +176,8 @@ class Magic {
   isblurredMind(initiator, game) {
     if (initiator.flags.isGlitched) {
       // если кастер находится под глюком/безой/остальными
-      sails.log('todo isblurredMind');
+      // eslint-disable-next-line no-console
+      console.log('todo isblurredMind');
     }
   }
 

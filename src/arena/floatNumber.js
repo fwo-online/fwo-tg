@@ -3,6 +3,6 @@
  * @param {String|Number} str входящая строка
  * @return {floatNumber} строка формата "0.00"
  */
-const fln = (str) => +parseFloat(str).toFixed(2);
+const floatNumber = (str) => +parseFloat(str).toFixed(2);
 
-module.exports = fln;
+module.exports = floatNumber;

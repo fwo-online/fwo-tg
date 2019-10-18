@@ -26,6 +26,7 @@ const dispel = new CommonMagic({
 dispel.run = (initiator, target, game) => {
   // тут нужно во всех обьектах длительных магий искать target:target
   // и удалять
-  sails.log('longMagic:debug:Array:', game.longActions);
+  // eslint-disable-next-line no-console
+  console.log('longMagic:debug:Array:', game.longActions);
 };
 module.exports = dispel;

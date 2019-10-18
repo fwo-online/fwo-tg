@@ -1,3 +1,5 @@
+const floatNumber = require('../floatNumber');
+
 module.exports = {
   /**
    * Функция которая раздает exp всем участникам хила таргета
@@ -32,7 +34,7 @@ module.exports = {
       healers.forEach((healObj) => {
         const healVal = +healObj.val;
         const initiator = Game.getPlayerById(healObj.initiator);
-        const hpProc = Math.round(healVal * 100 / allHeal);
+        const hpProc = Math.round((healVal * 100) / allHeal);
         /* В случае если хил вышел за границу максимального HP
         Exp будет выдано только за кол-во до максимума */
         const playerExpForHeal = Math.round(exp * (hpProc / 100));

@@ -1,3 +1,4 @@
+const floatNumber = require('./floatNumber');
 /**
  * PlayerService
  * @description Обьект игрока внутри боя ! Это не Character!
@@ -110,7 +111,8 @@ class Stats {
   mode(type, atr, val) {
     let a = this.inRound[atr];
     if (_.isUndefined(a)) {
-      sails.log.error('mode atr error', atr);
+      // eslint-disable-next-line no-console
+      console.error('mode atr error', atr);
       this.inRound[atr] = 0;
     }
     if (_.isObject(a)) {
@@ -131,12 +133,14 @@ class Stats {
         }
         break;
       default:
-        sails.log.error('Stats mode type error', type);
+        // eslint-disable-next-line no-console
+        console.error('Stats mode type error', type);
         throw new Error({
           message: 'stat mode fail', type: 'engine',
         });
     }
-    sails.log('new stat:', this.inRound[atr], 'atr', atr, 'val', val);
+    // eslint-disable-next-line no-console
+    console.log('new stat:', this.inRound[atr], 'atr', atr, 'val', val);
   }
 
   /**

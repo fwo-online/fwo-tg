@@ -1,4 +1,5 @@
 const CommonMagic = require('../Constuructors/CommonMagicConstructor');
+const floatNumber = require('../floatNumber');
 /**
  * Среднее лечение
  * Основное описание магии общее требовани есть в конструкторе

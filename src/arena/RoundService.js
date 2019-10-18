@@ -49,7 +49,8 @@ class RoundConstructor extends ee {
       timestamp: ts(),
       timer: sails.config.arena.roundTimeout,
     });
-    sails.log.debug('RC debug:: start round:', this.count);
+    // eslint-disable-next-line no-console
+    console.debug('RC debug:: start round:', this.count);
   }
 
   /**
@@ -58,7 +59,8 @@ class RoundConstructor extends ee {
   orders() {
     this.status = 'orders';
     // Рассылаем всем состояние HP отправляем сервисное о старте раунда
-    sails.log.debug('Round State: orders');
+    // eslint-disable-next-line no-console
+    console.debug('Round State: orders');
     this.write({
       event: 'orders',
       round: this.count,
@@ -75,7 +77,8 @@ class RoundConstructor extends ee {
   end() {
     // Запускаем завершение раунда, и переход к следующему
     // сюда нужны таймауты проверки на end и т.п
-    sails.log.debug('RC debug:: end');
+    // eslint-disable-next-line no-console
+    console.debug('RC debug:: end');
     this.status = 'ending';
     this.write({ event: 'endRound' });
   }
@@ -86,7 +89,8 @@ class RoundConstructor extends ee {
    */
   engine() {
     this.status = 'engine';
-    sails.log.debug('Round State: waiting');
+    // eslint-disable-next-line no-console
+    console.debug('Round State: waiting');
     this.write({ event: 'endOrders', round: this.count, state: this.status });
     this.write({ event: 'engine', round: this.count, state: this.status });
     this.goNext('ending');
@@ -103,12 +107,14 @@ class RoundConstructor extends ee {
     switch (state) {
       case 'init':
         // Состояние инициации раунда после создани игры
-        sails.log.debug('Round State: init');
+      // eslint-disable-next-line no-console
+        console.debug('Round State: init');
         this.goNext('starting');
         break;
       case 'starting':
         // Начало рануда, pre-round
-        sails.log.debug('Round State: starting');
+      // eslint-disable-next-line no-console
+        console.debug('Round State: starting');
         this.start();
         this.goNext('orders');
         break;
@@ -123,13 +129,15 @@ class RoundConstructor extends ee {
         // code
         break;
       case 'ending':
-        sails.log.debug('Round State: ending');
+        // eslint-disable-next-line no-console
+        console.debug('Round State: ending');
         this.end();
         break;
 
       default:
         // code
-        sails.log.error('Unknown Round State', state);
+      // eslint-disable-next-line no-console
+        console.error('Unknown Round State', state);
     }
   }
 

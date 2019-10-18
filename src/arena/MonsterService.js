@@ -5,7 +5,7 @@
   * @todo Это нерабочий модуль, только прототип
   */
 
-const Monster = function (data) {
+const Monster = (data) => {
   this.name = data && data.name ? data.name : this.generateName();
   this.class = data && data.class ? data.class : this.generateClass();
 };

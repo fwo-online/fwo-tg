@@ -1,3 +1,7 @@
+const CharacterService = require('./CharacterService');
+const MiscService = require('./MagicService');
+const GameService = require('./GameService');
+
 /**
  * OrderService
  *
@@ -23,7 +27,8 @@ class Orders {
    * @param {Number} atcproc процент действия
    */
   orderAction(charId, target, action, atcproc) {
-    sails.log('orderAction >', charId);
+    // eslint-disable-next-line no-console
+    console.log('orderAction >', charId);
     /**
      * initiator: '1',
      * target: '1',
@@ -58,10 +63,12 @@ class Orders {
       //   a.hand = 'righthand';
       // }
       Game.players[charId].proc -= atcproc;
-      sails.log('order :::: ', a);
+      // eslint-disable-next-line no-console
+      console.log('order :::: ', a);
       this.ordersList.push(a);
     } else {
-      sails.log.error('action spoof:', action);
+      // eslint-disable-next-line no-console
+      console.error('action spoof:', action);
     }
   }
 
@@ -101,7 +108,8 @@ class Orders {
       {
         initiator: charId,
       }], _.isEqual);
-    sails.log('block order', this.ordersList);
+    // eslint-disable-next-line no-console
+    console.log('block order', this.ordersList);
   }
 
   /**

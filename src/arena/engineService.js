@@ -1,37 +1,6 @@
-/**
- * Engine
- * Модуль обработки боя
- * @todo wip
- */
-const { arena } = global;
-arena.magics = require('./magics');
-
-const ACTIONS = arena.magics;
-
-const STAGES = sails.config.arena.stages;
-
-/**
- * @param {Object} gameObj Обьект игры
- * @return {Boolean} true
- * */
-async function engine(gameObj) {
-  try {
-    if (!gameObj) {
-      // кастылик для запуска debug fight
-      await CharacterService.loading(1); // загрузка 2х чаров
-      await CharacterService.loading(2);
-      const gameObj = new GameService([1, 2]);
-      await gameObj.createGame();
-      gameObj.orders = { ordersList: testGame.orders };
-      return runStage(STAGES, gameObj);
-    }
-    return runStage(STAGES, gameObj);
-  } catch (e) {
-    sails.log.debug(e);
-  } finally {
-    sails.log.info('engine done');
-  }
-}
+const CharacterService = require('./CharacterService');
+const GameService = require('./GameService');
+const testGame = require('./testGame');
 
 /**
  * @param {Array} ar массив строк
@@ -45,7 +14,8 @@ function runStage(ar, gameObj) {
     if (typeof x !== 'string') {
       runStage(x, gameObj);
     } else {
-      sails.log('stage run:', x);
+      // eslint-disable-next-line no-console
+      console.log('stage run:', x);
       if (act[x] && ord[x]) {
         const ordObj = ord[x];
         ordObj.forEach((o) => {
@@ -75,6 +45,44 @@ function runStage(ar, gameObj) {
 function sortOrders(ordersArr) {
   return _.groupBy(ordersArr, 'action');
 }
+
+/**
+ * Engine
+ * Модуль обработки боя
+ * @todo wip
+ */
+const { arena } = global;
+arena.magics = require('./magics');
+
+const ACTIONS = arena.magics;
+
+const STAGES = sails.config.arena.stages;
+
+/**
+ * @param {Object} gameObj Обьект игры
+ * @return {Boolean} true
+ * */
+async function engine(gameObj) {
+  try {
+    if (!gameObj) {
+      // кастылик для запуска debug fight
+      await CharacterService.loading(1); // загрузка 2х чаров
+      await CharacterService.loading(2);
+      gameObj = new GameService([1, 2]);
+      await gameObj.createGame();
+      gameObj.orders = { ordersList: testGame.orders };
+      return runStage(STAGES, gameObj);
+    }
+    return runStage(STAGES, gameObj);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.debug(e);
+  } finally {
+    // eslint-disable-next-line no-console
+    console.info('engine done');
+  }
+}
+
 
 /**
  * Нужна функция которая отценивает на каком уровне выполняется action

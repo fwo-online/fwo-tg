@@ -1,4 +1,6 @@
 const Inventory = require('../models/Inventory');
+const MiscService = require('./MiscService');
+const floatNumber = require('./floatNumber');
 /**
  * Конструктор персонажа
  * @todo сюда нужны будет get/set функции для intreface части
@@ -39,9 +41,9 @@ function getDynHarks(charObj) {
     min: floatNumber(harks.int / 10), max: floatNumber(harks.int / 5),
   });
 
-  const manaReg = floatNumber((harks.wis * 4 / 10) + (harks.int * 6 / 10));
+  const manaReg = floatNumber((harks.wis * 0.4) + (harks.int * 0.6));
 
-  const enReg = floatNumber((harks.con * 4 / 10) + (harks.dex * 6 / 10));
+  const enReg = floatNumber((harks.con * 0.4) + (harks.dex * 0.6));
   const hit = calcHit();
 
   /**
@@ -180,12 +182,14 @@ class Char {
    */
   async saveToDb() {
     try {
-      sails.log('Saving char :: id', this.id);
+      // eslint-disable-next-line no-console
+      console.log('Saving char :: id', this.id);
       const _this = { ...this };
       delete _this.inventory;
       await Character.update({ id: this.id }, _this);
     } catch (e) {
-      sails.log.error('Fail on CharSave:', e);
+      // eslint-disable-next-line no-console
+      console.error('Fail on CharSave:', e);
     }
   }
 }
