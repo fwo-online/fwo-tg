@@ -27,6 +27,7 @@ class WatchConstructor {
    * Если пустая обнаружена выставляем в null
    *
    */
+  // eslint-disable-next-line class-methods-use-this
   cleaner() {
     arena.wch.forEach((o) => {
       if (o.status === 'closed') delete arena.wch[o];

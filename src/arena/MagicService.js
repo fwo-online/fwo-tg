@@ -7,6 +7,43 @@ const { magic } = require('./config');
 // const magicList = arena.magics;
 arena.magics = require('./magics');
 
+
+/**
+ * Возвращает есть ли доступные магии на данном круге для изучения
+ * @param {Number} charId идентификатор персонажа
+ * @param {Number} lvl круг проучиваемой магии
+ * @return {boolean}
+ */
+function hasMagicToLearn(charId, lvl) {
+  const charObj = arena.players[charId];
+  // берем массив всех магий в игре на данном уровне для этой профы
+  const list = module.exports.list(lvl, charObj.prof);
+  // массив всех доступных магий в игре на этом круге
+  const keyBy = (array, key) => (array).reduce((r, x) => ({ ...r, [x[key]]: x }), {});
+  const globalList = Object.keys(keyBy(list, 'name'));
+  // массив всех магий в круге у чара
+  const charMag = Object.keys(charObj.mag);
+  // разница между
+  let arrayOfDiff = globalList.filter((m) => !charMag.includes(m));
+  const not3lvl = charMag.filter((e) => charObj.mag[e] < 3);
+  if (arrayOfDiff.length < 1) {
+    // Нет новых магий в круге, проверяем а есть ли что учить
+    arrayOfDiff = not3lvl;
+  } else {
+    arrayOfDiff = _.union(not3lvl, arrayOfDiff);
+  }
+  // рандомим будем ли мы учить сейчас одну из новых или проучивать старую
+  return arrayOfDiff;
+}
+
+/**
+ * Функция проверки шанс выучить магию
+ * @return {boolean}
+ */
+function learnChance() {
+  return chance > MiscService.rndm('1d100');
+}
+
 const chance = magic.learnChance;
 module.exports = {
   /**
@@ -71,38 +108,3 @@ module.exports = {
     return { name: a.name, desc: a.desc };
   },
 };
-
-/**
- * Возвращает есть ли доступные магии на данном круге для изучения
- * @param {Number} charId идентификатор персонажа
- * @param {Number} lvl круг проучиваемой магии
- * @return {boolean}
- */
-function hasMagicToLearn(charId, lvl) {
-  const charObj = arena.players[charId];
-  // берем массив всех магий в игре на данном уровне для этой профы
-  const list = module.exports.list(lvl, charObj.prof);
-  // массив всех доступных магий в игре на этом круге
-  const globalList = Object.keys(_.keyBy(list, 'name'));
-  // массив всех магий в круге у чара
-  const charMag = Object.keys(charObj.mag);
-  // разница между
-  let arrayOfDiff = globalList.filter((m) => !charMag.includes(m));
-  const not3lvl = charMag.filter((e) => charObj.mag[e] < 3);
-  if (arrayOfDiff.length < 1) {
-    // Нет новых магий в круге, проверяем а есть ли что учить
-    arrayOfDiff = not3lvl;
-  } else {
-    arrayOfDiff = _.union(not3lvl, arrayOfDiff);
-  }
-  // рандомим будем ли мы учить сейчас одну из новых или проучивать старую
-  return arrayOfDiff;
-}
-
-/**
- * Функция проверки шанс выучить магию
- * @return {boolean}
- */
-function learnChance() {
-  return chance > MiscService.rndm('1d100');
-}

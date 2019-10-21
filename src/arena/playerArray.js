@@ -21,7 +21,8 @@ class PlayersArr {
   async roundJson() {
     const result = await Promise.all(this.init.map((p) => PlayerService.loading(p)));
     this.arr = result;
-    return _.keyBy(result, 'id');
+    const keyBy = (array, key) => (array).reduce((r, x) => ({ ...r, [x[key]]: x }), {});
+    return keyBy(result, 'id');
   }
 
   /**
