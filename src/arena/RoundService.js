@@ -151,9 +151,9 @@ class RoundConstructor extends ee {
    */
   goNext(newState, timeout) {
     const defaultTimer = timeout || roundTimeout;
-    const _this = this;
+    const self = this;
     const x = setTimeout(() => {
-      _this.nextState(newState);
+      self.nextState(newState);
       clearTimeout(x);
     }, defaultTimer);
   }

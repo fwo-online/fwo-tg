@@ -88,6 +88,7 @@ class Orders {
         const initiator = ord.initiator.id;
         const { action } = ord;
         if (!MiscService.isMagic(action) && initiator === charId) {
+          // eslint-disable-next-line no-param-reassign
           ord.target = GameService.randomAlive(ord.initiator.getGameId());
         }
       });
@@ -95,6 +96,7 @@ class Orders {
       this.ordersList.forEach((ord) => {
         const { action } = ord;
         if (!MiscService.isMagic(action)) {
+          // eslint-disable-next-line no-param-reassign
           ord.target = GameService.randomAlive(ord.initiator.getGameId());
         }
       });

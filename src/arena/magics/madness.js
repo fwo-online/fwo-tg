@@ -25,6 +25,7 @@ const madness = new CommonMagic({
  */
 madness.run = (initiator, target, game) => {
   // тут возможно нужен идентификатор кастера и рауд ?
+  // eslint-disable-next-line no-param-reassign
   target.flags.isMad = true;
 };
 module.exports = madness;

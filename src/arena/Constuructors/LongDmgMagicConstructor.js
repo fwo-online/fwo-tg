@@ -26,6 +26,7 @@ class LongDmgMagic extends DmgMagic {
    */
   cast(i, t, g) {
     try {
+      // eslint-disable-next-line no-param-reassign
       g.longActions[this.name] = g.longActions[this.name] || [];
       this.buff = g.longActions[this.name];
       super.cast(i, t, g);
@@ -90,6 +91,7 @@ class LongDmgMagic extends DmgMagic {
     longArray.forEach((a) => {
       if (a.duration < 1) return;
       try {
+        // eslint-disable-next-line no-param-reassign
         a.duration--;
         const i = game.getPlayerById(a.initiator);
         const t = game.getPlayerById(a.target);

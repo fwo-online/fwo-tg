@@ -70,6 +70,7 @@ class Magic {
     const costValue = parseFloat(initiator.stats.val(this.costType)
       - parseFloat(this.cost));
     if (costValue >= 0) {
+      // eslint-disable-next-line no-param-reassign
       initiator.stats[this.costType] = +costValue;
     } else {
       throw this.breaks('NO_MANA');

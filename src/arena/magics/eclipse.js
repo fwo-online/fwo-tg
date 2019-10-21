@@ -25,6 +25,7 @@ const eclipse = new CommonMagic({
  */
 eclipse.run = (initiator, target, game) => {
   // выставляем глобальный флаг затмения
+  // eslint-disable-next-line no-param-reassign
   game.round.flags.isEclipsed = true;
 };
 module.exports = eclipse;

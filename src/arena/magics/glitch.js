@@ -25,6 +25,7 @@ const glitch = new CommonMagic({
  */
 glitch.run = (initiator, target, game) => {
   // тут возможно нужен идентификатор кастера и рауд ?
+  // eslint-disable-next-line no-param-reassign
   target.flags.isGlitched = true;
 };
 module.exports = glitch;

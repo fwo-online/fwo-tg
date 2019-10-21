@@ -64,12 +64,12 @@ class Game {
    */
   preLoading() {
     this.info.status = 'preload';
-    const _this = this;
+    const self = this;
     const allSockets = this.sockets();
     // eslint-disable-next-line no-console
     console.info(allSockets);
     allSockets.forEach((s) => {
-      sails.sockets.join(s, `gameId${_this.info.id}`);
+      sails.sockets.join(s, `gameId${self.info.id}`);
     });
     this.sendToAll({
       event: 'preload',
@@ -79,7 +79,7 @@ class Game {
     });
     // помечаем всех игроков что они в игре
     this.info.players.forEach((player) => {
-      arena.players[player].mm = _this.info.id;
+      arena.players[player].mm = self.info.id;
     });
 
     this.startGame();
@@ -214,7 +214,10 @@ class Game {
    * Сбрасываем всем игрокам кол-во доступных процентов на 100
    */
   resetProc() {
-    this.players.forEach((player) => player.proc = 100);
+    // eslint-disable-next-line no-param-reassign
+    this.players.forEach((player) => {
+      player.proc = 100;
+    });
   }
 
   /**

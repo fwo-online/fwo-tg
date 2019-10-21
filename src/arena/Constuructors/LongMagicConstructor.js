@@ -21,6 +21,7 @@ class LongMagic extends Common {
    */
   cast(i, t, g) {
     try {
+      // eslint-disable-next-line no-param-reassign
       g.longActions[this.name] = g.longActions[this.name] || [];
       this.buff = g.longActions[this.name];
       super.cast(i, t, g);
@@ -49,6 +50,7 @@ class LongMagic extends Common {
     longArray.forEach((a) => {
       if (a.duration < 1) return;
       try {
+        // eslint-disable-next-line no-param-reassign
         a.duration -= 1;
         const i = game.getPlayerById(a.initiator);
         const t = game.getPlayerById(a.target);
