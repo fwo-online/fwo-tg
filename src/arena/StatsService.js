@@ -3,7 +3,7 @@ const floatNumber = require('./floatNumber');
 /**
  * Класс для хранения stats
  */
-class Stats {
+class StatsService {
   /**
      * Конструктор класса stats
      * @param {Object} obj обьект параметров
@@ -100,4 +100,4 @@ class Stats {
   }
 }
 
-module.exports = Stats;
+module.exports = StatsService;

@@ -8,12 +8,10 @@ module.exports = {
   postEffect(g) {
     const Game = g;
     let healmsg = '';
-    Game.forAllPlayers(giveExpForHeal);
-
     /**
-     * Раздаем exp всем участникам хила
-     * @param {PlayerObj} target цель на которую использовался handsHeal
-     */
+    * Раздаем exp всем участникам хила
+    * @param {PlayerObj} target цель на которую использовался handsHeal
+    */
     function giveExpForHeal(target) {
       const healers = target.flags.isHealed;
       if (!Object.keys(healers).length) return;
@@ -36,7 +34,7 @@ module.exports = {
         const initiator = Game.getPlayerById(healObj.initiator);
         const hpProc = Math.round((healVal * 100) / allHeal);
         /* В случае если хил вышел за границу максимального HP
-        Exp будет выдано только за кол-во до максимума */
+       Exp будет выдано только за кол-во до максимума */
         const playerExpForHeal = Math.round(exp * (hpProc / 100));
         initiator.stats.mode('up', 'exp', playerExpForHeal);
         healmsg += `[${initiator.nick} +hp:${healVal}/+e:${playerExpForHeal}] `;
@@ -45,5 +43,6 @@ module.exports = {
       console.log(`${target.nick} был вылечен на ${allHeal} | ${healmsg}`);
       Game.sendBattleLog(`${target.nick} был вылечен на ${allHeal}|${healmsg}`);
     }
+    Game.forAllPlayers(giveExpForHeal);
   },
 };

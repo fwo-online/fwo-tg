@@ -9,7 +9,7 @@ const GameService = require('./GameService');
  * @return {Boolean}
  */
 function isMaxTargets(charId) {
-  return true;
+  return charId;
 }
 
 /**
@@ -19,7 +19,7 @@ function isMaxTargets(charId) {
  * @todo
  */
 function isValidAct(action) {
-  return true;
+  return action;
 }
 
 /**

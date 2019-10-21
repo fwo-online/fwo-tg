@@ -94,12 +94,14 @@ class LongMagic extends Common {
   /**
    * блочим вывод основного конструктора магий
    */
+  // eslint-disable-next-line class-methods-use-this
   next() {}
 
   /**
    * блочим получение exp при срабатывание
    * конструктора магий
    */
+  // eslint-disable-next-line class-methods-use-this
   getExp() {}
 
   /**

@@ -1,7 +1,6 @@
 const { EventEmitter } = require('events');
-const GameService = require('./GameService');
-const WatchService = require('./WatchService');
-const { maxIter, roundPlayersLimit } = require('./config');
+const { maxIter } = require('./config');
+const QueueConstructor = require('./Constuructors/QueueConstrucror');
 
 /**
  * MatchMaking system
@@ -89,7 +88,7 @@ class MatchMaking extends EventEmitter {
         } else {
           queue = this.allQueue.find((qu) => (qu.policy(searcher) && qu.open));
           if (!queue) {
-            queue = new Queue();
+            queue = new QueueConstructor();
             this.allQueue.push(queue);
           }
           queue.addTo(searcher);
@@ -97,72 +96,6 @@ class MatchMaking extends EventEmitter {
         }
       }
       iter += 1;
-    }
-  }
-}
-
-/**
- * Конструктор обьекта очереди
- */
-class Queue {
-  /**
-   * Конструтор пустой очереди
-   */
-  constructor() {
-    this.psr = 0;
-    this.players = [];
-    this.open = true;
-  }
-
-  /**
-   * Добавление чара в предсобранную комнату для игры
-   * @param {Object} searcherObj Обьект чара начавшего поиск
-   */
-  async addTo(searcherObj) {
-    try {
-      this.players.push(searcherObj);
-      if (this.checkStatus()) {
-        this.open = false;
-        await this.goStartGame();
-      }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e);
-    }
-  }
-
-  /**
-   * Описание политики обьекта очереди
-   * @param {Object} searcherObj
-   * @return {Boolean}
-   */
-  policy(searcherObj) {
-    const playerPsr = searcherObj.psr;
-    return (!this.length) || (playerPsr > (this.psr / this.length + 50));
-  }
-
-  /**
-   * Возвращает достигнут ли лимит игроков в очереди
-   * @return {Boolean}
-   */
-  checkStatus() {
-    // Проверяем не собралась ли уже у нас очередь ?
-    return this.players.length >= roundPlayersLimit;
-  }
-
-  /**
-   * Функция создания обьекта игры после того как достаточное кол-во игроков,
-   * уже найдено в игру.
-   */
-  async goStartGame() {
-    try {
-      const newGame = new GameService(this.players.map((pl) => pl.charId));
-      await newGame.createGame();
-      WatchService.take(newGame);
-      this.open = false;
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e);
     }
   }
 }
