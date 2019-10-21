@@ -24,6 +24,7 @@ const secondLife = new CommonMagic({
  * @param {Object} initiator Обьект кастера
  * @param {Object} target Обьект цели
  */
+// eslint-disable-next-line no-unused-vars
 secondLife.run = function blessing(initiator, target) {
   // if hp < 0 , wasHP = |hp|
   // set hp 0.05

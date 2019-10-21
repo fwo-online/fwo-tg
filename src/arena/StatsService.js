@@ -3,7 +3,7 @@ const floatNumber = require('./floatNumber');
 /**
  * Класс для хранения stats
  */
-class Stats {
+class StatsService {
   /**
      * Конструктор класса stats
      * @param {Object} obj обьект параметров
@@ -45,7 +45,7 @@ class Stats {
         this.inRound[atr] = floatNumber(a - val);
         break;
       case 'set':
-        if ('atr' === 'hit') {
+        if (atr === 'hit') {
           a = floatNumber(a * val);
         } else {
           a = floatNumber(val);
@@ -100,4 +100,4 @@ class Stats {
   }
 }
 
-module.exports = Stats;
+module.exports = StatsService;

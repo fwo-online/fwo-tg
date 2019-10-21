@@ -9,7 +9,7 @@ const GameService = require('./GameService');
  * @return {Boolean}
  */
 function isMaxTargets(charId) {
-  return true;
+  return charId;
 }
 
 /**
@@ -19,7 +19,7 @@ function isMaxTargets(charId) {
  * @todo
  */
 function isValidAct(action) {
-  return true;
+  return action;
 }
 
 /**
@@ -101,6 +101,7 @@ class Orders {
    * @param {String} reason причина смена цели пока здесь название action
    * @todo возможно в reason на ещё понадобится инициатор
    */
+  // eslint-disable-next-line no-unused-vars
   shuffle(charId, reason) {
     if (charId) {
       // ord - обьект заказа

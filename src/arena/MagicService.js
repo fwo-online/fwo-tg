@@ -36,6 +36,7 @@ function hasMagicToLearn(charId, lvl) {
   return arrayOfDiff;
 }
 
+const chance = magic.learnChance;
 /**
  * Функция проверки шанс выучить магию
  * @return {boolean}
@@ -44,7 +45,6 @@ function learnChance() {
   return chance > MiscService.rndm('1d100');
 }
 
-const chance = magic.learnChance;
 module.exports = {
   /**
    * Список доступных магий для профы на заданном круге

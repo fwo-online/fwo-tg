@@ -21,15 +21,15 @@ class Groups {
    */
   invite(charId) {
     // sendGroupInvite ? (groupLiderId ?)
-
+    return charId || this;
   }
 
   add(charId) {
-
+    return charId || this;
   }
 
   remove(charId) {
-
+    return charId || this;
   }
 }
 
