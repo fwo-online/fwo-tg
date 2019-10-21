@@ -1,4 +1,5 @@
 const arena = require('./index');
+const Item = require('../arena/ItemService');
 /**
  * getDefaultItem
  * @param {String} prof ID профы w/l/m/p
@@ -51,6 +52,7 @@ module.exports = {
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log('fail in harks', e);
+      return false;
     }
   }, /**
    * Возвращает массив одетых вещей в инвентаре

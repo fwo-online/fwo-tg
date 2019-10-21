@@ -2,6 +2,7 @@ const arena = require('./index');
 const Inventory = require('../models/Inventory');
 const MiscService = require('./MiscService');
 const floatNumber = require('./floatNumber');
+const db = require('../models/index');
 /**
  * Конструктор персонажа
  * @todo сюда нужны будет get/set функции для intreface части
@@ -45,7 +46,6 @@ function getDynHarks(charObj) {
   const manaReg = floatNumber((harks.wis * 0.4) + (harks.int * 0.6));
 
   const enReg = floatNumber((harks.con * 0.4) + (harks.dex * 0.6));
-  const hit = calcHit();
 
   /**
    * Функция расчета наносимого урона
@@ -65,6 +65,7 @@ function getDynHarks(charObj) {
     return h;
   }
 
+  const hit = calcHit();
   const maxTarget = (charObj.prof === 'l') ? Math.round(charObj.lvl + 3 / 2) : 1;
   const lspell = (charObj.prof === 'l') ? Math.round((harks.int - 4) / 3) : 0;
   return {
@@ -118,7 +119,7 @@ class Char {
 
   /**
    * Загрузка чара в память
-   * @param {Number} charId идентификатор чара
+   * @param {Number} charId идентификатор чара (tgId)
    * @type {Promise}
    */
   static async loading(charId) {
@@ -127,12 +128,11 @@ class Char {
      */
     const harksFromItems = await Inventory.getAllHarks(charId)
       || { hit: { min: 0, max: 0 } };
-    const p = await Character.findOne({
-      id: charId,
-    });
+    const p = await db.char.find({ tgId: charId });
     p.harksFromItems = harksFromItems;
     p.def = getDynHarks(p);
     // изменяем прототип
+    // eslint-disable-next-line no-proto
     p.__proto__ = Object.create(this.prototype);
     arena.players[charId] = p;
   }
@@ -187,7 +187,7 @@ class Char {
       console.log('Saving char :: id', this.id);
       const self = { ...this };
       delete self.inventory;
-      await Character.update({ id: this.id }, self);
+      await db.char.update({ tgId: this.id }, self);
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error('Fail on CharSave:', e);

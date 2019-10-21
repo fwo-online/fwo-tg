@@ -44,9 +44,8 @@ class Heal {
    * цель до выпонения личения имела статус "isDead", а после хила имее хп > 0
    * Значит накидываем хилеру 1 голды :)
    */
-  backToLife() {
-
-  }
+  // eslint-disable-next-line class-methods-use-this
+  backToLife() {}
 
   /**
    * @param {Object} obj
@@ -70,6 +69,7 @@ class Heal {
   /**
    * Пустая run
    */
+  // eslint-disable-next-line class-methods-use-this
   run() {}
 
   /**

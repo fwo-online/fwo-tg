@@ -1,5 +1,11 @@
 # FWO Telegram Game
-[![Codeship Status for catHD/fwo-tg](https://app.codeship.com/projects/aa64e020-cbf7-0137-79ad-4651ab1c695f/status?branch=master)](https://app.codeship.com/projects/368219)
+### Auto CI/CD
+
+Префикс для тестовых веток : __dev-*__
+
+Сборка в мастере только после PR.
+
+
 ### BOT
 
 @FightWorldBot

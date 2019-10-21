@@ -14,6 +14,7 @@ class LongDmgMagic extends DmgMagic {
    * Конструктор длительных магий
    * @param {Object} magObj
    */
+  // eslint-disable-next-line no-useless-constructor
   constructor(magObj) {
     super(magObj);
   }

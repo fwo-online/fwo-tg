@@ -2,7 +2,7 @@ name: FWO Test
 
 on:
   push:
-    branches: 
+    branches:
       - dev-*
 
 jobs:
@@ -26,3 +26,8 @@ jobs:
         npm test
       env:
         CI: true
+    - name: Deploy MasterBot
+      uses: contention/action-rsync-deploy@master
+      env:
+        secrets: ${{ DEPLOY_KEY }}
+        args: '-avzr --delete --exclude /uploads/ codeship@159.89.227.216:~/fwo-test/'
