@@ -18,6 +18,7 @@ class Protect {
    * @param {Object} target Обьект цели
    * @param {Object} game Обьект игры (не обязателен)
    */
+  // eslint-disable-next-line class-methods-use-this
   cast(initiator, target, game) {
     const tect = initiator.stats.val('pdef') * initiator.proc;
     target.stats.mode('up', 'def', tect);

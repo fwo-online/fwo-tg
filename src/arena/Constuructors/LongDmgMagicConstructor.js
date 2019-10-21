@@ -41,12 +41,14 @@ class LongDmgMagic extends DmgMagic {
   /**
    * глушим первичный вывод
    */
+  // eslint-disable-next-line class-methods-use-this
   next() {
   }
 
   /**
    * getExp
    */
+  // eslint-disable-next-line class-methods-use-this
   getExp() {}
 
   /**
@@ -93,7 +95,7 @@ class LongDmgMagic extends DmgMagic {
       if (a.duration < 1) return;
       try {
         // eslint-disable-next-line no-param-reassign
-        a.duration--;
+        a.duration -= 1;
         const i = game.getPlayerById(a.initiator);
         const t = game.getPlayerById(a.target);
         this.params = { initiator: i, target: t, game };

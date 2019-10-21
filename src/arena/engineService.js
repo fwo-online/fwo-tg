@@ -3,6 +3,22 @@ const CharacterService = require('./CharacterService');
 const GameService = require('./GameService');
 const testGame = require('./testGame');
 
+const { arena } = global;
+arena.magics = require('./magics');
+
+const ACTIONS = arena.magics;
+
+const STAGES = stages;
+
+/**
+ * Сортируем список заказов
+ * @param {Array} ordersArr
+ * @return {Object} {action:[{initiator:x,target:y,action:z,proc:100}}
+ */
+function sortOrders(ordersArr) {
+  return ordersArr.reduce((r, v, i, a, k = v.action) => ((r[k] || (r[k] = [])).push(v), r), {});
+}
+
 /**
  * @param {Array} ar массив строк
  * @param {Object} gameObj обьект игры
@@ -39,25 +55,10 @@ function runStage(ar, gameObj) {
 }
 
 /**
- * Сортируем список заказов
- * @param {Array} ordersArr
- * @return {Object} {action:[{initiator:x,target:y,action:z,proc:100}}
- */
-function sortOrders(ordersArr) {
-  return _.groupBy(ordersArr, 'action');
-}
-
-/**
  * Engine
  * Модуль обработки боя
  * @todo wip
  */
-const { arena } = global;
-arena.magics = require('./magics');
-
-const ACTIONS = arena.magics;
-
-const STAGES = stages;
 
 /**
  * @param {Object} gameObj Обьект игры

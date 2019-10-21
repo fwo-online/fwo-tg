@@ -2,6 +2,26 @@ const CharacterService = require('./CharacterService');
 const MiscService = require('./MagicService');
 const GameService = require('./GameService');
 
+
+/**
+ * @desc проверка достижения максимального кол-ва целей при атаке
+ * @param {Number} charId идентификатор [charId]
+ * @return {Boolean}
+ */
+function isMaxTargets(charId) {
+  return true;
+}
+
+/**
+ * @desc Проверка доступно ли действие для персонажа
+ * @param {String} action идентификатор действия
+ * @return {Boolean}
+ * @todo
+ */
+function isValidAct(action) {
+  return true;
+}
+
 /**
  * OrderService
  *
@@ -129,25 +149,6 @@ class Orders {
       this.ordersList = this.testOrdersList;
     }
   }
-}
-
-/**
- * @desc проверка достижения максимального кол-ва целей при атаке
- * @param {Number} charId идентификатор [charId]
- * @return {Boolean}
- */
-function isMaxTargets(charId) {
-  return true;
-}
-
-/**
- * @desc Проверка доступно ли действие для персонажа
- * @param {String} action идентификатор действия
- * @return {Boolean}
- * @todo
- */
-function isValidAct(action) {
-  return true;
 }
 
 module.exports = Orders;

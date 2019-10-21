@@ -2,6 +2,14 @@ const ee = require('events');
 const { roundTimeout } = require('./config');
 
 /**
+ * Возвращаем timeStamp на момент запуска счетчика на стороне сервера
+ * @return {number}
+ */
+function ts() {
+  return Math.floor(Date.now() / 1000);
+}
+
+/**
  * RoundService
  *
  * Конструктор раунда
@@ -157,14 +165,6 @@ class RoundConstructor extends ee {
       clearTimeout(x);
     }, defaultTimer);
   }
-}
-
-/**
- * Возвращаем timeStamp на момент запуска счетчика на стороне сервера
- * @return {number}
- */
-function ts() {
-  return Math.floor(Date.now() / 1000);
 }
 
 module.exports = RoundConstructor;
