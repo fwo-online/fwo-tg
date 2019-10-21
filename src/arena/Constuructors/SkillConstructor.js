@@ -34,6 +34,7 @@ class Skill {
   /**
    * Функция снимает требуемое кол-во en за использования скила
    */
+  // eslint-disable-next-line class-methods-use-this
   getCost() {
 
   }
@@ -76,6 +77,7 @@ class Skill {
   /**
    * Пустая функция для потомка
    */
+  // eslint-disable-next-line class-methods-use-this
   run() {}
 
   /**

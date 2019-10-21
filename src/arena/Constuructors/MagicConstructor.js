@@ -162,10 +162,12 @@ class Magic {
    * Функция воли богов
    * @return {Boolean} true/false решение богов
    */
+  // eslint-disable-next-line class-methods-use-this
   godCheck() {
     return MiscService.rndm('1d100') <= 5;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   run() {
     return true;
   }
@@ -176,6 +178,7 @@ class Magic {
    * @param {Object} game Обьект игры для доступа ко всему
    * @todo нужно вынести этот метод в orders или к Players Obj
    */
+  // eslint-disable-next-line no-unused-vars,class-methods-use-this
   isblurredMind(initiator, game) {
     if (initiator.flags.isGlitched) {
       // если кастер находится под глюком/безой/остальными
@@ -191,6 +194,7 @@ class Magic {
    * @param {Object} game Обьект игры для доступа ко всему
    * @todo нужно вынести этот метод в orders
    */
+  // eslint-disable-next-line no-unused-vars
   checkPreAffects(initiator, target, game) {
     const { isSilenced } = initiator.flags;
     if (isSilenced && isSilenced.some((e) => e.action !== this.name)) {

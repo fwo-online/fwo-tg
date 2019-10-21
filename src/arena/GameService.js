@@ -65,12 +65,7 @@ class Game {
   preLoading() {
     this.info.status = 'preload';
     const self = this;
-    const allSockets = this.sockets();
     // eslint-disable-next-line no-console
-    console.info(allSockets);
-    allSockets.forEach((s) => {
-      sails.sockets.join(s, `gameId${self.info.id}`);
-    });
     this.sendToAll({
       event: 'preload',
       payload: {
@@ -111,7 +106,8 @@ class Game {
   sendBattleLog(data) {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: SBL', 'gameId:', this.info.id, 'data:', data);
-    sails.sockets.broadcast(`gameId${this.info.id}`, 'BattleLog', data);
+    // eslint-disable-next-line no-undef
+    tg.sendToChan(`gameId${this.info.id}`, 'BattleLog', data);
   }
 
   /**
@@ -120,7 +116,8 @@ class Game {
   sendToAll(data) {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: sendToAll', this.info.id);
-    sails.sockets.broadcast(`gameId${this.info.id}`, 'GameEvent', data);
+    // eslint-disable-next-line no-undef
+    tg.sendToChan(`gameId${this.info.id}`, 'GameEvent', data);
   }
 
   /**
@@ -145,6 +142,7 @@ class Game {
    * будет выброшен
    * @param {String} nick ник игрока который будет помочен как бездействующий
    */
+  // eslint-disable-next-line consistent-return
   preKick(nick) {
     const player = this.players[nick];
     // eslint-disable-next-line no-console
@@ -157,6 +155,7 @@ class Game {
    * без сохранения накопленных статов
    * @param {String} nick имя персонажа в игре
    */
+  // eslint-disable-next-line consistent-return
   kick(nick) {
     const player = this.players[nick];
     // eslint-disable-next-line no-console
@@ -216,6 +215,7 @@ class Game {
   resetProc() {
     // eslint-disable-next-line no-param-reassign
     this.players.forEach((player) => {
+      // eslint-disable-next-line no-param-reassign
       player.proc = 100;
     });
   }

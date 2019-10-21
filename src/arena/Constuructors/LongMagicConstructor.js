@@ -9,6 +9,7 @@ class LongMagic extends Common {
    * Конструктор длительных магий
    * @param {Object} magObj
    */
+  // eslint-disable-next-line no-useless-constructor
   constructor(magObj) {
     super(magObj);
   }
@@ -94,12 +95,14 @@ class LongMagic extends Common {
   /**
    * блочим вывод основного конструктора магий
    */
+  // eslint-disable-next-line class-methods-use-this
   next() {}
 
   /**
    * блочим получение exp при срабатывание
    * конструктора магий
    */
+  // eslint-disable-next-line class-methods-use-this
   getExp() {}
 
   /**
