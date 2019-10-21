@@ -45,7 +45,7 @@ class StatsService {
         this.inRound[atr] = floatNumber(a - val);
         break;
       case 'set':
-        if ('atr' === 'hit') {
+        if (atr === 'hit') {
           a = floatNumber(a * val);
         } else {
           a = floatNumber(val);

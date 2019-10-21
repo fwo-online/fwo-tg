@@ -101,6 +101,7 @@ class Orders {
    * @param {String} reason причина смена цели пока здесь название action
    * @todo возможно в reason на ещё понадобится инициатор
    */
+  // eslint-disable-next-line no-unused-vars
   shuffle(charId, reason) {
     if (charId) {
       // ord - обьект заказа

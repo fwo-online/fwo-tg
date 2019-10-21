@@ -19,6 +19,7 @@ class Regen {
    * @param {Object} target Обьект цели
    * @param {Object} game Обьект игры (не обязателен)
    */
+  // eslint-disable-next-line no-unused-vars
   cast(initiator, target, game) {
     const val = initiator.stats.val('manaReg') * initiator.proc; // размер восстан
     initiator.stats.mode('up', 'mp', val);
