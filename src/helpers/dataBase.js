@@ -3,6 +3,7 @@
  *
  */
 const CharModel = require('../models/character');
+const GameModel = require('../models/games');
 
 function dbErr(e) {
   throw new Error('Fail in dbHelper:', e);
@@ -59,6 +60,16 @@ module.exports = {
     async update(tgId, params) {
       try {
         return await CharModel.findOneAndUpdate({ tgId, deleted: false }, params);
+      } catch (e) {
+        dbErr(e);
+      }
+    },
+  },
+  game: {
+    async create(gameObject) {
+      try {
+        const x = new GameModel(gameObject);
+        x.save();
       } catch (e) {
         dbErr(e);
       }

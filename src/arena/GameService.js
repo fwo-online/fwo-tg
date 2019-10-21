@@ -1,6 +1,7 @@
 const arena = require('./index');
 const BattleLog = require('./BattleLog');
 const engineService = require('./engineService');
+const db = require('../helpers/dataBase');
 /**
  * GameService
  *
@@ -192,7 +193,7 @@ class Game {
    * @return {Object} Обьект созданный в базе
    */
   async createGame() {
-    const dbgame = await Games.create({
+    const dbgame = await db.game.create({
       players: this.playerArr.init,
     });
     this.players = await this.playerArr.roundJson();
@@ -352,6 +353,7 @@ class Game {
    * @param {Player} player обьект игрока
    * @param {Game} game обьект игры
    */
+  // eslint-disable-next-line class-methods-use-this
   sendStatus(player, game) {
     let team = game.playerArr.getMyTeam(player.clan);
     if (!Object.keys(team).length) {
