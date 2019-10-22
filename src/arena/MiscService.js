@@ -81,15 +81,7 @@ function randInt(min, max) {
 }
 
 module.exports = {
-  // чистим Online при перезапуске сервака.
-  async onlineCleaner() {
-    try {
-      await Online.update({}, { online: false });
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e);
-    }
-  }, /**
+  /**
    * @description Проверяем является ли req GET && isSocket
    * @param {req} req принимает входящий req из контроллера
    * @return {Boolean}
@@ -128,6 +120,7 @@ module.exports = {
    *@return {Boolean}
    */
   isMagic(action) {
+    // eslint-disable-next-line no-underscore-dangle
     return arena.magics[action]._proto_.constructor === 'magic';
   },
   randInt, /**
