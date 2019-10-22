@@ -16,6 +16,7 @@ const STAGES = stages;
  * @return {Object} {action:[{initiator:x,target:y,action:z,proc:100}}
  */
 function sortOrders(ordersArr) {
+  // eslint-disable-next-line no-return-assign, no-param-reassign,no-sequences
   return ordersArr.reduce((r, v, i, a, k = v.action) => ((r[k] || (r[k] = [])).push(v), r), {});
 }
 
@@ -64,6 +65,7 @@ function runStage(ar, gameObj) {
  * @param {Object} gameObj Обьект игры
  * @return {Boolean} true
  * */
+// eslint-disable-next-line consistent-return
 async function engine(gameObj) {
   try {
     if (!gameObj) {

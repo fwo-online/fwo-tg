@@ -57,10 +57,9 @@ class MatchMaking extends EventEmitter {
    * Основная функция запуска поиска внутри системы MatchMaking
    */
   start() {
-    const _this = this;
     this.timerId = setInterval(() => {
-      _this.main();
-    }, _this.prefs.checkinterval);
+      this.main();
+    }, this.prefs.checkinterval);
   }
 
   /**
@@ -71,7 +70,7 @@ class MatchMaking extends EventEmitter {
     let queue;
     while ((this.mmQueue.length >= 2) && (iter < maxIter)) {
       const mmLength = this.mmQueue.length - 1;
-      for (let i = mmLength; i >= 0; i--) {
+      for (let i = mmLength; i >= 0; i -= 1) {
         // @todo нужно перейти на lodash
         const searcher = this.mmQueue[i];
         if (!searcher) break;
@@ -80,6 +79,7 @@ class MatchMaking extends EventEmitter {
           // сюда нужна функция чистки allQueue от уже собранных очередей.
           // eslint-disable-next-line no-console
           console.debug('length>10');
+          // eslint-disable-next-line no-restricted-syntax
           for (const xx in this.allQueue) {
             if (!this.allQueue[xx].open) {
               this.allQueue.splice(xx, 1);

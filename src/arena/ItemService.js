@@ -13,7 +13,7 @@ module.exports = {
   * @return {Object} обьект стандартизированных параметров вещи
   */
   itemAtrParser: (data) =>
-  // eslint-disable-next-line consistent-return
+  // eslint-disable-next-line consistent-return, implicit-arrow-linebreak
     JSON.parse(JSON.stringify(data), (key, value) => {
       const minmaxarr = [
         'hp_drain',
@@ -45,12 +45,14 @@ module.exports = {
   * @return {Boolean}
   *
   */
+  // eslint-disable-next-line consistent-return
   harkCheck(nick, itemCode) {
   // функция проверяет проходит ли чар по харкам
   // проверку шмотки или нет
     const char = arena.players[nick];
     const item = arena.shop[itemCode];
     if ((char) && (item)) {
+      // eslint-disable-next-line no-restricted-syntax
       for (const i in char.hrks) {
         if (char.hrks[i] < item.hark[i]) {
           return false;
