@@ -26,7 +26,3 @@ jobs:
         npm test
       env:
         CI: true
-    - name: Deploy MasterBot
-      uses: contention/action-rsync-deploy@master
-      env:
-        args: '-avzr --delete --exclude /uploads/ codeship@159.89.227.216:~/fwo-test/'
