@@ -29,5 +29,4 @@ jobs:
     - name: deploy test bot
       uses: contention/action-rsync-deploy@master
       env:
-        secrets: ${{ DEPLOY_KEY }}
         args: '-avzr --delete --exclude .htaccess --exclude /uploads/ user@server.com:/srv/myapp/public/htdocs/'  
