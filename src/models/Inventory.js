@@ -188,5 +188,5 @@ module.exports = {
     });
     return resp;
   },
-  Inventory,
+  Inventory: mongoose.model('Inventory', Inventory),
 };
