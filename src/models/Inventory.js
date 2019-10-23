@@ -33,7 +33,9 @@ const Inventory = new Schema({
   // Добавляем связь инвенторя с персонажем
   // charID
   owner: {
-    model: 'character', required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'character',
+    required: true,
   },
 });
 
