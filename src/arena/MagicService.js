@@ -2,7 +2,8 @@ const union = require('lodash.union');
 const groupBy = require('lodash.groupby');
 const arena = require('./index');
 const MiscService = require('./MiscService');
-const { magic } = require('./config');
+const { arena: { magic } } = require('./config');
+
 /**
  * Сервис работы с магиями
  */
