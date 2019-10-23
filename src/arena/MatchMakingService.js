@@ -20,7 +20,7 @@ class MatchMaking extends EventEmitter {
     this.allQueue = []; // обьект очередей ! < 10
     this.mmQueue = [];
     this.prefs = {
-      checkinterval: 10000,
+      checkInterval: 10000,
     };
     this.timerId = undefined;
   }
@@ -34,7 +34,7 @@ class MatchMaking extends EventEmitter {
     this.mmQueue.splice(this.mmQueue.indexOf(obj), 1);
     // @todo убрать просле дебага
     // eslint-disable-next-line no-console
-    console.log('mm pull debug', this.mmQueue);
+    console.log('MM pull debug', this.mmQueue);
   }
 
   /**
@@ -59,7 +59,7 @@ class MatchMaking extends EventEmitter {
   start() {
     this.timerId = setInterval(() => {
       this.main();
-    }, this.prefs.checkinterval);
+    }, this.prefs.checkInterval);
   }
 
   /**
@@ -100,4 +100,4 @@ class MatchMaking extends EventEmitter {
   }
 }
 
-module.exports = MatchMaking;
+module.exports = new MatchMaking();

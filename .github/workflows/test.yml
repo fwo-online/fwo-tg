@@ -1,5 +1,4 @@
-name: FWO Test
-
+name: test bot deploy
 on:
   push:
     branches:

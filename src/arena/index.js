@@ -1,2 +1,7 @@
+const MM = require('./MatchMakingService');
+MM.start();
+
 global.arena = {};
-module.exports = {};
+module.exports = {
+  mm: MM,
+};
