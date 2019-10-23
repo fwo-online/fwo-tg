@@ -39,7 +39,7 @@ const inventory = new Schema({
   },
 });
 
-inventory.methods = {
+inventory.static = {
   /**
    * getAllHarks
    *
@@ -51,7 +51,7 @@ inventory.methods = {
    * а затем суммирует все полученные данны в единый обьект.
    *
    * */
-  async getAllHarks(charId) {
+  getAllHarks: async (charId) => {
     try {
       const allItems = await this.getPutOned(charId);
       return allItems.reduce((ob, i) => {
@@ -68,7 +68,7 @@ inventory.methods = {
    * @param {Number} charId
    * @return {Promise<Array>} [item,item,item]
    */
-  async getPutOned(charId) {
+  getPutOned: async (charId) => {
     const invObj = await this.model('Inventory').findOne({ owner: charId }) || {};
     return invObj.items.filter((el) => el.putOn === true);
   },
@@ -82,7 +82,7 @@ inventory.methods = {
    * @return {Array} Обьект нового инвентаря
    * @todo на входе должно быть 2 параметра charId && itemCode
    */
-  async addItem(charId, itemCode) {
+  addItem: async (charId, itemCode) => {
     const invObj = await this.model('Inventory').findOne({
       owner: charId,
     });
@@ -119,7 +119,7 @@ inventory.methods = {
    * @todo сделать!
    */
 
-  async delItem(charId, slotId) {
+  delItem: async (charId, slotId) => {
     const inv = await this.model('Inventory').findOne({
       owner: charId,
     });
@@ -142,7 +142,7 @@ inventory.methods = {
    * @param {String} prof идентификатор итема в инвенторе
    * @todo переделать после допила addItem
    */
-  async firstCreate(charId, prof) {
+  firstCreate: async (charId, prof) => {
     await this.create({
       owner: charId,
     });
@@ -156,7 +156,7 @@ inventory.methods = {
    * @param {Number} slotId Идентификатор итема внутри инвенторя пользователя
    * @return {Array} Массив нового инвентаря
    */
-  async putOnItem(charId, slotId) {
+  putOnItem: async (charId, slotId) => {
     const inv = await this.model('Inventory').findOne({
       owner: charId,
     });
@@ -175,7 +175,7 @@ inventory.methods = {
    * @return {Array} Массив нового инвентаря
    * @todo переделать!
    */
-  async putOffItem(charId, slotId) {
+  putOffItem: async (charId, slotId) => {
     const inv = await this.model('Inventory').findOne({
       owner: charId,
     });
