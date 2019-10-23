@@ -25,7 +25,7 @@ function getDefaultItem(prof) {
  * @todo нужно переработать
  */
 
-const Inventory = new Schema({
+const inventory = new Schema({
   items: {
     type: Object, defaultsTo: {},
   },
@@ -39,8 +39,7 @@ const Inventory = new Schema({
   },
 });
 
-
-module.exports = {
+inventory.methods = {
   /**
    * getAllHarks
    *
@@ -70,7 +69,7 @@ module.exports = {
    * @return {Promise<Array>} [item,item,item]
    */
   async getPutOned(charId) {
-    const invObj = await Inventory.findOne({ owner: charId }) || {};
+    const invObj = await this.model('Inventory').findOne({ owner: charId }) || {};
     return invObj.items.filter((el) => el.putOn === true);
   },
 
@@ -84,7 +83,7 @@ module.exports = {
    * @todo на входе должно быть 2 параметра charId && itemCode
    */
   async addItem(charId, itemCode) {
-    const invObj = await Inventory.findOne({
+    const invObj = await this.model('Inventory').findOne({
       owner: charId,
     });
     // Проверка на наличие итема в базе
@@ -103,7 +102,7 @@ module.exports = {
       stack: false,
       val: 1,
     };
-    const resp = await Inventory.update({
+    const resp = await this.model('Inventory').update({
       owner: charId,
     }, {
       items,
@@ -121,11 +120,11 @@ module.exports = {
    */
 
   async delItem(charId, slotId) {
-    const inv = await Inventory.findOne({
+    const inv = await this.model('Inventory').findOne({
       owner: charId,
     });
     delete (inv.items[slotId]);
-    const resp = await Inventory.update({
+    const resp = await this.model('Inventory').update({
       owner: charId,
     }, {
       items: inv.items,
@@ -158,11 +157,11 @@ module.exports = {
    * @return {Array} Массив нового инвентаря
    */
   async putOnItem(charId, slotId) {
-    const inv = await Inventory.findOne({
+    const inv = await this.model('Inventory').findOne({
       owner: charId,
     });
     inv.items[slotId].putOn = true;
-    const resp = await Inventory.update({
+    const resp = await this.model('Inventory').update({
       owner: charId,
     }, {
       items: inv.items,
@@ -177,16 +176,16 @@ module.exports = {
    * @todo переделать!
    */
   async putOffItem(charId, slotId) {
-    const inv = await Inventory.findOne({
+    const inv = await this.model('Inventory').findOne({
       owner: charId,
     });
     inv.items[slotId].putOn = false;
-    const resp = await Inventory.update({
+    const resp = await this.model('Inventory').update({
       owner: charId,
     }, {
       items: inv.items,
     });
     return resp;
   },
-  Inventory: mongoose.model('Inventory', Inventory),
 };
+module.exports = mongoose.model('Inventory', inventory);
