@@ -5,11 +5,12 @@
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
 const channelHelper = require('../helpers/channelHelper');
+// const Char = require('../arena/CharacterService');
 
 const battleScene = new Scene('battleScene');
-battleScene.enter(({ reply }) => {
+battleScene.enter(({ reply, session }) => {
   reply(
-    'Кнопки',
+    `Кнопки: charId > ${session.character.nickname}`,
     Markup.inlineKeyboard([
       Markup.callbackButton('Атака', 'Атака'),
       Markup.callbackButton('Защита', 'Защита'),
