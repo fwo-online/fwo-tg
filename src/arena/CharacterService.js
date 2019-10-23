@@ -135,6 +135,8 @@ class Char {
     // eslint-disable-next-line no-proto
     p.__proto__ = Object.create(this.prototype);
     arena.players[charId] = p;
+    // eslint-disable-next-line no-console
+    console.log(JSON.stringify(arena.players));
   }
 
   /**
