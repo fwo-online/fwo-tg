@@ -19,8 +19,8 @@ battleScene.enter(({ reply }) => {
 });
 
 battleScene.action('Атака', ({ reply }) => {
-  reply('Сообщение в личный чат');
-  channelHelper.broadcast('Сообщение в общий чат');
+  reply('Мессага в личный чат');
+  channelHelper.broadcast('Мессага в общий чат');
 });
 
 module.exports = battleScene;
