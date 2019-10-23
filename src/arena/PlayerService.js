@@ -80,7 +80,7 @@ class Player {
   notify(data) {
     const pack = { event: 'startGame', payload: data };
     // eslint-disable-next-line no-undef
-    sails.sockets.broadcast(arena.players[this.id].socketId, 'GameEvent', pack);
+    global.broadcast(arena.players[this.id].socketId, 'GameEvent', pack);
   }
 }
 

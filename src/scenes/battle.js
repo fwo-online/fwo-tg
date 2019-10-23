@@ -4,7 +4,6 @@
  */
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
-const game = require('../arena/magics');
 
 const battleScene = new Scene('battleScene');
 battleScene.enter(({ reply }) => {
@@ -19,9 +18,8 @@ battleScene.enter(({ reply }) => {
 });
 
 battleScene.action('Атака', ({ reply }) => {
-  // eslint-disable-next-line no-console
-  console.log(game);
-  reply('Атака');
+  reply('Сообщение в личный чат');
+  global.broadcast('Сообщение в общий чат');
 });
 
 module.exports = battleScene;

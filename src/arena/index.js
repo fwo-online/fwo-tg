@@ -1,4 +1,5 @@
 const MM = require('./MatchMakingService');
+
 MM.start();
 
 global.arena = {};
