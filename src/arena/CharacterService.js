@@ -2,7 +2,7 @@ const arena = require('./index');
 const Inventory = require('../models/Inventory');
 const MiscService = require('./MiscService');
 const floatNumber = require('./floatNumber');
-const db = require('../models/index');
+const db = require('../helpers/dataBase');
 /**
  * Конструктор персонажа
  * @todo сюда нужны будет get/set функции для intreface части
