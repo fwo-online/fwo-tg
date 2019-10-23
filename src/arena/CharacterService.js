@@ -128,7 +128,7 @@ class Char {
      */
     const harksFromItems = await Inventory.getAllHarks(charId)
       || { hit: { min: 0, max: 0 } };
-    const p = await db.char.find({ tgId: charId });
+    const p = await db.char.find({ _id: charId });
     p.harksFromItems = harksFromItems;
     p.def = getDynHarks(p);
     // изменяем прототип
