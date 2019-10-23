@@ -26,8 +26,10 @@ jobs:
         npm test
       env:
         CI: true
-    - name: Deploy MasterBot
-      uses: contention/action-rsync-deploy@master
+    - name: Deploy to MasterBot
+      uses: catHD/action-rsync@master
       env:
-        secrets: ${{ DEPLOY_KEY }}
-        args: '-avzr --delete --exclude /uploads/ codeship@159.89.227.216:~/fwo-test/'
+        DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+        RSYNC_ARG: "-avzr --delete"
+        EXCLUDE_ARG: ""
+        HOST_ARG: "codeship@159.89.227.216:~/fwo-tg/"
