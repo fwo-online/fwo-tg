@@ -32,4 +32,4 @@ jobs:
         RSYNC_ARG: "-avzr --delete"
         EXCLUDE_ARG: ""
         HOST_ARG: "codeship@159.89.227.216:~/fwo-test/"
-        
+

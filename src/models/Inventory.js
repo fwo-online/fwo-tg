@@ -27,7 +27,7 @@ function getDefaultItem(prof) {
 
 const Inventory = new Schema({
   items: {
-    type: 'JSON', defaultsTo: {},
+    type: Object, defaultsTo: {},
   },
 
   // Добавляем связь инвенторя с персонажем
