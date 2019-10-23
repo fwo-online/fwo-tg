@@ -1,6 +1,7 @@
 const arena = require('./index');
 const StatsService = require('./StatsService');
 const FlagsConstructors = require('./Constuructors/FlagsConstructor');
+const channelHelper = require('../helpers/channelHelper');
 /**
  * PlayerService
  * @description Обьект игрока внутри боя ! Это не Character!
@@ -80,7 +81,7 @@ class Player {
   notify(data) {
     const pack = { event: 'startGame', payload: data };
     // eslint-disable-next-line no-undef
-    global.broadcast(arena.players[this.id].socketId, 'GameEvent', pack);
+    channelHelper.broadcast(arena.players[this.id].socketId, 'GameEvent', pack);
   }
 }
 

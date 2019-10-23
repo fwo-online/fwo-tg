@@ -4,6 +4,7 @@
  */
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
+const channelHelper = require('../helpers/channelHelper');
 
 const battleScene = new Scene('battleScene');
 battleScene.enter(({ reply }) => {
@@ -19,7 +20,7 @@ battleScene.enter(({ reply }) => {
 
 battleScene.action('Атака', ({ reply }) => {
   reply('Сообщение в личный чат');
-  global.broadcast('Сообщение в общий чат');
+  channelHelper.broadcast('Сообщение в общий чат');
 });
 
 module.exports = battleScene;
