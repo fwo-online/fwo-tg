@@ -25,3 +25,8 @@ jobs:
         npm test
       env:
         CI: true
+    - name: Deploy to testbot
+      uses: contention/rsync-deployments@master
+      env:
+        DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+      args: ['-avzr --delete --exclude','/uploads/', 'codeship@159.89.227.216:~/fwo-test/']
