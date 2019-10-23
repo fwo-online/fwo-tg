@@ -39,7 +39,7 @@ const inventory = new Schema({
   },
 });
 
-inventory.static = {
+inventory.statics = {
   /**
    * getAllHarks
    *
