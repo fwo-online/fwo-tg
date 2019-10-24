@@ -6,7 +6,7 @@ module.exports = {
   @return Boolean
    */
   async check(tgId) {
-    const re = await db.char.find(tgId);
+    const re = await db.char.find({ tgId });
     return !!re;
   },
   /*
@@ -127,7 +127,7 @@ module.exports = {
   // eslint-disable-next-line consistent-return
   async getChar(tgId) {
     try {
-      return await db.char.find(tgId);
+      return await db.char.find({ tgId });
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log(e);

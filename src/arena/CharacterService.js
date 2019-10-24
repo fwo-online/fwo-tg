@@ -27,7 +27,7 @@ function defHarks(prof) {
  * enReg: number, hit: boolean, maxTarget: number, lspell: number}}
  */
 function getDynHarks(charObj) {
-  const harks = charObj.hark;
+  const { harks } = charObj;
   const patk = (charObj.prof === 'l')
     ? floatNumber(harks.dex + (harks.int * 0.5))
     : floatNumber(harks.dex + (harks.str * 0.4));
@@ -55,6 +55,7 @@ function getDynHarks(charObj) {
     const h = {};
     if (charObj.prof === 'l') {
       const intDmg = (harks.int - 2) / 10;
+      console.log(charObj);
       h.min = floatNumber(intDmg + +charObj.harksFromItems.hit.min);
       h.max = floatNumber(intDmg + +charObj.harksFromItems.hit.max);
     } else {

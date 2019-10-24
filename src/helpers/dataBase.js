@@ -12,9 +12,9 @@ function dbErr(e) {
 module.exports = {
   char: {
     // eslint-disable-next-line consistent-return
-    async find(tgId) {
+    async find(obj) {
       try {
-        return await CharModel.findOne({ tgId, deleted: false });
+        return await CharModel.findOne({ ...obj, deleted: false });
       } catch (e) {
         dbErr(e);
       }
