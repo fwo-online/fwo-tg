@@ -55,7 +55,6 @@ function getDynHarks(charObj) {
     const h = {};
     if (charObj.prof === 'l') {
       const intDmg = (harks.int - 2) / 10;
-      console.log(charObj);
       h.min = floatNumber(intDmg + +charObj.harksFromItems.hit.min);
       h.max = floatNumber(intDmg + +charObj.harksFromItems.hit.max);
     } else {
