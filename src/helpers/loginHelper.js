@@ -1,4 +1,5 @@
 const db = require('./dataBase');
+const { firstCreate } = require('../models/Inventory');
 
 module.exports = {
   /*
@@ -33,12 +34,6 @@ module.exports = {
           int: 3,
           wis: 3,
           con: 6,
-          inventory: [
-            {
-              code: 'waa',
-              putOn: true,
-              place: 'a',
-            }],
         };
         break;
 
@@ -50,12 +45,6 @@ module.exports = {
           int: 10,
           wis: 3,
           con: 6,
-          inventory: [
-            {
-              code: 'wab',
-              putOn: true,
-              place: 'a',
-            }],
         };
         break;
 
@@ -70,12 +59,6 @@ module.exports = {
           mag: {
             magic_arrow: 1,
           },
-          inventory: [
-            {
-              code: 'wac',
-              putOn: true,
-              place: 'a',
-            }],
         };
         break;
 
@@ -90,12 +73,6 @@ module.exports = {
           mag: {
             light_heal: 1,
           },
-          inventory: [
-            {
-              code: 'wac',
-              putOn: true,
-              place: 'a',
-            }],
         };
         break;
 
@@ -110,7 +87,9 @@ module.exports = {
     h.tgId = tgId;
     h.nickname = nickname;
     // eslint-disable-next-line consistent-return
-    return db.char.create(h);
+    const resp = await db.char.create(h);
+    await firstCreate(resp._id, resp.prof);
+    return resp;
   },
   /*
   @func удаления

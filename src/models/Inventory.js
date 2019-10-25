@@ -149,7 +149,7 @@ inventory.statics = {
    * @todo переделать после допила addItem
    */
   async firstCreate(charId, prof) {
-    await this.create({
+    await this.model('Inventory').create({
       owner: charId,
     });
     const defItemCode = getDefaultItem(prof);
