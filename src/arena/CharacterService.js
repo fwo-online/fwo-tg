@@ -1,5 +1,5 @@
 const arena = require('./index');
-const Inventory = require('../models/Inventory');
+const Inventory = require('../models/inventory');
 const MiscService = require('./MiscService');
 const floatNumber = require('./floatNumber');
 const db = require('../helpers/dataBase');
