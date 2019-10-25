@@ -16,7 +16,8 @@ class WatchConstructor {
    * @param {Object} gameObj обьект созанной игры
    */
   constructor(gameObj) {
-    this.gameId = gameObj.info.id;
+    // eslint-disable-next-line no-underscore-dangle
+    this.gameId = gameObj.info._id;
     // обработчики эвентов от раунда
     gameObj.preLoading();
     // @todo избавиться от Watchera
