@@ -88,6 +88,7 @@ module.exports = {
     h.nickname = nickname;
     // eslint-disable-next-line consistent-return
     const resp = await db.char.create(h);
+    // eslint-disable-next-line no-underscore-dangle
     await firstCreate(resp._id, resp.prof);
     return resp;
   },
