@@ -1,5 +1,5 @@
 const db = require('./dataBase');
-const { firstCreate } = require('../models/Inventory');
+const Inventory = require('../models/inventory');
 
 module.exports = {
   /*
@@ -89,7 +89,7 @@ module.exports = {
     // eslint-disable-next-line consistent-return
     const resp = await db.char.create(h);
     // eslint-disable-next-line no-underscore-dangle
-    await firstCreate(resp._id, resp.prof);
+    await Inventory.firstCreate(resp._id, resp.prof);
     return resp;
   },
   /*
