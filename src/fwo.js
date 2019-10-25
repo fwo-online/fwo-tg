@@ -10,13 +10,11 @@ const Item = require('./models/item');
 // eslint-disable-next-line no-console
 db.connection.on('open', () => console.log('db online'));
 const bot = new Telegraf(process.env.BOT_TOKEN);
+Item.load();
 
 bot.use(session());
 bot.use(stage.middleware());
-bot.start(async ({ scene }) => {
-  Item.load();
-  scene.enter('greeter');
-});
+bot.start(async ({ scene }) => { scene.enter('greeter'); });
 bot.command('greeter', (ctx) => ctx.scene.enter('greeter'));
 bot.launch();
 
