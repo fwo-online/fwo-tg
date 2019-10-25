@@ -125,8 +125,10 @@ class Char {
     /**
      * @todo организовать нормальную загрузку
      */
-    const harksFromItems = await db.inventory.getAllHarks(charId)
-      || { hit: { min: 0, max: 0 } };
+    let harksFromItems = await db.inventory.getAllHarks(charId);
+    if (!Object.keys(harksFromItems).length) {
+      harksFromItems = { hit: { min: 0, max: 0 } };
+    }
     const p = await db.char.find({ _id: charId });
     p.harksFromItems = harksFromItems;
     p.def = getDynHarks(p);

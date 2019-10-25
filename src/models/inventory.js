@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const _ = require('lodash');
 const { arena: { defaultItems } } = require('../arena/config');
 
 const { Schema } = mongoose;
@@ -53,9 +54,9 @@ inventory.statics = {
   async fullHarks(charId) {
     try {
       const allItems = await this.getPutOned(charId);
-      return allItems.reduce((ob, i) => {
+      return _.reduce(allItems, (ob, i) => {
         const f = this.model('Item').getHarks(i.code);
-        return Object.assign(ob, f);
+        return _.merge(ob, f);
       }, {});
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -74,7 +75,7 @@ inventory.statics = {
       await this.firstCreate(charId, char.prof);
       return this.getPutOned(charId);
     }
-    return invObj.items.filter((el) => el.putOn === true);
+    return _.filter(invObj.items, { putOn: true });
   },
 
   /**
