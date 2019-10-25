@@ -7,7 +7,6 @@ const channelHelper = require('../helpers/channelHelper');
  * @description Обьект игрока внутри боя ! Это не Character!
  * @module Service/Player
  */
-global.arena.players = {};
 
 // @todo нужно создать отдельный метод, для автоматического сложения всех харок
 // аналогично парсеру.
@@ -44,7 +43,7 @@ class Player {
    */
   static loading(charId) {
     // @todo fast hack
-    return new Player(arena.players[charId]);
+    return new Player(global.arena.players[charId]);
   }
 
   /**

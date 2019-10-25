@@ -2,6 +2,8 @@ const arena = require('./index');
 const MiscService = require('./MiscService');
 const floatNumber = require('./floatNumber');
 const db = require('../helpers/dataBase');
+
+global.arena.players = {};
 /**
  * Конструктор персонажа
  * @todo сюда нужны будет get/set функции для intreface части
@@ -136,7 +138,7 @@ class Char {
     // eslint-disable-next-line no-proto
     p.__proto__ = Object.create(this.prototype);
     if (!arena.players) arena.players = {};
-    arena.players[charId] = p;
+    global.arena.players[charId] = p;
     // eslint-disable-next-line no-console
     console.log(JSON.stringify(arena.players));
   }
