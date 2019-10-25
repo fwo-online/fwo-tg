@@ -194,11 +194,11 @@ class Game {
    * @return {Object} Обьект созданный в базе
    */
   async createGame() {
-    const dbgame = await db.game.create({
+    const dbGame = await db.game.create({
       players: this.playerArr.init,
     });
     this.players = await this.playerArr.roundJson();
-    this.info = dbgame;
+    this.info = dbGame;
     return true;
   }
 

@@ -16,6 +16,8 @@ class WatchConstructor {
    * @param {Object} gameObj обьект созанной игры
    */
   constructor(gameObj) {
+    // eslint-disable-next-line no-console
+    console.log(gameObj);
     // eslint-disable-next-line no-underscore-dangle
     this.gameId = gameObj.info._id;
     // обработчики эвентов от раунда
