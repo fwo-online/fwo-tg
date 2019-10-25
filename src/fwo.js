@@ -6,10 +6,9 @@ const channelHelper = require('./helpers/channelHelper');
 const Item = require('./models/item');
 
 // DB connection
-
-// eslint-disable-next-line no-console
 db.connection.on('open', () => {
-  console.log('db online')
+  // eslint-disable-next-line no-console
+  console.log('db online');
   Item.load();
 });
 
