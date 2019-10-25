@@ -135,6 +135,7 @@ class Char {
     // изменяем прототип
     // eslint-disable-next-line no-proto
     p.__proto__ = Object.create(this.prototype);
+    if (!arena.players) arena.players = {};
     arena.players[charId] = p;
     // eslint-disable-next-line no-console
     console.log(JSON.stringify(arena.players));
