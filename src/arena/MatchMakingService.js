@@ -1,5 +1,5 @@
 const { EventEmitter } = require('events');
-const { maxIter } = require('./config');
+const { arena: { maxIter } } = require('./config');
 const QueueConstructor = require('./Constuructors/QueueConstrucror');
 
 /**
