@@ -2,6 +2,7 @@ const arena = require('./index');
 const BattleLog = require('./BattleLog');
 const engineService = require('./engineService');
 const db = require('../helpers/dataBase');
+const chanHelper = require('../helpers/channelHelper');
 /**
  * GameService
  *
@@ -108,7 +109,7 @@ class Game {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: SBL', 'gameId:', this.info.id, 'data:', data);
     // eslint-disable-next-line no-undef
-    tg.sendToChan(`gameId${this.info.id}`, 'BattleLog', data);
+    channHe(`gameId${this.info.id}`, 'BattleLog', data);
   }
 
   /**
@@ -118,7 +119,7 @@ class Game {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: sendToAll', this.info.id);
     // eslint-disable-next-line no-undef
-    tg.sendToChan(`gameId${this.info.id}`, 'GameEvent', data);
+    chanHelper.broadcast(`gameId${this.info.id} : GameEvent:${data}`);
   }
 
   /**
