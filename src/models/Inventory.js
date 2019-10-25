@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const arena = require('./index');
-const Item = require('../arena/ItemService');
+const Item = require('./item');
+const { arena: { defaultItems } } = require('../arena/config');
 
 const { Schema } = mongoose;
 
@@ -14,7 +14,7 @@ const { Schema } = mongoose;
  */
 function getDefaultItem(prof) {
   // eslint-disable-next-line no-console
-  return arena.defaultItems[prof] || console.log('no prof in getDefaultItem');
+  return defaultItems[prof] || console.log('no prof in getDefaultItem');
 }
 
 /**
@@ -70,7 +70,7 @@ inventory.statics = {
    */
   async getPutOned(charId) {
     const invObj = await this.model('Inventory').findOne({ owner: charId });
-    return invObj.items ? invObj.items.filter((el) => el.putOn === true) : [];
+    return invObj.items ? invObj.items.filter((el) => el.putOn === true) : this.firstCreate(charId, 'l');
   },
 
   /**
@@ -87,7 +87,7 @@ inventory.statics = {
       owner: charId,
     });
     // Проверка на наличие итема в базе
-    await Item.findOne({
+    await this.model('Item').findOne({
       code: itemCode,
     });
     const { items } = invObj;
@@ -143,6 +143,7 @@ inventory.statics = {
    * @todo переделать после допила addItem
    */
   async firstCreate(charId, prof) {
+    await this.model('Item').load();
     await this.create({
       owner: charId,
     });
