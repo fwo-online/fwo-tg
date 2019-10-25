@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const PlayerService = require('./PlayerService');
 /**
  * Класс контроля игроков внутри созданной игры
@@ -21,8 +22,7 @@ class PlayersArr {
   async roundJson() {
     const result = await Promise.all(this.init.map((p) => PlayerService.loading(p)));
     this.arr = result;
-    const keyBy = (array, key) => (array).reduce((r, x) => ({ ...r, [x[key]]: x }), {});
-    return keyBy(result, 'id');
+    return _.keyBy(result, 'id');
   }
 
   /**
