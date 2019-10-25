@@ -1,6 +1,6 @@
 const GameService = require('../GameService');
 const WatchService = require('../WatchService');
-const { roundPlayersLimit } = require('../config');
+const { arena: { roundPlayersLimit } } = require('../config');
 /**
  * Конструктор обьекта очереди
  */
