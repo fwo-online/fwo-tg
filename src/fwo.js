@@ -3,6 +3,7 @@ const session = require('telegraf/session');
 const db = require('./models');
 const stage = require('./scenes/stage.js');
 const channelHelper = require('./helpers/channelHelper');
+const Item = require('./models/item');
 
 // DB connection
 
@@ -12,8 +13,12 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 
 bot.use(session());
 bot.use(stage.middleware());
-bot.start(({ scene }) => scene.enter('greeter'));
+bot.start(async ({ scene }) => {
+  await Item.load();
+  scene.enter('greeter');
+});
 bot.command('greeter', (ctx) => ctx.scene.enter('greeter'));
 bot.launch();
+
 
 channelHelper.bot = bot;
