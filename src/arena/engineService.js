@@ -1,12 +1,11 @@
-const { stages } = require('./config');
+const { arena: { stages } } = require('./config');
 const CharacterService = require('./CharacterService');
 const GameService = require('./GameService');
 const testGame = require('./testGame');
 
-const { arena } = global;
-arena.magics = require('./magics');
+global.arena.magics = require('./magics');
 
-const ACTIONS = arena.magics;
+const ACTIONS = global.arena.magics;
 
 const STAGES = stages;
 

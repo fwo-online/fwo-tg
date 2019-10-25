@@ -8,9 +8,12 @@ const Item = require('./models/item');
 // DB connection
 
 // eslint-disable-next-line no-console
-db.connection.on('open', () => console.log('db online'));
+db.connection.on('open', () => {
+  console.log('db online')
+  Item.load();
+});
+
 const bot = new Telegraf(process.env.BOT_TOKEN);
-Item.load();
 
 bot.use(session());
 bot.use(stage.middleware());

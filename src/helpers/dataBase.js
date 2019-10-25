@@ -80,7 +80,7 @@ module.exports = {
     // eslint-disable-next-line consistent-return
     async getAllHarks(charId) {
       try {
-        return await InventoryModel.getAllHarks(charId);
+        return await InventoryModel.fullHarks(charId);
       } catch (e) {
         dbErr(e);
       }

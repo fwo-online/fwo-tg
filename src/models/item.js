@@ -16,142 +16,142 @@ const { Schema } = mongoose;
 
 const item = new Schema({
   code: {
-    type: 'string', unique: true, required: true, dominant: true,
+    type: String, unique: true, required: true, dominant: true,
   },
   name: {
-    type: 'string',
+    type: String,
   },
   atc: {
-    type: 'string',
+    type: String,
   },
   prt: {
-    type: 'string',
+    type: String,
   },
   price: {
-    type: 'string',
+    type: String,
   },
   wear: {
-    type: 'string',
+    type: String,
   },
   race: {
-    type: 'string',
+    type: String,
   },
   weight: {
-    type: 'string',
+    type: String,
   },
   gskill: {
-    type: 'string',
+    type: String,
   },
   gprice: {
-    type: 'string',
+    type: String,
   },
   wcomb: {
-    type: 'string',
+    type: String,
   },
   hark: {
-    type: 'string',
+    type: String,
   },
   plushark: {
-    type: 'string',
+    type: String,
   },
   mga: {
-    type: 'string',
+    type: String,
   },
   mgp: {
-    type: 'string',
+    type: String,
   },
   hl: {
-    type: 'string',
+    type: String,
   },
   r_fire: {
-    type: 'string',
+    type: String,
   },
   r_acid: {
-    type: 'string',
+    type: String,
   },
   r_lighting: {
-    type: 'string',
+    type: String,
   },
   r_frost: {
-    type: 'string',
+    type: String,
   },
   r_physical: {
-    type: 'string',
+    type: String,
   },
   chance: {
-    type: 'string',
+    type: String,
   },
   descr: {
-    type: 'string',
+    type: String,
   },
   add_hp: {
-    type: 'string',
+    type: String,
   },
   add_mp: {
-    type: 'string',
+    type: String,
   },
   add_en: {
-    type: 'string',
+    type: String,
   },
   onlymake: {
-    type: 'string',
+    type: String,
   },
   subclass: {
-    type: 'string',
+    type: String,
   },
   reg_hp: {
-    type: 'string',
+    type: String,
   },
   reg_en: {
-    type: 'string',
+    type: String,
   },
   reg_mp: {
-    type: 'string',
+    type: String,
   },
   hp_drain: {
-    type: 'string',
+    type: String,
   },
   mp_drain: {
-    type: 'string',
+    type: String,
   },
   en_drain: {
-    type: 'string',
+    type: String,
   },
   type: {
-    type: 'string',
+    type: String,
   },
   hit: {
-    type: 'string',
+    type: String,
   },
   edinahp: {
-    type: 'string',
+    type: String,
   },
   eff: {
-    type: 'string',
+    type: String,
   },
   hide: {
-    type: 'string',
+    type: String,
   },
   wtype: {
-    type: 'string',
+    type: String,
   },
   '2handed': {
-    type: 'string',
+    type: String,
   },
   case: {
-    type: 'string',
+    type: String,
   },
   fire: {
-    type: 'string',
+    type: String,
   },
   acid: {
-    type: 'string',
+    type: String,
   },
   lighting: {
-    type: 'string',
+    type: String,
   },
   frost: {
-    type: 'string',
+    type: String,
   },
 });
 

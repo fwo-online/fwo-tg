@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Item = require('./item');
 const { arena: { defaultItems } } = require('../arena/config');
 
 const { Schema } = mongoose;
@@ -51,11 +50,11 @@ inventory.statics = {
    * а затем суммирует все полученные данны в единый обьект.
    *
    * */
-  async getAllHarks(charId) {
+  async fullHarks(charId) {
     try {
       const allItems = await this.getPutOned(charId);
       return allItems.reduce((ob, i) => {
-        const f = Item.getHarks(i.code);
+        const f = this.model('Item').getHarks(i.code);
         return Object.assign(ob, f);
       }, {});
     } catch (e) {
@@ -107,7 +106,7 @@ inventory.statics = {
       stack: false,
       val: 1,
     };
-    const resp = await this.model('Inventory').update({
+    const resp = await this.model('Inventory').updateOne({
       owner: charId,
     }, {
       items,
@@ -166,7 +165,7 @@ inventory.statics = {
       owner: charId,
     });
     inv.items[slotId].putOn = true;
-    const resp = await this.model('Inventory').update({
+    const resp = await this.model('Inventory').updateOne({
       owner: charId,
     }, {
       items: inv.items,
@@ -185,7 +184,7 @@ inventory.statics = {
       owner: charId,
     });
     inv.items[slotId].putOn = false;
-    const resp = await this.model('Inventory').update({
+    const resp = await this.model('Inventory').updateOne({
       owner: charId,
     }, {
       items: inv.items,
@@ -193,4 +192,5 @@ inventory.statics = {
     return resp;
   },
 };
+
 module.exports = mongoose.model('Inventory', inventory);
