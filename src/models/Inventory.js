@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Item = require('./item');
 const { arena: { defaultItems } } = require('../arena/config');
+const db = require('../helpers/dataBase');
 
 const { Schema } = mongoose;
 
@@ -70,7 +71,12 @@ inventory.statics = {
    */
   async getPutOned(charId) {
     const invObj = await this.model('Inventory').findOne({ owner: charId });
-    return invObj.items ? invObj.items.filter((el) => el.putOn === true) : this.firstCreate(charId, 'l');
+    if (!invObj) {
+      const char = await db.char.find({ _id: charId });
+      await this.firstCreate(charId, char.prof);
+      return this.getPutOned(charId);
+    }
+    return invObj.items.filter((el) => el.putOn === true);
   },
 
   /**

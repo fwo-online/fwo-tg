@@ -14,7 +14,7 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 bot.use(session());
 bot.use(stage.middleware());
 bot.start(async ({ scene }) => {
-  await Item.load();
+  Item.load();
   scene.enter('greeter');
 });
 bot.command('greeter', (ctx) => ctx.scene.enter('greeter'));
