@@ -14,7 +14,7 @@ const chanHelper = require('../helpers/channelHelper');
  */
 global.arena.games = {};
 const RoundService = require('./RoundService');
-const PlayersArr = require('./PlayerService');
+const PlayersArr = require('./playerArray');
 const OrderService = require('./OrderService');
 
 /**
@@ -109,7 +109,7 @@ class Game {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: SBL', 'gameId:', this.info.id, 'data:', data);
     // eslint-disable-next-line no-undef
-    channHe(`gameId${this.info.id}`, 'BattleLog', data);
+    chanHelper.broadcast(`gameId${this.info.id} : BattleLog:${data}`);
   }
 
   /**
