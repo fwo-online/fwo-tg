@@ -1,5 +1,4 @@
-const union = require('lodash.union');
-const groupBy = require('lodash.groupby');
+const _ = require('lodash')
 const arena = require('./index');
 const MiscService = require('./MiscService');
 const { arena: { magic } } = require('./config');
@@ -22,8 +21,7 @@ function hasMagicToLearn(charId, lvl) {
   // берем массив всех магий в игре на данном уровне для этой профы
   const list = module.exports.list(lvl, charObj.prof);
   // массив всех доступных магий в игре на этом круге
-  const keyBy = (array, key) => (array).reduce((r, x) => ({ ...r, [x[key]]: x }), {});
-  const globalList = Object.keys(keyBy(list, 'name'));
+  const globalList = Object.keys(_.keyBy(list, 'name'));
   // массив всех магий в круге у чара
   const charMag = Object.keys(charObj.mag);
   // разница между
@@ -33,7 +31,7 @@ function hasMagicToLearn(charId, lvl) {
     // Нет новых магий в круге, проверяем а есть ли что учить
     arrayOfDiff = not3lvl;
   } else {
-    arrayOfDiff = union(not3lvl, arrayOfDiff);
+    arrayOfDiff = _.union(not3lvl, arrayOfDiff);
   }
   // рандомим будем ли мы учить сейчас одну из новых или проучивать старую
   return arrayOfDiff;
@@ -65,7 +63,7 @@ module.exports = {
     magicList = magicList.map((m) => ({
       name: m.name, lvl: m.lvl, orderType: m.orderType, desc: m.desc,
     }));
-    magicList = groupBy(magicList, 'lvl');
+    magicList = _.groupBy(magicList, 'lvl');
     if (lvl === 'all') return magicList;
     return magicList[lvl];
   }, /**
