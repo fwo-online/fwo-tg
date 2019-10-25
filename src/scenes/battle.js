@@ -20,11 +20,11 @@ battleScene.enter(({ reply }) => {
 
 battleScene.action('search', async ({ reply, session }) => {
   // eslint-disable-next-line no-underscore-dangle
-  const chatObject = await Char.loading(session.character._id);
+  await Char.loading(session.character._id);
   // eslint-disable-next-line no-console
   console.log(JSON.stringify(global.arena));
   // eslint-disable-next-line no-underscore-dangle
-  const searchObject = { charId: chatObject._id, psr: 1000, startTime: Date.now() };
+  const searchObject = { charId: session.character._id, psr: 1000, startTime: Date.now() };
   arena.mm.push(searchObject);
   await reply('Мессага в личный чат');
   channelHelper.broadcast('Мессага в общий чат');
