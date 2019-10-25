@@ -23,7 +23,9 @@ battleScene.action('search', async ({ reply, session }) => {
   const chatObject = await Char.loading(session.character._id);
   // eslint-disable-next-line no-console
   console.log(JSON.stringify(global.arena));
-  arena.mm.push(chatObject);
+  // eslint-disable-next-line no-underscore-dangle
+  const searchObject = { charId: chatObject._id, psr: 1000, startTime: Date.now() };
+  arena.mm.push(searchObject);
   await reply('Мессага в личный чат');
   channelHelper.broadcast('Мессага в общий чат');
 });
