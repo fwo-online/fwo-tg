@@ -1,5 +1,4 @@
 const arena = require('./index');
-const Inventory = require('../models/inventory');
 const MiscService = require('./MiscService');
 const floatNumber = require('./floatNumber');
 const db = require('../helpers/dataBase');
@@ -126,7 +125,7 @@ class Char {
     /**
      * @todo организовать нормальную загрузку
      */
-    const harksFromItems = await Inventory.getAllHarks(charId)
+    const harksFromItems = await db.inventory.getAllHarks(charId)
       || { hit: { min: 0, max: 0 } };
     const p = await db.char.find({ _id: charId });
     p.harksFromItems = harksFromItems;

@@ -4,6 +4,7 @@
  */
 const CharModel = require('../models/character');
 const GameModel = require('../models/games');
+const InventoryModel = require('../models/inventory');
 
 function dbErr(e) {
   throw new Error('Fail in dbHelper:', e);
@@ -70,6 +71,16 @@ module.exports = {
       try {
         const x = new GameModel(gameObject);
         x.save();
+      } catch (e) {
+        dbErr(e);
+      }
+    },
+  },
+  inventory: {
+    // eslint-disable-next-line consistent-return
+    async getAllHarks(charId) {
+      try {
+        return await InventoryModel.getAllHarks(charId);
       } catch (e) {
         dbErr(e);
       }
