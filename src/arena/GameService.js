@@ -220,7 +220,7 @@ class Game {
    */
   // eslint-disable-next-line no-underscore-dangle
   resetProc() {
-    // eslint-disable-next-line no-param-reassign
+    // eslint-disable-next-line no-param-reassign,no-return-assign
     _.forEach(this.players, (p) => p.proc = 100);
   }
 
