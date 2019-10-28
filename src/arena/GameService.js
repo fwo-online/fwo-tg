@@ -218,7 +218,9 @@ class Game {
   /**
    * Сбрасываем всем игрокам кол-во доступных процентов на 100
    */
+  // eslint-disable-next-line no-underscore-dangle
   resetProc() {
+    // eslint-disable-next-line no-param-reassign
     _.forEach(this.players, (p) => p.proc = 100);
   }
 
@@ -314,8 +316,10 @@ class Game {
    * Функция выставляет "смерть" для игроков имеющих hp < 0;
    */
   sortDead() {
+    // eslint-disable-next-line no-underscore-dangle
     _.forEach(this.players, (p) => {
       if (p.stats.val('hp') <= 0) {
+        // eslint-disable-next-line no-param-reassign
         p.alive = false;
       }
     });
@@ -336,6 +340,7 @@ class Game {
    * @param {function} f функция применяющая ко всем игрокам в игре
    */
   forAllPlayers(f) {
+    // eslint-disable-next-line no-underscore-dangle
     _.forEach(this.players, (p) => f(p));
   }
 
@@ -344,9 +349,11 @@ class Game {
    * @param {function} f функция применяющая
    */
   forAllAlivePlayers(f) {
+    // eslint-disable-next-line no-underscore-dangle
     const aliveArr = _.filter(this.players, {
       alive: true,
     });
+    // eslint-disable-next-line no-underscore-dangle
     _.forEach(aliveArr, (p) => f(p, this));
   }
 

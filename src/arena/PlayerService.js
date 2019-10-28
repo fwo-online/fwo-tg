@@ -1,4 +1,3 @@
-const arena = require('./index');
 const StatsService = require('./StatsService');
 const FlagsConstructors = require('./Constuructors/FlagsConstructor');
 const channelHelper = require('../helpers/channelHelper');
@@ -77,6 +76,7 @@ class Player {
    * Нотификация через сокет
    * @param {Object} data обьект для отправки пользователю
    */
+  // eslint-disable-next-line class-methods-use-this
   notify(data) {
     const pack = { event: 'startGame', payload: data };
     // eslint-disable-next-line no-undef
