@@ -1,4 +1,4 @@
-const _ = require('lodash')
+const _ = require('lodash');
 const arena = require('./index');
 const MiscService = require('./MiscService');
 const { arena: { magic } } = require('./config');

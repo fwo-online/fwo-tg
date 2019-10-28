@@ -67,11 +67,12 @@ module.exports = {
     },
   },
   game: {
+    // eslint-disable-next-line consistent-return
     async create(gameObject) {
       try {
         const x = new GameModel(gameObject);
         x.save();
-        return x
+        return x;
       } catch (e) {
         dbErr(e);
       }

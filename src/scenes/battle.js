@@ -27,7 +27,7 @@ battleScene.action('search', async ({ reply, session }) => {
   const searchObject = { charId: session.character._id, psr: 1000, startTime: Date.now() };
   arena.mm.push(searchObject);
   await reply('Мессага в личный чат');
-  // await channelHelper.broadcast('Мессага в общий чат');
+  await channelHelper.broadcast('Мессага в общий чат');
 });
 
 module.exports = battleScene;
