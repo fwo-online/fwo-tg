@@ -13,7 +13,6 @@ const chanHelper = require('../helpers/channelHelper');
  * Нужен механизм подключения обратно, если клиент "обновил" страницу или
  * переподключился к игре после disconnect(разрыв соединения)
  */
-global.arena.games = {};
 const RoundService = require('./RoundService');
 const PlayersArr = require('./playerArray');
 const OrderService = require('./OrderService');
@@ -45,11 +44,13 @@ class Game {
   /**
    * Статик функция возвращающая массив живых игроков в игре
    * @param {Number} gameId идентификатор игры
-   * @return {Array} [PlayerObject,PlayerObject,...] массив живых игроков
+   * @return {Object} [PlayerID:{PlayerObjectPlayerObject},...] массив живых игроков
    */
   static aliveArr(gameId) {
-    const game = arena.games[gameId];
-    return game.players.filter((player) => player.alive);
+    const game = global.arena.games[gameId];
+    return _.filter(game.players, {
+      alive: true,
+    });
   }
 
   /**
@@ -174,9 +175,6 @@ class Game {
   endGame() {
     // eslint-disable-next-line no-console
     console.log('GC debug:: endGame', this.info.id);
-    this.info.players.forEach((charId) => {
-      if (arena.players[charId]) arena.players[charId].mm = false;
-    });
     // Отправляем статистику
     this.sendBattleLog(this.statistic());
     // @todo нужно выкидывать из комнаты чата
@@ -303,9 +301,11 @@ class Game {
    */
   statistic() {
     const winners = Game.aliveArr(this.info.id);
-    winners.forEach((p) => p.stats.addGold(5));
+    // eslint-disable-next-line no-underscore-dangle
+    _.forEach(winners, (p) => p.stats.addGold(5));
     let res = `Statistic: Game ${this.info.id} `;
-    this.players.forEach((p) => {
+    // eslint-disable-next-line no-underscore-dangle
+    _.forEach(this.players, (p) => {
       const s = p.stats.collect;
       res += `Player ${p.nick}: exp[${s.exp}] gold[${s.gold}] `;
     });
@@ -328,8 +328,9 @@ class Game {
   /**
    * Сброс состояния игроков
    */
+  // eslint-disable-next-line no-underscore-dangle
   refrashPlayer() {
-    this.players.forEach((p) => {
+    _.forEach(this.players, (p) => {
       p.stats.refresh();
       p.flags.refresh();
     });

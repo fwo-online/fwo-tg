@@ -7,6 +7,7 @@ const arena = require('./index');
  *
  */
 global.arena.wch = {};
+global.arena.wch.init = 'fwo';
 
 /**
  * Конструктор обьекта слежения за статусами игры
