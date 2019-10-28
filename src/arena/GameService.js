@@ -75,7 +75,8 @@ class Game {
       },
     });
     // помечаем всех игроков что они в игре
-    this.info.players.forEach((player) => {
+    this.info.playerArr.init.forEach((player) => {
+      // eslint-disable-next-line no-underscore-dangle
       arena.players[player].mm = self.info.id;
     });
 
@@ -199,6 +200,8 @@ class Game {
     });
     this.players = await this.playerArr.roundJson();
     this.info = dbGame;
+    // eslint-disable-next-line no-underscore-dangle
+    this.info.id = this.info._id;
     return true;
   }
 

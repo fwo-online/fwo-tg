@@ -9,7 +9,7 @@ module.exports = {
   /**
    * @param {string} data - текст отправляемого сообщения
    */
-  broadcast(data) {
-    this.bot.telegram.sendMessage(chatId, data);
+  async broadcast(data) {
+    await this.bot.telegram.sendMessage(chatId, data);
   },
 };

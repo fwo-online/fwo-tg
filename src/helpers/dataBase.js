@@ -71,6 +71,7 @@ module.exports = {
       try {
         const x = new GameModel(gameObject);
         x.save();
+        return x
       } catch (e) {
         dbErr(e);
       }
