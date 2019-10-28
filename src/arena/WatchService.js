@@ -18,8 +18,7 @@ class WatchConstructor {
   constructor(gameObj) {
     // eslint-disable-next-line no-console
     console.log(gameObj);
-    // eslint-disable-next-line no-underscore-dangle
-    this.gameId = gameObj.info._id;
+    this.gameId = gameObj.info.id;
     // обработчики эвентов от раунда
     gameObj.preLoading();
     // @todo избавиться от Watchera
@@ -46,8 +45,8 @@ module.exports = {
   take(gameObj) {
     try {
       const watcher = new WatchConstructor(gameObj);
-      arena.games[gameObj.info.id] = gameObj;
-      arena.wch[watcher.gameId] = watcher;
+      global.arena.games[watcher.gameId] = gameObj;
+      global.arena.wch[watcher.gameId] = watcher;
       watcher.cleaner();
     } catch (e) {
       // eslint-disable-next-line no-console

@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const arena = require('./index');
 const BattleLog = require('./BattleLog');
 const engineService = require('./engineService');
@@ -66,7 +67,7 @@ class Game {
    */
   preLoading() {
     this.info.status = 'preload';
-    const self = this;
+    // const self = this;
     // eslint-disable-next-line no-console
     this.sendToAll({
       event: 'preload',
@@ -75,10 +76,10 @@ class Game {
       },
     });
     // помечаем всех игроков что они в игре
-    this.info.playerArr.init.forEach((player) => {
-      // eslint-disable-next-line no-underscore-dangle
-      arena.players[player].mm = self.info.id;
-    });
+    // this.playerArr.init.forEach((player) => {
+    // eslint-disable-next-line no-underscore-dangle
+    // arena.players[player].mm = self.info.id;
+    // });
 
     this.startGame();
     this.initHandlers();
@@ -110,7 +111,7 @@ class Game {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: SBL', 'gameId:', this.info.id, 'data:', data);
     // eslint-disable-next-line no-undef
-    chanHelper.broadcast(`gameId${this.info.id} : BattleLog:${data}`);
+    chanHelper.broadcast(`gameId: ${this.info.id} : BattleLog:${JSON.stringify(data)}`);
   }
 
   /**
@@ -120,7 +121,7 @@ class Game {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: sendToAll', this.info.id);
     // eslint-disable-next-line no-undef
-    chanHelper.broadcast(`gameId${this.info.id} : GameEvent:${data}`);
+    chanHelper.broadcast(`gameId: ${this.info.id} GameEvent:${JSON.stringify(data)}`);
   }
 
   /**
@@ -218,11 +219,7 @@ class Game {
    * Сбрасываем всем игрокам кол-во доступных процентов на 100
    */
   resetProc() {
-    // eslint-disable-next-line no-param-reassign
-    this.players.forEach((player) => {
-      // eslint-disable-next-line no-param-reassign
-      player.proc = 100;
-    });
+    _.forEach(this.players, (p) => p.proc = 100);
   }
 
   /**
@@ -317,9 +314,8 @@ class Game {
    * Функция выставляет "смерть" для игроков имеющих hp < 0;
    */
   sortDead() {
-    this.players.forEach((p) => {
+    _.forEach(this.players, (p) => {
       if (p.stats.val('hp') <= 0) {
-        // eslint-disable-next-line no-param-reassign
         p.alive = false;
       }
     });
@@ -340,7 +336,7 @@ class Game {
    * @param {function} f функция применяющая ко всем игрокам в игре
    */
   forAllPlayers(f) {
-    this.players.forEach((p) => f(p));
+    _.forEach(this.players, (p) => f(p));
   }
 
   /**
@@ -348,8 +344,10 @@ class Game {
    * @param {function} f функция применяющая
    */
   forAllAlivePlayers(f) {
-    const aliveArr = this.players.filter((player) => player.alive);
-    aliveArr.forEach((p) => f(p, this));
+    const aliveArr = _.filter(this.players, {
+      alive: true,
+    });
+    _.forEach(aliveArr, (p) => f(p, this));
   }
 
   /**

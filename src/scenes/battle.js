@@ -21,6 +21,7 @@ battleScene.enter(({ reply }) => {
 battleScene.action('search', async ({ reply, session }) => {
   // eslint-disable-next-line no-underscore-dangle
   await Char.loading(session.character._id);
+
   // eslint-disable-next-line no-console
   console.log(JSON.stringify(global.arena));
   // eslint-disable-next-line no-underscore-dangle

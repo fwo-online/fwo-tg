@@ -1,5 +1,5 @@
 const ee = require('events');
-const { roundTimeout } = require('./config');
+const { arena: { roundTimeout } } = require('./config');
 
 /**
  * Возвращаем timeStamp на момент запуска счетчика на стороне сервера
@@ -50,7 +50,7 @@ class RoundConstructor extends ee {
    */
   start() {
     this.status = 'starting';
-    this.coun += 1;
+    this.count += 1;
     this.write({
       event: 'startRound',
       round: this.count,
