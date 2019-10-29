@@ -283,7 +283,7 @@ class Game {
    */
   saveGame() {
     try {
-      const charArr = arena.players;
+      const charArr = global.arena.players;
       _.forEach(this.info.players, (p) => {
         charArr[p].exp += this.players[p].stats.collect.exp;
         charArr[p].gold += this.players[p].stats.collect.gold;
