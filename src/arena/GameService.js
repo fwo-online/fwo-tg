@@ -284,7 +284,7 @@ class Game {
   saveGame() {
     try {
       const charArr = arena.players;
-      this.info.players.forEach((p) => {
+      _.forEach(this.info.players, (p) => {
         charArr[p].exp += this.players[p].stats.collect.exp;
         charArr[p].gold += this.players[p].stats.collect.gold;
         charArr[p].saveToDb();
