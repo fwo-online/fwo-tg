@@ -45,6 +45,7 @@ module.exports = {
    */
   take(gameObj) {
     try {
+      // @todo конструктор не успевает создать обьект что приводит к гонке
       const watcher = new WatchConstructor(gameObj);
       global.arena.games[watcher.gameId] = gameObj;
       global.arena.wch[watcher.gameId] = watcher;
