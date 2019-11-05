@@ -1,6 +1,5 @@
 /**
  * MongoHelper
- *
  */
 const CharModel = require('../models/character');
 const GameModel = require('../models/games');
@@ -15,7 +14,7 @@ module.exports = {
     // eslint-disable-next-line consistent-return
     async find(tgId) {
       try {
-        const x = await CharModel.findOne({ tgId, deleted: false });
+        const x = await CharModel.findOne({ ...tgId, deleted: false });
         // eslint-disable-next-line no-underscore-dangle
         x._doc.id = x._id;
         // eslint-disable-next-line no-underscore-dangle
