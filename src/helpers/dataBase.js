@@ -13,9 +13,9 @@ function dbErr(e) {
 module.exports = {
   char: {
     // eslint-disable-next-line consistent-return
-    async find(obj) {
+    async find(tgId) {
       try {
-        const x = await CharModel.findOne({ ...obj, deleted: false });
+        const x = await CharModel.findOne({ tgId, deleted: false });
         // eslint-disable-next-line no-underscore-dangle
         x._doc.id = x._id;
         // eslint-disable-next-line no-underscore-dangle
