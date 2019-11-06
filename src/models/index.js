@@ -1,4 +1,10 @@
 const mongoose = require('mongoose');
+// eslint-disable-next-line no-unused-vars
+const CharModel = require('../models/character');
+// eslint-disable-next-line no-unused-vars
+const GameModel = require('../models/games');
+// eslint-disable-next-line no-unused-vars
+const InventoryModel = require('../models/inventory');
 
 mongoose.connect(
   'mongodb://duser:IeK7ijooh6aizie7@ds011903.mlab.com:11903/fwo',

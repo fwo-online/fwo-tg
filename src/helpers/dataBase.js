@@ -1,8 +1,9 @@
 /**
  * MongoHelper
- *
  */
 const CharModel = require('../models/character');
+const GameModel = require('../models/games');
+const InventoryModel = require('../models/inventory');
 
 function dbErr(e) {
   throw new Error('Fail in dbHelper:', e);
@@ -13,7 +14,11 @@ module.exports = {
     // eslint-disable-next-line consistent-return
     async find(tgId) {
       try {
-        return await CharModel.findOne({ tgId, deleted: false });
+        const x = await CharModel.findOne({ ...tgId, deleted: false });
+        // eslint-disable-next-line no-underscore-dangle
+        x._doc.id = x._id;
+        // eslint-disable-next-line no-underscore-dangle
+        return x._doc;
       } catch (e) {
         dbErr(e);
       }
@@ -39,7 +44,8 @@ module.exports = {
       try {
         const x = new CharModel(charObj);
         x.save();
-        return x;
+        // eslint-disable-next-line no-underscore-dangle
+        return x._doc;
       } catch (e) {
         dbErr(e);
       }
@@ -59,6 +65,29 @@ module.exports = {
     async update(tgId, params) {
       try {
         return await CharModel.findOneAndUpdate({ tgId, deleted: false }, params);
+      } catch (e) {
+        dbErr(e);
+      }
+    },
+  },
+  game: {
+    // eslint-disable-next-line consistent-return
+    async create(gameObject) {
+      try {
+        const x = new GameModel(gameObject);
+        x.save();
+        // eslint-disable-next-line no-underscore-dangle
+        return x._doc;
+      } catch (e) {
+        dbErr(e);
+      }
+    },
+  },
+  inventory: {
+    // eslint-disable-next-line consistent-return
+    async getAllHarks(charId) {
+      try {
+        return await InventoryModel.fullHarks(charId);
       } catch (e) {
         dbErr(e);
       }

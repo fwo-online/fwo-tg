@@ -1,8 +1,7 @@
-name: FWO Test
-
+name: test bot deploy
 on:
   push:
-    branches: 
+    branches:
       - dev-*
 
 jobs:
@@ -26,7 +25,11 @@ jobs:
         npm test
       env:
         CI: true
-    - name: deploy test bot
-      uses: contention/action-rsync-deploy@master
+    - name: Deploy to testbot
+      uses: catHD/action-rsync@master
       env:
-        args: '-avzr --delete --exclude .htaccess --exclude /uploads/ user@server.com:/srv/myapp/public/htdocs/'  
+        DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+        RSYNC_ARG: "-avzr --delete"
+        EXCLUDE_ARG: ""
+        HOST_ARG: "codeship@159.89.227.216:~/fwo-test/"
+
