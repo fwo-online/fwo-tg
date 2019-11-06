@@ -3,7 +3,7 @@ const Markup = require('telegraf/markup');
  * Помощник для отправки сообщений в общий чат
  */
 
-const chatId = '358539547';
+const chatId = '-331233606';
 
 module.exports = {
   bot: null,
