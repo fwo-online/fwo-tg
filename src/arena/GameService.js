@@ -84,6 +84,9 @@ class Game {
 
     this.startGame();
     this.initHandlers();
+    this.info.players.forEach((player) => {
+      global.arena.players[player].mm = this.info.id;
+    });
   }
 
   /**
@@ -255,13 +258,11 @@ class Game {
           break;
         }
         case 'orders': {
-          channelHelper.sendOrderButtons();
-          this.sendToAll(data);
+          channelHelper.sendOrderButtons(this.playerArr);
           break;
         }
         case 'endOrders': {
-          channelHelper.endOrderButtons();
-          this.sendToAll(data);
+          channelHelper.endOrderButtons(this.playerArr);
           break;
         }
         default: {

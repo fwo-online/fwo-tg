@@ -21,6 +21,7 @@ class Player {
   constructor(params) {
     this.nick = params.nickname;
     this.id = params.id;
+    this.tgId = params.tgId;
     this.prof = params.prof;
     this.stats = new StatsService(params.def);
     this.flags = new FlagsConstructors();
@@ -80,7 +81,7 @@ class Player {
   notify(data) {
     const pack = { event: 'startGame', payload: data };
     // eslint-disable-next-line no-undef
-    channelHelper.broadcast('GameEvent', pack);
+    channelHelper.broadcast(`GameEvent${JSON.stringify(pack)}`, this.tgId);
   }
 }
 
