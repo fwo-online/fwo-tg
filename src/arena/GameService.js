@@ -3,7 +3,7 @@ const arena = require('./index');
 const BattleLog = require('./BattleLog');
 const engineService = require('./engineService');
 const db = require('../helpers/dataBase');
-const chanHelper = require('../helpers/channelHelper');
+const channelHelper = require('../helpers/channelHelper');
 /**
  * GameService
  *
@@ -112,7 +112,7 @@ class Game {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: SBL', 'gameId:', this.info.id, 'data:', data);
     // eslint-disable-next-line no-undef
-    chanHelper.broadcast(`gameId: ${this.info.id} : BattleLog:${JSON.stringify(data)}`);
+    channelHelper.broadcast(`gameId: ${this.info.id} : BattleLog:${JSON.stringify(data)}`);
   }
 
   /**
@@ -122,7 +122,7 @@ class Game {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: sendToAll', this.info.id);
     // eslint-disable-next-line no-undef
-    chanHelper.broadcast(`gameId: ${this.info.id} GameEvent:${JSON.stringify(data)}`);
+    channelHelper.broadcast(`gameId: ${this.info.id} GameEvent:${JSON.stringify(data)}`);
   }
 
   /**
@@ -255,10 +255,12 @@ class Game {
           break;
         }
         case 'orders': {
+          channelHelper.sendOrderButtons();
           this.sendToAll(data);
           break;
         }
         case 'endOrders': {
+          channelHelper.endOrderButtons();
           this.sendToAll(data);
           break;
         }

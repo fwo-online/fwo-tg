@@ -21,7 +21,7 @@ battleScene.enter(({ reply }) => {
 battleScene.action('search', async ({ reply, session }) => {
   // eslint-disable-next-line no-underscore-dangle
   await Char.loading(session.character._id);
-
+  
   // eslint-disable-next-line no-console
   console.log(JSON.stringify(global.arena));
   // eslint-disable-next-line no-underscore-dangle
@@ -29,6 +29,22 @@ battleScene.action('search', async ({ reply, session }) => {
   arena.mm.push(searchObject);
   await reply('Мессага в личный чат');
   await channelHelper.broadcast('Мессага в общий чат');
+});
+
+battleScene.action('attack', async ({ reply }) => {
+  reply('Заказ атаки');
+});
+
+battleScene.action('handsHeal', async ({ reply }) => {
+  reply('Заказ лечения');
+});
+
+battleScene.action('protect', async ({ reply }) => {
+  reply('Заказ защиты');
+});
+
+battleScene.action('regen', async ({ reply }) => {
+  reply('Заказ регена');
 });
 
 module.exports = battleScene;
