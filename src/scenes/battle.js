@@ -47,6 +47,7 @@ battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) =>
 
 battleScene.action(/\w*_\w*_\w*/, async ({ editMessageText, session, match }) => {
   const [action, target, nick] = match.input.split('_');
+  // eslint-disable-next-line no-underscore-dangle
   const gameId = global.arena.players[session.character._id].mm;
   const Game = global.arena.games[gameId];
   // eslint-disable-next-line no-underscore-dangle
