@@ -25,8 +25,8 @@ battleScene.action('search', async ({ reply, session }) => {
 
   // eslint-disable-next-line no-console
   console.log(JSON.stringify(global.arena));
-  const id = session.character._id;
   // eslint-disable-next-line no-underscore-dangle
+  const id = session.character._id;
   const searchObject = { charId: id, psr: 1000, startTime: Date.now() };
   arena.mm.push(searchObject);
   await reply('Идёт поиск игры...');
