@@ -68,9 +68,8 @@ class Game {
    */
   preLoading() {
     this.info.status = 'preload';
-    // const self = this;
     // eslint-disable-next-line no-console
-    this.sendToAll({
+    console.log({
       event: 'preload',
       payload: {
         gameId: this.info.id,
@@ -96,12 +95,7 @@ class Game {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: startGame', 'gameId:', this.info.id);
     // рассылаем статусы хп команды и врагов
-    this.sendToAll({
-      event: 'preload',
-      payload: {
-        gameId: this.info.id,
-      },
-    });
+    this.sendToAll('Игра начинается');
     this.forAllAlivePlayers(this.sendStatus);
     this.round.nextState();
   }
@@ -115,7 +109,7 @@ class Game {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: SBL', 'gameId:', this.info.id, 'data:', data);
     // eslint-disable-next-line no-undef
-    channelHelper.broadcast(`gameId: ${this.info.id} : BattleLog:${JSON.stringify(data)}`);
+    channelHelper.broadcast(data);
   }
 
   /**
@@ -125,7 +119,7 @@ class Game {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: sendToAll', this.info.id);
     // eslint-disable-next-line no-undef
-    channelHelper.broadcast(`gameId: ${this.info.id} GameEvent:${JSON.stringify(data)}`);
+    channelHelper.broadcast(data);
   }
 
   /**
@@ -183,12 +177,7 @@ class Game {
     // @todo нужно выкидывать из комнаты чата
     this.saveGame();
     setTimeout(() => {
-      this.sendToAll({
-        event: 'endGame',
-        payload: {
-          gameId: this.info.id,
-        },
-      });
+      this.sendToAll('Конец игры, распределяем ресурсы...');
     }, 15000);
   }
 
@@ -235,7 +224,7 @@ class Game {
         case 'startRound': {
           // eslint-disable-next-line no-console
           console.log('Handler: ', data);
-          this.sendToAll(data);
+          this.sendToAll(`⚡️ Раунд ${data.round} начинается ⚡`);
           this.resetProc();
           this.orders.reset();
           this.forAllAlivePlayers(this.sendStatus);
@@ -253,11 +242,12 @@ class Game {
           break;
         }
         case 'engine': {
-          this.sendToAll(data);
+          // this.sendToAll(data);
           await engineService(this);
           break;
         }
         case 'orders': {
+          channelHelper.broadcast('Пришло время делать заказы!');
           channelHelper.sendOrderButtons(this.playerArr);
           break;
         }
@@ -306,11 +296,11 @@ class Game {
     const winners = Game.aliveArr(this.info.id);
     // eslint-disable-next-line no-underscore-dangle
     _.forEach(winners, (p) => p.stats.addGold(5));
-    let res = `Statistic: Game ${this.info.id} `;
+    let res = `Статистика: игра ${this.info.id} `;
     // eslint-disable-next-line no-underscore-dangle
     _.forEach(this.players, (p) => {
       const s = p.stats.collect;
-      res += `Player ${p.nick}: exp[${s.exp}] gold[${s.gold}] `;
+      res += `Игрок ${p.nick} получает ${s.exp} опыта и ${s.gold} золота`;
     });
     return res;
   }
@@ -368,19 +358,20 @@ class Game {
    */
   // eslint-disable-next-line class-methods-use-this
   sendStatus(player, game) {
-    let team = game.playerArr.getMyTeam(player.clan);
-    if (!Object.keys(team).length) {
+    const team = game.playerArr.getMyTeam(player.clan);
+    if (_.isEmpty(team)) {
       team.push(player);
     }
-    const enemies = game.playerArr.arr.filter((p) => !team.includes(p));
-    team = team.map((p) => {
-      if (player.id === p.id) {
-        return player;
-      }
-      return p.getFullStatus();
+    const enemies = _.difference(game.playerArr.arr, team);
+    const allies = team.map((p) => {
+      const ally = p.getFullStatus();
+      return `\n\n👤 ${ally.nick} (${ally.prof})\n❤️ Здоровье: ${ally.hp}\n💙 Мана: ${ally.mp}`;
     });
-    enemies.map((p) => p.getStatus());
-    player.notify({ enemies, team });
+    enemies.map((p) => {
+      const enemy = p.getStatus();
+      return `\n\n👤 ${enemy.nick} (${p.prof})\n❤️ Здоровье: ${enemy.hp}`;
+    });
+    player.notify({ enemies, allies });
   }
 }
 module.exports = Game;

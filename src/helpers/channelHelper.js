@@ -23,7 +23,7 @@ module.exports = {
     playersArr.arr.forEach(async (player) => {
       const message = await this.bot.telegram.sendMessage(
         player.tgId,
-        'ещё кнопки',
+        'Выбери действие',
         Markup.inlineKeyboard([
           Markup.callbackButton('Атака', 'action_attack'),
           Markup.callbackButton('Лечение', 'action_handsHeal'),

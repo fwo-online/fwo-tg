@@ -80,8 +80,10 @@ class Player {
   // eslint-disable-next-line class-methods-use-this
   notify(data) {
     const pack = { event: 'startGame', payload: data };
+    // eslint-disable-next-line no-console
+    console.log(pack);
     // eslint-disable-next-line no-undef
-    channelHelper.broadcast(`GameEvent${JSON.stringify(pack)}`, this.tgId);
+    channelHelper.broadcast(`Союзники:${data.allies}\n\nВраги:${data.enemies}`);
   }
 }
 

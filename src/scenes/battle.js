@@ -25,11 +25,12 @@ battleScene.action('search', async ({ reply, session }) => {
 
   // eslint-disable-next-line no-console
   console.log(JSON.stringify(global.arena));
+  const id = session.character._id;
   // eslint-disable-next-line no-underscore-dangle
-  const searchObject = { charId: session.character._id, psr: 1000, startTime: Date.now() };
+  const searchObject = { charId: id, psr: 1000, startTime: Date.now() };
   arena.mm.push(searchObject);
-  await reply('Мессага в личный чат');
-  await channelHelper.broadcast('Мессага в общий чат');
+  await reply('Идёт поиск игры...');
+  await channelHelper.broadcast(`Игрок ${global.arena.players[id].nickname} начал поиск игры`);
 });
 
 battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) => {
@@ -38,7 +39,7 @@ battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) =>
   const [, action] = match.input.split('_');
   const aliveArr = GameService.aliveArr(gameId).map(({ nick, id }) => Markup.callbackButton(nick, `${action}_${id}_${nick}`));
   editMessageText(
-    `Выбери цель для ${match} 100%`,
+    `Выбери цель для ${match}`,
     Markup.inlineKeyboard([
       ...aliveArr,
     ]).resize().extra(),
