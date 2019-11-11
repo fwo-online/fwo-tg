@@ -90,7 +90,7 @@ profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
 profile.action('confirm', async ({ session, update, editMessageText }) => {
   await loginHelper.saveHarks(update.callback_query.from.id, session.character);
   // eslint-disable-next-line no-param-reassign
-  allHarks.forEach((hark) => delete session.character[`${hark}Temp`]);
+  allHarks.forEach((hark) => delete session.character.harks[`${hark}Temp`]);
   editMessageText(
     `Твой профиль, ${session.character.nickname}
 Статистика:
