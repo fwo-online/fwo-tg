@@ -277,10 +277,10 @@ class Game {
   saveGame() {
     try {
       const charArr = global.arena.players;
-      _.forEach(this.info.players, (p) => {
+      _.forEach(this.info.players, async (p) => {
         charArr[p].exp += this.players[p].stats.collect.exp;
         charArr[p].gold += this.players[p].stats.collect.gold;
-        charArr[p].saveToDb();
+        await charArr[p].saveToDb();
       });
     } catch (e) {
       // eslint-disable-next-line no-console

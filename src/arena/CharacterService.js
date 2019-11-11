@@ -191,9 +191,8 @@ class Char {
     try {
       // eslint-disable-next-line no-console
       console.log('Saving char :: id', this.id);
-      const self = { ...this };
-      delete self.inventory;
-      await db.char.update({ tgId: this.id }, self);
+      const {gold, exp} = this;
+      await db.char.update(this.tgId, {gold, exp});
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error('Fail on CharSave:', e);
