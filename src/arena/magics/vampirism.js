@@ -23,7 +23,7 @@ const vampirism = new DmgMagic({
  * @param {Object} initiator Обьект кастера
  * @param {Object} target Обьект цели
  */
-vampirism.run = function magicArrow(initiator, target) {
+vampirism.run = function run(initiator, target) {
   target.stats.mode('down', 'hp', this.effectVal(initiator));
   initiator.stats.mode('up', 'hp', this.status.hit);
 };

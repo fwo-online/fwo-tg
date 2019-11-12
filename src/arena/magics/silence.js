@@ -24,7 +24,7 @@ const silence = new CommonMagic({
  * @param {Object} game Обьект игры (не обязателен)
  */
 // eslint-disable-next-line no-unused-vars
-silence.run = (initiator, target, game) => {
+silence.run = function run(initiator, target, game) {
   const s = target.flags.isSilenced || [];
   s.push({
     initiator: initiator.name,

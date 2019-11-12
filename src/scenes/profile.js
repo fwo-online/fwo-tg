@@ -3,6 +3,7 @@ const Stage = require('telegraf/stage');
 const Markup = require('telegraf/markup');
 const loginHelper = require('../helpers/loginHelper');
 const MagicService = require('../arena/MagicService');
+const CharacterService = require('../arena/CharacterService');
 
 const { leave } = Stage;
 const profile = new Scene('profile');
@@ -120,16 +121,46 @@ profile.action('magics', ({ editMessageText, session }) => {
   const keys = Object.keys(session.character.magics);
   if (keys) {
     keys.forEach((key) => {
-      magicButtons.push(Markup.callbackButton(key, `about_${key}`));
+      magicButtons.push(Markup.callbackButton(`${key}: ${session.character.magics[key]}`, `about_${key}`));
     });
   }
   editMessageText(
-    'Известные магии. Нажми на магию, чтобы узнать больше',
+    `Известные магии. Нажми на магию, чтобы узнать больше. У тебя ${session.character.bonus} бонусов`,
     Markup.inlineKeyboard([
       magicButtons,
-      [Markup.callbackButton('Назад', 'back')],
+      [Markup.callbackButton('Учить', 'learn'), Markup.callbackButton('Назад', 'back')],
     ]).resize().extra(),
   );
+});
+
+profile.action('learn', async ({ editMessageText, session }) => {
+  try {
+    // eslint-disable-next-line no-underscore-dangle
+    await CharacterService.loading(session.character._id);
+    // eslint-disable-next-line no-underscore-dangle, no-param-reassign
+    session.character = { ...session.character, ...MagicService.learn(session.character._id, 1) };
+    const magicButtons = [];
+    const keys = Object.keys(session.character.magics);
+    if (keys) {
+      keys.forEach((key) => {
+        magicButtons.push(Markup.callbackButton(`${key}: ${session.character.magics[key]}`, `about_${key}`));
+      });
+    }
+    editMessageText(
+      `Теперь ты знаешь на одну магию больше. У тебя ${session.character.bonus} бонусов`,
+      Markup.inlineKeyboard([
+        magicButtons,
+        [Markup.callbackButton('Учить', 'learn'), Markup.callbackButton('Назад', 'back')],
+      ]).resize().extra(),
+    );
+  } catch (e) {
+    editMessageText(
+      `${e}`,
+      Markup.inlineKeyboard([
+        Markup.callbackButton('Назад', 'magics'),
+      ]).resize().extra(),
+    );
+  }
 });
 
 profile.action(/about(?=_)/, ({ editMessageText, match }) => {

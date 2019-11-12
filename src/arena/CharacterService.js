@@ -137,7 +137,7 @@ class Char {
     // изменяем прототип
     // eslint-disable-next-line no-proto
     p.__proto__ = Object.create(this.prototype);
-    if (!global.arena.players) arena.players = {};
+    if (!global.arena.players) global.arena.players = {};
     global.arena.players[charId] = p;
     // eslint-disable-next-line no-console
     console.log(JSON.stringify(global.arena.players));
@@ -162,7 +162,7 @@ class Char {
    * @param {Number} lvl уровень проученной магии
    */
   learnMagic(magicId, lvl) {
-    this.mag[magicId] = lvl;
+    this.magics[magicId] = lvl;
     // опасный тест
     this.saveToDb();
   }
@@ -191,8 +191,12 @@ class Char {
     try {
       // eslint-disable-next-line no-console
       console.log('Saving char :: id', this.id);
-      const { gold, exp } = this;
-      await db.char.update(this.tgId, { gold, exp });
+      const {
+        gold, exp, magics, bonus,
+      } = this;
+      await db.char.update(this.tgId, {
+        gold, exp, magics, bonus,
+      });
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error('Fail on CharSave:', e);

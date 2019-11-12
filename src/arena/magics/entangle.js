@@ -22,7 +22,7 @@ const entangle = new CommonMagic({
  * @param {Object} initiator Обьект кастера
  * @param {Object} target Обьект цели
  */
-entangle.run = (initiator, target) => {
+entangle.run = function run(initiator, target) {
   target.stats.mode('down', 'pdef', this.effectVal(initiator));
 };
 module.exports = entangle;

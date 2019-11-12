@@ -23,7 +23,7 @@ const eclipse = new CommonMagic({
  * @param {Object} target Обьект цели
  * @param {Object} game Обьект игры (не обязателен)
  */
-eclipse.run = (initiator, target, game) => {
+eclipse.run = function run(initiator, target, game) {
   // выставляем глобальный флаг затмения
   // eslint-disable-next-line no-param-reassign
   game.round.flags.isEclipsed = true;

@@ -24,7 +24,7 @@ const paralysis = new CommonMagic({
  * @param {Object} game Обьект игры (не обязателен)
  */
 // eslint-disable-next-line no-unused-vars
-paralysis.run = (initiator, target, game) => {
+paralysis.run = function run(initiator, target, game) {
   // тут возможно нужен идентификатор кастера и рауд ?
   // eslint-disable-next-line no-param-reassign
   target.flags.isParalysed = true;
