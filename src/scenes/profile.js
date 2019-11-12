@@ -2,6 +2,7 @@ const Scene = require('telegraf/scenes/base');
 const Stage = require('telegraf/stage');
 const Markup = require('telegraf/markup');
 const loginHelper = require('../helpers/loginHelper');
+const MagicService = require('../arena/MagicService');
 
 const { leave } = Stage;
 const profile = new Scene('profile');
@@ -34,6 +35,9 @@ const getInlineResetButton = () => [
   Markup.callbackButton('Сбросить', 'reset'),
 ];
 
+const getInlineBackButton = () => [
+  Markup.callbackButton('Назад', 'back'),
+];
 
 const getInlineKeyboard = (character) => {
   const inlineKeyboardArr = [];
@@ -41,21 +45,25 @@ const getInlineKeyboard = (character) => {
   allHarks.forEach((hark) => inlineKeyboardArr.push(getInlineButton(character, hark)));
   inlineKeyboardArr.push(getInlineResetButton());
   inlineKeyboardArr.push(getInlineConfirmButton());
+  inlineKeyboardArr.push(getInlineBackButton());
 
   return inlineKeyboardArr;
 };
 
-profile.enter(({ reply, session }) => {
-  reply(
-    `Твой профиль, ${session.character.nickname}
+const getMainMenu = (session) => [
+  `Твой профиль, ${session.character.nickname}
 Статистика:
     Игр: ${session.character.statistics.games}
     Убийств: ${session.character.statistics.kills}
     `,
-    Markup.inlineKeyboard([
-      Markup.callbackButton('Характеристики', 'harks'),
-    ]).resize().extra(),
-  );
+  Markup.inlineKeyboard([
+    Markup.callbackButton('Характеристики', 'harks'),
+    Markup.callbackButton('Магии', 'magics'),
+  ]).resize().extra(),
+];
+
+profile.enter(({ reply, session }) => {
+  reply(...getMainMenu(session));
 });
 
 profile.action('harks', ({ editMessageText, session }) => {
@@ -91,16 +99,7 @@ profile.action('confirm', async ({ session, update, editMessageText }) => {
   await loginHelper.saveHarks(update.callback_query.from.id, session.character);
   // eslint-disable-next-line no-param-reassign
   allHarks.forEach((hark) => delete session.character.harks[`${hark}Temp`]);
-  editMessageText(
-    `Твой профиль, ${session.character.nickname}
-Статистика:
-    Игр: ${session.character.statistics.games}
-    Убийств: ${session.character.statistics.kills}
-    `,
-    Markup.inlineKeyboard([
-      Markup.callbackButton('Характеристики', 'harks'),
-    ]).resize().extra(),
-  );
+  editMessageText(...getMainMenu(session));
 });
 
 profile.action('reset', async ({ session, editMessageText, update }) => {
@@ -114,6 +113,38 @@ profile.action('reset', async ({ session, editMessageText, update }) => {
       ...getInlineKeyboard(session.character),
     ]).resize().extra(),
   );
+});
+
+profile.action('magics', ({ editMessageText, session }) => {
+  const magicButtons = [];
+  const keys = Object.keys(session.character.magics);
+  if (keys) {
+    keys.forEach((key) => {
+      magicButtons.push(Markup.callbackButton(key, `about_${key}`));
+    });
+  }
+  editMessageText(
+    'Известные магии. Нажми на магию, чтобы узнать больше',
+    Markup.inlineKeyboard([
+      magicButtons,
+      [Markup.callbackButton('Назад', 'back')],
+    ]).resize().extra(),
+  );
+});
+
+profile.action(/about(?=_)/, ({ editMessageText, match }) => {
+  const [, name] = match.input.split('_');
+  const magic = MagicService.show(name);
+  editMessageText(
+    `${magic.name}: ${magic.desc}`,
+    Markup.inlineKeyboard([
+      Markup.callbackButton('Назад', 'magics'),
+    ]).resize().extra(),
+  );
+});
+
+profile.action('back', ({ editMessageText, session }) => {
+  editMessageText(...getMainMenu(session));
 });
 
 profile.command('exit', ({ scene }) => {
