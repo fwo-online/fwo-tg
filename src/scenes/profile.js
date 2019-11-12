@@ -121,13 +121,13 @@ profile.action('magics', ({ editMessageText, session }) => {
   const keys = Object.keys(session.character.magics);
   if (keys) {
     keys.forEach((key) => {
-      magicButtons.push(Markup.callbackButton(`${key}: ${session.character.magics[key]}`, `about_${key}`));
+      magicButtons.push([Markup.callbackButton(`${key}: ${session.character.magics[key]}`, `about_${key}`)]);
     });
   }
   editMessageText(
     `Известные магии. Нажми на магию, чтобы узнать больше. У тебя ${session.character.bonus} бонусов`,
     Markup.inlineKeyboard([
-      magicButtons,
+      ...magicButtons,
       [Markup.callbackButton('Учить', 'learn'), Markup.callbackButton('Назад', 'back')],
     ]).resize().extra(),
   );
