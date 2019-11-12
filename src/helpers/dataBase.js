@@ -37,7 +37,7 @@ module.exports = {
     // eslint-disable-next-line consistent-return
     async remove(tgId) {
       try {
-        return await CharModel.findOneAndUpdate({ tgId }, { deleted: true });
+        return await CharModel.findOneAndUpdate({ tgId, deleted: false }, { deleted: true });
       } catch (e) {
         dbErr(e);
       }
