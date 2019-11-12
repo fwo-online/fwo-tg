@@ -24,7 +24,7 @@ const strongHeal = new CommonMagic({
  * @param {Object} initiator Обьект кастера
  * @param {Object} target Обьект цели
  */
-strongHeal.run = function mediumHeal(target) {
+strongHeal.run = function run(target) {
   const maxHP = target.stats.val('maxHp'); // показатель максимального HP
   const realHP = target.stats.val('hp'); // показатель текущего HP
   this.status.effect = this.effectVal(); // показатель хила

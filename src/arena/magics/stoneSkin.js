@@ -22,7 +22,7 @@ const stoneSkin = new CommonMagic({
  * @param {Object} initiator Обьект кастера
  * @param {Object} target Обьект цели
  */
-stoneSkin.run = (initiator, target) => {
+stoneSkin.run = function run(initiator, target) {
   target.stats.mode('up', 'pdef', this.effectVal(initiator));
 };
 module.exports = stoneSkin;

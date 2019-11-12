@@ -1,6 +1,5 @@
 const pullAllWith = require('lodash.pullallwith');
 const isEqual = require('lodash.isequal');
-const CharacterService = require('./CharacterService');
 const MiscService = require('./MagicService');
 const GameService = require('./GameService');
 
@@ -63,7 +62,9 @@ class Orders {
       action = actionParam.name;
     }
     // формируем список заказа для ника
-    const Game = CharacterService.getGameFromCharId(charId);
+
+    const gameId = global.arena.players[charId].mm;
+    const Game = global.arena.games[gameId];
     // @todo Нужны константы для i18n
     if (!Game) {
       throw Error('Вы не в игре');

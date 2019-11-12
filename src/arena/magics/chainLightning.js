@@ -25,7 +25,7 @@ const chainLightning = new DmgMagic({
  * @param {Object} initiator Обьект кастера
  * @param {Object} target Обьект цели
  */
-chainLightning.run = (initiator, target) => {
+chainLightning.run = function run(initiator, target) {
   target.stats.mode('down', 'hp', this.effectVal(initiator));
 };
 module.exports = chainLightning;

@@ -24,7 +24,7 @@ const fireRain = new DmgMagic({
  * @param {Object} target Обьект цели
  */
 // eslint-disable-next-line no-unused-vars
-fireRain.run = (initiator, target) => {
+fireRain.run = function run(initiator, target) {
   // Наносит урон всем участникам команды цели
 };
 module.exports = fireRain;

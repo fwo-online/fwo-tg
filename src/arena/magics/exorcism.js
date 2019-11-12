@@ -24,7 +24,7 @@ const exorcism = new CommonMagic({
  * @param {Object} game Обьект игры (не обязателен)
  */
 // eslint-disable-next-line no-unused-vars
-exorcism.run = (initiator, target, game) => {
+exorcism.run = function run(initiator, target, game) {
   // Очищаем все "bad" магии в которых target является target данной магии
 };
 module.exports = exorcism;

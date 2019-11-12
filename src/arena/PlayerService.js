@@ -21,15 +21,16 @@ class Player {
   constructor(params) {
     this.nick = params.nickname;
     this.id = params.id;
+    this.tgId = params.tgId;
     this.prof = params.prof;
     this.stats = new StatsService(params.def);
     this.flags = new FlagsConstructors();
     // @todo закладка для вычисляемых статов
-    this.modifiers = params.modifiers || { magics: {}, castChance: 0 }; // Обьект
+    this.modifiers = { magics: {}, castChance: 0, ...params.modifiers }; // Обьект
     // модификаторов
     this.resists = params.resists || {}; // Обьект резистов
     this.skills = params.skills || {}; // Обькт доступных скилов
-    this.magics = params.mag || {}; // обьект изученых магий
+    this.magics = params.magics || {}; // обьект изученых магий
     this.statical = params.statical || {}; // статически реген
     this.alive = true;
     return this;
@@ -79,8 +80,10 @@ class Player {
   // eslint-disable-next-line class-methods-use-this
   notify(data) {
     const pack = { event: 'startGame', payload: data };
+    // eslint-disable-next-line no-console
+    console.log(pack);
     // eslint-disable-next-line no-undef
-    channelHelper.broadcast('GameEvent', pack);
+    channelHelper.broadcast(`Союзники:${data.allies}\n\nВраги:${data.enemies}`);
   }
 }
 

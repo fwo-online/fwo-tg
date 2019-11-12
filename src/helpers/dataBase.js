@@ -12,13 +12,16 @@ function dbErr(e) {
 module.exports = {
   char: {
     // eslint-disable-next-line consistent-return
-    async find(tgId) {
+    async find(query) {
       try {
-        const x = await CharModel.findOne({ ...tgId, deleted: false });
-        // eslint-disable-next-line no-underscore-dangle
-        x._doc.id = x._id;
-        // eslint-disable-next-line no-underscore-dangle
-        return x._doc;
+        const x = await CharModel.findOne({ ...query, deleted: false });
+        if (x) {
+          // eslint-disable-next-line no-underscore-dangle
+          x._doc.id = x._id;
+          // eslint-disable-next-line no-underscore-dangle
+          return x._doc;
+        }
+        return x;
       } catch (e) {
         dbErr(e);
       }
@@ -34,7 +37,7 @@ module.exports = {
     // eslint-disable-next-line consistent-return
     async remove(tgId) {
       try {
-        return await CharModel.findOneAndRemove({ tgId });
+        return await CharModel.findOneAndUpdate({ tgId, deleted: false }, { deleted: true });
       } catch (e) {
         dbErr(e);
       }

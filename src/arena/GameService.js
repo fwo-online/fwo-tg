@@ -3,7 +3,7 @@ const arena = require('./index');
 const BattleLog = require('./BattleLog');
 const engineService = require('./engineService');
 const db = require('../helpers/dataBase');
-const chanHelper = require('../helpers/channelHelper');
+const channelHelper = require('../helpers/channelHelper');
 /**
  * GameService
  *
@@ -68,9 +68,8 @@ class Game {
    */
   preLoading() {
     this.info.status = 'preload';
-    // const self = this;
     // eslint-disable-next-line no-console
-    this.sendToAll({
+    console.log({
       event: 'preload',
       payload: {
         gameId: this.info.id,
@@ -84,6 +83,9 @@ class Game {
 
     this.startGame();
     this.initHandlers();
+    this.info.players.forEach((player) => {
+      global.arena.players[player].mm = this.info.id;
+    });
   }
 
   /**
@@ -93,12 +95,7 @@ class Game {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: startGame', 'gameId:', this.info.id);
     // рассылаем статусы хп команды и врагов
-    this.sendToAll({
-      event: 'preload',
-      payload: {
-        gameId: this.info.id,
-      },
-    });
+    this.sendToAll('Игра начинается');
     this.forAllAlivePlayers(this.sendStatus);
     this.round.nextState();
   }
@@ -112,7 +109,7 @@ class Game {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: SBL', 'gameId:', this.info.id, 'data:', data);
     // eslint-disable-next-line no-undef
-    chanHelper.broadcast(`gameId: ${this.info.id} : BattleLog:${JSON.stringify(data)}`);
+    channelHelper.broadcast(data);
   }
 
   /**
@@ -122,7 +119,7 @@ class Game {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: sendToAll', this.info.id);
     // eslint-disable-next-line no-undef
-    chanHelper.broadcast(`gameId: ${this.info.id} GameEvent:${JSON.stringify(data)}`);
+    channelHelper.broadcast(data);
   }
 
   /**
@@ -180,12 +177,7 @@ class Game {
     // @todo нужно выкидывать из комнаты чата
     this.saveGame();
     setTimeout(() => {
-      this.sendToAll({
-        event: 'endGame',
-        payload: {
-          gameId: this.info.id,
-        },
-      });
+      this.sendToAll('Конец игры, распределяем ресурсы...');
     }, 15000);
   }
 
@@ -232,7 +224,7 @@ class Game {
         case 'startRound': {
           // eslint-disable-next-line no-console
           console.log('Handler: ', data);
-          this.sendToAll(data);
+          this.sendToAll(`⚡️ Раунд ${data.round} начинается ⚡`);
           this.resetProc();
           this.orders.reset();
           this.forAllAlivePlayers(this.sendStatus);
@@ -250,16 +242,17 @@ class Game {
           break;
         }
         case 'engine': {
-          this.sendToAll(data);
+          // this.sendToAll(data);
           await engineService(this);
           break;
         }
         case 'orders': {
-          this.sendToAll(data);
+          channelHelper.broadcast('Пришло время делать заказы!');
+          channelHelper.sendOrderButtons(this.playerArr);
           break;
         }
         case 'endOrders': {
-          this.sendToAll(data);
+          channelHelper.endOrderButtons(this.playerArr);
           break;
         }
         default: {
@@ -284,10 +277,10 @@ class Game {
   saveGame() {
     try {
       const charArr = global.arena.players;
-      _.forEach(this.info.players, (p) => {
+      _.forEach(this.info.players, async (p) => {
         charArr[p].exp += this.players[p].stats.collect.exp;
         charArr[p].gold += this.players[p].stats.collect.gold;
-        charArr[p].saveToDb();
+        await charArr[p].saveToDb();
       });
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -303,11 +296,11 @@ class Game {
     const winners = Game.aliveArr(this.info.id);
     // eslint-disable-next-line no-underscore-dangle
     _.forEach(winners, (p) => p.stats.addGold(5));
-    let res = `Statistic: Game ${this.info.id} `;
+    let res = `Статистика: игра ${this.info.id} `;
     // eslint-disable-next-line no-underscore-dangle
     _.forEach(this.players, (p) => {
       const s = p.stats.collect;
-      res += `Player ${p.nick}: exp[${s.exp}] gold[${s.gold}] `;
+      res += `Игрок ${p.nick} получает ${s.exp} опыта и ${s.gold} золота`;
     });
     return res;
   }
@@ -365,19 +358,20 @@ class Game {
    */
   // eslint-disable-next-line class-methods-use-this
   sendStatus(player, game) {
-    let team = game.playerArr.getMyTeam(player.clan);
-    if (!Object.keys(team).length) {
+    const team = game.playerArr.getMyTeam(player.clan);
+    if (_.isEmpty(team)) {
       team.push(player);
     }
-    const enemies = game.playerArr.arr.filter((p) => !team.includes(p));
-    team = team.map((p) => {
-      if (player.id === p.id) {
-        return player;
-      }
-      return p.getFullStatus();
+    const enemies = _.difference(game.playerArr.arr, team);
+    const allies = team.map((p) => {
+      const ally = p.getFullStatus();
+      return `\n\n👤 ${ally.nick} (${ally.prof}), ❤️ Здоровье: ${ally.hp}, 💙 Мана: ${ally.mp}`;
     });
-    enemies.map((p) => p.getStatus());
-    player.notify({ enemies, team });
+    enemies.map((p) => {
+      const enemy = p.getStatus();
+      return `\n\n👤 ${enemy.nick} (${p.prof}), ❤️ Здоровье: ${enemy.hp}`;
+    });
+    player.notify({ enemies, allies });
   }
 }
 module.exports = Game;

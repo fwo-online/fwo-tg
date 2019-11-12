@@ -23,7 +23,7 @@ const frostTouch = new LongDmgMagic({
  * @param {Object} initiator Обьект кастера
  * @param {Object} target Обьект цели
  */
-frostTouch.longRun = (initiator, target) => {
+frostTouch.longRun = function longRun(initiator, target) {
   target.stats.mode('down', 'hp', this.effectVal(initiator));
 };
 module.exports = frostTouch;
