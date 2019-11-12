@@ -56,9 +56,9 @@ module.exports = {
           int: 8,
           wis: 10,
           con: 6,
-          mag: {
-            magic_arrow: 1,
-          },
+        };
+        h.magics = {
+          magicArrow: 1,
         };
         break;
 
@@ -70,9 +70,9 @@ module.exports = {
           int: 10,
           wis: 8,
           con: 6,
-          mag: {
-            light_heal: 1,
-          },
+        };
+        h.magics = {
+          lightHeal: 1,
         };
         break;
 

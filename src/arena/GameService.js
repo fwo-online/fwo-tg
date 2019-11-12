@@ -365,11 +365,11 @@ class Game {
     const enemies = _.difference(game.playerArr.arr, team);
     const allies = team.map((p) => {
       const ally = p.getFullStatus();
-      return `\n\n👤 ${ally.nick} (${ally.prof})\n❤️ Здоровье: ${ally.hp}\n💙 Мана: ${ally.mp}`;
+      return `\n\n👤 ${ally.nick} (${ally.prof}), ❤️ Здоровье: ${ally.hp}, 💙 Мана: ${ally.mp}`;
     });
     enemies.map((p) => {
       const enemy = p.getStatus();
-      return `\n\n👤 ${enemy.nick} (${p.prof})\n❤️ Здоровье: ${enemy.hp}`;
+      return `\n\n👤 ${enemy.nick} (${p.prof}), ❤️ Здоровье: ${enemy.hp}`;
     });
     player.notify({ enemies, allies });
   }

@@ -24,6 +24,6 @@ const magicArrow = new DmgMagic({
  * @param {Object} target Обьект цели
  */
 magicArrow.run = (initiator, target) => {
-  target.stats.mode('down', 'hp', this.effectVal(initiator));
+  target.stats.mode('down', 'hp', magicArrow.effectVal(initiator));
 };
 module.exports = magicArrow;

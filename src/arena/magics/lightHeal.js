@@ -27,15 +27,15 @@ const lightHeal = new CommonMagic({
 lightHeal.run = (initiator, target) => {
   const maxHP = target.stats.val('maxHp'); // показатель максимального HP
   const realHP = target.stats.val('hp'); // показатель текущего HP
-  this.status.effect = this.effectVal(); // показатель хила
-  if ((+this.status.effect + realHP) > maxHP) {
-    this.status.effect = +maxHP - realHP;
+  lightHeal.status.effect = lightHeal.effectVal(); // показатель хила
+  if ((+lightHeal.status.effect + realHP) > maxHP) {
+    lightHeal.status.effect = +maxHP - realHP;
   }
-  this.status.effect = floatNumber(this.status.effect);
-  target.stats.mode('up', 'hp', this.status.effect);
+  lightHeal.status.effect = floatNumber(lightHeal.status.effect);
+  target.stats.mode('up', 'hp', lightHeal.status.effect);
 };
 lightHeal.getExp = function getExp(initiator) {
-  this.status.exp = Math.round(this.status.effect * 10 * initiator.proc);
-  initiator.stats.mode('up', 'exp', this.status.exp);
+  lightHeal.status.exp = Math.round(lightHeal.status.effect * 10 * initiator.proc);
+  initiator.stats.mode('up', 'exp', lightHeal.status.exp);
 };
 module.exports = lightHeal;

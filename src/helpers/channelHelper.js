@@ -21,22 +21,29 @@ module.exports = {
    */
   async sendOrderButtons(playersArr) {
     playersArr.arr.forEach(async (player) => {
+      const buttons = [
+        Markup.callbackButton('Атака', 'action_attack'),
+        Markup.callbackButton('Лечение', 'action_handsHeal'),
+        Markup.callbackButton('Защита', 'action_protect'),
+        Markup.callbackButton('Реген', 'action_regen'),
+      ];
+      const keys = Object.keys(player.magics);
+      if (keys.length) {
+        keys.forEach((key) => {
+          buttons.push(Markup.callbackButton(key, `action_${key}`));
+        });
+      }
       const message = await this.bot.telegram.sendMessage(
         player.tgId,
         'Выбери действие',
-        Markup.inlineKeyboard([
-          Markup.callbackButton('Атака', 'action_attack'),
-          Markup.callbackButton('Лечение', 'action_handsHeal'),
-          Markup.callbackButton('Защита', 'action_protect'),
-          Markup.callbackButton('Реген', 'action_regen'),
-        ]).resize().extra(),
+        Markup.inlineKeyboard(buttons).resize().extra(),
       );
       this.messages[message.chat.id] = message.message_id;
     });
   },
 
   /**
-   * Удаление кнопок после заказа   
+   * Удаление кнопок после заказа
    * @param {object} playersArr - объект playerArr
    */
   async endOrderButtons(playersArr) {

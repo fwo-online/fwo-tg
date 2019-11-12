@@ -26,11 +26,11 @@ class Player {
     this.stats = new StatsService(params.def);
     this.flags = new FlagsConstructors();
     // @todo закладка для вычисляемых статов
-    this.modifiers = params.modifiers || { magics: {}, castChance: 0 }; // Обьект
+    this.modifiers = { magics: {}, castChance: 0, ...params.modifiers }; // Обьект
     // модификаторов
     this.resists = params.resists || {}; // Обьект резистов
     this.skills = params.skills || {}; // Обькт доступных скилов
-    this.magics = params.mag || {}; // обьект изученых магий
+    this.magics = params.magics || {}; // обьект изученых магий
     this.statical = params.statical || {}; // статически реген
     this.alive = true;
     return this;
