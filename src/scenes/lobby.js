@@ -9,10 +9,11 @@ lobby.enter(({ reply, session }) => {
   reply(
     `Lobby
 Так так, значит ты "${session.character.nickname}"
-У тебя ${session.character.gold} голды и ${session.character.exp} опыта.
+Статистика: ⬆ ${session.character.lvl} 💰 ${session.character.gold} 📖 ${session.character.exp}
+
 Отсюда можно выйти: /exit 
 Или удалить персонажа: /remove 
-/profile /battle
+Тестовые разделы: /profile /battle
 `,
   );
 });
