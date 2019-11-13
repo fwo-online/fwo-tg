@@ -35,8 +35,17 @@ class Skill {
    * Функция снимает требуемое кол-во en за использования скила
    */
   // eslint-disable-next-line class-methods-use-this
-  getCost() {
-
+  getCost(initiator) {
+    // достаем цену за использование согласно lvl скила у пользователя
+    const skillCost = this.cost[this.lvl - 1];
+    const remainingEnergy = parseFloat(initiator.stats.val(this.costType)
+        - parseFloat(skillCost));
+    if (remainingEnergy >= 0) {
+      // eslint-disable-next-line no-param-reassign
+      initiator.stats[this.costType] = +remainingEnergy;
+    } else {
+      throw this.breaks('NO_ENERGY');
+    }
   }
 
   /**
