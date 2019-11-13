@@ -37,7 +37,7 @@ class Skill {
   // eslint-disable-next-line class-methods-use-this
   getCost(initiator) {
     // достаем цену за использование согласно lvl скила у пользователя
-    const skillCost = this.cost[initiator.skills[this.name]];
+    const skillCost = this.cost[initiator.skills[this.name] - 1];
     const remainingEnergy = parseFloat(initiator.stats.val(this.costType)
         - parseFloat(skillCost));
     if (remainingEnergy >= 0) {
