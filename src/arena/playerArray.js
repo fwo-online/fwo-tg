@@ -31,7 +31,7 @@ class PlayersArr {
    * @return {Array}
    */
   getMyTeam(playerClanId) {
-    return this.arr.filter((el) => el.clan === playerClanId);
+    return _.filter(this.arr, { clan: playerClanId });
   }
 }
 module.exports = PlayersArr;

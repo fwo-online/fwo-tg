@@ -362,12 +362,12 @@ class Game {
     if (_.isEmpty(team)) {
       team.push(player);
     }
-    const enemies = _.difference(game.playerArr.arr, team);
+    let enemies = _.difference(game.playerArr.arr, team);
     const allies = team.map((p) => {
       const ally = p.getFullStatus();
       return `\n\n👤 ${ally.nick} (${ally.prof}), ❤️ Здоровье: ${ally.hp}, 💙 Мана: ${ally.mp}`;
     });
-    enemies.map((p) => {
+    enemies = enemies.map((p) => {
       const enemy = p.getStatus();
       return `\n\n👤 ${enemy.nick} (${p.prof}), ❤️ Здоровье: ${enemy.hp}`;
     });
