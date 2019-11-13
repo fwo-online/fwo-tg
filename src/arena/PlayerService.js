@@ -79,11 +79,7 @@ class Player {
    */
   // eslint-disable-next-line class-methods-use-this
   notify(data) {
-    const pack = { event: 'startGame', payload: data };
-    // eslint-disable-next-line no-console
-    console.log(pack);
-    // eslint-disable-next-line no-undef
-    channelHelper.broadcast(`Союзники:${data.allies}\n\nВраги:${data.enemies}`);
+    channelHelper.broadcast(`Союзники:${data.allies}\n\nВраги:${data.enemies}`, this.tgId);
   }
 }
 
