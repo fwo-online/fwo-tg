@@ -14,7 +14,7 @@ const berserk = new Skill({
   aoeType: 'target',
   chance: [70, 75, 80, 85, 90, 95],
   effect: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6],
-  msg: (nick, exp) => `${nick} использовал [berserk] [📖📖📖 +${exp}]`,
+  msg: (nick, exp) => `${nick} использовал [berserk] [📖 +${exp}]`,
 });
 /**
  * Логика работы скила
