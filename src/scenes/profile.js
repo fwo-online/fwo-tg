@@ -1,7 +1,6 @@
 const Scene = require('telegraf/scenes/base');
 const Stage = require('telegraf/stage');
 const Markup = require('telegraf/markup');
-const loginHelper = require('../helpers/loginHelper');
 const MagicService = require('../arena/MagicService');
 const CharacterService = require('../arena/CharacterService');
 
@@ -17,13 +16,13 @@ const HARK_NAMES = {
   con: 'Телосложение',
 };
 
-const getInlineButton = ({ harks }, hark) => [
+const getInlineButton = (character, hark) => [
   Markup.callbackButton(
-    `${HARK_NAMES[hark]}: ${harks[hark]}`,
+    `${HARK_NAMES[hark]}: ${character.harks[hark]}`,
     'do_nothing',
   ),
   Markup.callbackButton(
-    `+${harks[`${hark}Temp`] ? harks[hark] - harks[`${hark}Temp`] : ''}`,
+    `+ ${character.getIncreaseHarkCount(hark)}`,
     `increase_${hark}`,
   ),
 ];
@@ -54,17 +53,22 @@ const getInlineKeyboard = (character) => {
 const getMainMenu = (session) => [
   `Твой профиль, ${session.character.nickname}
 Статистика:
-    Игр: ${session.character.statistics.games}
-    Убийств: ${session.character.statistics.kills}
+    Игр: ${session.character.games}
+    Убийств: ${session.character.kills}
     `,
   Markup.inlineKeyboard([
     Markup.callbackButton('Характеристики', 'harks'),
     Markup.callbackButton('Магии', 'magics'),
+    Markup.callbackButton('Инвентарь', 'inventory'),
   ]).resize().extra(),
 ];
 
 profile.enter(({ reply, session }) => {
   reply(...getMainMenu(session));
+});
+
+profile.action('inventory', ({ scene }) => {
+  scene.enter('inventory');
 });
 
 profile.action('harks', ({ editMessageText, session }) => {
@@ -79,14 +83,9 @@ profile.action('harks', ({ editMessageText, session }) => {
 });
 
 profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
-  if (session.character.free === 0) return;
   const [, hark] = match.input.split('_');
-  // eslint-disable-next-line no-param-reassign
-  session.character.harks[`${hark}Temp`] = session.character.harks[`${hark}Temp`] || session.character.harks[hark];
-  // eslint-disable-next-line no-param-reassign
-  session.character.harks[hark] += 1;
-  // eslint-disable-next-line no-param-reassign
-  session.character.free -= 1;
+
+  session.character.increaseHark(hark);
 
   editMessageText(
     `Свободных очков ${session.character.free}`,
@@ -96,21 +95,22 @@ profile.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
   );
 });
 
-profile.action('confirm', async ({ session, update, editMessageText }) => {
-  // @todo сюда нужно будет предусмотреть проверки на корректность сохраняемых данных
-  await loginHelper.saveHarks(update.callback_query.from.id, session.character);
-  // eslint-disable-next-line no-param-reassign
-  allHarks.forEach((hark) => delete session.character.harks[`${hark}Temp`]);
-  editMessageText(...getMainMenu(session));
-});
-
-profile.action('reset', async ({ session, editMessageText, update }) => {
-  // eslint-disable-next-line no-param-reassign
-  session.character = await loginHelper.getChar(update.callback_query.from.id);
-  const { free } = session.character;
+profile.action('confirm', async ({ session, editMessageText }) => {
+  await session.character.submitIncreaseHarks();
 
   editMessageText(
-    `Свободных очков ${free}`,
+    `Свободных очков ${session.character.free}`,
+    Markup.inlineKeyboard([
+      ...getInlineKeyboard(session.character),
+    ]).resize().extra(),
+  );
+});
+
+profile.action('reset', async ({ session, editMessageText }) => {
+  session.character.resetHarks();
+
+  editMessageText(
+    `Свободных очков ${session.character.free}`,
     Markup.inlineKeyboard([
       ...getInlineKeyboard(session.character),
     ]).resize().extra(),
@@ -139,7 +139,7 @@ profile.action('learn', async ({ editMessageText, session }) => {
     // eslint-disable-next-line no-underscore-dangle
     await CharacterService.loading(session.character._id);
     // eslint-disable-next-line no-underscore-dangle, no-param-reassign
-    session.character = { ...session.character, ...MagicService.learn(session.character._id, 1) };
+    session.character = { ...session.character, ...MagicService.learn(session.character.id, 1) };
     const magicButtons = [];
     const keys = Object.keys(session.character.magics);
     if (keys) {

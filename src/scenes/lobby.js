@@ -8,7 +8,7 @@ const loginHelper = require('../helpers/loginHelper');
 lobby.enter(({ reply, session }) => {
   reply(
     `Lobby
-Так так, значит ты "${session.character.nickname}"
+Так так, значит ты ${session.character.nickname}
 Статистика: ⬆ ${session.character.lvl} 💰 ${session.character.gold} 📖 ${session.character.exp}
 
 Отсюда можно выйти: /exit 

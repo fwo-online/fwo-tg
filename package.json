@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/eslint --fix src/",
-    "start": "node src/fwo.js"
+    "start": "nodemon src/fwo.js"
   },
   "repository": {
     "type": "git",
@@ -32,12 +32,14 @@
     "lodash.pullallwith": "^4.7.0",
     "lodash.union": "^4.6.0",
     "mongoose": "^5.7.3",
+    "socks5-https-client": "^1.2.1",
     "telegraf": "^3.32.0"
   },
   "devDependencies": {
     "eslint": "^6.5.1",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2",
-    "jsdoc": "^3.6.3"
+    "jsdoc": "^3.6.3",
+    "nodemon": "^1.19.4"
   }
 }
