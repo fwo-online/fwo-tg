@@ -1,5 +1,5 @@
 const { EventEmitter } = require('events');
-const { arena: { maxIter } } = require('./config');
+const config = require('./config');
 const QueueConstructor = require('./Constuructors/QueueConstrucror');
 
 /**
@@ -68,7 +68,7 @@ class MatchMaking extends EventEmitter {
   main() {
     let iter = 0;
     let queue;
-    while ((this.mmQueue.length >= 2) && (iter < maxIter)) {
+    while ((this.mmQueue.length >= 2) && (iter < config.maxIter)) {
       const mmLength = this.mmQueue.length - 1;
       for (let i = mmLength; i >= 0; i -= 1) {
         // @todo нужно перейти на lodash

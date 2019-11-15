@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const arena = require('./index');
 const MiscService = require('./MiscService');
-const { arena: { magic } } = require('./config');
+const config = require('./config');
 
 /**
  * Сервис работы с магиями
@@ -37,7 +37,7 @@ function hasMagicToLearn(charId, lvl) {
   return arrayOfDiff;
 }
 
-const chance = magic.learnChance;
+const chance = config.magic.learnChance;
 /**
  * Функция проверки шанс выучить магию
  * @return {boolean}
