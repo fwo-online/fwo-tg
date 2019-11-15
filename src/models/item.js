@@ -166,7 +166,7 @@ item.statics = {
     try {
       const items = await this.model('Item').find({});
       if (Object.entries(items).length) {
-        config.items = _.keyBy(items, 'code');
+        global.arena.items = _.keyBy(items, 'code');
       } else {
         let shopArr = fs.readFileSync('shop.json', 'utf8');
         shopArr = JSON.parse(shopArr);
@@ -184,7 +184,7 @@ item.statics = {
           }
           return true;
         });
-        config.items = _.keyBy(items, 'code');
+        global.arena.items = _.keyBy(items, 'code');
       }
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -200,7 +200,7 @@ item.statics = {
    * @return {Object}
    */
   getHarks(itemCode) {
-    const itemObj = ItemService.itemAtrParser(config.items[itemCode]);
+    const itemObj = ItemService.itemAtrParser(global.arena.items[itemCode]);
     return _.pick(itemObj, config.parseAttr);
   },
 };
