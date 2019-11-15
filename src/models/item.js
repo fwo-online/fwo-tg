@@ -1,8 +1,8 @@
-const keyBy = require('lodash.keyby');
+const _ = require('lodash');
 const fs = require('fs');
 const mongoose = require('mongoose');
 const forEach = require('lodash.foreach');
-const arena = require('./index');
+const arena = require('../arena/config');
 const ItemService = require('../arena/ItemService');
 
 const { Schema } = mongoose;
@@ -166,7 +166,7 @@ item.statics = {
     try {
       const items = await this.model('Item').find({});
       if (Object.entries(items).length) {
-        arena.items = keyBy(items, 'code');
+        arena.items = _.keyBy(items, 'code');
       } else {
         let shopArr = fs.readFileSync('shop.json', 'utf8');
         shopArr = JSON.parse(shopArr);
@@ -184,7 +184,7 @@ item.statics = {
           }
           return true;
         });
-        arena.items = keyBy(items, 'code');
+        arena.items = _.keyBy(items, 'code');
       }
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -200,8 +200,8 @@ item.statics = {
    * @return {Object}
    */
   getHarks(itemCode) {
-    const { parseAttr } = ItemService.itemAtrParser(arena.items[itemCode]);
-    return parseAttr;
+    const itemObj = ItemService.itemAtrParser(arena.items[itemCode]);
+    return _.pick(itemObj, arena.arena.parseAttr);
   },
 };
 
