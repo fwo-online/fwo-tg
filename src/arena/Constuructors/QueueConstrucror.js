@@ -1,6 +1,6 @@
 const GameService = require('../GameService');
 const WatchService = require('../WatchService');
-const { arena: { roundPlayersLimit } } = require('../config');
+const { config } = require('../config');
 /**
  * Конструктор обьекта очереди
  */
@@ -47,7 +47,7 @@ class QueueConstructor {
      */
   checkStatus() {
     // Проверяем не собралась ли уже у нас очередь ?
-    return this.players.length >= roundPlayersLimit;
+    return this.players.length >= config.roundPlayersLimit;
   }
 
   /**

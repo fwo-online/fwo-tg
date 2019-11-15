@@ -1,4 +1,4 @@
-const { arena: { stages } } = require('./config');
+const { config } = require('./config');
 const CharacterService = require('./CharacterService');
 const GameService = require('./GameService');
 const testGame = require('./testGame');
@@ -7,7 +7,7 @@ global.arena.magics = require('./magics');
 
 const ACTIONS = global.arena.magics;
 
-const STAGES = stages;
+const STAGES = config.stages;
 
 /**
  * Сортируем список заказов

@@ -201,7 +201,7 @@ item.statics = {
    */
   getHarks(itemCode) {
     const itemObj = ItemService.itemAtrParser(arena.items[itemCode]);
-    return _.pick(itemObj, arena.arena.parseAttr);
+    return _.pick(itemObj, arena.config.parseAttr);
   },
 };
 
