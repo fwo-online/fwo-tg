@@ -1,5 +1,5 @@
 const { EventEmitter } = require('events');
-const { config } = require('./config');
+const config = require('./config');
 const QueueConstructor = require('./Constuructors/QueueConstrucror');
 
 /**

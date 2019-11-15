@@ -1,6 +1,6 @@
 const GameService = require('../GameService');
 const WatchService = require('../WatchService');
-const { config } = require('../config');
+const config = require('../config');
 /**
  * Конструктор обьекта очереди
  */

@@ -1,5 +1,5 @@
 const ee = require('events');
-const { config } = require('./config');
+const config = require('./config');
 
 /**
  * Возвращаем timeStamp на момент запуска счетчика на стороне сервера
