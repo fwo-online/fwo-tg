@@ -32,8 +32,8 @@ create.action('create', ({ editMessageText }) => {
 
 create.action(/select(?=_)/, ({ editMessageText, session, match }) => {
   const [, prof] = match.input.split('_');
-  // eslint-disable-next-line no-param-reassign
-  session.character.prof = prof;
+  
+  session.prof = prof;
   editMessageText(
     `Ты выбрал класс ${prof}.
       ${prof} – ${charDescr[prof]}. 
@@ -42,11 +42,11 @@ create.action(/select(?=_)/, ({ editMessageText, session, match }) => {
       Markup.callbackButton('Выбрать', 'select'),
       Markup.callbackButton('Назад', 'back'),
     ]).resize().extra(),
-  );
+  );w
 });
 
 create.action('select', ({ editMessageText, session, scene }) => {
-  if (!session.character.prof) {
+  if (!session.prof) {
     editMessageText(
       'Не понятно, какой то ты странный',
       Markup.inlineKeyboard([

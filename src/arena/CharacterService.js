@@ -91,15 +91,91 @@ function getDynHarks(charObj) {
 class Char {
   /**
    * Конструктор игрока
-   * @param {String} nickName имя персонажа
-   * @param {String} prof имя профессии персонажа
    * @param {Object} charObj обьект персонажа из базы
    */
-  constructor(nickName, prof) {
-    this.nickname = nickName;
-    const defaults = defHarks(prof);
-    this.clearHarks = defaults.hark;
-    this.prof = defaults.prof;
+  constructor(charObj) {
+    // const defaults = defHarks(charObj.prof);
+    // this.clearHarks = defaults.hark;
+    // this.prof = defaults.prof;
+    this.charObj = charObj;
+    this.tempHarks = {
+      ...charObj.harks,
+      free: charObj.free,
+    };
+  }
+
+  get id() {
+    return this.charObj.id;
+  }
+
+  get nickname() {
+    return this.charObj.nickname;
+  }
+
+  get lvl() {
+    return this.charObj.lvl;
+  }
+
+  get gold() {
+    return this.charObj.gold;
+  }
+
+  get exp() {
+    return this.charObj.exp;
+  }
+
+  get games() {
+    return this.charObj.statistics.games;
+  }
+
+  get kills() {
+    return this.charObj.statistics.kills;
+  }
+
+  get free() {
+    return this.tempHarks.free;
+  }
+
+  get harks() {
+    return this.tempHarks;
+  }
+
+  get magics() {
+    return this.charObj.magics;
+  }
+
+  get bonus() {
+    return this.charObj.bonus;
+  }
+
+  getIncreaseHarkCount(hark) {
+    const count = this.tempHarks[hark] - this.charObj.harks[hark];
+    return count || '';
+  }
+
+  increaseHark(harkName) {
+    if (this.tempHarks.free < 1) {
+      return;
+    }
+
+    this.tempHarks[harkName] += 1;
+    this.tempHarks.free -= 1;
+  }
+
+  resetHarks() {
+    this.tempHarks = {
+      ...this.charObj.harks,
+      free: this.charObj.free,
+    };
+  }
+
+  async submitIncreaseHarks() {
+    const { free, ...harks } = this.tempHarks;
+    this.charObj.harks = harks;
+    this.charObj.free = free;
+
+    // @todo сюда нужно будет предусмотреть проверки на корректность сохраняемых данных
+    return db.char.update(this.charObj.tgId, this.charObj);
   }
 
   /**
@@ -120,27 +196,22 @@ class Char {
 
   /**
    * Загрузка чара в память
-   * @param {Number} charId идентификатор чара (tgId)
-   * @type {Promise}
+   * @param {Number} tgId идентификатор чара (tgId)
+   * @type {Promise<Char>}
    */
-  static async loading(charId) {
-    /**
-     * @todo организовать нормальную загрузку
-     */
-    let harksFromItems = await db.inventory.getAllHarks(charId);
-    if (!Object.keys(harksFromItems).length) {
-      harksFromItems = { hit: { min: 0, max: 0 } };
+  static async getCharacter(tgId) {
+    const charFromDb = await db.char.find({ tgId });
+
+    if (!charFromDb) {
+      return null;
     }
-    const p = await db.char.find({ _id: charId });
-    p.harksFromItems = harksFromItems;
-    p.def = getDynHarks(p);
-    // изменяем прототип
-    // eslint-disable-next-line no-proto
-    p.__proto__ = Object.create(this.prototype);
+
+    const char = new Char(charFromDb);
     if (!global.arena.players) global.arena.players = {};
-    global.arena.players[charId] = p;
+    global.arena.players[char.id] = char;
     // eslint-disable-next-line no-console
     console.log(JSON.stringify(global.arena.players));
+    return char;
   }
 
   /**

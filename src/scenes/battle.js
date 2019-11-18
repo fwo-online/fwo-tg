@@ -5,7 +5,6 @@
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
 const channelHelper = require('../helpers/channelHelper');
-const Char = require('../arena/CharacterService');
 const arena = require('../arena');
 const GameService = require('../arena/GameService');
 
@@ -19,14 +18,8 @@ battleScene.enter(({ reply }) => {
   );
 });
 
-battleScene.action('search', async ({ editMessageText, session }) => {
-  // eslint-disable-next-line no-underscore-dangle
-  await Char.loading(session.character._id);
-
-  // eslint-disable-next-line no-console
-  console.log(JSON.stringify(global.arena));
-  // eslint-disable-next-line no-underscore-dangle
-  const id = session.character._id;
+battleScene.action('search', async ({ reply, session }) => {
+  const { id } = session.character;
   const searchObject = { charId: id, psr: 1000, startTime: Date.now() };
   arena.mm.push(searchObject);
   await editMessageText(
@@ -52,8 +45,7 @@ battleScene.action('stop', async ({ editMessageText, session }) => {
 });
 
 battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) => {
-  // eslint-disable-next-line no-underscore-dangle
-  const gameId = global.arena.players[session.character._id].mm;
+  const gameId = global.arena.players[session.character.id].mm;
   const [, action] = match.input.split('_');
   const aliveArr = GameService.aliveArr(gameId).map(({ nick, id }) => Markup.callbackButton(nick, `${action}_${id}_${nick}`));
   editMessageText(
@@ -67,10 +59,10 @@ battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) =>
 battleScene.action(/\w*_\w*_\w*/, async ({ editMessageText, session, match }) => {
   const [action, target, nick] = match.input.split('_');
   // eslint-disable-next-line no-underscore-dangle
-  const gameId = global.arena.players[session.character._id].mm;
+  const gameId = global.arena.players[session.character.id].mm;
   const Game = global.arena.games[gameId];
   // eslint-disable-next-line no-underscore-dangle
-  Game.orders.orderAction(session.character._id, target, action, 100);
+  Game.orders.orderAction(session.character.id, target, action, 100);
   editMessageText(
     `Заказан ${action} на игрока ${nick}`,
   );

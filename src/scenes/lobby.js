@@ -8,7 +8,7 @@ const loginHelper = require('../helpers/loginHelper');
 lobby.enter(({ reply, session }) => {
   reply(
     `Lobby
-Так так, значит ты "${session.character.nickname}"
+Так так, значит ты ${session.character.nickname}
 Статистика: ⬆ ${session.character.lvl} 💰 ${session.character.gold} 📖 ${session.character.exp}
 
 Отсюда можно выйти: /exit 
@@ -33,8 +33,11 @@ lobby.command('battle', ({ scene }) => {
   scene.enter('battleScene');
 });
 
-lobby.command('remove', async ({ scene, reply, from }) => {
+lobby.command('remove', async ({
+  session, scene, reply, from,
+}) => {
   const resp = await loginHelper.remove(from.id);
+  session.character = null;
   if (resp) {
     reply(
       'Твой персонаж был удалён!',

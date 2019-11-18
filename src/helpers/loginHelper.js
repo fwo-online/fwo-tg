@@ -1,5 +1,6 @@
 const db = require('./dataBase');
 const Inventory = require('../models/inventory');
+const CharacterService = require('../arena/CharacterService');
 
 module.exports = {
   /*
@@ -107,7 +108,7 @@ module.exports = {
   // eslint-disable-next-line consistent-return
   async getChar(tgId) {
     try {
-      return await db.char.find({ tgId });
+      return await CharacterService.getCharacter(tgId);
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log(e);
