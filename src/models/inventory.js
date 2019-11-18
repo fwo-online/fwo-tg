@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
-const { arena: { defaultItems } } = require('../arena/config');
+const config = require('../arena/config');
 
 const { Schema } = mongoose;
 
@@ -14,7 +14,7 @@ const { Schema } = mongoose;
  */
 function getDefaultItem(prof) {
   // eslint-disable-next-line no-console
-  return defaultItems[prof] || console.log('no prof in getDefaultItem');
+  return config.defaultItems[prof] || console.log('no prof in getDefaultItem');
 }
 
 /**
@@ -153,7 +153,7 @@ inventory.statics = {
     });
     const defItemCode = getDefaultItem(prof);
     await this.addItem(charId, defItemCode);
-    await this.putOnItem(charId, 0);
+    await this.putOnItem(charId, '0');
   }, /**
    * putOnItem
    * @description Пытаемся одеть указанный итем.

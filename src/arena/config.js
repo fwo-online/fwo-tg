@@ -7,7 +7,7 @@
    */
 global.arena = {};
 global.arena.groups = {};
-module.exports.arena = {
+module.exports = {
   Name: 'Arena-Beta',
   noReg: false, // Запрещена регистрация
   // -------------------------- Регистрация ------------

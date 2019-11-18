@@ -1,5 +1,5 @@
 const ee = require('events');
-const { arena: { roundTimeout } } = require('./config');
+const config = require('./config');
 
 /**
  * Возвращаем timeStamp на момент запуска счетчика на стороне сервера
@@ -56,7 +56,7 @@ class RoundConstructor extends ee {
       round: this.count,
       state: this.status,
       timestamp: ts(),
-      timer: roundTimeout,
+      timer: config.roundTimeout,
     });
     // eslint-disable-next-line no-console
     console.debug('RC debug:: start round:', this.count);
@@ -75,7 +75,7 @@ class RoundConstructor extends ee {
       round: this.count,
       state: this.status,
       timestamp: ts(),
-      timer: roundTimeout,
+      timer: config.roundTimeout,
     });
     this.goNext('waiting');
   }
@@ -158,7 +158,7 @@ class RoundConstructor extends ee {
    * @param {Number} timeout  число в мс, через которое следует выполнить
    */
   goNext(newState, timeout) {
-    const defaultTimer = timeout || roundTimeout;
+    const defaultTimer = timeout || config.roundTimeout;
     const self = this;
     const x = setTimeout(() => {
       self.nextState(newState);
