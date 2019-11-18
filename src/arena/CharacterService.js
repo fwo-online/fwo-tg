@@ -208,7 +208,7 @@ class Char {
 
     const char = new Char(charFromDb);
     if (!global.arena.players) global.arena.players = {};
-    global.arena.players[tgId] = char;
+    global.arena.players[char.id] = char;
     // eslint-disable-next-line no-console
     console.log(JSON.stringify(global.arena.players));
     return char;
