@@ -2,7 +2,10 @@ const loginHelper = require('../helpers/loginHelper');
 
 const authMiddleware = async ({ session, update }, next) => {
   if (!session.character && update.message) {
-    session.character = await loginHelper.getChar(update.message.from.id);
+    const character = await loginHelper.getChar(update.message.from.id);
+    if (character) {
+      session.character = character;
+    }
   }
   next();
 };

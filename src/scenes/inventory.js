@@ -2,14 +2,14 @@ const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
 const Inventory = require('../models/inventory');
 
-const inventory = new Scene('inventory');
+const inventoryScene = new Scene('inventory');
 
 const getInventoryItems = (items) => items.map((item) => Markup.callbackButton(
   `${item.code}`,
   item.code,
 ));
 
-inventory.enter(async ({ editMessageText, session }) => {
+inventoryScene.enter(async ({ editMessageText, session }) => {
   const items = await Inventory.getPutOned(session.character.id);
 
   editMessageText(
@@ -18,4 +18,4 @@ inventory.enter(async ({ editMessageText, session }) => {
   );
 });
 
-module.exports = inventory;
+module.exports = inventoryScene;

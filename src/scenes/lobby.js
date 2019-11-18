@@ -33,8 +33,11 @@ lobby.command('battle', ({ scene }) => {
   scene.enter('battleScene');
 });
 
-lobby.command('remove', async ({ scene, reply, from }) => {
+lobby.command('remove', async ({
+  session, scene, reply, from,
+}) => {
   const resp = await loginHelper.remove(from.id);
+  session.character = null;
   if (resp) {
     reply(
       'Твой персонаж был удалён!',

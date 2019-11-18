@@ -196,26 +196,19 @@ class Char {
 
   /**
    * Загрузка чара в память
-   * @param {Number} charId идентификатор чара (tgId)
+   * @param {Number} tgId идентификатор чара (tgId)
    * @type {Promise<Char>}
    */
-  static async getCharacter(charId) {
-    // let harksFromItems = await db.inventory.getAllHarks(charId);
-    // if (!Object.keys(harksFromItems).length) {
-    //   harksFromItems = { hit: { min: 0, max: 0 } };
-    // }
-    const charFromDb = await db.char.find({ tgId: charId });
+  static async getCharacter(tgId) {
+    const charFromDb = await db.char.find({ tgId });
+
+    if (!charFromDb) {
+      return null;
+    }
+
     const char = new Char(charFromDb);
-    // char.charObj.harks = defHarks(char.charObj.prof).hark
-    // char.charObj.free = 10;
-    // db.char.update(charId, char.charObj);
-    // p.harksFromItems = harksFromItems;
-    // p.def = getDynHarks(p);
-    // изменяем прототип
-    // eslint-disable-next-line no-proto
-    // p.__proto__ = Object.create(this.prototype);
     if (!global.arena.players) global.arena.players = {};
-    global.arena.players[charId] = char;
+    global.arena.players[tgId] = char;
     // eslint-disable-next-line no-console
     console.log(JSON.stringify(global.arena.players));
     return char;
