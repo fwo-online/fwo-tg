@@ -1,6 +1,5 @@
 const Telegraf = require('telegraf');
 const session = require('telegraf/session');
-const SocksAgent = require('socks5-https-client/lib/Agent');
 const db = require('./models');
 const stage = require('./scenes/stage.js');
 const channelHelper = require('./helpers/channelHelper');
@@ -15,16 +14,8 @@ db.connection.on('open', () => {
   Item.load();
 });
 
-const socksAgent = new SocksAgent({
-  socksHost: '45.138.156.65',
-  socksPort: '15788',
-  socksUsername: 'LFlvgkmY1O',
-  socksPassword: 'qdahjxVbX9',
-});
 
-const bot = new Telegraf('439110772:AAF8CDxHOx_Hw12il0AbXbRxWU4jHj49OFI', {
-  telegram: { agent: socksAgent },
-});
+const bot = new Telegraf(process.env.BOT_TOKEN);
 
 bot.use(session());
 bot.use(stage.middleware());
