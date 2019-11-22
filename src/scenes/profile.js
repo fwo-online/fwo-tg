@@ -137,7 +137,7 @@ profile.action('magics', ({ editMessageText, session }) => {
 profile.action('learn', async ({ editMessageText, session }) => {
   try {
     await CharacterService.loading(session.character.id);
-    
+
     session.character = { ...session.character, ...MagicService.learn(session.character.id, 1) };
     const magicButtons = [];
     const keys = Object.keys(session.character.magics);
