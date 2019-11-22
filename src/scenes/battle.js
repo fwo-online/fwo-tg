@@ -18,7 +18,7 @@ battleScene.enter(({ reply }) => {
   );
 });
 
-battleScene.action('search', async ({ reply, session }) => {
+battleScene.action('search', async ({ editMessageText, session }) => {
   const { id } = session.character;
   const searchObject = { charId: id, psr: 1000, startTime: Date.now() };
   arena.mm.push(searchObject);

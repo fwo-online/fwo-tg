@@ -26,9 +26,10 @@ function getDefaultItem(prof) {
  */
 
 const inventory = new Schema({
-  items: {
-    type: Object, default: {},
-  },
+  code: { type: String, default: '' },
+  name: { type: String, default: '' },
+  putOn: { type: Boolean, default: false },
+  durable: { type: Number, default: 10 },
 
   // Добавляем связь инвенторя с персонажем
   // charID
@@ -88,31 +89,12 @@ inventory.statics = {
    * @todo на входе должно быть 2 параметра charId && itemCode
    */
   async addItem(charId, itemCode) {
-    const invObj = await this.model('Inventory').findOne({
+    await this.model('Inventory').create({
       owner: charId,
-    });
-    // Проверка на наличие итема в базе
-    await this.model('Item').findOne({
-      code: itemCode,
-    });
-    const { items } = invObj;
-    const keys = Object.keys(items);
-    const lastKey = keys[keys.length - 1] || -1;
-    items[+lastKey + 1] = {
       code: itemCode,
       putOn: false,
-      durable: {
-        val: 10, default: 10,
-      },
       stack: false,
-      val: 1,
-    };
-    const resp = await this.model('Inventory').updateOne({
-      owner: charId,
-    }, {
-      items,
     });
-    return resp;
   },
 
   /**
@@ -148,49 +130,57 @@ inventory.statics = {
    * @todo переделать после допила addItem
    */
   async firstCreate(charId, prof) {
-    await this.model('Inventory').create({
-      owner: charId,
-    });
     const defItemCode = getDefaultItem(prof);
-    await this.addItem(charId, defItemCode);
-    await this.putOnItem(charId, '0');
-  }, /**
+    this.addItem(charId, defItemCode);
+  },
+
+  /**
    * putOnItem
    * @description Пытаемся одеть указанный итем.
    * @param {Number} charId ID чара
-   * @param {Number} slotId Идентификатор итема внутри инвенторя пользователя
+   * @param {Number} itemId Идентификатор итема внутри инвенторя пользователя
    * @return {Array} Массив нового инвентаря
    */
-  async putOnItem(charId, slotId) {
-    const inv = await this.model('Inventory').findOne({
+  async putOnItem(charId, itemId) {
+    return this.model('Inventory').updateOne({
       owner: charId,
-    });
-    inv.items[slotId].putOn = true;
-    const resp = await this.model('Inventory').updateOne({
-      owner: charId,
+      _id: itemId,
     }, {
-      items: inv.items,
+      putOn: true,
     });
-    return resp;
-  }, /**
+  },
+
+  /**
    * putOffItem
    * @description Пытаемся снять указанный итем.
    * @param {Number} charId ID чара
-   * @param {Number} slotId Идентификатор итема внутри инвенторя пользователя
+   * @param {Number} itemId Идентификатор итема внутри инвенторя пользователя
    * @return {Array} Массив нового инвентаря
    * @todo переделать!
    */
-  async putOffItem(charId, slotId) {
-    const inv = await this.model('Inventory').findOne({
+  async putOffItem(charId, itemId) {
+    return this.model('Inventory').updateOne({
       owner: charId,
+      _id: itemId,
+    }, {
+      putOn: false,
     });
-    inv.items[slotId].putOn = false;
-    const resp = await this.model('Inventory').updateOne({
+  },
+
+  async getItem(itemId, charId) {
+    return this.model('Inventory').findOne({
       owner: charId,
     }, {
-      items: inv.items,
+      item: itemId,
     });
-    return resp;
+  },
+
+  async getItems(charId) {
+    return this.model('Inventory').find({ owner: charId });
+  },
+
+  getItemName(itemCode) {
+    return global.arena.items[itemCode].name;
   },
 };
 
