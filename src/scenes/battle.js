@@ -18,12 +18,30 @@ battleScene.enter(({ reply }) => {
   );
 });
 
-battleScene.action('search', async ({ reply, session }) => {
+battleScene.action('search', async ({ editMessageText, session }) => {
   const { id } = session.character;
   const searchObject = { charId: id, psr: 1000, startTime: Date.now() };
   arena.mm.push(searchObject);
-  await reply('Идёт поиск игры...');
+  await editMessageText(
+    'Кнопки',
+    Markup.inlineKeyboard([
+      Markup.callbackButton('Нет-нет, остановите, я передумал!', 'stop'),
+    ]).resize().extra(),
+  );
   await channelHelper.broadcast(`Игрок ${global.arena.players[id].nickname} начал поиск игры`);
+});
+
+battleScene.action('stop', async ({ editMessageText, session }) => {
+  // eslint-disable-next-line no-underscore-dangle
+  const id = session.character._id;
+  arena.mm.pull(id);
+  editMessageText(
+    'Кнопки',
+    Markup.inlineKeyboard([
+      Markup.callbackButton('Искать приключений на ...', 'search'),
+    ]).resize().extra(),
+  );
+  await channelHelper.broadcast(`Игрок ${global.arena.players[id].nickname} внезапно передумал`);
 });
 
 battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) => {

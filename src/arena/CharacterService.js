@@ -140,6 +140,26 @@ class Char {
     return this.charObj.bonus;
   }
 
+  get items() {
+    return this.charObj.inventory;
+  }
+
+  getItem(itemId) {
+    return this.items.find((item) => item._id.equals(itemId));
+  }
+
+  async putOffItem(itemId) {
+    await db.inventory.putOffItem(this.id, itemId);
+    const inventory = await db.inventory.getItems(this.id);
+    this.charObj.inventory = inventory;
+  }
+
+  async putOnItem(itemId) {
+    await db.inventory.putOnItem(this.id, itemId);
+    const inventory = await db.inventory.getItems(this.id);
+    this.charObj.inventory = inventory;
+  }
+
   getIncreaseHarkCount(hark) {
     const count = this.tempHarks[hark] - this.charObj.harks[hark];
     return count || '';
@@ -199,8 +219,6 @@ class Char {
     const char = new Char(charFromDb);
     if (!global.arena.players) global.arena.players = {};
     global.arena.players[char.id] = char;
-    // eslint-disable-next-line no-console
-    console.log(JSON.stringify(global.arena.players));
     return char;
   }
 
