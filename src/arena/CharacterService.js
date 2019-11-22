@@ -16,6 +16,8 @@ const harkArr = ['str', 'dex', 'int', 'wis', 'con'];
  * @param {String} prof строка профессии
  * @return {Object} обьект harks {str:x,dex:x,wis:x,int:x,con:x}
  */
+// @todo првоерить что после правок чар создается с нужным набором дефолтных характеристрик
+// eslint-disable-next-line no-unused-vars
 function defHarks(prof) {
   return MiscService.prof[prof];
 }
@@ -27,6 +29,7 @@ function defHarks(prof) {
  * maxEn: number,mga: number, mgp: number, hl: {min: *, max: *}, manaReg: *,
  * enReg: number, hit: boolean, maxTarget: number, lspell: number}}
  */
+// eslint-disable-next-line no-unused-vars
 function getDynHarks(charObj) {
   const { harks } = charObj;
   const patk = (charObj.prof === 'l')
@@ -105,7 +108,7 @@ class Char {
   }
 
   get id() {
-    return this.charObj.id;
+    return this.charObj.id || this.charObj._id;
   }
 
   get nickname() {
@@ -196,16 +199,14 @@ class Char {
 
   /**
    * Загрузка чара в память
-   * @param {Number} tgId идентификатор чара (tgId)
+   * @param {Number} tgId идентификатор пользователя в TG (tgId)
    * @type {Promise<Char>}
    */
   static async getCharacter(tgId) {
-    const charFromDb = await db.char.find({ tgId });
-
+    const charFromDb = await db.char.load({ tgId });
     if (!charFromDb) {
       return null;
     }
-
     const char = new Char(charFromDb);
     if (!global.arena.players) global.arena.players = {};
     global.arena.players[char.id] = char;

@@ -6,7 +6,7 @@ const GameModel = require('../models/games');
 const InventoryModel = require('../models/inventory');
 
 function dbErr(e) {
-  throw new Error('Fail in dbHelper:', e);
+  throw new Error(`Fail in dbHelper: ${e}`);
 }
 
 module.exports = {
@@ -20,6 +20,24 @@ module.exports = {
           x._doc.id = x._id;
           // eslint-disable-next-line no-underscore-dangle
           return x._doc;
+        }
+        return x;
+      } catch (e) {
+        dbErr(e);
+      }
+    },
+    /**
+     * Загрузка чара из базы
+     * @param query
+     * @return {Promise<any|{}>}
+     */
+    // eslint-disable-next-line consistent-return
+    async load(query) {
+      try {
+        const x = await CharModel.findOne({ ...query, deleted: false }).populate('inventory');
+        console.log('fff', x);
+        if (x) {
+          x.id = x._id;
         }
         return x;
       } catch (e) {
@@ -43,12 +61,15 @@ module.exports = {
       }
     },
     // eslint-disable-next-line consistent-return
+    /**
+     * Создание персонажа
+     * @param charObj
+     * @return {Promise<CharacterData>}
+     */
     async create(charObj) {
       try {
-        const x = new CharModel(charObj);
-        x.save();
-        // eslint-disable-next-line no-underscore-dangle
-        return x._doc;
+        const char = await CharModel.create(charObj);
+        await InventoryModel.firstCreate(char);
       } catch (e) {
         dbErr(e);
       }
