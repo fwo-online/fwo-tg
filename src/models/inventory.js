@@ -78,15 +78,20 @@ inventory.statics = {
    * @param {Number} charId Идентификатор чара
    * @param {String} itemCode Код итема который следует добавить
    * @return {Promise<Array>} Обьект нового инветаря
-   * @todo на входе должно быть 2 параметра charId && itemCode
    */
+  // eslint-disable-next-line consistent-return
   async addItem(charId, itemCode) {
-    const char = await this.model('Character').findById(charId);
-    const item = await this.model('Inventory')
-      .create({ owner: charId, code: itemCode });
-    char.inventory.push(item);
-    await char.save();
-    return char.inventory;
+    try {
+      const char = await this.model('Character').findById(charId);
+      const item = await this.model('Inventory')
+        .create({ owner: charId, code: itemCode });
+      char.inventory.push(item);
+      await char.save();
+      return char.inventory;
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log('InventoryModel Error:', e);
+    }
   },
   /**
    * delItem
@@ -102,7 +107,8 @@ inventory.statics = {
       const char = await this.model('Character').findById(charId);
       _.pull(char.inventory, itemId);
       await char.save();
-      return this.model('Inventory').findByIdAndDelete(itemId);
+      await this.model('Inventory').findByIdAndDelete(itemId);
+      return char.inventory;
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log('InventoryModel Error:', e);
@@ -116,6 +122,7 @@ inventory.statics = {
    * т.к инветарь не связан на прямую и для его создания нужно сначала получить
    * ownerId чара.
    * @param {Object} charObj обьект созданного чара
+   * @return {Promise<CharacterData>} CharObj обьект персонажа
    * @todo переделать после допила addItem
    */
   async firstCreate(charObj) {
@@ -160,7 +167,7 @@ inventory.statics = {
     return this.model('Inventory').findOne({
       owner: charId,
     }, {
-      item: itemId,
+      _id: itemId,
     });
   },
 

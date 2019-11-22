@@ -12,17 +12,6 @@ global.arena.players = {};
  */
 const harkArr = ['str', 'dex', 'int', 'wis', 'con'];
 /**
- * Функция возвращающая дефолтные параметры чара в зависимости от профы
- * @param {String} prof строка профессии
- * @return {Object} обьект harks {str:x,dex:x,wis:x,int:x,con:x}
- */
-// @todo првоерить что после правок чар создается с нужным набором дефолтных характеристрик
-// eslint-disable-next-line no-unused-vars
-function defHarks(prof) {
-  return MiscService.prof[prof];
-}
-
-/**
  * Возвращает список динамических характеристик
  * @param {Object} charObj обьект персонажа из базы
  * @return {{patk: number, pdef: number, maxHp: number, maxMp: number,

@@ -35,7 +35,6 @@ module.exports = {
     async load(query) {
       try {
         const x = await CharModel.findOne({ ...query, deleted: false }).populate('inventory');
-        console.log('fff', x);
         if (x) {
           x.id = x._id;
         }
