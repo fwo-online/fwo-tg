@@ -4,7 +4,6 @@ const config = require('../arena/config');
 
 const { Schema } = mongoose;
 
-
 /**
  * getDefaultItem
  * @param {String} prof ID профы w/l/m/p
@@ -26,16 +25,14 @@ function getDefaultItem(prof) {
  */
 
 const inventory = new Schema({
-  code: { type: String, default: '' },
+  code: { type: String, required: true },
   name: { type: String, default: '' },
   putOn: { type: Boolean, default: false },
   durable: { type: Number, default: 10 },
-
-  // Добавляем связь инвенторя с персонажем
-  // charID
+  // Добавляем связь инвенторя с персонажем charID
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'character',
+    ref: 'Character',
     required: true,
   },
 });
@@ -70,12 +67,7 @@ inventory.statics = {
    * @return {Promise<Array>} [item,item,item]
    */
   async getPutOned(charId) {
-    const invObj = await this.model('Inventory').findOne({ owner: charId });
-    if (!invObj) {
-      const char = await this.model('Character').findOne({ _id: charId });
-      await this.firstCreate(charId, char.prof);
-      return this.getPutOned(charId);
-    }
+    const invObj = await this.model('Inventory').find({ owner: charId });
     return _.filter(invObj.items, { putOn: true });
   },
 
@@ -85,38 +77,42 @@ inventory.statics = {
    * @description Функция добавления итема в инвентарь
    * @param {Number} charId Идентификатор чара
    * @param {String} itemCode Код итема который следует добавить
-   * @return {Array} Обьект нового инвентаря
-   * @todo на входе должно быть 2 параметра charId && itemCode
+   * @return {Promise<Array>} Обьект нового инветаря
    */
+  // eslint-disable-next-line consistent-return
   async addItem(charId, itemCode) {
-    await this.model('Inventory').create({
-      owner: charId,
-      code: itemCode,
-      putOn: false,
-      stack: false,
-    });
+    try {
+      const char = await this.model('Character').findById(charId);
+      const item = await this.model('Inventory')
+        .create({ owner: charId, code: itemCode });
+      char.inventory.push(item);
+      await char.save();
+      return char.inventory;
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log('InventoryModel Error:', e);
+    }
   },
-
   /**
    * delItem
    * @description Удаление итема из инвентаря чара (итем обязан быть снят)
-   * @param {Number} charId идентификатор чара
-   * @param {Number} slotId идентификатор итема в инвенторе
+   * @param {String} charId идентификатор чара
+   * @param {string} itemId идентификатор итема в инвенторе
    * @return {Array} Массив нового инвентаря
-   * @todo сделать!
    */
 
-  async delItem(charId, slotId) {
-    const inv = await this.model('Inventory').findOne({
-      owner: charId,
-    });
-    delete (inv.items[slotId]);
-    const resp = await this.model('Inventory').update({
-      owner: charId,
-    }, {
-      items: inv.items,
-    });
-    return resp;
+  // eslint-disable-next-line consistent-return
+  async delItem(charId, itemId) {
+    try {
+      const char = await this.model('Character').findById(charId);
+      _.pull(char.inventory, itemId);
+      await char.save();
+      await this.model('Inventory').findByIdAndDelete(itemId);
+      return char.inventory;
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log('InventoryModel Error:', e);
+    }
   },
 
   /**
@@ -125,13 +121,13 @@ inventory.statics = {
    * Данная функция нужна для создания инвенторя в момент создания чара
    * т.к инветарь не связан на прямую и для его создания нужно сначала получить
    * ownerId чара.
-   * @param {Number} charId идентификатор чара
-   * @param {String} prof идентификатор итема в инвенторе
+   * @param {Object} charObj обьект созданного чара
+   * @return {Promise<CharacterData>} CharObj обьект персонажа
    * @todo переделать после допила addItem
    */
-  async firstCreate(charId, prof) {
-    const defItemCode = getDefaultItem(prof);
-    this.addItem(charId, defItemCode);
+  async firstCreate(charObj) {
+    const defItemCode = getDefaultItem(charObj.prof);
+    return this.addItem(charObj._id, defItemCode);
   },
 
   /**
@@ -171,7 +167,7 @@ inventory.statics = {
     return this.model('Inventory').findOne({
       owner: charId,
     }, {
-      item: itemId,
+      _id: itemId,
     });
   },
 
