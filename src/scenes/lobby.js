@@ -8,24 +8,18 @@ const {
 const lobby = new Scene('lobby');
 const loginHelper = require('../helpers/loginHelper');
 
-lobby.enter(({
-  replyWithMarkdown,
-  session,
-}) => {
-  replyWithMarkdown(
-    `Lobby
+lobby.enter(({ replyWithMarkdown, session }) => replyWithMarkdown(
+  `Lobby
 Так так, значит ты *${session.character.nickname}*
 Статистика: ⬆ ${session.character.lvl} 💰 ${session.character.gold} 📖 ${session.character.exp}
 `, Markup.keyboard([
-      ['⚔ В бой'],
-      ['😎 Профиль', '🏪 Магазин'],
-      ['☸ Настройки', '❓ Помощь'],
-    ])
-      .oneTime()
-      .resize()
-      .extra(),
-  );
-});
+    ['⚔ В бой'],
+    ['😎 Профиль', '🏪 Магазин'],
+    ['☸ Настройки', '❓ Помощь'],
+  ])
+    .resize()
+    .extra(),
+));
 
 lobby.command('exit', ({
   scene,
@@ -34,14 +28,14 @@ lobby.command('exit', ({
   scene.enter('greeter');
 });
 
-lobby.command('😎 Профиль', ({
+lobby.hears('😎 Профиль', ({
   scene,
 }) => {
   leave();
   scene.enter('profile');
 });
 
-lobby.command('⚔ В бой', ({
+lobby.hears('⚔ В бой', ({
   scene,
 }) => {
   leave();

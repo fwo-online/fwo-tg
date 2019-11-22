@@ -64,6 +64,11 @@ const getMainMenu = (session) => [
 ];
 
 profile.enter(({ reply, session }) => {
+  reply('Профиль', Markup.keyboard([
+    ['🔙 Назад'],
+  ])
+    .resize()
+    .extra());
   reply(...getMainMenu(session));
 });
 
