@@ -3,14 +3,14 @@ const Stage = require('telegraf/stage');
 const Markup = require('telegraf/markup');
 
 const {
-  leave
+  leave,
 } = Stage;
 const lobby = new Scene('lobby');
 const loginHelper = require('../helpers/loginHelper');
 
 lobby.enter(({
-  reply,
-  session
+  replyWithMarkdown,
+  session,
 }) => {
   replyWithMarkdown(
     `Lobby
@@ -21,27 +21,27 @@ lobby.enter(({
       ['😎 Профиль', '🏪 Магазин'],
       ['☸ Настройки', '❓ Помощь'],
     ])
-    .resize()
-    .extra(),
+      .resize()
+      .extra(),
   );
 });
 
 lobby.command('exit', ({
-  scene
+  scene,
 }) => {
   leave();
   scene.enter('greeter');
 });
 
 lobby.command('😎 Профиль', ({
-  scene
+  scene,
 }) => {
   leave();
   scene.enter('profile');
 });
 
 lobby.command('⚔ В бой', ({
-  scene
+  scene,
 }) => {
   leave();
   scene.enter('battleScene');
