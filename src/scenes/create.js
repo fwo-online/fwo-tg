@@ -32,7 +32,7 @@ create.action('create', ({ editMessageText }) => {
 
 create.action(/select(?=_)/, ({ editMessageText, session, match }) => {
   const [, prof] = match.input.split('_');
-
+  
   session.prof = prof;
   editMessageText(
     `Ты выбрал класс ${prof}.
@@ -42,7 +42,7 @@ create.action(/select(?=_)/, ({ editMessageText, session, match }) => {
       Markup.callbackButton('Выбрать', 'select'),
       Markup.callbackButton('Назад', 'back'),
     ]).resize().extra(),
-  );
+  );w
 });
 
 create.action('select', ({ editMessageText, session, scene }) => {
