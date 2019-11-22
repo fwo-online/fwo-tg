@@ -13,7 +13,7 @@ lobby.enter(({ reply, session }) => {
 
 Отсюда можно выйти: /exit 
 Или удалить персонажа: /remove 
-Тестовые разделы: /profile /battle
+Тестовые разделы: /profile /battle /shop
 `,
   );
 });
@@ -31,6 +31,11 @@ lobby.command('profile', ({ scene }) => {
 lobby.command('battle', ({ scene }) => {
   leave();
   scene.enter('battleScene');
+});
+
+lobby.command('shop', ({ scene }) => {
+  leave();
+  scene.enter('shop');
 });
 
 lobby.command('remove', async ({
