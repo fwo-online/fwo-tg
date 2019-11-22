@@ -1,5 +1,4 @@
 const arena = require('./index');
-const MiscService = require('./MiscService');
 const floatNumber = require('./floatNumber');
 const db = require('../helpers/dataBase');
 
@@ -17,6 +16,7 @@ const harkArr = ['str', 'dex', 'int', 'wis', 'con'];
  * @return {{patk: number, pdef: number, maxHp: number, maxMp: number,
  * maxEn: number,mga: number, mgp: number, hl: {min: *, max: *}, manaReg: *,
  * enReg: number, hit: boolean, maxTarget: number, lspell: number}}
+ * @todo проверить что функция используется при загрузке игрока в игру
  */
 // eslint-disable-next-line no-unused-vars
 function getDynHarks(charObj) {
