@@ -16,6 +16,9 @@ const harkArr = ['str', 'dex', 'int', 'wis', 'con'];
  * @param {String} prof строка профессии
  * @return {Object} обьект harks {str:x,dex:x,wis:x,int:x,con:x}
  */
+
+// @TODO использовать эту функцию что бы eslint не ругался :)
+// eslint-disable-next-line no-unused-vars
 function defHarks(prof) {
   return MiscService.prof[prof];
 }
@@ -27,6 +30,9 @@ function defHarks(prof) {
  * maxEn: number,mga: number, mgp: number, hl: {min: *, max: *}, manaReg: *,
  * enReg: number, hit: boolean, maxTarget: number, lspell: number}}
  */
+
+// @TODO использовать эту функцию что бы eslint не ругался :)
+// eslint-disable-next-line no-unused-vars
 function getDynHarks(charObj) {
   const { harks } = charObj;
   const patk = (charObj.prof === 'l')
@@ -148,6 +154,26 @@ class Char {
     return this.charObj.bonus;
   }
 
+  get items() {
+    return this.charObj.inventory;
+  }
+
+  getItem(itemId) {
+    return this.items.find((item) => item._id.equals(itemId));
+  }
+
+  async putOffItem(itemId) {
+    await db.inventory.putOffItem(this.id, itemId);
+    const inventory = await db.inventory.getItems(this.id);
+    this.charObj.inventory = inventory;
+  }
+
+  async putOnItem(itemId) {
+    await db.inventory.putOnItem(this.id, itemId);
+    const inventory = await db.inventory.getItems(this.id);
+    this.charObj.inventory = inventory;
+  }
+
   getIncreaseHarkCount(hark) {
     const count = this.tempHarks[hark] - this.charObj.harks[hark];
     return count || '';
@@ -206,11 +232,13 @@ class Char {
       return null;
     }
 
+    // @todo нужно джойнить инвентарь
+    const inventory = await db.inventory.getItems(charFromDb.id);
+    charFromDb.inventory = inventory;
+
     const char = new Char(charFromDb);
     if (!global.arena.players) global.arena.players = {};
     global.arena.players[char.id] = char;
-    // eslint-disable-next-line no-console
-    console.log(JSON.stringify(global.arena.players));
     return char;
   }
 

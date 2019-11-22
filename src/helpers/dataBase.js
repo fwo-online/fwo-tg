@@ -95,5 +95,22 @@ module.exports = {
         dbErr(e);
       }
     },
+    // eslint-disable-next-line consistent-return
+    async getItems(charId) {
+      try {
+        return await InventoryModel.getItems(charId);
+      } catch (e) {
+        dbErr(e);
+      }
+    },
+    async putOffItem(charId, itemId) {
+      return InventoryModel.putOffItem(charId, itemId);
+    },
+    async putOnItem(charId, itemId) {
+      return InventoryModel.putOnItem(charId, itemId);
+    },
+    async getItem(itemCode, charId) {
+      return InventoryModel.getItem(itemCode, charId);
+    },
   },
 };
