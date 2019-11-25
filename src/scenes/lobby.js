@@ -28,16 +28,12 @@ lobby.command('exit', ({
   scene.enter('greeter');
 });
 
-lobby.hears('😎 Профиль', ({
-  scene,
-}) => {
+lobby.hears('😎 Профиль', ({ scene }) => {
   leave();
   scene.enter('profile');
 });
 
-lobby.hears('⚔ В бой', ({
-  scene,
-}) => {
+lobby.hears('⚔ В бой', ({ scene }) => {
   leave();
   scene.enter('battleScene');
 });

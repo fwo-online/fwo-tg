@@ -188,5 +188,9 @@ profile.command('exit', ({ scene }) => {
   scene.enter('lobby');
 });
 
+profile.hears('🔙 Назад', ({ scene }) => {
+  leave();
+  scene.enter('lobby');
+});
 
 module.exports = profile;

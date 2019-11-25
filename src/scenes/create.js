@@ -23,9 +23,9 @@ create.action('create', ({ editMessageText }) => {
     'Странные упыри ползут со всех сторон, нам нужны бойцы, кем ты желаешь стать в этом мире?',
     Markup.inlineKeyboard([
       Markup.callbackButton('Маг', 'select_Маг'),
-      Markup.callbackButton('Лучник', 'select_Лучник'),
-      Markup.callbackButton('Воин', 'select_Воин'),
-      Markup.callbackButton('Лекарь', 'select_Лекарь'),
+      Markup.callbackButton('Лучник 🏹', 'select_Лучник'),
+      Markup.callbackButton('Воин 🛡', 'select_Воин'),
+      Markup.callbackButton('Лекарь ♱', 'select_Лекарь'),
     ]).resize().extra(),
   );
 });
