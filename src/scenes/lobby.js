@@ -38,6 +38,11 @@ lobby.hears('⚔ В бой', ({ scene }) => {
   scene.enter('battleScene');
 });
 
+lobby.command('shop', ({ scene }) => {
+  leave();
+  scene.enter('shop');
+});
+
 lobby.command('remove', async ({
   session,
   scene,

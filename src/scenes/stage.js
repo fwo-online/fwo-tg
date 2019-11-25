@@ -6,6 +6,7 @@ const setNick = require('./setNick');
 const profile = require('./profile');
 const battleScene = require('./battle');
 const inventoryScene = require('./inventory');
+const shopScene = require('./shop');
 
 const stage = new Stage();
 const { leave } = Stage;
@@ -20,5 +21,6 @@ stage.register(setNick);
 stage.register(profile);
 stage.register(battleScene);
 stage.register(inventoryScene);
+stage.register(shopScene);
 
 module.exports = stage;

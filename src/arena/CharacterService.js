@@ -112,6 +112,10 @@ class Char {
     return this.charObj.gold;
   }
 
+  set gold(value) {
+    this.charObj.gold = value;
+  }
+
   get exp() {
     return this.charObj.exp;
   }
@@ -142,6 +146,10 @@ class Char {
 
   get items() {
     return this.charObj.inventory;
+  }
+
+  get prof() {
+    return this.charObj.prof;
   }
 
   getItem(itemId) {
