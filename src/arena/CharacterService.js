@@ -1,5 +1,4 @@
 const arena = require('./index');
-const MiscService = require('./MiscService');
 const floatNumber = require('./floatNumber');
 const db = require('../helpers/dataBase');
 
@@ -12,26 +11,13 @@ global.arena.players = {};
  */
 const harkArr = ['str', 'dex', 'int', 'wis', 'con'];
 /**
- * Функция возвращающая дефолтные параметры чара в зависимости от профы
- * @param {String} prof строка профессии
- * @return {Object} обьект harks {str:x,dex:x,wis:x,int:x,con:x}
- */
-
-// @TODO использовать эту функцию что бы eslint не ругался :)
-// eslint-disable-next-line no-unused-vars
-function defHarks(prof) {
-  return MiscService.prof[prof];
-}
-
-/**
  * Возвращает список динамических характеристик
  * @param {Object} charObj обьект персонажа из базы
  * @return {{patk: number, pdef: number, maxHp: number, maxMp: number,
  * maxEn: number,mga: number, mgp: number, hl: {min: *, max: *}, manaReg: *,
  * enReg: number, hit: boolean, maxTarget: number, lspell: number}}
+ * @todo проверить что функция используется при загрузке игрока в игру
  */
-
-// @TODO использовать эту функцию что бы eslint не ругался :)
 // eslint-disable-next-line no-unused-vars
 function getDynHarks(charObj) {
   const { harks } = charObj;
@@ -111,7 +97,7 @@ class Char {
   }
 
   get id() {
-    return this.charObj.id;
+    return this.charObj.id || this.charObj._id;
   }
 
   get nickname() {
@@ -222,20 +208,14 @@ class Char {
 
   /**
    * Загрузка чара в память
-   * @param {Number} tgId идентификатор чара (tgId)
+   * @param {Number} tgId идентификатор пользователя в TG (tgId)
    * @type {Promise<Char>}
    */
   static async getCharacter(tgId) {
-    const charFromDb = await db.char.find({ tgId });
-
+    const charFromDb = await db.char.load({ tgId });
     if (!charFromDb) {
       return null;
     }
-
-    // @todo нужно джойнить инвентарь
-    const inventory = await db.inventory.getItems(charFromDb.id);
-    charFromDb.inventory = inventory;
-
     const char = new Char(charFromDb);
     if (!global.arena.players) global.arena.players = {};
     global.arena.players[char.id] = char;
