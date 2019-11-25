@@ -22,7 +22,7 @@ create.action('create', ({ editMessageText }) => {
   editMessageText(
     'Странные упыри ползут со всех сторон, нам нужны бойцы, кем ты желаешь стать в этом мире?',
     Markup.inlineKeyboard([
-      Markup.callbackButton('Маг', 'select_Маг'),
+      Markup.callbackButton('Маг 🔮', 'select_Маг'),
       Markup.callbackButton('Лучник 🏹', 'select_Лучник'),
       Markup.callbackButton('Воин 🛡', 'select_Воин'),
       Markup.callbackButton('Лекарь ♱', 'select_Лекарь'),
@@ -50,10 +50,10 @@ create.action('select', ({ editMessageText, session, scene }) => {
     editMessageText(
       'Не понятно, какой то ты странный',
       Markup.inlineKeyboard([
-        Markup.callbackButton('Маг', 'select_Маг'),
-        Markup.callbackButton('Лучник', 'select_Лучник'),
-        Markup.callbackButton('Воин', 'select_Воин'),
-        Markup.callbackButton('Лекарь', 'select_Лекарь'),
+        Markup.callbackButton('Маг 🔮', 'select_Маг'),
+        Markup.callbackButton('Лучник 🏹', 'select_Лучник'),
+        Markup.callbackButton('Воин 🛡', 'select_Воин'),
+        Markup.callbackButton('Лекарь ♱', 'select_Лекарь'),
       ]).resize().extra(),
     );
   } else {
@@ -67,10 +67,10 @@ create.action('back', ({ editMessageText }) => {
   editMessageText(
     'Думаешь лучше попробовать кем то другим?',
     Markup.inlineKeyboard([
-      Markup.callbackButton('Маг', 'select_Маг'),
-      Markup.callbackButton('Лучник', 'select_Лучник'),
-      Markup.callbackButton('Воин', 'select_Воин'),
-      Markup.callbackButton('Лекарь', 'select_Лекарь'),
+      Markup.callbackButton('Маг 🔮', 'select_Маг'),
+      Markup.callbackButton('Лучник 🏹', 'select_Лучник'),
+      Markup.callbackButton('Воин 🛡', 'select_Воин'),
+      Markup.callbackButton('Лекарь ♱', 'select_Лекарь'),
     ]).resize().extra(),
   );
 });
