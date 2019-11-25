@@ -42,7 +42,9 @@ const getInlineBackButton = () => [
 const getInlineKeyboard = (character) => {
   const inlineKeyboardArr = [];
 
-  allHarks.forEach((hark) => inlineKeyboardArr.push(getInlineButton(character, hark)));
+  allHarks.forEach(
+    (hark) => inlineKeyboardArr.push(getInlineButton(character, hark)),
+  );
   inlineKeyboardArr.push(getInlineResetButton());
   inlineKeyboardArr.push(getInlineConfirmButton());
   inlineKeyboardArr.push(getInlineBackButton());
@@ -66,9 +68,7 @@ const getMainMenu = (session) => [
 profile.enter(({ reply, session }) => {
   reply('Профиль', Markup.keyboard([
     ['🔙 Назад'],
-  ])
-    .resize()
-    .extra());
+  ]).resize().extra());
   reply(...getMainMenu(session));
 });
 
@@ -127,14 +127,18 @@ profile.action('magics', ({ editMessageText, session }) => {
   const keys = Object.keys(session.character.magics);
   if (keys) {
     keys.forEach((key) => {
-      magicButtons.push([Markup.callbackButton(`${key}: ${session.character.magics[key]}`, `about_${key}`)]);
+      magicButtons.push([
+        Markup.callbackButton(`${key}: ${session.character.magics[key]}`,
+          `about_${key}`)]);
     });
   }
   editMessageText(
     `Известные магии. Нажми на магию, чтобы узнать больше. У тебя ${session.character.bonus} бонусов`,
     Markup.inlineKeyboard([
       ...magicButtons,
-      [Markup.callbackButton('Учить', 'learn'), Markup.callbackButton('Назад', 'back')],
+      [
+        Markup.callbackButton('Учить', 'learn'),
+        Markup.callbackButton('Назад', 'back')],
     ]).resize().extra(),
   );
 });
@@ -143,19 +147,26 @@ profile.action('learn', async ({ editMessageText, session }) => {
   try {
     await CharacterService.loading(session.character.id);
 
-    session.character = { ...session.character, ...MagicService.learn(session.character.id, 1) };
+    session.character = {
+      ...session.character, ...MagicService.learn(session.character.id, 1),
+    };
     const magicButtons = [];
     const keys = Object.keys(session.character.magics);
     if (keys) {
       keys.forEach((key) => {
-        magicButtons.push(Markup.callbackButton(`${key}: ${session.character.magics[key]}`, `about_${key}`));
+        magicButtons.push(
+          Markup.callbackButton(`${key}: ${session.character.magics[key]}`,
+            `about_${key}`),
+        );
       });
     }
     editMessageText(
       `Теперь ты знаешь на одну магию больше. У тебя ${session.character.bonus} бонусов`,
       Markup.inlineKeyboard([
         magicButtons,
-        [Markup.callbackButton('Учить', 'learn'), Markup.callbackButton('Назад', 'back')],
+        [
+          Markup.callbackButton('Учить', 'learn'),
+          Markup.callbackButton('Назад', 'back')],
       ]).resize().extra(),
     );
   } catch (e) {

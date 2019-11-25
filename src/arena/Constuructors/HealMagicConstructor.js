@@ -1,5 +1,6 @@
 const floatNumber = require('../floatNumber');
 const MiscService = require('../MiscService');
+
 /**
  * Heal Class
  */
@@ -62,7 +63,8 @@ class Heal {
   effectVal() {
     const i = this.params.initiator;
     const proc = i.proc || 0;
-    const eff = MiscService.randInt(i.stats.val('hl').min, i.stats.val('hl').max);
+    const eff = MiscService.randInt(i.stats.val('hl').min,
+      i.stats.val('hl').max);
     return floatNumber(eff * proc);
   }
 

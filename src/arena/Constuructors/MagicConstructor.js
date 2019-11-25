@@ -28,7 +28,7 @@ class Magic {
    */
   get isLong() {
     return this.constructor.name === 'LongMagic' || this.constructor.name
-      === 'LongDmgMagic';
+        === 'LongDmgMagic';
   }
 
   // Дальше идут общие методы для всех магий
@@ -68,7 +68,7 @@ class Magic {
    */
   getCost(initiator) {
     const costValue = parseFloat(initiator.stats.val(this.costType)
-      - parseFloat(this.cost));
+        - parseFloat(this.cost));
     if (costValue >= 0) {
       // eslint-disable-next-line no-param-reassign
       initiator.stats[this.costType] = +costValue;

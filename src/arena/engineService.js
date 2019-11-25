@@ -16,7 +16,10 @@ const STAGES = config.stages;
  */
 function sortOrders(ordersArr) {
   // eslint-disable-next-line no-return-assign, no-param-reassign,no-sequences
-  return ordersArr.reduce((r, v, i, a, k = v.action) => ((r[k] || (r[k] = [])).push(v), r), {});
+  return ordersArr.reduce(
+    // eslint-disable-next-line no-sequences,no-return-assign
+    (r, v, i, a, k = v.action) => ((r[k] || (r[k] = [])).push(v), r), {},
+  );
 }
 
 /**
@@ -85,7 +88,6 @@ async function engine(gameObj) {
     console.info('engine done');
   }
 }
-
 
 /**
  * Нужна функция которая отценивает на каком уровне выполняется action

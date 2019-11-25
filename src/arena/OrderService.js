@@ -3,7 +3,6 @@ const isEqual = require('lodash.isequal');
 const MiscService = require('./MagicService');
 const GameService = require('./GameService');
 
-
 /**
  * @desc проверка достижения максимального кол-ва целей при атаке
  * @param {Number} charId идентификатор [charId]

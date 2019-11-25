@@ -1,10 +1,9 @@
-
 /**
-   * FWO Config Files
-   *
-   * @description Конфигурационный файл для арены
-   *
-   */
+ * FWO Config Files
+ *
+ * @description Конфигурационный файл для арены
+ *
+ */
 global.arena = {};
 global.arena.groups = {};
 module.exports = {

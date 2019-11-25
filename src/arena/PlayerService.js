@@ -79,7 +79,8 @@ class Player {
    */
   // eslint-disable-next-line class-methods-use-this
   notify(data) {
-    channelHelper.broadcast(`Союзники:${data.allies}\n\nВраги:${data.enemies}`, this.tgId);
+    channelHelper.broadcast(`Союзники:${data.allies}\n\nВраги:${data.enemies}`,
+      this.tgId);
   }
 }
 

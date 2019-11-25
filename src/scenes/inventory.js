@@ -29,46 +29,51 @@ inventoryScene.action('inventoryBack', async ({ session, editMessageText }) => {
   );
 });
 
-inventoryScene.action(/itemInfo(?=_)/, async ({ session, editMessageText, match }) => {
-  const [, itemId] = match.input.split('_');
-  const item = session.character.getItem(itemId);
-  const itemName = Inventory.getItemName(item.code);
-  const itemAction = item.putOn ? Markup.callbackButton('Снять', `putOff_${itemId}`) : Markup.callbackButton('Надеть', `putOn_${itemId}`);
+inventoryScene.action(/itemInfo(?=_)/,
+  async ({ session, editMessageText, match }) => {
+    const [, itemId] = match.input.split('_');
+    const item = session.character.getItem(itemId);
+    const itemName = Inventory.getItemName(item.code);
+    const itemAction = item.putOn ? Markup.callbackButton('Снять',
+      `putOff_${itemId}`) : Markup.callbackButton('Надеть',
+      `putOn_${itemId}`);
 
-  editMessageText(
-    `Выберите действие для вещи ${itemName}`,
-    Markup.inlineKeyboard([
-      itemAction,
-      Markup.callbackButton('Продать', 'sell'),
-      Markup.callbackButton('Назад', 'back'),
-    ]).resize().extra(),
-  );
-});
+    editMessageText(
+      `Выберите действие для вещи ${itemName}`,
+      Markup.inlineKeyboard([
+        itemAction,
+        Markup.callbackButton('Продать', 'sell'),
+        Markup.callbackButton('Назад', 'back'),
+      ]).resize().extra(),
+    );
+  });
 
-inventoryScene.action(/putOff(?=_)/, async ({ session, editMessageText, match }) => {
-  const [, itemId] = match.input.split('_');
-  await session.character.putOffItem(itemId);
+inventoryScene.action(/putOff(?=_)/,
+  async ({ session, editMessageText, match }) => {
+    const [, itemId] = match.input.split('_');
+    await session.character.putOffItem(itemId);
 
-  editMessageText(
-    'Предмет успешно снят!',
-    Markup.inlineKeyboard([
-      Markup.callbackButton('Назад', 'inventoryBack'),
-    ]).resize().extra(),
-  );
-});
+    editMessageText(
+      'Предмет успешно снят!',
+      Markup.inlineKeyboard([
+        Markup.callbackButton('Назад', 'inventoryBack'),
+      ]).resize().extra(),
+    );
+  });
 
-inventoryScene.action(/putOn(?=_)/, async ({ session, editMessageText, match }) => {
-  const [, itemId] = match.input.split('_');
+inventoryScene.action(/putOn(?=_)/,
+  async ({ session, editMessageText, match }) => {
+    const [, itemId] = match.input.split('_');
 
-  await session.character.putOnItem(itemId);
+    await session.character.putOnItem(itemId);
 
-  editMessageText(
-    'Предмет успешно надет!',
-    Markup.inlineKeyboard([
-      Markup.callbackButton('Назад', 'inventoryBack'),
-    ]).resize().extra(),
-  );
-});
+    editMessageText(
+      'Предмет успешно надет!',
+      Markup.inlineKeyboard([
+        Markup.callbackButton('Назад', 'inventoryBack'),
+      ]).resize().extra(),
+    );
+  });
 
 inventoryScene.action('back', ({ scene }) => {
   scene.reenter();

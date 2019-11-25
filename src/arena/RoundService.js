@@ -116,13 +116,13 @@ class RoundConstructor extends ee {
     switch (state) {
       case 'init':
         // Состояние инициации раунда после создани игры
-      // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console
         console.debug('Round State: init');
         this.goNext('starting');
         break;
       case 'starting':
         // Начало рануда, pre-round
-      // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console
         console.debug('Round State: starting');
         this.start();
         this.goNext('orders');
@@ -145,7 +145,7 @@ class RoundConstructor extends ee {
 
       default:
         // code
-      // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console
         console.error('Unknown Round State', state);
     }
   }

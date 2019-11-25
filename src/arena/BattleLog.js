@@ -1,4 +1,5 @@
 const ee = require('events');
+
 /**
  * msg
  * @param {Object} msgObj тип сообщения
@@ -92,4 +93,5 @@ class BattleLog extends ee {
     this.emit('BattleLog', data);
   }
 }
+
 module.exports = BattleLog;

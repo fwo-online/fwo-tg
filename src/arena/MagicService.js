@@ -9,7 +9,6 @@ const config = require('./config');
 // const magicList = arena.magics;
 arena.magics = require('./magics');
 
-
 /**
  * Возвращает есть ли доступные магии на данном круге для изучения
  * @param {Number} charId идентификатор персонажа
@@ -38,6 +37,7 @@ function hasMagicToLearn(charId, lvl) {
 }
 
 const chance = config.magic.learnChance;
+
 /**
  * Функция проверки шанс выучить магию
  * @return {boolean}
@@ -54,7 +54,7 @@ module.exports = {
    * @return {Object} {круг_магии:[id_магии:{описание}},...]
    */
   list: (lvl, prof) => {
-  // eslint-disable-next-line array-callback-return, consistent-return
+    // eslint-disable-next-line array-callback-return, consistent-return
     let magicList = _.filter(arena.magics, (m) => {
       if (m.lvl === 0) return true;
       if (m.profList) return m.profList.indexOf(prof) + 1;

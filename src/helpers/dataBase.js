@@ -34,7 +34,8 @@ module.exports = {
     // eslint-disable-next-line consistent-return
     async load(query) {
       try {
-        const x = await CharModel.findOne({ ...query, deleted: false }).populate('inventory');
+        const x = await CharModel.findOne({ ...query, deleted: false })
+          .populate('inventory');
         if (x) {
           x.id = x._id;
         }
@@ -54,7 +55,8 @@ module.exports = {
     // eslint-disable-next-line consistent-return
     async remove(tgId) {
       try {
-        return await CharModel.findOneAndUpdate({ tgId, deleted: false }, { deleted: true });
+        return await CharModel.findOneAndUpdate({ tgId, deleted: false },
+          { deleted: true });
       } catch (e) {
         dbErr(e);
       }

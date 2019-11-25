@@ -1,5 +1,6 @@
 // import Magic from './MagicConstructor';
 const Magic = require('./MagicConstructor');
+
 /**
  * Общий конструктор не длительных магий
  */

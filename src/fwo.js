@@ -14,7 +14,6 @@ db.connection.on('open', () => {
   Item.load();
 });
 
-
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 bot.use(session());
@@ -30,6 +29,5 @@ bot.use(protectedMiddleware);
 bot.command('profile', (ctx) => ctx.scene.enter('profile'));
 bot.command('inventory', (ctx) => ctx.scene.enter('inventory'));
 bot.launch();
-
 
 channelHelper.bot = bot;

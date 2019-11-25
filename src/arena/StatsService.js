@@ -1,13 +1,13 @@
-
 const floatNumber = require('./floatNumber');
+
 /**
  * Класс для хранения stats
  */
 class StatsService {
   /**
-     * Конструктор класса stats
-     * @param {Object} obj обьект параметров
-     */
+   * Конструктор класса stats
+   * @param {Object} obj обьект параметров
+   */
   constructor(obj) {
     // дефольные параметры
     // балванка
@@ -21,12 +21,12 @@ class StatsService {
   }
 
   /**
-     * Функция изменения атрибута
-     * @param {String} type тип изменения up/down
-     * @param {String} atr изменяемый атрибут atk/hark.str/def
-     * @param {floatNumber} val значение на которое будет изменено
-     * изменение может происходить только внутри inRound
-     */
+   * Функция изменения атрибута
+   * @param {String} type тип изменения up/down
+   * @param {String} atr изменяемый атрибут atk/hark.str/def
+   * @param {floatNumber} val значение на которое будет изменено
+   * изменение может происходить только внутри inRound
+   */
   mode(type, atr, val) {
     let a = this.inRound[atr];
     if (a === undefined) {
@@ -63,8 +63,8 @@ class StatsService {
   }
 
   /**
-     * Функция обнуления состояние inRound Object
-     */
+   * Функция обнуления состояние inRound Object
+   */
   refresh() {
     const oldData = { ...this.inRound }; // ссылаемся на внешний обьект
     if (oldData.exp) {
@@ -79,10 +79,10 @@ class StatsService {
   }
 
   /**
-     * Функция возвращающее значение атрибута
-     * @param {String} atr str/atk/prt/dex
-     * @return {floatNumber}
-     */
+   * Функция возвращающее значение атрибута
+   * @param {String} atr str/atk/prt/dex
+   * @return {floatNumber}
+   */
   val(atr) {
     const a = this.inRound[atr];
     if (typeof a === 'number') {
@@ -92,9 +92,9 @@ class StatsService {
   }
 
   /**
-     * Добавление голда игроку
-     * @param {Number} n кол-во gold
-     */
+   * Добавление голда игроку
+   * @param {Number} n кол-во gold
+   */
   addGold(n = 0) {
     this.collect.gold += +n;
   }

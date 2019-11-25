@@ -23,6 +23,7 @@ const dodge = new Skill({
  */
 dodge.run = (initiator = this.params.initiator) => {
   const initiatorSkillLvl = initiator.skills[this.name];
-  initiator.flags.isDodging = this.effect[initiatorSkillLvl - 1] * initiator.stats.val('dex');
+  initiator.flags.isDodging = this.effect[initiatorSkillLvl - 1]
+      * initiator.stats.val('dex');
 };
 module.exports = dodge;

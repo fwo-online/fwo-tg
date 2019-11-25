@@ -1,17 +1,17 @@
 const arena = require('./index');
 /**
-  * Items Service
-  *
-  * @description Набор функций для работы с вещами.
-  * @module Service/Item
-  */
+ * Items Service
+ *
+ * @description Набор функций для работы с вещами.
+ * @module Service/Item
+ */
 
 module.exports = {
-/**
-  * @description Парсер hark itema
-  * @param {Object} data параметры вещи из базы
-  * @return {Object} обьект стандартизированных параметров вещи
-  */
+  /**
+   * @description Парсер hark itema
+   * @param {Object} data параметры вещи из базы
+   * @return {Object} обьект стандартизированных параметров вещи
+   */
   itemAtrParser: (data) =>
   // eslint-disable-next-line consistent-return, implicit-arrow-linebreak
     JSON.parse(JSON.stringify(data), (key, value) => {
@@ -25,7 +25,7 @@ module.exports = {
         'lighting',
         'frost',
       ];
-      // eslint-disable-next-line no-bitwise
+        // eslint-disable-next-line no-bitwise
       const isFound = ~minmaxarr.indexOf(key);
       if (((key === 'hark') || (key === 'plushark')) && (value !== '')) {
         return JSON.parse(value);
@@ -40,15 +40,15 @@ module.exports = {
       if (value !== '') return value;
     }),
   /**
-  * @param {String} nick
-  * @param {Number} itemCode ID итема
-  * @return {Boolean}
-  *
-  */
+   * @param {String} nick
+   * @param {Number} itemCode ID итема
+   * @return {Boolean}
+   *
+   */
   // eslint-disable-next-line consistent-return
   harkCheck(nick, itemCode) {
-  // функция проверяет проходит ли чар по харкам
-  // проверку шмотки или нет
+    // функция проверяет проходит ли чар по харкам
+    // проверку шмотки или нет
     const char = arena.players[nick];
     const item = arena.shop[itemCode];
     if ((char) && (item)) {

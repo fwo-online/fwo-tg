@@ -1,9 +1,9 @@
 /**
-  * Monster Service
-  * @description Класс для создание монстра
-  * @module Service/Monster
-  * @todo Это нерабочий модуль, только прототип
-  */
+ * Monster Service
+ * @description Класс для создание монстра
+ * @module Service/Monster
+ * @todo Это нерабочий модуль, только прототип
+ */
 
 const Monster = (data) => {
   this.name = data && data.name ? data.name : this.generateName();

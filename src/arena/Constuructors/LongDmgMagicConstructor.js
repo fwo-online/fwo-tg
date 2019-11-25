@@ -127,7 +127,7 @@ class LongDmgMagic extends DmgMagic {
       initiator: this.params.initiator.id || i.id,
       target: this.params.target.id || t.id,
       duration: this.params.initiator.stats.val('lspell')
-      || i.stats.val('lspell'),
+          || i.stats.val('lspell'),
       round: this.params.game.round.count || g.round.count,
       proc: this.params.initiator.proc || i.proc,
     });

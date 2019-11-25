@@ -16,9 +16,7 @@ lobby.enter(({ replyWithMarkdown, session }) => replyWithMarkdown(
     ['⚔ В бой'],
     ['😎 Профиль', '🏪 Магазин'],
     ['☸ Настройки', '❓ Помощь'],
-  ])
-    .resize()
-    .extra(),
+  ]).resize().extra(),
 ));
 
 lobby.command('exit', ({
@@ -65,6 +63,5 @@ lobby.command('remove', async ({
     scene.enter('greeter');
   }
 });
-
 
 module.exports = lobby;

@@ -30,7 +30,9 @@ battleScene.action('search', async ({ editMessageText, session }) => {
       Markup.callbackButton('Нет-нет, остановите, я передумал!', 'stop'),
     ]).resize().extra(),
   );
-  await channelHelper.broadcast(`Игрок ${global.arena.players[id].nickname} начал поиск игры`);
+  await channelHelper.broadcast(
+    `Игрок ${global.arena.players[id].nickname} начал поиск игры`,
+  );
 });
 
 battleScene.action('stop', async ({ editMessageText, session }) => {
@@ -43,13 +45,17 @@ battleScene.action('stop', async ({ editMessageText, session }) => {
       Markup.callbackButton('Искать приключений на ...', 'search'),
     ]).resize().extra(),
   );
-  await channelHelper.broadcast(`Игрок ${global.arena.players[id].nickname} внезапно передумал`);
+  await channelHelper.broadcast(
+    `Игрок ${global.arena.players[id].nickname} внезапно передумал`,
+  );
 });
 
 battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) => {
   const gameId = global.arena.players[session.character.id].mm;
   const [, action] = match.input.split('_');
-  const aliveArr = GameService.aliveArr(gameId).map(({ nick, id }) => Markup.callbackButton(nick, `${action}_${id}_${nick}`));
+  const aliveArr = GameService.aliveArr(gameId)
+    .map(({ nick, id }) => Markup.callbackButton(nick,
+      `${action}_${id}_${nick}`));
   editMessageText(
     `Выбери цель для ${match}`,
     Markup.inlineKeyboard([

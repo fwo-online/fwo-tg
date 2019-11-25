@@ -39,7 +39,7 @@ class DmgMagic extends Magic {
     if (this.dmgType !== 'clear') {
       // правим урон от mgp цели и mga кастера
       eff = eff * (1 + 0.004 * i.stats.val('mga'))
-        * (1 - 0.002 * t.stats.val('mgp'));
+          * (1 - 0.002 * t.stats.val('mgp'));
     }
     this.status.hit = eff;
     return eff;

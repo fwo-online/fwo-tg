@@ -3,8 +3,8 @@
  */
 class FlagsConstructors {
   /**
-     * Конструктор обьект флагов
-     */
+   * Конструктор обьект флагов
+   */
   constructor() {
     this.isProtected = [];
     this.isGlitched = {};
@@ -16,8 +16,8 @@ class FlagsConstructors {
   }
 
   /**
-     * Обнуление флагов
-     */
+   * Обнуление флагов
+   */
   refresh() {
     this.isProtected = [];
     this.isGlitched = {};

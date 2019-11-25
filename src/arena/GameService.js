@@ -374,4 +374,5 @@ class Game {
     player.notify({ enemies, allies });
   }
 }
+
 module.exports = Game;

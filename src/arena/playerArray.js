@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const PlayerService = require('./PlayerService');
+
 /**
  * Класс контроля игроков внутри созданной игры
  */
@@ -20,7 +21,9 @@ class PlayersArr {
    * @todo переделать это, убрать внутрь конструктора playersArr
    */
   async roundJson() {
-    const result = await Promise.all(this.init.map((p) => PlayerService.loading(p)));
+    const result = await Promise.all(
+      this.init.map((p) => PlayerService.loading(p)),
+    );
     this.arr = result;
     return _.keyBy(result, 'id');
   }
@@ -34,4 +37,5 @@ class PlayersArr {
     return _.filter(this.arr, { clan: playerClanId });
   }
 }
+
 module.exports = PlayersArr;

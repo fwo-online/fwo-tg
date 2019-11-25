@@ -8,10 +8,11 @@ module.exports = {
   postEffect(g) {
     const Game = g;
     let healmsg = '';
+
     /**
-    * Раздаем exp всем участникам хила
-    * @param {PlayerObj} target цель на которую использовался handsHeal
-    */
+     * Раздаем exp всем участникам хила
+     * @param {PlayerObj} target цель на которую использовался handsHeal
+     */
     function giveExpForHeal(target) {
       const healers = target.flags.isHealed;
       if (!Object.keys(healers).length) return;
@@ -43,6 +44,7 @@ module.exports = {
       console.log(`${target.nick} был вылечен на ${allHeal} | ${healmsg}`);
       Game.sendBattleLog(`${target.nick} был вылечен на ${allHeal}|${healmsg}`);
     }
+
     Game.forAllPlayers(giveExpForHeal);
   },
 };

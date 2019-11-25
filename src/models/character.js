@@ -69,5 +69,4 @@ const character = new Schema({
   deleted: { type: Boolean, default: false },
 });
 
-
 module.exports = mongoose.model('Character', character);
