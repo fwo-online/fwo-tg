@@ -9,8 +9,10 @@ const arena = require('../arena');
 const GameService = require('../arena/GameService');
 
 const battleScene = new Scene('battleScene');
-battleScene.enter(({ reply }) => {
-  reply(
+battleScene.enter(async ({ reply, replyWithMarkdown }) => {
+  // @todo При поиске боя хотелось бы ещё выдавать сюда картиночку
+  await replyWithMarkdown('*Поиск Боя*', Markup.removeKeyboard().extra());
+  await reply(
     'Кнопки',
     Markup.inlineKeyboard([
       Markup.callbackButton('Искать приключений на ...', 'search'),

@@ -64,6 +64,11 @@ const getMainMenu = (session) => [
 ];
 
 profile.enter(({ reply, session }) => {
+  reply('Профиль', Markup.keyboard([
+    ['🔙 Назад'],
+  ])
+    .resize()
+    .extra());
   reply(...getMainMenu(session));
 });
 
@@ -183,5 +188,9 @@ profile.command('exit', ({ scene }) => {
   scene.enter('lobby');
 });
 
+profile.hears('🔙 Назад', ({ scene }) => {
+  leave();
+  scene.enter('lobby');
+});
 
 module.exports = profile;
