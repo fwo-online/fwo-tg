@@ -8,7 +8,7 @@ greeter.enter(async ({
   reply, scene, session,
 }) => {
   if (session.character) {
-    await reply('Привет');
+    await reply('FWO - Arena');
     leave();
     scene.enter('lobby');
   } else {

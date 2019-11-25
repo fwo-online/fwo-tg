@@ -1,8 +1,10 @@
 const Scene = require('telegraf/scenes/base');
+const Stage = require('telegraf/stage');
 const Markup = require('telegraf/markup');
 const Inventory = require('../models/inventory');
 
 const inventoryScene = new Scene('inventory');
+const { leave } = Stage;
 
 const getInventoryItems = (items) => items.map((item) => Markup.callbackButton(
   `${Inventory.getItemName(item.code)}`,
@@ -31,14 +33,14 @@ inventoryScene.action(/itemInfo(?=_)/, async ({ session, editMessageText, match 
   const [, itemId] = match.input.split('_');
   const item = session.character.getItem(itemId);
   const itemName = Inventory.getItemName(item.code);
-  const itemAction = item.putOn ? Markup.callbackButton('Снять', `putOff_${itemId}`) : Markup.callbackButton('Одеть', `putOn_${itemId}`);
+  const itemAction = item.putOn ? Markup.callbackButton('Снять', `putOff_${itemId}`) : Markup.callbackButton('Надеть', `putOn_${itemId}`);
 
   editMessageText(
     `Выберите действие для вещи ${itemName}`,
     Markup.inlineKeyboard([
       itemAction,
       Markup.callbackButton('Продать', 'sell'),
-      Markup.callbackButton('Удалить', 'remove'),
+      Markup.callbackButton('Назад', 'back'),
     ]).resize().extra(),
   );
 });
@@ -66,6 +68,15 @@ inventoryScene.action(/putOn(?=_)/, async ({ session, editMessageText, match }) 
       Markup.callbackButton('Назад', 'inventoryBack'),
     ]).resize().extra(),
   );
+});
+
+inventoryScene.action('back', ({ scene }) => {
+  scene.reenter();
+});
+
+inventoryScene.hears('🔙 Назад', ({ scene }) => {
+  leave();
+  scene.enter('lobby');
 });
 
 module.exports = inventoryScene;

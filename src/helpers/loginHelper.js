@@ -1,5 +1,4 @@
 const db = require('./dataBase');
-const Inventory = require('../models/inventory');
 const CharacterService = require('../arena/CharacterService');
 
 module.exports = {
@@ -87,11 +86,8 @@ module.exports = {
     h.sex = sex;
     h.tgId = tgId;
     h.nickname = nickname;
-    // eslint-disable-next-line consistent-return
-    const resp = await db.char.create(h);
-    // eslint-disable-next-line no-underscore-dangle
-    await Inventory.firstCreate(resp._id, resp.prof);
-    return resp;
+    // eslint-disable-next-line no-return-await
+    return await db.char.create(h);
   },
   /*
   @func удаления

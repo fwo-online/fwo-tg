@@ -20,8 +20,7 @@ class PhysConstructor {
 
   /**
    * Основная функция выполнения. Из неё дёргаются все зависимости
-   * Общий метод каста магии
-   * в нём выполняются общие функции для всех магий
+   * Общий метод для скилов физической атаки
    * @param {Object} initiator Обьект кастера
    * @param {Object} target Обьект цели
    * @param {Object} game Обьект игры (не обязателен)
@@ -49,7 +48,24 @@ class PhysConstructor {
    * Проверка флагаов влияющих на физический урон
    */
   checkPreAffects() {
-    return this;
+    const { initiator, target } = this.params;
+    // Проверяем увёртку
+    if (target.flags.isDodging) {
+      // @todo нужна проверка на тип оружия в руках атакующего
+      //  проверяем имеет ли цель достаточно dex для того что бы уклониться
+      const iDex = initiator.stats.val('dex');
+      const at = floatNumber(Math.round(target.flags.isDodging / iDex));
+      // eslint-disable-next-line no-console
+      console.log('Dodging: ', at);
+      const r = MiscService.rndm('1d100');
+      const c = Math.round(Math.sqrt(at) + (10 * at) + 5);
+      const result = c > r;
+      // eslint-disable-next-line no-console
+      console.log('left:', c, ' right:', r, ' result:', result);
+      this.status.failReason = ({
+        action: 'dodge', message: 'dodged',
+      });
+    }
   }
 
   /**

@@ -33,7 +33,7 @@ const character = new Schema({
   lvl: { type: Number, default: 1 },
   sex: { type: String, default: 'm' },
   lastFight: { type: Date, default: null },
-  inventory: { type: Object, default: [] },
+  inventory: [{ type: Schema.Types.ObjectId, ref: 'Inventory' }],
   psr: { type: Number, default: 1500 },
   magics: { type: Object, default: {} },
   bonus: { type: Number, default: 0 },
