@@ -36,9 +36,14 @@ lobby.hears('⚔ В бой', ({ scene }) => {
   scene.enter('battleScene');
 });
 
+lobby.hears('🏪 Магазин', ({ scene }) => {
+  leave();
+  scene.enter('shopScene');
+});
+
 lobby.command('shop', ({ scene }) => {
   leave();
-  scene.enter('shop');
+  scene.enter('shopScene');
 });
 
 lobby.command('remove', async ({

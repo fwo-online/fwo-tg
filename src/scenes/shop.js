@@ -6,7 +6,7 @@ const Inventory = require('../models/inventory');
 
 const { leave } = Stage;
 
-const shopScene = new Scene('shop');
+const shopScene = new Scene('shopScene');
 
 const STORES = {
   a: 'Пр.рука',
