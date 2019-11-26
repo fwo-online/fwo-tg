@@ -20,7 +20,6 @@ const berserk = new Skill({
 /**
  * Логика работы скила
  * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
  */
 berserk.run = (initiator = this.params.initiator) => {
   const initiatorMagicLvl = initiator.skills[this.name];

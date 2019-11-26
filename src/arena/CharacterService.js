@@ -100,6 +100,10 @@ class Char {
     return this.charObj.id || this.charObj._id;
   }
 
+  get tgId() {
+    return this.charObj.tgId;
+  }
+
   get nickname() {
     return this.charObj.nickname;
   }
@@ -232,7 +236,7 @@ class Char {
 
   /**
    * Возвращает обьект игры по Id чара
-   * @param {Number} charId идентификатор чара;
+   * @param {String} charId идентификатор чара;
    * @return {Object} Обьект игры
    * @todo нужно перенести это не в static а во внутрь экземпляра класса
    */
