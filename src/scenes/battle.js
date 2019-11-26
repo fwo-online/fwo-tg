@@ -36,8 +36,7 @@ battleScene.action('search', async ({ editMessageText, session }) => {
 });
 
 battleScene.action('stop', async ({ editMessageText, session }) => {
-  // eslint-disable-next-line no-underscore-dangle
-  const id = session.character._id;
+  const { id } = session.character;
   arena.mm.pull(id);
   editMessageText(
     'Кнопки',
