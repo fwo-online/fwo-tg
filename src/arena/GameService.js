@@ -68,13 +68,6 @@ class Game {
    */
   preLoading() {
     this.info.status = 'preload';
-    const self = this;
-    // помечаем всех игроков что они в игре
-    this.playerArr.init.forEach((player) => {
-    // eslint-disable-next-line no-underscore-dangle
-      arena.players[player].mm = self.info.id;
-    });
-
     this.startGame();
     this.initHandlers();
     this.info.players.forEach((player) => {
