@@ -9,6 +9,25 @@ const arena = require('../arena');
 const GameService = require('../arena/GameService');
 
 const battleScene = new Scene('battleScene');
+
+const penaltyTime = 180000;
+
+const checkCancelFindCount = (character) => {
+  const time = Date.now();
+  if (!character.mm) {
+    character.mm = {
+      time,
+      try: 0,
+    };
+  }
+  if (character.mm.try >= 3 && time - character.mm.time < penaltyTime) {
+    return false;
+  }
+  character.mm.try += 1;
+  character.mm.time = time;
+  return true;
+};
+
 battleScene.enter(async ({ reply, replyWithMarkdown }) => {
   // @todo При поиске боя хотелось бы ещё выдавать сюда картиночку
   await replyWithMarkdown('*Поиск Боя*', Markup.removeKeyboard().extra());
@@ -21,18 +40,28 @@ battleScene.enter(async ({ reply, replyWithMarkdown }) => {
 });
 
 battleScene.action('search', async ({ editMessageText, session }) => {
-  const { id } = session.character;
-  const searchObject = { charId: id, psr: 1000, startTime: Date.now() };
-  arena.mm.push(searchObject);
-  await editMessageText(
-    'Кнопки',
-    Markup.inlineKeyboard([
-      Markup.callbackButton('Нет-нет, остановите, я передумал!', 'stop'),
-    ]).resize().extra(),
-  );
-  await channelHelper.broadcast(
-    `Игрок ${global.arena.players[id].nickname} начал поиск игры`,
-  );
+  const { id, mm } = session.character;
+  if (!checkCancelFindCount(session.character)) {
+    const remainingTime = ((penaltyTime - (Date.now() - mm.time)) / 1000).toFixed();
+    await editMessageText(
+      `Слишком много жмёшь кнопку, жди ${remainingTime} секунд до следующей попытки`,
+      Markup.inlineKeyboard([
+        Markup.callbackButton('Искать приключений на ...', 'search'),
+      ]).resize().extra(),
+    );
+  } else {
+    const searchObject = { charId: id, psr: 1000, startTime: Date.now() };
+    arena.mm.push(searchObject);
+    await editMessageText(
+      'Кнопки',
+      Markup.inlineKeyboard([
+        Markup.callbackButton('Нет-нет, остановите, я передумал!', 'stop'),
+      ]).resize().extra(),
+    );
+    await channelHelper.broadcast(
+      `Игрок ${global.arena.players[id].nickname} начал поиск игры`,
+    );
+  }
 });
 
 battleScene.action('stop', async ({ editMessageText, session }) => {
