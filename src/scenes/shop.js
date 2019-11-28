@@ -3,6 +3,7 @@ const Stage = require('telegraf/stage');
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
 const Inventory = require('../models/inventory');
+const ItemService = require('../arena/ItemService');
 
 const { leave } = Stage;
 
@@ -38,6 +39,22 @@ const STORES = {
   ab: 'Двуручное оружие',
 };
 
+const INFO_NAMES = {
+  hit: 'Удар',
+  atc: 'Атака',
+  prt: 'Защита',
+
+  hark: 'Требуемые характеристики',
+};
+
+const HARK_NAMES = {
+  s: ['str', 'Сила'],
+  d: ['dex', 'Ловкость'],
+  w: ['wis', 'Мудрость'],
+  i: ['int', 'Интелект'],
+  c: ['con', 'Телосложение'],
+};
+
 const getTypeButtons = (types) => {
   const buttons = types.map((type) => [Markup.callbackButton(
     `${STORES[type]}`,
@@ -54,7 +71,7 @@ const getItems = (wear, prof) => {
   const items = _.filter(global.arena.items, { wear });
   const filteredItems = items.filter((item) => item.race.includes(prof));
   const buttons = filteredItems.map((item) => [Markup.callbackButton(
-    `${item.name}, ${item.price}`,
+    `${item.name} (${item.price})`,
     `itemInfo_${item.code}`,
   )]);
   buttons.push([Markup.callbackButton(
@@ -62,6 +79,30 @@ const getItems = (wear, prof) => {
     'back',
   )]);
   return buttons;
+};
+
+const getItemInfo = (item, character) => {
+  const parseAttr = ItemService.itemAtrParser(item);
+  const infoNames = Object.keys(INFO_NAMES);
+  let string = `${item.name} (${item.price}) \n${item.descr}`;
+  infoNames.forEach((name) => {
+    if (parseAttr[name]) {
+      if (name === 'hark') {
+        string += `\n\n${INFO_NAMES[name]}:`;
+        const harks = Object.keys(parseAttr.hark);
+        harks.forEach((hark) => {
+          const harkArr = HARK_NAMES[hark];
+          const isWear = character.harks[harkArr[0]] < parseAttr.hark[hark];
+          string += `\n${isWear ? '❗️' : '✅'} ${harkArr[1]}: ${parseAttr.hark[hark]} ${isWear ? `(${character.harks[harkArr[0]] - parseAttr.hark[hark]})` : ''}`;
+        });
+      } else if (name === 'hit') {
+        string += `\n${INFO_NAMES[name]}: ${parseAttr.hit.min}/${parseAttr.hit.min}`;
+      } else {
+        string += `\n${INFO_NAMES[name]}: ${parseAttr[name]}`;
+      }
+    }
+  });
+  return string;
 };
 
 shopScene.enter(({ reply }) => {
@@ -85,9 +126,8 @@ shopScene.action(/itemType(?=_)/, async ({ session, editMessageText, match }) =>
 shopScene.action(/itemInfo(?=_)/, async ({ session, editMessageText, match }) => {
   const [, code] = match.input.split('_');
   const item = global.arena.items[code];
-
   editMessageText(
-    `${item.name}. 💲 ${item.price}. У тебя есть 💰 ${session.character.gold}`,
+    getItemInfo(item, session.character),
     Markup.inlineKeyboard([
       Markup.callbackButton(
         'Купить',
