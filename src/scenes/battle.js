@@ -12,6 +12,12 @@ const battleScene = new Scene('battleScene');
 
 const penaltyTime = 180000;
 
+/**
+ * Проверяет можно ли игроку начать поиск
+ * Если сделано слишком много попыток за заданное время, возвращает false
+ * @param {Object} character - объект персонажа
+ * @return {boolean}
+ */
 const checkCancelFindCount = (character) => {
   const time = Date.now();
   if (!character.mm) {
@@ -31,12 +37,14 @@ const checkCancelFindCount = (character) => {
 battleScene.enter(async ({ reply, replyWithMarkdown }) => {
   // @todo При поиске боя хотелось бы ещё выдавать сюда картиночку
   await replyWithMarkdown('*Поиск Боя*', Markup.removeKeyboard().extra());
-  await reply(
+  const message = await reply(
     'Кнопки',
     Markup.inlineKeyboard([
-      Markup.callbackButton('Искать приключений на ...', 'search'),
+      [Markup.callbackButton('Искать приключений на ...', 'search')],
+      [Markup.callbackButton('Назад', 'exit')],
     ]).resize().extra(),
   );
+  channelHelper.findMessage = message.message_id;
 });
 
 battleScene.action('search', async ({ editMessageText, session }) => {
@@ -46,7 +54,8 @@ battleScene.action('search', async ({ editMessageText, session }) => {
     await editMessageText(
       `Слишком много жмёшь кнопку, жди ${remainingTime} секунд до следующей попытки`,
       Markup.inlineKeyboard([
-        Markup.callbackButton('Искать приключений на ...', 'search'),
+        [Markup.callbackButton('Искать приключений на ...', 'search')],
+        [Markup.callbackButton('Назад', 'exit')],
       ]).resize().extra(),
     );
   } else {
@@ -70,7 +79,8 @@ battleScene.action('stop', async ({ editMessageText, session }) => {
   editMessageText(
     'Кнопки',
     Markup.inlineKeyboard([
-      Markup.callbackButton('Искать приключений на ...', 'search'),
+      [Markup.callbackButton('Искать приключений на ...', 'search')],
+      [Markup.callbackButton('Назад', 'exit')],
     ]).resize().extra(),
   );
   await channelHelper.broadcast(
@@ -102,6 +112,10 @@ battleScene.action(/\w*_\w*_\w*/, async ({ editMessageText, session, match }) =>
   editMessageText(
     `Заказан ${action} на игрока ${nick}`,
   );
+});
+
+battleScene.action('exit', ({ scene }) => {
+  scene.enter('lobby');
 });
 
 module.exports = battleScene;

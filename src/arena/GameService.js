@@ -80,6 +80,7 @@ class Game {
     // eslint-disable-next-line no-underscore-dangle
     // arena.players[player].mm = self.info.id;
     // });
+    channelHelper.removeFindButtons(this.playersArr);
 
     this.startGame();
     this.initHandlers();

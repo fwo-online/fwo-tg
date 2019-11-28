@@ -54,4 +54,14 @@ module.exports = {
       );
     });
   },
+
+  async removeFindButtons(playersArr) {
+    if (!this.findMessage) return;
+    playersArr.arr.forEach(async (player) => {
+      this.messageId = await this.bot.telegram.deleteMessage(
+        player.tgId,
+        this.messages[player.tgId],
+      );
+    });
+  },
 };
