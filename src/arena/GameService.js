@@ -68,20 +68,7 @@ class Game {
    */
   preLoading() {
     this.info.status = 'preload';
-    // eslint-disable-next-line no-console
-    console.log({
-      event: 'preload',
-      payload: {
-        gameId: this.info.id,
-      },
-    });
-    // помечаем всех игроков что они в игре
-    // this.playerArr.init.forEach((player) => {
-    // eslint-disable-next-line no-underscore-dangle
-    // arena.players[player].mm = self.info.id;
-    // });
     channelHelper.removeMessages(this.playerArr);
-
     this.startGame();
     this.initHandlers();
     this.info.players.forEach((player) => {
@@ -366,11 +353,11 @@ class Game {
     let enemies = _.difference(game.playerArr.arr, team);
     const allies = team.map((p) => {
       const ally = p.getFullStatus();
-      return `\n\n👤 ${ally.nick} (${ally.prof}), ❤️ Здоровье: ${ally.hp}, 💙 Мана: ${ally.mp}`;
+      return `\n\n👤 ${ally.nick} (${ally.prof}), ❤️: ${ally.hp}, 💙 : ${ally.mp}`;
     });
     enemies = enemies.map((p) => {
       const enemy = p.getStatus();
-      return `\n\n👤 ${enemy.nick} (${p.prof}), ❤️ Здоровье: ${enemy.hp}`;
+      return `\n\n👤 ${enemy.nick} (${p.prof}) ❤️: ${enemy.hp}`;
     });
     player.notify({ enemies, allies });
   }

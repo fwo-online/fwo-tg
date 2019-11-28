@@ -94,6 +94,7 @@ class Char {
       ...charObj.harks,
       free: charObj.free,
     };
+    this.def = getDynHarks(charObj);
   }
 
   get id() {
@@ -227,6 +228,10 @@ class Char {
     const charFromDb = await db.char.load({ tgId });
     if (!charFromDb) {
       return null;
+    }
+    charFromDb.harksFromItems = await db.inventory.getAllHarks(charFromDb.id);
+    if (!Object.keys(charFromDb.harksFromItems).length) {
+      charFromDb.harksFromItems = { hit: { min: 0, max: 0 } };
     }
     const char = new Char(charFromDb);
     if (!global.arena.players) global.arena.players = {};
