@@ -19,7 +19,7 @@ class WatchConstructor {
   constructor(gameObj) {
     // eslint-disable-next-line no-console
     console.log(gameObj);
-    this.gameId = gameObj.info.id;
+    this.gameId = gameObj.info._id;
     // обработчики эвентов от раунда
     gameObj.preLoading();
     // @todo избавиться от Watchera

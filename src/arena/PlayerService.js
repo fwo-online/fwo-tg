@@ -16,7 +16,7 @@ const channelHelper = require('../helpers/channelHelper');
 class Player {
   /**
    * Конструктор обьекта игрока внутри игры
-   * @param {Object} params параметры игрока из базы
+   * @param {Object} params параметры игрока из обьекта CharObj
    */
   constructor(params) {
     this.nick = params.nickname;
