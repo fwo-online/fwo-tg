@@ -80,7 +80,7 @@ class Game {
     // eslint-disable-next-line no-underscore-dangle
     // arena.players[player].mm = self.info.id;
     // });
-    channelHelper.removeFindButtons(this.playersArr);
+    channelHelper.removeMessages(this.playerArr);
 
     this.startGame();
     this.initHandlers();
@@ -253,7 +253,7 @@ class Game {
           break;
         }
         case 'endOrders': {
-          channelHelper.endOrderButtons(this.playerArr);
+          channelHelper.removeMessages(this.playerArr);
           break;
         }
         default: {

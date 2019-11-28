@@ -46,19 +46,9 @@ module.exports = {
    * Удаление кнопок после заказа
    * @param {object} playersArr - объект playerArr
    */
-  async endOrderButtons(playersArr) {
+  async removeMessages(playersArr) {
     playersArr.arr.forEach(async (player) => {
-      this.messageId = await this.bot.telegram.deleteMessage(
-        player.tgId,
-        this.messages[player.tgId],
-      );
-    });
-  },
-
-  async removeFindButtons(playersArr) {
-    if (!this.findMessage) return;
-    playersArr.arr.forEach(async (player) => {
-      this.messageId = await this.bot.telegram.deleteMessage(
+      await this.bot.telegram.deleteMessage(
         player.tgId,
         this.messages[player.tgId],
       );

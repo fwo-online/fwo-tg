@@ -34,7 +34,7 @@ const checkCancelFindCount = (character) => {
   return true;
 };
 
-battleScene.enter(async ({ reply, replyWithMarkdown, session }) => {
+battleScene.enter(async ({ reply, replyWithMarkdown }) => {
   // @todo При поиске боя хотелось бы ещё выдавать сюда картиночку
   await replyWithMarkdown('*Поиск Боя*', Markup.removeKeyboard().extra());
   const message = await reply(
@@ -44,8 +44,7 @@ battleScene.enter(async ({ reply, replyWithMarkdown, session }) => {
       [Markup.callbackButton('Назад', 'exit')],
     ]).resize().extra(),
   );
-  const { tgId } = session.character;
-  channelHelper.messages[tgId] = message.message_id;
+  channelHelper.messages[message.chat.id] = message.message_id;
 });
 
 battleScene.action('search', async ({ editMessageText, session }) => {
