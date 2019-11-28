@@ -70,9 +70,7 @@ module.exports = {
    */
   harkToString(char, item) {
     const i = this.itemAtrParser(item);
-    function tag(strings) {
-      console.log(strings.raw);
-    }
+
     return `
 ${item.name} (${item.price}) \n${item.descr}
 ${i.atc ? `Атака: ${i.atc}` : ''}
