@@ -9,30 +9,68 @@ const arena = require('../arena');
 const GameService = require('../arena/GameService');
 
 const battleScene = new Scene('battleScene');
+
+const penaltyTime = 180000;
+
+/**
+ * Проверяет можно ли игроку начать поиск
+ * Если сделано слишком много попыток за заданное время, возвращает false
+ * @param {Object} character - объект персонажа
+ * @return {boolean}
+ */
+const checkCancelFindCount = (character) => {
+  const time = Date.now();
+  if (!character.mm) {
+    character.mm = {
+      time,
+      try: 0,
+    };
+  }
+  if (character.mm.try >= 3 && time - character.mm.time < penaltyTime) {
+    return false;
+  }
+  character.mm.try += 1;
+  character.mm.time = time;
+  return true;
+};
+
 battleScene.enter(async ({ reply, replyWithMarkdown }) => {
   // @todo При поиске боя хотелось бы ещё выдавать сюда картиночку
   await replyWithMarkdown('*Поиск Боя*', Markup.removeKeyboard().extra());
-  await reply(
+  const message = await reply(
     'Кнопки',
     Markup.inlineKeyboard([
-      Markup.callbackButton('Искать приключений на ...', 'search'),
+      [Markup.callbackButton('Искать приключений на ...', 'search')],
+      [Markup.callbackButton('Назад', 'exit')],
     ]).resize().extra(),
   );
+  channelHelper.messages[message.chat.id] = message.message_id;
 });
 
 battleScene.action('search', async ({ editMessageText, session }) => {
-  const { id } = session.character;
-  const searchObject = { charId: id, psr: 1000, startTime: Date.now() };
-  arena.mm.push(searchObject);
-  await editMessageText(
-    'Кнопки',
-    Markup.inlineKeyboard([
-      Markup.callbackButton('Нет-нет, остановите, я передумал!', 'stop'),
-    ]).resize().extra(),
-  );
-  await channelHelper.broadcast(
-    `Игрок ${global.arena.players[id].nickname} начал поиск игры`,
-  );
+  const { id, mm } = session.character;
+  if (!checkCancelFindCount(session.character)) {
+    const remainingTime = ((penaltyTime - (Date.now() - mm.time)) / 1000).toFixed();
+    await editMessageText(
+      `Слишком много жмёшь кнопку, жди ${remainingTime} секунд до следующей попытки`,
+      Markup.inlineKeyboard([
+        [Markup.callbackButton('Искать приключений на ...', 'search')],
+        [Markup.callbackButton('Назад', 'exit')],
+      ]).resize().extra(),
+    );
+  } else {
+    const searchObject = { charId: id, psr: 1000, startTime: Date.now() };
+    arena.mm.push(searchObject);
+    await editMessageText(
+      'Кнопки',
+      Markup.inlineKeyboard([
+        Markup.callbackButton('Нет-нет, остановите, я передумал!', 'stop'),
+      ]).resize().extra(),
+    );
+    await channelHelper.broadcast(
+      `Игрок ${global.arena.players[id].nickname} начал поиск игры`,
+    );
+  }
 });
 
 battleScene.action('stop', async ({ editMessageText, session }) => {
@@ -41,7 +79,8 @@ battleScene.action('stop', async ({ editMessageText, session }) => {
   editMessageText(
     'Кнопки',
     Markup.inlineKeyboard([
-      Markup.callbackButton('Искать приключений на ...', 'search'),
+      [Markup.callbackButton('Искать приключений на ...', 'search')],
+      [Markup.callbackButton('Назад', 'exit')],
     ]).resize().extra(),
   );
   await channelHelper.broadcast(
@@ -73,6 +112,10 @@ battleScene.action(/\w*_\w*_\w*/, async ({ editMessageText, session, match }) =>
   editMessageText(
     `Заказан ${action} на игрока ${nick}`,
   );
+});
+
+battleScene.action('exit', ({ scene }) => {
+  scene.enter('lobby');
 });
 
 module.exports = battleScene;

@@ -68,6 +68,7 @@ class Game {
    */
   preLoading() {
     this.info.status = 'preload';
+    channelHelper.removeMessages(this.playerArr);
     this.startGame();
     this.initHandlers();
     this.info.players.forEach((player) => {
@@ -239,7 +240,7 @@ class Game {
           break;
         }
         case 'endOrders': {
-          channelHelper.endOrderButtons(this.playerArr);
+          channelHelper.removeMessages(this.playerArr);
           break;
         }
         default: {
