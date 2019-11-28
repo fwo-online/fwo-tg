@@ -38,25 +38,14 @@ const STORES = {
   w: 'Обувь',
   ab: 'Двуручное оружие',
 };
+const storeKeys = Object.keys(STORES);
 
-const INFO_NAMES = {
-  hit: 'Удар',
-  atc: 'Атака',
-  prt: 'Защита',
-
-  hark: 'Требуемые характеристики',
-};
-
-const HARK_NAMES = {
-  s: ['str', 'Сила'],
-  d: ['dex', 'Ловкость'],
-  w: ['wis', 'Мудрость'],
-  i: ['int', 'Интелект'],
-  c: ['con', 'Телосложение'],
-};
-
-const getTypeButtons = (types) => {
-  const buttons = types.map((type) => [Markup.callbackButton(
+/**
+ * Возвращет кнопки по всем типам вещей из STORES
+ * @returns {array}
+ */
+const getTypeButtons = () => {
+  const buttons = storeKeys.map((type) => [Markup.callbackButton(
     `${STORES[type]}`,
     `itemType_${type}`,
   )]);
@@ -67,6 +56,13 @@ const getTypeButtons = (types) => {
   return buttons;
 };
 
+/**
+ * Возвращает предметы по выбранному типу.
+ * Не показывает вещи, которые не подходят персонажу по профессии
+ * @param {string} wear - тип вещей (куда надевается)
+ * @param {string} prof - профессия персонажа
+ * @returns {array}
+ */
 const getItems = (wear, prof) => {
   const items = _.filter(global.arena.items, { wear });
   const filteredItems = items.filter((item) => item.race.includes(prof));
@@ -81,36 +77,10 @@ const getItems = (wear, prof) => {
   return buttons;
 };
 
-const getItemInfo = (item, character) => {
-  const parseAttr = ItemService.itemAtrParser(item);
-  const infoNames = Object.keys(INFO_NAMES);
-  let string = `${item.name} (${item.price}) \n${item.descr}`;
-  infoNames.forEach((name) => {
-    if (parseAttr[name]) {
-      if (name === 'hark') {
-        string += `\n\n${INFO_NAMES[name]}:`;
-        const harks = Object.keys(parseAttr.hark);
-        harks.forEach((hark) => {
-          const harkArr = HARK_NAMES[hark];
-          const isWear = character.harks[harkArr[0]] < parseAttr.hark[hark];
-          string += `\n${isWear ? '❗️' : '✅'} ${harkArr[1]}: ${parseAttr.hark[hark]} ${isWear ? `(${character.harks[harkArr[0]] - parseAttr.hark[hark]})` : ''}`;
-        });
-      } else if (name === 'hit') {
-        string += `\n${INFO_NAMES[name]}: ${parseAttr.hit.min}/${parseAttr.hit.min}`;
-      } else {
-        string += `\n${INFO_NAMES[name]}: ${parseAttr[name]}`;
-      }
-    }
-  });
-  return string;
-};
-
 shopScene.enter(({ reply }) => {
-  const keys = Object.keys(STORES);
-
   reply(
     'Список категорий товаров',
-    Markup.inlineKeyboard(getTypeButtons(keys)).resize().extra(),
+    Markup.inlineKeyboard(getTypeButtons()).resize().extra(),
   );
 });
 
@@ -127,7 +97,7 @@ shopScene.action(/itemInfo(?=_)/, async ({ session, editMessageText, match }) =>
   const [, code] = match.input.split('_');
   const item = global.arena.items[code];
   editMessageText(
-    getItemInfo(item, session.character),
+    ItemService.harkToString(session.character, item),
     Markup.inlineKeyboard([
       Markup.callbackButton(
         'Купить',
@@ -185,11 +155,9 @@ shopScene.action(/buy(?=_)/, async ({
 });
 
 shopScene.action('back', ({ editMessageText }) => {
-  const keys = Object.keys(STORES);
-
   editMessageText(
     'Список товаров',
-    Markup.inlineKeyboard(getTypeButtons(keys)).resize().extra(),
+    Markup.inlineKeyboard(getTypeButtons()).resize().extra(),
   );
 });
 

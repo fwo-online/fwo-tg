@@ -7,7 +7,6 @@ const CharacterService = require('../arena/CharacterService');
 const { leave } = Stage;
 const profile = new Scene('profile');
 
-const allHarks = ['str', 'dex', 'wis', 'int', 'con'];
 const HARK_NAMES = {
   str: 'Сила',
   dex: 'Ловкость',
@@ -41,8 +40,8 @@ const getInlineBackButton = () => [
 
 const getInlineKeyboard = (character) => {
   const inlineKeyboardArr = [];
-
-  allHarks.forEach(
+  const harks = Object.keys(HARK_NAMES);
+  harks.forEach(
     (hark) => inlineKeyboardArr.push(getInlineButton(character, hark)),
   );
   inlineKeyboardArr.push(getInlineResetButton());
