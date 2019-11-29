@@ -21,7 +21,6 @@ function getDefaultItem(prof) {
  *
  * @description Модель инвентаря чара
  * @module Model/Inventory
- * @todo нужно переработать
  */
 
 const inventory = new Schema({
@@ -39,7 +38,7 @@ const inventory = new Schema({
 
 inventory.statics = {
   /**
-   * getAllHarks
+   * fullHarks
    *
    * @desc Возвращает  суммарный обьект всех суммирующихся характеристик от
    * одетых вещей внутри инвентаря чара
@@ -123,7 +122,6 @@ inventory.statics = {
    * ownerId чара.
    * @param {Object} charObj обьект созданного чара
    * @return {Promise<CharacterData>} CharObj обьект персонажа
-   * @todo переделать после допила addItem
    */
   async firstCreate(charObj) {
     const defItemCode = getDefaultItem(charObj.prof);
@@ -151,8 +149,7 @@ inventory.statics = {
    * @description Пытаемся снять указанный итем.
    * @param {Number} charId ID чара
    * @param {Number} itemId Идентификатор итема внутри инвенторя пользователя
-   * @return {Array} Массив нового инвентаря
-   * @todo переделать!
+   * @return {Promise<Query|void>} ItemObject после изменения его в базе
    */
   async putOffItem(charId, itemId) {
     return this.model('Inventory').updateOne({
@@ -162,7 +159,12 @@ inventory.statics = {
       putOn: false,
     });
   },
-
+  /**
+   * Функция возвращает обьект ItemObj привязанному к персонажу
+   * @param itemId
+   * @param charId
+   * @return {Promise<Query|void>}
+   */
   async getItem(itemId, charId) {
     return this.model('Inventory').findOne({
       owner: charId,
@@ -170,11 +172,19 @@ inventory.statics = {
       _id: itemId,
     });
   },
-
+  /**
+   * Функция возвращает массив всех обьектов относящихся к персонажу
+   * @param charId
+   * @return {Promise<Array|void>} массив обтектов персонажа
+   */
   async getItems(charId) {
     return this.model('Inventory').find({ owner: charId });
   },
-
+  /**
+   * Функция возращает имя вещи
+   * @param itemCode
+   * @return {String} displayName вещи
+   */
   getItemName(itemCode) {
     return global.arena.items[itemCode].name;
   },

@@ -13,7 +13,7 @@ module.exports = {
    * @param {string} [id=chatId] - id чата
    */
   async broadcast(data, id = chatId) {
-    await this.bot.telegram.sendMessage(id, data);
+    await this.bot.telegram.sendMessage(id, data, { parse_mode: 'Markdown' });
   },
   /**
    * Отправка кнопок при начале заказа
