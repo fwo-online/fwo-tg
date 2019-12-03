@@ -79,8 +79,11 @@ const getItems = (wear, prof) => {
   return buttons;
 };
 
-shopScene.enter(({ reply }) => {
-  reply(
+shopScene.enter(async ({ reply, replyWithMarkdown }) => {
+  await replyWithMarkdown('*Магазин*', Markup.keyboard([
+    ['🔙 Назад'],
+  ]).resize().extra());
+  await reply(
     'Список категорий товаров',
     Markup.inlineKeyboard(getTypeButtons()).resize().extra(),
   );
@@ -163,7 +166,7 @@ shopScene.action('back', ({ editMessageText }) => {
   );
 });
 
-shopScene.action('leave', ({ scene }) => {
+shopScene.hears('🔙 Назад', ({ scene }) => {
   leave();
   scene.enter('lobby');
 });
