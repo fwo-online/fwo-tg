@@ -67,9 +67,9 @@ const getItems = (wear, prof) => {
   const items = _.filter(global.arena.items, { wear });
   const filteredItems = items
     .filter((item) => item.race.includes(prof) && !item.onlymake && item.hide === '0')
-    .sort((a, b) => a.price - b.price);
+    .sort((a, b) => b.price - a.price);
   const buttons = filteredItems.map((item) => [Markup.callbackButton(
-    `${item.name} (${item.price})`,
+    `${item.name} (💰 ${item.price})`,
     `itemInfo_${item.code}`,
   )]);
   buttons.push([Markup.callbackButton(

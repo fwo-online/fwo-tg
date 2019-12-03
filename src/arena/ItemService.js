@@ -72,11 +72,11 @@ module.exports = {
     const i = this.itemAtrParser(item);
 
     return `
-${item.name} (${item.price}) \n${item.descr}
-${i.atc ? `Атака: ${i.atc}` : ''}
-${i.hit ? `Удар: ${i.hit.min}/${i.hit.max}` : ''}
-${i.prt ? `Защита: ${i.prt}` : ''}
-${i.hark ? `nТребуемые характеристики:
+${item.name} (💰 ${item.price}) \n${item.descr}
+${i.atc ? `🗡 Атака: ${i.atc}` : ''}
+${i.hit ? `⚔️ Удар: ${i.hit.min}-${i.hit.max}` : ''}
+${i.prt ? `🛡 Защита: ${i.prt}` : ''}
+${i.hark ? `👤 Требуемые характеристики:
 ${i.hark.s > char.harks.str ? '❗️' : '✅'} Сила:  ${i.hark.s} ${
   i.hark.s > char.harks.str ? `(${char.harks.str - i.hark.s})` : ''
 }
