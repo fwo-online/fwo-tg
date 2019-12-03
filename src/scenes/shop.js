@@ -3,6 +3,7 @@ const Stage = require('telegraf/stage');
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
 const Inventory = require('../models/inventory');
+const ItemService = require('../arena/ItemService');
 
 const { leave } = Stage;
 
@@ -37,9 +38,14 @@ const STORES = {
   w: 'Обувь',
   ab: 'Двуручное оружие',
 };
+const storeKeys = Object.keys(STORES);
 
-const getTypeButtons = (types) => {
-  const buttons = types.map((type) => [Markup.callbackButton(
+/**
+ * Возвращет кнопки по всем типам вещей из STORES
+ * @returns {array}
+ */
+const getTypeButtons = () => {
+  const buttons = storeKeys.map((type) => [Markup.callbackButton(
     `${STORES[type]}`,
     `itemType_${type}`,
   )]);
@@ -50,11 +56,20 @@ const getTypeButtons = (types) => {
   return buttons;
 };
 
+/**
+ * Возвращает предметы по выбранному типу.
+ * Не показывает вещи, которые не подходят персонажу по профессии
+ * @param {string} wear - тип вещей (куда надевается)
+ * @param {string} prof - профессия персонажа
+ * @returns {array}
+ */
 const getItems = (wear, prof) => {
   const items = _.filter(global.arena.items, { wear });
-  const filteredItems = items.filter((item) => item.race.includes(prof));
+  const filteredItems = items
+    .filter((item) => item.race.includes(prof) && !item.onlymake && item.hide === '0')
+    .sort((a, b) => b.price - a.price);
   const buttons = filteredItems.map((item) => [Markup.callbackButton(
-    `${item.name}, ${item.price}`,
+    `${item.name} (💰 ${item.price})`,
     `itemInfo_${item.code}`,
   )]);
   buttons.push([Markup.callbackButton(
@@ -65,11 +80,9 @@ const getItems = (wear, prof) => {
 };
 
 shopScene.enter(({ reply }) => {
-  const keys = Object.keys(STORES);
-
   reply(
     'Список категорий товаров',
-    Markup.inlineKeyboard(getTypeButtons(keys)).resize().extra(),
+    Markup.inlineKeyboard(getTypeButtons()).resize().extra(),
   );
 });
 
@@ -85,9 +98,8 @@ shopScene.action(/itemType(?=_)/, async ({ session, editMessageText, match }) =>
 shopScene.action(/itemInfo(?=_)/, async ({ session, editMessageText, match }) => {
   const [, code] = match.input.split('_');
   const item = global.arena.items[code];
-
   editMessageText(
-    `${item.name}. 💲 ${item.price}. У тебя есть 💰 ${session.character.gold}`,
+    ItemService.harkToString(session.character, item),
     Markup.inlineKeyboard([
       Markup.callbackButton(
         'Купить',
@@ -145,11 +157,9 @@ shopScene.action(/buy(?=_)/, async ({
 });
 
 shopScene.action('back', ({ editMessageText }) => {
-  const keys = Object.keys(STORES);
-
   editMessageText(
     'Список товаров',
-    Markup.inlineKeyboard(getTypeButtons(keys)).resize().extra(),
+    Markup.inlineKeyboard(getTypeButtons()).resize().extra(),
   );
 });
 
