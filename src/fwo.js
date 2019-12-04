@@ -6,6 +6,7 @@ const channelHelper = require('./helpers/channelHelper');
 const Item = require('./models/item');
 const authMiddleware = require('./middlewares/authMiddleware');
 const protectedMiddleware = require('./middlewares/protectedMiddleware');
+const chatMiddleware = require('./middlewares/chatMiddleware');
 
 // DB connection
 db.connection.on('open', () => {
@@ -19,6 +20,7 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 bot.use(session());
 bot.use(stage.middleware());
 bot.use(authMiddleware);
+bot.use(chatMiddleware);
 bot.start(async ({ scene }) => { scene.enter('greeter'); });
 bot.command('greeter', (ctx) => ctx.scene.enter('greeter'));
 
