@@ -84,7 +84,6 @@ class Game {
     console.debug('GC debug:: startGame', 'gameId:', this.info.id);
     // рассылаем статусы хп команды и врагов
     this.sendToAll('Игра начинается');
-    this.forAllAlivePlayers(this.sendStatus);
     this.round.nextState();
   }
 
