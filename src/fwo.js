@@ -19,6 +19,7 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 
 bot.use(session());
 bot.use(stage.middleware());
+bot.use(chatMiddleware);
 bot.use(authMiddleware);
 bot.use(chatMiddleware);
 bot.start(async ({ scene }) => { scene.enter('greeter'); });
