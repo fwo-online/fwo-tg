@@ -21,6 +21,7 @@ bot.use(session());
 bot.use(stage.middleware());
 bot.use(chatMiddleware);
 bot.use(authMiddleware);
+bot.use(chatMiddleware);
 bot.start(async ({ scene }) => { scene.enter('greeter'); });
 bot.command('greeter', (ctx) => ctx.scene.enter('greeter'));
 
