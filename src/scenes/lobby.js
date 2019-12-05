@@ -9,9 +9,13 @@ const lobby = new Scene('lobby');
 const loginHelper = require('../helpers/loginHelper');
 
 lobby.enter(({ replyWithMarkdown, session }) => replyWithMarkdown(
-  `Lobby
-Так так, значит ты *${session.character.nickname}*
-Статистика: ⬆ ${session.character.lvl} 💰 ${session.character.gold} 📖 ${session.character.exp}
+  `*Lobby*
+Так так, значит ты *${session.character.nickname}* (${session.character.prof})
+
+Статистика: 
+⬆ ${session.character.lvl}
+ 💰 ${session.character.gold}
+ 📖 ${session.character.exp}
 `, Markup.keyboard([
     ['⚔ В бой'],
     ['😎 Профиль', '🏪 Магазин'],
