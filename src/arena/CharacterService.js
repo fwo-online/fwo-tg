@@ -138,7 +138,7 @@ class Char {
   }
 
   get harks() {
-    return this.tempHarks;
+    return this.charObj.harks;
   }
 
   get magics() {
@@ -153,12 +153,32 @@ class Char {
     return this.charObj.inventory;
   }
 
+  set items(items) {
+    this.charObj.inventory = items;
+  }
+
   get prof() {
     return this.charObj.prof;
   }
 
+  async addItem(itemCode) {
+    const item = await db.inventory.addItem(this.id, itemCode);
+    this.charObj.inventory.push(item);
+    return this.saveToDb();
+  }
+
   getItem(itemId) {
     return this.items.find((item) => item._id.equals(itemId));
+  }
+
+  isCanPutOned(item) {
+    return !this.items.find((currentItem) => currentItem.wear === item.wear && currentItem.putOn);
+  }
+
+  async removeItem(itemId) {
+    this.items = this.items.filter((item) => !item._id.equals(itemId));
+    await db.inventory.removeItem(this.id, itemId);
+    return this.saveToDb();
   }
 
   async putOffItem(itemId) {
@@ -168,9 +188,29 @@ class Char {
   }
 
   async putOnItem(itemId) {
+    const charItem = this.getItem(itemId);
+    const item = global.arena.items[charItem.code];
+    const {
+      str, dex, wis, int, con,
+    } = this.harks;
+    const {
+      s, d, w, i, c,
+    } = JSON.parse(item.hark);
+
+    if (item.hark) {
+      if (s > str || d > dex || w > wis || i > int || c > con) {
+        return false;
+      }
+    }
+
+    if (!this.isCanPutOned(item)) {
+      return false;
+    }
+
     await db.inventory.putOnItem(this.id, itemId);
     const inventory = await db.inventory.getItems(this.id);
     this.charObj.inventory = inventory;
+    return true;
   }
 
   getIncreaseHarkCount(hark) {
@@ -201,6 +241,28 @@ class Char {
 
     // @todo сюда нужно будет предусмотреть проверки на корректность сохраняемых данных
     return db.char.update(this.charObj.tgId, this.charObj);
+  }
+
+  async buyItem(itemCode) {
+    const item = global.arena.items[itemCode];
+
+    if (this.gold < item.price) {
+      return false;
+    }
+
+    this.gold -= item.price;
+    this.addItem(itemCode);
+    return this.saveToDb();
+  }
+
+  sellItem(itemId) {
+    const charItem = this.getItem(itemId);
+    const item = global.arena.items[charItem.code];
+
+    this.removeItem(itemId);
+    this.gold += item.price / 2;
+
+    return this.saveToDb();
   }
 
   /**
@@ -288,10 +350,14 @@ class Char {
       // eslint-disable-next-line no-console
       console.log('Saving char :: id', this.id);
       const {
-        gold, exp, magics, bonus,
+        gold, exp, magics, bonus, items,
       } = this;
-      await db.char.update(this.tgId, {
-        gold, exp, magics, bonus,
+      return await db.char.update(this.tgId, {
+        gold,
+        exp,
+        magics,
+        bonus,
+        inventory: items,
       });
     } catch (e) {
       // eslint-disable-next-line no-console

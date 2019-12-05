@@ -2,7 +2,6 @@ const _ = require('lodash');
 const Stage = require('telegraf/stage');
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
-const Inventory = require('../models/inventory');
 const ItemService = require('../arena/ItemService');
 
 const { leave } = Stage;
@@ -102,7 +101,7 @@ shopScene.action(/itemInfo(?=_)/, async ({ session, editMessageText, match }) =>
   const [, code] = match.input.split('_');
   const item = global.arena.items[code];
   editMessageText(
-    ItemService.harkToString(session.character, item),
+    ItemService.itemDescription(session.character, item),
     Markup.inlineKeyboard([
       Markup.callbackButton(
         'Купить',
@@ -123,7 +122,9 @@ shopScene.action(/buy(?=_)/, async ({
 }) => {
   const [, code] = match.input.split('_');
   const item = global.arena.items[code];
-  if (session.character.gold < item.price) {
+  const result = await session.character.buyItem(code);
+
+  if (!result) {
     editMessageText(
       'Недостаточно голды',
       Markup.inlineKeyboard([
@@ -134,9 +135,6 @@ shopScene.action(/buy(?=_)/, async ({
     );
   } else {
     try {
-      session.character.gold -= item.price;
-      await Inventory.addItem(session.character.id, code);
-      await session.character.saveToDb();
       editMessageText(
         `Ты купил предмет ${item.name}. У тебя осталось 💰 ${session.character.gold}`,
         Markup.inlineKeyboard([

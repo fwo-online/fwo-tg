@@ -25,7 +25,7 @@ function getDefaultItem(prof) {
 
 const inventory = new Schema({
   code: { type: String, required: true },
-  name: { type: String, default: '' },
+  wear: { type: String, required: true },
   putOn: { type: Boolean, default: false },
   durable: { type: Number, default: 10 },
   // Добавляем связь инвенторя с персонажем charID
@@ -80,13 +80,12 @@ inventory.statics = {
    */
   // eslint-disable-next-line consistent-return
   async addItem(charId, itemCode) {
+    const item = global.arena.items[itemCode];
     try {
-      const char = await this.model('Character').findById(charId);
-      const item = await this.model('Inventory')
-        .create({ owner: charId, code: itemCode });
-      char.inventory.push(item);
-      await char.save();
-      return char.inventory;
+      return await this.model('Inventory')
+        .create({
+          owner: charId, code: itemCode, wear: item.wear,
+        });
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log('InventoryModel Error:', e);
@@ -172,6 +171,15 @@ inventory.statics = {
       _id: itemId,
     });
   },
+
+  removeItem(itemId, charId) {
+    return this.model('Inventory').remove({
+      owner: charId,
+    }, {
+      _id: itemId,
+    });
+  },
+
   /**
    * Функция возвращает массив всех обьектов относящихся к персонажу
    * @param charId

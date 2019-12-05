@@ -62,35 +62,29 @@ module.exports = {
     }
   },
 
-  /**
-   * Возвращает строку характеристик предмета
-   * @param {Object} char - объект персонажа
-   * @param {Object} item - объект предмета
-   * @return {string}
-   */
-  harkToString(char, item) {
+  itemDescription(char, item) {
     const i = this.itemAtrParser(item);
 
-    return `
-${item.name} (💰 ${item.price}) \n${item.descr}
-${i.atc ? `🗡 Атака: ${i.atc}` : ''}
-${i.hit ? `⚔️ Удар: ${i.hit.min}-${i.hit.max}` : ''}
-${i.prt ? `🛡 Защита: ${i.prt}` : ''}
-${i.hark ? `👤 Требуемые характеристики:
-${i.hark.s > char.harks.str ? '❗️' : '✅'} Сила:  ${i.hark.s} ${
-  i.hark.s > char.harks.str ? `(${char.harks.str - i.hark.s})` : ''
-}
-${i.hark.d > char.harks.dex ? '❗️' : '✅'} Ловкость:  ${i.hark.d} ${
-  i.hark.d > char.harks.dex ? `(${char.harks.dex - i.hark.d})` : ''
-}
-${i.hark.w > char.harks.wis ? '❗️' : '✅'} Мудрость:  ${i.hark.w} ${
-  i.hark.w > char.harks.wis ? `(${char.harks.wis - i.hark.w})` : ''
-}
-${i.hark.i > char.harks.int ? '❗️' : '✅'} Интелект:  ${i.hark.i} ${
-  i.hark.i > char.harks.int ? `(${char.harks.int - i.hark.i})` : ''
-}
-${i.hark.c > char.harks.con ? '❗️' : '✅'} Телосложение:  ${i.hark.c} ${
-  i.hark.c > char.harks.con ? `(${char.harks.con - i.hark.c})` : ''
-}` : ''}`;
+    return [
+      `${item.name} ${item.price ? `(💰 ${item.price})` : ''}`,
+      item.descr && `\n${item.descr}\n`,
+      i.atc && `🗡 Атака: ${i.atc}`,
+      i.hit && `⚔️ Удар: ${i.hit.min}-${i.hit.max}`,
+      i.prt && `🛡 Защита: ${i.prt}`,
+      i.hark && `\n👤 Требуемые характеристики:
+      ${i.hark.s > char.harks.str ? '❗️' : '✅'} Сила: ${i.hark.s} ${i.hark.s > char.harks.str
+  ? `(${char.harks.str - i.hark.s})` : ''}
+      ${i.hark.d > char.harks.dex ? '❗️' : '✅'} Ловкость:  ${i.hark.d} ${i.hark.d > char.harks.dex
+  ? `(${char.harks.dex - i.hark.d})` : ''}
+      ${i.hark.w > char.harks.wis ? '❗️' : '✅'} Мудрость:  ${i.hark.w} ${i.hark.w > char.harks.wis
+  ? `(${char.harks.wis - i.hark.w})` : ''}
+      ${i.hark.i > char.harks.int ? '❗️' : '✅'} Интелект:  ${i.hark.i} ${i.hark.i > char.harks.int
+  ? `(${char.harks.int - i.hark.i})` : ''}
+      ${i.hark.c > char.harks.con ? '❗️' : '✅'} Телосложение:  ${i.hark.c} ${i.hark.c > char.harks.con
+  ? `(${char.harks.con - i.hark.c})` : ''}\n`,
+      item.weight && `Вес ${item.weight} кг`,
+    ]
+      .filter((currentItem) => currentItem)
+      .join('\n');
   },
 };
