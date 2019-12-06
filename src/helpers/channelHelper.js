@@ -54,4 +54,14 @@ module.exports = {
       );
     });
   },
+
+  async sendExitButton(playersArr, message = 'Выйти в лобби') {
+    playersArr.arr.forEach(async (player) => {
+      await this.bot.telegram.sendMessage(
+        player.tgId,
+        message,
+        Markup.inlineKeyboard([Markup.callbackButton('Выход', 'exit')]).resize().extra(),
+      );
+    });
+  },
 };

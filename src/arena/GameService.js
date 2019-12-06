@@ -165,6 +165,7 @@ class Game {
     this.saveGame();
     setTimeout(() => {
       this.sendToAll('Конец игры, распределяем ресурсы...');
+      channelHelper.sendExitButton(this.playerArr);
     }, 15000);
   }
 
