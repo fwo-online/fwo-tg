@@ -54,4 +54,17 @@ module.exports = {
       );
     });
   },
+
+  async sendExitButton(playersArr) {
+    playersArr.arr.forEach(async (player) => {
+      const { exp, gold } = player.stats.collect;
+      await this.bot.telegram.sendMessage(
+        player.tgId,
+        `Награда за бой:
+📖 ${exp}
+💰 ${gold}`,
+        Markup.inlineKeyboard([Markup.callbackButton('Выход в лобби', 'exit')]).resize().extra(),
+      );
+    });
+  },
 };
