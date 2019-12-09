@@ -55,12 +55,16 @@ module.exports = {
     });
   },
 
-  async sendExitButton(playersArr, message = 'Выйти в лобби') {
+  async sendExitButton(playersArr) {
     playersArr.arr.forEach(async (player) => {
+      const { exp, gold } = player.stats.collect;
       await this.bot.telegram.sendMessage(
         player.tgId,
-        message,
-        Markup.inlineKeyboard([Markup.callbackButton('Выход', 'exit')]).resize().extra(),
+        `Награда за бой:
+⬆ ${exp}
+💰 ${gold}
+📖 ${Math.floor(exp / 100)}`,
+        Markup.inlineKeyboard([Markup.callbackButton('Выход в лобби', 'exit')]).resize().extra(),
       );
     });
   },

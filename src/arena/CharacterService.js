@@ -125,6 +125,10 @@ class Char {
     return this.charObj.exp;
   }
 
+  set exp(value) {
+    this.charObj.exp = value;
+  }
+
   get games() {
     return this.charObj.statistics.games;
   }
@@ -147,6 +151,10 @@ class Char {
 
   get bonus() {
     return this.charObj.bonus;
+  }
+
+  set bonus(value) {
+    this.charObj.bonus = value;
   }
 
   get items() {

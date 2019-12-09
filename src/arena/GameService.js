@@ -268,6 +268,7 @@ class Game {
       _.forEach(this.info.players, async (p) => {
         charArr[p].exp += this.players[p].stats.collect.exp;
         charArr[p].gold += this.players[p].stats.collect.gold;
+        charArr[p].bonus += Math.floor(this.players[p].stats.collect.exp / 100);
         await charArr[p].saveToDb();
       });
     } catch (e) {
