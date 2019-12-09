@@ -153,10 +153,6 @@ class Char {
     return this.charObj.bonus;
   }
 
-  set bonus(value) {
-    this.charObj.bonus = value;
-  }
-
   get items() {
     return this.charObj.inventory;
   }

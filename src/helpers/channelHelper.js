@@ -62,8 +62,7 @@ module.exports = {
         player.tgId,
         `Награда за бой:
 📖 ${exp}
-💰 ${gold}
-💡 ${Math.floor(exp / 100)}`,
+💰 ${gold}`,
         Markup.inlineKeyboard([Markup.callbackButton('Выход в лобби', 'exit')]).resize().extra(),
       );
     });
