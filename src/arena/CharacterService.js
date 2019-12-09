@@ -12,7 +12,7 @@ global.arena.players = {};
 const harkArr = ['str', 'dex', 'int', 'wis', 'con'];
 /**
  * Возвращает список динамических характеристик
- * @param {Object} charObj обьект персонажа из базы
+ * @param {Object} charObj инстанс Char
  * @return {{patk: number, pdef: number, maxHp: number, maxMp: number,
  * maxEn: number,mga: number, mgp: number, hl: {min: *, max: *}, manaReg: *,
  * enReg: number, hit: boolean, maxTarget: number, lspell: number}}
@@ -94,11 +94,23 @@ class Char {
       ...charObj.harks,
       free: charObj.free,
     };
-    this.def = getDynHarks(charObj);
+    this.updateHarkFromItems();
   }
 
   get id() {
     return this.charObj.id || this.charObj._id;
+  }
+
+  get prof() {
+    return this.charObj.prof;
+  }
+
+  get lvl() {
+    return this.charObj.lvl;
+  }
+
+  get def() {
+    return getDynHarks(this);
   }
 
   get tgId() {
@@ -107,10 +119,6 @@ class Char {
 
   get nickname() {
     return this.charObj.nickname;
-  }
-
-  get lvl() {
-    return this.charObj.lvl;
   }
 
   get gold() {
@@ -157,10 +165,6 @@ class Char {
     this.charObj.inventory = items;
   }
 
-  get prof() {
-    return this.charObj.prof;
-  }
-
   async addItem(itemCode) {
     const item = await db.inventory.addItem(this.id, itemCode);
     this.charObj.inventory.push(item);
@@ -185,6 +189,7 @@ class Char {
     await db.inventory.putOffItem(this.id, itemId);
     const inventory = await db.inventory.getItems(this.id);
     this.charObj.inventory = inventory;
+    return this.updateHarkFromItems();
   }
 
   async putOnItem(itemId) {
@@ -210,6 +215,8 @@ class Char {
     await db.inventory.putOnItem(this.id, itemId);
     const inventory = await db.inventory.getItems(this.id);
     this.charObj.inventory = inventory;
+
+    await this.updateHarkFromItems();
     return true;
   }
 
@@ -265,6 +272,13 @@ class Char {
     return this.saveToDb();
   }
 
+  async updateHarkFromItems() {
+    this.harksFromitems = await db.inventory.getAllHarks(this.id);
+    if (!Object.keys(this.harksFromItems).length) {
+      this.harksFromItems = { hit: { min: 0, max: 0 } };
+    }
+  }
+
   /**
    * @desc Получает идентификатор игры из charId участника
    * @return {String|Number} gameId идентификатор игры
@@ -291,10 +305,7 @@ class Char {
     if (!charFromDb) {
       return null;
     }
-    charFromDb.harksFromItems = await db.inventory.getAllHarks(charFromDb.id);
-    if (!Object.keys(charFromDb.harksFromItems).length) {
-      charFromDb.harksFromItems = { hit: { min: 0, max: 0 } };
-    }
+
     const char = new Char(charFromDb);
     if (!global.arena.players) global.arena.players = {};
     global.arena.players[char.id] = char;
