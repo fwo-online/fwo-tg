@@ -61,9 +61,9 @@ module.exports = {
       await this.bot.telegram.sendMessage(
         player.tgId,
         `Награда за бой:
-⬆ ${exp}
+📖 ${exp}
 💰 ${gold}
-📖 ${Math.floor(exp / 100)}`,
+💡 ${Math.floor(exp / 100)}`,
         Markup.inlineKeyboard([Markup.callbackButton('Выход в лобби', 'exit')]).resize().extra(),
       );
     });
