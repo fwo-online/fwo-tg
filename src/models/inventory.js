@@ -67,7 +67,7 @@ inventory.statics = {
    */
   async getPutOned(charId) {
     const invObj = await this.model('Inventory').find({ owner: charId });
-    return _.filter(invObj.items, { putOn: true });
+    return _.filter(invObj, { putOn: true });
   },
 
   /**
@@ -175,7 +175,6 @@ inventory.statics = {
   removeItem(itemId, charId) {
     return this.model('Inventory').remove({
       owner: charId,
-    }, {
       _id: itemId,
     });
   },

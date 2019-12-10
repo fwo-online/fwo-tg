@@ -198,11 +198,11 @@ class Char {
     const {
       str, dex, wis, int, con,
     } = this.harks;
-    const {
-      s, d, w, i, c,
-    } = JSON.parse(item.hark);
 
     if (item.hark) {
+      const {
+        s, d, w, i, c,
+      } = JSON.parse(item.hark);
       if (s > str || d > dex || w > wis || i > int || c > con) {
         return false;
       }
@@ -273,8 +273,8 @@ class Char {
   }
 
   async updateHarkFromItems() {
-    this.harksFromitems = await db.inventory.getAllHarks(this.id);
-    if (!Object.keys(this.harksFromItems).length) {
+    this.harksFromItems = await db.inventory.getAllHarks(this.id);
+    if (!this.harksFromItems) {
       this.harksFromItems = { hit: { min: 0, max: 0 } };
     }
   }
