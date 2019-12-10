@@ -70,7 +70,8 @@ module.exports = {
     async create(charObj) {
       try {
         const char = await CharModel.create(charObj);
-        await InventoryModel.firstCreate(char);
+        const item = await InventoryModel.firstCreate(char);
+        await this.update(char.tgId, { inventory: [item] });
       } catch (e) {
         dbErr(e);
       }
@@ -133,6 +134,12 @@ module.exports = {
     },
     async getItem(itemCode, charId) {
       return InventoryModel.getItem(itemCode, charId);
+    },
+    async removeItem(itemId, charId) {
+      return InventoryModel.removeItem(itemId, charId);
+    },
+    async addItem(charId, itemCode) {
+      return InventoryModel.addItem(charId, itemCode);
     },
   },
 };
