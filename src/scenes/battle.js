@@ -118,4 +118,14 @@ battleScene.action('exit', ({ scene }) => {
   scene.enter('lobby');
 });
 
+battleScene.command('run', async ({ reply, session }) => {
+  const { id } = session.character;
+  const gameId = global.arena.players[id].mm;
+  const Game = global.arena.games[gameId];
+
+  Game.preKick(id);
+
+  reply('Ты будешь выброшен из игры в конце этого раунда');
+});
+
 module.exports = battleScene;

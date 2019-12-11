@@ -12,6 +12,7 @@ class FlagsConstructors {
     this.isDead = '';
     this.isHealed = [];
     this.isHited = [];
+    this.isKicked = false;
     return this;
   }
 
