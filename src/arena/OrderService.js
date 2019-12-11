@@ -152,6 +152,14 @@ class Orders {
       this.ordersList = this.testOrdersList;
     }
   }
+
+  /**
+   * Проверяет делал ли игрок заказ
+   * @param {number} id
+   */
+  checkPlayerOrder(id) {
+    return this.ordersList.find((order) => order.initiator.id === id);
+  }
 }
 
 module.exports = Orders;

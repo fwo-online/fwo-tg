@@ -278,7 +278,7 @@ class Char {
 
   async updateHarkFromItems() {
     this.harksFromItems = await db.inventory.getAllHarks(this.id);
-    if (!this.harksFromItems) {
+    if (!this.harksFromItems || !Object.keys(this.harksFromItems).length) {
       this.harksFromItems = { hit: { min: 0, max: 0 } };
     }
   }

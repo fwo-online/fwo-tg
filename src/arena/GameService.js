@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const arena = require('./index');
 const BattleLog = require('./BattleLog');
 const engineService = require('./engineService');
 const db = require('../helpers/dataBase');
@@ -44,7 +43,7 @@ class Game {
   /**
    * Статик функция возвращающая массив живых игроков в игре
    * @param {Number} gameId идентификатор игры
-   * @return {Object} [PlayerID:{PlayerObjectPlayerObject},...] массив живых игроков
+   * @return {any[]} [PlayerID:{PlayerObjectPlayerObject},...] массив живых игроков
    */
   static aliveArr(gameId) {
     const game = global.arena.games[gameId];
@@ -64,11 +63,35 @@ class Game {
   }
 
   /**
+   * Отправляет в чат кнопки с заказами
+   * @param {Object} player - объект игрока
+   */
+  static showOrderButtons(player) {
+    channelHelper.sendOrderButtons(player);
+  }
+
+  /**
+   * Удаляет кнопки заказа в чате
+   * @param {Object} player - объект игрока
+   */
+  static hideLastMessage(player) {
+    channelHelper.removeMessages(player);
+  }
+
+  /**
+   * Отправляет в чат кнопки с заказами
+   * @param {Object} player - объект игрока
+   */
+  static showExitButton(player) {
+    channelHelper.sendExitButton(player);
+  }
+
+  /**
    * Предзагрузка игры
    */
   preLoading() {
     this.info.status = 'preload';
-    channelHelper.removeMessages(this.playerArr);
+    this.forAllAlivePlayers(Game.hideLastMessage);
     this.startGame();
     this.initHandlers();
     this.info.players.forEach((player) => {
@@ -95,7 +118,6 @@ class Game {
   sendBattleLog(data) {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: SBL', 'gameId:', this.info.id, 'data:', data);
-    // eslint-disable-next-line no-undef
     channelHelper.broadcast(data);
   }
 
@@ -105,7 +127,6 @@ class Game {
   sendToAll(data) {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: sendToAll', this.info.id);
-    // eslint-disable-next-line no-undef
     channelHelper.broadcast(data);
   }
 
@@ -118,38 +139,40 @@ class Game {
   }
 
   /**
-   * @description Собираем все сокеты в кучу
-   * @return {Array} Массив socket's id ['/JXD8vauhvdav','/OIc8934hucahd']
-   *
-   */
-  sockets() {
-    return this.info.players.map((charId) => arena.players[charId].socketId);
-  }
-
-  /**
    * @description Прекик, помечаем что пользователь не выполнил заказ и дальше
    * будет выброшен
-   * @param {String} nick ник игрока который будет помочен как бездействующий
+   * @param {string} id id игрока, который будет помочен как бездействующий
    */
-  // eslint-disable-next-line consistent-return
-  preKick(nick) {
-    const player = this.players[nick];
+  preKick(id) {
+    const player = this.players[id];
     // eslint-disable-next-line no-console
-    if (!player) return console.log('GC debug:: preKick', nick, 'no player');
-    player.isKicked = true;
+    if (!player) return console.log('GC debug:: preKick', id, 'no player');
+    player.flags.isKicked = true;
   }
 
   /**
    * @description Функция "выброса игрока" из игры,
    * без сохранения накопленных статов
-   * @param {String} nick имя персонажа в игре
+   * @param {string} id id игрока, который будет выброшен
    */
-  // eslint-disable-next-line consistent-return
-  kick(nick) {
-    const player = this.players[nick];
+  kick(id) {
+    const player = this.players[id];
     // eslint-disable-next-line no-console
-    if (!player) return console.log('GC debug:: kick', nick, 'no player');
-    this.players.splice(this.players.indexOf(nick), 1);
+    if (!player) return console.log('GC debug:: kick', id, 'no player');
+    channelHelper.sendRunButton(player);
+    channelHelper.broadcast(`Игрок ${this.players[id].nick} был выброшен из игры`);
+    delete this.players[id];
+    this.info.players.splice(this.info.players.indexOf(id), 1);
+  }
+
+  /**
+   * Проверяем делал ли игрок заказ. Помечает isKicked, если нет
+   * @param {object} player
+   */
+  checkOrders(player) {
+    if (player.flags.isKicked) this.kick(player.id);
+
+    player.flags.isKicked = !this.orders.checkPlayerOrder(player.id);
   }
 
   /**
@@ -161,11 +184,10 @@ class Game {
     console.log('GC debug:: endGame', this.info.id);
     // Отправляем статистику
     this.sendBattleLog(this.statistic());
-    // @todo нужно выкидывать из комнаты чата
     this.saveGame();
     setTimeout(() => {
       this.sendToAll('Конец игры, распределяем ресурсы...');
-      channelHelper.sendExitButton(this.playerArr);
+      this.forAllPlayers(Game.showExitButton);
     }, 15000);
   }
 
@@ -179,14 +201,13 @@ class Game {
     });
     this.players = await this.playerArr.roundJson();
     this.info = dbGame;
-    // eslint-disable-next-line no-underscore-dangle
     this.info.id = this.info._id;
     return true;
   }
 
   /**
    * Возвращает обьект персонажа внутри игры [engine]
-   * @param {Number} id идентификатор чара
+   * @param {string} id идентификатор чара
    * @return {Object} PlayerObj
    */
   getPlayerById(id) {
@@ -196,9 +217,8 @@ class Game {
   /**
    * Сбрасываем всем игрокам кол-во доступных процентов на 100
    */
-  // eslint-disable-next-line no-underscore-dangle
   resetProc() {
-    // eslint-disable-next-line no-param-reassign,no-return-assign
+    // eslint-disable-next-line no-return-assign
     _.forEach(this.players, (p) => p.proc = 100);
   }
 
@@ -215,12 +235,12 @@ class Game {
           this.sendToAll(`⚡️ Раунд ${data.round} начинается ⚡`);
           this.resetProc();
           this.orders.reset();
-          this.forAllAlivePlayers(this.sendStatus);
+          this.forAllPlayers(this.sendStatus);
           break;
         }
         case 'endRound': {
           this.sortDead();
-          this.refrashPlayer();
+          this.refreshPlayer();
           // нужно вызывать готовые функции
           if (this.isGameEnd) {
             this.endGame();
@@ -230,17 +250,17 @@ class Game {
           break;
         }
         case 'engine': {
-          // this.sendToAll(data);
           await engineService(this);
           break;
         }
         case 'orders': {
           channelHelper.broadcast('Пришло время делать заказы!');
-          channelHelper.sendOrderButtons(this.playerArr);
+          this.forAllAlivePlayers(Game.showOrderButtons);
           break;
         }
         case 'endOrders': {
-          channelHelper.removeMessages(this.playerArr);
+          this.forAllAlivePlayers(Game.hideLastMessage);
+          this.forAllPlayers(this.checkOrders);
           break;
         }
         default: {
@@ -282,13 +302,11 @@ class Game {
    */
   statistic() {
     const winners = Game.aliveArr(this.info.id);
-    // eslint-disable-next-line no-underscore-dangle
     _.forEach(winners, (p) => p.stats.addGold(5));
     let res = `Статистика: игра ${this.info.id} `;
-    // eslint-disable-next-line no-underscore-dangle
     _.forEach(this.players, (p) => {
       const s = p.stats.collect;
-      res += `Игрок ${p.nick} получает ${s.exp} опыта и ${s.gold} золота`;
+      res += `\nИгрок ${p.nick} получает ${s.exp} опыта и ${s.gold} золота`;
     });
     return res;
   }
@@ -297,10 +315,8 @@ class Game {
    * Функция выставляет "смерть" для игроков имеющих hp < 0;
    */
   sortDead() {
-    // eslint-disable-next-line no-underscore-dangle
     _.forEach(this.players, (p) => {
       if (p.stats.val('hp') <= 0) {
-        // eslint-disable-next-line no-param-reassign
         p.alive = false;
       }
     });
@@ -309,8 +325,7 @@ class Game {
   /**
    * Сброс состояния игроков
    */
-  // eslint-disable-next-line no-underscore-dangle
-  refrashPlayer() {
+  refreshPlayer() {
     _.forEach(this.players, (p) => {
       p.stats.refresh();
       p.flags.refresh();
@@ -322,8 +337,7 @@ class Game {
    * @param {function} f функция применяющая ко всем игрокам в игре
    */
   forAllPlayers(f) {
-    // eslint-disable-next-line no-underscore-dangle
-    _.forEach(this.players, (p) => f(p));
+    _.forEach(this.players, (p) => f.call(this, p));
   }
 
   /**
@@ -331,12 +345,10 @@ class Game {
    * @param {function} f функция применяющая
    */
   forAllAlivePlayers(f) {
-    // eslint-disable-next-line no-underscore-dangle
     const aliveArr = _.filter(this.players, {
       alive: true,
     });
-    // eslint-disable-next-line no-underscore-dangle
-    _.forEach(aliveArr, (p) => f(p, this));
+    aliveArr.forEach((p) => f.call(this, p));
   }
 
   /**
@@ -344,13 +356,12 @@ class Game {
    * @param {Player} player обьект игрока
    * @param {Game} game обьект игры
    */
-  // eslint-disable-next-line class-methods-use-this
-  sendStatus(player, game) {
-    const team = game.playerArr.getMyTeam(player.clan);
+  sendStatus(player) {
+    const team = this.playerArr.getMyTeam(player.clan);
     if (_.isEmpty(team)) {
       team.push(player);
     }
-    let enemies = _.difference(game.playerArr.arr, team);
+    let enemies = _.difference(this.playerArr.arr, team);
     const allies = team.map((p) => {
       const ally = p.getFullStatus();
       return `\n\n👤 ${ally.nick} (${ally.prof}), ❤️: ${ally.hp}, 💙 : ${ally.mp}`;
