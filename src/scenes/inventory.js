@@ -8,7 +8,7 @@ const inventoryScene = new Scene('inventory');
 const { leave } = Stage;
 
 const getInventoryItems = (items) => items.map((item) => [Markup.callbackButton(
-  `${Inventory.getItemName(item.code)}`,
+  `${item.putOn ? '✔️' : ''} ${Inventory.getItemName(item.code)}`,
   `itemInfo_${item._id}`,
 )]);
 
