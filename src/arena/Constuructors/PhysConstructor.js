@@ -2,6 +2,11 @@ const floatNumber = require('../floatNumber');
 const MiscService = require('../MiscService');
 
 /**
+ * @typedef {import ('../GameService')} game
+ * @typedef {import ('../PlayerService')} player
+ */
+
+/**
  * Конструктор физической атаки
  * (возможно физ скилы)
  * @todo Сейчас при осутствие защиты на целе, не учитывается статик протект(
@@ -10,10 +15,18 @@ const MiscService = require('../MiscService');
 class PhysConstructor {
   /**
    * Конструктор атаки
-   * @param {String} atkAct имя actions
+   * @param {atkAct} atkAct имя actions
+   * @typedef {Object} atkAct
+   * @property {String} name
+   * @property {String} desc
+   * @property {Number} lvl
+   * @property {String} orderType
    */
   constructor(atkAct) {
-    Object.assign(this, atkAct);
+    this.name = atkAct.name;
+    this.desc = atkAct.desc;
+    this.lvl = atkAct.lvl;
+    this.orderType = atkAct.orderType;
     this.status = {};
     this.status.failReason = undefined; // причина провала атаки
   }
@@ -21,9 +34,9 @@ class PhysConstructor {
   /**
    * Основная функция выполнения. Из неё дёргаются все зависимости
    * Общий метод для скилов физической атаки
-   * @param {Object} initiator Обьект кастера
-   * @param {Object} target Обьект цели
-   * @param {Object} game Обьект игры (не обязателен)
+   * @param {player} initiator Обьект кастера
+   * @param {player} target Обьект цели
+   * @param {game} game Обьект игры (не обязателен)
    */
   cast(initiator, target, game) {
     this.params = {
@@ -88,10 +101,9 @@ class PhysConstructor {
    * атака прошла
    */
   protectCheck() {
-    const i = this.params.initiator;
-    const t = this.params.target;
-    const atc = i.stats.val('patk') * i.proc;
-    const prt = t.flags.isProtected.length > 0 ? t.stats.val('pdef') : 0.1;
+    const { initiator, target } = this.params;
+    const atc = initiator.stats.val('patk') * initiator.proc;
+    const prt = target.flags.isProtected.length > 0 ? target.stats.val('pdef') : 0.1;
     const at = floatNumber(Math.round(atc / prt));
     // eslint-disable-next-line no-console
     console.log('at', at);
@@ -100,13 +112,13 @@ class PhysConstructor {
     const result = c > r;
     // eslint-disable-next-line no-console
     console.log('left', c, 'right', r, 'result', result);
-    const initiatorHitParam = i.stats.val('hit');
+    const initiatorHitParam = initiator.stats.val('hit');
     const hitval = MiscService.randInt(initiatorHitParam.min,
       initiatorHitParam.max);
-    this.status.hit = floatNumber(hitval * i.proc);
+    this.status.hit = floatNumber(hitval * initiator.proc);
     if (result) {
       this.params.target.flags.isHited = ({
-        initiator: this.params.initiator.nick, hit: this.status.hit,
+        initiator: initiator.nick, hit: this.status.hit,
       });
       this.run();
     } else {
@@ -135,21 +147,19 @@ class PhysConstructor {
    * Функция агрегации данных после выполнениния действия
    */
   next() {
-    const { target } = this.params;
-    const { initiator } = this.params;
-    const bl = this.params.game.battleLog;
-    let msg = '';
+    const { initiator, target } = this.params;
+    const { battleLog } = this.params.game;
     if (this.status.failReason) {
-      msg = ({
+      const msg = {
         target: target.nick,
         initiator: initiator.nick,
         failReason: this.status.failReason.action,
         message: this.status.failReason.message,
         actionType: 'phys',
-      });
-      bl.log(msg);
+      };
+      battleLog.log(msg);
     } else {
-      msg = ({
+      const msg = {
         exp: this.status.exp,
         action: this.name,
         actionType: 'phys',
@@ -157,8 +167,8 @@ class PhysConstructor {
         dmg: floatNumber(this.status.hit),
         initiator: initiator.nick,
         dmgType: 'phys',
-      });
-      bl.success(msg);
+      };
+      battleLog.success(msg);
     }
   }
 
@@ -168,12 +178,12 @@ class PhysConstructor {
    * общую проверку
    */
   checkTargetIsDead() {
-    const t = this.params.target;
-    const hpNow = t.stats.val('hp').val;
-    if (hpNow <= 0 && !Object.keys(t.flags.isDead).length) {
-      t.flags.isDead = ({
+    const { target } = this.params;
+    const hpNow = target.stats.val('hp');
+    if (hpNow <= 0 && !Object.keys(target.flags.isDead).length) {
+      target.flags.isDead = {
         action: this.name, initiator: this.params.initiator.id,
-      });
+      };
     }
   }
 
@@ -194,14 +204,13 @@ class PhysConstructor {
    * за протектом
    */
   protectorsGetExp() {
-    const t = this.params.target; // Обьект цеои
-    const f = t.flags.isProtected; // Коллекция защищающих [{id,кол-во дефа},..]
-    const G = this.params.game; // Обьект игры
-    const prt = t.stats.val('def'); // общий показатель защиты цели
+    const { target, game } = this.params;
+    const f = target.flags.isProtected; // Коллекция защищающих [{id,кол-во дефа},..]
+    const prt = target.stats.val('def'); // общий показатель защиты цели
     f.forEach((p) => {
-      const pr = (Math.floor(parseFloat(p.val) * 100) / parseFloat(prt));
+      const pr = (Math.floor(p.val * 100) / prt);
       const e = Math.round(this.status.hit * 0.8 * pr);
-      G.getPlayerById(p.initiator).stats.mode('up', 'exp', e);
+      game.getPlayerById(p.initiator).stats.mode('up', 'exp', e);
     });
   }
 }

@@ -1,6 +1,5 @@
 const StatsService = require('./StatsService');
 const FlagsConstructors = require('./Constuructors/FlagsConstructor');
-const channelHelper = require('../helpers/channelHelper');
 /**
  * PlayerService
  * @description Обьект игрока внутри боя ! Это не Character!
@@ -16,13 +15,27 @@ const channelHelper = require('../helpers/channelHelper');
 class Player {
   /**
    * Конструктор обьекта игрока внутри игры
-   * @param {Object} params параметры игрока из обьекта CharObj
+   * @param {params} params
+   * @typedef {Object} params параметры игрока из обьекта CharObj
+   * @property {String} nickname
+   * @property {String} id
+   * @property {Number} tgId
+   * @property {String} prof
+   * @property {Object} modifiers
+   * @property {Object} resists
+   * @property {Object} skills
+   * @property {Object} magics
+   * @property {Object} statical
+   * @property {Object} def
+   * @property {Number} proc
+   * @property {Number} lvl
    */
   constructor(params) {
     this.nick = params.nickname;
     this.id = params.id;
     this.tgId = params.tgId;
     this.prof = params.prof;
+    this.lvl = params.lvl;
     this.stats = new StatsService(params.def);
     this.flags = new FlagsConstructors();
     // @todo закладка для вычисляемых статов
@@ -33,13 +46,13 @@ class Player {
     this.magics = params.magics || {}; // обьект изученых магий
     this.statical = params.statical || {}; // статически реген
     this.alive = true;
+    this.proc = 100;
     return this;
   }
 
   /**
    * Загрузка чара в память
-   * @param {Number} charId идентификатор чара
-   * @return {Promise}
+   * @param {String} charId идентификатор чара
    */
   static loading(charId) {
     // @todo fast hack
@@ -48,39 +61,22 @@ class Player {
 
   /**
    * Функция вернет обьект состояния Player
-   * @return {Object} {id,nick,prof,hp}
    */
   getStatus() {
     return {
-      id: this.id,
-      nick: this.nick,
-      prof: this.prof,
       hp: this.stats.val('hp'),
     };
   }
 
   /**
    * Функция вернет обьект состояния Player для отображения команде
-   * @return {Object} {id,nick,hp}
    */
   getFullStatus() {
     return {
-      id: this.id,
-      nick: this.nick,
-      prof: this.prof,
       hp: this.stats.val('hp'),
       mp: this.stats.val('mp'),
+      en: this.stats.val('en'),
     };
-  }
-
-  /**
-   * Нотификация через сокет
-   * @param {Object} data обьект для отправки пользователю
-   */
-  // eslint-disable-next-line class-methods-use-this
-  notify(data) {
-    channelHelper.broadcast(`Союзники:${data.allies}\n\nВраги:${data.enemies}`,
-      this.tgId);
   }
 }
 

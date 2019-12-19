@@ -4,6 +4,8 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
  * Основное описание магии общее требовани есть в конструкторе
  * @todo в старой арене на 3 лвл магии она становилась длительной
  */
+
+/** @typedef {import ('../PlayerService')} player */
 const blessing = new CommonMagic({
   name: 'blessing',
   desc: 'Благословляет цель увеличивая её параметры',
@@ -20,8 +22,8 @@ const blessing = new CommonMagic({
 });
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
+ * @param {player} initiator Обьект кастера
+ * @param {player} target Обьект цели
  */
 blessing.run = function run(initiator, target) {
   target.stats.mode('up', 'patk', this.effectVal(initiator));

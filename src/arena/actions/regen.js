@@ -1,6 +1,12 @@
 /**
  * Класс регенирации
  */
+
+/**
+ * @typedef {import ('../GameService')} game
+ * @typedef {import ('../PlayerService')} player
+ */
+
 class Regen {
   /**
    * Изменяем состояние цели, создаем custom run
@@ -15,9 +21,9 @@ class Regen {
   /**
    * Каст регенирации
    * Регенирация срабатывает даже при атаке на цель
-   * @param {Object} initiator Обьект кастера
-   * @param {Object} target Обьект цели
-   * @param {Object} game Обьект игры (не обязателен)
+   * @param {player} initiator Обьект кастера
+   * @param {player} target Обьект цели
+   * @param {game} game Обьект игры (не обязателен)
    */
   // eslint-disable-next-line no-unused-vars, class-methods-use-this
   cast(initiator, target, game) {

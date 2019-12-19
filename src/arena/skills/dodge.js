@@ -2,6 +2,9 @@ const Skill = require('../Constuructors/SkillConstructor');
 /**
  * Увертка
  */
+
+/** @typedef {import ('../PlayerService')} player */
+
 const dodge = new Skill({
   name: 'dodge',
   desc: 'Шанс увернуться от одной или нескольких атак(только против колющего, режущего, рубящего, метательного, оглушающего оружия)',
@@ -19,7 +22,7 @@ const dodge = new Skill({
 });
 /**
  * Логика работы скила
- * @param {Object} initiator Обьект кастера
+ * @param {player} [initiator] Обьект кастера
  */
 dodge.run = (initiator = this.params.initiator) => {
   const initiatorSkillLvl = initiator.skills[this.name];

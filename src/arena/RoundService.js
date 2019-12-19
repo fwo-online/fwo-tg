@@ -108,11 +108,10 @@ class RoundConstructor extends ee {
   /**
    * goNext
    * @description Функция изменения состояний обьекта
-   * @param {String} newState строка нового состояния
+   * @param {String} [state=this.status] строка нового состояния
    *
    */
-  nextState(newState) {
-    const state = newState || this.status;
+  nextState(state = this.status) {
     switch (state) {
       case 'init':
         // Состояние инициации раунда после создани игры
@@ -155,15 +154,14 @@ class RoundConstructor extends ee {
    *
    * @description Функция изменения с одного состояния в другое
    * @param {String} newState строка нового состояния перевод состояния
-   * @param {Number} timeout  число в мс, через которое следует выполнить
+   * @param {Number} [timeout=config.roundTimeout] число в мс, через которое следует выполнить
    */
-  goNext(newState, timeout) {
-    const defaultTimer = timeout || config.roundTimeout;
+  goNext(newState, timeout = config.roundTimeout) {
     const self = this;
     const x = setTimeout(() => {
       self.nextState(newState);
       clearTimeout(x);
-    }, defaultTimer);
+    }, timeout);
   }
 }
 

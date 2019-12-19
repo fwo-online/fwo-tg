@@ -3,6 +3,8 @@ const CommonMagic = require('../Constuructors/LongMagicConstructor');
  * Проклятие
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+/** @typedef {import ('../PlayerService')} player */
 const curse = new CommonMagic({
   name: 'curse',
   desc: 'Понижает вероятность атаки у цели и понижает ее защиту',
@@ -19,8 +21,8 @@ const curse = new CommonMagic({
 });
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
+ * @param {player} initiator Обьект кастера
+ * @param {player} target Обьект цели
  */
 curse.longRun = function longRun(initiator, target) {
   target.stats.mode('down', 'patk', this.effectVal(initiator));

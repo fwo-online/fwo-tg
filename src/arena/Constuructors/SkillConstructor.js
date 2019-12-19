@@ -1,29 +1,60 @@
 const MiscService = require('../MiscService');
 
 /**
+ * @typedef {import ('../GameService')} game
+ * @typedef {import ('../PlayerService')} player
+ */
+
+/**
  * Основной конструктор класса скилов (войны/лучники)
  */
 class Skill {
   /**
    * Создание скила
-   * @param {Skill} params параметры создания нового скилла
+   * @param {skill} params параметры создания нового скилла
+   * @typedef {Object} skill
+   * @property {String} name
+   * @property {String} desc
+   * @property {Number[]} cost
+   * @property {Number} proc
+   * @property {Number} baseExp
+   * @property {String} costType
+   * @property {Number} lvl
+   * @property {String} orderType
+   * @property {String} aoeType
+   * @property {Number[]} chance
+   * @property {Number[]} effect
+   * @property {Function} msg
+   * @property {String[]} profList - массив проф
    */
   constructor(params) {
-    Object.assign(this, params);
+    this.name = params.name;
+    this.desc = params.desc;
+    this.cost = params.cost;
+    this.proc = params.proc;
+    this.baseExp = params.baseExp;
+    this.costType = params.costType;
+    this.lvl = params.lvl;
+    this.orderType = params.orderType;
+    this.aoeType = params.aoeType;
+    this.chance = params.chance;
+    this.effect = params.effect;
+    this.msg = params.msg;
+    this.profList = params.profList;
   }
 
   /**
    * Основная точка вхождения в выполнение скила
-   * @param {Object} i инициатор
-   * @param {Object} t цель
-   * @param {Object} g Game обьект игры
+   * @param {player} initiator инициатор
+   * @param {player} target цель
+   * @param {game} game Game обьект игры
    */
-  cast(i, t, g) {
+  cast(initiator, target, game) {
     this.params = {
-      initiator: i, target: t, game: g,
+      initiator, target, game,
     };
     try {
-      this.getCost();
+      this.getCost(initiator);
       this.checkChance();
       this.run();
       this.next();
@@ -34,15 +65,14 @@ class Skill {
 
   /**
    * Функция снимает требуемое кол-во en за использования скила
+   * @param {player} initiator
    */
   // eslint-disable-next-line class-methods-use-this
   getCost(initiator) {
     // достаем цену за использование согласно lvl скила у пользователя
     const skillCost = this.cost[initiator.skills[this.name] - 1];
-    const remainingEnergy = parseFloat(initiator.stats.val(this.costType)
-        - parseFloat(skillCost));
+    const remainingEnergy = initiator.stats.val(this.costType) - skillCost;
     if (remainingEnergy >= 0) {
-      // eslint-disable-next-line no-param-reassign
       initiator.stats[this.costType] = +remainingEnergy;
     } else {
       throw this.breaks('NO_ENERGY');

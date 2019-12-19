@@ -3,6 +3,12 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
  * Вторая жизнь
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+/**
+ * @typedef {import ('../GameService')} game
+ * @typedef {import ('../PlayerService')} player
+ */
+
 const secondLife = new CommonMagic({
   name: 'secondLife',
   desc: 'Воскрешает цель',
@@ -21,8 +27,8 @@ const secondLife = new CommonMagic({
 });
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
+ * @param {player} initiator Обьект кастера
+ * @param {player} target Обьект цели
  */
 // eslint-disable-next-line no-unused-vars
 secondLife.run = function run(initiator, target) {

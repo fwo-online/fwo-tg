@@ -3,6 +3,11 @@ const DmgMagic = require('../Constuructors/DmgMagicConstructor');
  * Огненный дождь
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+/**
+ * @typedef {import ('../PlayerService')} player
+ */
+
 const fireRain = new DmgMagic({
   name: 'fireRain',
   desc: 'Обрушивает на команду противника огненный дождь',
@@ -20,8 +25,8 @@ const fireRain = new DmgMagic({
 });
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
+ * @param {player} initiator Обьект кастера
+ * @param {player} target Обьект цели
  */
 // eslint-disable-next-line no-unused-vars
 fireRain.run = function run(initiator, target) {

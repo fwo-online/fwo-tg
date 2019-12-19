@@ -175,7 +175,6 @@ item.statics = {
 
         forEach(shopArr, async (o, code) => {
           try {
-            // eslint-disable-next-line no-param-reassign
             o.code = code;
             await this.model('Item').create(o);
           } catch (e) {

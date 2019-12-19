@@ -1,6 +1,12 @@
 /**
  * Класс защиты
  */
+
+/**
+ * @typedef {import ('../GameService')} game
+ * @typedef {import ('../PlayerService')} player
+ */
+
 class Protect {
   /**
    * Изменяем протект цели, создаем custom run
@@ -14,9 +20,9 @@ class Protect {
 
   /**
    * Каст протекта
-   * @param {Object} initiator Обьект кастера
-   * @param {Object} target Обьект цели
-   * @param {Object} game Обьект игры (не обязателен)
+   * @param {player} initiator Обьект кастера
+   * @param {player} target Обьект цели
+   * @param {game} [game] Обьект игры
    */
   // eslint-disable-next-line no-unused-vars, class-methods-use-this
   cast(initiator, target, game) {

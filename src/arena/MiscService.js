@@ -1,4 +1,3 @@
-const arena = require('./index');
 /**
  * @description Просто мусорка с кастомными функциями
  * @module Service/Misc
@@ -12,12 +11,18 @@ const PROF = {
     hark: {
       str: 10, dex: 8, int: 3, wis: 3, con: 6,
     },
+    descr: 'стронг',
+    name: 'Воин',
+    icon: '🛡',
   },
   Archer: {
     prof: 'l',
     hark: {
       str: 3, dex: 8, int: 10, wis: 3, con: 6,
     },
+    descr: 'ахуенный',
+    name: 'Лучник',
+    icon: '🏹',
   },
   Mage: {
     prof: 'm',
@@ -27,6 +32,9 @@ const PROF = {
     mag: {
       lightHeal: 1,
     },
+    descr: 'волшебный',
+    name: 'Маг',
+    icon: '🔮',
   },
   Priest: {
     prof: 'p',
@@ -36,6 +44,9 @@ const PROF = {
     mag: {
       lightHeal: 1,
     },
+    descr: 'хилит',
+    name: 'Лекарь',
+    icon: '♱',
   },
 };
 const STORES = {
@@ -81,13 +92,7 @@ function randInt(min, max) {
 }
 
 module.exports = {
-  /**
-   * @description Проверяем является ли req GET && isSocket
-   * @param {req} req принимает входящий req из контроллера
-   * @return {Boolean}
-   */
-  isPostSock: (req) => (req.isSocket) && (req.method === 'POST'),
-  prof: PROF,
+  charDescr: PROF,
   stores: STORES, /**
    * Функция рандома по формату 1d100+10;
    * @param {String} diceStr параметры рандома в формате 1d100
@@ -120,8 +125,7 @@ module.exports = {
    *@return {Boolean}
    */
   isMagic(action) {
-    // eslint-disable-next-line no-underscore-dangle
-    return arena.magics[action]._proto_.constructor === 'magic';
+    return global.arena.magics[action]._proto_.constructor === 'magic';
   },
   randInt, /**
    * генератор уникальных идентификаторов для тим

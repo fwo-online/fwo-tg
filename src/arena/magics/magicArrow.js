@@ -3,6 +3,9 @@ const DmgMagic = require('../Constuructors/DmgMagicConstructor');
  * Магическая стрела
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+/** @typedef {import ('../PlayerService')} player */
+
 const magicArrow = new DmgMagic({
   name: 'magicArrow',
   desc: 'Магическая стрела',
@@ -20,8 +23,8 @@ const magicArrow = new DmgMagic({
 });
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
+ * @param {player} initiator Обьект кастера
+ * @param {player} target Обьект цели
  */
 magicArrow.run = function run(initiator, target) {
   target.stats.mode('down', 'hp', this.effectVal(initiator));

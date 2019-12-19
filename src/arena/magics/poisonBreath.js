@@ -3,6 +3,12 @@ const DmgMagic = require('../Constuructors/DmgMagicConstructor');
  * Ядовитое дыхание
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+/**
+ * @typedef {import ('../GameService')} game
+ * @typedef {import ('../PlayerService')} player
+ */
+
 const poisonBreath = new DmgMagic({
   name: 'poisonBreath',
   desc: 'Повреждает цель ядовитым дыханием, нанося урон.',
@@ -20,8 +26,8 @@ const poisonBreath = new DmgMagic({
 });
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
+ * @param {player} initiator Обьект кастера
+ * @param {player} target Обьект цели
  */
 poisonBreath.run = function run(initiator, target) {
   target.stats.mode('down', 'hp', this.effectVal(initiator));

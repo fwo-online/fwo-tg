@@ -83,7 +83,24 @@ function getDynHarks(charObj) {
 class Char {
   /**
    * Конструктор игрока
-   * @param {Object} charObj обьект персонажа из базы
+   * @param {char} charObj обьект персонажа из базы
+   * @typedef {Object} char
+   * @property {String} id
+   * @property {String} _id
+   * @property {String} prof
+   * @property {Number} lvl
+   * @property {Number} tgId
+   * @property {String} nickname
+   * @property {Number} gold
+   * @property {Number} exp
+   * @property {Object} statistics
+   * @property {Object} inventory
+   * @property {Object} harks
+   * @property {Object} magics
+   * @property {Number} free
+   * @property {Number} bonus
+   * @property {Object} mm
+   *
    */
   constructor(charObj) {
     // const defaults = defHarks(charObj.prof);
@@ -147,6 +164,10 @@ class Char {
 
   get free() {
     return this.tempHarks.free;
+  }
+
+  set free(value) {
+    this.tempHarks.free = value;
   }
 
   get harks() {
@@ -302,7 +323,7 @@ class Char {
   /**
    * Загрузка чара в память
    * @param {Number} tgId идентификатор пользователя в TG (tgId)
-   * @type {Promise<Char>}
+   * @return {Promise<Char>}
    */
   static async getCharacter(tgId) {
     const charFromDb = await db.char.load({ tgId });
@@ -347,9 +368,9 @@ class Char {
    * @todo нужно поправить
    */
   async upHark(hark, val) {
-    if (!harkArr.indexOf(hark) + 1 && val <= this.free) {
+    if (!(harkArr.indexOf(hark) + 1) && val <= this.free) {
       this.free -= +val;
-      this.hark[hark] += +val;
+      this.harks[hark] += +val;
     } else {
       throw Error('UPHARK_ERR');
     }

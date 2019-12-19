@@ -1,21 +1,30 @@
 const MiscService = require('../MiscService');
 
 /**
+ * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../GameService')} game
+ */
+
+/**
  * Конструктор магии
  */
 class Magic {
   /**
    * Создание магии
-   * @param {Object} magObj Обьект создаваемой магии
-   * @param {String} name Имя магии
-   * @param {String} desc Короткое описание
-   * @param {Number} cost Стоимость за использование
-   * @param {String} costType Тип единицы стоимости {en/mp}
-   * @param {Number} lvl Требуемый уровень круга магий для использования
-   * @param {String} orderType Тип цели заклинания self/team/enemy/enemyTeam
-   * @param {String} aoeType Тип нанесения урона по цели:
-   * @param {Number} baseExp Стартовый параметр exp за действие
+   * @param {magObj} magObj Обьект создаваемой магии
+   * @typedef {Object} magObj
+   * @property {String} name Имя магии
+   * @property {String} desc Короткое описание
+   * @property {Number} cost Стоимость за использование
+   * @property {String} costType Тип единицы стоимости {en/mp}
+   * @property {Number} lvl Требуемый уровень круга магий для использования
+   * @property {String} orderType Тип цели заклинания self/team/enemy/enemyTeam
+   * @property {String} aoeType Тип нанесения урона по цели:
+   * @property {Number} baseExp Стартовый параметр exp за действие
    * target/targetAoe/all/allNoinitiator/team/self
+   * @property {String[]} effect размер рандомного эффект от магии
+   * @property {String} magType Тип магии good/bad/neutral
+   * @property {Number[]} chance
    */
   constructor(magObj) {
     Object.assign(this, magObj);
@@ -35,9 +44,9 @@ class Magic {
   /**
    * Общий метод каста магии
    * в нём выполняются общие функции для всех магий
-   * @param {Object} initiator Обьект кастера
-   * @param {Object} target Обьект цели
-   * @param {Object} game Обьект игры (не обязателен)
+   * @param {player} initiator Обьект кастера
+   * @param {player} target Обьект цели
+   * @param {game} [game] Обьект игры
    */
   cast(initiator, target, game) {
     this.params = {
@@ -47,7 +56,7 @@ class Magic {
       this.checkPreAffects(initiator, target, game);
       this.isblurredMind(initiator, game); // проверка не запудрило
       this.getCost(initiator);
-      this.checkChance(initiator);
+      this.checkChance();
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.getExp(initiator);
       this.next(initiator, target);
@@ -64,7 +73,7 @@ class Magic {
    * Функция списывающая с кастера требуемое
    * кол-во единиц за использование магии
    * Если кастеру хватило mp/en продолжаем,если нет, то возвращаем false
-   * @param {Object} initiator Обьект кастера
+   * @param {player} initiator Обьект кастера
    */
   getCost(initiator) {
     const costValue = parseFloat(initiator.stats.val(this.costType)
@@ -81,7 +90,7 @@ class Magic {
    * Функция списывающая с кастера требуемое
    * кол-во единиц за использование магии
    * Если кастеру хватило mp/en продолжаем,если нет, то возвращаем false
-   * @param {Object} initiator Обьект кастера
+   * @param {player} initiator Обьект кастера
    */
   getExp(initiator) {
     this.status.exp = Math.round(this.baseExp * initiator.proc);
@@ -90,13 +99,12 @@ class Magic {
 
   /**
    * Функция расчитывай размер эффекат от магии по стандартным дайсам
-   * @param {Object} initiator Обьект персонажа
+   * @param {player} [initiator=this.param.initiator] Обьект персонажа
    * @return {Number} dice число эффекта
    */
-  effectVal(initiator) {
-    const i = initiator || this.params.initiator;
-    const initiatorMagicLvl = i.magics[this.name];
-    return MiscService.dice(this.effect[initiatorMagicLvl - 1]) * i.proc;
+  effectVal(initiator = this.params.initiator) {
+    const initiatorMagicLvl = initiator.magics[this.name];
+    return MiscService.dice(this.effect[initiatorMagicLvl - 1]) * initiator.proc;
   }
 
   /**
@@ -132,8 +140,7 @@ class Magic {
    * @todo Всё ниже рассчитывается дла бафов и не учитывает mdef/mga
    */
   getChance() {
-    const { initiator } = this.params;
-    const { target } = this.params;
+    const { initiator, target } = this.params;
     const initiatorMagicLvl = initiator.magics[this.name];
     // eslint-disable-next-line no-console
     console.log('getChance:magicLvl:', initiatorMagicLvl);
@@ -167,15 +174,32 @@ class Magic {
     return MiscService.rndm('1d100') <= 5;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  run() {
-    return true;
+  /**
+   * @param {player} [initiator] обьект персонажа
+   * @param {player} [target] обьект персонажа
+   * @param {game} [game] Обьект игры для доступа ко всему
+   * @return {void}
+   */
+  // eslint-disable-next-line class-methods-use-this, no-unused-vars
+  run(initiator, target, game) {
+    return this;
+  }
+
+  /**
+   * @param {player} [initiator] обьект персонажа
+   * @param {player} [target] обьект персонажа
+   * @param {game} [game] Обьект игры для доступа ко всему
+   * @return {void}
+   */
+  // eslint-disable-next-line class-methods-use-this, no-unused-vars
+  longRun(initiator, target, game) {
+    return this;
   }
 
   /**
    * Проверка на запудревание мозгов
-   * @param {Object} initiator обьект персонажаы
-   * @param {Object} game Обьект игры для доступа ко всему
+   * @param {player} initiator обьект персонажаы
+   * @param {game} game Обьект игры для доступа ко всему
    * @todo нужно вынести этот метод в orders или к Players Obj
    */
   // eslint-disable-next-line no-unused-vars,class-methods-use-this
@@ -189,15 +213,15 @@ class Magic {
 
   /**
    * Проверка на запудревание мозгов
-   * @param {Object} initiator обьект персонажаы
-   * @param {Object} target обьект цели магии
-   * @param {Object} game Обьект игры для доступа ко всему
+   * @param {player} initiator обьект персонажаы
+   * @param {player} target обьект цели магии
+   * @param {game} game Обьект игры для доступа ко всему
    * @todo нужно вынести этот метод в orders
    */
   // eslint-disable-next-line no-unused-vars
   checkPreAffects(initiator, target, game) {
     const { isSilenced } = initiator.flags;
-    if (isSilenced && isSilenced.some((e) => e.action !== this.name)) {
+    if (isSilenced && isSilenced.some((e) => e.initiator !== this.name)) {
       // если кастер находится под безмолвием/бунтом богов
       throw this.breaks('SILENCED');
     }
@@ -219,8 +243,8 @@ class Magic {
 
   /**
    * Магия прошла удачно
-   * @param {Object} initiator обьект персонажаы
-   * @param {Object} target обьект цели магии
+   * @param {player} initiator обьект персонажаы
+   * @param {player} target обьект цели магии
    * @todo тут нужен вывод требуемых параметров
    */
   next(initiator, target) {

@@ -3,6 +3,9 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
  * Каменная кожа
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+/** @typedef {import ('../PlayerService')} player */
+
 const stoneSkin = new CommonMagic({
   name: 'stoneSkin',
   desc: 'Превращает кожу цели в камень',
@@ -19,8 +22,8 @@ const stoneSkin = new CommonMagic({
 });
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
+ * @param {player} initiator Обьект кастера
+ * @param {player} target Обьект цели
  */
 stoneSkin.run = function run(initiator, target) {
   target.stats.mode('up', 'pdef', this.effectVal(initiator));

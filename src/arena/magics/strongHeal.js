@@ -5,6 +5,9 @@ const floatNumber = require('../floatNumber');
  * Сильное лечение
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+/** @typedef {import ('../PlayerService')} player */
+
 const strongHeal = new CommonMagic({
   name: 'strongHeal',
   desc: 'Сильное лечение цели',
@@ -21,8 +24,7 @@ const strongHeal = new CommonMagic({
 });
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
+ * @param {player} target Обьект цели
  */
 strongHeal.run = function run(target) {
   const maxHP = target.stats.val('maxHp'); // показатель максимального HP
@@ -34,6 +36,9 @@ strongHeal.run = function run(target) {
   this.status.effect = floatNumber(this.status.effect);
   target.stats.mode('up', 'hp', this.status.effect);
 };
+/**
+ * @param {player} initiator
+ */
 strongHeal.getExp = (initiator) => {
   this.status.exp = Math.round(this.status.effect * 10 * initiator.proc);
   initiator.stats.mode('up', 'exp', this.status.exp);

@@ -3,6 +3,13 @@ const WatchService = require('../WatchService');
 const config = require('../config');
 
 /**
+ * @typedef {Object} mmObj
+ * @property {string} charId
+ * @property {number} psr
+ * @property {number} startTime
+ */
+
+/**
  * Конструктор обьекта очереди
  */
 class QueueConstructor {
@@ -11,13 +18,14 @@ class QueueConstructor {
    */
   constructor() {
     this.psr = 0;
+    /** @type {mmObj[]} */
     this.players = [];
     this.open = true;
   }
 
   /**
    * Добавление чара в предсобранную комнату для игры
-   * @param {Object} searcherObj Обьект чара начавшего поиск
+   * @param {mmObj} searcherObj Обьект чара начавшего поиск
    */
   async addTo(searcherObj) {
     try {
@@ -34,7 +42,7 @@ class QueueConstructor {
 
   /**
    * Описание политики обьекта очереди
-   * @param {Object} searcherObj
+   * @param {mmObj} searcherObj
    * @return {Boolean}
    */
   policy(searcherObj) {

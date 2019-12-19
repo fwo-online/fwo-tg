@@ -12,11 +12,16 @@ const getInventoryItems = (items) => items.map((item) => [Markup.callbackButton(
   `itemInfo_${item._id}`,
 )]);
 
-inventoryScene.enter(async ({ session, reply }) => {
+inventoryScene.enter(async ({ replyWithMarkdown, reply, session }) => {
   const { items } = session.character;
-
-  reply(
-    `Твой инвентарь, ${session.character.nickname}`,
+  await replyWithMarkdown(
+    '*Инвентарь*',
+    Markup.keyboard([
+      ['🔙 В лобби'],
+    ]).resize().extra(),
+  );
+  await reply(
+    'Список вещей',
     Markup.inlineKeyboard(getInventoryItems(items)).resize().extra(),
   );
 });
@@ -24,8 +29,8 @@ inventoryScene.enter(async ({ session, reply }) => {
 inventoryScene.action('inventoryBack', async ({ session, editMessageText }) => {
   const { items } = session.character;
 
-  editMessageText(
-    `Твой инвентарь, ${session.character.nickname}`,
+  await editMessageText(
+    'Список вещей',
     Markup.inlineKeyboard(getInventoryItems(items)).resize().extra(),
   );
 });
@@ -106,7 +111,7 @@ inventoryScene.action('back', ({ scene }) => {
   scene.reenter();
 });
 
-inventoryScene.hears('🔙 Назад', ({ scene }) => {
+inventoryScene.hears('🔙 В лобби', ({ scene }) => {
   leave();
   scene.enter('lobby');
 });

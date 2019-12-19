@@ -3,6 +3,12 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
  * Благословение
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+/**
+ * @typedef {import ('../GameService')} game
+ * @typedef {import ('../PlayerService')} player
+ */
+
 const glitch = new CommonMagic({
   name: 'glitch',
   desc: 'Глюки, вводит цель в замешательство, цель атакуют любого из игроков',
@@ -19,9 +25,9 @@ const glitch = new CommonMagic({
 
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
- * @param {Object} game Обьект игры (не обязателен)
+ * @param {player} initiator Обьект кастера
+ * @param {player} target Обьект цели
+ * @param {game} game Обьект игры (не обязателен)
  */
 // eslint-disable-next-line no-unused-vars
 glitch.run = function run(initiator, target, game) {

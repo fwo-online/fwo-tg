@@ -24,7 +24,7 @@ class StatsService {
    * Функция изменения атрибута
    * @param {String} type тип изменения up/down
    * @param {String} atr изменяемый атрибут atk/hark.str/def
-   * @param {floatNumber} val значение на которое будет изменено
+   * @param {Number} val значение на которое будет изменено
    * изменение может происходить только внутри inRound
    */
   mode(type, atr, val) {
@@ -54,9 +54,7 @@ class StatsService {
       default:
         // eslint-disable-next-line no-console
         console.error('Stats mode type error', type);
-        throw new Error({
-          message: 'stat mode fail', type: 'engine',
-        });
+        throw new Error('stat mode fail');
     }
     // eslint-disable-next-line no-console
     console.log('new stat:', this.inRound[atr], 'atr', atr, 'val', val);
@@ -74,6 +72,7 @@ class StatsService {
     // выставляем ману и хп на начало раунда
     this.inRound.hp = oldData.hp || this.defStat.maxHp; // @todo hardcord
     this.inRound.mp = oldData.mp || this.defStat.maxMp; // @todo hardcord
+    this.inRound.en = oldData.en || this.defStat.maxEn;
     this.inRound.exp = 0; // кол-во Exp на начало раунда
     this.inRound.def = 0; // кол-во дефа на начало
   }
@@ -81,7 +80,7 @@ class StatsService {
   /**
    * Функция возвращающее значение атрибута
    * @param {String} atr str/atk/prt/dex
-   * @return {floatNumber}
+   * @return {Number}
    */
   val(atr) {
     const a = this.inRound[atr];
