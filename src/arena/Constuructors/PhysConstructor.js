@@ -122,10 +122,10 @@ class PhysConstructor {
       });
       this.run();
     } else {
+      this.protectorsGetExp();
       this.status.failReason = ({
         action: 'protect', message: 'DEF',
       });
-      this.protectorsGetExp();
     }
   }
 
@@ -206,7 +206,7 @@ class PhysConstructor {
   protectorsGetExp() {
     const { target, game } = this.params;
     const f = target.flags.isProtected; // Коллекция защищающих [{id,кол-во дефа},..]
-    const prt = target.stats.val('def'); // общий показатель защиты цели
+    const prt = target.stats.val('pdef'); // общий показатель защиты цели
     f.forEach((p) => {
       const pr = (Math.floor(p.val * 100) / prt);
       const e = Math.round(this.status.hit * 0.8 * pr);

@@ -23,7 +23,7 @@ function csl(msgObj) {
       eng: '',
     },
     DEF: {
-      ru: `${initiator} атаковал ${target}, но тот смог защититься[${failReason}]`,
+      ru: `${initiator} атаковал ${target}, но тот смог защититься [${failReason}]`,
       eng: '',
     },
     CHANCE_FAIL: {
