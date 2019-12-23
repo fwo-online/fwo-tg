@@ -4,7 +4,7 @@ const Markup = require('telegraf/markup');
  * @typedef {import ('../arena/PlayerService')} Player
  */
 
-const chatId = -1001483444452;
+const chatId = process.env.BOT_CHATID || -1001483444452;
 
 module.exports = {
   bot: null,
