@@ -42,6 +42,7 @@ class PhysConstructor {
     this.params = {
       initiator, target, game,
     };
+    this.status = {};
     const bl = this.params.game.battleLog;
     try {
       this.checkPreAffects();

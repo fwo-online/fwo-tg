@@ -1,4 +1,5 @@
 const floatNumber = require('./floatNumber');
+const _ = require('lodash');
 
 /**
  * Класс для хранения stats
@@ -64,11 +65,11 @@ class StatsService {
    * Функция обнуления состояние inRound Object
    */
   refresh() {
-    const oldData = { ...this.inRound }; // ссылаемся на внешний обьект
+    const oldData = _.clone(this.inRound); // ссылаемся на внешний обьект
     if (oldData.exp) {
       this.collect.exp += +oldData.exp;
     }
-    this.inRound = { ...this.defStat };
+    this.inRound = _.clone(this.defStat);
     // выставляем ману и хп на начало раунда
     this.inRound.hp = oldData.hp || this.defStat.maxHp; // @todo hardcord
     this.inRound.mp = oldData.mp || this.defStat.maxMp; // @todo hardcord
