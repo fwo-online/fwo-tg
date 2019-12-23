@@ -384,6 +384,9 @@ class Game {
     const allies = team.map((p) => {
       const status = p.getFullStatus();
       const { icon } = Object.values(charDescr).find((el) => el.prof === p.prof);
+      if (p.prof === 'l' || p.prof === 'w'){
+        return `\n\t👤 ${p.nick} (${icon}${p.lvl}) ❤️${status.hp} 🔋${status.en}`;
+      }
       return `\n\t👤 ${p.nick} (${icon}${p.lvl}) ❤️${status.hp}  \n\t💧${status.mp}  🔋${status.en}`;
     });
     enemies = enemies.map((p) => {
