@@ -27,7 +27,7 @@ class Protect {
   // eslint-disable-next-line no-unused-vars, class-methods-use-this
   cast(initiator, target, game) {
     const tect = initiator.stats.val('pdef') * initiator.proc;
-    target.stats.mode('up', 'def', tect);
+    target.stats.mode('up', 'pdef', tect);
     target.flags.isProtected.push({
       initiator: initiator.id, val: tect,
     });
