@@ -35,6 +35,15 @@ const checkCancelFindCount = (character) => {
   return true;
 };
 
+/**
+ * Возвращает кнопки с процентом заказа
+ * @param {string} match
+ * @param {number} proc
+ */
+const getProcentKeyboard = (match, proc) => [100, 5, 10, 25, 50, 75]
+  .filter((key) => key <= proc)
+  .map((key) => Markup.callbackButton(key, `${match}_${key}`));
+
 battleScene.enter(async ({ reply, replyWithMarkdown }) => {
   // @todo При поиске боя хотелось бы ещё выдавать сюда картиночку
   await replyWithMarkdown('*Поиск Боя*', Markup.removeKeyboard().extra());
@@ -97,7 +106,7 @@ battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) =>
   const [, action] = match.input.split('_');
   const aliveArr = GameService.aliveArr(gameId)
     .map(({ nick, id }) => Markup.callbackButton(nick,
-      `${action}_${id}_${nick}`));
+      `${action}_${id}`));
   editMessageText(
     `Выбери цель для ${match}`,
     Markup.inlineKeyboard([
@@ -106,17 +115,38 @@ battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) =>
   );
 });
 
-battleScene.action(/\w*_\w*_\w*/, async ({ editMessageText, session, match }) => {
-  const [action, target, nick] = match.input.split('_');
+battleScene.action(/^([^_]+)_([^_]+)$/, async ({ editMessageText, session, match }) => {
+  const [action, target] = match.input.split('_');
+  const { id } = session.character;
+  const gameId = global.arena.players[id].mm;
+  /** @type {GameService} */
+  const Game = global.arena.games[gameId];
+  const player = Game.players[id];
+  editMessageText(
+    `Выбери силу ${action} на игрока ${Game.players[target].nick}`,
+    Markup.inlineKeyboard([
+      ...getProcentKeyboard(match.input, player.proc),
+    ]).resize().extra(),
+  );
+});
+
+battleScene.action(/^([^_]+)_([^_]+)_([^_]+)$/, async ({ editMessageText, session, match }) => {
+  const [action, target, proc] = match.input.split('_');
   const initiator = session.character.id;
   const gameId = global.arena.players[initiator].mm;
   /** @type {GameService} */
   const Game = global.arena.games[gameId];
+  const player = Game.players[initiator];
   Game.orders.orderAction({
-    initiator, target, action, proc: 100,
+    initiator, target, action, proc,
   });
+
+  const message = Game.orders.ordersList
+    .filter((order) => order.initiator === initiator)
+    .map((order) => `\n${order.action}(${order.proc}%) на игрока ${Game.players[order.target].nick}`);
   editMessageText(
-    `Заказан ${action} на игрока ${nick}`,
+    `Заказы: ${message.join()}`,
+    player.proc !== 0 ? Markup.inlineKeyboard(channelHelper.getOrderButtons(player)).resize().extra() : '',
   );
 });
 

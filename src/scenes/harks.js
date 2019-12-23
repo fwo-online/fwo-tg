@@ -1,28 +1,21 @@
 const Scene = require('telegraf/scenes/base');
 const Stage = require('telegraf/stage');
 const Markup = require('telegraf/markup');
+const { harksDescr } = require('../arena/MiscService');
 
 const { leave } = Stage;
 const harkScene = new Scene('harks');
-
-const HARK_NAMES = {
-  str: 'Сила',
-  dex: 'Ловкость',
-  wis: 'Мудрость',
-  int: 'Интелект',
-  con: 'Телосложение',
-};
 
 /**
  * @param {import ('../arena/CharacterService')} character
  */
 const getInlineKeyboard = (character) => {
   const inlineKeyboardArr = Object
-    .keys(HARK_NAMES)
+    .keys(harksDescr)
     .map((hark) => [
       Markup.callbackButton(
-        `${HARK_NAMES[hark]}: ${character.harks[hark]}`,
-        'do_nothing',
+        `${harksDescr[hark].name}: ${character.harks[hark]}`,
+        `info_${hark}`,
       ),
       Markup.callbackButton(
         `+ ${character.getIncreaseHarkCount(hark)}`,
@@ -52,17 +45,31 @@ harkScene.enter(async ({ replyWithMarkdown, reply, session }) => {
   );
 });
 
-harkScene.action(/increase(?=_)/, ({ session, editMessageText, match }) => {
+harkScene.action(/increase(?=_)/, ({
+  session,
+  editMessageText,
+  match,
+  answerCallbackQuery,
+}) => {
   const [, hark] = match.input.split('_');
 
-  session.character.increaseHark(hark);
+  try {
+    session.character.increaseHark(hark);
 
-  editMessageText(
-    `Свободных очков ${session.character.free}`,
-    Markup.inlineKeyboard([
-      ...getInlineKeyboard(session.character),
-    ]).resize().extra(),
-  );
+    editMessageText(
+      `Свободных очков ${session.character.free}`,
+      Markup.inlineKeyboard([
+        ...getInlineKeyboard(session.character),
+      ]).resize().extra(),
+    );
+  } catch (e) {
+    answerCallbackQuery(e.message);
+  }
+});
+
+harkScene.action(/info(?=_)/, ({ answerCallbackQuery, match }) => {
+  const [, hark] = match.input.split('_');
+  answerCallbackQuery(harksDescr[hark].descr);
 });
 
 harkScene.action('confirm', async ({ session, editMessageText }) => {

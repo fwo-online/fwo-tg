@@ -19,7 +19,7 @@ class PlayersArr {
   /**
    * round_json
    * @description JSON пользователей нужно хратить в определенном формате
-   * @return {Promise<_.Dictionary<Player>>} userjson Обьект на начало игры
+   * @return {Promise<Object<string, Player>>} userjson Обьект на начало игры
    * @todo переделать это, убрать внутрь конструктора playersArr
    */
   async roundJson() {

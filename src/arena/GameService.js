@@ -28,7 +28,7 @@ class Game {
    */
   constructor(playerArr) {
     this.playerArr = new PlayersArr(playerArr);
-    /** @type {_.Dictionary<Player>} */
+    /** @type {Object<string, Player>} */
     this.players = {};
     this.round = new RoundService();
     this.orders = new OrderService();
