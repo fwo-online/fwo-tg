@@ -46,10 +46,10 @@ module.exports = {
     );
   },
   /**
-   * Отправка кнопок при начале заказа
-   * @param {object} player - объект игрока
+   * Получение кнопок заказа. Базовые кнопки + доступные магии
+   * @param {Player} player - объект игрока
    */
-  async sendOrderButtons(player) {
+  getOrderButtons(player) {
     const buttons = [
       [Markup.callbackButton('Атака', 'action_attack')],
       [Markup.callbackButton('Лечение', 'action_handsHeal')],
@@ -62,10 +62,17 @@ module.exports = {
         buttons.push([Markup.callbackButton(key, `action_${key}`)]);
       });
     }
+    return buttons;
+  },
+  /**
+   * Отправка кнопок при начале заказа
+   * @param {Player} player - объект игрока
+   */
+  async sendOrderButtons(player) {
     const message = await this.bot.telegram.sendMessage(
       player.tgId,
       'Выбери действие',
-      Markup.inlineKeyboard(buttons).resize().extra(),
+      Markup.inlineKeyboard(this.getOrderButtons(player)).resize().extra(),
     );
     this.messages[message.chat.id] = message.message_id;
   },

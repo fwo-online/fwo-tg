@@ -252,7 +252,7 @@ class Char {
 
   increaseHark(harkName) {
     if (this.tempHarks.free < 1) {
-      return;
+      throw Error('Недостаточно очков');
     }
 
     this.tempHarks[harkName] += 1;

@@ -23,11 +23,6 @@ lobby.enter(({ replyWithMarkdown, session }) => {
   );
 });
 
-lobby.command('exit', ({ scene }) => {
-  leave();
-  scene.enter('greeter');
-});
-
 lobby.hears('😎 Профиль', ({ scene }) => {
   leave();
   scene.enter('profile');
