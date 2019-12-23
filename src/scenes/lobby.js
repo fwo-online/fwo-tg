@@ -1,31 +1,29 @@
 const Scene = require('telegraf/scenes/base');
 const Stage = require('telegraf/stage');
 const Markup = require('telegraf/markup');
+const { charDescr } = require('../arena/MiscService');
 
 const {
   leave,
 } = Stage;
 const lobby = new Scene('lobby');
-const loginHelper = require('../helpers/loginHelper');
 
-lobby.enter(({ replyWithMarkdown, session }) => replyWithMarkdown(
-  `*Lobby*
-Так так, значит ты *${session.character.nickname}* (${session.character.prof})
+lobby.enter(({ replyWithMarkdown, session }) => {
+  const { nickname, prof, lvl } = session.character;
+  const { icon } = Object.values(charDescr).find((el) => el.prof === prof);
 
-Статистика: 
-⬆ ${session.character.lvl}
- 💰 ${session.character.gold}
- 📖 ${session.character.exp}
-`, Markup.keyboard([
-    ['⚔ В бой'],
-    ['😎 Профиль', '🏪 Магазин'],
-    ['☸ Настройки', '❓ Помощь'],
-  ]).resize().extra(),
-));
+  replyWithMarkdown(
+    `*Лобби*
+Так-так, значит ты *${nickname}* (${icon}${lvl})`,
+    Markup.keyboard([
+      ['⚔ В бой'],
+      ['😎 Профиль', '🏪 Магазин'],
+      ['☸ Настройки', '❓ Помощь'],
+    ]).resize().extra(),
+  );
+});
 
-lobby.command('exit', ({
-  scene,
-}) => {
+lobby.command('exit', ({ scene }) => {
   leave();
   scene.enter('greeter');
 });
@@ -45,32 +43,9 @@ lobby.hears('🏪 Магазин', ({ scene }) => {
   scene.enter('shopScene');
 });
 
-lobby.command('shop', ({ scene }) => {
+lobby.hears('☸ Настройки', ({ scene }) => {
   leave();
-  scene.enter('shopScene');
-});
-
-lobby.command('remove', async ({
-  session,
-  scene,
-  reply,
-  from,
-}) => {
-  const resp = await loginHelper.remove(from.id);
-  session.character = null;
-  if (resp) {
-    reply(
-      'Твой персонаж был удалён!',
-    );
-    leave();
-    scene.enter('greeter');
-  } else {
-    reply(
-      'Произошла ошибка',
-    );
-    leave();
-    scene.enter('greeter');
-  }
+  scene.enter('settings');
 });
 
 module.exports = lobby;

@@ -4,6 +4,9 @@ const floatNumber = require('../floatNumber');
  * Среднее лечение
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+/** @typedef {import ('../PlayerService')} player */
+
 const mediumHeal = new CommonMagic({
   name: 'mediumHeal',
   desc: 'Среднее лечение цели',
@@ -20,8 +23,8 @@ const mediumHeal = new CommonMagic({
 });
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
+ * @param {player} initiator Обьект кастера
+ * @param {player} target Обьект цели
  */
 mediumHeal.run = function run(initiator, target) {
   const maxHP = target.stats.val('maxHp'); // показатель максимального HP
@@ -33,6 +36,9 @@ mediumHeal.run = function run(initiator, target) {
   this.status.effect = floatNumber(this.status.effect);
   target.stats.mode('up', 'hp', this.status.effect);
 };
+/**
+ * @param {player} initiator
+ */
 mediumHeal.getExp = function getExp(initiator) {
   this.status.exp = Math.round(this.status.effect * 10 * initiator.proc);
   initiator.stats.mode('up', 'exp', this.status.exp);

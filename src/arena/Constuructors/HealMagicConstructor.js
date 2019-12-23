@@ -2,6 +2,11 @@ const floatNumber = require('../floatNumber');
 const MiscService = require('../MiscService');
 
 /**
+ * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../GameService')} game
+ */
+
+/**
  * Heal Class
  */
 class Heal {
@@ -18,9 +23,9 @@ class Heal {
    * Основная функция выполнения. Из неё дёргаются все зависимости
    * Общий метод каста магии
    * в нём выполняются общие функции для всех магий
-   * @param {Object} initiator Обьект кастера
-   * @param {Object} target Обьект цели
-   * @param {Object} game Обьект игры (не обязателен)
+   * @param {player} initiator Обьект кастера
+   * @param {player} target Обьект цели
+   * @param {game} game Обьект игры (не обязателен)
    */
   cast(initiator, target, game) {
     this.params = {
@@ -52,8 +57,14 @@ class Heal {
    * @param {Object} obj
    */
   breaks(obj) {
-    const bl = this.params.game.battleLog;
-    bl.log(obj);
+    const { target, initiator } = this.params;
+    const msg = {
+      message: obj.message,
+      target: target.nick,
+      initiator: initiator.nick,
+    };
+    const { battleLog } = this.params.game;
+    battleLog.log(msg);
   }
 
   /**
@@ -78,10 +89,9 @@ class Heal {
    * Функция положительного прохождения
    */
   next() {
-    const { target } = this.params;
-    const { initiator } = this.params;
-    const bl = this.params.game.battleLog;
-    bl.success({
+    const { target, initiator } = this.params;
+    const { battleLog } = this.params.game;
+    battleLog.success({
       exp: this.status.exp,
       action: this.name,
       actionType: 'heal',

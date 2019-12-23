@@ -1,19 +1,49 @@
 const Markup = require('telegraf/markup');
 /**
  * Помощник для отправки сообщений в общий чат
+ * @typedef {import ('../arena/PlayerService')} Player
  */
 
-const chatId = '-331233606';
+const chatId = -1001483444452;
 
 module.exports = {
   bot: null,
   messages: {},
+  statusMessages: {},
   /**
    * @param {string} data - текст отправляемого сообщения
-   * @param {string} [id=chatId] - id чата
+   * @param {Number} [id=chatId] - id чата
    */
   async broadcast(data, id = chatId) {
     await this.bot.telegram.sendMessage(id, data, { parse_mode: 'Markdown' });
+  },
+
+  /**
+   * Отправляет статус игры игрокам
+   * @param {string} data - текст отправляемого сообщения
+   * @param {number} id - id чата
+   */
+  async sendStatus(data, id) {
+    if (!this.statusMessages[id]) {
+      const message = await this.bot.telegram.sendMessage(id, data, { parse_mode: 'Markdown' });
+      this.statusMessages[id] = message.message_id;
+    } else {
+      this.updateStatus(data, id);
+    }
+  },
+  /**
+   * Обновляет статус игры у игроков
+   * @param {string} data - текст отправляемого сообщения
+   * @param {number} id - id чата
+   */
+  async updateStatus(data, id) {
+    await this.bot.telegram.editMessageText(
+      id,
+      this.statusMessages[id],
+      '',
+      data,
+      { parse_mode: 'Markdown' },
+    );
   },
   /**
    * Отправка кнопок при начале заказа
@@ -42,7 +72,7 @@ module.exports = {
 
   /**
    * Удаление кнопок после заказа
-   * @param {object} player - объект игрока
+   * @param {Player} player - объект игрока
    */
   async removeMessages(player) {
     await this.bot.telegram.deleteMessage(
@@ -53,7 +83,7 @@ module.exports = {
 
   /**
    * Отправляет статистику и кнопку выхода в лобби
-   * @param {оbject} player
+   * @param {Player} player
    */
   async sendExitButton(player) {
     const { exp, gold } = player.stats.collect;
@@ -66,6 +96,10 @@ module.exports = {
     );
   },
 
+  /**
+   * Отправляет сообщение для сбежавшего и кнопку выхода в лобби
+   * @param {Player} player
+   */
   async sendRunButton(player) {
     await this.bot.telegram.sendMessage(
       player.tgId,

@@ -1,12 +1,17 @@
 const Stage = require('telegraf/stage');
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
+const { charDescr } = require('../arena/MiscService');
 
 const { leave } = Stage;
 const create = new Scene('create');
-const charDescr = {
-  Лучник: 'ахуенный', Маг: 'волшебный', Воин: 'стронг', Лекарь: 'хилит',
-};
+
+const getProfButtons = () => Object
+  .keys(charDescr)
+  .map((prof) => [Markup.callbackButton(
+    `${charDescr[prof].name} ${charDescr[prof].icon}`,
+    `select_${prof}`,
+  )]);
 
 create.enter(({ reply }) => {
   reply(
@@ -21,22 +26,18 @@ create.enter(({ reply }) => {
 create.action('create', ({ editMessageText }) => {
   editMessageText(
     'Странные упыри ползут со всех сторон, нам нужны бойцы, кем ты желаешь стать в этом мире?',
-    Markup.inlineKeyboard([
-      Markup.callbackButton('Маг 🔮', 'select_Маг'),
-      Markup.callbackButton('Лучник 🏹', 'select_Лучник'),
-      Markup.callbackButton('Воин 🛡', 'select_Воин'),
-      Markup.callbackButton('Лекарь ♱', 'select_Лекарь'),
-    ]).resize().extra(),
+    Markup.inlineKeyboard(getProfButtons()).resize().extra(),
   );
 });
 
 create.action(/select(?=_)/, ({ editMessageText, session, match }) => {
   const [, prof] = match.input.split('_');
+  const { name, descr } = charDescr[prof];
 
-  session.prof = prof;
+  session.prof = name;
   editMessageText(
-    `Ты выбрал класс ${prof}.
-      ${prof} – ${charDescr[prof]}. 
+    `Ты выбрал класс ${name}.
+      ${name} – ${descr}. 
       Выбрать или вернуться назад?`,
     Markup.inlineKeyboard([
       Markup.callbackButton('Выбрать', 'select'),
@@ -45,33 +46,16 @@ create.action(/select(?=_)/, ({ editMessageText, session, match }) => {
   );
 });
 
-create.action('select', ({ editMessageText, session, scene }) => {
-  if (!session.prof) {
-    editMessageText(
-      'Не понятно, какой то ты странный',
-      Markup.inlineKeyboard([
-        Markup.callbackButton('Маг 🔮', 'select_Маг'),
-        Markup.callbackButton('Лучник 🏹', 'select_Лучник'),
-        Markup.callbackButton('Воин 🛡', 'select_Воин'),
-        Markup.callbackButton('Лекарь ♱', 'select_Лекарь'),
-      ]).resize().extra(),
-    );
-  } else {
-    editMessageText('Отлично', Markup.inlineKeyboard([]));
-    leave();
-    scene.enter('setNick');
-  }
+create.action('select', async ({ editMessageText, scene }) => {
+  await editMessageText('Отлично', Markup.inlineKeyboard([]));
+  leave();
+  scene.enter('setNick');
 });
 
-create.action('back', ({ editMessageText }) => {
-  editMessageText(
+create.action('back', async ({ editMessageText }) => {
+  await editMessageText(
     'Думаешь лучше попробовать кем то другим?',
-    Markup.inlineKeyboard([
-      Markup.callbackButton('Маг 🔮', 'select_Маг'),
-      Markup.callbackButton('Лучник 🏹', 'select_Лучник'),
-      Markup.callbackButton('Воин 🛡', 'select_Воин'),
-      Markup.callbackButton('Лекарь ♱', 'select_Лекарь'),
-    ]).resize().extra(),
+    Markup.inlineKeyboard(getProfButtons()).resize().extra(),
   );
 });
 

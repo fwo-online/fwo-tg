@@ -3,6 +3,9 @@ const DmgMagic = require('../Constuructors/DmgMagicConstructor');
  * Кислотный плевок
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+/** @typedef {import ('../PlayerService')} player */
+
 const acidSpittle = new DmgMagic({
   name: 'acidSpittle',
   desc: 'Кислотный плевок',
@@ -20,8 +23,8 @@ const acidSpittle = new DmgMagic({
 });
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
+ * @param {player} initiator Обьект кастера
+ * @param {player} target Обьект цели
  */
 acidSpittle.run = function run(initiator, target) {
   target.stats.mode('down', 'hp', this.effectVal(initiator));

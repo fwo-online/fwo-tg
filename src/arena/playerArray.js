@@ -3,21 +3,23 @@ const PlayerService = require('./PlayerService');
 
 /**
  * Класс контроля игроков внутри созданной игры
+ * @typedef {import ('./PlayerService')} Player
  */
 class PlayersArr {
   /**
    * Конструктор обьекта
-   * @param {Array} arr [charId,charId,...]
+   * @param {String[]} arr [charId,charId,...]
    */
   constructor(arr) {
     this.init = arr;
+    /** @type {Player[]} */
     this.arr = [];
   }
 
   /**
    * round_json
    * @description JSON пользователей нужно хратить в определенном формате
-   * @return {Object} userjson Обьект на начало игры
+   * @return {Promise<_.Dictionary<Player>>} userjson Обьект на начало игры
    * @todo переделать это, убрать внутрь конструктора playersArr
    */
   async roundJson() {
@@ -31,7 +33,7 @@ class PlayersArr {
   /**
    * Функция вернет массив игроков в моей тиме
    * @param {Number} playerClanId идентификатор клана
-   * @return {Array}
+   * @returns {Player[]}
    */
   getMyTeam(playerClanId) {
     return _.filter(this.arr, { clan: playerClanId });

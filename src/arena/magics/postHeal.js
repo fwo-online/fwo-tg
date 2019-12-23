@@ -1,9 +1,14 @@
 const floatNumber = require('../floatNumber');
 
+/**
+ * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../GameService')} game
+ */
+
 module.exports = {
   /**
    * Функция которая раздает exp всем участникам хила таргета
-   * @param {Object} g Game
+   * @param {game} g Game
    */
   postEffect(g) {
     const Game = g;
@@ -11,7 +16,7 @@ module.exports = {
 
     /**
      * Раздаем exp всем участникам хила
-     * @param {PlayerObj} target цель на которую использовался handsHeal
+     * @param {player} target цель на которую использовался handsHeal
      */
     function giveExpForHeal(target) {
       const healers = target.flags.isHealed;
@@ -31,7 +36,7 @@ module.exports = {
         target.stats.mode('up', 'hp', allHeal);
       }
       healers.forEach((healObj) => {
-        const healVal = +healObj.val;
+        const healVal = healObj.val;
         const initiator = Game.getPlayerById(healObj.initiator);
         const hpProc = Math.round((healVal * 100) / allHeal);
         /* В случае если хил вышел за границу максимального HP

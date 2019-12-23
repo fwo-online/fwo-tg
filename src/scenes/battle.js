@@ -7,6 +7,7 @@ const Markup = require('telegraf/markup');
 const channelHelper = require('../helpers/channelHelper');
 const arena = require('../arena');
 const GameService = require('../arena/GameService');
+const { charDescr } = require('../arena/MiscService');
 
 const battleScene = new Scene('battleScene');
 
@@ -48,7 +49,9 @@ battleScene.enter(async ({ reply, replyWithMarkdown }) => {
 });
 
 battleScene.action('search', async ({ editMessageText, session }) => {
-  const { id, mm } = session.character;
+  const {
+    id, mm, nickname, lvl, prof,
+  } = session.character;
   if (!checkCancelFindCount(session.character)) {
     const remainingTime = ((penaltyTime - (Date.now() - mm.time)) / 1000).toFixed();
     await editMessageText(
@@ -60,6 +63,7 @@ battleScene.action('search', async ({ editMessageText, session }) => {
     );
   } else {
     const searchObject = { charId: id, psr: 1000, startTime: Date.now() };
+    const { icon } = Object.values(charDescr).find((el) => el.prof === prof);
     arena.mm.push(searchObject);
     await editMessageText(
       'Кнопки',
@@ -68,7 +72,7 @@ battleScene.action('search', async ({ editMessageText, session }) => {
       ]).resize().extra(),
     );
     await channelHelper.broadcast(
-      `Игрок ${global.arena.players[id].nickname} начал поиск игры`,
+      `Игрок *${nickname}* (${icon}${lvl}) начал поиск игры`,
     );
   }
 });
@@ -104,11 +108,13 @@ battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) =>
 
 battleScene.action(/\w*_\w*_\w*/, async ({ editMessageText, session, match }) => {
   const [action, target, nick] = match.input.split('_');
-  // eslint-disable-next-line no-underscore-dangle
-  const gameId = global.arena.players[session.character.id].mm;
+  const initiator = session.character.id;
+  const gameId = global.arena.players[initiator].mm;
+  /** @type {GameService} */
   const Game = global.arena.games[gameId];
-  // eslint-disable-next-line no-underscore-dangle
-  Game.orders.orderAction(session.character.id, target, action, 100);
+  Game.orders.orderAction({
+    initiator, target, action, proc: 100,
+  });
   editMessageText(
     `Заказан ${action} на игрока ${nick}`,
   );
@@ -121,9 +127,10 @@ battleScene.action('exit', ({ scene }) => {
 battleScene.command('run', async ({ reply, session }) => {
   const { id } = session.character;
   const gameId = global.arena.players[id].mm;
+  /** @type {GameService} */
   const Game = global.arena.games[gameId];
 
-  Game.preKick(id);
+  Game.preKick(id, 'run');
 
   reply('Ты будешь выброшен из игры в конце этого раунда');
 });

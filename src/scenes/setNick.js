@@ -6,7 +6,7 @@ const { leave } = Stage;
 const setNick = new Scene('setNick');
 
 async function valid(nickname) {
-  const trimNickname = nickname;
+  const trimNickname = nickname.trim();
   if (trimNickname.length > 16) {
     throw new Error('Слишком длинный. Попробуй короче');
   } else if (trimNickname.length < 3) {

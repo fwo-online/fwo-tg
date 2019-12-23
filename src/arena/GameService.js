@@ -15,18 +15,21 @@ const channelHelper = require('../helpers/channelHelper');
 const RoundService = require('./RoundService');
 const PlayersArr = require('./playerArray');
 const OrderService = require('./OrderService');
+const { charDescr } = require('../arena/MiscService');
 
 /**
  * Класс для обьекта игры
+ * @typedef {import ('./PlayerService')} Player
  */
 class Game {
   /**
    * Конструктор обьекта игры
-   *@param {Array} playerArr массив игроков
+   * @param {Array} playerArr массив игроков
    */
   constructor(playerArr) {
     this.playerArr = new PlayersArr(playerArr);
-    this.players = [];
+    /** @type {_.Dictionary<Player>} */
+    this.players = {};
     this.round = new RoundService();
     this.orders = new OrderService();
     this.battleLog = new BattleLog();
@@ -35,6 +38,7 @@ class Game {
 
   /**
    * Функция проверки окончания игры
+   * @return {boolean}
    */
   get isGameEnd() {
     return Game.aliveArr(this.info.id).length < 2 || this.round.count > 4;
@@ -43,7 +47,7 @@ class Game {
   /**
    * Статик функция возвращающая массив живых игроков в игре
    * @param {Number} gameId идентификатор игры
-   * @return {any[]} [PlayerID:{PlayerObjectPlayerObject},...] массив живых игроков
+   * @return {Player[]} массив живых игроков
    */
   static aliveArr(gameId) {
     const game = global.arena.games[gameId];
@@ -53,9 +57,9 @@ class Game {
   }
 
   /**
-   * Статик функция возвращающая массив живых игроков в игре
+   * Статик функция возвращающая случайного живого игрока
    * @param {Number} gameId идентификатор игры
-   * @return {String} массив живых игроков
+   * @return {Player} случайный живой игрок
    */
   static randomAlive(gameId) {
     const aliveArr = Game.aliveArr(gameId);
@@ -64,7 +68,7 @@ class Game {
 
   /**
    * Отправляет в чат кнопки с заказами
-   * @param {Object} player - объект игрока
+   * @param {Player} player - объект игрока
    */
   static showOrderButtons(player) {
     channelHelper.sendOrderButtons(player);
@@ -72,7 +76,7 @@ class Game {
 
   /**
    * Удаляет кнопки заказа в чате
-   * @param {Object} player - объект игрока
+   * @param {Player} player - объект игрока
    */
   static hideLastMessage(player) {
     channelHelper.removeMessages(player);
@@ -80,7 +84,7 @@ class Game {
 
   /**
    * Отправляет в чат кнопки с заказами
-   * @param {Object} player - объект игрока
+   * @param {Player} player - объект игрока
    */
   static showExitButton(player) {
     channelHelper.sendExitButton(player);
@@ -112,7 +116,7 @@ class Game {
 
   /**
    * @description Отправляем event BattleLog все подключенным к игре
-   * @param {Object} data Обьект содержащий {event,msg}
+   * @param {String} data строка, отправляемая в общий чат
    *
    */
   sendBattleLog(data) {
@@ -122,7 +126,7 @@ class Game {
   }
 
   /**
-   * @param {Object} data Обьект содержащий {event,msg}
+   * @param {String} data строка, отправляемая в общий чат
    */
   sendToAll(data) {
     // eslint-disable-next-line no-console
@@ -139,20 +143,19 @@ class Game {
   }
 
   /**
-   * @description Прекик, помечаем что пользователь не выполнил заказ и дальше
-   * будет выброшен
+   * Прекик, помечаем что пользователь не выполнил заказ и дальше будет выброшен
    * @param {string} id id игрока, который будет помочен как бездействующий
+   * @param {string} reason строка, подставляющаяся в флаг isKicked
    */
-  preKick(id) {
+  preKick(id, reason) {
     const player = this.players[id];
     // eslint-disable-next-line no-console
     if (!player) return console.log('GC debug:: preKick', id, 'no player');
-    player.flags.isKicked = true;
+    player.flags.isKicked = reason;
   }
 
   /**
-   * @description Функция "выброса игрока" из игры,
-   * без сохранения накопленных статов
+   * Функция "выброса игрока" из игры без сохранения накопленных статов
    * @param {string} id id игрока, который будет выброшен
    */
   kick(id) {
@@ -167,12 +170,19 @@ class Game {
 
   /**
    * Проверяем делал ли игрок заказ. Помечает isKicked, если нет
-   * @param {object} player
+   * @param {Player} player
    */
   checkOrders(player) {
-    if (player.flags.isKicked) this.kick(player.id);
+    if (player.flags.isKicked === 'run') {
+      this.kick(player.id);
+      return;
+    }
 
-    player.flags.isKicked = !this.orders.checkPlayerOrder(player.id);
+    if (player.flags.isKicked === 'afk' && !this.orders.checkPlayerOrder(player.id)) {
+      this.kick(player.id);
+    } else {
+      player.flags.isKicked = this.orders.checkPlayerOrder(player.id) ? '' : 'afk';
+    }
   }
 
   /**
@@ -193,7 +203,7 @@ class Game {
 
   /**
    * Создание обьекта в базе // потребуется для ведения истории
-   * @return {Object} Обьект созданный в базе
+   * @return {Promise<true>} Обьект созданный в базе
    */
   async createGame() {
     const dbGame = await db.game.create({
@@ -208,7 +218,7 @@ class Game {
   /**
    * Возвращает обьект персонажа внутри игры [engine]
    * @param {string} id идентификатор чара
-   * @return {Object} PlayerObj
+   * @return {Player} PlayerObj
    */
   getPlayerById(id) {
     return this.players[id];
@@ -298,7 +308,7 @@ class Game {
 
   /**
    * Функция послематчевой статистики
-   * @return {String} возвращает строку статистики по всем игрокам
+   * @return {string} возвращает строку статистики по всем игрокам
    */
   statistic() {
     const winners = Game.aliveArr(this.info.id);
@@ -313,13 +323,23 @@ class Game {
 
   /**
    * Функция выставляет "смерть" для игроков имеющих hp < 0;
+   * Отсылает сообщение о смерти игрока в последнем раунде
    */
   sortDead() {
+    const dead = [];
     _.forEach(this.players, (p) => {
-      if (p.stats.val('hp') <= 0) {
+      if (p.stats.val('hp') <= 0 && p.alive) {
+        dead.push(p.nick);
         p.alive = false;
       }
     });
+    if (dead.length) {
+      this.sendToAll(`Погибши${
+        dead.length === 1 ? 'й' : 'е'
+      } в этом раунде: ${
+        dead.join(', ')
+      }`);
+    }
   }
 
   /**
@@ -354,7 +374,6 @@ class Game {
   /**
    * Рассылка состояний живым игрокам
    * @param {Player} player обьект игрока
-   * @param {Game} game обьект игры
    */
   sendStatus(player) {
     const team = this.playerArr.getMyTeam(player.clan);
@@ -363,14 +382,24 @@ class Game {
     }
     let enemies = _.difference(this.playerArr.arr, team);
     const allies = team.map((p) => {
-      const ally = p.getFullStatus();
-      return `\n\n👤 ${ally.nick} (${ally.prof}), ❤️: ${ally.hp}, 💙 : ${ally.mp}`;
+      const status = p.getFullStatus();
+      const { icon } = Object.values(charDescr).find((el) => el.prof === p.prof);
+      return `\n\t👤 ${p.nick} (${icon}${p.lvl}) ❤️${status.hp}  \n\t💧${status.mp}  🔋${status.en}`;
     });
     enemies = enemies.map((p) => {
-      const enemy = p.getStatus();
-      return `\n\n👤 ${enemy.nick} (${p.prof}) ❤️: ${enemy.hp}`;
+      const status = p.getStatus();
+      const { icon } = Object.values(charDescr).find((c) => c.prof === p.prof);
+      return `\n\t👤 ${p.nick} (${icon}${p.lvl}) ❤️${status.hp}`;
     });
-    player.notify({ enemies, allies });
+    channelHelper.sendStatus(
+      `*Раунд ${this.round.count}*
+_Союзники:_\`\`\`
+${allies}\`\`\`
+_Враги:_\`\`\`
+${enemies}\`\`\`
+`,
+      player.tgId,
+    );
   }
 }
 

@@ -3,6 +3,9 @@ const LongMagic = require('../Constuructors/LongMagicConstructor');
  * Малая аура
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+/** @typedef {import ('../PlayerService')} player */
+
 const mediumAura = new LongMagic({
   name: 'mediumAura',
   desc: 'Создает вокруг цели среднюю ауру',
@@ -19,8 +22,8 @@ const mediumAura = new LongMagic({
 });
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
+ * @param {player} initiator Обьект кастера
+ * @param {player} target Обьект цели
  */
 mediumAura.longRun = function longRun(initiator, target) {
   target.stats.mode('up', 'pdef', this.effectVal(initiator));

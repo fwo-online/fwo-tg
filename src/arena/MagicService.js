@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const arena = require('./index');
 const MiscService = require('./MiscService');
 const config = require('./config');
 
@@ -7,13 +6,13 @@ const config = require('./config');
  * Сервис работы с магиями
  */
 // const magicList = arena.magics;
-arena.magics = require('./magics');
+global.arena.magics = require('./magics');
 
 /**
  * Возвращает есть ли доступные магии на данном круге для изучения
  * @param {Number} charId идентификатор персонажа
  * @param {Number} lvl круг проучиваемой магии
- * @return {boolean}
+ * @return {string[]}
  */
 function hasMagicToLearn(charId, lvl) {
   const charObj = global.arena.players[charId];
@@ -49,13 +48,13 @@ function learnChance() {
 module.exports = {
   /**
    * Список доступных магий для профы на заданном круге
-   * @param {Number} lvl круг магии
+   * @param {Number|String} lvl круг магии
    * @param {String} prof профессия персонаже
    * @return {Object} {круг_магии:[id_магии:{описание}},...]
    */
-  list: (lvl, prof) => {
+  list(lvl, prof) {
     // eslint-disable-next-line array-callback-return, consistent-return
-    let magicList = _.filter(arena.magics, (m) => {
+    let magicList = _.filter(global.arena.magics, (m) => {
       if (m.lvl === 0) return true;
       if (m.profList) return m.profList.indexOf(prof) + 1;
     });
@@ -68,14 +67,16 @@ module.exports = {
     magicList = _.groupBy(magicList, 'lvl');
     if (lvl === 'all') return magicList;
     return magicList[lvl];
-  }, /**
+  },
+  /**
    * Пручка магии с шансом
    * @param {Number} charId идентификатор персонажа
    * @param {Number} lvl круг проучиваемой магии
-   * @return {*}
    */
-  learn: (charId, lvl) => {
+  learn(charId, lvl) {
     const charObj = global.arena.players[charId];
+    // списываем бонусы
+    charObj.bonus -= lvl;
     if (charObj.prof === 'l' || charObj.prof === 'w') {
       throw Error(`Класс ${charObj.prof} не может в магию`);
     }
@@ -93,8 +94,6 @@ module.exports = {
     if (!learnChance()) {
       throw Error('Не удалось выучить');
     }
-    // списываем бонусы
-    charObj.bonus -= lvl;
     // выбираем магию
     const r = MiscService.rndm(`1d${def.length}`) - 1;
     const charMagLvl = charObj.magics[def[r]] || 0;
@@ -104,14 +103,15 @@ module.exports = {
       bonus: charObj.bonus,
       magics: charObj.magics,
     };
-  }, /**
+  },
+  /**
    * Показываем описание магии
    * @todo Сейчас отдаем только name и desc
    * @param {String} magId строка идентификатор магии
-   * @return {*}
+   * @return {{name: string, desc: string}}
    */
-  show: (magId) => {
-    const a = arena.magics[magId];
+  show(magId) {
+    const a = global.arena.magics[magId];
     return { name: a.name, desc: a.desc };
   },
 };

@@ -99,7 +99,7 @@ module.exports = {
   },
   /**
    * @function
-   * @return {Object} обьект персонажа
+   * @return {Promise<CharacterService>} обьект персонажа
    */
   // eslint-disable-next-line consistent-return
   async getChar(tgId) {

@@ -15,7 +15,7 @@ const STAGES = config.stages;
  * @return {Object} {action:[{initiator:x,target:y,action:z,proc:100}}
  */
 function sortOrders(ordersArr) {
-  // eslint-disable-next-line no-return-assign, no-param-reassign,no-sequences
+  // eslint-disable-next-line no-return-assign, no-sequences
   return ordersArr.reduce(
     // eslint-disable-next-line no-sequences,no-return-assign
     (r, v, i, a, k = v.action) => ((r[k] || (r[k] = [])).push(v), r), {},
@@ -24,8 +24,8 @@ function sortOrders(ordersArr) {
 
 /**
  * @param {Array} ar массив строк
- * @param {Object} gameObj обьект игры
- * @return {Object} измененный обьет игры
+ * @param {GameService} gameObj обьект игры
+ * @return {GameService} измененный обьет игры
  */
 function runStage(ar, gameObj) {
   const act = { ...ACTIONS };
@@ -64,10 +64,9 @@ function runStage(ar, gameObj) {
  */
 
 /**
- * @param {Object} gameObj Обьект игры
- * @return {Boolean} true
- * */
-// eslint-disable-next-line consistent-return
+ * @param {GameService} gameObj Обьект игры
+ * @return {Promise<GameService>}
+*/
 async function engine(gameObj) {
   try {
     if (!gameObj) {

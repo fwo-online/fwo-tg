@@ -2,6 +2,9 @@ const Skill = require('../Constuructors/SkillConstructor');
 /**
  * Берсерк
  */
+
+/** @typedef {import ('../PlayerService')} player */
+
 const berserk = new Skill({
   name: 'berserk',
   desc: 'Повышает урон, но понижает магзащиту и атаку',
@@ -19,7 +22,7 @@ const berserk = new Skill({
 });
 /**
  * Логика работы скила
- * @param {Object} initiator Обьект кастера
+ * @param {player} [initiator] Обьект кастера
  */
 berserk.run = (initiator = this.params.initiator) => {
   const initiatorMagicLvl = initiator.skills[this.name];

@@ -3,6 +3,9 @@ const DmgMagic = require('../Constuructors/DmgMagicConstructor');
  * Камнепад
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+/** @typedef {import ('../PlayerService')} player */
+
 const rockfall = new DmgMagic({
   name: 'rockfall',
   desc: 'Наносит повреждение цели.',
@@ -20,8 +23,8 @@ const rockfall = new DmgMagic({
 });
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
+ * @param {player} initiator Обьект кастера
+ * @param {player} target Обьект цели
  */
 rockfall.run = function run(initiator, target) {
   target.stats.mode('down', 'hp', this.effectVal(initiator));

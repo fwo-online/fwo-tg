@@ -8,18 +8,22 @@ const MiscService = require('../MiscService');
 class DmgMagic extends Magic {
   /**
    * Создание магии
-   * @param {Object} magObj Обьект создаваемой магии
-   * @param {String} name Имя магии
-   * @param {String} desc Короткое описание
-   * @param {Number} cost Стоимость за использование
-   * @param {String} costType Тип единицы стоимости {en/mp}
-   * @param {Number} lvl Требуемый уровень круга магий для использования
-   * @param {String} orderType Тип цели заклинания self/team/enemy/enemyTeam
-   * @param {String} aoeType Тип нанесения урона по цели:
+   * @param {magObj} magObj Обьект создаваемой магии
+   * @typedef {Object} magObj
+   * @property {String} name Имя магии
+   * @property {String} desc Короткое описание
+   * @property {Number} cost Стоимость за использование
+   * @property {String} costType Тип единицы стоимости {en/mp}
+   * @property {Number} lvl Требуемый уровень круга магий для использования
+   * @property {String} orderType Тип цели заклинания self/team/enemy/enemyTeam
+   * @property {String} aoeType Тип нанесения урона по цели:
+   * @property {Number} baseExp Стартовый параметр exp за действие
    * target/targetAoe/all/allNoinitiator/team/self
-   * @param {String} magType Тип магии good/bad/neutral
-   * @param {String} effect размер рандомного эффект от магии
-   * @param {String} dmgType Тип наносимого урона (для расчета резистов)
+   * @property {String} magType Тип магии good/bad/neutral
+   * @property {String[]} effect размер рандомного эффект от магии
+   * @property {Number[]} chance
+   * @property {String[]} profList
+   * @property {String} dmgType Тип наносимого урона (для расчета резистов)
    */
   constructor(magObj) {
     super(magObj);

@@ -9,6 +9,13 @@ const QueueConstructor = require('./Constuructors/QueueConstrucror');
  * */
 
 /**
+ * @typedef {Object} mmObj
+ * @property {string} charId
+ * @property {number} psr
+ * @property {number} startTime
+ */
+
+/**
  * Общий класс обьекта MatchMaking
  */
 class MatchMaking extends EventEmitter {
@@ -17,7 +24,9 @@ class MatchMaking extends EventEmitter {
    */
   constructor() {
     super();
+    /** @type {QueueConstructor[]} */
     this.allQueue = []; // обьект очередей ! < 10
+    /** @type {mmObj[]} */
     this.mmQueue = [];
     this.prefs = {
       checkInterval: 10000,
@@ -27,7 +36,7 @@ class MatchMaking extends EventEmitter {
 
   /**
    * Удаление обьекта игрока в очередь поиска
-   * @param {Number} charId id чара в поиске
+   * @param {String} charId id чара в поиске
    */
   pull(charId) {
     const obj = this.mmQueue.find((el) => el.charId === charId);
@@ -39,7 +48,7 @@ class MatchMaking extends EventEmitter {
 
   /**
    * Добавление обьекта игрока в очередь поиска
-   *@param {Object} obj Обьект запроса поиска {charId,psr,startTime}
+   * @param {mmObj} obj Обьект запроса поиска {charId,psr,startTime}
    */
   push(obj) {
     this.mmQueue.push(obj);
@@ -82,7 +91,7 @@ class MatchMaking extends EventEmitter {
           // eslint-disable-next-line no-restricted-syntax
           for (const xx in this.allQueue) {
             if (!this.allQueue[xx].open) {
-              this.allQueue.splice(xx, 1);
+              this.allQueue.splice(+xx, 1);
             }
           }
         } else {
@@ -92,7 +101,7 @@ class MatchMaking extends EventEmitter {
             this.allQueue.push(queue);
           }
           queue.addTo(searcher);
-          this.pull(searcher);
+          this.pull(searcher.charId);
         }
       }
       iter += 1;

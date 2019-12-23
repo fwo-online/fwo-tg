@@ -3,6 +3,11 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
  * Благословение
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+/**
+ * @typedef {import ('../GameService')} game
+ * @typedef {import ('../PlayerService')} player
+ */
 const eclipse = new CommonMagic({
   name: 'eclipse',
   desc: 'Глюки, вводит цель в замешательство, цель атакуют любого из игроков',
@@ -19,13 +24,12 @@ const eclipse = new CommonMagic({
 
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
- * @param {Object} game Обьект игры (не обязателен)
+ * @param {player} initiator Обьект кастера
+ * @param {player} target Обьект цели
+ * @param {game} game Обьект игры (не обязателен)
  */
 eclipse.run = function run(initiator, target, game) {
   // выставляем глобальный флаг затмения
-  // eslint-disable-next-line no-param-reassign
   game.round.flags.isEclipsed = true;
 };
 module.exports = eclipse;

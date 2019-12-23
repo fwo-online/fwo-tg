@@ -3,6 +3,12 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
  * Снятие магии
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+/**
+ * @typedef {import ('../GameService')} game
+ * @typedef {import ('../PlayerService')} player
+ */
+
 const dispel = new CommonMagic({
   name: 'dispel',
   desc: 'Снимает все длительные магии с цели',
@@ -19,9 +25,9 @@ const dispel = new CommonMagic({
 
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
- * @param {Object} game Обьект игры (не обязателен)
+ * @param {player} initiator Обьект кастера
+ * @param {player} target Обьект цели
+ * @param {game} game Обьект игры (не обязателен)
  */
 dispel.run = function run(initiator, target, game) {
   // тут нужно во всех обьектах длительных магий искать target:target

@@ -2,38 +2,44 @@ const ee = require('events');
 
 /**
  * msg
- * @param {Object} msgObj тип сообщения
+ * @param {Object.<string, string>} msgObj тип сообщения
  * @todo WIP, функция должна будет принимать как значения урона т.п так и
  * уметь работать с i18n
  * сейчас (е) не обрабатывается, нужно обрабатывать только нужный тип Error
  * если это не BattleLog выброс, его нужно прокидывать дальше вверх
- * @return {Object} ({type:String,message:String})
+ * @return {String} ({type:String,message:String})
  */
 function csl(msgObj) {
-  const magic = msgObj.action;
-  const msg = msgObj.message;
-  const { failReason } = msgObj;
-  const t = msgObj.target;
-  const i = msgObj.initiator;
+  const {
+    failReason, action, message, target, initiator,
+  } = msgObj;
   const TEXT = {
     NO_MANA: {
-      ru: `Нехватило манны для заклинания ${magic}`, eng: '',
+      ru: `Не хватило маны для заклинания ${action}`,
+      eng: '',
     },
     SILENCED: {
-      ru: `${i} пытался сотворить ${magic} но попытка провалилась(затыка)`,
+      ru: `${initiator} пытался сотворить ${action}, но попытка провалилась(затыка)`,
       eng: '',
     },
     DEF: {
-      ru: `${i} атаковал ${t} но тот смог защититься[${failReason}]`, eng: '',
+      ru: `${initiator} атаковал ${target}, но тот смог защититься[${failReason}]`,
+      eng: '',
     },
     CHANCE_FAIL: {
-      ru: `${i} пытался сотворить ${magic}, но у него не вышло`, eng: '',
+      ru: `${initiator} пытался сотворить ${action}, но у него не вышло`,
+      eng: '',
     },
     GOD_FAIL: {
-      ru: `Заклинание ${magic} ${i} провалилось по воле богов `, eng: '',
+      ru: `Заклинание ${action} ${initiator} провалилось по воле богов `,
+      eng: '',
+    },
+    HEAL_FAIL: {
+      ru: `${initiator} пытался вылечить ${target}, но тот был атакован`,
+      eng: '',
     },
   };
-  const text = TEXT[msg] || {
+  const text = TEXT[message] || {
     ru: 'Ошибка парсинга строки магии',
   };
   // @todo сейчас battleLog на стороне клиента не понимает типы магий, и
@@ -58,7 +64,7 @@ class BattleLog extends ee {
 
   /**
    * Функция логирует действия в console log
-   * @param {Object} msgObj тип сообщения
+   * @param {Object.<string, string>} msgObj тип сообщения
    */
   log(msgObj) {
     const data = csl(msgObj);
@@ -87,7 +93,7 @@ class BattleLog extends ee {
 
   /**
    * Функция отправки сообщений в Game
-   * @param {Object} data обьект сообщения
+   * @param {string} data обьект сообщения
    */
   write(data) {
     this.emit('BattleLog', data);

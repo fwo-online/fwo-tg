@@ -4,6 +4,12 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
  * Безмолвие
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+/**
+ * @typedef {import ('../GameService')} game
+ * @typedef {import ('../PlayerService')} player
+ */
+
 const silence = new CommonMagic({
   name: 'silence',
   cost: 16,
@@ -19,15 +25,15 @@ const silence = new CommonMagic({
 
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
- * @param {Object} game Обьект игры (не обязателен)
+ * @param {player} initiator Обьект кастера
+ * @param {player} target Обьект цели
+ * @param {game} game Обьект игры (не обязателен)
  */
 // eslint-disable-next-line no-unused-vars
 silence.run = function run(initiator, target, game) {
   const s = target.flags.isSilenced || [];
   s.push({
-    initiator: initiator.name,
+    initiator: initiator.nick,
     action: 'silence',
   });
 };

@@ -3,6 +3,9 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
  * Магический доспех
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+/** @typedef {import ('../PlayerService')} player */
+
 const magicArmor = new CommonMagic({
   name: 'magicArmor',
   desc: 'Создает магический доспех на маге',
@@ -19,8 +22,8 @@ const magicArmor = new CommonMagic({
 });
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
+ * @param {player} initiator Обьект кастера
+ * @param {player} target Обьект цели
  */
 magicArmor.run = function run(initiator, target) {
   target.stats.mode('up', 'pdef', this.effectVal(initiator));

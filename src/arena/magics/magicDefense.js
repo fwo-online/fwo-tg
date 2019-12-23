@@ -4,6 +4,12 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
  * Магическая защита
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+/**
+ * @typedef {import ('../GameService')} game
+ * @typedef {import ('../PlayerService')} player
+ */
+
 const magicDefense = new CommonMagic({
   name: 'magicDefense',
   cost: 12,
@@ -19,9 +25,9 @@ const magicDefense = new CommonMagic({
 });
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
- * @param {Object} game Обьект игры (не обязателен)
+ * @param {player} initiator Обьект кастера
+ * @param {player} target Обьект цели
+ * @param {game} game Обьект игры (не обязателен)
  */
 magicDefense.run = function run(initiator, target) {
   target.stats.mode('up', 'mgp', this.effectVal(initiator));

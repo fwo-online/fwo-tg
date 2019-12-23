@@ -3,6 +3,8 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
  * Опутывание
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+/** @typedef {import ('../PlayerService')} player */
 const entangle = new CommonMagic({
   name: 'entangle',
   desc: 'Уменьшает защиту цели.',
@@ -19,8 +21,8 @@ const entangle = new CommonMagic({
 });
 /**
  * Основная функция запуска магии
- * @param {Object} initiator Обьект кастера
- * @param {Object} target Обьект цели
+ * @param {player} initiator Обьект кастера
+ * @param {player} target Обьект цели
  */
 entangle.run = function run(initiator, target) {
   target.stats.mode('down', 'pdef', this.effectVal(initiator));
