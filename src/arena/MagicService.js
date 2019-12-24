@@ -77,9 +77,7 @@ module.exports = {
     const charObj = global.arena.players[charId];
     // списываем бонусы
     charObj.bonus -= lvl;
-    if (charObj.prof === 'l' || charObj.prof === 'w') {
-      throw Error(`Класс ${charObj.prof} не может в магию`);
-    }
+
     if (lvl > charObj.lvl) {
       throw Error('circle_error');
     }

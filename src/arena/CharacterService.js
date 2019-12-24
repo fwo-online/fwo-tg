@@ -1,6 +1,7 @@
 const arena = require('./index');
 const floatNumber = require('./floatNumber');
 const db = require('../helpers/dataBase');
+const { lvlRatio } = require('./config');
 
 global.arena.players = {};
 /**
@@ -96,11 +97,11 @@ class Char {
    * @property {Object} statistics
    * @property {Object} inventory
    * @property {Object} harks
-   * @property {Object} magics
+   * @property {Object.<string, number>} magics
    * @property {Number} free
    * @property {Number} bonus
    * @property {Object} mm
-   *
+   * @property {Object.<string, number>} skills
    */
   constructor(charObj) {
     // const defaults = defHarks(charObj.prof);
@@ -151,6 +152,8 @@ class Char {
   }
 
   set exp(value) {
+    this.bonus += Math.round(value / 100) - Math.round(this.charObj.exp / 100);
+    this.addLvl(value);
     this.charObj.exp = value;
   }
 
@@ -178,8 +181,16 @@ class Char {
     return this.charObj.magics;
   }
 
+  get skills() {
+    return this.charObj.skills;
+  }
+
   get bonus() {
     return this.charObj.bonus;
+  }
+
+  set bonus(value) {
+    this.charObj.bonus = value;
   }
 
   get items() {
@@ -188,6 +199,18 @@ class Char {
 
   set items(items) {
     this.charObj.inventory = items;
+  }
+
+  /**
+   * Проверяет количество опыта для следующего уровня. Добавляет уровень, если опыта достаточно
+   * @param {number} currentExp - текущее количество опыта
+   */
+  addLvl(currentExp) {
+    const nextLvlExp = 2 ** (this.lvl - 1) * 1000 * lvlRatio;
+    if (nextLvlExp < currentExp) {
+      this.charObj.lvl += 1;
+      this.addLvl(currentExp);
+    }
   }
 
   async addItem(itemCode) {
@@ -362,6 +385,16 @@ class Char {
   }
 
   /**
+   * Получение нового умения
+   * @param {string} skillId идентификатор умения
+   * @param {number} lvl уровень проученного умения
+   */
+  learnSkill(skillId, lvl) {
+    this.skills[skillId] = lvl;
+    this.saveToDb();
+  }
+
+  /**
    * Метод для работы с harks персонажа
    * @param {String} hark str/dex/wis/int/con
    * @param {Number} val кол-во на которое будет поднята характеристика
@@ -386,13 +419,15 @@ class Char {
       // eslint-disable-next-line no-console
       console.log('Saving char :: id', this.id);
       const {
-        gold, exp, magics, bonus, items,
+        gold, exp, magics, bonus, items, skills, lvl,
       } = this;
       return await db.char.update(this.tgId, {
         gold,
         exp,
         magics,
         bonus,
+        skills,
+        lvl,
         inventory: items,
       });
     } catch (e) {

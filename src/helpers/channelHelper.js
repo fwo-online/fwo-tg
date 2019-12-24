@@ -56,12 +56,14 @@ module.exports = {
       [Markup.callbackButton('Защита', 'action_protect')],
       [Markup.callbackButton('Реген', 'action_regen')],
     ];
-    const keys = Object.keys(player.magics);
-    if (keys.length) {
-      keys.forEach((key) => {
-        buttons.push([Markup.callbackButton(key, `action_${key}`)]);
-      });
-    }
+    const magics = Object.keys(player.magics);
+    magics.forEach((magic) => {
+      buttons.push([Markup.callbackButton(magic, `action_${magic}`)]);
+    });
+    const skills = Object.keys(player.skills);
+    skills.forEach((skill) => {
+      buttons.push([Markup.callbackButton(skill, `action_${skill}`)]);
+    });
     return buttons;
   },
   /**
