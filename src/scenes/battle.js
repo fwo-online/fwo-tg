@@ -147,7 +147,8 @@ battleScene.action(/^([^_]+)_([^_]+)_([^_]+)$/, async ({ editMessageText, sessio
     .filter((order) => order.initiator === initiator)
     .map((order) => `\n${order.action}(${order.proc}%) на игрока ${Game.players[order.target].nick}`);
   editMessageText(
-    `Заказы: ${message.join()}`,
+    `У тебя осталось ${player.proc}%
+Заказы: ${message.join()}`,
     player.proc !== 0 ? Markup.inlineKeyboard(channelHelper.getOrderButtons(player)).resize().extra() : '',
   );
 });
