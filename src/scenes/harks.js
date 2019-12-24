@@ -66,7 +66,6 @@ harkScene.action(/increase(?=_)/, ({
     answerCbQuery(e.message);
   }
 });
-
 harkScene.action(/info(?=_)/, ({ answerCbQuery, match }) => {
   const [, hark] = match.input.split('_');
   answerCbQuery(harksDescr[hark].descr);
