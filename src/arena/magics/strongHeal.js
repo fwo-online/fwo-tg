@@ -39,7 +39,7 @@ strongHeal.run = function run(target) {
 /**
  * @param {player} initiator
  */
-strongHeal.getExp = (initiator) => {
+strongHeal.getExp = function getExp (initiator) {
   this.status.exp = Math.round(this.status.effect * 10 * initiator.proc);
   initiator.stats.mode('up', 'exp', this.status.exp);
 };

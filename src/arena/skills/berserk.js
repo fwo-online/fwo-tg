@@ -24,7 +24,7 @@ const berserk = new Skill({
  * Логика работы скила
  * @param {player} [initiator] Обьект кастера
  */
-berserk.run = (initiator = this.params.initiator) => {
+berserk.run = function run(initiator = this.params.initiator) {
   const initiatorMagicLvl = initiator.skills[this.name];
   const effect = this.effect[initiatorMagicLvl - 1] || 1;
   const atk = initiator.stats.val('patk');
