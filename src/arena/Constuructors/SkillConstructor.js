@@ -58,8 +58,10 @@ class Skill {
       this.checkChance();
       this.run();
       this.next();
-    } catch (e) {
-      this.breaks(e);
+    } catch (failMsg) {
+      const bl = this.params.game.battleLog;
+      bl.log(failMsg);
+      this.params = null;
     }
   }
 
@@ -85,7 +87,7 @@ class Skill {
   checkChance() {
     if (MiscService.rndm('1d100') > this.getChance()) {
       // скил сфейлился
-      throw Error('SKILL_FAIL');
+      throw this.breaks('SKILL_FAIL')
     }
   }
 
@@ -124,13 +126,11 @@ class Skill {
    * Обработка провала магии
    */
   breaks(e) {
-    // eslint-disable-next-line no-console
-    console.log(e);
-    const msg = {
+    return {
       action: this.name,
+      initiator: this.params.initiator.nick,
+      message: e,
     };
-    this.params.game.battleLog.log(msg);
-    this.params = null;
   }
 }
 

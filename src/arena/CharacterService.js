@@ -209,6 +209,7 @@ class Char {
     const nextLvlExp = 2 ** (this.lvl - 1) * 1000 * lvlRatio;
     if (nextLvlExp < currentExp) {
       this.charObj.lvl += 1;
+      this.free += 10;
       this.addLvl(currentExp);
     }
   }

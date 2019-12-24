@@ -4,9 +4,10 @@ const GameService = require('./GameService');
 const testGame = require('./testGame');
 
 global.arena.magics = require('./magics');
+const skills = require('./skills');
 
-const ACTIONS = global.arena.magics;
-
+const { magics } = global.arena;
+const ACTIONS = { ...magics, ...skills };
 const STAGES = config.stages;
 
 /**

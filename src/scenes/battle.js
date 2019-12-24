@@ -8,6 +8,7 @@ const channelHelper = require('../helpers/channelHelper');
 const arena = require('../arena');
 const GameService = require('../arena/GameService');
 const { charDescr } = require('../arena/MiscService');
+const { skills } = require('../arena/SkillService');
 
 const battleScene = new Scene('battleScene');
 
@@ -104,9 +105,10 @@ battleScene.action('stop', async ({ editMessageText, session }) => {
 battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) => {
   const gameId = global.arena.players[session.character.id].mm;
   const [, action] = match.input.split('_');
+  const proc = skills[action] ? `_${skills[action].proc}` : '';
   const aliveArr = GameService.aliveArr(gameId)
     .map(({ nick, id }) => Markup.callbackButton(nick,
-      `${action}_${id}`));
+      `${action}_${id}${proc}`));
   editMessageText(
     `Выбери цель для ${match}`,
     Markup.inlineKeyboard([

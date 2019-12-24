@@ -24,7 +24,7 @@ const dodge = new Skill({
  * Логика работы скила
  * @param {player} [initiator] Обьект кастера
  */
-dodge.run = function run (initiator = this.params.initiator) {
+dodge.run = function run(initiator = this.params.initiator) {
   const initiatorSkillLvl = initiator.skills[this.name];
   initiator.flags.isDodging = this.effect[initiatorSkillLvl - 1]
       * initiator.stats.val('dex');
