@@ -1,5 +1,7 @@
 const Markup = require('telegraf/markup');
 const { skills } = require('../arena/SkillService');
+
+const { magics } = global.arena;
 /**
  * Помощник для отправки сообщений в общий чат
  * @typedef {import ('../arena/PlayerService')} Player
@@ -58,9 +60,10 @@ module.exports = {
       [Markup.callbackButton('Защита', 'action_protect')],
       [Markup.callbackButton('Реген', 'action_regen')],
     ];
+
     Object.keys(player.magics)
-      .forEach((magic) => {
-        buttons.push([Markup.callbackButton(magic, `action_${magic}`)]);
+      .forEach((m) => {
+        buttons.push([Markup.callbackButton(magics[m].displayName, `action_${m}`)]);
       });
 
     const gameId = global.arena.players[player.id].mm;
@@ -70,7 +73,7 @@ module.exports = {
     Object.keys(player.skills)
       .filter((s) => skills[s].proc <= player.proc && !Game.orders.checkPlayerOrder(player.id, s))
       .forEach((s) => {
-        buttons.push([Markup.callbackButton(`${skills[s].name} (${skills[s].proc}%)`, `action_${s}`)]);
+        buttons.push([Markup.callbackButton(`${skills[s].displayName} (${skills[s].proc}%)`, `action_${s}`)]);
       });
     return buttons;
   },

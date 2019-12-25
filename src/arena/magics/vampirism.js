@@ -8,6 +8,7 @@ const DmgMagic = require('../Constuructors/DmgMagicConstructor');
 
 const vampirism = new DmgMagic({
   name: 'vampirism',
+  displayName: 'Вампиризм',
   desc: 'Возвращает часть нанесеного урона в качесте жизней',
   cost: 12,
   baseExp: 10,

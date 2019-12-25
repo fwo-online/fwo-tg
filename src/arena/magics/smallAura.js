@@ -8,6 +8,7 @@ const LongMagic = require('../Constuructors/LongMagicConstructor');
 
 const smallAura = new LongMagic({
   name: 'smallAura',
+  displayName: 'Малая аура',
   desc: 'Создает вокруг цели слабую ауру',
   cost: 3,
   baseExp: 6,

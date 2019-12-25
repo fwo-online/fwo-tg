@@ -11,6 +11,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
 
 const madness = new CommonMagic({
   name: 'madness',
+  displayName: 'Безумие',
   desc: 'Заставляет цель атаковать саму себя',
   cost: 10,
   baseExp: 80,

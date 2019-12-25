@@ -81,10 +81,8 @@ module.exports = {
       'eclipse'],
     // @todo Тут пойду ВСЕ скилы, очередность в процессе
     // SKILLS:
-    [
-      'berserk',
-      'dodge',
-    ],
+    'berserk',
+    'dodge',
     [
       'protect',
       'regen_energy',

@@ -13,6 +13,7 @@ class Protect {
    */
   constructor() {
     this.name = 'protect';
+    this.displayName = 'Защита';
     this.desc = 'Защита от физических атак';
     this.lvl = 0;
     this.orderType = 'all';

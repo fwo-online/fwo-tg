@@ -27,7 +27,6 @@ module.exports = {
       throw Error(`Умение ${skill.name} имеет максимальный уровень`);
     }
     char.bonus -= skill.bonusCost[charSkillLvl];
-    char.skills[skillId] = charSkillLvl + 1;
     char.learnSkill(skillId, charSkillLvl + 1);
     return char;
   },

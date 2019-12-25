@@ -8,6 +8,7 @@ const DmgMagic = require('../Constuructors/DmgMagicConstructor');
 
 const magicArrow = new DmgMagic({
   name: 'magicArrow',
+  displayName: 'Магическая стрела',
   desc: 'Магическая стрела',
   cost: 3,
   baseExp: 8,

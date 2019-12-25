@@ -11,6 +11,7 @@ const LongDmgMagic = require('../Constuructors/LongDmgMagicConstructor');
 
 const frostTouch = new LongDmgMagic({
   name: 'frostTouch',
+  displayName: 'Ледяное прикосновение',
   desc: 'Поражает цель ледяным касанием, отнимая жизни. (длительная)',
   cost: 3,
   baseExp: 16,

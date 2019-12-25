@@ -14,6 +14,7 @@ class Skill {
    * @param {skill} params параметры создания нового скилла
    * @typedef {Object} skill
    * @property {String} name
+   * @property {String} displayName;
    * @property {String} desc
    * @property {Number[]} cost
    * @property {Number} proc
@@ -30,6 +31,7 @@ class Skill {
    */
   constructor(params) {
     this.name = params.name;
+    this.displayName = params.displayName;
     this.desc = params.desc;
     this.cost = params.cost;
     this.proc = params.proc;

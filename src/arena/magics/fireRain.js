@@ -10,6 +10,7 @@ const DmgMagic = require('../Constuructors/DmgMagicConstructor');
 
 const fireRain = new DmgMagic({
   name: 'fireRain',
+  displayName: 'Огненный дождь',
   desc: 'Обрушивает на команду противника огненный дождь',
   cost: 18,
   baseExp: 8,

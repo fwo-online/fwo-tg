@@ -12,6 +12,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
 
 const silence = new CommonMagic({
   name: 'silence',
+  displayName: 'Безмолвие',
   cost: 16,
   baseExp: 80,
   costType: 'mp',

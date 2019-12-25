@@ -11,6 +11,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
 
 const paralysis = new CommonMagic({
   name: 'paralysis',
+  displayName: 'Паралич',
   desc: 'Парализует цель',
   cost: 8,
   baseExp: 80,

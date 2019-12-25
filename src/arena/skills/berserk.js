@@ -7,6 +7,7 @@ const Skill = require('../Constuructors/SkillConstructor');
 
 const berserk = new Skill({
   name: 'berserk',
+  displayName: '👹 Берсерк',
   desc: 'Повышает урон, но понижает магзащиту и атаку',
   cost: [8, 9, 10, 11, 12, 13],
   proc: 10,

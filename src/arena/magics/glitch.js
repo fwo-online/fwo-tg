@@ -11,6 +11,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
 
 const glitch = new CommonMagic({
   name: 'glitch',
+  displayName: 'Глюки',
   desc: 'Глюки, вводит цель в замешательство, цель атакуют любого из игроков',
   cost: 12,
   baseExp: 80,

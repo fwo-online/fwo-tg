@@ -8,6 +8,7 @@ const DmgMagic = require('../Constuructors/DmgMagicConstructor');
 
 const rockfall = new DmgMagic({
   name: 'rockfall',
+  displayName: 'Камнепад',
   desc: 'Наносит повреждение цели.',
   cost: 3,
   baseExp: 16,

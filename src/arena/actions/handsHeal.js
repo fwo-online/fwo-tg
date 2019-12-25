@@ -4,7 +4,11 @@
 const HealMagicConstructor = require('../Constuructors/HealMagicConstructor');
 
 const params = {
-  desc: 'Лечение руками', lvl: 0, orderType: 'all', name: 'handsHeal',
+  name: 'handsHeal',
+  desc: 'Лечение руками',
+  displayName: 'Лечение руками',
+  lvl: 0,
+  orderType: 'all',
 };
 const handsHeal = new HealMagicConstructor(params);
 

@@ -8,6 +8,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
 /** @typedef {import ('../PlayerService')} player */
 const blessing = new CommonMagic({
   name: 'blessing',
+  displayName: 'Благословление',
   desc: 'Благословляет цель увеличивая её параметры',
   cost: 3,
   baseExp: 8,

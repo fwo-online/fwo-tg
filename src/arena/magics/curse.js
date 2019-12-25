@@ -7,6 +7,7 @@ const CommonMagic = require('../Constuructors/LongMagicConstructor');
 /** @typedef {import ('../PlayerService')} player */
 const curse = new CommonMagic({
   name: 'curse',
+  displayName: 'Проклятие',
   desc: 'Понижает вероятность атаки у цели и понижает ее защиту',
   cost: 3,
   baseExp: 8,

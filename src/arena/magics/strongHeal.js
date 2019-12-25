@@ -10,6 +10,7 @@ const floatNumber = require('../floatNumber');
 
 const strongHeal = new CommonMagic({
   name: 'strongHeal',
+  displayName: 'Сильное лечение',
   desc: 'Сильное лечение цели',
   cost: 12,
   baseExp: 10,

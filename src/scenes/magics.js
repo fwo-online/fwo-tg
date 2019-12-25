@@ -1,21 +1,19 @@
 const Scene = require('telegraf/scenes/base');
-const Stage = require('telegraf/stage');
 const Markup = require('telegraf/markup');
 const MagicService = require('../arena/MagicService');
 
-const { leave } = Stage;
 const magicScene = new Scene('magics');
 
 const getMagicButtons = (character) => Object
   .keys(character.magics)
   .map((key) => [
     Markup.callbackButton(
-      `${key}: ${character.magics[key]}`,
+      `${MagicService.magics[key].displayName}: ${character.magics[key]}`,
       `about_${key}`,
     ),
   ]);
 
-magicScene.enter(async ({ replyWithMarkdown, reply, session }) => {
+magicScene.enter(async ({ replyWithMarkdown, session }) => {
   await replyWithMarkdown(
     '*Магии*',
     Markup.keyboard([
@@ -23,8 +21,9 @@ magicScene.enter(async ({ replyWithMarkdown, reply, session }) => {
     ]).resize().extra(),
   );
 
-  await reply(
-    `Известные магии. Нажми на магию, чтобы узнать больше. У тебя ${session.character.bonus} бонусов`,
+  await replyWithMarkdown(
+    `Известные магии. Нажми на магию, чтобы узнать о ней больше.
+Стоимость изучения магии *1💡*(${session.character.bonus}💡) ${session.character.bonus === 0 ? '❗️' : '✅'}`,
     Markup.inlineKeyboard([
       ...getMagicButtons(session.character),
       [
@@ -34,29 +33,27 @@ magicScene.enter(async ({ replyWithMarkdown, reply, session }) => {
   );
 });
 
-magicScene.action('learn', async ({ editMessageText, session }) => {
+magicScene.action('learn', async ({ editMessageText, answerCbQuery, session }) => {
   try {
-    session.character = {
-      ...session.character, ...MagicService.learn(session.character.id, 1),
-    };
-    editMessageText(
-      `Теперь ты знаешь на одну магию больше. У тебя ${session.character.bonus} бонусов`,
-      Markup.inlineKeyboard([
+    session.character = MagicService.learn(session.character.id, 2);
+    answerCbQuery('Теперь ты знаешь на одну магию больше');
+  } catch (e) {
+    answerCbQuery(e.message);
+  }
+  editMessageText(
+    `Известные магии. Нажми на магию, чтобы узнать о ней больше.
+Стоимость изучения магии *1💡*(${session.character.bonus}💡) ${session.character.bonus === 0 ? '❗️' : '✅'}`,
+    {
+      parse_mode: 'Markdown',
+      reply_markup: Markup.inlineKeyboard([
         ...getMagicButtons(session.character),
         [
           Markup.callbackButton('Учить', 'learn'),
           Markup.callbackButton('В профиль', 'back'),
         ],
-      ]).resize().extra(),
-    );
-  } catch (e) {
-    editMessageText(
-      `${e.message}`,
-      Markup.inlineKeyboard([
-        Markup.callbackButton('Назад', 'magics'),
-      ]).resize().extra(),
-    );
-  }
+      ]).resize(),
+    },
+  );
 });
 
 magicScene.action(/about(?=_)/, ({ editMessageText, match }) => {
@@ -66,30 +63,32 @@ magicScene.action(/about(?=_)/, ({ editMessageText, match }) => {
     `${magic.name}: ${magic.desc}`,
     Markup.inlineKeyboard([
       Markup.callbackButton('Назад', 'magics'),
-    ]).resize().extra(),
+    ]).resize(),
   );
 });
 
 magicScene.action('magics', async ({ editMessageText, session }) => {
   await editMessageText(
-    `Известные магии. Нажми на магию, чтобы узнать больше. У тебя ${session.character.bonus} бонусов`,
-    Markup.inlineKeyboard([
-      ...getMagicButtons(session.character),
-      [
-        Markup.callbackButton('Учить', 'learn'),
-        Markup.callbackButton('В профиль', 'back'),
-      ],
-    ]).resize().extra(),
+    `Известные магии. Нажми на магию, чтобы узнать о ней больше.
+Стоимость изучения магии *1💡*(${session.character.bonus}💡) ${session.character.bonus === 0 ? '❗️' : '✅'}`,
+    {
+      parse_mode: 'Markdown',
+      reply_markup: Markup.inlineKeyboard([
+        ...getMagicButtons(session.character),
+        [
+          Markup.callbackButton('Учить', 'learn'),
+          Markup.callbackButton('В профиль', 'back'),
+        ],
+      ]).resize(),
+    },
   );
 });
 
 magicScene.action('back', ({ scene }) => {
-  leave();
   scene.enter('profile');
 });
 
 magicScene.hears('🔙 В лобби', ({ scene }) => {
-  leave();
   scene.enter('lobby');
 });
 
