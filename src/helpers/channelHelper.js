@@ -1,7 +1,11 @@
 const Markup = require('telegraf/markup');
+const { skills } = require('../arena/SkillService');
+
+const { magics } = global.arena;
 /**
  * Помощник для отправки сообщений в общий чат
  * @typedef {import ('../arena/PlayerService')} Player
+ * @typedef {import ('../arena/GameService')} Game
  */
 
 const chatId = process.env.BOT_CHATID || -1001483444452;
@@ -56,12 +60,21 @@ module.exports = {
       [Markup.callbackButton('Защита', 'action_protect')],
       [Markup.callbackButton('Реген', 'action_regen')],
     ];
-    const keys = Object.keys(player.magics);
-    if (keys.length) {
-      keys.forEach((key) => {
-        buttons.push([Markup.callbackButton(key, `action_${key}`)]);
+
+    Object.keys(player.magics)
+      .forEach((m) => {
+        buttons.push([Markup.callbackButton(magics[m].displayName, `action_${m}`)]);
       });
-    }
+
+    const gameId = global.arena.players[player.id].mm;
+    /** @type {Game} */
+    const Game = global.arena.games[gameId];
+
+    Object.keys(player.skills)
+      .filter((s) => skills[s].proc <= player.proc && !Game.orders.checkPlayerOrder(player.id, s))
+      .forEach((s) => {
+        buttons.push([Markup.callbackButton(`${skills[s].displayName} (${skills[s].proc}%)`, `action_${s}`)]);
+      });
     return buttons;
   },
   /**

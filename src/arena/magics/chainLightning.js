@@ -8,6 +8,7 @@ const DmgMagic = require('../Constuructors/DmgMagicConstructor');
 /** @typedef {import ('../PlayerService')} player */
 const chainLightning = new DmgMagic({
   name: 'chainLightning',
+  displayName: 'Цепь молний',
   desc: 'Цепная молния повреждает выбраную цель молнией и еще одну случайно.',
   cost: 8,
   baseExp: 12,

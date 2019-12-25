@@ -18,12 +18,14 @@ class PhysConstructor {
    * @param {atkAct} atkAct имя actions
    * @typedef {Object} atkAct
    * @property {String} name
+   * @property {string} displayName
    * @property {String} desc
    * @property {Number} lvl
    * @property {String} orderType
    */
   constructor(atkAct) {
     this.name = atkAct.name;
+    this.displayName = atkAct.displayName;
     this.desc = atkAct.desc;
     this.lvl = atkAct.lvl;
     this.orderType = atkAct.orderType;

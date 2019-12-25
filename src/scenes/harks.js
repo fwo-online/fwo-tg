@@ -49,7 +49,7 @@ harkScene.action(/increase(?=_)/, ({
   session,
   editMessageText,
   match,
-  answerCallbackQuery,
+  answerCbQuery,
 }) => {
   const [, hark] = match.input.split('_');
 
@@ -63,18 +63,18 @@ harkScene.action(/increase(?=_)/, ({
       ]).resize().extra(),
     );
   } catch (e) {
-    answerCallbackQuery(e.message);
+    answerCbQuery(e.message);
   }
 });
-
-harkScene.action(/info(?=_)/, ({ answerCallbackQuery, match }) => {
+harkScene.action(/info(?=_)/, ({ answerCbQuery, match }) => {
   const [, hark] = match.input.split('_');
-  answerCallbackQuery(harksDescr[hark].descr);
+  answerCbQuery(harksDescr[hark].descr);
 });
 
-harkScene.action('confirm', async ({ session, editMessageText }) => {
+harkScene.action('confirm', async ({ session, editMessageText, answerCbQuery }) => {
   await session.character.submitIncreaseHarks();
 
+  await answerCbQuery('Изменения успешно применены');
   editMessageText(
     `Свободных очков ${session.character.free}`,
     Markup.inlineKeyboard([
@@ -83,9 +83,10 @@ harkScene.action('confirm', async ({ session, editMessageText }) => {
   );
 });
 
-harkScene.action('reset', async ({ session, editMessageText }) => {
+harkScene.action('reset', async ({ session, editMessageText, answerCbQuery }) => {
   session.character.resetHarks();
 
+  await answerCbQuery('Изменения успешно сброшены');
   editMessageText(
     `Свободных очков ${session.character.free}`,
     Markup.inlineKeyboard([

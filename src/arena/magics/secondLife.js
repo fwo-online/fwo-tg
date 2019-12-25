@@ -11,6 +11,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
 
 const secondLife = new CommonMagic({
   name: 'secondLife',
+  displayName: 'Вторая жизнь',
   desc: 'Воскрешает цель',
   cost: 20,
   baseExp: 8,

@@ -7,6 +7,7 @@ const Skill = require('../Constuructors/SkillConstructor');
 
 const berserk = new Skill({
   name: 'berserk',
+  displayName: '👹 Берсерк',
   desc: 'Повышает урон, но понижает магзащиту и атаку',
   cost: [8, 9, 10, 11, 12, 13],
   proc: 10,
@@ -19,12 +20,13 @@ const berserk = new Skill({
   effect: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6],
   msg: (nick, exp) => `${nick} использовал [berserk] [📖 +${exp}]`,
   profList: ['w'],
+  bonusCost: [10, 20, 30, 40, 60, 80],
 });
 /**
  * Логика работы скила
  * @param {player} [initiator] Обьект кастера
  */
-berserk.run = (initiator = this.params.initiator) => {
+berserk.run = function run(initiator = this.params.initiator) {
   const initiatorMagicLvl = initiator.skills[this.name];
   const effect = this.effect[initiatorMagicLvl - 1] || 1;
   const atk = initiator.stats.val('patk');

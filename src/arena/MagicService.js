@@ -46,6 +46,7 @@ function learnChance() {
 }
 
 module.exports = {
+  magics: global.arena.magics,
   /**
    * Список доступных магий для профы на заданном круге
    * @param {Number|String} lvl круг магии
@@ -76,33 +77,26 @@ module.exports = {
   learn(charId, lvl) {
     const charObj = global.arena.players[charId];
     // списываем бонусы
-    charObj.bonus -= lvl;
-    if (charObj.prof === 'l' || charObj.prof === 'w') {
-      throw Error(`Класс ${charObj.prof} не может в магию`);
-    }
-    if (lvl > charObj.lvl) {
-      throw Error('circle_error');
-    }
+
     if (lvl > charObj.bonus) {
       throw Error('Не хватает бонусов');
     }
     // массив различий
     const def = hasMagicToLearn(charId, lvl);
+    const r = MiscService.rndm(`1d${def.length}`) - 1;
+    const charMagLvl = charObj.magics[def[r]] || 0;
+
     if (def.length < 1) {
       throw Error('Нет магий для изучения');
     }
+    charObj.bonus -= lvl;
     if (!learnChance()) {
-      throw Error('Не удалось выучить');
+      throw Error('Не удалось вычить. Удача не на твоей стороне');
     }
     // выбираем магию
-    const r = MiscService.rndm(`1d${def.length}`) - 1;
-    const charMagLvl = charObj.magics[def[r]] || 0;
     charObj.learnMagic(def[r], charMagLvl + 1);
     // CharacterService.learnMagic(charId, def[r], charMagLvl + 1);
-    return {
-      bonus: charObj.bonus,
-      magics: charObj.magics,
-    };
+    return charObj;
   },
   /**
    * Показываем описание магии

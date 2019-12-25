@@ -1,5 +1,5 @@
-const floatNumber = require('./floatNumber');
 const _ = require('lodash');
+const floatNumber = require('./floatNumber');
 
 /**
  * Класс для хранения stats

@@ -3,7 +3,11 @@ const PhysConstructor = require('../Constuructors/PhysConstructor');
  * Физическая атака
  */
 const attack = new PhysConstructor({
-  name: 'attack', desc: 'Атака', lvl: 0, orderType: 'all',
+  name: 'attack',
+  displayName: 'Атака',
+  desc: 'Атака',
+  lvl: 0,
+  orderType: 'all',
 });
 /**
  * Кастомный обработчик атаки

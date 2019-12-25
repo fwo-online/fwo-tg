@@ -11,6 +11,7 @@ class DmgMagic extends Magic {
    * @param {magObj} magObj Обьект создаваемой магии
    * @typedef {Object} magObj
    * @property {String} name Имя магии
+   * @property {String} displayName Отображаемое имя
    * @property {String} desc Короткое описание
    * @property {Number} cost Стоимость за использование
    * @property {String} costType Тип единицы стоимости {en/mp}

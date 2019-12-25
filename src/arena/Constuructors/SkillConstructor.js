@@ -14,6 +14,7 @@ class Skill {
    * @param {skill} params параметры создания нового скилла
    * @typedef {Object} skill
    * @property {String} name
+   * @property {String} displayName;
    * @property {String} desc
    * @property {Number[]} cost
    * @property {Number} proc
@@ -26,9 +27,11 @@ class Skill {
    * @property {Number[]} effect
    * @property {Function} msg
    * @property {String[]} profList - массив проф
+   * @property {Number[]} bonusCost
    */
   constructor(params) {
     this.name = params.name;
+    this.displayName = params.displayName;
     this.desc = params.desc;
     this.cost = params.cost;
     this.proc = params.proc;
@@ -41,6 +44,7 @@ class Skill {
     this.effect = params.effect;
     this.msg = params.msg;
     this.profList = params.profList;
+    this.bonusCost = params.bonusCost;
   }
 
   /**
@@ -58,8 +62,10 @@ class Skill {
       this.checkChance();
       this.run();
       this.next();
-    } catch (e) {
-      this.breaks(e);
+    } catch (failMsg) {
+      const bl = this.params.game.battleLog;
+      bl.log(failMsg);
+      this.params = null;
     }
   }
 
@@ -85,7 +91,7 @@ class Skill {
   checkChance() {
     if (MiscService.rndm('1d100') > this.getChance()) {
       // скил сфейлился
-      throw Error('SKILL_FAIL');
+      throw this.breaks('SKILL_FAIL');
     }
   }
 
@@ -124,13 +130,11 @@ class Skill {
    * Обработка провала магии
    */
   breaks(e) {
-    // eslint-disable-next-line no-console
-    console.log(e);
-    const msg = {
+    return {
       action: this.name,
+      initiator: this.params.initiator.nick,
+      message: e,
     };
-    this.params.game.battleLog.log(msg);
-    this.params = null;
   }
 }
 

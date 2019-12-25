@@ -8,6 +8,7 @@ const channelHelper = require('../helpers/channelHelper');
 const arena = require('../arena');
 const GameService = require('../arena/GameService');
 const { charDescr } = require('../arena/MiscService');
+const { skills } = require('../arena/SkillService');
 
 const battleScene = new Scene('battleScene');
 
@@ -104,9 +105,10 @@ battleScene.action('stop', async ({ editMessageText, session }) => {
 battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) => {
   const gameId = global.arena.players[session.character.id].mm;
   const [, action] = match.input.split('_');
+  const proc = skills[action] ? `_${skills[action].proc}` : '';
   const aliveArr = GameService.aliveArr(gameId)
     .map(({ nick, id }) => Markup.callbackButton(nick,
-      `${action}_${id}`));
+      `${action}_${id}${proc}`));
   editMessageText(
     `Выбери цель для ${match}`,
     Markup.inlineKeyboard([
@@ -140,13 +142,20 @@ battleScene.action(/^([^_]+)_([^_]+)_([^_]+)$/, async ({ editMessageText, sessio
   Game.orders.orderAction({
     initiator, target, action, proc,
   });
-
+  const { magics } = global.arena;
+  const ACTIONS = { ...skills, ...magics };
   const message = Game.orders.ordersList
-    .filter((order) => order.initiator === initiator)
-    .map((order) => `\n${order.action}(${order.proc}%) на игрока ${Game.players[order.target].nick}`);
+    .filter((o) => o.initiator === initiator)
+    .map((o) => `\n_${ACTIONS[o.action].displayName}_ (*${o.proc}%*) на игрока *${Game.players[o.target].nick}*`);
   editMessageText(
-    `Заказы: ${message.join()}`,
-    player.proc !== 0 ? Markup.inlineKeyboard(channelHelper.getOrderButtons(player)).resize().extra() : '',
+    `У тебя осталось *${player.proc}%*
+Заказы: ${message.join()}`,
+    player.proc !== 0 ? {
+      parse_mode: 'Markdown',
+      reply_markup: Markup.inlineKeyboard(
+        channelHelper.getOrderButtons(player),
+      ).resize(),
+    } : '',
   );
 });
 

@@ -20,7 +20,8 @@ profile.enter(async ({ replyWithMarkdown, session }) => {
 \t\tУбийств:   💀 ${session.character.kills}
 \t\tУровень:   🔺 ${session.character.lvl}
 \t\tЗолото:    💰 ${session.character.gold}
-\t\tОпыт:      📖 ${session.character.exp}\`\`\``,
+\t\tОпыт:      📖 ${session.character.exp}
+\t\tБонусы:    💡 ${session.character.bonus}\`\`\``,
   );
 });
 

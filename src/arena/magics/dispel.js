@@ -11,6 +11,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
 
 const dispel = new CommonMagic({
   name: 'dispel',
+  displayName: 'Рассеивание',
   desc: 'Снимает все длительные магии с цели',
   cost: 18,
   baseExp: 80,

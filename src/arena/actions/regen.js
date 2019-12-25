@@ -13,6 +13,7 @@ class Regen {
    */
   constructor() {
     this.name = 'regeneration';
+    this.displayName = 'Восстановление';
     this.desc = 'Регенирация маны/энергии';
     this.lvl = 0;
     this.orderType = 'self';

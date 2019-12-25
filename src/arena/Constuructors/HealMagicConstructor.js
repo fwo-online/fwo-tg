@@ -11,11 +11,21 @@ const MiscService = require('../MiscService');
  */
 class Heal {
   /**
-   * Общий конструктор
-   * @param {Object} params экшена
+   * Конструктор атаки
+   * @param {params} params имя actions
+   * @typedef {Object} params
+   * @property {string} name
+   * @property {string} displayName
+   * @property {string} desc
+   * @property {number} lvl
+   * @property {string} orderType
    */
   constructor(params) {
-    Object.assign(this, params);
+    this.name = params.name;
+    this.displayName = params.displayName;
+    this.desc = params.desc;
+    this.lvl = params.lvl;
+    this.orderType = params.orderType;
     this.status = {};
   }
 

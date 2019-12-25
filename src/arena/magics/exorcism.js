@@ -11,6 +11,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
 
 const exorcism = new CommonMagic({
   name: 'exorcism',
+  displayName: 'Экзорцизм',
   desc: 'Экзорцизм снимает все отрицательные эффекты с цели',
   cost: 20,
   baseExp: 80,

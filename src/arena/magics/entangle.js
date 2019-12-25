@@ -7,6 +7,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
 /** @typedef {import ('../PlayerService')} player */
 const entangle = new CommonMagic({
   name: 'entangle',
+  displayName: 'Опутывание',
   desc: 'Уменьшает защиту цели.',
   cost: 3,
   baseExp: 6,

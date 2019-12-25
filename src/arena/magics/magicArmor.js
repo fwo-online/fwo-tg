@@ -8,6 +8,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
 
 const magicArmor = new CommonMagic({
   name: 'magicArmor',
+  displayName: 'Магический доспех',
   desc: 'Создает магический доспех на маге',
   cost: 3,
   baseExp: 6,

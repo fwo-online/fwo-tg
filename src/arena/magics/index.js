@@ -24,8 +24,6 @@ const stoneSkin = require('./stoneSkin');
 const smallAura = require('./smallAura');
 const regeneration = require('../actions/regen');
 const postHeal = require('./postHeal');
-// skills
-const berserk = require('../skills/berserk');
 
 module.exports = {
   blessing,
@@ -47,8 +45,5 @@ module.exports = {
   stoneSkin,
   smallAura,
   regeneration,
-  postHeal, /**
-   * Skills
-   */
-  berserk,
+  postHeal,
 };

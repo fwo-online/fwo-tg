@@ -8,6 +8,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
 
 const stoneSkin = new CommonMagic({
   name: 'stoneSkin',
+  displayName: 'Каменная кожа',
   desc: 'Превращает кожу цели в камень',
   cost: 3,
   baseExp: 6,

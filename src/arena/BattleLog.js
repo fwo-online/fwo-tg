@@ -38,6 +38,10 @@ function csl(msgObj) {
       ru: `${initiator} пытался вылечить ${target}, но тот был атакован`,
       eng: '',
     },
+    SKILL_FAIL: {
+      ru: `${initiator} пытался использовать умение ${action}, но у него не вышло`,
+      eng: '',
+    },
   };
   const text = TEXT[message] || {
     ru: 'Ошибка парсинга строки магии',

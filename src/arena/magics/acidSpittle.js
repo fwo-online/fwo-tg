@@ -8,6 +8,7 @@ const DmgMagic = require('../Constuructors/DmgMagicConstructor');
 
 const acidSpittle = new DmgMagic({
   name: 'acidSpittle',
+  displayName: 'Кислотный плевок',
   desc: 'Кислотный плевок',
   cost: 10,
   baseExp: 12,

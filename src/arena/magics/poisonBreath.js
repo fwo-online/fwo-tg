@@ -11,6 +11,7 @@ const DmgMagic = require('../Constuructors/DmgMagicConstructor');
 
 const poisonBreath = new DmgMagic({
   name: 'poisonBreath',
+  displayName: 'Ядовитое дыхание',
   desc: 'Повреждает цель ядовитым дыханием, нанося урон.',
   cost: 6,
   baseExp: 12,
