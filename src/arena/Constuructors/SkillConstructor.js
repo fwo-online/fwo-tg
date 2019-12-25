@@ -26,6 +26,7 @@ class Skill {
    * @property {Number[]} effect
    * @property {Function} msg
    * @property {String[]} profList - массив проф
+   * @property {Number[]} bonusCost
    */
   constructor(params) {
     this.name = params.name;
@@ -41,6 +42,7 @@ class Skill {
     this.effect = params.effect;
     this.msg = params.msg;
     this.profList = params.profList;
+    this.bonusCost = params.bonusCost;
   }
 
   /**
@@ -87,7 +89,7 @@ class Skill {
   checkChance() {
     if (MiscService.rndm('1d100') > this.getChance()) {
       // скил сфейлился
-      throw this.breaks('SKILL_FAIL')
+      throw this.breaks('SKILL_FAIL');
     }
   }
 

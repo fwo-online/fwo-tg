@@ -8,11 +8,12 @@ const skillsScene = new Scene('skills');
 
 const getSkillButtons = (list, char) => Object
   .keys(list)
+  .filter((skill) => SkillService.skills[skill].profList.includes(char.prof))
   .map((skill) => {
     const { name } = SkillService.show(skill);
     return [Markup.callbackButton(
-      `${name} ${char.skills[name] || ''}`,
-      `info_${name}`,
+      `${name} ${char.skills[skill] ? `(${char.skills[skill]})` : ''}`,
+      `info_${skill}`,
     )];
   });
 
@@ -42,10 +43,11 @@ skillsScene.enter(async ({ replyWithMarkdown, reply, session }) => {
 });
 
 skillsScene.action('skills', async ({ editMessageText, session }) => {
+  const charSkillButtons = getSkillButtons(session.character.skills, session.character);
   await editMessageText(
-    'Твои умения',
+    `Твои умения${charSkillButtons.length ? '' : '\nСейчас у тебя не изучено ни одного умения'}`,
     Markup.inlineKeyboard([
-      ...getSkillButtons(session.character.skills, session.character),
+      ...charSkillButtons,
       [
         Markup.callbackButton(
           'Учить',
@@ -75,18 +77,11 @@ skillsScene.action('list', ({ editMessageText, session }) => {
 
 skillsScene.action(/info(?=_)/, ({ editMessageText, session, match }) => {
   const [, skill] = match.input.split('_');
-  const { name, desc, lvl } = SkillService.show(skill);
-
   editMessageText(
-    `${name} (${session.character.skills[name] || 'Не изучено'})
-
-${desc}
-
-Уровень умения: ${lvl}
-Очков для изучения: ${session.character.bonus}`,
+    SkillService.skillDescription(skill, session.character),
     Markup.inlineKeyboard([
       [Markup.callbackButton(
-        `${session.character.skills[name] ? 'Повысить уровень' : 'Учить'}`,
+        `${session.character.skills[skill] ? 'Повысить уровень' : 'Учить'}`,
         `learn_${skill}`,
       )],
       [Markup.callbackButton(
@@ -98,26 +93,19 @@ ${desc}
 });
 
 skillsScene.action(/learn(?=_)/, ({
-  editMessageText,
-  answerCbQuery,
-  session,
-  match,
+  editMessageText, answerCbQuery, session, match,
 }) => {
   const [, skill] = match.input.split('_');
-  const { name, desc, lvl } = SkillService.show(skill);
+  const { name } = SkillService.show(skill);
   try {
-    SkillService.learn(session.character.id, skill);
+    session.character = SkillService.learn(session.character.id, skill);
+
     answerCbQuery(`Изучено умение ${name}`);
     editMessageText(
-      `${name} (${session.character.skills[name] || 'Не изучено'})
-
-${desc}
-
-Уровень умения: ${lvl}
-Очков для изучения: ${session.character.bonus}`,
+      SkillService.skillDescription(skill, session.character),
       Markup.inlineKeyboard([
         [Markup.callbackButton(
-          `${session.character.skills[name] ? 'Повысить уровень' : 'Учить'}`,
+          `${session.character.skills[skill] ? 'Повысить уровень' : 'Учить'}`,
           `learn_${skill}`,
         )],
         [Markup.callbackButton(

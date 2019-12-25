@@ -3,6 +3,7 @@ const { skills } = require('../arena/SkillService');
 /**
  * Помощник для отправки сообщений в общий чат
  * @typedef {import ('../arena/PlayerService')} Player
+ * @typedef {import ('../arena/GameService')} Game
  */
 
 const chatId = process.env.BOT_CHATID || -1001483444452;
@@ -61,10 +62,15 @@ module.exports = {
       .forEach((magic) => {
         buttons.push([Markup.callbackButton(magic, `action_${magic}`)]);
       });
+
+    const gameId = global.arena.players[player.id].mm;
+    /** @type {Game} */
+    const Game = global.arena.games[gameId];
+
     Object.keys(player.skills)
-      .filter((skill) => skills[skill].proc <= player.proc)
-      .forEach((skill) => {
-        buttons.push([Markup.callbackButton(`${skill} (${skills[skill].proc}%)`, `action_${skill}`)]);
+      .filter((s) => skills[s].proc <= player.proc && !Game.orders.checkPlayerOrder(player.id, s))
+      .forEach((s) => {
+        buttons.push([Markup.callbackButton(`${skills[s].name} (${skills[s].proc}%)`, `action_${s}`)]);
       });
     return buttons;
   },
