@@ -45,7 +45,6 @@ class PhysConstructor {
       initiator, target, game,
     };
     this.status = {};
-    const bl = this.params.game.battleLog;
     try {
       this.checkPreAffects();
       this.fitsCheck();
@@ -56,7 +55,8 @@ class PhysConstructor {
       this.checkTargetIsDead();
       this.next();
     } catch (e) {
-      bl.log(e);
+      const { battleLog } = this.params.game;
+      battleLog.log(e);
     }
   }
 
@@ -65,9 +65,9 @@ class PhysConstructor {
    */
   checkPreAffects() {
     const { initiator, target } = this.params;
+    const DODGE_TYPES = ['s', 'c', 'h', 'l', 'd'];
     // Проверяем увёртку
-    if (target.flags.isDodging) {
-      // @todo нужна проверка на тип оружия в руках атакующего
+    if (target.flags.isDodging && initiator.items.some((i) => DODGE_TYPES.includes(i.wtype))) {
       //  проверяем имеет ли цель достаточно dex для того что бы уклониться
       const iDex = initiator.stats.val('dex');
       const at = floatNumber(Math.round(target.flags.isDodging / iDex));
@@ -75,12 +75,9 @@ class PhysConstructor {
       console.log('Dodging: ', at);
       const r = MiscService.rndm('1d100');
       const c = Math.round(Math.sqrt(at) + (10 * at) + 5);
-      const result = c > r;
       // eslint-disable-next-line no-console
-      console.log('left:', c, ' right:', r, ' result:', result);
-      this.status.failReason = ({
-        action: 'dodge', message: 'dodged',
-      });
+      console.log('left:', c, ' right:', r, ' result:', c > r);
+      if (c > r) throw this.breaks('DODGED');
     }
   }
 
@@ -126,9 +123,7 @@ class PhysConstructor {
       this.run();
     } else {
       this.protectorsGetExp();
-      this.status.failReason = ({
-        action: 'protect', message: 'DEF',
-      });
+      throw this.breaks('DEF');
     }
   }
 
@@ -188,6 +183,20 @@ class PhysConstructor {
         action: this.name, initiator: this.params.initiator.id,
       };
     }
+  }
+
+
+  /**
+   * @param {String} msg строка остановки атаки (причина)
+   */
+  breaks(msg) {
+    return {
+      actionType: 'magic',
+      message: msg,
+      action: this.name,
+      initiator: this.params.initiator.nick,
+      target: this.params.target.nick,
+    };
   }
 
   /**

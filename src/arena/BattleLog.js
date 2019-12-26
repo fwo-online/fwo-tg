@@ -15,32 +15,40 @@ function csl(msgObj) {
   } = msgObj;
   const TEXT = {
     NO_MANA: {
-      ru: `Не хватило маны для заклинания ${action}`,
+      ru: `Не хватило маны для заклинания _${action}_`,
+      eng: '',
+    },
+    NO_ENERGY: {
+      ru: `Не хватило энерги для умения _${action}_`,
       eng: '',
     },
     SILENCED: {
-      ru: `${initiator} пытался сотворить ${action}, но попытка провалилась(затыка)`,
+      ru: `*${initiator}* пытался сотворить _${action}_, но попытка провалилась(затыка)`,
       eng: '',
     },
     DEF: {
-      ru: `${initiator} атаковал ${target}, но тот смог защититься [${failReason}]`,
+      ru: `*${initiator}* атаковал *${target}*, но тот смог защититься [${failReason}]`,
       eng: '',
     },
     CHANCE_FAIL: {
-      ru: `${initiator} пытался сотворить ${action}, но у него не вышло`,
+      ru: `*${initiator}* пытался сотворить _${action}_, но у него не вышло`,
       eng: '',
     },
     GOD_FAIL: {
-      ru: `Заклинание ${action} ${initiator} провалилось по воле богов `,
+      ru: `Заклинание _${action}_ *${initiator}* провалилось по воле богов `,
       eng: '',
     },
     HEAL_FAIL: {
-      ru: `${initiator} пытался вылечить ${target}, но тот был атакован`,
+      ru: `*${initiator}* пытался _вылечить_ *${target}*, но тот был атакован`,
       eng: '',
     },
     SKILL_FAIL: {
-      ru: `${initiator} пытался использовать умение ${action}, но у него не вышло`,
+      ru: `*${initiator}* пытался использовать умение _${action}_, но у него не вышло`,
       eng: '',
+    },
+    DODGED: {
+      ru: `*${initiator}* атаковал *${target}*, но тот уклонился от атаки`,
+      en: '',
     },
   };
   const text = TEXT[message] || {

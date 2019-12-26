@@ -21,14 +21,16 @@ class Player {
    * @property {String} id
    * @property {Number} tgId
    * @property {String} prof
-   * @property {Object} modifiers
-   * @property {Object} resists
-   * @property {Object} skills
-   * @property {Object} magics
+   * @property {Object.<string, number>}modifiers
+   * @property {Object.<string, number>} resists
+   * @property {Object.<string, number>} skills
+   * @property {Object.<string, number>} magics
    * @property {Object} statical
    * @property {Object} def
    * @property {Number} proc
    * @property {Number} lvl
+   * @property {{code: string, putOn: boolean}[]} items
+   * @property {Object.<string, number>} harks
    */
   constructor(params) {
     this.nick = params.nickname;
@@ -36,7 +38,14 @@ class Player {
     this.tgId = params.tgId;
     this.prof = params.prof;
     this.lvl = params.lvl;
-    this.stats = new StatsService(params.def);
+    this.items = params.items
+      .filter((item) => item.putOn)
+      .map((item) => ({
+        code: item.code,
+        /** @type {string} */
+        wtype: global.arena.items[item.code].wtype,
+      }));
+    this.stats = new StatsService({ ...params.def, ...params.harks });
     this.flags = new FlagsConstructors();
     // @todo закладка для вычисляемых статов
     this.modifiers = { magics: {}, castChance: 0, ...params.modifiers }; // Обьект
