@@ -1,4 +1,5 @@
 const ee = require('events');
+const { weaponTypes } = require('./MiscService');
 
 /**
  * msg
@@ -85,20 +86,26 @@ class BattleLog extends ee {
 
   /**
    * Удачный проход action
-   * @param {Object} msgObj тип сообщения
+   * @param {Object.<string, any>} msgObj тип сообщения
    */
   success(msgObj) {
     let data = '';
     // Если обьект содержит кастомную строку испльзуем её
     if (msgObj.msg) {
       data = msgObj.msg(msgObj.initiator, msgObj.exp);
+    } else if (msgObj.dmgType && msgObj.dmgType === 'phys') {
+      if (msgObj.weapon) {
+        const { action } = weaponTypes[msgObj.weapon.wtype];
+        data = `*${msgObj.initiator}* ${action(msgObj.target, msgObj.weapon)} и нанёс *${msgObj.dmg}* урона \\[ 💔-${msgObj.dmg}/${msgObj.hp} 📖${msgObj.exp} ]`;
+      } else {
+        data = `*${msgObj.initiator}* сотворил _${msgObj.action}_ (${msgObj.actionType}) на *${msgObj.target}* нанеся ${msgObj.dmg} урона и получил +e:${msgObj.exp}`;
+      }
     } else if (msgObj.dmgType) {
-      // магия является атакующей
-      data = `${msgObj.initiator} сотворил ${msgObj.action} (${msgObj.actionType}) на ${msgObj.target} нанеся ${msgObj.dmg} урона и получил +e:${msgObj.exp}`;
+      data = `*${msgObj.initiator}* сотворил _${msgObj.action}_ (${msgObj.actionType}) на *${msgObj.target}* нанеся ${msgObj.dmg} урона и получил +e:${msgObj.exp}`;
     } else if (!msgObj.effect) {
-      data = `${msgObj.initiator} использовал ${msgObj.action} (${msgObj.actionType}) на ${msgObj.target} и получил +e:${msgObj.exp}`;
+      data = `*${msgObj.initiator}* использовал _${msgObj.action}_ (${msgObj.actionType}) на *${msgObj.target}* и получил +e:${msgObj.exp}`;
     } else {
-      data = `${msgObj.initiator} использовав ${msgObj.action} на ${msgObj.target} с эффектом ${msgObj.effect} получил +e:${msgObj.exp}`;
+      data = `*${msgObj.initiator}* использовав _${msgObj.action}_ на *${msgObj.target}* с эффектом ${msgObj.effect} получил +e:${msgObj.exp}`;
     }
     this.write(data);
   }

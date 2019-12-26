@@ -41,9 +41,10 @@ class Player {
     this.items = params.items
       .filter((item) => item.putOn)
       .map((item) => ({
-        code: item.code,
         /** @type {string} */
         wtype: global.arena.items[item.code].wtype,
+        case: global.arena.items[item.code].case,
+        name: global.arena.items[item.code].name,
       }));
     this.stats = new StatsService({ ...params.def, ...params.harks });
     this.flags = new FlagsConstructors();
