@@ -7,6 +7,7 @@ const Item = require('./models/item');
 const authMiddleware = require('./middlewares/authMiddleware');
 const protectedMiddleware = require('./middlewares/protectedMiddleware');
 const chatMiddleware = require('./middlewares/chatMiddleware');
+const restartMiddleware = require('./middlewares/restartMiddleware');
 
 // DB connection
 db.connection.on('open', () => {
@@ -21,10 +22,11 @@ bot.use(session());
 bot.use(stage.middleware());
 bot.use(chatMiddleware);
 bot.use(authMiddleware);
-bot.use(chatMiddleware);
+
 bot.start(async ({ scene }) => { scene.enter('greeter'); });
 bot.command('greeter', (ctx) => ctx.scene.enter('greeter'));
 
+bot.use(restartMiddleware);
 bot.use(protectedMiddleware);
 
 // далее идут роуты для которых необходимо что бы персонаж был создан
