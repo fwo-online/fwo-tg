@@ -1,11 +1,7 @@
 const Scene = require('telegraf/scenes/base');
-const Stage = require('telegraf/stage');
 const Markup = require('telegraf/markup');
 const { charDescr } = require('../arena/MiscService');
 
-const {
-  leave,
-} = Stage;
 const lobby = new Scene('lobby');
 
 lobby.enter(({ replyWithMarkdown, session }) => {
@@ -24,22 +20,18 @@ lobby.enter(({ replyWithMarkdown, session }) => {
 });
 
 lobby.hears('😎 Профиль', ({ scene }) => {
-  leave();
   scene.enter('profile');
 });
 
 lobby.hears('⚔ В бой', ({ scene }) => {
-  leave();
   scene.enter('battleScene');
 });
 
 lobby.hears('🏪 Магазин', ({ scene }) => {
-  leave();
   scene.enter('shopScene');
 });
 
 lobby.hears('☸ Настройки', ({ scene }) => {
-  leave();
   scene.enter('settings');
 });
 

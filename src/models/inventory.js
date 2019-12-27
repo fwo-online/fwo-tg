@@ -172,6 +172,10 @@ inventory.statics = {
     });
   },
 
+  /**
+   * @param {string} charId идентификатор персонажа
+   * @param {string} itemId идентификатор предмета
+   */
   removeItem(itemId, charId) {
     return this.model('Inventory').remove({
       owner: charId,

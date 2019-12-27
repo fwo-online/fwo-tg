@@ -64,7 +64,8 @@ class PhysConstructor {
    */
   checkPreAffects() {
     const { initiator, target } = this.params;
-    const hasDodgingItems = initiator.items.some((i) => MiscService.weaponTypes[i.wtype].dodge);
+    const hasDodgingItems = initiator.items
+      .some((i) => i.wtype && MiscService.weaponTypes[i.wtype].dodge);
     // Проверяем увёртку
     if (target.flags.isDodging && hasDodgingItems) {
       //  проверяем имеет ли цель достаточно dex для того что бы уклониться

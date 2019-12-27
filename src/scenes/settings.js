@@ -31,28 +31,21 @@ settingsScene.enter(async ({ replyWithMarkdown, reply }) => {
 settingsScene.action('remove', async ({
   session,
   scene,
-  reply,
+  answerCbQuery,
   from,
 }) => {
   const resp = await loginHelper.remove(from.id);
   session.character = null;
   if (resp) {
-    reply(
-      'Твой персонаж был удалён!',
-    );
-    leave();
+    answerCbQuery('Твой персонаж был удалён!');
     scene.enter('greeter');
   } else {
-    reply(
-      'Произошла ошибка',
-    );
-    leave();
+    answerCbQuery('Произошла ошибка');
     scene.enter('greeter');
   }
 });
 
 settingsScene.hears('🔙 В лобби', ({ scene }) => {
-  leave();
   scene.enter('lobby');
 });
 

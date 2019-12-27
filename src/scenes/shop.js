@@ -1,11 +1,8 @@
 const _ = require('lodash');
-const Stage = require('telegraf/stage');
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
 const ItemService = require('../arena/ItemService');
 const { stores } = require('../arena/MiscService');
-
-const { leave } = Stage;
 
 const shopScene = new Scene('shopScene');
 
@@ -87,7 +84,7 @@ shopScene.action(/itemInfo(?=_)/, async ({ session, editMessageText, match }) =>
 shopScene.action(/buy(?=_)/, async ({
   session,
   editMessageText,
-  scene,
+  answerCbQuery,
   match,
 }) => {
   const [, code] = match.input.split('_');
@@ -95,32 +92,21 @@ shopScene.action(/buy(?=_)/, async ({
   const result = await session.character.buyItem(code);
 
   if (!result) {
-    editMessageText(
-      'Недостаточно голды',
-      Markup.inlineKeyboard([
-        Markup.callbackButton(
-          'Назад',
-          `itemType_${item.wear}`,
-        )]).resize().extra(),
-    );
+    answerCbQuery('Недостаточно голды');
   } else {
-    try {
-      editMessageText(
-        `Ты купил предмет ${item.name}. У тебя осталось 💰 ${session.character.gold}`,
-        Markup.inlineKeyboard([
-          [Markup.callbackButton(
-            'В инвентарь',
-            'inventory',
-          )],
-          [Markup.callbackButton(
-            'Продолжить покупки',
-            `itemType_${item.wear}`,
-          )],
-        ]).resize().extra(),
-      );
-    } catch (e) {
-      scene.reenter();
-    }
+    editMessageText(
+      `Ты купил предмет ${item.name}. У тебя осталось 💰 ${session.character.gold}`,
+      Markup.inlineKeyboard([
+        [Markup.callbackButton(
+          'В инвентарь',
+          'inventory',
+        )],
+        [Markup.callbackButton(
+          'Продолжить покупки',
+          `itemType_${item.wear}`,
+        )],
+      ]).resize().extra(),
+    );
   }
 });
 
@@ -132,12 +118,10 @@ shopScene.action('back', ({ editMessageText }) => {
 });
 
 shopScene.hears('🔙 В лобби', ({ scene }) => {
-  leave();
   scene.enter('lobby');
 });
 
 shopScene.action('inventory', ({ scene }) => {
-  leave();
   scene.enter('inventory');
 });
 

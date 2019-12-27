@@ -75,7 +75,7 @@ class RoundConstructor extends ee {
       round: this.count,
       state: this.status,
       timestamp: ts(),
-      timer: config.roundTimeout,
+      timer: config.roundTime,
     });
     this.goNext('waiting');
   }

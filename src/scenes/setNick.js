@@ -1,10 +1,12 @@
 const Scene = require('telegraf/scenes/base');
-const Stage = require('telegraf/stage');
 const loginHelper = require('../helpers/loginHelper');
 
-const { leave } = Stage;
 const setNick = new Scene('setNick');
 
+/**
+ * Валидация ника
+ * @param {string} nickname
+ */
 async function valid(nickname) {
   const trimNickname = nickname.trim();
   if (trimNickname.length > 16) {
@@ -13,6 +15,8 @@ async function valid(nickname) {
     throw new Error('Напрягись, ещё пару символов!');
   } else if (trimNickname.charAt(0) === '/') {
     throw new Error('Запрещено начинать ник с "/" ');
+  } else if (trimNickname.includes('_')) {
+    throw new Error('Запрещено использовать "_" в нике');
   }
 
   const resp = await loginHelper.checkNick(trimNickname);
@@ -36,11 +40,9 @@ setNick.on('text', async ({
     const nickname = await valid(message.text);
     await loginHelper.regChar(from.id, session.prof, nickname, 'm');
     session.character = await loginHelper.getChar(from.id);
-    leave();
     scene.enter('lobby');
   } catch (e) {
     await reply(e.message);
-    leave();
     scene.enter('greeter');
   }
 });
