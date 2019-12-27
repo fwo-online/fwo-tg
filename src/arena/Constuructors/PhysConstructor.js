@@ -30,7 +30,6 @@ class PhysConstructor {
     this.lvl = atkAct.lvl;
     this.orderType = atkAct.orderType;
     this.status = {};
-    this.status.failReason = undefined; // причина провала атаки
   }
 
   /**
@@ -65,9 +64,9 @@ class PhysConstructor {
    */
   checkPreAffects() {
     const { initiator, target } = this.params;
-    const DODGE_TYPES = ['s', 'c', 'h', 'l', 'd'];
+    const hasDodgingItems = initiator.items.some((i) => MiscService.weaponTypes[i.wtype].dodge);
     // Проверяем увёртку
-    if (target.flags.isDodging && initiator.items.some((i) => DODGE_TYPES.includes(i.wtype))) {
+    if (target.flags.isDodging && hasDodgingItems) {
       //  проверяем имеет ли цель достаточно dex для того что бы уклониться
       const iDex = initiator.stats.val('dex');
       const at = floatNumber(Math.round(target.flags.isDodging / iDex));
@@ -147,27 +146,19 @@ class PhysConstructor {
   next() {
     const { initiator, target } = this.params;
     const { battleLog } = this.params.game;
-    if (this.status.failReason) {
-      const msg = {
-        target: target.nick,
-        initiator: initiator.nick,
-        failReason: this.status.failReason.action,
-        message: this.status.failReason.message,
-        actionType: 'phys',
-      };
-      battleLog.log(msg);
-    } else {
-      const msg = {
-        exp: this.status.exp,
-        action: this.name,
-        actionType: 'phys',
-        target: target.nick,
-        dmg: floatNumber(this.status.hit),
-        initiator: initiator.nick,
-        dmgType: 'phys',
-      };
-      battleLog.success(msg);
-    }
+    const weapon = initiator.items.find((item) => MiscService.weaponTypes[item.wtype]);
+    const msg = {
+      exp: this.status.exp,
+      action: this.name,
+      actionType: 'phys',
+      target: target.nick,
+      dmg: floatNumber(this.status.hit),
+      hp: target.stats.val('hp'),
+      initiator: initiator.nick,
+      dmgType: 'phys',
+      weapon,
+    };
+    battleLog.success(msg);
   }
 
   /**
@@ -191,7 +182,7 @@ class PhysConstructor {
    */
   breaks(msg) {
     return {
-      actionType: 'magic',
+      actionType: 'phys',
       message: msg,
       action: this.name,
       initiator: this.params.initiator.nick,
