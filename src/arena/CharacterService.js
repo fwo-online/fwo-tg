@@ -230,7 +230,7 @@ class Char {
 
   async removeItem(itemId) {
     this.items = this.items.filter((item) => !item._id.equals(itemId));
-    await db.inventory.removeItem(this.id, itemId);
+    await db.inventory.removeItem(itemId, this.id);
     return this.saveToDb();
   }
 
