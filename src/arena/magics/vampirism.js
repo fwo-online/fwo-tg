@@ -28,7 +28,7 @@ const vampirism = new DmgMagic({
  * @param {player} target Обьект цели
  */
 vampirism.run = function run(initiator, target) {
-  target.stats.mode('down', 'hp', this.effectVal(initiator));
+  target.stats.mode('down', 'hp', this.effectVal());
   initiator.stats.mode('up', 'hp', this.status.hit);
 };
 module.exports = vampirism;

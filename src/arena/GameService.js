@@ -3,6 +3,7 @@ const BattleLog = require('./BattleLog');
 const engineService = require('./engineService');
 const db = require('../helpers/dataBase');
 const channelHelper = require('../helpers/channelHelper');
+const testGame = require('./testGame');
 /**
  * GameService
  *
@@ -271,6 +272,10 @@ class Game {
         case 'endOrders': {
           this.forAllAlivePlayers(Game.hideLastMessage);
           this.forAllPlayers(this.checkOrders);
+          // Debug Game Hack
+          if (this.players['5e05ee58bdf83c6a5ff3f8dd']) {
+            this.orders = _.merge(this.orders.ordersList, testGame.orders);
+          }
           break;
         }
         default: {

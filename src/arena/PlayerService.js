@@ -29,6 +29,7 @@ class Player {
    * @property {Object} def
    * @property {Number} proc
    * @property {Number} lvl
+   * @property {Number} clan
    */
   constructor(params) {
     this.nick = params.nickname;
@@ -36,6 +37,7 @@ class Player {
     this.tgId = params.tgId;
     this.prof = params.prof;
     this.lvl = params.lvl;
+    this.clan = params.clan;
     this.stats = new StatsService(params.def);
     this.flags = new FlagsConstructors();
     // @todo закладка для вычисляемых статов

@@ -65,7 +65,7 @@ module.exports = {
     /**
      * Создание персонажа
      * @param charObj
-     * @return {Promise<CharacterData>}
+     * @return {Promise<CharacterData|void>}
      */
     async create(charObj) {
       try {
