@@ -2,13 +2,11 @@
 
 const ORDERS = [
   {
-    initiator: '1', target: '2', proc: 100, action: 'attack',
+    initiator: '5e05ee58bdf83c6a5ff3f8dd', target: '5e05ee58bdf83c6a5ff3f8dd', proc: 100, action: 'protect',
   }, {
-    initiator: '1', target: '1', proc: 100, action: 'protect',
+    initiator: '5e05ee58bdf83c6a5ff3f8dd', target: '5e05ee58bdf83c6a5ff3f8dd', proc: 20, action: 'dodge',
   }, {
-    initiator: '1', target: '1', proc: 20, action: 'dodge',
-  }, {
-    initiator: '1', target: '1', proc: 100, action: 'handsHeal',
+    initiator: '5e05ee58bdf83c6a5ff3f8dd', target: '5e05ee58bdf83c6a5ff3f8dd', proc: 100, action: 'handsHeal',
   }];
 
 module.exports = {
