@@ -274,7 +274,7 @@ class Game {
           this.forAllPlayers(this.checkOrders);
           // Debug Game Hack
           if (this.players['5e05ee58bdf83c6a5ff3f8dd']) {
-            this.orders = _.merge(this.orders.ordersList, testGame.orders);
+            this.orders.ordersList = _.merge(this.orders.ordersList, testGame.orders);
           }
           break;
         }
