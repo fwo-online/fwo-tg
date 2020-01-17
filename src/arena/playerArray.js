@@ -36,6 +36,7 @@ class PlayersArr {
    * @returns {Player[]}
    */
   getMyTeam(playerClanId) {
+    if (!playerClanId) return [];
     return _.filter(this.arr, { clan: playerClanId });
   }
 }
