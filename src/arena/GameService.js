@@ -273,7 +273,7 @@ class Game {
           this.forAllAlivePlayers(Game.hideLastMessage);
           // Debug Game Hack
           if (this.players['5e05ee58bdf83c6a5ff3f8dd']) {
-            this.orders.ordersList = _.merge(this.orders.ordersList, testGame.orders);
+            this.orders.ordersList = this.orders.ordersList.concat(testGame.orders);
           }
           this.forAllPlayers(this.checkOrders);
           break;
