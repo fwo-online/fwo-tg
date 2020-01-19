@@ -2,33 +2,11 @@
 
 const ORDERS = [
   {
-    initiator: '1', target: '2', proc: 100, action: 'attack',
+    initiator: '5e05ee58bdf83c6a5ff3f8dd', target: '5e05ee58bdf83c6a5ff3f8dd', proc: 100, action: 'protect',
   }, {
-    initiator: '1', target: '1', proc: 100, action: 'protect',
+    initiator: '5e05ee58bdf83c6a5ff3f8dd', target: '5e05ee58bdf83c6a5ff3f8dd', proc: 20, action: 'dodge',
   }, {
-    initiator: '2', target: '1', proc: 20, action: 'silence',
-  }, {
-    initiator: '1', target: '2', proc: 100, action: 'chainLightning',
-  }, {
-    initiator: '1', target: '2', proc: 100, action: 'regen',
-  }, {
-    initiator: '2', target: '1', proc: 20, action: 'magicArrow',
-  }, {
-    initiator: '2', target: '2', proc: 20, action: 'smallAura',
-  }, {
-    initiator: '2', target: '2', proc: 100, action: 'smallAura',
-  }, {
-    initiator: '2', target: '1', proc: 100, action: 'handsHeal',
-  }, {
-    initiator: '1', target: '1', proc: 100, action: 'handsHeal',
-  }, {
-    initiator: '2', target: '1', proc: 100, action: 'frostTouch',
-  }, {
-    initiator: '2', target: '1', proc: 15, action: 'frostTouch',
-  }, {
-    initiator: '2', target: '1', proc: 100, action: 'rockfall',
-  }, {
-    initiator: '1', target: '1', proc: 10, action: 'berserk',
+    initiator: '5e05ee58bdf83c6a5ff3f8dd', target: '5e05ee58bdf83c6a5ff3f8dd', proc: 100, action: 'handsHeal',
   }];
 
 module.exports = {

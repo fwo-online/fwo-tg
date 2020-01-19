@@ -32,10 +32,11 @@ class PlayersArr {
 
   /**
    * Функция вернет массив игроков в моей тиме
-   * @param {Number} playerClanId идентификатор клана
+   * @param {Number|String} playerClanId идентификатор клана
    * @returns {Player[]}
    */
   getMyTeam(playerClanId) {
+    if (!playerClanId) return [];
     return _.filter(this.arr, { clan: playerClanId });
   }
 }

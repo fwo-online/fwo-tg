@@ -102,6 +102,7 @@ class Char {
    * @property {Number} bonus
    * @property {Object} mm
    * @property {Object.<string, number>} skills
+   * @property {Number} clan
    */
   constructor(charObj) {
     // const defaults = defHarks(charObj.prof);
@@ -199,6 +200,10 @@ class Char {
 
   set items(items) {
     this.charObj.inventory = items;
+  }
+
+  get clan() {
+    return this.charObj.clan;
   }
 
   /**

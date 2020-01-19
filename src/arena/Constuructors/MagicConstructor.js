@@ -25,6 +25,9 @@ class Magic {
    * @property {String[]} effect размер рандомного эффект от магии
    * @property {String} magType Тип магии good/bad/neutral
    * @property {Number[]} chance
+   * @property {String} costType
+   * @property {Number} baseExp
+   * @property {Number} cost
    */
   constructor(magObj) {
     Object.assign(this, magObj);

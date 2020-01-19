@@ -16,7 +16,7 @@ module.exports = {
   statusMessages: {},
   /**
    * @param {string} data - текст отправляемого сообщения
-   * @param {Number} [id=chatId] - id чата
+   * @param {Number|String} [id=chatId] - id чата
    */
   async broadcast(data, id = chatId) {
     await this.bot.telegram.sendMessage(id, data, { parse_mode: 'Markdown' });
