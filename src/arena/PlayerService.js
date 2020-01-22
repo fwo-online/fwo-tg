@@ -16,7 +16,7 @@ class Player {
   /**
    * Конструктор обьекта игрока внутри игры
    * @param {params} params
-   * @typedef {Object} params параметры игрока из обьекта CharObj
+   * @typedef {import('./SkillService').Char} params параметры игрока из обьекта CharObj
    * @property {String} nickname
    * @property {String} id
    * @property {Number} tgId
@@ -49,6 +49,7 @@ class Player {
     this.statical = params.statical || {}; // статически реген
     this.alive = true;
     this.proc = 100;
+    this.weapon = params.getPutonedWeapon();
     return this;
   }
 

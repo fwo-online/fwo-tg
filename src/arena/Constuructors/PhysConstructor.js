@@ -152,6 +152,9 @@ class PhysConstructor {
   next() {
     const { initiator, target } = this.params;
     const { battleLog } = this.params.game;
+    const weapon = initiator.weapon || {};
+    const weaponCase = global.arena.items[weapon.code] ? global.arena.items[weapon.code].case : 'Руками';
+
     if (this.status.failReason) {
       const msg = {
         target: target.nick,
@@ -169,6 +172,7 @@ class PhysConstructor {
         target: target.nick,
         dmg: floatNumber(this.status.hit),
         initiator: initiator.nick,
+        weaponCase,
         dmgType: 'phys',
       };
       battleLog.success(msg);

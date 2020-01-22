@@ -86,7 +86,11 @@ class BattleLog extends ee {
       data = msgObj.msg(msgObj.initiator, msgObj.exp);
     } else if (msgObj.dmgType) {
       // магия является атакующей
-      data = `${msgObj.initiator} сотворил ${msgObj.action} (${msgObj.actionType}) на ${msgObj.target} нанеся ${msgObj.dmg} урона и получил +e:${msgObj.exp}`;
+      if (msgObj.dmgType === 'phys') {
+        data = `${msgObj.initiator} нанес удар ${msgObj.target} ${msgObj.weaponCase} на ${msgObj.dmg} урона и получил +e:${msgObj.exp}`;
+      } else {
+        data = `${msgObj.initiator} сотворил ${msgObj.action} (${msgObj.actionType}) на ${msgObj.target} нанеся ${msgObj.dmg} урона и получил +e:${msgObj.exp}`;
+      }
     } else if (!msgObj.effect) {
       data = `${msgObj.initiator} использовал ${msgObj.action} (${msgObj.actionType}) на ${msgObj.target} и получил +e:${msgObj.exp}`;
     } else {
