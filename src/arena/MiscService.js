@@ -23,7 +23,7 @@ const WEAPON_TYPES = {
   h: {
     name: 'рубящее',
     dodge: true,
-    action: (target, weapon) => `покромсал *${target}* _${weapon.case}_`,
+    action: (target, weapon) => `рубанул *${target}* _${weapon.case}_`,
   },
   g: {
     name: 'лечащее',
