@@ -62,9 +62,10 @@ class Skill {
       this.checkChance();
       this.run();
       this.next();
+      this.getExp(initiator);
     } catch (failMsg) {
-      const bl = this.params.game.battleLog;
-      bl.log(failMsg);
+      const { battleLog } = this.params.game;
+      battleLog.log(failMsg);
       this.params = null;
     }
   }
@@ -125,6 +126,13 @@ class Skill {
    */
   // eslint-disable-next-line class-methods-use-this
   run() {}
+
+  /**
+   * Расчитываем полученный exp
+   */
+  getExp(initiator) {
+    initiator.stats.mode('up', 'exp', this.baseExp);
+  }
 
   /**
    * Обработка провала магии

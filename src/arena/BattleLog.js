@@ -1,4 +1,5 @@
 const ee = require('events');
+const { weaponTypes } = require('./MiscService');
 
 /**
  * msg
@@ -15,32 +16,40 @@ function csl(msgObj) {
   } = msgObj;
   const TEXT = {
     NO_MANA: {
-      ru: `Не хватило маны для заклинания ${action}`,
+      ru: `Не хватило маны для заклинания _${action}_`,
+      eng: '',
+    },
+    NO_ENERGY: {
+      ru: `Не хватило энерги для умения _${action}_`,
       eng: '',
     },
     SILENCED: {
-      ru: `${initiator} пытался сотворить ${action}, но попытка провалилась(затыка)`,
+      ru: `*${initiator}* пытался сотворить _${action}_, но попытка провалилась(затыка)`,
       eng: '',
     },
     DEF: {
-      ru: `${initiator} атаковал ${target}, но тот смог защититься [${failReason}]`,
+      ru: `*${initiator}* атаковал *${target}*, но тот смог защититься [${failReason}]`,
       eng: '',
     },
     CHANCE_FAIL: {
-      ru: `${initiator} пытался сотворить ${action}, но у него не вышло`,
+      ru: `*${initiator}* пытался сотворить _${action}_, но у него не вышло`,
       eng: '',
     },
     GOD_FAIL: {
-      ru: `Заклинание ${action} ${initiator} провалилось по воле богов `,
+      ru: `Заклинание _${action}_ *${initiator}* провалилось по воле богов `,
       eng: '',
     },
     HEAL_FAIL: {
-      ru: `${initiator} пытался вылечить ${target}, но тот был атакован`,
+      ru: `*${initiator}* пытался _вылечить_ *${target}*, но тот был атакован`,
       eng: '',
     },
     SKILL_FAIL: {
-      ru: `${initiator} пытался использовать умение ${action}, но у него не вышло`,
+      ru: `*${initiator}* пытался использовать умение _${action}_, но у него не вышло`,
       eng: '',
+    },
+    DODGED: {
+      ru: `*${initiator}* атаковал *${target}*, но тот уклонился от атаки`,
+      en: '',
     },
   };
   const text = TEXT[message] || {
@@ -77,24 +86,26 @@ class BattleLog extends ee {
 
   /**
    * Удачный проход action
-   * @param {Object} msgObj тип сообщения
+   * @param {Object.<string, any>} msgObj тип сообщения
    */
   success(msgObj) {
     let data = '';
     // Если обьект содержит кастомную строку испльзуем её
     if (msgObj.msg) {
       data = msgObj.msg(msgObj.initiator, msgObj.exp);
-    } else if (msgObj.dmgType) {
-      // магия является атакующей
-      if (msgObj.dmgType === 'phys') {
-        data = `${msgObj.initiator} нанес удар ${msgObj.target} ${msgObj.weaponCase} на ${msgObj.dmg} урона и получил +e:${msgObj.exp}`;
+    } else if (msgObj.dmgType && msgObj.dmgType === 'phys') {
+      if (msgObj.weapon) {
+        const { action } = weaponTypes[msgObj.weapon.wtype];
+        data = `*${msgObj.initiator}* ${action(msgObj.target, msgObj.weapon)} и нанёс *${msgObj.dmg}* урона \\[ 💔-${msgObj.dmg}/${msgObj.hp} 📖${msgObj.exp} ]`;
       } else {
-        data = `${msgObj.initiator} сотворил ${msgObj.action} (${msgObj.actionType}) на ${msgObj.target} нанеся ${msgObj.dmg} урона и получил +e:${msgObj.exp}`;
+        data = `*${msgObj.initiator}* сотворил _${msgObj.action}_ (${msgObj.actionType}) на *${msgObj.target}* нанеся ${msgObj.dmg} урона и получил +e:${msgObj.exp}`;
       }
+    } else if (msgObj.dmgType) {
+      data = `*${msgObj.initiator}* сотворил _${msgObj.action}_ (${msgObj.actionType}) на *${msgObj.target}* нанеся ${msgObj.dmg} урона и получил +e:${msgObj.exp}`;
     } else if (!msgObj.effect) {
-      data = `${msgObj.initiator} использовал ${msgObj.action} (${msgObj.actionType}) на ${msgObj.target} и получил +e:${msgObj.exp}`;
+      data = `*${msgObj.initiator}* использовал _${msgObj.action}_ (${msgObj.actionType}) на *${msgObj.target}* и получил +e:${msgObj.exp}`;
     } else {
-      data = `${msgObj.initiator} использовав ${msgObj.action} на ${msgObj.target} с эффектом ${msgObj.effect} получил +e:${msgObj.exp}`;
+      data = `*${msgObj.initiator}* использовав _${msgObj.action}_ на *${msgObj.target}* с эффектом ${msgObj.effect} получил +e:${msgObj.exp}`;
     }
     this.write(data);
   }

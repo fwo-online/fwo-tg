@@ -1,9 +1,7 @@
 const Scene = require('telegraf/scenes/base');
-const Stage = require('telegraf/stage');
 const Markup = require('telegraf/markup');
 const { harksDescr } = require('../arena/MiscService');
 
-const { leave } = Stage;
 const harkScene = new Scene('harks');
 
 /**
@@ -96,12 +94,10 @@ harkScene.action('reset', async ({ session, editMessageText, answerCbQuery }) =>
 });
 
 harkScene.action('exit', ({ scene }) => {
-  leave();
   scene.enter('profile');
 });
 
 harkScene.hears('🔙 В лобби', ({ scene }) => {
-  leave();
   scene.enter('lobby');
 });
 
