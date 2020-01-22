@@ -43,7 +43,7 @@ inventory.statics = {
    * @desc Возвращает  суммарный обьект всех суммирующихся характеристик от
    * одетых вещей внутри инвентаря чара
    * @param {Number} charId Идентификатор чара чей inventory нужно пропарсить
-   * @return {Object}
+   * @return {Promise<Object>}
    * @todo нужна фунция которая выбирает коды всех одеты вещей в инвентаре
    * а затем суммирует все полученные данны в единый обьект.
    *
@@ -96,7 +96,7 @@ inventory.statics = {
    * @description Удаление итема из инвентаря чара (итем обязан быть снят)
    * @param {String} charId идентификатор чара
    * @param {string} itemId идентификатор итема в инвенторе
-   * @return {Array} Массив нового инвентаря
+   * @return {Promise<Array>} Массив нового инвентаря
    */
 
   // eslint-disable-next-line consistent-return
@@ -132,7 +132,7 @@ inventory.statics = {
    * @description Пытаемся одеть указанный итем.
    * @param {Number} charId ID чара
    * @param {Number} itemId Идентификатор итема внутри инвенторя пользователя
-   * @return {Array} Массив нового инвентаря
+   * @return {Promise<Array>} Массив нового инвентаря
    */
   async putOnItem(charId, itemId) {
     return this.model('Inventory').updateOne({
@@ -148,7 +148,7 @@ inventory.statics = {
    * @description Пытаемся снять указанный итем.
    * @param {Number} charId ID чара
    * @param {Number} itemId Идентификатор итема внутри инвенторя пользователя
-   * @return {Promise<Query|void>} ItemObject после изменения его в базе
+   * @return {Promise<Array|void>} ItemObject после изменения его в базе
    */
   async putOffItem(charId, itemId) {
     return this.model('Inventory').updateOne({
@@ -162,7 +162,7 @@ inventory.statics = {
    * Функция возвращает обьект ItemObj привязанному к персонажу
    * @param itemId
    * @param charId
-   * @return {Promise<Query|void>}
+   * @return {Promise<Array|void>}
    */
   async getItem(itemId, charId) {
     return this.model('Inventory').findOne({

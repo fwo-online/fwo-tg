@@ -102,6 +102,7 @@ class Char {
    * @property {Number} bonus
    * @property {Object} mm
    * @property {Object.<string, number>} skills
+   * @property {Number} clan
    */
   constructor(charObj) {
     // const defaults = defHarks(charObj.prof);
@@ -201,6 +202,10 @@ class Char {
     this.charObj.inventory = items;
   }
 
+  get clan() {
+    return this.charObj.clan;
+  }
+
   /**
    * Проверяет количество опыта для следующего уровня. Добавляет уровень, если опыта достаточно
    * @param {number} currentExp - текущее количество опыта
@@ -230,7 +235,7 @@ class Char {
 
   async removeItem(itemId) {
     this.items = this.items.filter((item) => !item._id.equals(itemId));
-    await db.inventory.removeItem(this.id, itemId);
+    await db.inventory.removeItem(itemId, this.id);
     return this.saveToDb();
   }
 

@@ -31,6 +31,7 @@ class Player {
    * @property {Number} lvl
    * @property {{code: string, putOn: boolean}[]} items
    * @property {Object.<string, number>} harks
+   * @property {Number} clan
    */
   constructor(params) {
     this.nick = params.nickname;
@@ -38,6 +39,7 @@ class Player {
     this.tgId = params.tgId;
     this.prof = params.prof;
     this.lvl = params.lvl;
+
     this.items = params.items
       .filter((item) => item.putOn)
       .map((item) => ({
@@ -46,7 +48,8 @@ class Player {
         case: global.arena.items[item.code].case,
         name: global.arena.items[item.code].name,
       }));
-    this.stats = new StatsService({ ...params.def, ...params.harks });
+    this.clan = params.clan;
+    this.stats = new StatsService(params.def);
     this.flags = new FlagsConstructors();
     // @todo закладка для вычисляемых статов
     this.modifiers = { magics: {}, castChance: 0, ...params.modifiers }; // Обьект

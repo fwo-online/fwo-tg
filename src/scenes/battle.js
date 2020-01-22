@@ -9,6 +9,8 @@ const arena = require('../arena');
 const GameService = require('../arena/GameService');
 const { charDescr } = require('../arena/MiscService');
 const { skills } = require('../arena/SkillService');
+const loginHelper = require('../helpers/loginHelper');
+
 
 const battleScene = new Scene('battleScene');
 
@@ -172,6 +174,22 @@ battleScene.command('run', async ({ reply, session }) => {
   Game.preKick(id, 'run');
 
   reply('Ты будешь выброшен из игры в конце этого раунда');
+});
+
+/**
+ * Запус тестового боя
+ */
+battleScene.command('debug', async ({ reply, session }) => {
+  // @todo сделать отдельный признак в базе
+  const ADMINS = ['358539547', '187930249', '279139400', '371685623'];
+  const { tgId } = session.character;
+  if (!(ADMINS.indexOf(tgId) + 1)) {
+    // test players: id 5e05ee58bdf83c6a5ff3f8dd, tgId: 123456789
+    await loginHelper.getChar('123456789');
+    const searchObject = { charId: '5e05ee58bdf83c6a5ff3f8dd', psr: 1000, startTime: Date.now() };
+    arena.mm.push(searchObject);
+    reply('ok');
+  }
 });
 
 module.exports = battleScene;

@@ -28,6 +28,6 @@ const acidSpittle = new DmgMagic({
  * @param {player} target Обьект цели
  */
 acidSpittle.run = function run(initiator, target) {
-  target.stats.mode('down', 'hp', this.effectVal(initiator));
+  target.stats.mode('down', 'hp', this.effectVal());
 };
 module.exports = acidSpittle;

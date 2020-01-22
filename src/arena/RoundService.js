@@ -26,6 +26,8 @@ class RoundConstructor extends ee {
     super();
     this.count = 0;
     this.status = 'init';
+    // @todo нужна обработков флагов которые действуют на всю арену
+    this.flags = {};
   }
 
   /**
