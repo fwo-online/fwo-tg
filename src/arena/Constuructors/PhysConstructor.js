@@ -30,7 +30,6 @@ class PhysConstructor {
     this.lvl = atkAct.lvl;
     this.orderType = atkAct.orderType;
     this.status = {};
-    this.status.failReason = undefined; // причина провала атаки
   }
 
   /**
@@ -45,7 +44,6 @@ class PhysConstructor {
       initiator, target, game,
     };
     this.status = {};
-    const bl = this.params.game.battleLog;
     try {
       this.checkPreAffects();
       this.fitsCheck();
@@ -56,7 +54,8 @@ class PhysConstructor {
       this.checkTargetIsDead();
       this.next();
     } catch (e) {
-      bl.log(e);
+      const { battleLog } = this.params.game;
+      battleLog.log(e);
     }
   }
 
@@ -65,9 +64,10 @@ class PhysConstructor {
    */
   checkPreAffects() {
     const { initiator, target } = this.params;
+    const hasDodgingItems = initiator.items
+      .some((i) => i.wtype && MiscService.weaponTypes[i.wtype].dodge);
     // Проверяем увёртку
-    if (target.flags.isDodging) {
-      // @todo нужна проверка на тип оружия в руках атакующего
+    if (target.flags.isDodging && hasDodgingItems) {
       //  проверяем имеет ли цель достаточно dex для того что бы уклониться
       const iDex = initiator.stats.val('dex');
       const at = floatNumber(Math.round(target.flags.isDodging / iDex));
@@ -75,12 +75,9 @@ class PhysConstructor {
       console.log('Dodging: ', at);
       const r = MiscService.rndm('1d100');
       const c = Math.round(Math.sqrt(at) + (10 * at) + 5);
-      const result = c > r;
       // eslint-disable-next-line no-console
-      console.log('left:', c, ' right:', r, ' result:', result);
-      this.status.failReason = ({
-        action: 'dodge', message: 'dodged',
-      });
+      console.log('left:', c, ' right:', r, ' result:', c > r);
+      if (c > r) throw this.breaks('DODGED');
     }
   }
 
@@ -126,9 +123,7 @@ class PhysConstructor {
       this.run();
     } else {
       this.protectorsGetExp();
-      this.status.failReason = ({
-        action: 'protect', message: 'DEF',
-      });
+      throw this.breaks('DEF');
     }
   }
 
@@ -152,27 +147,19 @@ class PhysConstructor {
   next() {
     const { initiator, target } = this.params;
     const { battleLog } = this.params.game;
-    if (this.status.failReason) {
-      const msg = {
-        target: target.nick,
-        initiator: initiator.nick,
-        failReason: this.status.failReason.action,
-        message: this.status.failReason.message,
-        actionType: 'phys',
-      };
-      battleLog.log(msg);
-    } else {
-      const msg = {
-        exp: this.status.exp,
-        action: this.name,
-        actionType: 'phys',
-        target: target.nick,
-        dmg: floatNumber(this.status.hit),
-        initiator: initiator.nick,
-        dmgType: 'phys',
-      };
-      battleLog.success(msg);
-    }
+    const weapon = initiator.items.find((item) => MiscService.weaponTypes[item.wtype]);
+    const msg = {
+      exp: this.status.exp,
+      action: this.name,
+      actionType: 'phys',
+      target: target.nick,
+      dmg: floatNumber(this.status.hit),
+      hp: target.stats.val('hp'),
+      initiator: initiator.nick,
+      dmgType: 'phys',
+      weapon,
+    };
+    battleLog.success(msg);
   }
 
   /**
@@ -188,6 +175,20 @@ class PhysConstructor {
         action: this.name, initiator: this.params.initiator.id,
       };
     }
+  }
+
+
+  /**
+   * @param {String} msg строка остановки атаки (причина)
+   */
+  breaks(msg) {
+    return {
+      actionType: 'phys',
+      message: msg,
+      action: this.name,
+      initiator: this.params.initiator.nick,
+      target: this.params.target.nick,
+    };
   }
 
   /**
