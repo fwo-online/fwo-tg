@@ -1,9 +1,7 @@
-const Stage = require('telegraf/stage');
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
 const { charDescr } = require('../arena/MiscService');
 
-const { leave } = Stage;
 const create = new Scene('create');
 
 const getProfButtons = () => Object
@@ -48,7 +46,6 @@ create.action(/select(?=_)/, ({ editMessageText, session, match }) => {
 
 create.action('select', async ({ editMessageText, scene }) => {
   await editMessageText('Отлично', Markup.inlineKeyboard([]));
-  leave();
   scene.enter('setNick');
 });
 

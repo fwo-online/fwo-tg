@@ -76,6 +76,7 @@ class StatsService {
     this.inRound.en = oldData.en || this.defStat.maxEn;
     this.inRound.exp = 0; // кол-во Exp на начало раунда
     this.inRound.def = 0; // кол-во дефа на начало
+    this.inRound.dex = oldData.dex || this.defStat.dex; // кол-во ловкости на начало
   }
 
   /**

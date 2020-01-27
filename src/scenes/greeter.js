@@ -1,7 +1,6 @@
-const Stage = require('telegraf/stage');
+
 const Scene = require('telegraf/scenes/base');
 
-const { leave } = Stage;
 const greeter = new Scene('greeter');
 
 greeter.enter(async ({
@@ -9,10 +8,8 @@ greeter.enter(async ({
 }) => {
   if (session.character) {
     await reply('FWO - Arena');
-    leave();
     scene.enter('lobby');
   } else {
-    leave();
     scene.enter('create');
   }
 });

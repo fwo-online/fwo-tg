@@ -1,9 +1,7 @@
 const Scene = require('telegraf/scenes/base');
-const Stage = require('telegraf/stage');
 const Markup = require('telegraf/markup');
 const SkillService = require('../arena/SkillService');
 
-const { leave } = Stage;
 const skillsScene = new Scene('skills');
 
 const getSkillButtons = (list, char) => Object
@@ -124,7 +122,6 @@ skillsScene.action('exit', ({ scene }) => {
 });
 
 skillsScene.hears('🔙 В лобби', ({ scene }) => {
-  leave();
   scene.enter('lobby');
 });
 
