@@ -146,7 +146,7 @@ class PhysConstructor {
    */
   next() {
     const { initiator, target } = this.params;
-    const { battleLog } = this.params.game;
+    const { game } = this.params;
     const weapon = initiator.items.find((item) => MiscService.weaponTypes[item.wtype]);
     const msg = {
       exp: this.status.exp,
@@ -159,7 +159,8 @@ class PhysConstructor {
       dmgType: 'phys',
       weapon,
     };
-    battleLog.success(msg);
+    game.addHistoryDamage(msg);
+    game.battleLog.success(msg);
   }
 
   /**
