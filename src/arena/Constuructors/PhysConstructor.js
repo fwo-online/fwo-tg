@@ -148,19 +148,30 @@ class PhysConstructor {
     const { initiator, target } = this.params;
     const { battleLog } = this.params.game;
     const weapon = initiator.weapon || {};
+    const weaponCase = global.arena.items[weapon.code] ? global.arena.items[weapon.code].case : 'Руками';
 
-    const msg = {
-      exp: this.status.exp,
-      action: this.name,
-      actionType: 'phys',
-      target: target.nick,
-      dmg: floatNumber(this.status.hit),
-      hp: target.stats.val('hp'),
-      initiator: initiator.nick,
-      dmgType: 'phys',
-      weapon,
-    };
-    battleLog.success(msg);
+    if (this.status.failReason) {
+      const msg = {
+        target: target.nick,
+        initiator: initiator.nick,
+        failReason: this.status.failReason.action,
+        message: this.status.failReason.message,
+        actionType: 'phys',
+      };
+      battleLog.log(msg);
+    } else {
+      const msg = {
+        exp: this.status.exp,
+        action: this.name,
+        actionType: 'phys',
+        target: target.nick,
+        dmg: floatNumber(this.status.hit),
+        initiator: initiator.nick,
+        weaponCase,
+        dmgType: 'phys',
+      };
+      battleLog.success(msg);
+    }
   }
 
   /**
