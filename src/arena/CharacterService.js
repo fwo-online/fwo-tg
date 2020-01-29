@@ -230,7 +230,7 @@ class Char {
   }
 
   getPutonedWeapon() {
-    return this.items.find((item) => item.wear === 'a' && item.putOn);
+    return this.items.find((item) => /^ab?$/.test(item.wear) && item.putOn);
   }
 
   isCanPutOned(item) {
