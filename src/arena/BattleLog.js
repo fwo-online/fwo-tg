@@ -3,7 +3,6 @@ const { weaponTypes } = require('./MiscService');
 
 /**
  * msg
- * @param {Object.<string, string>} msgObj тип сообщения
  * @todo WIP, функция должна будет принимать как значения урона т.п так и
  * уметь работать с i18n
  * сейчас (е) не обрабатывается, нужно обрабатывать только нужный тип Error
@@ -12,8 +11,11 @@ const { weaponTypes } = require('./MiscService');
  */
 function csl(msgObj) {
   const {
-    failReason, action, message, target, initiator,
+    failReason, action, message, target, initiator, expArr, weapon,
   } = msgObj;
+
+  const expString = expArr ? expArr.map(([name, exp]) => `${name}: 📖${exp}`).join(', ') : '';
+
   const TEXT = {
     NO_MANA: {
       ru: `Не хватило маны для заклинания _${action}_`,
@@ -25,10 +27,6 @@ function csl(msgObj) {
     },
     SILENCED: {
       ru: `*${initiator}* пытался сотворить _${action}_, но попытка провалилась(затыка)`,
-      eng: '',
-    },
-    DEF: {
-      ru: `*${initiator}* атаковал *${target}*, но тот смог защититься [${failReason}]`,
       eng: '',
     },
     CHANCE_FAIL: {
@@ -47,8 +45,16 @@ function csl(msgObj) {
       ru: `*${initiator}* пытался использовать умение _${action}_, но у него не вышло`,
       eng: '',
     },
+    NO_WEAPON: {
+      ru: `*${initiator}* пытался атаковать *${target}*, но у него не оказалось оружия в руках`,
+      eng: '',
+    },
+    DEF: {
+      ru: `*${initiator}* атаковал *${target}* _${weapon ? weapon.case : ''}_, но тот смог защититься \\[${expString}]`,
+      eng: '',
+    },
     DODGED: {
-      ru: `*${initiator}* атаковал *${target}*, но тот уклонился от атаки`,
+      ru: `*${initiator}* атаковал *${target}* _${weapon ? weapon.case : ''}_, но тот уклонился от атаки`,
       en: '',
     },
   };
@@ -94,12 +100,8 @@ class BattleLog extends ee {
     if (msgObj.msg) {
       data = msgObj.msg(msgObj.initiator, msgObj.exp);
     } else if (msgObj.dmgType && msgObj.dmgType === 'phys') {
-      if (msgObj.weapon) {
-        const { action } = weaponTypes[msgObj.weapon.wtype];
-        data = `*${msgObj.initiator}* ${action(msgObj.target, msgObj.weapon)} и нанёс *${msgObj.dmg}* урона \\[ 💔-${msgObj.dmg}/${msgObj.hp} 📖${msgObj.exp} ]`;
-      } else {
-        data = `*${msgObj.initiator}* сотворил _${msgObj.action}_ (${msgObj.actionType}) на *${msgObj.target}* нанеся ${msgObj.dmg} урона и получил +e:${msgObj.exp}`;
-      }
+      const { action } = weaponTypes[msgObj.weapon.wtype];
+      data = `*${msgObj.initiator}* ${action(msgObj.target, msgObj.weapon)} и нанёс *${msgObj.dmg}* урона \\[ 💔-${msgObj.dmg}/${msgObj.hp} 📖${msgObj.exp} ]`;
     } else if (msgObj.dmgType) {
       data = `*${msgObj.initiator}* сотворил _${msgObj.action}_ (${msgObj.actionType}) на *${msgObj.target}* нанеся ${msgObj.dmg} урона и получил +e:${msgObj.exp}`;
     } else if (!msgObj.effect) {
