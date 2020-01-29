@@ -152,12 +152,11 @@ battleScene.action(/^([^_]+)_([^_]+)_([^_]+)$/, async ({ editMessageText, sessio
   editMessageText(
     `У тебя осталось *${player.proc}%*
 Заказы: ${message.join()}`,
-    player.proc !== 0 ? {
-      parse_mode: 'Markdown',
-      reply_markup: Markup.inlineKeyboard(
+    player.proc !== 0
+      ? Markup.inlineKeyboard(
         channelHelper.getOrderButtons(player),
-      ).resize(),
-    } : '',
+      ).resize().extra({ parse_mode: 'Markdown' })
+      : { parse_mode: 'Markdown' },
   );
 });
 
