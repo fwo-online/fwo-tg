@@ -10,4 +10,7 @@ module.exports = {
    * @description Item from DB
    */
   items: {},
+
+  /** @type import ('./magics')  */
+  magics: null,
 };

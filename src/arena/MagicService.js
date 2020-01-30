@@ -7,7 +7,6 @@ const arena = require('./index');
  * Сервис работы с магиями
  */
 // const magicList = arena.magics;
-global.arena.magics = require('./magics');
 
 /**
  * Возвращает есть ли доступные магии на данном круге для изучения
@@ -47,7 +46,7 @@ function learnChance() {
 }
 
 module.exports = {
-  magics: global.arena.magics,
+  magics: arena.magics,
   /**
    * Список доступных магий для профы на заданном круге
    * @param {Number|String} lvl круг магии
@@ -56,7 +55,7 @@ module.exports = {
    */
   list(lvl, prof) {
     // eslint-disable-next-line array-callback-return, consistent-return
-    let magicList = _.filter(global.arena.magics, (m) => {
+    let magicList = _.filter(arena.magics, (m) => {
       if (m.lvl === 0) return true;
       if (m.profList) return m.profList.indexOf(prof) + 1;
     });
@@ -106,7 +105,7 @@ module.exports = {
    * @return {{name: string, desc: string}}
    */
   show(magId) {
-    const a = global.arena.magics[magId];
+    const a = arena.magics[magId];
     return { name: a.name, desc: a.desc };
   },
 };
