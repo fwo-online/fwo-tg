@@ -29,9 +29,9 @@ class Player {
       .filter((item) => item.putOn)
       .map((item) => ({
         /** @type {string} */
-        wtype: global.arena.items[item.code].wtype,
-        case: global.arena.items[item.code].case,
-        name: global.arena.items[item.code].name,
+        wtype: arena.items[item.code].wtype,
+        case: arena.items[item.code].case,
+        name: arena.items[item.code].name,
       }));
     this.clan = params.clan;
     this.stats = new StatsService(params.def);

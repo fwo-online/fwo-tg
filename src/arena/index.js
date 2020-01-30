@@ -1,14 +1,13 @@
-const MM = require('./MatchMakingService');
-
-MM.start();
-
-global.arena = {};
-
-/** @type Object<string, import ('./CharacterService')> */
-const characters = {};
-/** @type Object<string, import ('./GameService')> */
-const games = {};
-
 module.exports = {
-  mm: MM, characters, games,
+  /** @type {import ('./MatchMakingService')} */
+  mm: null,
+  /** @type Object<string, import ('./CharacterService')> */
+  characters: {},
+  /** @type Object<string, import ('./GameService')> */
+  games: {},
+  /**
+   * @type Object<string, import ('../models/item')>
+   * @description Item from DB
+   */
+  items: {},
 };

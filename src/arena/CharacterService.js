@@ -251,7 +251,7 @@ class Char {
 
   async putOnItem(itemId) {
     const charItem = this.getItem(itemId);
-    const item = global.arena.items[charItem.code];
+    const item = arena.items[charItem.code];
     const {
       str, dex, wis, int, con,
     } = this.harks;
@@ -308,7 +308,7 @@ class Char {
   }
 
   async buyItem(itemCode) {
-    const item = global.arena.items[itemCode];
+    const item = arena.items[itemCode];
 
     if (this.gold < item.price) {
       return false;
@@ -321,7 +321,7 @@ class Char {
 
   sellItem(itemId) {
     const charItem = this.getItem(itemId);
-    const item = global.arena.items[charItem.code];
+    const item = arena.items[charItem.code];
 
     this.removeItem(itemId);
     this.gold += item.price / 2;
@@ -364,7 +364,6 @@ class Char {
     }
 
     const char = new Char(charFromDb);
-
     arena.characters[char.id] = char;
     return char;
   }

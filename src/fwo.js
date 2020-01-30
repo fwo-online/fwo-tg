@@ -9,6 +9,8 @@ const authMiddleware = require('./middlewares/authMiddleware');
 const protectedMiddleware = require('./middlewares/protectedMiddleware');
 const chatMiddleware = require('./middlewares/chatMiddleware');
 const restartMiddleware = require('./middlewares/restartMiddleware');
+const MM = require('./arena/MatchMakingService');
+const arena = require('./arena');
 
 // DB connection
 db.connection.on('open', () => {
@@ -16,6 +18,9 @@ db.connection.on('open', () => {
   console.log('db online');
   Item.load();
 });
+
+MM.start();
+arena.mm = MM;
 
 const socksAgent = new SocksAgent({
   socksHost: '45.138.156.65',

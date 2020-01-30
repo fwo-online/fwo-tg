@@ -1,6 +1,8 @@
+
 const Scene = require('telegraf/scenes/base');
 const Stage = require('telegraf/stage');
 const Markup = require('telegraf/markup');
+const arena = require('../arena');
 const Inventory = require('../models/inventory');
 const ItemService = require('../arena/ItemService');
 
@@ -41,7 +43,7 @@ inventoryScene.action(/itemInfo(?=_)/,
     const item = session.character.getItem(itemId);
     const itemDescription = ItemService.itemDescription(
       session.character,
-      global.arena.items[item.code],
+      arena.items[item.code],
     );
     const itemAction = item.putOn ? Markup.callbackButton('Снять',
       `putOff_${itemId}`) : Markup.callbackButton('Надеть',
