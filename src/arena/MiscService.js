@@ -1,3 +1,5 @@
+const arena = require('./index');
+
 /**
  * @description Просто мусорка с кастомными функциями
  * @module Service/Misc
@@ -205,7 +207,7 @@ module.exports = {
    *@return {Boolean}
    */
   isMagic(action) {
-    return global.arena.magics[action]._proto_.constructor === 'magic';
+    return arena.magics[action]._proto_.constructor === 'magic';
   },
   randInt, /**
    * генератор уникальных идентификаторов для тим

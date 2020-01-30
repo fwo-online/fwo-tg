@@ -100,12 +100,12 @@ battleScene.action('stop', async ({ editMessageText, session }) => {
     ]).resize().extra(),
   );
   await channelHelper.broadcast(
-    `Игрок ${global.arena.players[id].nickname} внезапно передумал`,
+    `Игрок ${arena.characters[id].nickname} внезапно передумал`,
   );
 });
 
 battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) => {
-  const gameId = global.arena.players[session.character.id].mm;
+  const gameId = arena.characters[session.character.id].mm;
   const [, action] = match.input.split('_');
   const proc = skills[action] ? `_${skills[action].proc}` : '';
   const aliveArr = GameService.aliveArr(gameId)
@@ -122,9 +122,9 @@ battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) =>
 battleScene.action(/^([^_]+)_([^_]+)$/, async ({ editMessageText, session, match }) => {
   const [action, target] = match.input.split('_');
   const { id } = session.character;
-  const gameId = global.arena.players[id].mm;
+  const gameId = arena.characters[id].mm;
   /** @type {GameService} */
-  const Game = global.arena.games[gameId];
+  const Game = arena.games[gameId];
   const player = Game.players[id];
   editMessageText(
     `Выбери силу ${action} на игрока ${Game.players[target].nick}`,
@@ -137,14 +137,14 @@ battleScene.action(/^([^_]+)_([^_]+)$/, async ({ editMessageText, session, match
 battleScene.action(/^([^_]+)_([^_]+)_([^_]+)$/, async ({ editMessageText, session, match }) => {
   const [action, target, proc] = match.input.split('_');
   const initiator = session.character.id;
-  const gameId = global.arena.players[initiator].mm;
+  const gameId = arena.characters[initiator].mm;
   /** @type {GameService} */
-  const Game = global.arena.games[gameId];
+  const Game = arena.games[gameId];
   const player = Game.players[initiator];
   Game.orders.orderAction({
     initiator, target, action, proc,
   });
-  const { magics } = global.arena;
+  const { magics } = arena;
   const ACTIONS = { ...skills, ...magics };
   const message = Game.orders.ordersList
     .filter((o) => o.initiator === initiator)
@@ -166,9 +166,9 @@ battleScene.action('exit', ({ scene }) => {
 
 battleScene.command('run', async ({ reply, session }) => {
   const { id } = session.character;
-  const gameId = global.arena.players[id].mm;
+  const gameId = arena.characters[id].mm;
   /** @type {GameService} */
-  const Game = global.arena.games[gameId];
+  const Game = arena.games[gameId];
 
   Game.preKick(id, 'run');
 

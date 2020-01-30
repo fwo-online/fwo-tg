@@ -145,12 +145,11 @@ class PhysConstructor {
    */
   next(failMsg) {
     const { initiator, target } = this.params;
-    const { battleLog } = this.params.game;
-
+    const { game } = this.params;
     const weapon = global.arena.items[initiator.weapon.code];
 
     if (failMsg) {
-      battleLog.log({ ...failMsg, weapon });
+      game.battleLog.log({ ...failMsg, weapon });
     } else {
       const msg = {
         exp: this.status.exp,
@@ -163,7 +162,8 @@ class PhysConstructor {
         weapon,
         dmgType: 'phys',
       };
-      battleLog.success(msg);
+      game.addHistoryDamage(msg);
+      game.battleLog.success(msg);
     }
   }
 
@@ -181,6 +181,7 @@ class PhysConstructor {
       };
     }
   }
+
 
   /**
    * @param {String} msg строка остановки атаки (причина)

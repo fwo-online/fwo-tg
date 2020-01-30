@@ -2,11 +2,10 @@ const config = require('./config');
 const CharacterService = require('./CharacterService');
 const GameService = require('./GameService');
 const testGame = require('./testGame');
-
-global.arena.magics = require('./magics');
+const arena = require('./index');
 const skills = require('./skills');
 
-const { magics } = global.arena;
+const { magics } = arena;
 const ACTIONS = { ...magics, ...skills };
 const STAGES = config.stages;
 

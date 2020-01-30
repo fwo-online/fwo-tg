@@ -56,9 +56,9 @@ class LongDmgMagic extends DmgMagic {
    *
    */
   longNext(i, t) {
-    const bl = this.params.game.battleLog;
+    const { game } = this.params;
     // noinspection Annotator
-    bl.success({
+    const dmgObj = {
       exp: this.status.exp,
       dmg: floatNumber(this.status.hit),
       action: this.name,
@@ -66,7 +66,9 @@ class LongDmgMagic extends DmgMagic {
       target: t.nick,
       initiator: i.nick,
       dmgType: this.dmgType,
-    });
+    };
+    game.addHistoryDamage(dmgObj);
+    game.battleLog.success(dmgObj);
     this.params = {};
     this.status = {};
   }

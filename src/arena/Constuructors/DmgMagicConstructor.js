@@ -69,8 +69,8 @@ class DmgMagic extends Magic {
    * @todo тут нужен вывод требуемых параметров
    */
   next(initiator, target) {
-    const bl = this.params.game.battleLog;
-    bl.success({
+    const { game } = this.params;
+    const dmgObj = {
       exp: this.status.exp,
       dmg: floatNumber(this.status.hit),
       action: this.name,
@@ -78,7 +78,9 @@ class DmgMagic extends Magic {
       target: target.nick,
       initiator: initiator.nick,
       dmgType: this.dmgType,
-    });
+    };
+    game.addHistoryDamage(dmgObj);
+    game.battleLog.success(dmgObj);
   }
 }
 
