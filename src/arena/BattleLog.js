@@ -11,7 +11,7 @@ const { weaponTypes } = require('./MiscService');
  */
 function csl(msgObj) {
   const {
-    failReason, action, message, target, initiator, expArr, weapon,
+    action, message, target, initiator, expArr, weapon,
   } = msgObj;
 
   const expString = expArr ? expArr.map(([name, exp]) => `${name}: 📖${exp}`).join(', ') : '';
