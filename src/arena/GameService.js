@@ -4,6 +4,7 @@ const engineService = require('./engineService');
 const db = require('../helpers/dataBase');
 const channelHelper = require('../helpers/channelHelper');
 const testGame = require('./testGame');
+const arena = require('./index');
 /**
  * GameService
  *
@@ -51,7 +52,7 @@ class Game {
    * @return {Player[]} массив живых игроков
    */
   static aliveArr(gameId) {
-    const game = global.arena.games[gameId];
+    const game = arena.games[gameId];
     return _.filter(game.players, {
       alive: true,
     });
@@ -97,10 +98,14 @@ class Game {
   preLoading() {
     this.info.status = 'preload';
     this.forAllAlivePlayers(Game.hideLastMessage);
-    this.startGame();
     this.initHandlers();
-    this.info.players.forEach((player) => {
-      global.arena.players[player].mm = this.info.id;
+    this.startGame();
+
+    arena.games[this.info.id] = this;
+
+    this.info.players.forEach((playerId) => {
+      arena.characters[playerId].mm = this.info.id;
+      arena.characters[playerId].currentGame = this.info.id;
     });
   }
 
@@ -213,6 +218,7 @@ class Game {
     this.players = await this.playerArr.roundJson();
     this.info = dbGame;
     this.info.id = this.info._id;
+    this.preLoading();
     return true;
   }
 
@@ -299,11 +305,10 @@ class Game {
    */
   saveGame() {
     try {
-      const charArr = global.arena.players;
       _.forEach(this.info.players, async (p) => {
-        charArr[p].exp += this.players[p].stats.collect.exp;
-        charArr[p].gold += this.players[p].stats.collect.gold;
-        await charArr[p].saveToDb();
+        arena.characters[p].exp += this.players[p].stats.collect.exp;
+        arena.characters[p].gold += this.players[p].stats.collect.gold;
+        await arena.characters[p].saveToDb();
       });
     } catch (e) {
       // eslint-disable-next-line no-console

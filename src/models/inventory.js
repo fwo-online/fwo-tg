@@ -1,5 +1,7 @@
+
 const mongoose = require('mongoose');
 const _ = require('lodash');
+const arena = require('../arena');
 const config = require('../arena/config');
 
 const { Schema } = mongoose;
@@ -80,7 +82,7 @@ inventory.statics = {
    */
   // eslint-disable-next-line consistent-return
   async addItem(charId, itemCode) {
-    const item = global.arena.items[itemCode];
+    const item = arena.items[itemCode];
     try {
       return await this.model('Inventory')
         .create({
@@ -197,7 +199,7 @@ inventory.statics = {
    * @return {String} displayName вещи
    */
   getItemName(itemCode) {
-    return global.arena.items[itemCode].name;
+    return arena.items[itemCode].name;
   },
 };
 

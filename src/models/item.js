@@ -1,7 +1,9 @@
+
 const _ = require('lodash');
 const fs = require('fs');
 const mongoose = require('mongoose');
 const forEach = require('lodash.foreach');
+const arena = require('../arena');
 const config = require('../arena/config');
 const ItemService = require('../arena/ItemService');
 
@@ -158,7 +160,7 @@ const item = new Schema({
 item.statics = {
   /**
    * Load/reload
-   * @description Функция подгрузки итемов в память (global.arena.items)
+   * @description Функция подгрузки итемов в память (arena.items)
    *
    */
   async load() {
@@ -166,7 +168,7 @@ item.statics = {
     try {
       const items = await this.model('Item').find({});
       if (Object.entries(items).length) {
-        global.arena.items = _.keyBy(items, 'code');
+        arena.items = _.keyBy(items, 'code');
       } else {
         let shopArr = fs.readFileSync('shop.json', 'utf8');
         shopArr = JSON.parse(shopArr);
@@ -183,7 +185,7 @@ item.statics = {
           }
           return true;
         });
-        global.arena.items = _.keyBy(items, 'code');
+        arena.items = _.keyBy(items, 'code');
       }
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -199,7 +201,7 @@ item.statics = {
    * @return {Object}
    */
   getHarks(itemCode) {
-    const itemObj = ItemService.itemAtrParser(global.arena.items[itemCode]);
+    const itemObj = ItemService.itemAtrParser(arena.items[itemCode]);
     return _.pick(itemObj, config.parseAttr);
   },
 };

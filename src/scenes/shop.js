@@ -1,6 +1,8 @@
+
 const _ = require('lodash');
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
+const arena = require('../arena');
 const ItemService = require('../arena/ItemService');
 const { stores } = require('../arena/MiscService');
 
@@ -25,7 +27,7 @@ const getTypeButtons = () => storeKeys.map((type) => [Markup.callbackButton(
  * @returns {array}
  */
 const getItems = (wear, prof) => {
-  const items = _.filter(global.arena.items, { wear });
+  const items = _.filter(arena.items, { wear });
   const buttons = items
     .filter((item) => item.race.includes(prof) && !item.onlymake && item.hide === '0')
     .sort((a, b) => b.price - a.price)
@@ -66,7 +68,7 @@ shopScene.action(/itemType(?=_)/, async ({ session, editMessageText, match }) =>
 
 shopScene.action(/itemInfo(?=_)/, async ({ session, editMessageText, match }) => {
   const [, code] = match.input.split('_');
-  const item = global.arena.items[code];
+  const item = arena.items[code];
   editMessageText(
     ItemService.itemDescription(session.character, item),
     Markup.inlineKeyboard([
@@ -88,7 +90,7 @@ shopScene.action(/buy(?=_)/, async ({
   match,
 }) => {
   const [, code] = match.input.split('_');
-  const item = global.arena.items[code];
+  const item = arena.items[code];
   const result = await session.character.buyItem(code);
 
   if (!result) {

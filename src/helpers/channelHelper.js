@@ -1,7 +1,8 @@
 const Markup = require('telegraf/markup');
 const { skills } = require('../arena/SkillService');
+const arena = require('../arena');
 
-const { magics } = global.arena;
+const { magics } = arena;
 /**
  * Помощник для отправки сообщений в общий чат
  * @typedef {import ('../arena/PlayerService')} Player
@@ -66,9 +67,9 @@ module.exports = {
         buttons.push([Markup.callbackButton(magics[m].displayName, `action_${m}`)]);
       });
 
-    const gameId = global.arena.players[player.id].mm;
+    const gameId = arena.characters[player.id].mm;
     /** @type {Game} */
-    const Game = global.arena.games[gameId];
+    const Game = arena.games[gameId];
 
     Object.keys(player.skills)
       .filter((s) => skills[s].proc <= player.proc && !Game.orders.checkPlayerOrder(player.id, s))

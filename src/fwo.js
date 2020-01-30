@@ -8,6 +8,9 @@ const authMiddleware = require('./middlewares/authMiddleware');
 const protectedMiddleware = require('./middlewares/protectedMiddleware');
 const chatMiddleware = require('./middlewares/chatMiddleware');
 const restartMiddleware = require('./middlewares/restartMiddleware');
+const MM = require('./arena/MatchMakingService');
+const arena = require('./arena');
+const magics = require('./arena/magics');
 
 // DB connection
 db.connection.on('open', () => {
@@ -15,6 +18,10 @@ db.connection.on('open', () => {
   console.log('db online');
   Item.load();
 });
+
+MM.start();
+arena.mm = MM;
+arena.magics = magics;
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 

@@ -1,5 +1,6 @@
 const StatsService = require('./StatsService');
 const FlagsConstructors = require('./Constuructors/FlagsConstructor');
+const arena = require('./index');
 /**
  * PlayerService
  * @description Обьект игрока внутри боя ! Это не Character!
@@ -15,23 +16,7 @@ const FlagsConstructors = require('./Constuructors/FlagsConstructor');
 class Player {
   /**
    * Конструктор обьекта игрока внутри игры
-   * @param {params} params
-   * @typedef {Object} params параметры игрока из обьекта CharObj
-   * @property {String} nickname
-   * @property {String} id
-   * @property {Number} tgId
-   * @property {String} prof
-   * @property {Object.<string, number>}modifiers
-   * @property {Object.<string, number>} resists
-   * @property {Object.<string, number>} skills
-   * @property {Object.<string, number>} magics
-   * @property {Object} statical
-   * @property {Object} def
-   * @property {Number} proc
-   * @property {Number} lvl
-   * @property {{code: string, putOn: boolean}[]} items
-   * @property {Object.<string, number>} harks
-   * @property {Number} clan
+   * @param {import ('./CharacterService')} params
    */
   constructor(params) {
     this.nick = params.nickname;
@@ -44,9 +29,9 @@ class Player {
       .filter((item) => item.putOn)
       .map((item) => ({
         /** @type {string} */
-        wtype: global.arena.items[item.code].wtype,
-        case: global.arena.items[item.code].case,
-        name: global.arena.items[item.code].name,
+        wtype: arena.items[item.code].wtype,
+        case: arena.items[item.code].case,
+        name: arena.items[item.code].name,
       }));
     this.clan = params.clan;
     this.stats = new StatsService(params.def);
@@ -69,7 +54,7 @@ class Player {
    */
   static loading(charId) {
     // @todo fast hack
-    return new Player(global.arena.players[charId]);
+    return new Player(arena.characters[charId]);
   }
 
   /**

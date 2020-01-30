@@ -5,6 +5,7 @@
  */
 /** @type {Object.<string, Skill>} */
 const skills = require('./skills');
+const arena = require('./index');
 
 module.exports = {
   skills,
@@ -15,7 +16,7 @@ module.exports = {
   learn(charId, skillId) {
     const skill = this.skills[skillId];
     /** @type {Char} */
-    const char = global.arena.players[charId];
+    const char = arena.characters[charId];
     const charSkillLvl = char.skills[skillId] || 0;
     if (skill.lvl > char.lvl) {
       throw Error('Твой уровень ниже уровня умения');
