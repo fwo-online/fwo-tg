@@ -124,7 +124,7 @@ battleScene.action(/^([^_]+)_([^_]+)$/, async ({ editMessageText, session, match
   const { id } = session.character;
   const gameId = arena.characters[id].mm;
   /** @type {GameService} */
-  const Game = global.arena.games[gameId];
+  const Game = arena.games[gameId];
   const player = Game.players[id];
   editMessageText(
     `Выбери силу ${action} на игрока ${Game.players[target].nick}`,
@@ -139,7 +139,7 @@ battleScene.action(/^([^_]+)_([^_]+)_([^_]+)$/, async ({ editMessageText, sessio
   const initiator = session.character.id;
   const gameId = arena.characters[initiator].mm;
   /** @type {GameService} */
-  const Game = global.arena.games[gameId];
+  const Game = arena.games[gameId];
   const player = Game.players[initiator];
   Game.orders.orderAction({
     initiator, target, action, proc,
@@ -169,7 +169,7 @@ battleScene.command('run', async ({ reply, session }) => {
   const { id } = session.character;
   const gameId = arena.characters[id].mm;
   /** @type {GameService} */
-  const Game = global.arena.games[gameId];
+  const Game = arena.games[gameId];
 
   Game.preKick(id, 'run');
 

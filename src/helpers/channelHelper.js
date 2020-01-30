@@ -69,7 +69,7 @@ module.exports = {
 
     const gameId = arena.characters[player.id].mm;
     /** @type {Game} */
-    const Game = global.arena.games[gameId];
+    const Game = arena.games[gameId];
 
     Object.keys(player.skills)
       .filter((s) => skills[s].proc <= player.proc && !Game.orders.checkPlayerOrder(player.id, s))

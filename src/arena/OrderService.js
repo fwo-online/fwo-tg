@@ -71,7 +71,7 @@ class Orders {
     // формируем список заказа для charId
 
     const gameId = arena.characters[initiator].mm;
-    const Game = global.arena.games[gameId];
+    const Game = arena.games[gameId];
     // @todo Нужны константы для i18n
     if (!Game) {
       throw Error('Вы не в игре');

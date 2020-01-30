@@ -52,7 +52,7 @@ class Game {
    * @return {Player[]} массив живых игроков
    */
   static aliveArr(gameId) {
-    const game = global.arena.games[gameId];
+    const game = arena.games[gameId];
     return _.filter(game.players, {
       alive: true,
     });
@@ -101,7 +101,7 @@ class Game {
     this.initHandlers();
     this.startGame();
 
-    global.arena.games[this.info.id] = this;
+    arena.games[this.info.id] = this;
 
     this.info.players.forEach((playerId) => {
       arena.characters[playerId].mm = this.info.id;

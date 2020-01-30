@@ -3,12 +3,12 @@ const MM = require('./MatchMakingService');
 MM.start();
 
 global.arena = {};
-global.arena.games = {};
-global.arena.games.init = 'fwo';
 
 /** @type Object<string, import ('./CharacterService')> */
 const characters = {};
+/** @type Object<string, import ('./GameService')> */
+const games = {};
 
 module.exports = {
-  mm: MM, characters,
+  mm: MM, characters, games,
 };
