@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const MiscService = require('./MiscService');
 const config = require('./config');
+const arena = require('./index');
 
 /**
  * Сервис работы с магиями
@@ -15,7 +16,7 @@ global.arena.magics = require('./magics');
  * @return {string[]}
  */
 function hasMagicToLearn(charId, lvl) {
-  const charObj = global.arena.players[charId];
+  const charObj = arena.characters[charId];
   // берем массив всех магий в игре на данном уровне для этой профы
   const list = module.exports.list(lvl, charObj.prof);
   // массив всех доступных магий в игре на этом круге
@@ -75,28 +76,28 @@ module.exports = {
    * @param {Number} lvl круг проучиваемой магии
    */
   learn(charId, lvl) {
-    const charObj = global.arena.players[charId];
+    const character = arena.characters[charId];
     // списываем бонусы
 
-    if (lvl > charObj.bonus) {
+    if (lvl > character.bonus) {
       throw Error('Не хватает бонусов');
     }
     // массив различий
     const def = hasMagicToLearn(charId, lvl);
     const r = MiscService.rndm(`1d${def.length}`) - 1;
-    const charMagLvl = charObj.magics[def[r]] || 0;
+    const charMagLvl = character.magics[def[r]] || 0;
 
     if (def.length < 1) {
       throw Error('Нет магий для изучения');
     }
-    charObj.bonus -= lvl;
+    character.bonus -= lvl;
     if (!learnChance()) {
       throw Error('Не удалось вычить. Удача не на твоей стороне');
     }
     // выбираем магию
-    charObj.learnMagic(def[r], charMagLvl + 1);
+    character.learnMagic(def[r], charMagLvl + 1);
     // CharacterService.learnMagic(charId, def[r], charMagLvl + 1);
-    return charObj;
+    return character;
   },
   /**
    * Показываем описание магии

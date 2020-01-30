@@ -2,6 +2,7 @@ const pullAllWith = require('lodash.pullallwith');
 const isEqual = require('lodash.isequal');
 const MiscService = require('./MiscService');
 const GameService = require('./GameService');
+const arena = require('./index');
 
 /**
  * @typedef {Object} order - объект заказа
@@ -69,7 +70,7 @@ class Orders {
 
     // формируем список заказа для charId
 
-    const gameId = global.arena.players[initiator].mm;
+    const gameId = arena.characters[initiator].mm;
     const Game = global.arena.games[gameId];
     // @todo Нужны константы для i18n
     if (!Game) {

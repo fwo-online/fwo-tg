@@ -1,5 +1,4 @@
 const GameService = require('../GameService');
-const WatchService = require('../WatchService');
 const config = require('../config');
 
 /**
@@ -67,7 +66,6 @@ class QueueConstructor {
     try {
       const newGame = new GameService(this.players.map((pl) => pl.charId));
       await newGame.createGame();
-      WatchService.take(newGame);
       this.open = false;
     } catch (e) {
       // eslint-disable-next-line no-console

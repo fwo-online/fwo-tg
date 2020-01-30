@@ -1,5 +1,6 @@
 const Markup = require('telegraf/markup');
 const { skills } = require('../arena/SkillService');
+const arena = require('../arena');
 
 const { magics } = global.arena;
 /**
@@ -66,7 +67,7 @@ module.exports = {
         buttons.push([Markup.callbackButton(magics[m].displayName, `action_${m}`)]);
       });
 
-    const gameId = global.arena.players[player.id].mm;
+    const gameId = arena.characters[player.id].mm;
     /** @type {Game} */
     const Game = global.arena.games[gameId];
 

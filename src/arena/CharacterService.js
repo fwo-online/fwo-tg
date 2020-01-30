@@ -3,7 +3,6 @@ const floatNumber = require('./floatNumber');
 const db = require('../helpers/dataBase');
 const { lvlRatio } = require('./config');
 
-global.arena.players = {};
 /**
  * Конструктор персонажа
  * @todo сюда нужны будет get/set функции для intreface части
@@ -103,6 +102,8 @@ class Char {
    * @property {Object} mm
    * @property {Object.<string, number>} skills
    * @property {Number} clan
+   * @property {import ('./GameService')} currentGame
+   * @property {Number} mm
    */
   constructor(charObj) {
     // const defaults = defHarks(charObj.prof);
@@ -113,7 +114,9 @@ class Char {
       ...charObj.harks,
       free: charObj.free,
     };
+    this.currentGame = null;
     this.updateHarkFromItems();
+    this.mm = null;
   }
 
   get id() {
@@ -361,8 +364,8 @@ class Char {
     }
 
     const char = new Char(charFromDb);
-    if (!global.arena.players) global.arena.players = {};
-    global.arena.players[char.id] = char;
+
+    arena.characters[char.id] = char;
     return char;
   }
 
