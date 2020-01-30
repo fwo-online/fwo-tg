@@ -144,7 +144,7 @@ battleScene.action(/^([^_]+)_([^_]+)_([^_]+)$/, async ({ editMessageText, sessio
   Game.orders.orderAction({
     initiator, target, action, proc,
   });
-  const { magics } = global.arena;
+  const { magics } = arena;
   const ACTIONS = { ...skills, ...magics };
   const message = Game.orders.ordersList
     .filter((o) => o.initiator === initiator)

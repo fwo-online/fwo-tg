@@ -4,8 +4,6 @@
  * @description Конфигурационный файл для арены
  *
  */
-global.arena = {};
-global.arena.groups = {};
 module.exports = {
   Name: 'Arena-Beta',
   noReg: false, // Запрещена регистрация

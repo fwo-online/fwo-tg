@@ -2,7 +2,7 @@ const Markup = require('telegraf/markup');
 const { skills } = require('../arena/SkillService');
 const arena = require('../arena');
 
-const { magics } = global.arena;
+const { magics } = arena;
 /**
  * Помощник для отправки сообщений в общий чат
  * @typedef {import ('../arena/PlayerService')} Player

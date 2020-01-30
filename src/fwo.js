@@ -1,6 +1,5 @@
 const Telegraf = require('telegraf');
 const session = require('telegraf/session');
-const SocksAgent = require('socks5-https-client/lib/Agent');
 const db = require('./models');
 const stage = require('./scenes/stage.js');
 const channelHelper = require('./helpers/channelHelper');
@@ -24,16 +23,7 @@ MM.start();
 arena.mm = MM;
 arena.magics = magics;
 
-const socksAgent = new SocksAgent({
-  socksHost: '45.138.156.65',
-  socksPort: '15788',
-  socksUsername: 'LFlvgkmY1O',
-  socksPassword: 'qdahjxVbX9',
-});
-
-const bot = new Telegraf('439110772:AAEmSFtNFir2IvJv9fIzUM1td8xCh6PGOLE', {
-  telegram: { agent: socksAgent },
-});
+const bot = new Telegraf(process.env.BOT_TOKEN);
 
 bot.use(session());
 bot.use(stage.middleware());
@@ -46,7 +36,8 @@ bot.command('greeter', (ctx) => ctx.scene.enter('greeter'));
 bot.use(restartMiddleware);
 bot.use(protectedMiddleware);
 
-bot.use(chatMiddleware);
+// далее идут роуты для которых необходимо что бы персонаж был создан
+
 bot.command('profile', (ctx) => ctx.scene.enter('profile'));
 bot.command('inventory', (ctx) => ctx.scene.enter('inventory'));
 bot.launch();
