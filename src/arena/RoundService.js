@@ -27,7 +27,9 @@ class RoundConstructor extends ee {
     this.count = 0;
     this.status = 'init';
     // @todo нужна обработков флагов которые действуют на всю арену
-    this.flags = {};
+    this.flags = {
+      noDamageRound: 0,
+    };
   }
 
   /**

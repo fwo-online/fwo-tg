@@ -17,6 +17,7 @@ const arena = require('./index');
 const RoundService = require('./RoundService');
 const PlayersArr = require('./playerArray');
 const OrderService = require('./OrderService');
+const HistoryService = require('./HistoryService');
 const { charDescr } = require('../arena/MiscService');
 
 /**
@@ -35,6 +36,7 @@ class Game {
     this.round = new RoundService();
     this.orders = new OrderService();
     this.battleLog = new BattleLog();
+    this.history = new HistoryService();
     this.longActions = {};
   }
 
@@ -43,7 +45,43 @@ class Game {
    * @return {boolean}
    */
   get isGameEnd() {
-    return Game.aliveArr(this.info.id).length < 2 || this.round.count > 4;
+    return (
+      this.alivePlayers.length < 2
+      || this.round.flags.noDamageRound > 2
+      || this.round.count > 4
+    );
+  }
+
+  get endGameReason() {
+    const base = 'Игра завершена.';
+    if (this.round.flags.noDamageRound > 2) {
+      return `${base} Причина: 3 рауда подряд никто из участников не наносил урона`;
+    }
+    return base;
+  }
+
+  /**
+   * Возвращает массив мёртвых игроков
+   * @return {Player[]}
+   */
+  get deadPlayers() {
+    return _.filter(this.players, {
+      alive: false,
+    });
+  }
+
+  /**
+   * Возвращает массив живых игроков
+   * @return {Player[]}
+   */
+  get alivePlayers() {
+    return _.filter(this.players, {
+      alive: true,
+    });
+  }
+
+  get checkRoundDamage() {
+    return !!this.history.getRoundDamage(this.round.count).length;
   }
 
   /**
@@ -192,6 +230,21 @@ class Game {
   }
 
   /**
+   * Ставим флаги, влияющие на окончание игры
+   */
+  handleEndGameFlags() {
+    if (this.checkRoundDamage) {
+      this.round.flags.noDamageRound = 0;
+    } else {
+      this.round.flags.noDamageRound += 1;
+    }
+  }
+
+  addHistoryDamage(dmgObj) {
+    this.history.addDamage(dmgObj, this.round.count);
+  }
+
+  /**
    * @description Завершение игры
    *
    */
@@ -199,6 +252,7 @@ class Game {
     // eslint-disable-next-line no-console
     console.log('GC debug:: endGame', this.info.id);
     // Отправляем статистику
+    this.sendBattleLog(this.endGameReason);
     this.sendBattleLog(this.statistic());
     this.saveGame();
     setTimeout(() => {
@@ -258,6 +312,7 @@ class Game {
         case 'endRound': {
           this.sortDead();
           this.refreshPlayer();
+          this.handleEndGameFlags();
           // нужно вызывать готовые функции
           if (this.isGameEnd) {
             this.endGame();
@@ -321,8 +376,9 @@ class Game {
    * @return {string} возвращает строку статистики по всем игрокам
    */
   statistic() {
-    const winners = Game.aliveArr(this.info.id);
-    _.forEach(winners, (p) => p.stats.addGold(5));
+    const winners = this.alivePlayers;
+    const gold = this.deadPlayers.length ? 5 : 1;
+    winners.forEach((p) => p.stats.addGold(gold));
     let res = `Статистика: игра ${this.info.id} `;
     _.forEach(this.players, (p) => {
       const s = p.stats.collect;
@@ -334,6 +390,8 @@ class Game {
   /**
    * Функция выставляет "смерть" для игроков имеющих hp < 0;
    * Отсылает сообщение о смерти игрока в последнем раунде
+   * @todo сообщение о смерти как-то нормально нужно сделать,
+   * чтобы выводило от чего и от кого умер игрок
    */
   sortDead() {
     const dead = [];
@@ -375,10 +433,7 @@ class Game {
    * @param {function} f функция применяющая
    */
   forAllAlivePlayers(f) {
-    const aliveArr = _.filter(this.players, {
-      alive: true,
-    });
-    aliveArr.forEach((p) => f.call(this, p));
+    this.alivePlayers.forEach((p) => f.call(this, p));
   }
 
   /**

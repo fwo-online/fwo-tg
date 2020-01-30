@@ -35,7 +35,6 @@ class FlagsConstructors {
     this.isDodging = 0;
     this.isMad = false;
     this.isParalysed = false;
-    this.isHited = [];
   }
 }
 
