@@ -1,6 +1,7 @@
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
 const MagicService = require('../arena/MagicService');
+const arena = require('../arena');
 
 const magicScene = new Scene('magics');
 
@@ -8,7 +9,7 @@ const getMagicButtons = (character) => Object
   .keys(character.magics)
   .map((key) => [
     Markup.callbackButton(
-      `${MagicService.magics[key].displayName}: ${character.magics[key]}`,
+      `${arena.magics[key].displayName}: ${character.magics[key]}`,
       `about_${key}`,
     ),
   ]);

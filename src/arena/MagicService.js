@@ -46,7 +46,6 @@ function learnChance() {
 }
 
 module.exports = {
-  magics: arena.magics,
   /**
    * Список доступных магий для профы на заданном круге
    * @param {Number|String} lvl круг магии
