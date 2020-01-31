@@ -24,15 +24,6 @@ class Player {
     this.tgId = params.tgId;
     this.prof = params.prof;
     this.lvl = params.lvl;
-
-    this.items = params.items
-      .filter((item) => item.putOn)
-      .map((item) => ({
-        /** @type {string} */
-        wtype: arena.items[item.code].wtype,
-        case: arena.items[item.code].case,
-        name: arena.items[item.code].name,
-      }));
     this.clan = params.clan;
     this.stats = new StatsService({ ...params.def, ...params.harks });
     this.flags = new FlagsConstructors();
@@ -45,6 +36,7 @@ class Player {
     this.statical = params.statical || {}; // статически реген
     this.alive = true;
     this.proc = 100;
+    this.weapon = params.getPutonedWeapon();
     return this;
   }
 
