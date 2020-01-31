@@ -54,8 +54,7 @@ class PhysConstructor {
       this.checkTargetIsDead();
       this.next();
     } catch (e) {
-      const { battleLog } = this.params.game;
-      battleLog.log(e);
+      this.next(e);
     }
   }
 
@@ -64,10 +63,11 @@ class PhysConstructor {
    */
   checkPreAffects() {
     const { initiator, target } = this.params;
-    const hasDodgingItems = initiator.items
-      .some((i) => i.wtype && MiscService.weaponTypes[i.wtype].dodge);
+    if (!initiator.weapon.code) throw this.breaks('NO_WEAPON');
+    const weapon = global.arena.items[initiator.weapon.code];
+    const hasDodgeableItems = MiscService.weaponTypes[weapon.wtype].dodge;
     // Проверяем увёртку
-    if (target.flags.isDodging && hasDodgingItems) {
+    if (target.flags.isDodging && hasDodgeableItems) {
       //  проверяем имеет ли цель достаточно dex для того что бы уклониться
       const iDex = initiator.stats.val('dex');
       const at = floatNumber(Math.round(target.flags.isDodging / iDex));
@@ -122,8 +122,7 @@ class PhysConstructor {
       });
       this.run();
     } else {
-      this.protectorsGetExp();
-      throw this.breaks('DEF');
+      throw this.protectorsGetExp();
     }
   }
 
@@ -144,23 +143,28 @@ class PhysConstructor {
   /**
    * Функция агрегации данных после выполнениния действия
    */
-  next() {
+  next(failMsg) {
     const { initiator, target } = this.params;
     const { game } = this.params;
-    const weapon = initiator.items.find((item) => MiscService.weaponTypes[item.wtype]);
-    const msg = {
-      exp: this.status.exp,
-      action: this.name,
-      actionType: 'phys',
-      target: target.nick,
-      dmg: floatNumber(this.status.hit),
-      hp: target.stats.val('hp'),
-      initiator: initiator.nick,
-      dmgType: 'phys',
-      weapon,
-    };
-    game.addHistoryDamage(msg);
-    game.battleLog.success(msg);
+    const weapon = global.arena.items[initiator.weapon.code];
+
+    if (failMsg) {
+      game.battleLog.log({ ...failMsg, weapon });
+    } else {
+      const msg = {
+        exp: this.status.exp,
+        action: this.name,
+        actionType: 'phys',
+        target: target.nick,
+        dmg: floatNumber(this.status.hit),
+        hp: initiator.stats.val('hp'),
+        initiator: initiator.nick,
+        weapon,
+        dmgType: 'phys',
+      };
+      game.addHistoryDamage(msg);
+      game.battleLog.success(msg);
+    }
   }
 
   /**
@@ -211,12 +215,15 @@ class PhysConstructor {
   protectorsGetExp() {
     const { target, game } = this.params;
     const f = target.flags.isProtected; // Коллекция защищающих [{id,кол-во дефа},..]
+    const expArr = [];
     const prt = target.stats.val('pdef'); // общий показатель защиты цели
     f.forEach((p) => {
       const pr = (Math.floor(p.val * 100) / prt);
       const e = Math.round(this.status.hit * 0.8 * pr);
+      expArr.push([game.getPlayerById(p.initiator).nick, e]);
       game.getPlayerById(p.initiator).stats.mode('up', 'exp', e);
     });
+    return { ...this.breaks('DEF'), expArr };
   }
 }
 

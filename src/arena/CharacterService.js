@@ -232,6 +232,10 @@ class Char {
     return this.items.find((item) => item._id.equals(itemId));
   }
 
+  getPutonedWeapon() {
+    return this.items.find((item) => /^ab?$/.test(item.wear) && item.putOn);
+  }
+
   isCanPutOned(item) {
     return !this.items.find((currentItem) => currentItem.wear === item.wear && currentItem.putOn);
   }
