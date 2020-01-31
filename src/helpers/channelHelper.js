@@ -1,8 +1,6 @@
 const Markup = require('telegraf/markup');
 const { skills } = require('../arena/SkillService');
 const arena = require('../arena');
-
-const { magics } = arena;
 /**
  * Помощник для отправки сообщений в общий чат
  * @typedef {import ('../arena/PlayerService')} Player
@@ -64,7 +62,7 @@ module.exports = {
 
     Object.keys(player.magics)
       .forEach((m) => {
-        buttons.push([Markup.callbackButton(magics[m].displayName, `action_${m}`)]);
+        buttons.push([Markup.callbackButton(arena.magics[m].displayName, `action_${m}`)]);
       });
 
     const gameId = arena.characters[player.id].mm;

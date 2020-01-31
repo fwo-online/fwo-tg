@@ -1,3 +1,4 @@
+const arena = require('../index');
 const floatNumber = require('../floatNumber');
 const MiscService = require('../MiscService');
 
@@ -45,8 +46,8 @@ class PhysConstructor {
     };
     this.status = {};
     try {
-      this.checkPreAffects();
       this.fitsCheck();
+      this.checkPreAffects();
       this.isblurredMind();
       this.protectCheck();
       // тут должен идти просчет дефа
@@ -63,8 +64,7 @@ class PhysConstructor {
    */
   checkPreAffects() {
     const { initiator, target } = this.params;
-    if (!initiator.weapon.code) throw this.breaks('NO_WEAPON');
-    const weapon = global.arena.items[initiator.weapon.code];
+    const weapon = arena.items[initiator.weapon.code];
     const hasDodgeableItems = MiscService.weaponTypes[weapon.wtype].dodge;
     // Проверяем увёртку
     if (target.flags.isDodging && hasDodgeableItems) {
@@ -85,7 +85,8 @@ class PhysConstructor {
    * Проверка флагаов влияющих на физический урон
    */
   fitsCheck() {
-    return this;
+    const { initiator } = this.params;
+    if (!initiator.weapon) throw this.breaks('NO_WEAPON');
   }
 
   /**
@@ -146,8 +147,7 @@ class PhysConstructor {
   next(failMsg) {
     const { initiator, target } = this.params;
     const { game } = this.params;
-    const weapon = global.arena.items[initiator.weapon.code];
-
+    const weapon = initiator.weapon ? arena.items[initiator.weapon.code] : {};
     if (failMsg) {
       game.battleLog.log({ ...failMsg, weapon });
     } else {
