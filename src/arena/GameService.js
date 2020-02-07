@@ -131,6 +131,19 @@ class Game {
   }
 
   /**
+   * Проверяет являются ли игроки союзниками
+   * @param {Player} player
+   * @param {Player} target
+   */
+  isPlayersAlly(player, target) {
+    const allies = this.playerArr.getMyTeam(player.clan);
+    if (!allies.length) {
+      allies.push(player);
+    }
+    return allies.some((ally) => ally.id === target.id);
+  }
+
+  /**
    * Предзагрузка игры
    */
   preLoading() {
