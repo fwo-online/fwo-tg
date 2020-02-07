@@ -41,7 +41,10 @@ module.exports = {
         const hpProc = Math.round((healVal * 100) / allHeal);
         /* В случае если хил вышел за границу максимального HP
        Exp будет выдано только за кол-во до максимума */
-        const playerExpForHeal = Math.round(exp * (hpProc / 100));
+        let playerExpForHeal = 0;
+        if (Game.isPlayersAlly(initiator, target)) {
+          playerExpForHeal = Math.round(exp * (hpProc / 100));
+        }
         initiator.stats.mode('up', 'exp', playerExpForHeal);
         healmsg += `[${initiator.nick} +hp:${healVal}/+e:${playerExpForHeal}] `;
       });
