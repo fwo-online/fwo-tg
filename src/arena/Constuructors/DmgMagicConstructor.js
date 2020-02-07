@@ -54,12 +54,17 @@ class DmgMagic extends Magic {
    * Функция списывающая с кастера требуемое
    * кол-во единиц за использование магии
    * Если кастеру хватило mp/en продолжаем,если нет, то возвращаем false
-   * @param {Object} initiator Обьект кастера
    */
-  getExp(initiator) {
-    const dmgExp = Math.round(this.status.hit * 8) + this.baseExp;
-    this.status.exp = dmgExp;
-    initiator.stats.mode('up', 'exp', dmgExp);
+  getExp() {
+    const { initiator, target, game } = this.params;
+
+    if (game.isPlayersAlly(initiator, target)) {
+      this.status.exp = 0;
+    } else {
+      const dmgExp = Math.round(this.status.hit * 8) + this.baseExp;
+      this.status.exp = dmgExp;
+      initiator.stats.mode('up', 'exp', dmgExp);
+    }
   }
 
   /**

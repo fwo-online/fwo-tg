@@ -200,10 +200,15 @@ class PhysConstructor {
    * Расчитываем полученный exp
    */
   getExp() {
-    const i = this.params.initiator.stats;
-    const e = this.status.hit * 8;
-    this.status.exp = Math.round(e);
-    i.mode('up', 'exp', this.status.exp);
+    const { initiator, target, game } = this.params;
+
+    if (game.isPlayersAlly(initiator, target)) {
+      this.status.exp = 0;
+    } else {
+      const exp = this.status.hit * 8;
+      this.status.exp = Math.round(exp);
+      initiator.stats.mode('up', 'exp', this.status.exp);
+    }
   }
 
   /**
