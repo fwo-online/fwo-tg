@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/eslint --fix src/",
-    "start": "nodemon src/fwo.js",
+    "start": "node src/fwo.js",
+    "dev": "nodemon src/fwo.js",
     "prod": "node src/fwo.js",
     "tsc": "tsc -b"
   },
