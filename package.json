@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/catHD/fwo-tg#readme",
   "dependencies": {
+    "express": "^4.17.1",
     "lodash": "^4.17.15",
     "lodash.foreach": "^4.5.0",
     "lodash.groupby": "^4.6.0",
