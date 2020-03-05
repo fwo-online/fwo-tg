@@ -18,6 +18,19 @@ db.connection.on('open', () => {
   console.log('db online');
   Item.load();
 });
+// heroku hack
+const express = require('express')
+const expressApp = express()
+
+const port = process.env.PORT || 3000
+expressApp.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+expressApp.listen(port, () => {
+  console.log(`Listening on port ${port}`)
+})
+
+//---
 
 MM.start();
 arena.mm = MM;
