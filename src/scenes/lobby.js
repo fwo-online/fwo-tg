@@ -4,11 +4,17 @@ const { charDescr } = require('../arena/MiscService');
 
 const lobby = new Scene('lobby');
 
-lobby.enter(({ replyWithMarkdown, session }) => {
+lobby.enter(async ({ replyWithMarkdown, replyWithPhoto, session }) => {
   const { nickname, prof, lvl } = session.character;
   const { icon } = Object.values(charDescr).find((el) => el.prof === prof);
 
-  replyWithMarkdown(
+  try {
+    await replyWithPhoto({ source: './src/assets/market.jpg' });
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.log(e);
+  }
+  await replyWithMarkdown(
     `*Лобби*
 Так-так, значит ты *${nickname}* (${icon}${lvl})`,
     Markup.keyboard([
