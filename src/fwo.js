@@ -1,5 +1,6 @@
 const Telegraf = require('telegraf');
 const session = require('telegraf/session');
+const express = require('express');
 const db = require('./models');
 const stage = require('./scenes/stage.js');
 const channelHelper = require('./helpers/channelHelper');
@@ -19,20 +20,18 @@ db.connection.on('open', () => {
   Item.load();
 });
 // heroku hack
-const express = require('express')
-const expressApp = express()
+const expressApp = express();
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3000;
 expressApp.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+  res.send('Hello World!');
+});
 expressApp.listen(port, () => {
-  console.log(`Listening on port ${port}`)
-})
+  console.log(`Listening on port ${port}`);
+});
 
 //---
 
-MM.start();
 arena.mm = MM;
 arena.magics = magics;
 
