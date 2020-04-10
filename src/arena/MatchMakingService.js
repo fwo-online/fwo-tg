@@ -77,11 +77,10 @@ class MatchMaking extends EventEmitter {
    */
   start() {
     if (!this.allQueue.length) {
-      const queue = new QueueConstructor(this.mmQueue);
+      const queue = new QueueConstructor(this.mmQueue.splice(0, config.maxPlayersLimit));
       if (queue.checkStatus()) {
         this.allQueue.push(queue);
         queue.goStartGame();
-        this.mmQueue = [];
       }
     }
   }
