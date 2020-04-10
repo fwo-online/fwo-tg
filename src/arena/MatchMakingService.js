@@ -28,9 +28,6 @@ class MatchMaking extends EventEmitter {
     this.allQueue = []; // обьект очередей ! < 10
     /** @type {mmObj[]} */
     this.mmQueue = [];
-    this.prefs = {
-      checkInterval: 10000,
-    };
     this.timerId = undefined;
   }
 
@@ -41,6 +38,7 @@ class MatchMaking extends EventEmitter {
   pull(charId) {
     const obj = this.mmQueue.find((el) => el.charId === charId);
     this.mmQueue.splice(this.mmQueue.indexOf(obj), 1);
+    this.main();
     // @todo убрать просле дебага
     // eslint-disable-next-line no-console
     console.log('MM pull debug', this.mmQueue);
@@ -52,6 +50,7 @@ class MatchMaking extends EventEmitter {
    */
   push(obj) {
     this.mmQueue.push(obj);
+    this.main();
   }
 
   /**
@@ -63,48 +62,44 @@ class MatchMaking extends EventEmitter {
   }
 
   /**
-   * Основная функция запуска поиска внутри системы MatchMaking
+   * Чистим очередь
+   */
+  clean() {
+    this.allQueue.forEach((queue, i) => {
+      if (!queue.open) {
+        this.allQueue.splice(i, 1);
+      }
+    });
+  }
+
+  /**
+   * Добавляем игроков в комнату
    */
   start() {
-    this.timerId = setInterval(() => {
-      this.main();
-    }, this.prefs.checkInterval);
+    if (!this.allQueue.length) {
+      const queue = new QueueConstructor(this.mmQueue.splice(0, config.maxPlayersLimit));
+      if (queue.checkStatus()) {
+        this.allQueue.push(queue);
+        queue.goStartGame();
+      }
+    }
+  }
+
+  /**
+   * Запускаем очистку и создаём новую очередь
+   */
+  cancel() {
+    this.clean();
+    this.main();
   }
 
   /**
    * Основная функци работы с очередями
    */
   main() {
-    let iter = 0;
-    let queue;
-    while ((this.mmQueue.length >= 2) && (iter < config.maxIter)) {
-      const mmLength = this.mmQueue.length - 1;
-      for (let i = mmLength; i >= 0; i -= 1) {
-        // @todo нужно перейти на lodash
-        const searcher = this.mmQueue[i];
-        if (!searcher) break;
-        // пробуем перебрать польз из очереди в одну из уже созданных очередей
-        if (this.allQueue.length > 10) {
-          // сюда нужна функция чистки allQueue от уже собранных очередей.
-          // eslint-disable-next-line no-console
-          console.debug('length>10');
-          // eslint-disable-next-line no-restricted-syntax
-          for (const xx in this.allQueue) {
-            if (!this.allQueue[xx].open) {
-              this.allQueue.splice(+xx, 1);
-            }
-          }
-        } else {
-          queue = this.allQueue.find((qu) => (qu.policy(searcher) && qu.open));
-          if (!queue) {
-            queue = new QueueConstructor();
-            this.allQueue.push(queue);
-          }
-          queue.addTo(searcher);
-          this.pull(searcher.charId);
-        }
-      }
-      iter += 1;
+    this.stop();
+    if (this.mmQueue.length >= config.roundPlayersLimit) {
+      this.timerId = setTimeout(() => { this.start(); }, config.startGameTimeout);
     }
   }
 }

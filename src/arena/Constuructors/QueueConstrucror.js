@@ -14,11 +14,12 @@ const config = require('../config');
 class QueueConstructor {
   /**
    * Конструтор пустой очереди
+   * @param {mmObj[]} searchers
    */
-  constructor() {
+  constructor(searchers) {
     this.psr = 0;
     /** @type {mmObj[]} */
-    this.players = [];
+    this.players = searchers;
     this.open = true;
   }
 
