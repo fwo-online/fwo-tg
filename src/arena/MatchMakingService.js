@@ -98,7 +98,7 @@ class MatchMaking extends EventEmitter {
    */
   main() {
     this.stop();
-    if (this.mmQueue.length >= config.roundPlayersLimit) {
+    if (this.mmQueue.length >= config.minPlayersLimit) {
       this.timerId = setTimeout(() => { this.start(); }, config.startGameTimeout);
     }
   }
