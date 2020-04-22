@@ -81,7 +81,7 @@ class RoundConstructor extends ee {
       timestamp: ts(),
       timer: config.roundTime,
     });
-    this.goNext('waiting');
+    this.goNext('waiting', config.ordersTime);
   }
 
   /**
