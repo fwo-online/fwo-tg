@@ -48,6 +48,7 @@ class Game {
     return (
       this.alivePlayers.length < 2
       || this.round.flags.noDamageRound > 2
+      || this.round.count > 9
     );
   }
 
