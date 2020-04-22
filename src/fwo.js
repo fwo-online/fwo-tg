@@ -13,11 +13,14 @@ const MM = require('./arena/MatchMakingService');
 const arena = require('./arena');
 const magics = require('./arena/magics');
 
+const bot = new Telegraf(process.env.BOT_TOKEN);
+
 // DB connection
 db.connection.on('open', () => {
   // eslint-disable-next-line no-console
   console.log('db online');
   Item.load();
+  bot.launch();
 });
 // heroku hack
 const expressApp = express();
@@ -35,8 +38,6 @@ expressApp.listen(port, () => {
 arena.mm = MM;
 arena.magics = magics;
 
-const bot = new Telegraf(process.env.BOT_TOKEN);
-
 bot.use(session());
 bot.use(stage.middleware());
 bot.use(chatMiddleware);
@@ -52,6 +53,5 @@ bot.use(protectedMiddleware);
 
 bot.command('profile', (ctx) => ctx.scene.enter('profile'));
 bot.command('inventory', (ctx) => ctx.scene.enter('inventory'));
-bot.launch();
 
 channelHelper.bot = bot;
