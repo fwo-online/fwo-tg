@@ -36,7 +36,7 @@ magicScene.enter(async ({ replyWithMarkdown, session }) => {
 
 magicScene.action('learn', async ({ editMessageText, answerCbQuery, session }) => {
   try {
-    session.character = MagicService.learn(session.character.id, 2);
+    session.character = MagicService.learn(session.character.id, 1);
     answerCbQuery('Теперь ты знаешь на одну магию больше');
   } catch (e) {
     answerCbQuery(e.message);
