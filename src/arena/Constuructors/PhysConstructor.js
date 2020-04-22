@@ -157,7 +157,7 @@ class PhysConstructor {
         actionType: 'phys',
         target: target.nick,
         dmg: floatNumber(this.status.hit),
-        hp: initiator.stats.val('hp'),
+        hp: target.stats.val('hp'),
         initiator: initiator.nick,
         weapon,
         dmgType: 'phys',
