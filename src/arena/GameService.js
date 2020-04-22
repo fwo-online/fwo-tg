@@ -48,7 +48,6 @@ class Game {
     return (
       this.alivePlayers.length < 2
       || this.round.flags.noDamageRound > 2
-      || this.round.count > 4
     );
   }
 
@@ -158,6 +157,7 @@ class Game {
       arena.characters[playerId].mm = this.info.id;
       arena.characters[playerId].currentGame = this.info.id;
     });
+    // @todo add statistic +1 game for all players
   }
 
   /**
