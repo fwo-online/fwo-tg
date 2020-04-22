@@ -56,7 +56,7 @@ class QueueConstructor {
    */
   checkStatus() {
     // Проверяем не собралась ли уже у нас очередь ?
-    return this.players.length >= config.roundPlayersLimit;
+    return this.players.length >= config.minPlayersLimit;
   }
 
   /**
