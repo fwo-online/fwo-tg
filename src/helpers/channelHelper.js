@@ -57,7 +57,7 @@ module.exports = {
       [Markup.callbackButton('Атака', 'action_attack')],
       [Markup.callbackButton('Лечение', 'action_handsHeal')],
       [Markup.callbackButton('Защита', 'action_protect')],
-      [Markup.callbackButton('Реген', 'action_regen')],
+      [Markup.callbackButton('Восстановление', 'action_regen')],
     ];
 
     Object.keys(player.magics)
