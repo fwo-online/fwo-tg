@@ -231,6 +231,10 @@ class Game {
    * @param {Player} player
    */
   checkOrders(player) {
+    if (!player.alive) {
+      return;
+    }
+
     if (player.flags.isKicked === 'run') {
       this.kick(player.id);
       return;
