@@ -163,7 +163,7 @@ class Magic {
     }
     // тут нужно взять получившийся шанс и проверить ещё отношение mga цели
     if (this.magType === 'bad') {
-      const x = (initiator.stats.val('mga') / target.stats.val('mgp'));
+      const x = (initiator.stats.val('mga') / target.stats.val('mgp')) / 10;
       result *= x;
     }
     console.log('chance is :',result, 'total',result * initiator.proc);
