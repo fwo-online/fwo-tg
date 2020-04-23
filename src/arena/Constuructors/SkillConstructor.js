@@ -58,7 +58,7 @@ class Skill {
       initiator, target, game,
     };
     try {
-      this.getCost(initiator);
+      this.getCost();
       this.checkChance();
       this.run();
       this.next();
@@ -75,7 +75,8 @@ class Skill {
    * @param {player} initiator
    */
   // eslint-disable-next-line class-methods-use-this
-  getCost(initiator) {
+  getCost() {
+    const { initiator } = this.params;
     // достаем цену за использование согласно lvl скила у пользователя
     const skillCost = this.cost[initiator.skills[this.name] - 1];
     const remainingEnergy = initiator.stats.val(this.costType) - skillCost;
