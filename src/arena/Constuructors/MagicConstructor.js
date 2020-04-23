@@ -166,7 +166,7 @@ class Magic {
       const x = (initiator.stats.val('mga') / target.stats.val('mgp'));
       result *= x;
     }
-    console.log('chance is :', result * initiator.proc);
+    console.log('chance is :',result, 'total',result * initiator.proc);
     return result * initiator.proc;
   }
 
