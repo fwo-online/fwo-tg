@@ -10,7 +10,7 @@ const glitch = require('./glitch');
 const silence = require('./silence');
 const attack = require('../actions/attack');
 const protect = require('../actions/protect');
-// const regen = require('./regen');
+const regen = require('../actions/regen');
 const handsHeal = require('../actions/handsHeal');
 const magicArrow = require('./magicArrow');
 const curse = require('./curse');
@@ -32,7 +32,8 @@ module.exports = {
   glitch,
   silence,
   attack,
-  protect, // regen: regen,
+  protect,
+  regen,
   handsHeal,
   magicArrow,
   curse,
