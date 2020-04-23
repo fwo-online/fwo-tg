@@ -56,9 +56,9 @@ class Magic {
       initiator, target, game,
     };
     try {
+      this.getCost(initiator);
       this.checkPreAffects(initiator, target, game);
       this.isblurredMind(initiator, game); // проверка не запудрило
-      this.getCost(initiator);
       this.checkChance();
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.getExp(initiator);
@@ -81,6 +81,7 @@ class Magic {
   getCost(initiator) {
     const costValue = parseFloat(initiator.stats.val(this.costType)
         - parseFloat(this.cost));
+    console.log('MP:', costValue);
     if (costValue >= 0) {
       // eslint-disable-next-line no-param-reassign
       initiator.stats[this.costType] = +costValue;
@@ -165,6 +166,7 @@ class Magic {
       const x = (initiator.stats.val('mga') / target.stats.val('mgp'));
       result *= x;
     }
+    console.log('chance is :', result * initiator.proc);
     return result * initiator.proc;
   }
 
