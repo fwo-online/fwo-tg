@@ -8,10 +8,6 @@ const chainLightning = require('./chainLightning');
 const magicDefense = require('./magicDefense');
 const glitch = require('./glitch');
 const silence = require('./silence');
-const attack = require('../actions/attack');
-const protect = require('../actions/protect');
-const regen = require('../actions/regen');
-const handsHeal = require('../actions/handsHeal');
 const magicArrow = require('./magicArrow');
 const curse = require('./curse');
 const entangle = require('./entangle');
@@ -31,10 +27,6 @@ module.exports = {
   magicDefense,
   glitch,
   silence,
-  attack,
-  protect,
-  regen,
-  handsHeal,
   magicArrow,
   curse,
   entangle,

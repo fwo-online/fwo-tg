@@ -12,6 +12,8 @@ const restartMiddleware = require('./middlewares/restartMiddleware');
 const MM = require('./arena/MatchMakingService');
 const arena = require('./arena');
 const magics = require('./arena/magics');
+const skills = require('./arena/skills');
+const actions = require('./arena/actions');
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -37,6 +39,8 @@ expressApp.listen(port, () => {
 
 arena.mm = MM;
 arena.magics = magics;
+arena.skills = skills;
+arena.actions = actions;
 
 bot.use(session());
 bot.use(stage.middleware());

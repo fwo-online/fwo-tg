@@ -159,12 +159,22 @@ class Orders {
 
   /**
    * Проверяет делал ли игрок заказ. Опционально проверяет название магии или умения в заказе
-   * @param {String} charId идентификатор персонажа
+   * @param {string} charId идентификатор персонажа
    * @param {string} [act] название умения или магии
-   * @returns {Boolean}
+   * @returns {boolean}
    */
   checkPlayerOrder(charId, act) {
     return this.ordersList.some((o) => o.initiator === charId && (act ? o.action === act : true));
+  }
+
+  /**
+   * Возвращает количество заказов игрока одного типа
+   * @param {String} charId идентификатор персонажа
+   * @param {string} act название умения или магии
+   * @returns {number} количество заказов игрока одного типа
+   */
+  getNumberOfOrder(charId, act) {
+    return this.ordersList.reduce((sum) => sum + Number(this.checkPlayerOrder(charId, act)), 0);
   }
 }
 

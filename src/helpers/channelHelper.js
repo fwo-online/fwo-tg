@@ -1,6 +1,5 @@
 const Markup = require('telegraf/markup');
-const { skills } = require('../arena/SkillService');
-const arena = require('../arena');
+const BattleKeyboard = require('./BattleKeyboard');
 /**
  * Помощник для отправки сообщений в общий чат
  * @typedef {import ('../arena/PlayerService')} Player
@@ -53,28 +52,11 @@ module.exports = {
    * @param {Player} player - объект игрока
    */
   getOrderButtons(player) {
-    const buttons = [
-      [Markup.callbackButton('Атака', 'action_attack')],
-      [Markup.callbackButton('Лечение', 'action_handsHeal')],
-      [Markup.callbackButton('Защита', 'action_protect')],
-      [Markup.callbackButton('Восстановление', 'action_regen')],
-    ];
-
-    Object.keys(player.magics)
-      .forEach((m) => {
-        buttons.push([Markup.callbackButton(arena.magics[m].displayName, `action_${m}`)]);
-      });
-
-    const gameId = arena.characters[player.id].mm;
-    /** @type {Game} */
-    const Game = arena.games[gameId];
-
-    Object.keys(player.skills)
-      .filter((s) => skills[s].proc <= player.proc && !Game.orders.checkPlayerOrder(player.id, s))
-      .forEach((s) => {
-        buttons.push([Markup.callbackButton(`${skills[s].displayName} (${skills[s].proc}%)`, `action_${s}`)]);
-      });
-    return buttons;
+    return new BattleKeyboard(player)
+      .setActions()
+      .setMagics()
+      .setSkills()
+      .render();
   },
   /**
    * Отправка кнопок при начале заказа

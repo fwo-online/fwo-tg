@@ -2,10 +2,11 @@ const config = require('./config');
 const CharacterService = require('./CharacterService');
 const GameService = require('./GameService');
 const testGame = require('./testGame');
+const actions = require('./actions');
 const magics = require('./magics');
 const skills = require('./skills');
 
-const ACTIONS = { ...magics, ...skills };
+const ACTIONS = { ...actions, ...magics, ...skills };
 const STAGES = config.stages;
 
 /**
