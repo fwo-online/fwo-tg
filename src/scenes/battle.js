@@ -144,8 +144,8 @@ battleScene.action(/^([^_]+)_([^_]+)_([^_]+)$/, async ({ editMessageText, sessio
   Game.orders.orderAction({
     initiator, target, action, proc,
   });
-  const { magics } = arena;
-  const ACTIONS = { ...skills, ...magics };
+  const { magics, actions } = arena;
+  const ACTIONS = { ...actions, ...skills, ...magics };
   const message = Game.orders.ordersList
     .filter((o) => o.initiator === initiator)
     .map((o) => `\n_${ACTIONS[o.action].displayName}_ (*${o.proc}%*) на игрока *${Game.players[o.target].nick}*`);

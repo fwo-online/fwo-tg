@@ -13,4 +13,8 @@ module.exports = {
 
   /** @type import ('./magics')  */
   magics: null,
+  /** @type import ('./skills') */
+  skills: null,
+  /** @type import ('./actions') */
+  actions: null,
 };
