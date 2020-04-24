@@ -1,6 +1,7 @@
 const Telegraf = require('telegraf');
 const session = require('telegraf/session');
 const express = require('express');
+const SocksAgent = require('socks5-https-client/lib/Agent');
 const db = require('./models');
 const stage = require('./scenes/stage.js');
 const channelHelper = require('./helpers/channelHelper');
@@ -18,10 +19,10 @@ const actions = require('./arena/actions');
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 // DB connection
-db.connection.on('open', () => {
+db.connection.on('open', async () => {
   // eslint-disable-next-line no-console
   console.log('db online');
-  Item.load();
+  await Item.load();
   bot.launch();
 });
 // heroku hack
