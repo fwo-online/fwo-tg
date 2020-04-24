@@ -84,7 +84,7 @@ class Magic {
     console.log('MP:', costValue);
     if (costValue >= 0) {
       // eslint-disable-next-line no-param-reassign
-      initiator.stats[this.costType] = +costValue;
+      initiator.stats.mode('set', this.costType, costValue);
     } else {
       throw this.breaks('NO_MANA');
     }
@@ -163,10 +163,10 @@ class Magic {
     }
     // тут нужно взять получившийся шанс и проверить ещё отношение mga цели
     if (this.magType === 'bad') {
-      const x = (initiator.stats.val('mga') / target.stats.val('mgp'));
+      const x = (initiator.stats.val('mga') / target.stats.val('mgp')) / 10;
       result *= x;
     }
-    console.log('chance is :',result, 'total',result * initiator.proc);
+    console.log('chance is :', result, 'total', result * initiator.proc);
     return result * initiator.proc;
   }
 

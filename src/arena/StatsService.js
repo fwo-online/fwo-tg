@@ -50,6 +50,7 @@ class StatsService {
           a = floatNumber(a * val);
         } else {
           a = floatNumber(val);
+          this.inRound[atr] = a;
         }
         break;
       default:
