@@ -78,7 +78,7 @@ inventory.statics = {
    * @description Функция добавления итема в инвентарь
    * @param {Number} charId Идентификатор чара
    * @param {String} itemCode Код итема который следует добавить
-   * @return {Promise<Array>} Обьект нового инветаря
+   * @return {Promise<Object>} Обьект нового инветаря
    */
   // eslint-disable-next-line consistent-return
   async addItem(charId, itemCode) {
@@ -122,11 +122,15 @@ inventory.statics = {
    * т.к инветарь не связан на прямую и для его создания нужно сначала получить
    * ownerId чара.
    * @param {Object} charObj обьект созданного чара
-   * @return {Promise<CharacterData>} CharObj обьект персонажа
+   * @return {Promise<Object>} Item созданный итем
    */
   async firstCreate(charObj) {
     const defItemCode = getDefaultItem(charObj.prof);
-    return this.addItem(charObj._id, defItemCode);
+
+    const item = await this.addItem(charObj._id, defItemCode);
+    await this.putOnItem(charObj._id, item.id);
+
+    return item;
   },
 
   /**
@@ -137,6 +141,7 @@ inventory.statics = {
    * @return {Promise<Array>} Массив нового инвентаря
    */
   async putOnItem(charId, itemId) {
+    console.log('PUT ON ITEM', charId, itemId);
     return this.model('Inventory').updateOne({
       owner: charId,
       _id: itemId,
