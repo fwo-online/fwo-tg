@@ -253,7 +253,7 @@ class Magic {
     const bl = this.params.game.battleLog;
     bl.success({
       exp: this.status.exp,
-      action: this.name,
+      action: this.displayName,
       actionType: 'magic',
       target: target.nick,
       initiator: initiator.nick,

@@ -28,8 +28,13 @@ class Regen {
    */
   // eslint-disable-next-line no-unused-vars, class-methods-use-this
   cast(initiator, target, game) {
-    const val = initiator.stats.val('manaReg') * initiator.proc; // размер восстан
-    initiator.stats.mode('up', 'mp', val);
+    if ((initiator.prof === 'l') || initiator.prof === 'w') {
+      const val = initiator.stats.val('enReg') * initiator.proc; // размер восстан
+      initiator.stats.mode('up', 'en', val);
+    } else {
+      const val = initiator.stats.val('manaReg') * initiator.proc; // размер восстан
+      initiator.stats.mode('up', 'mp', val);
+    }
   }
 }
 
