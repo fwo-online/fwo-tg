@@ -203,7 +203,7 @@ class Game {
   /**
    * Прекик, помечаем что пользователь не выполнил заказ и дальше будет выброшен
    * @param {string} id id игрока, который будет помочен как бездействующий
-   * @param {string} reason строка, подставляющаяся в флаг isKicked
+   * @param {'afk' | 'run'} reason строка, подставляющаяся в флаг isKicked
    */
   preKick(id, reason) {
     const player = this.players[id];
@@ -215,13 +215,18 @@ class Game {
   /**
    * Функция "выброса игрока" из игры без сохранения накопленных статов
    * @param {string} id id игрока, который будет выброшен
+   * @param {'afk' | 'run'} [reason] причина кика
    */
-  kick(id) {
+  kick(id, reason) {
     const player = this.players[id];
     // eslint-disable-next-line no-console
     if (!player) return console.log('GC debug:: kick', id, 'no player');
     channelHelper.sendRunButton(player);
-    channelHelper.broadcast(`Игрок ${this.players[id].nick} был выброшен из игры`);
+    if (reason === 'run') {
+      channelHelper.broadcast(`Игрок *${player.nick}* сбежал из боя`);
+    } else {
+      channelHelper.broadcast(`Игрок *${player.nick}* был выброшен из игры`);
+    }
     delete this.players[id];
     this.info.players.splice(this.info.players.indexOf(id), 1);
   }
@@ -236,12 +241,12 @@ class Game {
     }
 
     if (player.flags.isKicked === 'run') {
-      this.kick(player.id);
+      this.kick(player.id, player.flags.isKicked);
       return;
     }
 
     if (player.flags.isKicked === 'afk' && !this.orders.checkPlayerOrder(player.id)) {
-      this.kick(player.id);
+      this.kick(player.id, player.flags.isKicked);
     } else {
       player.flags.isKicked = this.orders.checkPlayerOrder(player.id) ? '' : 'afk';
     }
