@@ -9,7 +9,7 @@ lobby.enter(async ({ replyWithMarkdown, replyWithPhoto, session }) => {
   const { icon } = Object.values(charDescr).find((el) => el.prof === prof);
 
   try {
-    await replyWithPhoto({ source: './src/assets/market.jpg' });
+    await replyWithPhoto({ source: './assets/market.jpg' });
   } catch (e) {
     // eslint-disable-next-line no-console
     console.log(e);
