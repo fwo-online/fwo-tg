@@ -171,20 +171,20 @@ item.statics = {
         arena.items = _.keyBy(items, 'code');
       } else {
         let shopArr = fs.readFileSync('shop.json', 'utf8');
+        const createdItems = [];
+
         shopArr = JSON.parse(shopArr);
         // eslint-disable-next-line no-console
         console.log('File Loaded: ', Date.now() - timer1, 'ms');
 
         forEach(shopArr, async (o, code) => {
-          try {
-            o.code = code;
-            await this.model('Item').create(o);
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.log(e);
-          }
+          o.code = code;
+          createdItems.push(this.model('Item').create(o));
           return true;
         });
+
+        await Promise.all(createdItems);
+
         arena.items = _.keyBy(items, 'code');
       }
     } catch (e) {
