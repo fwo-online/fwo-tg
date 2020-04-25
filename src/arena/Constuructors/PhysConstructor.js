@@ -109,7 +109,7 @@ class PhysConstructor {
     // eslint-disable-next-line no-console
     console.log('at', at);
     const r = MiscService.rndm('1d100');
-    //const c = Math.round(Math.sqrt(at) + (10 * at) + 5);
+    // const c = Math.round(Math.sqrt(at) + (10 * at) + 5);
     // new formula for phys attack chance
     const c = 20 * at + 50;
     const result = c > r;
@@ -224,12 +224,18 @@ class PhysConstructor {
     const f = target.flags.isProtected; // Коллекция защищающих [{id,кол-во дефа},..]
     const expArr = [];
     const prt = target.stats.val('pdef'); // общий показатель защиты цели
-    f.forEach((p) => {
-      const pr = (Math.floor(p.val * 100) / prt);
-      const e = Math.round(this.status.hit * 0.8 * pr);
-      expArr.push([game.getPlayerById(p.initiator).nick, e]);
-      game.getPlayerById(p.initiator).stats.mode('up', 'exp', e);
-    });
+    if (f.length >= 1) {
+      f.forEach((p) => {
+        const pr = (Math.floor(p.val * 100) / prt);
+        const e = Math.round(this.status.hit * 0.8 * pr);
+        expArr.push([game.getPlayerById(p.initiator).nick, e]);
+        game.getPlayerById(p.initiator).stats.mode('up', 'exp', e);
+      });
+    } else {
+      const player = game.getPlayerById(f[0].initiator);
+      const e = Math.round(this.status.hit * 0.8);
+      player.stats.mode('up', 'exp', e);
+    }
     return { ...this.breaks('DEF'), expArr };
   }
 }
