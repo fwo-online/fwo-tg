@@ -103,7 +103,7 @@ class BattleLog extends ee {
       const { action } = weaponTypes[msgObj.weapon.wtype];
       data = `*${msgObj.initiator}* ${action(msgObj.target, msgObj.weapon)} и нанёс *${msgObj.dmg}* урона \\[ 💔-${msgObj.dmg}/${msgObj.hp} 📖${msgObj.exp} ]`;
     } else if (msgObj.dmgType) {
-      data = `*${msgObj.initiator}* сотворил _${msgObj.action}_ (${msgObj.actionType}) на *${msgObj.target}* нанеся ${msgObj.dmg} урона и получил +e:${msgObj.exp}`;
+      data = `*${msgObj.initiator}* сотворил _${msgObj.action}_ (${msgObj.actionType}) на *${msgObj.target}* нанеся ${msgObj.dmg}  \\[ 💔-${msgObj.dmg}/${msgObj.hp} 📖${msgObj.exp} ]`;
     } else if (!msgObj.effect) {
       data = `*${msgObj.initiator}* использовал _${msgObj.action}_ (${msgObj.actionType}) на *${msgObj.target}* и получил +e:${msgObj.exp}`;
     } else {
