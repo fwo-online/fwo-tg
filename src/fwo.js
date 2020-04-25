@@ -1,7 +1,6 @@
 const Telegraf = require('telegraf');
 const session = require('telegraf/session');
 const express = require('express');
-const SocksAgent = require('socks5-https-client/lib/Agent');
 const db = require('./models');
 const stage = require('./scenes/stage.js');
 const channelHelper = require('./helpers/channelHelper');
