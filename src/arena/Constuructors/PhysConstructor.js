@@ -109,7 +109,9 @@ class PhysConstructor {
     // eslint-disable-next-line no-console
     console.log('at', at);
     const r = MiscService.rndm('1d100');
-    const c = Math.round(Math.sqrt(at) + (10 * at) + 5);
+    //const c = Math.round(Math.sqrt(at) + (10 * at) + 5);
+    // new formula for phys attack chance
+    const c = 20 * at + 50;
     const result = c > r;
     // eslint-disable-next-line no-console
     console.log('left', c, 'right', r, 'result', result);
