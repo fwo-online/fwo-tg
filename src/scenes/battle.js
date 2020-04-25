@@ -43,10 +43,9 @@ const checkCancelFindCount = (character) => {
  * @param {string} match
  * @param {number} proc
  */
-const getProcentKeyboard = (match, proc) => [5, 10, 25, 50, 75]
+const getProcentKeyboard = (match, proc) => Array.from(new Set([5, 10, 25, 50, 75, proc]))
   .filter((key) => key <= proc)
-  .map((key) => Markup.callbackButton(key, `${match}_${key}`))
-  .concat(Markup.callbackButton(proc, `${match}_${proc}`));
+  .map((key) => Markup.callbackButton(key, `${match}_${key}`));
 
 battleScene.enter(async ({ reply, replyWithMarkdown }) => {
   // @todo При поиске боя хотелось бы ещё выдавать сюда картиночку
