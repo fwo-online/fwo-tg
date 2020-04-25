@@ -140,15 +140,11 @@ class Magic {
   /**
    * Возвращает шанс прохождения магии
    * @return {Number} result шанс прохождения
-   * @todo нужно кроме шанса магии прибавлять модификатор чара
-   * @todo Всё ниже рассчитывается дла бафов и не учитывает mdef/mga
    */
   getChance() {
     const { initiator, target } = this.params;
     const initiatorMagicLvl = initiator.magics[this.name];
-    // eslint-disable-next-line no-console
-    console.log('getChance:magicLvl:', initiatorMagicLvl);
-    const imc = initiator.modifiers.castChance; // мод шанс прохождения
+    const imc = initiator.modifiers.castChance || 0; // мод шанс прохождения
     const acm = initiator.modifiers.magics[this.name] || 0; // мод action'а
     let chance = this.chance[initiatorMagicLvl - 1];
     if (typeof chance === 'string') {
@@ -162,9 +158,10 @@ class Magic {
       result += +acm.chance;
     }
     // тут нужно взять получившийся шанс и проверить ещё отношение mga цели
+    // @todo magics cast chance
     if (this.magType === 'bad') {
-      const x = (initiator.stats.val('mga') / target.stats.val('mgp')) / 10;
-      result *= x;
+      const x = (initiator.stats.val('mga') / target.stats.val('mgp')) * 3;
+      result += x;
     }
     console.log('chance is :', result, 'total', result * initiator.proc);
     return result * initiator.proc;
