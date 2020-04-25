@@ -5,6 +5,6 @@ FROM node:12-slim
 WORKDIR /fwo
 COPY ./package*.json ./
 RUN npm install
-COPY ./src/* ./
+COPY ./src/ ./
 
 CMD ["node","fwo.js"]
