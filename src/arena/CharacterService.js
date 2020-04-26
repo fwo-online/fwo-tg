@@ -237,7 +237,9 @@ class Char {
   }
 
   isCanPutOned(item) {
-    return !this.items.find((currentItem) => currentItem.wear === item.wear && currentItem.putOn);
+    return !this.items.find((currentItem) => currentItem.putOn
+      && (item.wear.indexOf(currentItem.wear) !== -1
+      || currentItem.wear.indexOf(item.wear) !== -1));
   }
 
   async removeItem(itemId) {
