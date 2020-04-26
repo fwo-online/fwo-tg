@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [10.x]
+        node-version: [12.x]
     steps:
       - uses: actions/checkout@v1
       - name: Use Node.js ${{ matrix.node-version }}
@@ -21,10 +21,3 @@ jobs:
           npm test
         env:
           CI: true
-      - name: Deploy to MasterBot
-        uses: catHD/action-rsync@master
-        env:
-          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
-          RSYNC_ARG: "-avzr --delete"
-          EXCLUDE_ARG: ""
-          HOST_ARG: "codeship@159.89.227.216:~/fwo-tg/"
