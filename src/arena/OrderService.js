@@ -168,13 +168,13 @@ class Orders {
   }
 
   /**
-   * Возвращает количество заказов игрока одного типа
+   * Возвращает количество заказов игрока для данного умения
    * @param {String} charId идентификатор персонажа
-   * @param {string} act название умения или магии
-   * @returns {number} количество заказов игрока одного типа
+   * @param {string} action название умения или магии
+   * @returns {number} количество заказов игрока для данного умения
    */
-  getNumberOfOrder(charId, act) {
-    return this.ordersList.reduce((sum) => sum + Number(this.checkPlayerOrder(charId, act)), 0);
+  getNumberOfOrder(charId, action) {
+    return this.ordersList.filter((o) => o.initiator === charId && o.action === action).length;
   }
 }
 
