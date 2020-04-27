@@ -279,10 +279,10 @@ class Game {
     this.sendBattleLog(this.endGameReason);
     this.sendBattleLog(this.statistic());
     this.saveGame();
-    arena.mm.cancel();
     setTimeout(() => {
       this.sendToAll('Конец игры, распределяем ресурсы...');
       this.forAllPlayers(Game.showExitButton);
+      arena.mm.cancel();
       this.forAllPlayers(/** @param {Player} player */(player) => arena.mm.autoreg(player.id));
     }, 15000);
   }

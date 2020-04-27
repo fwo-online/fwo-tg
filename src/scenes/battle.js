@@ -175,6 +175,10 @@ battleScene.command('run', async ({ reply, session }) => {
   reply('Ты будешь выброшен из игры в конце этого раунда');
 });
 
+battleScene.leave(({ session }) => {
+  arena.mm.pull(session.character.id);
+});
+
 /**
  * Запус тестового боя
  */
