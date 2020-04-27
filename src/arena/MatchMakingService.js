@@ -1,4 +1,5 @@
 const { EventEmitter } = require('events');
+const arena = require('./index');
 const config = require('./config');
 const QueueConstructor = require('./Constuructors/QueueConstrucror');
 
@@ -100,6 +101,20 @@ class MatchMaking extends EventEmitter {
     this.stop();
     if (this.mmQueue.length >= config.minPlayersLimit) {
       this.timerId = setTimeout(() => { this.start(); }, config.startGameTimeout);
+    }
+  }
+
+  /**
+   * Автоматическая регистрация игрока
+   * @param {string} charId
+   */
+  autoreg(charId) {
+    if (arena.characters[charId].autoreg) {
+      this.push({
+        charId,
+        psr: 1000,
+        startTime: Date.now(),
+      });
     }
   }
 }
