@@ -14,6 +14,10 @@ const getMagicButtons = (character) => Object
     ),
   ]);
 
+const getLvlButtons = (length) => new Array(length).fill(0)
+  .reduce((arr, curr, i) => [...arr, i + 1], [])
+  .map((lvl) => Markup.callbackButton(lvl, `learn_${lvl}`));
+
 magicScene.enter(async ({ replyWithMarkdown, session }) => {
   await replyWithMarkdown(
     '*Магии*',
@@ -24,32 +28,39 @@ magicScene.enter(async ({ replyWithMarkdown, session }) => {
 
   await replyWithMarkdown(
     `Известные магии. Нажми на магию, чтобы узнать о ней больше.
-Стоимость изучения магии *1💡*(${session.character.bonus}💡) ${session.character.bonus === 0 ? '❗️' : '✅'}`,
+${session.character.lvl === 1 ? `Стоимость изучения магии *1💡*(${session.character.bonus}💡)` : ''}`,
     Markup.inlineKeyboard([
       ...getMagicButtons(session.character),
       [
-        Markup.callbackButton('Учить', 'learn'),
+        Markup.callbackButton('Учить', session.character.lvl === 1 ? 'learn_1' : 'select_lvl'),
         Markup.callbackButton('В профиль', 'back')],
     ]).resize().extra(),
   );
 });
 
-magicScene.action('learn', async ({ editMessageText, answerCbQuery, session }) => {
-  try {
-    session.character = MagicService.learn(session.character.id, 1);
-    answerCbQuery('Теперь ты знаешь на одну магию больше');
-  } catch (e) {
-    answerCbQuery(e.message);
+/** Ожиадем "learn_${lvl}", где lvl - уровень изучаемой магии */
+magicScene.action(/magics|learn(?=_)/, async ({
+  editMessageText, answerCbQuery, session, match,
+}) => {
+  const [, lvl] = match.input.split('_');
+  if (lvl) {
+    try {
+      session.character = MagicService.learn(session.character.id, lvl);
+      answerCbQuery('Теперь ты знаешь на одну магию больше');
+    } catch (e) {
+      answerCbQuery(e.message);
+    }
   }
+
   editMessageText(
     `Известные магии. Нажми на магию, чтобы узнать о ней больше.
-Стоимость изучения магии *1💡*(${session.character.bonus}💡) ${session.character.bonus === 0 ? '❗️' : '✅'}`,
+${session.character.lvl === 1 ? `Стоимость изучения магии *1💡*(${session.character.bonus}💡)` : ''}`,
     {
       parse_mode: 'Markdown',
       reply_markup: Markup.inlineKeyboard([
         ...getMagicButtons(session.character),
         [
-          Markup.callbackButton('Учить', 'learn'),
+          Markup.callbackButton('Учить', session.character.lvl === 1 ? 'learn_1' : 'select_lvl'),
           Markup.callbackButton('В профиль', 'back'),
         ],
       ]).resize(),
@@ -57,6 +68,24 @@ magicScene.action('learn', async ({ editMessageText, answerCbQuery, session }) =
   );
 });
 
+magicScene.action('select_lvl', ({ editMessageText, session }) => {
+  const lvl = Math.min(session.character.lvl, 4);
+
+  editMessageText(
+    `Выбери уровень изучаемой магии. Стоимость изучения равна уровню магии (*${session.character.bonus}💡*)`,
+    {
+      parse_mode: 'Markdown',
+      reply_markup: Markup.inlineKeyboard([
+        getLvlButtons(lvl),
+        [
+          Markup.callbackButton('Назад', 'magics'),
+        ],
+      ]).resize(),
+    },
+  );
+});
+
+/** Ожиадем "about_${name}", где name - название магии */
 magicScene.action(/about(?=_)/, ({ editMessageText, match }) => {
   const [, name] = match.input.split('_');
   const magic = MagicService.show(name);
@@ -64,24 +93,7 @@ magicScene.action(/about(?=_)/, ({ editMessageText, match }) => {
     `${magic.name}: ${magic.desc}`,
     Markup.inlineKeyboard([
       Markup.callbackButton('Назад', 'magics'),
-    ]).resize(),
-  );
-});
-
-magicScene.action('magics', async ({ editMessageText, session }) => {
-  await editMessageText(
-    `Известные магии. Нажми на магию, чтобы узнать о ней больше.
-Стоимость изучения магии *1💡*(${session.character.bonus}💡) ${session.character.bonus === 0 ? '❗️' : '✅'}`,
-    {
-      parse_mode: 'Markdown',
-      reply_markup: Markup.inlineKeyboard([
-        ...getMagicButtons(session.character),
-        [
-          Markup.callbackButton('Учить', 'learn'),
-          Markup.callbackButton('В профиль', 'back'),
-        ],
-      ]).resize(),
-    },
+    ]).resize().extra(),
   );
 });
 
