@@ -117,6 +117,7 @@ class Char {
     this.currentGame = null;
     this.updateHarkFromItems();
     this.mm = null;
+    this.autoreg = false;
   }
 
   get id() {
