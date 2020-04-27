@@ -81,6 +81,7 @@ class DmgMagic extends Magic {
       action: this.name,
       actionType: 'magic',
       target: target.nick,
+      hp: target.stats.val('hp'),
       initiator: initiator.nick,
       dmgType: this.dmgType,
     };
