@@ -53,7 +53,7 @@ class BattleKeyboard {
    * @todo добавить лучнику количество целей от maxTargets
    */
   checkAttackOrder() {
-    const maxTargets = /l/.test(this.player.prof) ? 2 : 1;
+    const maxTargets = arena.characters[this.player.id].def.maxTarget;
     return maxTargets > this.orders.getNumberOfOrder(this.player.id, arena.actions.attack.name);
   }
 
