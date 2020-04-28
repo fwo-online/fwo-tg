@@ -78,7 +78,7 @@ class DmgMagic extends Magic {
     const dmgObj = {
       exp: this.status.exp,
       dmg: floatNumber(this.status.hit),
-      action: this.name,
+      action: this.displayName,
       actionType: 'magic',
       target: target.nick,
       hp: target.stats.val('hp'),
