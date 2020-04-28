@@ -3,6 +3,20 @@ const MiscService = require('../MiscService');
 /**
  * @typedef {import ('../PlayerService')} player
  * @typedef {import ('../GameService')} game
+ * @typedef {Object} baseMag
+ * @property {string} name Имя магии
+ * @property {string} displayName Отображаемое имя
+ * @property {string} desc Короткое описание
+ * @property {number} cost Стоимость за использование
+ * @property {string} costType Тип единицы стоимости {en/mp}
+ * @property {number} lvl Требуемый уровень круга магий для использования
+ * @property {string} orderType Тип цели заклинания self/team/enemy/enemyTeam
+ * @property {string} aoeType Тип нанесения урона по цели:
+ * @property {number} baseExp Стартовый параметр exp за действие
+ * @property {string[]} effect размер рандомного эффект от магии
+ * @property {string} magType Тип магии good/bad/neutral
+ * @property {number[]} chance
+ * @property {string[]} profList
  */
 
 /**
@@ -11,26 +25,24 @@ const MiscService = require('../MiscService');
 class Magic {
   /**
    * Создание магии
-   * @param {magObj} magObj Обьект создаваемой магии
-   * @typedef {Object} magObj
-   * @property {String} name Имя магии
-   * @property {String} desc Короткое описание
-   * @property {Number} cost Стоимость за использование
-   * @property {String} costType Тип единицы стоимости {en/mp}
-   * @property {Number} lvl Требуемый уровень круга магий для использования
-   * @property {String} orderType Тип цели заклинания self/team/enemy/enemyTeam
-   * @property {String} aoeType Тип нанесения урона по цели:
-   * @property {Number} baseExp Стартовый параметр exp за действие
-   * target/targetAoe/all/allNoinitiator/team/self
-   * @property {String[]} effect размер рандомного эффект от магии
-   * @property {String} magType Тип магии good/bad/neutral
-   * @property {Number[]} chance
-   * @property {String} costType
-   * @property {Number} baseExp
-   * @property {Number} cost
+   * @param {baseMag} magObj Обьект создаваемой магии
    */
   constructor(magObj) {
-    Object.assign(this, magObj);
+    this.name = magObj.name;
+    this.desk = magObj.desc;
+    this.cost = magObj.cost;
+    this.costType = magObj.costType;
+    this.lvl = magObj.lvl;
+    this.orderType = magObj.orderType;
+    this.aoeType = magObj.aoeType;
+    this.baseExp = magObj.baseExp;
+    this.effect = magObj.effect;
+    this.magType = magObj.magType;
+    this.chance = magObj.chance;
+    this.costType = magObj.costType;
+    this.baseExp = magObj.baseExp;
+    this.displayName = magObj.displayName;
+    this.profList = magObj.profList;
     this.status = {};
   }
 
@@ -104,7 +116,7 @@ class Magic {
   /**
    * Функция расчитывай размер эффекат от магии по стандартным дайсам
    * @param {player} [initiator=this.param.initiator] Обьект персонажа
-   * @return {Number} dice число эффекта
+   * @return {number} dice число эффекта
    */
   effectVal(initiator = this.params.initiator) {
     const initiatorMagicLvl = initiator.magics[this.name];
@@ -139,7 +151,7 @@ class Magic {
 
   /**
    * Возвращает шанс прохождения магии
-   * @return {Number} result шанс прохождения
+   * @return {number} result шанс прохождения
    */
   getChance() {
     const { initiator, target } = this.params;
@@ -230,8 +242,8 @@ class Magic {
   }
 
   /**
-   * @param {String} msg строка остановки магии (причина)
-   * @return {Object} обьект остановки магии
+   * @param {string} msg строка остановки магии (причина)
+   * @return обьект остановки магии
    */
   breaks(msg) {
     return {
