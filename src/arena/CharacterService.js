@@ -60,7 +60,7 @@ function getDynHarks(charObj) {
 
   const hit = calcHit();
   const maxTarget = (charObj.prof === 'l') ? Math.round(charObj.lvl + 3 / 2) : 1;
-  const lspell = (charObj.prof === 'l') ? Math.round((harks.int - 4) / 3) : 0;
+  const lspell = (charObj.prof === 'm' || charObj.prof === 'p') ? Math.round((harks.int - 4) / 3) : 0;
   return {
     patk,
     pdef,
