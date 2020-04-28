@@ -74,6 +74,7 @@ class LongDmgMagic extends DmgMagic {
       actionType: 'magic',
       target: t.nick,
       initiator: i.nick,
+      hp: t.stats.val('hp'),
       dmgType: this.dmgType,
     };
     game.addHistoryDamage(dmgObj);
