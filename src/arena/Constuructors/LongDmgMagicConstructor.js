@@ -7,12 +7,19 @@ const floatNumber = require('../floatNumber');
 const DmgMagic = require('./DmgMagicConstructor');
 
 /**
+ * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../GameService')} game
+ * @typedef {import ('./MagicConstructor').baseMag} baseMag
+ * @typedef {import ('./DmgMagicConstructor').dmgMag} dmgMag
+ */
+
+/**
  * Общий конструктор не длительных магий
  */
 class LongDmgMagic extends DmgMagic {
   /**
    * Конструктор длительных магий
-   * @param {Object} magObj
+   * @param {baseMag & dmgMag} magObj
    */
   // eslint-disable-next-line no-useless-constructor
   constructor(magObj) {
@@ -21,9 +28,9 @@ class LongDmgMagic extends DmgMagic {
 
   /**
    * Добавляем в основной каст postRun для записи длительной магии в массив
-   * @param {Object} i  initiator
-   * @param {Object} t  target
-   * @param {Object} g  Game
+   * @param {player} i  initiator
+   * @param {player} t  target
+   * @param {game} g  Game
    */
   cast(i, t, g) {
     try {
@@ -52,6 +59,8 @@ class LongDmgMagic extends DmgMagic {
 
   /**
    * Функция формирующая специальный формат вывода для длительной магии
+   * @param {player} i
+   * @param {player} t
    * @todo в старой арене формат длительной атакующей магии был :
    *
    */
@@ -65,6 +74,7 @@ class LongDmgMagic extends DmgMagic {
       actionType: 'magic',
       target: t.nick,
       initiator: i.nick,
+      hp: t.stats.val('hp'),
       dmgType: this.dmgType,
     };
     game.addHistoryDamage(dmgObj);
@@ -75,7 +85,7 @@ class LongDmgMagic extends DmgMagic {
 
   /**
    * Кастыль для обработки длительной магии
-   * @param {Object} game обьект игры
+   * @param {game} game обьект игры
    * @todo hardcode =(
    * @todo возможно нужно вынести это в отдельный конструктор с которого будет
    * наследоваться вся логика "длительных" , сейча пока делаю так для mvp
@@ -117,6 +127,9 @@ class LongDmgMagic extends DmgMagic {
   /**
    * Функция формирует обьект параметров длительной магии внутри Game, для
    * текущего типа action
+   * @param {player} i  initiator
+   * @param {player} t  target
+   * @param {game} g  Game
    * buff = { frostTouch = [{initiator,target,duration},{}] }
    */
   postRun(i, t, g) {

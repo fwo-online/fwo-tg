@@ -3,31 +3,24 @@ const floatNumber = require('../floatNumber');
 const MiscService = require('../MiscService');
 
 /**
+ * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../GameService')} game
+ * @typedef {import ('./MagicConstructor').baseMag} baseMag
+ * @typedef {Object} dmgMag
+ * @property {string} dmgType
+ */
+
+/**
  * Общий конструктор не длительных магий
  */
 class DmgMagic extends Magic {
   /**
    * Создание магии
-   * @param {magObj} magObj Обьект создаваемой магии
-   * @typedef {Object} magObj
-   * @property {String} name Имя магии
-   * @property {String} displayName Отображаемое имя
-   * @property {String} desc Короткое описание
-   * @property {Number} cost Стоимость за использование
-   * @property {String} costType Тип единицы стоимости {en/mp}
-   * @property {Number} lvl Требуемый уровень круга магий для использования
-   * @property {String} orderType Тип цели заклинания self/team/enemy/enemyTeam
-   * @property {String} aoeType Тип нанесения урона по цели:
-   * @property {Number} baseExp Стартовый параметр exp за действие
-   * target/targetAoe/all/allNoinitiator/team/self
-   * @property {String} magType Тип магии good/bad/neutral
-   * @property {String[]} effect размер рандомного эффект от магии
-   * @property {Number[]} chance
-   * @property {String[]} profList
-   * @property {String} dmgType Тип наносимого урона (для расчета резистов)
+   * @param {dmgMag & baseMag} magObj Обьект создаваемой магии
    */
   constructor(magObj) {
     super(magObj);
+    this.dmgType = magObj.dmgType;
     this.status = {};
   }
 
@@ -69,8 +62,8 @@ class DmgMagic extends Magic {
 
   /**
    * Магия прошла удачно
-   * @param {Object} initiator обьект персонажаы
-   * @param {Object} target обьект цели магии
+   * @param {player} initiator обьект персонажаы
+   * @param {player} target обьект цели магии
    * @todo тут нужен вывод требуемых параметров
    */
   next(initiator, target) {
@@ -78,7 +71,7 @@ class DmgMagic extends Magic {
     const dmgObj = {
       exp: this.status.exp,
       dmg: floatNumber(this.status.hit),
-      action: this.name,
+      action: this.displayName,
       actionType: 'magic',
       target: target.nick,
       hp: target.stats.val('hp'),
