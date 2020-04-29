@@ -3,12 +3,18 @@ const Common = require('./CommonMagicConstructor');
 const floatNumber = require('../floatNumber');
 
 /**
+ * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../GameService')} game
+ * @typedef {import ('./MagicConstructor').baseMag} baseMag
+ */
+
+/**
  * Общий конструктор не длительных магий
  */
 class LongMagic extends Common {
   /**
    * Конструктор длительных магий
-   * @param {Object} magObj
+   * @param {baseMag} magObj
    */
   // eslint-disable-next-line no-useless-constructor
   constructor(magObj) {
@@ -17,9 +23,9 @@ class LongMagic extends Common {
 
   /**
    * Добавляем в основной каст postRun для записи длительной магии в массив
-   * @param {Object} i  initiator
-   * @param {Object} t  target
-   * @param {Object} g  Game
+   * @param {player} i  initiator
+   * @param {player} t  target
+   * @param {game} g  Game
    */
   cast(i, t, g) {
     try {
@@ -35,7 +41,7 @@ class LongMagic extends Common {
 
   /**
    * Кастыль для обработки длительной магии
-   * @param {Object} game обьект игры
+   * @param {game} game обьект игры
    * @todo hardcode =(
    */
   checkLong(game) {
@@ -73,6 +79,9 @@ class LongMagic extends Common {
   /**
    * Функция формирует обьект параметров длительной магии внутри Game, для
    * текущего типа action
+   * @param {player} i Обьект кастера
+   * @param {player} t Обьект цели
+   * @param {game} g Обьект игры
    * buff = { frostTouch = [{initiator,target,duration},{}] }
    * @todo нужно разрулить этот треш ибо оно работает ужасно
    */
@@ -106,8 +115,8 @@ class LongMagic extends Common {
 
   /**
    * Вызов логгера для длительных магий
-   * @param i
-   * @param t
+   * @param {player} i
+   * @param {player} t
    */
   longNext(i, t) {
     const bl = this.params.game.battleLog;
@@ -118,7 +127,6 @@ class LongMagic extends Common {
       actionType: 'magic',
       target: t.nick,
       initiator: i.nick,
-      dmgType: this.dmgType,
     });
   }
 }
