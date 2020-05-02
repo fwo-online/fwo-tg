@@ -97,7 +97,7 @@ class BattleLog extends ee {
   success(msgObj) {
     let data = '';
     const { expArr } = msgObj;
-    const expString = expArr ? expArr.map(([name, exp]) => `${name}: 📖${exp}`).join(', ') : '';
+    const expString = expArr ? expArr.map(([name, exp, val]) => `${name}:${val} 📖${exp}`).join(', ') : '';
     if (msgObj.action === 'headHeal') {
       data = `Игрок *${msgObj.target} был вылечен на ${msgObj.effect} \\[${expString}]`
     }
