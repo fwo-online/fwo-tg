@@ -38,7 +38,7 @@ const character = new Schema({
   magics: { type: Object, default: {} },
   bonus: { type: Number, default: 0 },
   skills: { type: Object, default: {} },
-  clan: { type: String, default: null },
+  clan: { type: Schema.Types.ObjectId, ref: 'Clan' },
   modifiers: {
     type: Object,
     default: {

@@ -101,7 +101,7 @@ class Char {
    * @property {Number} bonus
    * @property {Object} mm
    * @property {Object.<string, number>} skills
-   * @property {Number} clan
+   * @property {Object} clan
    * @property {import ('./GameService')} currentGame
    * @property {Number} mm
    */
@@ -349,6 +349,30 @@ class Char {
     }
   }
 
+  async createClan(name) {
+    if (this.gold < 100) {
+      throw new Error('Нужно больше золота');
+    }
+    this.gold -= 100;
+    const clan = await db.clan.create(this.id, name);
+    this.charObj.clan = clan;
+    await this.saveToDb();
+    const char = await Char.getCharacter(this.tgId);
+    return char;
+  }
+
+  async joinClan(clanId) {
+    this.charObj.clan = clanId;
+    await this.saveToDb();
+    const char = await Char.getCharacter(this.tgId);
+    return char;
+  }
+
+  async leaveClan() {
+    this.charObj.clan = undefined;
+    this.saveToDb();
+  }
+
   /**
    * @desc Получает идентификатор игры из charId участника
    * @return {String|Number} gameId идентификатор игры
@@ -440,7 +464,7 @@ class Char {
       // eslint-disable-next-line no-console
       console.log('Saving char :: id', this.id);
       const {
-        gold, exp, magics, bonus, items, skills, lvl,
+        gold, exp, magics, bonus, items, skills, lvl, clan,
       } = this;
       return await db.char.update(this.tgId, {
         gold,
@@ -449,6 +473,7 @@ class Char {
         bonus,
         skills,
         lvl,
+        clan,
         inventory: items,
       });
     } catch (e) {

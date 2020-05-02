@@ -19,6 +19,7 @@ lobby.enter(async ({ replyWithMarkdown, replyWithPhoto, session }) => {
 Так-так, значит ты *${nickname}* (${icon}${lvl})`,
     Markup.keyboard([
       ['⚔ В бой'],
+      ['🏰 Клан'],
       ['😎 Профиль', '🏪 Магазин'],
       ['☸ Настройки', '❓ Помощь'],
     ]).resize().extra(),
@@ -39,6 +40,10 @@ lobby.hears('🏪 Магазин', ({ scene }) => {
 
 lobby.hears('☸ Настройки', ({ scene }) => {
   scene.enter('settings');
+});
+
+lobby.hears('🏰 Клан', ({ scene }) => {
+  scene.enter('clan');
 });
 
 module.exports = lobby;
