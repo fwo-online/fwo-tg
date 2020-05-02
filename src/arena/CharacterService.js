@@ -435,7 +435,7 @@ class Char {
       // eslint-disable-next-line no-console
       console.log('Saving char :: id', this.id);
       const {
-        gold, exp, magics, bonus, items, skills, lvl,
+        gold, exp, magics, bonus, items, skills, lvl, free,
       } = this;
       return await db.char.update(this.tgId, {
         gold,
@@ -444,6 +444,7 @@ class Char {
         bonus,
         skills,
         lvl,
+        free,
         inventory: items,
       });
     } catch (e) {
