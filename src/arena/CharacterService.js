@@ -210,13 +210,17 @@ class Char {
     return this.charObj.clan;
   }
 
+  /** Суммарное количество опыта, требуемое для следующего уровня */
+  get nextLvlExp() {
+    return 2 ** (this.lvl - 1) * 1000 * lvlRatio;
+  }
+
   /**
    * Проверяет количество опыта для следующего уровня. Добавляет уровень, если опыта достаточно
    * @param {number} currentExp - текущее количество опыта
    */
   addLvl(currentExp) {
-    const nextLvlExp = 2 ** (this.lvl - 1) * 1000 * lvlRatio;
-    if (nextLvlExp < currentExp) {
+    if (this.nextLvlExp < currentExp) {
       this.charObj.lvl += 1;
       this.free += 10;
       this.addLvl(currentExp);

@@ -1,6 +1,6 @@
 const Markup = require('telegraf/markup');
-const arena = require('../arena');
 const BattleKeyboard = require('./BattleKeyboard');
+const arena = require('../arena');
 const { charDescr } = require('../arena/MiscService');
 /**
  * Помощник для отправки сообщений в общий чат
@@ -90,6 +90,7 @@ module.exports = {
    */
   async sendExitButton(player) {
     const { exp, gold } = player.stats.collect;
+    const character = arena.characters[player.id];
     const button = [];
     const {
       autoreg, nickname, lvl, prof,
@@ -105,8 +106,8 @@ module.exports = {
     await this.bot.telegram.sendMessage(
       player.tgId,
       `Награда за бой:
-📖 ${exp}
-💰 ${gold}
+📖 ${exp} (${character.exp}/${character.nextLvlExp})
+💰 ${gold} (${character.gold})
 ${autoreg ? 'Идёт поиск новой игры...' : ''}`,
       Markup.inlineKeyboard(button).resize().extra(),
     );
