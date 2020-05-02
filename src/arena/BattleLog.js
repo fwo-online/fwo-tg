@@ -96,6 +96,11 @@ class BattleLog extends ee {
    */
   success(msgObj) {
     let data = '';
+    const { expArr } = msgObj;
+    const expString = expArr ? expArr.map(([name, exp]) => `${name}: 📖${exp}`).join(', ') : '';
+    if (msgObj.action === 'headHeal') {
+      data = `Игрок *${msgObj.target} был вылечен на ${msgObj.effect} \\[${expString}]`
+    }
     // Если обьект содержит кастомную строку испльзуем её
     if (msgObj.msg) {
       data = msgObj.msg(msgObj.initiator, msgObj.exp);

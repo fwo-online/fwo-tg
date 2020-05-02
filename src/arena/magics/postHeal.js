@@ -13,6 +13,7 @@ module.exports = {
   postEffect(g) {
     const Game = g;
     let healmsg = '';
+    let expArr = [];
 
     /**
      * Раздаем exp всем участникам хила
@@ -35,6 +36,7 @@ module.exports = {
         exp = Math.round(allHeal * 8);
         target.stats.mode('up', 'hp', allHeal);
       }
+      // функция вычисляет процент хила для  каждого из хиллеров
       healers.forEach((healObj) => {
         const healVal = healObj.val;
         const initiator = Game.getPlayerById(healObj.initiator);
@@ -46,11 +48,17 @@ module.exports = {
           playerExpForHeal = Math.round(exp * (hpProc / 100));
         }
         initiator.stats.mode('up', 'exp', playerExpForHeal);
-        healmsg += `[${initiator.nick} +hp:${healVal}/+e:${playerExpForHeal}] `;
+        // healmsg += `[${initiator.nick} +hp:${healVal}/+e:${playerExpForHeal}] `;
+        expArr.push(initiator.nick,playerExpForHeal);
       });
-      // eslint-disable-next-line no-console
-      console.log(`${target.nick} был вылечен на ${allHeal} | ${healmsg}`);
-      Game.sendBattleLog(`${target.nick} был вылечен на ${allHeal}|${healmsg}`);
+
+      // Game.sendBattleLog(`${target.nick} был вылечен на ${allHeal}|${healmsg}`);
+      Game.battleLog.success({
+        action: 'headHeal',
+        target: target.nick,
+        effect: allHeal,
+        expArr: expArr,
+      });
     }
 
     Game.forAllPlayers(giveExpForHeal);
