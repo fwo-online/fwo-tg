@@ -227,7 +227,7 @@ class PhysConstructor {
     if (f.length >= 1) {
       f.forEach((p) => {
         const defender = game.getPlayerById(p.initiator);
-        if (target.id === initiator.id) {
+        if (game.isPlayersAlly(initiator, target)) {
           expArr.push([defender.nick, 0]);
         } else {
           const pr = (Math.floor(p.val * 100) / prt);
