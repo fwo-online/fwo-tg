@@ -49,7 +49,7 @@ module.exports = {
         }
         initiator.stats.mode('up', 'exp', playerExpForHeal);
         // healmsg += `[${initiator.nick} +hp:${healVal}/+e:${playerExpForHeal}] `;
-        expArr.push(initiator.nick,playerExpForHeal);
+        expArr.push(initiator.nick, playerExpForHeal, healVal);
       });
 
       // Game.sendBattleLog(`${target.nick} был вылечен на ${allHeal}|${healmsg}`);
