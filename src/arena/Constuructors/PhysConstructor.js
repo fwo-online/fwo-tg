@@ -220,16 +220,21 @@ class PhysConstructor {
    * за протектом
    */
   protectorsGetExp() {
-    const { target, game } = this.params;
+    const { initiator, target, game } = this.params;
     const f = target.flags.isProtected; // Коллекция защищающих [{id,кол-во дефа},..]
     const expArr = [];
     const prt = target.stats.val('pdef'); // общий показатель защиты цели
     if (f.length >= 1) {
       f.forEach((p) => {
-        const pr = (Math.floor(p.val * 100) / prt);
-        const e = Math.round(this.status.hit * 0.8 * pr);
-        expArr.push([game.getPlayerById(p.initiator).nick, e]);
-        game.getPlayerById(p.initiator).stats.mode('up', 'exp', e);
+        const defender = game.getPlayerById(p.initiator);
+        if (game.isPlayersAlly(initiator, target)) {
+          expArr.push([defender.nick, 0]);
+        } else {
+          const pr = (Math.floor(p.val * 100) / prt);
+          const e = Math.round(this.status.hit * 0.8 * pr);
+          expArr.push([defender.nick, e]);
+          defender.stats.mode('up', 'exp', e);
+        }
       });
     } else {
       const player = game.getPlayerById(f[0].initiator);
