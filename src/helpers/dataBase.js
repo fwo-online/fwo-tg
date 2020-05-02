@@ -175,7 +175,7 @@ module.exports = {
     },
     async findName(name) {
       try {
-        return await ClanModel.findOne({ name });
+        return await ClanModel.exists({ name: { $regex: name, $options: 'i' } });
       } catch (e) {
         dbErr(e);
       }
