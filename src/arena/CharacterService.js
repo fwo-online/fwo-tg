@@ -24,14 +24,14 @@ function getDynHarks(charObj) {
   const patk = (charObj.prof === 'l')
     ? floatNumber(harks.dex + (harks.int * 0.5))
     : floatNumber(harks.dex + (harks.str * 0.4));
-  const pdef = ((harks.con * 0.6) + (harks.dex * 0.4));
+  const pdef = floatNumber(((harks.con * 0.6) + (harks.dex * 0.4)));
   const maxHp = floatNumber(6 + (harks.con / 3));
   const maxMp = floatNumber(harks.wis * 1.5);
   const maxEn = (charObj.prof === 'l') ? (harks.dex + harks.int * 0.5
     + harks.con * 0.25) : (harks.dex + harks.str * 0.5 + harks.con * 0.25);
 
-  const mga = (harks.wis * 0.6) + (harks.int * 0.4);
-  const mgp = (harks.wis * 0.6) + (harks.int * 0.4);
+  const mga = floatNumber((harks.wis * 0.6) + (harks.int * 0.4));
+  const mgp = floatNumber((harks.wis * 0.6) + (harks.int * 0.4));
   const hl = ({
     min: floatNumber(harks.int / 10), max: floatNumber(harks.int / 5),
   });
@@ -117,6 +117,7 @@ class Char {
     this.currentGame = null;
     this.updateHarkFromItems();
     this.mm = null;
+    this.autoreg = false;
   }
 
   get id() {

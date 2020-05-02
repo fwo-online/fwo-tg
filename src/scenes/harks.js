@@ -22,6 +22,7 @@ const getInlineKeyboard = (character) => {
     ]);
   inlineKeyboardArr.push([Markup.callbackButton('Подтвердить', 'confirm')]);
   inlineKeyboardArr.push([Markup.callbackButton('Сбросить', 'reset')]);
+  inlineKeyboardArr.push([Markup.callbackButton('Доп. характеристики', 'def_harks')]);
   inlineKeyboardArr.push([Markup.callbackButton('В профиль', 'exit')]);
 
   return inlineKeyboardArr;
@@ -43,36 +44,31 @@ harkScene.enter(async ({ replyWithMarkdown, reply, session }) => {
   );
 });
 
-harkScene.action(/increase(?=_)/, ({
-  session,
-  editMessageText,
-  match,
-  answerCbQuery,
-}) => {
-  const [, hark] = match.input.split('_');
-
-  try {
-    session.character.increaseHark(hark);
-
-    editMessageText(
-      `Свободных очков ${session.character.free}`,
-      Markup.inlineKeyboard([
-        ...getInlineKeyboard(session.character),
-      ]).resize().extra(),
-    );
-  } catch (e) {
-    answerCbQuery(e.message);
-  }
-});
 harkScene.action(/info(?=_)/, ({ answerCbQuery, match }) => {
   const [, hark] = match.input.split('_');
   answerCbQuery(harksDescr[hark].descr);
 });
 
-harkScene.action('confirm', async ({ session, editMessageText, answerCbQuery }) => {
-  await session.character.submitIncreaseHarks();
+harkScene.action(/confirm|reset|back|increase(?=_)/, async ({
+  session, editMessageText, answerCbQuery, match,
+}) => {
+  if (match.input.includes('increase_')) {
+    try {
+      const [, hark] = match.input.split('_');
+      session.character.increaseHark(hark);
+    } catch (e) {
+      answerCbQuery(e.message);
+    }
+  }
+  if (match.input === 'confirm') {
+    await session.character.submitIncreaseHarks();
+    await answerCbQuery('Изменения успешно применены');
+  }
+  if (match.input === 'reset') {
+    session.character.resetHarks();
+    await answerCbQuery('Изменения успешно сброшены');
+  }
 
-  await answerCbQuery('Изменения успешно применены');
   editMessageText(
     `Свободных очков ${session.character.free}`,
     Markup.inlineKeyboard([
@@ -81,16 +77,28 @@ harkScene.action('confirm', async ({ session, editMessageText, answerCbQuery }) 
   );
 });
 
-harkScene.action('reset', async ({ session, editMessageText, answerCbQuery }) => {
-  session.character.resetHarks();
+harkScene.action('def_harks', ({ session, editMessageText }) => {
+  const { def, prof } = session.character;
+  const message = [`\`\`\`
+Урон:                     ${def.hit.min} - ${def.hit.max}
+Атака:                    ${def.patk}
+Защита:                   ${def.pdef}
+Здоровье:                 ${def.maxHp}
+Лечение:                  ${def.hl.min} - ${def.hl.max}
+Мана:                     ${def.maxMp}
+Восстановление маны:      ${def.manaReg}
+Энергия:                  ${def.maxEn}
+Восстановление энергии:   ${def.enReg}
+Магическая атака:         ${def.mga}
+Магическая защита:        ${def.mgp}`,
+  prof === 'l' && `${`Кол-во целей для атаки:  ${def.maxTarget}`}`,
+  (prof === 'm' || prof === 'p') && `${`Длительность магии:       ${def.lspell}`}`,
+  '```',
+  ].filter((val) => val).join('\n');
 
-  await answerCbQuery('Изменения успешно сброшены');
-  editMessageText(
-    `Свободных очков ${session.character.free}`,
-    Markup.inlineKeyboard([
-      ...getInlineKeyboard(session.character),
-    ]).resize().extra(),
-  );
+  editMessageText(message, Markup.inlineKeyboard([
+    Markup.callbackButton('Назад', 'back'),
+  ]).resize().extra({ parse_mode: 'Markdown' }));
 });
 
 harkScene.action('exit', ({ scene }) => {

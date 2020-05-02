@@ -227,6 +227,7 @@ class Game {
     } else {
       channelHelper.broadcast(`Игрок *${player.nick}* был выброшен из игры`);
     }
+    arena.characters[id].autoreg = false;
     delete this.players[id];
     this.info.players.splice(this.info.players.indexOf(id), 1);
   }
@@ -278,10 +279,11 @@ class Game {
     this.sendBattleLog(this.endGameReason);
     this.sendBattleLog(this.statistic());
     this.saveGame();
-    arena.mm.cancel();
     setTimeout(() => {
       this.sendToAll('Конец игры, распределяем ресурсы...');
       this.forAllPlayers(Game.showExitButton);
+      arena.mm.cancel();
+      this.forAllPlayers(/** @param {Player} player */(player) => arena.mm.autoreg(player.id));
     }, 15000);
   }
 
