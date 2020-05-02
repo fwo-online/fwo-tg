@@ -37,7 +37,14 @@ module.exports = {
       try {
         const x = await CharModel.findOne({ ...query, deleted: false })
           .populate('inventory')
-          .populate('clan');
+          .populate({
+            path: 'clan',
+            populate: { path: 'owner' },
+          })
+          .populate({
+            path: 'clan',
+            populate: { path: 'players' },
+          });
         if (x) {
           x.id = x._id;
         }

@@ -23,11 +23,16 @@ clanScene.enter(async ({ replyWithMarkdown, session }) => {
     );
   } else {
     const { clan } = session.character;
+
     replyWithMarkdown(
       `*${clan.name}*`,
       Markup.inlineKeyboard([
         Markup.callbackButton('Список учасников', 'players_list'),
-        Markup.callbackButton('Удалить клан', 'remove'),
+        Markup.callbackButton(
+          'Удалить клан',
+          'remove',
+          clan.owner.tgId !== session.character.tgId,
+        ),
       ]).resize().extra(),
     );
   }
