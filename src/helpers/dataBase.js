@@ -10,6 +10,11 @@ function dbErr(e) {
   throw new Error(`Fail in dbHelper: ${e}`);
 }
 
+/**
+ * @typedef {import ('../models/clan').ClanDocument} ClanDocument
+ * @typedef {import ('../models/clan').Clan} Clan
+ */
+
 module.exports = {
   char: {
     // eslint-disable-next-line consistent-return
@@ -152,6 +157,12 @@ module.exports = {
     },
   },
   clan: {
+    /**
+     * Создаёт новый клан
+     * @param {string} owner - id создателя клана
+     * @param {string} name - название клана
+     * @returns {Promise<Clan>}
+     */
     async create(owner, name) {
       try {
         const clan = new ClanModel({
@@ -161,11 +172,15 @@ module.exports = {
         });
         await clan.save();
 
-        return clan.toObject();
+        return clan;
       } catch (e) {
         dbErr(e);
       }
     },
+    /**
+     * Возвращает список всех кланов
+     * @returns {Promise<Clan[]>}
+     */
     async list() {
       try {
         return await ClanModel.find();
@@ -173,6 +188,11 @@ module.exports = {
         dbErr(e);
       }
     },
+    /**
+     * Ищет название клана в базе без учёта регистра
+     * @param {string} name - название клана
+     * @returns {Promise<boolean>}
+     */
     async findName(name) {
       try {
         return await ClanModel.exists({ name: { $regex: name, $options: 'i' } });
@@ -180,6 +200,11 @@ module.exports = {
         dbErr(e);
       }
     },
+    /**
+     * @param {string} clanId - id клана
+     * @param {Partial<Clan>} params - параметры, которые требуется обновить
+     * @returns {Promise<Clan>}
+     */
     async update(clanId, params) {
       try {
         return await ClanModel.findOneAndUpdate({ _id: clanId }, params);
@@ -187,9 +212,12 @@ module.exports = {
         dbErr(e);
       }
     },
+    /**
+     * @param {string} clanId - id клана
+     */
     async remove(clanId) {
       try {
-        return await ClanModel.remove({ _id: clanId });
+        return await ClanModel.deleteOne({ _id: clanId });
       } catch (e) {
         dbErr(e);
       }

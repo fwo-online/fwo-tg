@@ -4,6 +4,10 @@ const db = require('../helpers/dataBase');
 const { lvlRatio } = require('./config');
 
 /**
+ * @typedef {import ('../models/clan').Clan} Clan
+ */
+
+/**
  * Конструктор персонажа
  * @todo сюда нужны будет get/set функции для intreface части
  * @todo Сейчас массив arena.player не является массивом обьектов Character,
@@ -101,7 +105,7 @@ class Char {
    * @property {Number} bonus
    * @property {Object} mm
    * @property {Object.<string, number>} skills
-   * @property {Object} clan
+   * @property {Clan} clan
    * @property {import ('./GameService')} currentGame
    * @property {Number} mm
    */
@@ -349,6 +353,9 @@ class Char {
     }
   }
 
+  /**
+   * @param {Clan} clan
+   */
   async joinClan(clan) {
     this.charObj.clan = clan;
     await this.saveToDb();
