@@ -11,7 +11,7 @@ const db = require('../helpers/dataBase');
  */
 
 module.exports = {
-  lvlCost: [100, 250, 750, 1000],
+  lvlCost: [100, 250, 750, 1500],
   /**
    * Создаёт новый
    * @param {string} charId - id создателя клана
@@ -57,5 +57,24 @@ module.exports = {
     await char.saveToDb();
     await db.clan.update(clan.id, { gold: clan.gold + gold });
     clan.gold += gold;
+  },
+  /**
+   * Снимает золото из казны и повышает уровань
+   * @param {ClanDocument} clan
+   */
+  async levelUp(clan) {
+    const cost = this.lvlCost[clan.lvl];
+    if (clan.gold < cost) {
+      throw new Error('Недостаточно золота');
+    }
+    if (clan.lvl >= this.lvlCost.length) {
+      throw new Error('Клан имеет максимальный уровень');
+    }
+    const newParams = {
+      gold: clan.gold - cost,
+      lvl: clan.lvl + 1,
+    };
+    await db.clan.update(clan._id, newParams);
+    Object.assign(clan, newParams);
   },
 };

@@ -5,6 +5,20 @@ const { charDescr } = require('../arena/MiscService');
 
 const clanScene = new Scene('clan');
 
+const startScreen = {
+  message: (clan) => `*${clan.name}*`,
+  markup: (clan, isAdmin) => Markup.inlineKeyboard([
+    [Markup.callbackButton('Список учасников', 'players_list')],
+    [Markup.callbackButton('Казна', 'add_gold')],
+    [Markup.callbackButton(
+      `Улучшить клан (-${ClanService.lvlCost[clan.lvl]}💰 +1👤)`,
+      'lvlup',
+      clan.lvl >= ClanService.lvlCost.length,
+    )],
+    [Markup.callbackButton('Удалить клан', 'remove', !isAdmin)],
+  ]).resize().extra({ parse_mode: 'Markdown' }),
+};
+
 clanScene.enter(async ({ replyWithMarkdown, session }) => {
   await replyWithMarkdown(
     '*Клан*',
@@ -26,12 +40,43 @@ clanScene.enter(async ({ replyWithMarkdown, session }) => {
     const isAdmin = clan.owner.tgId === session.character.tgId;
 
     replyWithMarkdown(
-      `*${clan.name}*`,
+      startScreen.message(clan),
+      startScreen.markup(clan, isAdmin),
+    );
+  }
+});
+
+clanScene.action(/lvlup|back/, async ({
+  session, answerCbQuery, match, editMessageText,
+}) => {
+  const { clan } = session.character;
+
+  if (!clan) {
+    editMessageText(
+      'Сейчас ты не состоишь ни в одном клане',
       Markup.inlineKeyboard([
-        Markup.callbackButton('Список учасников', 'players_list'),
-        Markup.callbackButton('Казна', 'add_gold'),
-        Markup.callbackButton('Удалить клан', 'remove', !isAdmin),
-      ]).resize().extra(),
+        Markup.callbackButton('Создать клан', 'create'),
+        Markup.callbackButton('Вступить в клан', 'clan_list'),
+      ]).resize().extra({
+        parse_mode: 'Markdown',
+      }),
+    );
+  } else {
+    if (match.input === 'lvlup') {
+      const cost = ClanService.lvlCost[clan.lvl];
+      try {
+        await ClanService.levelUp(session.character.clan);
+        answerCbQuery(`Клан достиг ${clan.lvl} уровня. Списано ${cost}💰`);
+      } catch (e) {
+        return answerCbQuery(e.message);
+      }
+    }
+
+    const isAdmin = clan.owner.tgId === session.character.tgId;
+
+    editMessageText(
+      startScreen.message(clan),
+      startScreen.markup(clan, isAdmin),
     );
   }
 });
@@ -47,7 +92,7 @@ clanScene.action(/add(?=_)/, async ({
       await ClanService.addGold(clan, session.character, Number(gold));
       answerCbQuery(`Списано ${gold}💰`);
     } catch (e) {
-      answerCbQuery(e);
+      answerCbQuery(e.message);
     }
   }
 
@@ -55,8 +100,8 @@ clanScene.action(/add(?=_)/, async ({
     `В казне ${session.character.clan.gold}💰
 Пополнить казну:`,
     Markup.inlineKeyboard([
-      ...[10, 25, 50, 100].map((val) => Markup.callbackButton(val, `add_${val}`)),
-      Markup.callbackButton('Назад', 'back'),
+      [10, 25, 50, 100, 250].map((val) => Markup.callbackButton(val, `add_${val}`)),
+      [Markup.callbackButton('Назад', 'back')],
     ]).resize().extra(),
   );
 });
@@ -96,12 +141,9 @@ ${message.join('\n')}`,
   );
 });
 
-clanScene.action('create', ({ scene }) => {
+clanScene.action('create', async ({ scene, deleteMessage }) => {
+  await deleteMessage();
   scene.enter('createClan');
-});
-
-clanScene.action('back', ({ scene }) => {
-  scene.reenter();
 });
 
 clanScene.hears('🔙 В лобби', ({ scene }) => {
