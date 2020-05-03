@@ -97,10 +97,7 @@ class BattleLog extends ee {
   success(msgObj) {
     let data = '';
     const { expArr } = msgObj;
-    const expString = expArr ? expArr.map(([name, exp, val]) => `${name}:${val} 📖${exp}`).join(', ') : '';
-    if (msgObj.action === 'headHeal') {
-      data = `Игрок *${msgObj.target} был вылечен на ${msgObj.effect} \\[${expString}]`
-    }
+    const expString = expArr ? expArr.map(([name, exp, val]) => `${name}: ❤${val} 📖${exp}`).join(', ') : '';
     // Если обьект содержит кастомную строку испльзуем её
     if (msgObj.msg) {
       data = msgObj.msg(msgObj.initiator, msgObj.exp);
@@ -113,6 +110,10 @@ class BattleLog extends ee {
       data = `*${msgObj.initiator}* использовал _${msgObj.action}_ (${msgObj.actionType}) на *${msgObj.target}* и получил +e:${msgObj.exp}`;
     } else {
       data = `*${msgObj.initiator}* использовав _${msgObj.action}_ на *${msgObj.target}* с эффектом ${msgObj.effect} получил +e:${msgObj.exp}`;
+    }
+    // Выношу вниз т.к проверка связана с action
+    if (msgObj.action === 'handsHeal') {
+      data = `Игрок *${msgObj.target}* был 🤲 вылечен 🤲 на ${msgObj.effect} \\[ ${expString}]`
     }
     this.write(data);
   }
