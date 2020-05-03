@@ -57,6 +57,14 @@ function csl(msgObj) {
       ru: `*${initiator}* атаковал *${target}* _${weapon ? weapon.case : ''}_, но тот уклонился от атаки`,
       en: '',
     },
+    ECLIPSE: {
+      ru: `*${initiator}* попытался атаковал *${target}* но ничего не увидел во тьме`,
+      en: '',
+    },
+    PARALYSED: {
+      ru: `*${initiator}* попытался атаковал но был парализован`,
+      en: '',
+    },
   };
   const text = TEXT[message] || {
     ru: 'Ошибка парсинга строки магии',
