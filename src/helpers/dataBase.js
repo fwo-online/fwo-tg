@@ -187,6 +187,7 @@ module.exports = {
         return await ClanModel
           .findById(id)
           .populate('owner')
+          .populate('requests')
           .populate('players');
       } catch (e) {
         dbErr(e);
@@ -225,6 +226,7 @@ module.exports = {
         return await ClanModel
           .findByIdAndUpdate(clanId, params, { new: true })
           .populate('owner')
+          .populate('requests')
           .populate('players');
       } catch (e) {
         dbErr(e);

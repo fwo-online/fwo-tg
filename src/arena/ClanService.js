@@ -41,7 +41,10 @@ module.exports = {
   async removeClan(clanId) {
     const clan = await this.getClanById(clanId);
     clan.players.forEach((player) => {
-      arena.characters[player.id].leaveClan();
+      const char = arena.characters[player.id];
+      if (char) {
+        char.leaveClan();
+      }
     });
     return db.clan.remove(clan.id);
   },
@@ -87,6 +90,16 @@ module.exports = {
       lvl: clan.lvl + 1,
     };
     const updated = await db.clan.update(clan.id, newParams);
+    Object.assign(clan, updated);
+  },
+  /**
+   * Создаёт заявку на вступление в клан
+   * @param {string} clanId
+   * @param {string} charId
+   */
+  async createRequest(clanId, charId) {
+    const clan = await this.getClanById(clanId);
+    const updated = await db.clan.update(clanId, { requests: clan.requests.concat(charId) });
     Object.assign(clan, updated);
   },
 };

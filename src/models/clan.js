@@ -12,6 +12,8 @@ const { Schema } = mongoose;
  * @property {Object[]} players
  * @property {Object} owner
  * @property {string} id
+ * @property {number} maxPlayers
+ * @property {boolean} hasEmptySlot
  *
  * @typedef {import ('mongoose').Document & Clan} ClanDocument
  */
@@ -28,7 +30,7 @@ const clan = new Schema({
   },
   gold: { type: Number, default: 0 },
   lvl: { type: Number, default: 1 },
-  requests: { type: Array, default: [] },
+  requests: [{ type: Schema.Types.ObjectId, ref: 'Character' }],
   players: [{ type: Schema.Types.ObjectId, ref: 'Character' }],
   owner: {
     type: Schema.Types.ObjectId,
@@ -36,6 +38,14 @@ const clan = new Schema({
     required: true,
     unique: true,
   },
+});
+
+clan.virtual('maxPlayers').get(function maxPlayers() {
+  return this.lvl + 1;
+});
+
+clan.virtual('hasEmptySlot').get(function hasEmptySlot() {
+  return this.players.length < this.lvl + 1;
 });
 
 /**
