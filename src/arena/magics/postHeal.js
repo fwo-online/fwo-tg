@@ -12,7 +12,6 @@ module.exports = {
    */
   postEffect(g) {
     const Game = g;
-    let healmsg = '';
     const expArr = [];
 
     /**
@@ -48,11 +47,9 @@ module.exports = {
           playerExpForHeal = Math.round(exp * (hpProc / 100));
         }
         initiator.stats.mode('up', 'exp', playerExpForHeal);
-        // healmsg += `[${initiator.nick} +hp:${healVal}/+e:${playerExpForHeal}] `;
         expArr.push([initiator.nick, playerExpForHeal, healVal]);
       });
-
-      // Game.sendBattleLog(`${target.nick} был вылечен на ${allHeal}|${healmsg}`);
+      // @todo подумать над тем что бы организовать это место через msg(кастомную строку магии)
       Game.battleLog.success({
         action: 'handsHeal',
         target: target.nick,
