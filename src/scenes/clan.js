@@ -1,7 +1,6 @@
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
-const db = require('../helpers/dataBase');
-// const CharacterService = require('../arena/CharacterService');
+const ClanService = require('../arena/ClanService');
 
 const clanScene = new Scene('clan');
 
@@ -42,15 +41,14 @@ clanScene.action('players_list', async () => {
   /** @todo */
 });
 
-clanScene.action('remove', async ({ session, reply, scene }) => {
-  await db.clan.remove(session.character.clan.id);
-  session.character.leaveClan();
+clanScene.action('remove', async ({ reply, scene, session }) => {
+  await ClanService.removeClan(session.character.clan);
   await reply('Клан был удалён');
   scene.reenter();
 });
 
 clanScene.action('clan_list', async ({ replyWithMarkdown }) => {
-  const clans = await db.clan.list();
+  const clans = await ClanService.getClanList();
   const message = clans.map((clan) => `*${clan.name}* (👥${clan.players.length})`);
   replyWithMarkdown(
     `Список доступных кланов:

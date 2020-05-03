@@ -349,20 +349,8 @@ class Char {
     }
   }
 
-  async createClan(name) {
-    if (this.gold < 100) {
-      throw new Error('Нужно больше золота');
-    }
-    this.gold -= 100;
-    const clan = await db.clan.create(this.id, name);
+  async joinClan(clan) {
     this.charObj.clan = clan;
-    await this.saveToDb();
-    const char = await Char.getCharacter(this.tgId);
-    return char;
-  }
-
-  async joinClan(clanId) {
-    this.charObj.clan = clanId;
     await this.saveToDb();
     const char = await Char.getCharacter(this.tgId);
     return char;

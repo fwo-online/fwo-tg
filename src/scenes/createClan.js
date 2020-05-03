@@ -1,6 +1,7 @@
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
 const db = require('../helpers/dataBase');
+const ClanService = require('../arena/ClanService');
 
 const createClanScene = new Scene('createClan');
 
@@ -45,7 +46,7 @@ createClanScene.on('text', async ({
 }) => {
   try {
     const clanName = await valid(message.text);
-    const char = await session.character.createClan(clanName);
+    const char = await ClanService.createClan(session.character.id, clanName);
     session.character = char;
     scene.enter('clan');
   } catch (e) {
