@@ -1,6 +1,7 @@
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
 const ClanService = require('../arena/ClanService');
+const { charDescr } = require('../arena/MiscService');
 
 const clanScene = new Scene('clan');
 
@@ -37,20 +38,33 @@ clanScene.enter(async ({ replyWithMarkdown, session }) => {
   }
 });
 
-clanScene.action('players_list', async () => {
-  /** @todo */
+clanScene.action('players_list', async ({ session, editMessageText }) => {
+  const { id } = session.character;
+  const { players } = session.character.clan;
+  const list = players.map((player) => {
+    const { nickname, prof, lvl } = player;
+    const { icon } = Object.values(charDescr).find((el) => el.prof === prof);
+    return `${player.id === id ? '👑 ' : ''}*${nickname}* (${icon}${lvl})`;
+  });
+  editMessageText(
+    `Список участников:
+${list.join('\n')}`,
+    Markup.inlineKeyboard([
+      Markup.callbackButton('Назад', 'back'),
+    ]).resize().extra({ parse_mode: 'Markdown' }),
+  );
 });
 
-clanScene.action('remove', async ({ reply, scene, session }) => {
+clanScene.action('remove', async ({ editMessageText, scene, session }) => {
   await ClanService.removeClan(session.character.clan);
-  await reply('Клан был удалён');
+  await editMessageText('Клан был удалён');
   scene.reenter();
 });
 
-clanScene.action('clan_list', async ({ replyWithMarkdown }) => {
+clanScene.action('clan_list', async ({ editMessageText }) => {
   const clans = await ClanService.getClanList();
   const message = clans.map((clan) => `*${clan.name}* (👥${clan.players.length})`);
-  replyWithMarkdown(
+  editMessageText(
     `Список доступных кланов:
 ${message.join('\n')}`,
     Markup.inlineKeyboard([
@@ -63,7 +77,7 @@ clanScene.action('create', ({ scene }) => {
   scene.enter('createClan');
 });
 
-clanScene.action('create', ({ scene }) => {
+clanScene.action('back', ({ scene }) => {
   scene.reenter();
 });
 
