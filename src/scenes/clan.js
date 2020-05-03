@@ -23,19 +23,42 @@ clanScene.enter(async ({ replyWithMarkdown, session }) => {
     );
   } else {
     const { clan } = session.character;
+    const isAdmin = clan.owner.tgId === session.character.tgId;
 
     replyWithMarkdown(
       `*${clan.name}*`,
       Markup.inlineKeyboard([
         Markup.callbackButton('Список учасников', 'players_list'),
-        Markup.callbackButton(
-          'Удалить клан',
-          'remove',
-          clan.owner.tgId !== session.character.tgId,
-        ),
+        Markup.callbackButton('Казна', 'add_gold'),
+        Markup.callbackButton('Удалить клан', 'remove', !isAdmin),
       ]).resize().extra(),
     );
   }
+});
+
+clanScene.action(/add(?=_)/, async ({
+  session, editMessageText, match, answerCbQuery,
+}) => {
+  const [, gold] = match.input.split('_');
+  const { clan } = session.character;
+
+  if (!Number.isNaN(Number(gold))) {
+    try {
+      await ClanService.addGold(clan, session.character, Number(gold));
+      answerCbQuery(`Списано ${gold}💰`);
+    } catch (e) {
+      answerCbQuery(e);
+    }
+  }
+
+  editMessageText(
+    `В казне ${session.character.clan.gold}💰
+Пополнить казну:`,
+    Markup.inlineKeyboard([
+      ...[10, 25, 50, 100].map((val) => Markup.callbackButton(val, `add_${val}`)),
+      Markup.callbackButton('Назад', 'back'),
+    ]).resize().extra(),
+  );
 });
 
 clanScene.action('players_list', async ({ session, editMessageText }) => {

@@ -104,7 +104,7 @@ module.exports = {
     // eslint-disable-next-line consistent-return
     async update(tgId, params) {
       try {
-        return await CharModel.findOneAndUpdate({ tgId, deleted: false }, params).populate('clan');
+        return await CharModel.findOneAndUpdate({ tgId, deleted: false }, params);
       } catch (e) {
         dbErr(e);
       }
