@@ -13,7 +13,7 @@ module.exports = {
   postEffect(g) {
     const Game = g;
     let healmsg = '';
-    let expArr = [];
+    const expArr = [];
 
     /**
      * Раздаем exp всем участникам хила
@@ -49,17 +49,18 @@ module.exports = {
         }
         initiator.stats.mode('up', 'exp', playerExpForHeal);
         // healmsg += `[${initiator.nick} +hp:${healVal}/+e:${playerExpForHeal}] `;
-        expArr.push(initiator.nick, playerExpForHeal, healVal);
+        expArr.push([initiator.nick, playerExpForHeal, healVal]);
       });
 
       // Game.sendBattleLog(`${target.nick} был вылечен на ${allHeal}|${healmsg}`);
       Game.battleLog.success({
-        action: 'headHeal',
+        action: 'handsHeal',
         target: target.nick,
         effect: allHeal,
         expArr: expArr,
       });
-    }
+      expArr.length = 0;
+    };
 
     Game.forAllPlayers(giveExpForHeal);
   },
