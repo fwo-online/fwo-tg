@@ -36,7 +36,9 @@ clanScene.enter(async ({ replyWithMarkdown, session }) => {
       ]).resize().extra(),
     );
   } else {
-    const { clan } = session.character;
+    const clan = await ClanService.getClanById(session.character.clan.id);
+    session.character.clan = clan;
+
     const isAdmin = clan.owner.tgId === session.character.tgId;
 
     replyWithMarkdown(
@@ -49,9 +51,7 @@ clanScene.enter(async ({ replyWithMarkdown, session }) => {
 clanScene.action(/lvlup|back/, async ({
   session, answerCbQuery, match, editMessageText,
 }) => {
-  const { clan } = session.character;
-
-  if (!clan) {
+  if (!session.character.clan) {
     editMessageText(
       'Сейчас ты не состоишь ни в одном клане',
       Markup.inlineKeyboard([
@@ -62,10 +62,11 @@ clanScene.action(/lvlup|back/, async ({
       }),
     );
   } else {
+    const clan = await ClanService.getClanById(session.character.clan.id);
     if (match.input === 'lvlup') {
       const cost = ClanService.lvlCost[clan.lvl];
       try {
-        await ClanService.levelUp(session.character.clan);
+        await ClanService.levelUp(clan.id);
         answerCbQuery(`Клан достиг ${clan.lvl} уровня. Списано ${cost}💰`);
       } catch (e) {
         return answerCbQuery(e.message);
@@ -85,11 +86,11 @@ clanScene.action(/add(?=_)/, async ({
   session, editMessageText, match, answerCbQuery,
 }) => {
   const [, gold] = match.input.split('_');
-  const { clan } = session.character;
+  const clan = await ClanService.getClanById(session.character.clan.id);
 
   if (!Number.isNaN(Number(gold))) {
     try {
-      await ClanService.addGold(clan, session.character, Number(gold));
+      await ClanService.addGold(clan.id, session.character.id, Number(gold));
       answerCbQuery(`Списано ${gold}💰`);
     } catch (e) {
       answerCbQuery(e.message);
@@ -97,7 +98,7 @@ clanScene.action(/add(?=_)/, async ({
   }
 
   editMessageText(
-    `В казне ${session.character.clan.gold}💰
+    `В казне ${clan.gold}💰
 Пополнить казну:`,
     Markup.inlineKeyboard([
       [10, 25, 50, 100, 250].map((val) => Markup.callbackButton(val, `add_${val}`)),
@@ -124,7 +125,7 @@ ${list.join('\n')}`,
 });
 
 clanScene.action('remove', async ({ editMessageText, scene, session }) => {
-  await ClanService.removeClan(session.character.clan);
+  await ClanService.removeClan(session.character.clan.id);
   await editMessageText('Клан был удалён');
   scene.reenter();
 });

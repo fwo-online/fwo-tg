@@ -11,6 +11,7 @@ const { Schema } = mongoose;
  * @property {Object[]} requests
  * @property {Object[]} players
  * @property {Object} owner
+ * @property {string} id
  *
  * @typedef {import ('mongoose').Document & Clan} ClanDocument
  */

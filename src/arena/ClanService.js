@@ -12,6 +12,14 @@ const db = require('../helpers/dataBase');
 
 module.exports = {
   lvlCost: [100, 250, 750, 1500],
+  async getClanById(id) {
+    if (arena.clans[id]) {
+      return arena.clans[id];
+    }
+    const clan = await db.clan.find(id);
+    arena.clans[clan.id] = clan;
+    return clan;
+  },
   /**
    * Создаёт новый
    * @param {string} charId - id создателя клана
@@ -28,9 +36,10 @@ module.exports = {
   },
   /**
    * Удаляет клан у всех участников и удаляет его
-   * @param {ClanDocument} clan
+   * @param {string} clanId
    */
-  async removeClan(clan) {
+  async removeClan(clanId) {
+    const clan = await this.getClanById(clanId);
     clan.players.forEach((player) => {
       arena.characters[player.id].leaveClan();
     });
@@ -45,24 +54,27 @@ module.exports = {
   },
   /**
    * Добавляет золото в клан и забирает у персонажа
-   * @param {ClanDocument} clan
+   * @param {string} clanId
    * @param {string} charId - id персонажа
    * @param {number} gold - количество золота
    */
-  async addGold(clan, char, gold) {
+  async addGold(clanId, charId, gold) {
+    const clan = await this.getClanById(clanId);
+    const char = arena.characters[charId];
     if (char.gold < gold) {
       throw new Error('Недостаточно золота');
     }
     char.gold -= gold;
     await char.saveToDb();
-    await db.clan.update(clan.id, { gold: clan.gold + gold });
-    clan.gold += gold;
+    const updated = await db.clan.update(clan.id, { gold: clan.gold + gold });
+    Object.assign(clan, updated);
   },
   /**
    * Снимает золото из казны и повышает уровань
-   * @param {ClanDocument} clan
+   * @param {string} clanId
    */
-  async levelUp(clan) {
+  async levelUp(clanId) {
+    const clan = await this.getClanById(clanId);
     const cost = this.lvlCost[clan.lvl];
     if (clan.gold < cost) {
       throw new Error('Недостаточно золота');
@@ -74,7 +86,7 @@ module.exports = {
       gold: clan.gold - cost,
       lvl: clan.lvl + 1,
     };
-    await db.clan.update(clan._id, newParams);
-    Object.assign(clan, newParams);
+    const updated = await db.clan.update(clan.id, newParams);
+    Object.assign(clan, updated);
   },
 };

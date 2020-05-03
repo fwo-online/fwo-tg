@@ -178,6 +178,21 @@ module.exports = {
       }
     },
     /**
+     * Возвращает клан по id
+     * @param {string} query
+     * @returns {Promise<Clan>}
+     */
+    async find(id) {
+      try {
+        return await ClanModel
+          .findById(id)
+          .populate('owner')
+          .populate('players');
+      } catch (e) {
+        dbErr(e);
+      }
+    },
+    /**
      * Возвращает список всех кланов
      * @returns {Promise<Clan[]>}
      */
@@ -207,7 +222,10 @@ module.exports = {
      */
     async update(clanId, params) {
       try {
-        return await ClanModel.findOneAndUpdate({ _id: clanId }, params);
+        return await ClanModel
+          .findByIdAndUpdate(clanId, params, { new: true })
+          .populate('owner')
+          .populate('players');
       } catch (e) {
         dbErr(e);
       }
