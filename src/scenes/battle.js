@@ -106,18 +106,23 @@ battleScene.action('stop', async ({ editMessageText, session }) => {
 battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) => {
   const gameId = arena.characters[session.character.id].mm;
   const [, action] = match.input.split('_');
-  if (action === 'repeat') {
+  if (action === 'repeat' || action === 'reset') {
     const initiator = session.character.id;
     const Game = arena.games[gameId];
     const player = Game.players[initiator];
-    Game.orders.repeatLastOrder(initiator);
+    if (action === 'repeat') {
+      Game.orders.repeatLastOrder(initiator);
+    }
+    if (action === 'reset') {
+      Game.orders.resetOrdersForPlayer(initiator);
+    }
     const ACTIONS = { ...arena.actions, ...arena.skills, ...arena.magics };
     const message = Game.orders.ordersList
       .filter((o) => o.initiator === initiator)
       .map((o) => `\n_${ACTIONS[o.action].displayName}_ (*${o.proc}%*) на игрока *${Game.players[o.target].nick}*`);
     editMessageText(
       `У тебя осталось *${player.proc}%*
-  Заказы: ${message.join()}`,
+${Game.orders.checkPlayerOrder(initiator) ? `Заказы: ${message.join()}` : ''}`,
       player.proc !== 0
         ? Markup.inlineKeyboard(
           channelHelper.getOrderButtons(player),

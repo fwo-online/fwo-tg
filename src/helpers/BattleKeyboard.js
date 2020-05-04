@@ -62,9 +62,22 @@ class BattleKeyboard {
    */
   setRepeatButton() {
     return [Markup.callbackButton(
-      'Повторить',
+      '🔁 Повторить',
       'action_repeat',
-      this.player.proc !== 100 || this.game.round.count === 1,
+      this.player.proc !== 100
+      || this.game.round.count === 1
+      || !this.game.orders.checkPlayerOrderLastRound(this.player.id),
+    )];
+  }
+
+  /**
+   * @private
+   */
+  setResetButton() {
+    return [Markup.callbackButton(
+      '↩️ Очистить заказ',
+      'action_reset',
+      this.player.proc === 100,
     )];
   }
 
@@ -112,7 +125,7 @@ class BattleKeyboard {
           return [Markup.callbackButton(`${action.displayName} (${action.proc}%)`, `action_${action.name}`)];
         }
         return [Markup.callbackButton(action.displayName, `action_${action.name}`)];
-      }), this.setRepeatButton()];
+      }), this.setRepeatButton(), this.setResetButton()];
   }
 }
 
