@@ -8,7 +8,7 @@ const clanScene = new Scene('clan');
 const startScreen = {
   message: (clan) => `*${clan.name}*`,
   markup: (clan, isAdmin) => Markup.inlineKeyboard([
-    [Markup.callbackButton('Список учасников', 'players_list')],
+    [Markup.callbackButton('Список участников', 'players_list')],
     [Markup.callbackButton('Казна', 'add_gold')],
     [Markup.callbackButton(`Заявки на вступление (${clan.requests.length})`, 'requests_list')],
     [Markup.callbackButton(
@@ -126,16 +126,29 @@ ${list.join('\n')}`,
   );
 });
 
-clanScene.action('requests_list', async ({ session, editMessageText }) => {
-  const { id } = session.character.clan;
-  const clan = await ClanService.getClanById(id);
+clanScene.action(/requests_list|(accept|reject)(?=_)/, async ({
+  session, editMessageText, match, answerCbQuery,
+}) => {
+  const [action, tgId] = match.input.split('_');
+  const clan = await ClanService.getClanById(session.character.clan.id);
+  try {
+    if (action === 'accept') {
+      await ClanService.acceptRequest(clan.id, tgId);
+    }
+    if (action === 'reject') {
+      await ClanService.rejectRequest(clan.id, tgId);
+    }
+  } catch (e) {
+    answerCbQuery(e.message);
+  }
+
   const list = clan.requests.map((player) => {
     const { nickname, prof, lvl } = player;
     const { icon } = Object.values(charDescr).find((el) => el.prof === prof);
     return [
       Markup.callbackButton(`${nickname} (${icon}${lvl})`, 'todo'),
-      Markup.callbackButton('Принять', `accept_${player.id}`),
-      Markup.callbackButton('Отклонить', `reject_${player.id}`),
+      Markup.callbackButton('Принять', `accept_${player.tgId}`),
+      Markup.callbackButton('Отклонить', `reject_${player.tgId}`),
     ];
   });
   editMessageText(

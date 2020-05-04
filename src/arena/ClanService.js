@@ -1,6 +1,8 @@
 const arena = require('./index');
-// const CharacterService = require('./CharacterService');
+const channerHelper = require('../helpers/channelHelper');
+const CharacterService = require('./CharacterService');
 const db = require('../helpers/dataBase');
+
 /**
  * Clan Service
  *
@@ -101,5 +103,48 @@ module.exports = {
     const clan = await this.getClanById(clanId);
     const updated = await db.clan.update(clanId, { requests: clan.requests.concat(charId) });
     Object.assign(clan, updated);
+  },
+  /**
+   * Добавляет игрока в клан и отправляет ему сообщение
+   * @param {string} clanId
+   * @param {number} tgId
+   */
+  async acceptRequest(clanId, tgId) {
+    const clan = await this.getClanById(clanId);
+    if (clan.hasEmptySlot) {
+      const char = await CharacterService.getCharacter(tgId);
+      const updated = await db.clan.update(clan.id, {
+        players: [...clan.players, char.id],
+        requests: clan.requests.filter((player) => player.tgId !== char.tgId),
+      });
+      console.log([...clan.players, char], updated);
+      Object.assign(clan, updated);
+
+      /** @todo не сохраняется клан у игрока */
+      await char.joinClan(updated);
+      channerHelper.broadcast(
+        `Твоя заявка на вступление в клан *${clan.name}* была одобрена`,
+        char.tgId,
+      );
+    } else {
+      throw new Error('Клан уже сформирован');
+    }
+  },
+  /**
+   * Отклоняет запрос игрока
+   * @param {string} clanId
+   * @param {number} tgId
+   */
+  async rejectRequest(clanId, tgId) {
+    const clan = await this.getClanById(clanId);
+    const char = await CharacterService.getCharacter(tgId);
+    const updated = await db.clan.update(clan.id, {
+      requests: clan.requests.filter((player) => player.tgId !== char.tgId),
+    });
+    Object.assign(clan, updated);
+    channerHelper.broadcast(
+      `Твоя заявка на вступление в клан *${clan.name}* была отклонена`,
+      char.tgId,
+    );
   },
 };
