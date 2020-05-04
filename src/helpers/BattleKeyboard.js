@@ -57,6 +57,17 @@ class BattleKeyboard {
     return maxTargets > this.orders.getNumberOfOrder(this.player.id, arena.actions.attack.name);
   }
 
+  /**
+   * @private
+   */
+  setRepeatButton() {
+    return [Markup.callbackButton(
+      'Повторить',
+      'action_repeat',
+      this.player.proc !== 100 || this.game.round.count === 1,
+    )];
+  }
+
   setActions() {
     if (this.checkAttackOrder()) {
       this.concat(arena.actions.attack);
@@ -95,12 +106,13 @@ class BattleKeyboard {
   }
 
   render() {
-    return this.keyboard.map((action) => {
-      if (action instanceof Skill) {
-        return [Markup.callbackButton(`${action.displayName} (${action.proc}%)`, `action_${action.name}`)];
-      }
-      return [Markup.callbackButton(action.displayName, `action_${action.name}`)];
-    });
+    return [...this.keyboard
+      .map((action) => {
+        if (action instanceof Skill) {
+          return [Markup.callbackButton(`${action.displayName} (${action.proc}%)`, `action_${action.name}`)];
+        }
+        return [Markup.callbackButton(action.displayName, `action_${action.name}`)];
+      }), this.setRepeatButton()];
   }
 }
 

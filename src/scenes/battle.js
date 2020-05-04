@@ -8,7 +8,6 @@ const channelHelper = require('../helpers/channelHelper');
 const arena = require('../arena');
 const GameService = require('../arena/GameService');
 const { charDescr } = require('../arena/MiscService');
-const { skills } = require('../arena/SkillService');
 const loginHelper = require('../helpers/loginHelper');
 
 
@@ -107,16 +106,36 @@ battleScene.action('stop', async ({ editMessageText, session }) => {
 battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) => {
   const gameId = arena.characters[session.character.id].mm;
   const [, action] = match.input.split('_');
-  const proc = skills[action] ? `_${skills[action].proc}` : '';
-  const aliveArr = GameService.aliveArr(gameId)
-    .map(({ nick, id }) => Markup.callbackButton(nick,
-      `${action}_${id}${proc}`));
-  editMessageText(
-    `Выбери цель для ${match}`,
-    Markup.inlineKeyboard([
-      ...aliveArr,
-    ]).resize().extra(),
-  );
+  if (action === 'repeat') {
+    const initiator = session.character.id;
+    const Game = arena.games[gameId];
+    const player = Game.players[initiator];
+    Game.orders.repeatLastOrder(initiator);
+    const ACTIONS = { ...arena.actions, ...arena.skills, ...arena.magics };
+    const message = Game.orders.ordersList
+      .filter((o) => o.initiator === initiator)
+      .map((o) => `\n_${ACTIONS[o.action].displayName}_ (*${o.proc}%*) на игрока *${Game.players[o.target].nick}*`);
+    editMessageText(
+      `У тебя осталось *${player.proc}%*
+  Заказы: ${message.join()}`,
+      player.proc !== 0
+        ? Markup.inlineKeyboard(
+          channelHelper.getOrderButtons(player),
+        ).resize().extra({ parse_mode: 'Markdown' })
+        : { parse_mode: 'Markdown' },
+    );
+  } else {
+    const proc = arena.skills[action] ? `_${arena.skills[action].proc}` : '';
+    const aliveArr = GameService.aliveArr(gameId)
+      .map(({ nick, id }) => Markup.callbackButton(nick,
+        `${action}_${id}${proc}`));
+    editMessageText(
+      `Выбери цель для ${match}`,
+      Markup.inlineKeyboard([
+        ...aliveArr,
+      ]).resize().extra(),
+    );
+  }
 });
 
 battleScene.action(/^([^_]+)_([^_]+)$/, async ({ editMessageText, session, match }) => {
@@ -144,8 +163,8 @@ battleScene.action(/^([^_]+)_([^_]+)_([^_]+)$/, async ({ editMessageText, sessio
   Game.orders.orderAction({
     initiator, target, action, proc,
   });
-  const { magics, actions } = arena;
-  const ACTIONS = { ...actions, ...skills, ...magics };
+
+  const ACTIONS = { ...arena.actions, ...arena.skills, ...arena.magics };
   const message = Game.orders.ordersList
     .filter((o) => o.initiator === initiator)
     .map((o) => `\n_${ACTIONS[o.action].displayName}_ (*${o.proc}%*) на игрока *${Game.players[o.target].nick}*`);

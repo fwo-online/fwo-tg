@@ -47,7 +47,12 @@ class Orders {
   constructor() {
     /** @type {order[]} */
     this.ordersList = [];
-    this.hist = {};
+    /** @type {order[][]} */
+    this.hist = [];
+  }
+
+  get lastOrders() {
+    return this.hist[this.hist.length - 1];
   }
 
   /**
@@ -147,14 +152,8 @@ class Orders {
    * Очищаем массив заказов
    */
   reset() {
-    const keys = Object.keys(this.hist);
-    const lastKey = keys[keys.length - 1];
-    this.hist[lastKey + 1] = this.ordersList;
-    if (!this.testOrdersList) {
-      this.ordersList = [];
-    } else {
-      this.ordersList = this.testOrdersList;
-    }
+    this.hist.push(this.ordersList);
+    this.ordersList = [];
   }
 
   /**
@@ -175,6 +174,14 @@ class Orders {
    */
   getNumberOfOrder(charId, action) {
     return this.ordersList.filter((o) => o.initiator === charId && o.action === action).length;
+  }
+
+  repeatLastOrder(charId) {
+    this.lastOrders.forEach((order) => {
+      if (order.initiator === charId) {
+        this.orderAction(order);
+      }
+    });
   }
 }
 
