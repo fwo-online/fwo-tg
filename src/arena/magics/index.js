@@ -27,6 +27,7 @@ const regeneration = require('../actions/regen');
 const postHeal = require('./postHeal');
 
 module.exports = {
+  acidSpittle,
   blessing,
   chainLightning,
   glitch,
@@ -38,6 +39,7 @@ module.exports = {
   poisonBreath,
   rockfall,
   lightHeal,
+  madness,
   magicArmor,
   magicArrow,
   magicDefense,
