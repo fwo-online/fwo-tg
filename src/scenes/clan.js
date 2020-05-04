@@ -17,6 +17,7 @@ const startScreen = {
       clan.lvl >= ClanService.lvlCost.length,
     )],
     [Markup.callbackButton('Удалить клан', 'remove', !isAdmin)],
+    [Markup.callbackButton('Покинуть клан', 'leave', isAdmin)],
   ]).resize().extra({ parse_mode: 'Markdown' }),
 };
 
@@ -38,7 +39,6 @@ clanScene.enter(async ({ replyWithMarkdown, session }) => {
     );
   } else {
     const clan = await ClanService.getClanById(session.character.clan.id);
-    console.log(clan.maxPlayers);
     session.character.clan = clan;
 
     const isAdmin = clan.owner.tgId === session.character.tgId;
@@ -159,9 +159,18 @@ clanScene.action(/requests_list|(accept|reject)(?=_)/, async ({
   );
 });
 
-clanScene.action('remove', async ({ editMessageText, scene, session }) => {
-  await ClanService.removeClan(session.character.clan.id);
-  await editMessageText('Клан был удалён');
+clanScene.action(/remove|leave/, async ({
+  editMessageText, scene, session, match,
+}) => {
+  const char = session.character;
+  if (match.input === 'remove') {
+    await ClanService.removeClan(char.clan.id);
+    await editMessageText('Клан был удалён');
+  }
+  if (match.input === 'leave') {
+    await ClanService.leaveClan(char.clan.id, char.tgId);
+  }
+
   scene.reenter();
 });
 

@@ -146,4 +146,18 @@ module.exports = {
       char.tgId,
     );
   },
+  /**
+   * Удаляет игрока из клана
+   * @param {string} clanId
+   * @param {number} tgId
+   */
+  async leaveClan(clanId, tgId) {
+    const clan = await this.getClanById(clanId);
+    const char = await CharacterService.getCharacter(tgId);
+    const updated = await db.clan.update(clan.id, {
+      players: clan.players.filter((player) => player.tgId !== char.tgId),
+    });
+    await char.leaveClan();
+    Object.assign(clan, updated);
+  },
 };
