@@ -110,12 +110,11 @@ clanScene.action(/add(?=_)/, async ({
 });
 
 clanScene.action('players_list', async ({ session, editMessageText }) => {
-  const { id } = session.character;
-  const { players } = session.character.clan;
-  const list = players.map((player) => {
+  const clan = await ClanService.getClanById(session.character.clan.id);
+  const list = clan.players.map((player) => {
     const { nickname, prof, lvl } = player;
     const { icon } = Object.values(charDescr).find((el) => el.prof === prof);
-    return `${player.id === id ? '👑 ' : ''}*${nickname}* (${icon}${lvl})`;
+    return `${player.id === clan.owner.id ? '👑 ' : ''}*${nickname}* (${icon}${lvl})`;
   });
   editMessageText(
     `Список участников:

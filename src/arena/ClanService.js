@@ -117,11 +117,10 @@ module.exports = {
         players: [...clan.players, char.id],
         requests: clan.requests.filter((player) => player.tgId !== char.tgId),
       });
-      console.log([...clan.players, char], updated);
       Object.assign(clan, updated);
 
       /** @todo не сохраняется клан у игрока */
-      await char.joinClan(updated);
+      await char.joinClan(clan);
       channerHelper.broadcast(
         `Твоя заявка на вступление в клан *${clan.name}* была одобрена`,
         char.tgId,
