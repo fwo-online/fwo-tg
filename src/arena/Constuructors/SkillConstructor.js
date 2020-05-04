@@ -113,7 +113,7 @@ class Skill {
   next() {
     this.params.game.battleLog.success({
       exp: this.baseExp,
-      action: this.name,
+      action: this.displayName,
       actionType: 'skill',
       target: this.params.target.nick,
       initiator: this.params.initiator.nick,

@@ -113,9 +113,9 @@ class BattleLog extends ee {
     } else if (msgObj.dmgType) {
       data = `*${msgObj.initiator}* сотворил _${msgObj.action}_ (${msgObj.actionType}) на *${msgObj.target}* нанеся ${msgObj.dmg}  \\[ 💔-${msgObj.dmg}/${msgObj.hp} 📖${msgObj.exp} ]`;
     } else if (!msgObj.effect) {
-      data = `*${msgObj.initiator}* использовал _${msgObj.action}_ (${msgObj.actionType}) на *${msgObj.target}* и получил +e:${msgObj.exp}`;
+      data = `*${msgObj.initiator}* использовал _${msgObj.action}_ (${msgObj.actionType}) на *${msgObj.target}* \\[ 📖${msgObj.exp} ]`;
     } else {
-      data = `*${msgObj.initiator}* использовав _${msgObj.action}_ на *${msgObj.target}* с эффектом ${msgObj.effect} получил +e:${msgObj.exp}`;
+      data = `*${msgObj.initiator}* использовав _${msgObj.action}_ на *${msgObj.target}* с эффектом ${msgObj.effect} \\[ 📖${msgObj.exp} ]`;
     }
     this.write(data);
   }
