@@ -98,7 +98,7 @@ class PhysConstructor {
     const { initiator, game } = this.params;
     if (initiator.flags.isGlitched) {
       // Меняем цель внутри атаки на любого живого в игре
-      this.params.target = game.alivePlayers[Math.floor(Math.random() * game.alivePlayers.length)];
+      this.params.target = game.randomAlive(game.info.id);
     }
     if (initiator.flags.isMad) {
       this.params.target = initiator;
