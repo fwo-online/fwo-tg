@@ -47,7 +47,12 @@ class Orders {
   constructor() {
     /** @type {order[]} */
     this.ordersList = [];
-    this.hist = {};
+    /** @type {order[][]} */
+    this.hist = [];
+  }
+
+  get lastOrders() {
+    return this.hist[this.hist.length - 1];
   }
 
   /**
@@ -147,14 +152,8 @@ class Orders {
    * Очищаем массив заказов
    */
   reset() {
-    const keys = Object.keys(this.hist);
-    const lastKey = keys[keys.length - 1];
-    this.hist[lastKey + 1] = this.ordersList;
-    if (!this.testOrdersList) {
-      this.ordersList = [];
-    } else {
-      this.ordersList = this.testOrdersList;
-    }
+    this.hist.push(this.ordersList);
+    this.ordersList = [];
   }
 
   /**
@@ -168,6 +167,14 @@ class Orders {
   }
 
   /**
+   * Проверяет делал ли игрок заказ в предыдущем раунде
+   * @param {string} charId идентификатор персонажа
+   */
+  checkPlayerOrderLastRound(charId) {
+    return this.lastOrders.some((o) => o.initiator === charId);
+  }
+
+  /**
    * Возвращает количество заказов игрока для данного умения
    * @param {String} charId идентификатор персонажа
    * @param {string} action название умения или магии
@@ -175,6 +182,29 @@ class Orders {
    */
   getNumberOfOrder(charId, action) {
     return this.ordersList.filter((o) => o.initiator === charId && o.action === action).length;
+  }
+
+  /**
+   * Повторяет заказ для игрока
+   * @param {string} charId идентификатор персонажа
+   */
+  repeatLastOrder(charId) {
+    this.lastOrders.forEach((order) => {
+      if (order.initiator === charId) {
+        this.orderAction(order);
+      }
+    });
+  }
+
+  /**
+   * Сбрасывает заказ для игрока
+   * @param {string} charId идентификатор персонажа
+   */
+  resetOrdersForPlayer(charId) {
+    this.ordersList = this.ordersList.filter((o) => o.initiator !== charId);
+    const gameId = arena.characters[charId].mm;
+    const Game = arena.games[gameId];
+    Game.getPlayerById(charId).proc = 100;
   }
 }
 

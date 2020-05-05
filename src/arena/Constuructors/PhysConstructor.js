@@ -63,7 +63,9 @@ class PhysConstructor {
    * Проверка флагаов влияющих на физический урон
    */
   checkPreAffects() {
-    const { initiator, target } = this.params;
+    const { initiator, target, game } = this.params;
+    // Глабальная проверка не весит ли затмение на арене
+    if (game.round.flags.isEclipsed) throw this.breaks('ECLIPSE');
     const weapon = arena.items[initiator.weapon.code];
     const hasDodgeableItems = MiscService.weaponTypes[weapon.wtype].dodge;
     // Проверяем увёртку
@@ -93,7 +95,17 @@ class PhysConstructor {
    * Проверка флагаов влияющих на выбор цели
    */
   isblurredMind() {
-    return this;
+    const { initiator, game } = this.params;
+    if (initiator.flags.isGlitched) {
+      // Меняем цель внутри атаки на любого живого в игре
+      this.params.target = game.randomAlive(game.info.id);
+    }
+    if (initiator.flags.isMad) {
+      this.params.target = initiator;
+    }
+    if (initiator.flags.isParalysed) {
+      throw this.breaks('PARALYSED');
+    }
   }
 
   /**

@@ -103,7 +103,7 @@ class Heal {
     const { battleLog } = this.params.game;
     battleLog.success({
       exp: this.status.exp,
-      action: this.name,
+      action: this.displayName,
       actionType: 'heal',
       target: target.nick,
       initiator: initiator.nick,

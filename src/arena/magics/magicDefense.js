@@ -14,7 +14,7 @@ const magicDefense = new CommonMagic({
   name: 'magicDefense',
   displayName: 'Магическая защита',
   cost: 12,
-  baseExp: 0.6,
+  baseExp: 40,
   costType: 'mp',
   lvl: 2,
   orderType: 'all',
