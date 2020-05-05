@@ -108,6 +108,7 @@ class Char {
    * @property {Clan} clan
    * @property {import ('./GameService')} currentGame
    * @property {Number} mm
+   * @property {{reason: string, date: Date}[]} penalty
    */
   constructor(charObj) {
     // const defaults = defHarks(charObj.prof);
@@ -217,6 +218,36 @@ class Char {
   /** Суммарное количество опыта, требуемое для следующего уровня */
   get nextLvlExp() {
     return 2 ** (this.lvl - 1) * 1000 * lvlRatio;
+  }
+
+  /**
+   * @param {string} reason
+   */
+  getPenaltyDate(reason) {
+    const penalty = this.charObj.penalty.find((p) => p.reason === reason);
+    if (penalty && penalty.date.valueOf() > Date.now()) {
+      return penalty.date;
+    }
+    return false;
+  }
+
+  /**
+   * @param {string} reason
+   * @param {number} minutes
+   */
+  async updatePenalty(reason, minutes) {
+    const date = new Date();
+    date.setHours(date.getHours(), date.getMinutes() + minutes);
+
+    const penalty = { reason, date };
+    const index = this.charObj.penalty.findIndex((p) => p.reason === reason);
+
+    if (index === -1) {
+      this.charObj.penalty.push(penalty);
+    } else {
+      this.charObj.penalty[index] = penalty;
+    }
+    await this.saveToDb();
   }
 
   /**
@@ -365,7 +396,7 @@ class Char {
 
   async leaveClan() {
     this.charObj.clan = undefined;
-    this.saveToDb();
+    await this.updatePenalty('clan_leave', 5 * 24 * 60);
     return this;
   }
 
@@ -470,6 +501,7 @@ class Char {
         skills,
         lvl,
         clan,
+        penalty: this.charObj.penalty,
         inventory: items,
       });
     } catch (e) {

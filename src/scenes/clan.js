@@ -37,7 +37,7 @@ clanScene.enter(async ({ replyWithMarkdown, session }) => {
       'Сейчас ты не состоишь ни в одном клане',
       Markup.inlineKeyboard([
         Markup.callbackButton('Создать клан', 'create'),
-        Markup.callbackButton('Вступить в клан', 'clan_list'),
+        Markup.callbackButton('Вступить в клан', 'clanlist'),
       ]).resize().extra(),
     );
   } else {
@@ -53,15 +53,24 @@ clanScene.enter(async ({ replyWithMarkdown, session }) => {
   }
 });
 
-clanScene.action(/lvlup|back/, async ({
+clanScene.action(/lvlup|back|remove|leave/, async ({
   session, answerCbQuery, match, editMessageText,
 }) => {
+  const char = session.character;
+  if (match.input === 'remove') {
+    await ClanService.removeClan(char.clan.id);
+    await answerCbQuery('Клан был удалён');
+  }
+  if (match.input === 'leave') {
+    session.character = await ClanService.leaveClan(char.clan.id, char.tgId);
+  }
+
   if (!session.character.clan) {
     editMessageText(
       'Сейчас ты не состоишь ни в одном клане',
       Markup.inlineKeyboard([
         Markup.callbackButton('Создать клан', 'create'),
-        Markup.callbackButton('Вступить в клан', 'clan_list'),
+        Markup.callbackButton('Вступить в клан', 'clanlist'),
       ]).resize().extra({
         parse_mode: 'Markdown',
       }),
@@ -165,52 +174,27 @@ clanScene.action(/requests_list|(accept|reject)(?=_)/, async ({
   );
 });
 
-clanScene.action(/remove|leave/, async ({
-  editMessageText, scene, session, match,
+clanScene.action(/clanlist|request(?=_)/, async ({
+  session, editMessageText, answerCbQuery, match,
 }) => {
-  const char = session.character;
-  if (match.input === 'remove') {
-    await ClanService.removeClan(char.clan.id);
-    await editMessageText('Клан был удалён');
-  }
-  if (match.input === 'leave') {
-    session.character = await ClanService.leaveClan(char.clan.id, char.tgId);
+  const [, id] = match.input.split('_');
+  if (id) {
+    try {
+      await ClanService.handleRequest(session.character.id, id);
+    } catch (e) {
+      answerCbQuery(e.message);
+    }
   }
 
-  scene.reenter();
-});
-
-clanScene.action('clan_list', async ({ editMessageText }) => {
-  const clans = await ClanService.getClanList();
-  const buttons = clans.map((clan) => [
-    Markup.callbackButton(
-      `${clan.name} (👥${clan.players.length} / ${clan.maxPlayers})`,
-      `info_${clan.id}`,
-    ),
-    Markup.callbackButton(
-      `${clan.hasEmptySlot ? 'Вступить' : 'Нет места'}`,
-      `request_${clan.id}`,
-    ),
-  ]);
+  const list = await ClanService.getClanList(session.character.id);
 
   editMessageText(
     'Список доступных кланов:',
     Markup.inlineKeyboard([
-      ...buttons,
+      ...list,
       [Markup.callbackButton('Назад', 'back')],
     ]).resize().extra({ parse_mode: 'Markdown' }),
   );
-});
-
-clanScene.action(/request(?=_)/, async ({ session, answerCbQuery, match }) => {
-  const [, id] = match.input.split('_');
-  const clan = await ClanService.getClanById(id);
-  if (clan.hasEmptySlot) {
-    await ClanService.createRequest(clan.id, session.character.id);
-    answerCbQuery('Заявка на вступление отправлена');
-  } else {
-    answerCbQuery('Клан уже сформирован');
-  }
 });
 
 clanScene.action('create', async ({ scene, deleteMessage }) => {

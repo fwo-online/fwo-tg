@@ -178,14 +178,14 @@ module.exports = {
       }
     },
     /**
-     * Возвращает клан по id
-     * @param {string} query
+     * Возвращает клан по query
+     * @param {Partial<ClanDocument>} query
      * @returns {Promise<Clan>}
      */
-    async find(id) {
+    async findOne(query) {
       try {
         return await ClanModel
-          .findById(id)
+          .findOne(query)
           .populate('owner')
           .populate('requests')
           .populate('players');

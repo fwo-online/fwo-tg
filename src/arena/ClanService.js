@@ -1,3 +1,4 @@
+const Markup = require('telegraf/markup');
 const arena = require('./index');
 const channerHelper = require('../helpers/channelHelper');
 const CharacterService = require('./CharacterService');
@@ -18,12 +19,56 @@ module.exports = {
     if (arena.clans[id]) {
       return arena.clans[id];
     }
-    const clan = await db.clan.find(id);
+    const clan = await db.clan.findOne({ _id: id });
     arena.clans[clan.id] = clan;
     return clan;
   },
   /**
-   * Создаёт новый
+   * @param {string} clanId - id клана
+   * @param {string} charId - id порсонажа
+   */
+  async handleRequest(charId, clanId) {
+    const char = arena.characters[charId];
+    const clan = await this.getClanById(clanId);
+    const requestClan = await this.getPlayerClanRequest(charId);
+
+    const remainingTime = (date) => ((date.valueOf() - Date.now()) / 60000).toFixed();
+
+    const penaltyForRequest = char.getPenaltyDate('clan_request');
+    if (penaltyForRequest) {
+      throw new Error(`Определись и возвращайся через ${remainingTime(penaltyForRequest)} мин.`);
+    }
+    const penaltyForLeave = char.getPenaltyDate('clan_leave');
+    if (penaltyForLeave) {
+      throw new Error(`Вступить в новый клан ты сможешь через ${remainingTime(penaltyForLeave)} мин.`);
+    }
+
+    if (clan.requests.some((p) => p.tgId === char.tgId)) {
+      await this.removeRequest(clan.id, char.id);
+      throw new Error('Заявка на вступление отменена');
+    }
+
+    if (requestClan) {
+      throw new Error('Сначала отмени предыдущую заявку');
+    }
+
+    if (clan.hasEmptySlot) {
+      await this.createRequest(clan.id, char.id);
+      throw new Error('Заявка на вступление отправлена');
+    } else {
+      throw new Error('Клан уже сформирован');
+    }
+  },
+  /**
+  * Возвращает клан, в который игрок делал заявку
+  * @param {string} charId - id порсонажа
+  */
+  async getPlayerClanRequest(charId) {
+    const clan = await db.clan.findOne({ requests: charId });
+    return clan;
+  },
+  /**
+   * Создаёт новый клан
    * @param {string} charId - id создателя клана
    * @param {string} name - название клана
    */
@@ -52,10 +97,22 @@ module.exports = {
   },
   /**
    * Возвразает список всех кланов из бд
+   * @returns {Promise<import ('telegraf').CallbackButton[][]>}
    */
-  async getClanList() {
+  async getClanList(charId) {
+    const char = arena.characters[charId];
     const clans = await db.clan.list();
-    return clans;
+    const requestClan = await this.getPlayerClanRequest(char.id) || {};
+    return clans.map((clan) => [
+      Markup.callbackButton(
+        `${clan.name} (👥${clan.players.length} / ${clan.maxPlayers})`,
+        `info_${clan.id}`,
+      ),
+      Markup.callbackButton(
+        `${clan.id === requestClan.id ? 'Отменить' : 'Вступить'}`,
+        `request_${clan.id}`,
+      ),
+    ]);
   },
   /**
    * Добавляет золото в клан и забирает у персонажа
@@ -102,6 +159,20 @@ module.exports = {
   async createRequest(clanId, charId) {
     const clan = await this.getClanById(clanId);
     const updated = await db.clan.update(clanId, { requests: clan.requests.concat(charId) });
+    Object.assign(clan, updated);
+  },
+  /**
+   * Отмена заявки игроком
+   * @param {string} clanId
+   * @param {string} charId
+   */
+  async removeRequest(clanId, charId) {
+    const char = arena.characters[charId];
+    const clan = await this.getClanById(clanId);
+    const updated = await db.clan.update(clanId, {
+      requests: clan.requests.filter((p) => p.tgId !== char.tgId),
+    });
+    await char.updatePenalty('clan_request', 60);
     Object.assign(clan, updated);
   },
   /**
