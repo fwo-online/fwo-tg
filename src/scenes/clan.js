@@ -145,13 +145,15 @@ clanScene.action(/requests_list|(accept|reject)(?=_)/, async ({
     answerCbQuery(e.message);
   }
 
+  const isAdmin = clan.owner.tgId === session.character.tgId;
+
   const list = clan.requests.map((player) => {
     const { nickname, prof, lvl } = player;
     const { icon } = Object.values(charDescr).find((el) => el.prof === prof);
     return [
       Markup.callbackButton(`${nickname} (${icon}${lvl})`, 'todo'),
-      Markup.callbackButton('Принять', `accept_${player.tgId}`),
-      Markup.callbackButton('Отклонить', `reject_${player.tgId}`),
+      Markup.callbackButton('Принять', `accept_${player.tgId}`, !isAdmin),
+      Markup.callbackButton('Отклонить', `reject_${player.tgId}`, !isAdmin),
     ];
   });
   editMessageText(
