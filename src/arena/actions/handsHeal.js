@@ -5,7 +5,7 @@ const HealMagicConstructor = require('../Constuructors/HealMagicConstructor');
 
 const params = {
   name: 'handsHeal',
-  desc: 'Лечение руками',
+  desc: 'Лечение руками. Действие может быть прервано физической атакой',
   displayName: 'Лечение руками',
   lvl: 0,
   orderType: 'all',

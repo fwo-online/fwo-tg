@@ -123,7 +123,7 @@ class LongMagic extends Common {
     bl.success({
       exp: this.status.exp,
       dmg: floatNumber(this.status.hit),
-      action: this.name,
+      action: this.displayName,
       actionType: 'magic',
       target: t.nick,
       initiator: i.nick,
