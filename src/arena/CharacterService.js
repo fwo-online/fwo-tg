@@ -366,6 +366,7 @@ class Char {
   async leaveClan() {
     this.charObj.clan = undefined;
     this.saveToDb();
+    return this;
   }
 
   /**

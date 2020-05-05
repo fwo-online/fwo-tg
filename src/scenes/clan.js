@@ -1,6 +1,7 @@
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
 const ClanService = require('../arena/ClanService');
+const arena = require('../arena');
 const { charDescr } = require('../arena/MiscService');
 
 const clanScene = new Scene('clan');
@@ -28,6 +29,8 @@ clanScene.enter(async ({ replyWithMarkdown, session }) => {
       ['🔙 В лобби'],
     ]).resize().extra(),
   );
+
+  session.character = arena.characters[session.character.id];
 
   if (!session.character.clan) {
     replyWithMarkdown(
@@ -64,6 +67,7 @@ clanScene.action(/lvlup|back/, async ({
       }),
     );
   } else {
+    session.character = arena.characters[session.character.id];
     const clan = await ClanService.getClanById(session.character.clan.id);
     if (match.input === 'lvlup') {
       const cost = ClanService.lvlCost[clan.lvl];
@@ -168,7 +172,7 @@ clanScene.action(/remove|leave/, async ({
     await editMessageText('Клан был удалён');
   }
   if (match.input === 'leave') {
-    await ClanService.leaveClan(char.clan.id, char.tgId);
+    session.character = await ClanService.leaveClan(char.clan.id, char.tgId);
   }
 
   scene.reenter();

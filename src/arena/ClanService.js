@@ -120,7 +120,7 @@ module.exports = {
       Object.assign(clan, updated);
 
       /** @todo не сохраняется клан у игрока */
-      await char.joinClan(clan);
+      arena.characters[char.id] = await char.joinClan(clan);
       channerHelper.broadcast(
         `Твоя заявка на вступление в клан *${clan.name}* была одобрена`,
         char.tgId,
@@ -157,7 +157,8 @@ module.exports = {
     const updated = await db.clan.update(clan.id, {
       players: clan.players.filter((player) => player.tgId !== char.tgId),
     });
-    await char.leaveClan();
     Object.assign(clan, updated);
+    await char.leaveClan();
+    return char;
   },
 };
