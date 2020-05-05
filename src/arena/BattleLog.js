@@ -97,7 +97,7 @@ class BattleLog extends ee {
   success(msgObj) {
     let data = '';
     const { expArr } = msgObj;
-    const expString = expArr ? expArr.map(([name, exp, val]) => `${name}: ❤${val} 📖${exp}`).join(', ') : '';
+    const expString = expArr ? expArr.map(([name, exp, val]) => `${name}: 💖${val} 📖${exp}`).join(', ') : '';
     // Если обьект содержит кастомную строку испльзуем её
     if (msgObj.msg) {
       data = msgObj.msg(msgObj.initiator, msgObj.exp);
