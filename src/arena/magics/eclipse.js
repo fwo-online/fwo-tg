@@ -11,7 +11,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
 const eclipse = new CommonMagic({
   name: 'eclipse',
   displayName: 'Затмение',
-  desc: 'Глюки, вводит цель в замешательство, цель атакуют любого из игроков',
+  desc: 'Погружает арену во тьму, не позволяя атаковать',
   cost: 16,
   baseExp: 80,
   costType: 'mp',
