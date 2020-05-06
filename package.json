@@ -4,7 +4,7 @@
   "description": "FightWorld Telegram",
   "main": "index.js",
   "scripts": {
-    "test": "node src/fwo.js && mocha --timeout 5000",
+    "test": "node src/fwo.js & sleep 20; mocha --timeout 15s",
     "lint": "./node_modules/.bin/eslint --fix src/",
     "start": "node src/fwo.js",
     "dev": "nodemon src/fwo.js",
