@@ -39,7 +39,7 @@ const character = new Schema({
   bonus: { type: Number, default: 0 },
   skills: { type: Object, default: {} },
   clan: { type: Schema.Types.ObjectId, ref: 'Clan' },
-  penalty: [{ 
+  penalty: [{
     reason: String,
     date: Date,
   }],

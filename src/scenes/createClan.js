@@ -30,7 +30,7 @@ async function valid(name) {
 createClanScene.enter(async ({ reply, session }) => {
   reply(
     `Стоимость создания клана: 100💰.
-${session.character.clan ? 'Сначала тебе нужно покинуть свой клан' : 'Введи название клана'}`,
+${session.character.clan ? 'Сначала тебе нужно покинуть свой клан' : 'Введи название клана:'}`,
     Markup.inlineKeyboard([
       Markup.callbackButton('Назад', 'back'),
     ]).resize().extra(),

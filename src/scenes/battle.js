@@ -61,7 +61,7 @@ battleScene.enter(async ({ reply, replyWithMarkdown }) => {
 
 battleScene.action('search', async ({ editMessageText, session }) => {
   const {
-    id, mm, nickname, lvl, prof,
+    id, mm, nickname, lvl, prof, clan,
   } = session.character;
   if (!checkCancelFindCount(session.character)) {
     const remainingTime = ((penaltyTime - (Date.now() - mm.time)) / 1000).toFixed();
@@ -83,13 +83,13 @@ battleScene.action('search', async ({ editMessageText, session }) => {
       ]).resize().extra(),
     );
     await channelHelper.broadcast(
-      `Игрок *${nickname}* (${icon}${lvl}) начал поиск игры`,
+      `Игрок ${clan ? `\\[${clan.name}]` : ''}*${nickname}* (${icon}${lvl}) начал поиск игры`,
     );
   }
 });
 
 battleScene.action('stop', async ({ editMessageText, session }) => {
-  const { id } = session.character;
+  const { id, nickname, clan } = session.character;
   arena.mm.pull(id);
   editMessageText(
     'Кнопки',
@@ -99,7 +99,7 @@ battleScene.action('stop', async ({ editMessageText, session }) => {
     ]).resize().extra(),
   );
   await channelHelper.broadcast(
-    `Игрок ${arena.characters[id].nickname} внезапно передумал`,
+    `Игрок ${clan ? `\\[${clan.name}]` : ''}*${nickname}* внезапно передумал`,
   );
 });
 
