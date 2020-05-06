@@ -24,17 +24,19 @@ module.exports = {
       const maxHp = target.stats.val('maxHp');
       const curHp = target.stats.val('hp');
       let exp = 0;
+      // Размер излечения
+      let healEffect = 0;
       // healObj = {initiator: i.id, val: this.status.val,}
       let allHeal = healers.reduce((sum = 0, h) => sum + h.val, 0);
       allHeal = floatNumber(allHeal);
       const sumHeal = floatNumber(allHeal + curHp);
       if (sumHeal >= maxHp) {
-        exp = Math.round((maxHp - curHp) * 8);
-        target.stats.mode('up', 'hp', maxHp - curHp);
+        healEffect = floatNumber(maxHp - curHp);
       } else {
-        exp = Math.round(allHeal * 8);
-        target.stats.mode('up', 'hp', allHeal);
+        healEffect = allHeal;
       }
+      exp = Math.round(healEffect * 8);
+      target.stats.mode('up', 'hp', healEffect);
       // функция вычисляет процент хила для  каждого из хиллеров
       healers.forEach((healObj) => {
         const healVal = healObj.val;
@@ -49,11 +51,14 @@ module.exports = {
         initiator.stats.mode('up', 'exp', playerExpForHeal);
         expArr.push([initiator.nick, playerExpForHeal, healVal]);
       });
-      // @todo подумать над тем что бы организовать это место через msg(кастомную строку магии)
+      /** effect показывает кол-во хп на которое была выхилена цель
+      * При этом expArr содержит кол-во хп на которую "мог бы похилить хилер"
+      * но exp будет выдано в % от размера хила с учетом максимального хп цели 
+      */
       Game.battleLog.success({
         action: 'handsHeal',
         target: target.nick,
-        effect: allHeal,
+        effect: healEffect,
         expArr: expArr,
       });
       expArr.length = 0;

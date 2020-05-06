@@ -249,7 +249,7 @@ class Magic {
     return {
       actionType: 'magic',
       message: msg,
-      action: this.name,
+      action: this.displayName,
       initiator: this.params.initiator.nick,
       target: this.params.target.nick,
     };

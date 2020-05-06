@@ -121,7 +121,7 @@ class BattleLog extends ee {
     }
     // Выношу вниз т.к проверка связана с action
     if (msgObj.action === 'handsHeal') {
-      data = `Игрок *${msgObj.target}* был 🤲 вылечен 🤲 на *${msgObj.effect}* \\[ ${expString}]`
+      data = `Игрок *${msgObj.target}* был вылечен 🤲 на *${msgObj.effect}* \\[ ${expString} ]`
     }
     this.write(data);
   }

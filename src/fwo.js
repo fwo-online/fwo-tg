@@ -14,7 +14,16 @@ const magics = require('./arena/magics');
 const skills = require('./arena/skills');
 const actions = require('./arena/actions');
 
-const bot = new Telegraf(process.env.BOT_TOKEN);
+const SocksAgent = require('socks5-https-client/lib/Agent')
+
+const socksAgent = new SocksAgent({
+  socksHost: '45.138.156.65',
+  socksPort: '15788',
+  socksUsername: 'LFlvgkmY1O',
+  socksPassword: 'qdahjxVbX9',
+});
+
+const bot = new Telegraf(process.env.BOT_TOKEN,{telegram: {agent: socksAgent}});
 
 // DB connection
 db.connection.on('open', async () => {
