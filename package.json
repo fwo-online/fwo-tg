@@ -4,7 +4,7 @@
   "description": "FightWorld Telegram",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout 5000",
+    "test": "node src/fwo.js && mocha --timeout 5000",
     "lint": "./node_modules/.bin/eslint --fix src/",
     "start": "node src/fwo.js",
     "dev": "nodemon src/fwo.js",
@@ -36,8 +36,7 @@
     "lodash.pullallwith": "^4.7.0",
     "lodash.union": "^4.6.0",
     "mongoose": "^5.7.3",
-    "telegraf": "^3.32.0",
-    "telegraf-test": "^1.2.1"
+    "telegraf": "^3.32.0"
   },
   "devDependencies": {
     "eslint": "^6.5.1",
@@ -46,6 +45,7 @@
     "jsdoc": "^3.6.3",
     "mocha": "^7.1.2",
     "nodemon": "^1.19.4",
-    "socks5-https-client": "^1.2.1"
+    "socks5-https-client": "^1.2.1",
+    "telegraf-test": "^1.2.1"
   }
 }
