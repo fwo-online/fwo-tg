@@ -1,8 +1,8 @@
-const chatMiddleware = async ({ chat }, next) => {
+const chatMiddleware = ({ chat }, next) => {
   if (chat && chat.type !== 'private') {
     return;
   }
-  await next();
+  return next();
 };
 
 module.exports = chatMiddleware;
