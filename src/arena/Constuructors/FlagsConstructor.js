@@ -8,7 +8,7 @@ class FlagsConstructors {
   constructor() {
     /** @type {{initiator: string, val: number}[]} */
     this.isProtected = [];
-    this.isGlitched = {};
+    this.isGlitched = false;
     /** @type {{initiator: string, val: number}[]} */
     this.isSilenced = [];
     this.isDead = {};
@@ -27,7 +27,7 @@ class FlagsConstructors {
    */
   refresh() {
     this.isProtected = [];
-    this.isGlitched = {};
+    this.isGlitched = false;
     this.isSilenced = [];
     this.isDead = {};
     this.isHealed = [];

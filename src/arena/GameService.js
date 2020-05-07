@@ -97,16 +97,6 @@ class Game {
   }
 
   /**
-   * Статик функция возвращающая случайного живого игрока
-   * @param {Number} gameId идентификатор игры
-   * @return {Player} случайный живой игрок
-   */
-  static randomAlive(gameId) {
-    const aliveArr = Game.aliveArr(gameId);
-    return aliveArr[Math.random() * aliveArr.length];
-  }
-
-  /**
    * Отправляет в чат кнопки с заказами
    * @param {Player} player - объект игрока
    */
@@ -316,7 +306,13 @@ class Game {
     // eslint-disable-next-line no-return-assign
     _.forEach(this.players, (p) => p.proc = 100);
   }
-
+  /**
+  * Очищаем глобальные флаги в бою
+  * затмение, бунт богов, и т.п
+  */
+  refreshRoundFlags() {
+    this.round.flags.global = {};
+  }
   /**
    * Подвес
    */
@@ -336,6 +332,7 @@ class Game {
         case 'endRound': {
           this.sortDead();
           this.refreshPlayer();
+          this.refreshRoundFlags();
           this.handleEndGameFlags();
           // нужно вызывать готовые функции
           if (this.isGameEnd) {

@@ -31,6 +31,6 @@ const eclipse = new CommonMagic({
  */
 eclipse.run = function run(initiator, target, game) {
   // выставляем глобальный флаг затмения
-  game.round.flags.isEclipsed = true;
+  game.round.flags.global.isEclipsed = true;
 };
 module.exports = eclipse;

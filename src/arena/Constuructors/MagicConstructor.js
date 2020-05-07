@@ -70,7 +70,7 @@ class Magic {
     try {
       this.getCost(initiator);
       this.checkPreAffects(initiator, target, game);
-      this.isblurredMind(initiator, game); // проверка не запудрило
+      this.isblurredMind(); // проверка не запудрило
       this.checkChance();
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.getExp(initiator);
@@ -217,11 +217,10 @@ class Magic {
    * @todo нужно вынести этот метод в orders или к Players Obj
    */
   // eslint-disable-next-line no-unused-vars,class-methods-use-this
-  isblurredMind(initiator, game) {
+  isblurredMind() {
+    const { initiator, game } = this.params;
     if (initiator.flags.isGlitched) {
-      // если кастер находится под глюком/безой/остальными
-      // eslint-disable-next-line no-console
-      console.log('todo isblurredMind');
+      this.params.target = game.playerArr.randomAlive; 
     }
   }
 
@@ -249,7 +248,7 @@ class Magic {
     return {
       actionType: 'magic',
       message: msg,
-      action: this.name,
+      action: this.displayName,
       initiator: this.params.initiator.nick,
       target: this.params.target.nick,
     };

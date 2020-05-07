@@ -140,7 +140,7 @@ class Skill {
    */
   breaks(e) {
     return {
-      action: this.name,
+      action: this.displayName,
       initiator: this.params.initiator.nick,
       message: e,
     };
