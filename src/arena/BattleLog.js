@@ -26,7 +26,7 @@ function csl(msgObj) {
       eng: '',
     },
     SILENCED: {
-      ru: `*${initiator}* пытался сотворить _${action}_, но попытка провалилась(затыка)`,
+      ru: `*${initiator}* пытался сотворить _${action}_, но попытка провалилась (безмолвие)`,
       eng: '',
     },
     CHANCE_FAIL: {

@@ -65,11 +65,16 @@ class PhysConstructor {
   checkPreAffects() {
     const { initiator, target, game } = this.params;
     // Глабальная проверка не весит ли затмение на арене
-    if (game.round.flags.isEclipsed) throw this.breaks('ECLIPSE');
+    if (game.round.flags.global.isEclipsed) throw this.breaks('ECLIPSE');
     const weapon = arena.items[initiator.weapon.code];
     const hasDodgeableItems = MiscService.weaponTypes[weapon.wtype].dodge;
     // Проверяем увёртку
     if (target.flags.isDodging && hasDodgeableItems) {
+
+      /** @todo  возможно следует состряпать static функцию tryDodge внутри скила
+      * уворота которая будет выполнять весь расчет а возвращать только bool
+      * значение. Сейчас эти проверки сильно раздувают PhysConstructor
+      */
       //  проверяем имеет ли цель достаточно dex для того что бы уклониться
       const iDex = initiator.stats.val('dex');
       const at = floatNumber(Math.round(target.flags.isDodging / iDex));
@@ -98,7 +103,7 @@ class PhysConstructor {
     const { initiator, game } = this.params;
     if (initiator.flags.isGlitched) {
       // Меняем цель внутри атаки на любого живого в игре
-      this.params.target = game.randomAlive(game.info.id);
+      this.params.target = game.playerArr.randomAlive;
     }
     if (initiator.flags.isMad) {
       this.params.target = initiator;
@@ -159,8 +164,9 @@ class PhysConstructor {
    * Функция агрегации данных после выполнениния действия
    */
   next(failMsg) {
-    const { initiator, target } = this.params;
-    const { game } = this.params;
+    console.log(failMsg);
+
+    const { initiator, target, game } = this.params;
     const weapon = initiator.weapon ? arena.items[initiator.weapon.code] : {};
     if (failMsg) {
       game.battleLog.log({ ...failMsg, weapon });
