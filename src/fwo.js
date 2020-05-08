@@ -1,5 +1,5 @@
-const Telegraf = require('telegraf');
 const session = require('telegraf/session');
+const bot = require('./bot');
 const db = require('./models');
 const stage = require('./scenes/stage.js');
 const channelHelper = require('./helpers/channelHelper');
@@ -13,8 +13,6 @@ const arena = require('./arena');
 const magics = require('./arena/magics');
 const skills = require('./arena/skills');
 const actions = require('./arena/actions');
-
-const bot = new Telegraf(process.env.BOT_TOKEN);
 
 // DB connection
 db.connection.on('open', async () => {
@@ -44,5 +42,8 @@ bot.use(protectedMiddleware);
 
 bot.command('profile', (ctx) => ctx.scene.enter('profile'));
 bot.command('inventory', (ctx) => ctx.scene.enter('inventory'));
+
+// нужно поставить условие, что бы это поднималось только в деве
+bot.startWebhook('/test', null, 3000);
 
 channelHelper.bot = bot;

@@ -160,7 +160,7 @@ class Magic {
     const acm = initiator.modifiers.magics[this.name] || 0; // мод action'а
     let chance = this.chance[initiatorMagicLvl - 1];
     if (typeof chance === 'string') {
-      chance = MiscService.rndm(chance);
+      chance = MiscService.dice(chance);
     }
     let result = chance + imc;
 

@@ -7,7 +7,7 @@ const authMiddleware = async ({ session, chat }, next) => {
       session.character = character;
     }
   }
-  next();
+  return next();
 };
 
 module.exports = authMiddleware;

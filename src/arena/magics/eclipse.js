@@ -20,7 +20,7 @@ const eclipse = new CommonMagic({
   aoeType: 'target',
   magType: 'bad',
   chance: ['1d80', '1d90+5', '1d100+5'],
-  profList: ['m'],
+  profList: ['p'],
 });
 
 /**
