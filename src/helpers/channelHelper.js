@@ -88,6 +88,7 @@ module.exports = {
    */
   async sendExitButton(player) {
     const { exp, gold } = player.stats.collect;
+    delete this.statusMessages[player.tgId];
     await this.bot.telegram.sendMessage(
       player.tgId,
       `Награда за бой:
@@ -102,6 +103,7 @@ module.exports = {
    * @param {Player} player
    */
   async sendRunButton(player) {
+    delete this.statusMessages[player.tgId];
     await this.bot.telegram.sendMessage(
       player.tgId,
       'Ты бежал из боя',
