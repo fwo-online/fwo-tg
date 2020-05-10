@@ -220,7 +220,7 @@ class Magic {
   isblurredMind() {
     const { initiator, game } = this.params;
     if (initiator.flags.isGlitched) {
-      this.params.target = game.playerArr.randomAlive; 
+      this.params.target = game.playerArr.randomAlive;
     }
   }
 

@@ -70,7 +70,6 @@ class PhysConstructor {
     const hasDodgeableItems = MiscService.weaponTypes[weapon.wtype].dodge;
     // Проверяем увёртку
     if (target.flags.isDodging && hasDodgeableItems) {
-
       /** @todo  возможно следует состряпать static функцию tryDodge внутри скила
       * уворота которая будет выполнять весь расчет а возвращать только bool
       * значение. Сейчас эти проверки сильно раздувают PhysConstructor

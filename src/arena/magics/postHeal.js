@@ -53,16 +53,16 @@ module.exports = {
       });
       /** effect показывает кол-во хп на которое была выхилена цель
       * При этом expArr содержит кол-во хп на которую "мог бы похилить хилер"
-      * но exp будет выдано в % от размера хила с учетом максимального хп цели 
+      * но exp будет выдано в % от размера хила с учетом максимального хп цели
       */
       Game.battleLog.success({
         action: 'handsHeal',
         target: target.nick,
         effect: healEffect,
-        expArr: expArr,
+        expArr,
       });
       expArr.length = 0;
-    };
+    }
 
     Game.forAllPlayers(giveExpForHeal);
   },
