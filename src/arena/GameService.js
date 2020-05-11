@@ -451,7 +451,6 @@ class Game {
   ]
 }
     */
-    console.log(this.longActions);
     const _this = this;
     _.forEach(this.longActions,(longMagicType,k) => {
       _this.longActions[k] = _.filter(longMagicType, (act) => {
@@ -459,7 +458,6 @@ class Game {
       });
     });
     this.longActions = _this.longActions;
-    console.log('new long', this.longActions);
   }
   /**
    * Сброс состояния игроков
