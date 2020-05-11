@@ -18,7 +18,7 @@ const RoundService = require('./RoundService');
 const PlayersArr = require('./playerArray');
 const OrderService = require('./OrderService');
 const HistoryService = require('./HistoryService');
-const { charDescr } = require('../arena/MiscService');
+const { charDescr } = require('./MiscService');
 
 /**
  * Класс для обьекта игры
@@ -306,6 +306,7 @@ class Game {
     // eslint-disable-next-line no-return-assign
     _.forEach(this.players, (p) => p.proc = 100);
   }
+
   /**
   * Очищаем глобальные флаги в бою
   * затмение, бунт богов, и т.п
@@ -313,6 +314,7 @@ class Game {
   refreshRoundFlags() {
     this.round.flags.global = {};
   }
+
   /**
    * Подвес
    */
@@ -422,6 +424,7 @@ class Game {
         p.alive = false;
       }
     });
+    this.cleanLongMagics();
     if (dead.length) {
       this.sendToAll(`Погибши${
         dead.length === 1 ? 'й' : 'е'
@@ -430,7 +433,32 @@ class Game {
       }`);
     }
   }
-
+  /**
+  * Очистка массива длительных магий от умерших
+  */
+  cleanLongMagics() {
+    /**
+    * Очищаем массив длительных магий для мертвецов
+{
+    frostTouch: [
+    {
+      initiator: '5ea330784e5f0354f04edcec',
+      target: '5e05ee58bdf83c6a5ff3f8dd',
+      duration: 0,
+      round: 1,
+      proc: 1
+    }
+  ]
+}
+    */
+    const _this = this;
+    _.forEach(this.longActions,(longMagicType,k) => {
+      _this.longActions[k] = _.filter(longMagicType, (act) => {
+        return _this.getPlayerById(act.target).alive;
+      });
+    });
+    this.longActions = _this.longActions;
+  }
   /**
    * Сброс состояния игроков
    */
