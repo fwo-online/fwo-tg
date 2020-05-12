@@ -24,7 +24,7 @@ function hasMagicToLearn(charId, lvl) {
   const charMag = Object.keys(charObj.magics);
   // разница между
   let arrayOfDiff = globalList.filter((m) => !charMag.includes(m));
-  const not3lvl = charMag.filter((e) => charObj.magics[e] < 3);
+  const not3lvl = charMag.filter((e) => arena.magics[e].lvl === lvl && charObj.magics[e] < 3);
   if (arrayOfDiff.length < 1) {
     // Нет новых магий в круге, проверяем а есть ли что учить
     arrayOfDiff = not3lvl;
