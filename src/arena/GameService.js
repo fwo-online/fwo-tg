@@ -454,7 +454,8 @@ class Game {
     const _this = this;
     _.forEach(this.longActions,(longMagicType,k) => {
       _this.longActions[k] = _.filter(longMagicType, (act) => {
-        return _this.getPlayerById(act.target).alive;
+        const p = _this.getPlayerById(act.target) || {};
+        return p.alive;
       });
     });
     this.longActions = _this.longActions;
