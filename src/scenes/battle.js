@@ -41,7 +41,7 @@ battleScene.enter(async ({ reply, replyWithMarkdown }) => {
   // @todo При поиске боя хотелось бы ещё выдавать сюда картиночку
   await replyWithMarkdown('*Поиск Боя*', Markup.removeKeyboard().extra());
   const message = await reply(
-    'Кнопки',
+    'Начать поиск',
     Markup.inlineKeyboard([
       [Markup.callbackButton('Искать приключений на ...', 'search')],
       [Markup.callbackButton('Назад', 'exit')],
@@ -68,7 +68,7 @@ battleScene.action('search', async ({ editMessageText, session }) => {
     const { icon } = Object.values(charDescr).find((el) => el.prof === prof);
     arena.mm.push(searchObject);
     await editMessageText(
-      'Кнопки',
+      'Идёт поиск игры...',
       Markup.inlineKeyboard([
         Markup.callbackButton('Нет-нет, остановите, я передумал!', 'stop'),
       ]).resize().extra(),
@@ -82,7 +82,7 @@ battleScene.action('search', async ({ editMessageText, session }) => {
 battleScene.action('stop', async ({ editMessageText, session }) => {
   arena.mm.pull(session.character.id);
   editMessageText(
-    'Кнопки',
+    'Начать поиск',
     Markup.inlineKeyboard([
       [Markup.callbackButton('Искать приключений на ...', 'search')],
       [Markup.callbackButton('Назад', 'exit')],
@@ -93,59 +93,50 @@ battleScene.action('stop', async ({ editMessageText, session }) => {
   );
 });
 
+/**
+ * Ожидаем строку 'action_{attack}'
+ */
 battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) => {
   const { currentGame, id } = session.character;
   const [, action] = match.input.split('_');
 
-  if (action === 'repeat' || action === 'reset') {
-    const player = currentGame.players[id];
-    if (action === 'repeat') {
-      BattleService.repeatOrder(id, currentGame);
-    } else if (action === 'reset') {
-      BattleService.resetOrder(id, currentGame);
-    }
-    editMessageText(
-      `У тебя осталось *${player.proc}%*
-Заказы: ${BattleService.getCurrentOrders(id, currentGame)}`,
-      Markup.inlineKeyboard(
-        channelHelper.getOrderButtons(player),
-      ).resize().extra({ parse_mode: 'Markdown' }),
-    );
-  } else {
-    editMessageText(
-      `Выбери цель для ${BattleService.getActions()[action].displayName}`,
-      Markup.inlineKeyboard([
-        ...BattleService.getTargetButtons(id, currentGame, action),
-      ]).resize().extra(),
-    );
-  }
-});
-
-battleScene.action(/^([^_]+)_([^_]+)$/, async ({ editMessageText, session, match }) => {
-  const [action, target] = match.input.split('_');
-  const { id, currentGame } = session.character;
-  const player = currentGame.players[id];
+  const [message, keyboard] = BattleService.handleAction(id, currentGame, action);
   editMessageText(
-    `Выбери силу ${BattleService.getActions()[action].displayName} на игрока ${currentGame.players[target].nick}`,
-    Markup.inlineKeyboard([
-      ...BattleService.getProcentKeyboard(match.input, player.proc),
-    ]).resize().extra(),
+    message,
+    Markup.inlineKeyboard(
+      keyboard,
+    ).resize().extra({ parse_mode: 'Markdown' }),
   );
 });
 
+/**
+ * Ожидаем строку '{attack}_{target}'
+ */
+battleScene.action(/^([^_]+)_([^_]+)$/, async ({ editMessageText, session, match }) => {
+  const [action, target] = match.input.split('_');
+  const { id, currentGame } = session.character;
+  const [message, keyboard] = BattleService.handleTarget(id, currentGame, action, target);
+  editMessageText(
+    message,
+    Markup.inlineKeyboard(
+      keyboard,
+    ).resize().extra({ parse_mode: 'Markdown' }),
+  );
+});
+
+/**
+ * Ожидаем строку '{attack}_{target}_{proc}'
+ */
 battleScene.action(/^([^_]+)_([^_]+)_([^_]+)$/, async ({ editMessageText, session, match }) => {
   const [action, target, proc] = match.input.split('_');
   const { id, currentGame } = session.character;
-  const player = currentGame.players[id];
-  currentGame.orders.orderAction({
-    initiator: id, target, action, proc,
-  });
-
+  const [message, keyboard] = BattleService.handlePercent(
+    id, currentGame, action, target, Number(proc),
+  );
   editMessageText(
-    `У тебя осталось *${player.proc}%*
-Заказы: ${BattleService.getCurrentOrders(id, currentGame)}`,
+    message,
     Markup.inlineKeyboard(
-      channelHelper.getOrderButtons(player),
+      keyboard,
     ).resize().extra({ parse_mode: 'Markdown' }),
   );
 });
