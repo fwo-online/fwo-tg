@@ -420,7 +420,6 @@ class Game {
   giveGoldforKill() {
     const deadArray = this.deadPlayers;
     _.forEach(deadArray, (p) => {
-      console.log('f',p,'isDead',p.flags.isDead);
       const killer = this.getPlayerById(p.flags.isDead);
       if (killer) killer.stats.addGold(5 * p.lvl);
     });
