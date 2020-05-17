@@ -68,6 +68,22 @@ class Player {
       en: this.stats.val('en'),
     };
   }
+
+  /**
+  * Возвращает убийцу игрока если он записан
+  * @return {Player<id>}
+  */
+  getKiller() {
+    return this.flags.isDead;
+  }
+
+  /**
+  * Устанавливает убийцу игрока
+  * @param {Player} записывает id убийцы
+  */
+  setKiller(player) {
+    this.flags.isDead = player.id;
+  }
 }
 
 module.exports = Player;

@@ -18,7 +18,7 @@ const RoundService = require('./RoundService');
 const PlayersArr = require('./playerArray');
 const OrderService = require('./OrderService');
 const HistoryService = require('./HistoryService');
-const { charDescr } = require('../arena/MiscService');
+const { charDescr } = require('./MiscService');
 
 /**
  * Класс для обьекта игры
@@ -337,12 +337,12 @@ class Game {
         }
         case 'endRound': {
           this.sortDead();
-          this.refreshPlayer();
           this.handleEndGameFlags();
           // нужно вызывать готовые функции
           if (this.isGameEnd) {
             this.endGame();
           } else {
+            this.refreshPlayer();
             this.round.goNext('starting', 500);
           }
           break;
@@ -402,6 +402,7 @@ class Game {
    * @return {string} возвращает строку статистики по всем игрокам
    */
   statistic() {
+    this.giveGoldforKill();
     const winners = this.alivePlayers;
     const gold = this.deadPlayers.length ? 5 : 1;
     winners.forEach((p) => p.stats.addGold(gold));
@@ -411,6 +412,18 @@ class Game {
       res += `\nИгрок ${p.nick} получает ${s.exp} опыта и ${s.gold} золота`;
     });
     return res;
+  }
+
+  /**
+  * Функция пробегает всех убитых и раздает золото убийцам
+  */
+  giveGoldforKill() {
+    const deadArray = this.deadPlayers;
+    _.forEach(deadArray, (p) => {
+      console.log('f',p,'isDead',p.flags.isDead);
+      const killer = this.getPlayerById(p.flags.isDead);
+      if (killer) killer.stats.addGold(5 * p.lvl);
+    });
   }
 
   /**
