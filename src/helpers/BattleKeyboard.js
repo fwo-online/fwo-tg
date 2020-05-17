@@ -10,8 +10,7 @@ class BattleKeyboard {
     this.keyboard = [];
     this.player = player;
 
-    const gameId = arena.characters[player.id].mm;
-    this.game = arena.games[gameId];
+    this.game = arena.characters[player.id].currentGame;
     this.date = Date.now();
   }
 
@@ -122,9 +121,9 @@ class BattleKeyboard {
     return [...this.keyboard
       .map((action) => {
         if (action instanceof Skill) {
-          return [Markup.callbackButton(`${action.displayName} (${action.proc}%)`, `action_${action.name}`)];
+          return [Markup.callbackButton(`${action.displayName} (${action.proc}%)`, `action_${action.name}`, this.player.proc === 0)];
         }
-        return [Markup.callbackButton(action.displayName, `action_${action.name}`)];
+        return [Markup.callbackButton(action.displayName, `action_${action.name}`, this.player.proc === 0)];
       }), this.setRepeatButton(), this.setResetButton()];
   }
 }
