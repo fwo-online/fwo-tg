@@ -6,9 +6,9 @@ const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
 const channelHelper = require('../helpers/channelHelper');
 const arena = require('../arena');
-const GameService = require('../arena/GameService');
 const { charDescr } = require('../arena/MiscService');
 const loginHelper = require('../helpers/loginHelper');
+const BattleService = require('../arena/BattleService');
 
 
 const battleScene = new Scene('battleScene');
@@ -36,15 +36,6 @@ const checkCancelFindCount = (character) => {
   character.mm.time = time;
   return true;
 };
-
-/**
- * Возвращает кнопки с процентом заказа
- * @param {string} match
- * @param {number} proc
- */
-const getProcentKeyboard = (match, proc) => Array.from(new Set([5, 10, 25, 50, 75, proc]))
-  .filter((key) => key <= proc)
-  .map((key) => Markup.callbackButton(key, `${match}_${key}`));
 
 battleScene.enter(async ({ reply, replyWithMarkdown }) => {
   // @todo При поиске боя хотелось бы ещё выдавать сюда картиночку
@@ -89,8 +80,7 @@ battleScene.action('search', async ({ editMessageText, session }) => {
 });
 
 battleScene.action('stop', async ({ editMessageText, session }) => {
-  const { id } = session.character;
-  arena.mm.pull(id);
+  arena.mm.pull(session.character.id);
   editMessageText(
     'Кнопки',
     Markup.inlineKeyboard([
@@ -99,45 +89,34 @@ battleScene.action('stop', async ({ editMessageText, session }) => {
     ]).resize().extra(),
   );
   await channelHelper.broadcast(
-    `Игрок ${arena.characters[id].nickname} внезапно передумал`,
+    `Игрок ${session.character.nickname} внезапно передумал`,
   );
 });
 
 battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) => {
-  const gameId = arena.characters[session.character.id].mm;
+  const { currentGame, id } = session.character;
   const [, action] = match.input.split('_');
+
   if (action === 'repeat' || action === 'reset') {
     const initiator = session.character.id;
-    const Game = arena.games[gameId];
-    const player = Game.players[initiator];
+    const player = arena.games[currentGame].players[initiator];
     if (action === 'repeat') {
-      Game.orders.repeatLastOrder(initiator);
+      BattleService.repeatOrder(id, currentGame);
+    } else if (action === 'reset') {
+      BattleService.resetOrder(id, currentGame);
     }
-    if (action === 'reset') {
-      Game.orders.resetOrdersForPlayer(initiator);
-    }
-    const ACTIONS = { ...arena.actions, ...arena.skills, ...arena.magics };
-    const message = Game.orders.ordersList
-      .filter((o) => o.initiator === initiator)
-      .map((o) => `\n_${ACTIONS[o.action].displayName}_ (*${o.proc}%*) на игрока *${Game.players[o.target].nick}*`);
     editMessageText(
       `У тебя осталось *${player.proc}%*
-${Game.orders.checkPlayerOrder(initiator) ? `Заказы: ${message.join()}` : ''}`,
-      player.proc !== 0
-        ? Markup.inlineKeyboard(
-          channelHelper.getOrderButtons(player),
-        ).resize().extra({ parse_mode: 'Markdown' })
-        : { parse_mode: 'Markdown' },
+Заказы: ${BattleService.getCurrentOrders(initiator, currentGame)}`,
+      Markup.inlineKeyboard(
+        channelHelper.getOrderButtons(player),
+      ).resize().extra({ parse_mode: 'Markdown' }),
     );
   } else {
-    const proc = arena.skills[action] ? `_${arena.skills[action].proc}` : '';
-    const aliveArr = GameService.aliveArr(gameId)
-      .map(({ nick, id }) => Markup.callbackButton(nick,
-        `${action}_${id}${proc}`));
     editMessageText(
-      `Выбери цель для ${match}`,
+      `Выбери цель для ${BattleService.getActions()[action].displayName}`,
       Markup.inlineKeyboard([
-        ...aliveArr,
+        ...BattleService.getTargetButtons(id, currentGame, action),
       ]).resize().extra(),
     );
   }
@@ -146,14 +125,12 @@ ${Game.orders.checkPlayerOrder(initiator) ? `Заказы: ${message.join()}` : 
 battleScene.action(/^([^_]+)_([^_]+)$/, async ({ editMessageText, session, match }) => {
   const [action, target] = match.input.split('_');
   const { id } = session.character;
-  const gameId = arena.characters[id].mm;
-  /** @type {GameService} */
-  const Game = arena.games[gameId];
+  const Game = arena.games[session.character.currentGame];
   const player = Game.players[id];
   editMessageText(
-    `Выбери силу ${action} на игрока ${Game.players[target].nick}`,
+    `Выбери силу ${BattleService.getActions()[action].displayName} на игрока ${Game.players[target].nick}`,
     Markup.inlineKeyboard([
-      ...getProcentKeyboard(match.input, player.proc),
+      ...BattleService.getProcentKeyboard(match.input, player.proc),
     ]).resize().extra(),
   );
 });
@@ -161,26 +138,18 @@ battleScene.action(/^([^_]+)_([^_]+)$/, async ({ editMessageText, session, match
 battleScene.action(/^([^_]+)_([^_]+)_([^_]+)$/, async ({ editMessageText, session, match }) => {
   const [action, target, proc] = match.input.split('_');
   const initiator = session.character.id;
-  const gameId = arena.characters[initiator].mm;
-  /** @type {GameService} */
-  const Game = arena.games[gameId];
+  const Game = arena.games[session.character.currentGame];
   const player = Game.players[initiator];
   Game.orders.orderAction({
     initiator, target, action, proc,
   });
 
-  const ACTIONS = { ...arena.actions, ...arena.skills, ...arena.magics };
-  const message = Game.orders.ordersList
-    .filter((o) => o.initiator === initiator)
-    .map((o) => `\n_${ACTIONS[o.action].displayName}_ (*${o.proc}%*) на игрока *${Game.players[o.target].nick}*`);
   editMessageText(
     `У тебя осталось *${player.proc}%*
-Заказы: ${message.join()}`,
-    player.proc !== 0
-      ? Markup.inlineKeyboard(
-        channelHelper.getOrderButtons(player),
-      ).resize().extra({ parse_mode: 'Markdown' })
-      : { parse_mode: 'Markdown' },
+Заказы: ${BattleService.getCurrentOrders(initiator, session.character.currentGame)}`,
+    Markup.inlineKeyboard(
+      channelHelper.getOrderButtons(player),
+    ).resize().extra({ parse_mode: 'Markdown' }),
   );
 });
 
@@ -189,10 +158,8 @@ battleScene.action('exit', ({ scene }) => {
 });
 
 battleScene.command('run', async ({ reply, session }) => {
-  const { id } = session.character;
-  const gameId = arena.characters[id].mm;
-  /** @type {GameService} */
-  const Game = arena.games[gameId];
+  const { id, currentGame } = session.character;
+  const Game = arena.games[currentGame];
 
   Game.preKick(id, 'run');
 

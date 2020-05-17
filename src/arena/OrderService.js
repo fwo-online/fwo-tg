@@ -157,6 +157,14 @@ class Orders {
   }
 
   /**
+   * Возвращает все заказы игрока в текущем раунда
+   * @param {String} charId идентификатор персонажа
+   */
+  getPlayerOrders(charId) {
+    return this.ordersList.filter((o) => o.initiator === charId);
+  }
+
+  /**
    * Проверяет делал ли игрок заказ. Опционально проверяет название магии или умения в заказе
    * @param {string} charId идентификатор персонажа
    * @param {string} [act] название умения или магии
@@ -202,7 +210,7 @@ class Orders {
    */
   resetOrdersForPlayer(charId) {
     this.ordersList = this.ordersList.filter((o) => o.initiator !== charId);
-    const gameId = arena.characters[charId].mm;
+    const gameId = arena.characters[charId].currentGame;
     const Game = arena.games[gameId];
     Game.getPlayerById(charId).proc = 100;
   }

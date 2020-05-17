@@ -122,9 +122,9 @@ class BattleKeyboard {
     return [...this.keyboard
       .map((action) => {
         if (action instanceof Skill) {
-          return [Markup.callbackButton(`${action.displayName} (${action.proc}%)`, `action_${action.name}`)];
+          return [Markup.callbackButton(`${action.displayName} (${action.proc}%)`, `action_${action.name}`, this.player.proc === 0)];
         }
-        return [Markup.callbackButton(action.displayName, `action_${action.name}`)];
+        return [Markup.callbackButton(action.displayName, `action_${action.name}`, this.player.proc === 0)];
       }), this.setRepeatButton(), this.setResetButton()];
   }
 }
