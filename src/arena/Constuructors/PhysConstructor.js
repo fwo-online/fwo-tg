@@ -187,12 +187,10 @@ class PhysConstructor {
    * общую проверку
    */
   checkTargetIsDead() {
-    const { target } = this.params;
+    const { initiator, target } = this.params;
     const hpNow = target.stats.val('hp');
-    if (hpNow <= 0 && !Object.keys(target.flags.isDead).length) {
-      target.flags.isDead = {
-        action: this.name, initiator: this.params.initiator.id,
-      };
+    if (hpNow <= 0 && !target.getKiller()) {
+      target.setKiller(initiator);
     }
   }
 

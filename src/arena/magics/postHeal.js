@@ -54,10 +54,10 @@ module.exports = {
         action: 'handsHeal',
         target: target.nick,
         effect: allHeal,
-        expArr: expArr,
+        expArr,
       });
       expArr.length = 0;
-    };
+    }
 
     Game.forAllPlayers(giveExpForHeal);
   },
