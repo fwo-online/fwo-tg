@@ -155,8 +155,7 @@ class Game {
     arena.games[this.info.id] = this;
 
     this.info.players.forEach((playerId) => {
-      arena.characters[playerId].mm = this.info.id;
-      arena.characters[playerId].currentGame = this.info.id;
+      arena.characters[playerId].gameId = this.info.id;
     });
     // @todo add statistic +1 game for all players
   }
@@ -282,6 +281,7 @@ class Game {
     setTimeout(() => {
       this.sendToAll('Конец игры, распределяем ресурсы...');
       this.forAllPlayers(Game.showExitButton);
+      this.forAllPlayers((player) => { arena.characters[player.id].gameId = null; });
       arena.mm.cancel();
       this.forAllPlayers(/** @param {Player} player */(player) => arena.mm.autoreg(player.id));
     }, 15000);
@@ -448,7 +448,7 @@ class Game {
 
   /**
    * Интерфейс для работы со всеми игроками в игре
-   * @param {function} f функция применяющая ко всем игрокам в игре
+   * @param {function(Player): void} f функция применяющая ко всем игрокам в игре
    */
   forAllPlayers(f) {
     _.forEach(this.players, (p) => f.call(this, p));
@@ -456,7 +456,7 @@ class Game {
 
   /**
    * Интерфейс для работы с живыми
-   * @param {function} f функция применяющая
+   * @param {function(Player): void} f функция применяющая
    */
   forAllAlivePlayers(f) {
     this.alivePlayers.forEach((p) => f.call(this, p));

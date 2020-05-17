@@ -98,8 +98,7 @@ battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) =>
   const [, action] = match.input.split('_');
 
   if (action === 'repeat' || action === 'reset') {
-    const initiator = session.character.id;
-    const player = arena.games[currentGame].players[initiator];
+    const player = currentGame.players[id];
     if (action === 'repeat') {
       BattleService.repeatOrder(id, currentGame);
     } else if (action === 'reset') {
@@ -107,7 +106,7 @@ battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) =>
     }
     editMessageText(
       `У тебя осталось *${player.proc}%*
-Заказы: ${BattleService.getCurrentOrders(initiator, currentGame)}`,
+Заказы: ${BattleService.getCurrentOrders(id, currentGame)}`,
       Markup.inlineKeyboard(
         channelHelper.getOrderButtons(player),
       ).resize().extra({ parse_mode: 'Markdown' }),
@@ -124,11 +123,10 @@ battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) =>
 
 battleScene.action(/^([^_]+)_([^_]+)$/, async ({ editMessageText, session, match }) => {
   const [action, target] = match.input.split('_');
-  const { id } = session.character;
-  const Game = arena.games[session.character.currentGame];
-  const player = Game.players[id];
+  const { id, currentGame } = session.character;
+  const player = currentGame.players[id];
   editMessageText(
-    `Выбери силу ${BattleService.getActions()[action].displayName} на игрока ${Game.players[target].nick}`,
+    `Выбери силу ${BattleService.getActions()[action].displayName} на игрока ${currentGame.players[target].nick}`,
     Markup.inlineKeyboard([
       ...BattleService.getProcentKeyboard(match.input, player.proc),
     ]).resize().extra(),
@@ -137,16 +135,15 @@ battleScene.action(/^([^_]+)_([^_]+)$/, async ({ editMessageText, session, match
 
 battleScene.action(/^([^_]+)_([^_]+)_([^_]+)$/, async ({ editMessageText, session, match }) => {
   const [action, target, proc] = match.input.split('_');
-  const initiator = session.character.id;
-  const Game = arena.games[session.character.currentGame];
-  const player = Game.players[initiator];
-  Game.orders.orderAction({
-    initiator, target, action, proc,
+  const { id, currentGame } = session.character;
+  const player = currentGame.players[id];
+  currentGame.orders.orderAction({
+    initiator: id, target, action, proc,
   });
 
   editMessageText(
     `У тебя осталось *${player.proc}%*
-Заказы: ${BattleService.getCurrentOrders(initiator, session.character.currentGame)}`,
+Заказы: ${BattleService.getCurrentOrders(id, currentGame)}`,
     Markup.inlineKeyboard(
       channelHelper.getOrderButtons(player),
     ).resize().extra({ parse_mode: 'Markdown' }),
@@ -159,9 +156,8 @@ battleScene.action('exit', ({ scene }) => {
 
 battleScene.command('run', async ({ reply, session }) => {
   const { id, currentGame } = session.character;
-  const Game = arena.games[currentGame];
 
-  Game.preKick(id, 'run');
+  currentGame.preKick(id, 'run');
 
   reply('Ты будешь выброшен из игры в конце этого раунда');
 });

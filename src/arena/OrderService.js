@@ -75,8 +75,7 @@ class Orders {
 
     // формируем список заказа для charId
 
-    const gameId = arena.characters[initiator].mm;
-    const Game = arena.games[gameId];
+    const Game = arena.characters[initiator].currentGame;
     // @todo Нужны константы для i18n
     if (!Game) {
       throw Error('Вы не в игре');
@@ -210,8 +209,7 @@ class Orders {
    */
   resetOrdersForPlayer(charId) {
     this.ordersList = this.ordersList.filter((o) => o.initiator !== charId);
-    const gameId = arena.characters[charId].currentGame;
-    const Game = arena.games[gameId];
+    const Game = arena.characters[charId].currentGame;
     Game.getPlayerById(charId).proc = 100;
   }
 }

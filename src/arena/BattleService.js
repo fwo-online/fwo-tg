@@ -6,16 +6,14 @@ const arena = require('./index');
  * @typedef {import ('./GameService')} Game
  */
 
-const getGame = (gameId) => arena.games[gameId];
 const getActions = () => ({ ...arena.actions, ...arena.skills, ...arena.magics });
 module.exports = {
   getActions,
   /**
    * @param {string} action
-   * @param {string} gameId
+   * @param {Game} game
    */
-  getTargetButtons(initiator, gameId, action) {
-    const game = getGame(gameId);
+  getTargetButtons(initiator, game, action) {
     const player = game.players[initiator];
     const { orderType } = getActions()[action];
     const proc = arena.skills[action] ? `_${arena.skills[action].proc}` : '';
@@ -34,26 +32,23 @@ module.exports = {
   },
   /**
    * @param {string} initiator
-   * @param {Game} gameId
+   * @param {Game} game
    */
-  repeatOrder(initiator, gameId) {
-    const game = getGame(gameId);
+  repeatOrder(initiator, game) {
     game.orders.repeatLastOrder(initiator);
   },
   /**
    * @param {string} initiator
-   * @param {Game} gameId
+   * @param {Game} game
    */
-  resetOrder(initiator, gameId) {
-    const game = getGame(gameId);
+  resetOrder(initiator, game) {
     game.orders.resetOrdersForPlayer(initiator);
   },
   /**
    * @param {string} initiator
-   * @param {Game} gameId
+   * @param {Game} game
    */
-  getCurrentOrders(initiator, gameId) {
-    const game = getGame(gameId);
+  getCurrentOrders(initiator, game) {
     return game.orders.getPlayerOrders(initiator)
       .map((o) => `_${getActions()[o.action].displayName}_ (*${o.proc}%*) на игрока *${game.players[o.target].nick}*`)
       .join('\n');

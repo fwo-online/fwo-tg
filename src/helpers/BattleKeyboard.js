@@ -10,8 +10,7 @@ class BattleKeyboard {
     this.keyboard = [];
     this.player = player;
 
-    const gameId = arena.characters[player.id].mm;
-    this.game = arena.games[gameId];
+    this.game = arena.characters[player.id].currentGame;
     this.date = Date.now();
   }
 
