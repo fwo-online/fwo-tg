@@ -119,9 +119,8 @@ class Char {
       ...charObj.harks,
       free: charObj.free,
     };
-    this.currentGame = null;
     this.updateHarkFromItems();
-    this.mm = null;
+    this.mm = {};
     this.autoreg = false;
   }
 
@@ -402,7 +401,7 @@ class Char {
 
   /**
    * @desc Получает идентификатор игры из charId участника
-   * @return {String|Number} gameId идентификатор игры
+   * @return {string} gameId идентификатор игры
    */
   get gameId() {
     return this.mm.status || '';
@@ -410,10 +409,14 @@ class Char {
 
   /**
    * Setter gameId
-   * @param {String|Number} newStatus новый статус mm персонажа
+   * @param {string} newStatus новый статус mm персонажа
    */
   set gameId(newStatus) {
     this.mm.status = newStatus;
+  }
+
+  get currentGame() {
+    return arena.games[this.gameId];
   }
 
   /**
@@ -435,11 +438,11 @@ class Char {
   /**
    * Возвращает обьект игры по Id чара
    * @param {String} charId идентификатор чара;
-   * @return {Object} Обьект игры
+   * @return {this} Обьект игры
    * @todo нужно перенести это не в static а во внутрь экземпляра класса
    */
   static getGameFromCharId(charId) {
-    const gameId = arena.players[charId].mm;
+    const { gameId } = arena.characters[charId];
     if (arena.games[gameId]) {
       return arena.games[gameId];
     } throw Error('gameId_error');

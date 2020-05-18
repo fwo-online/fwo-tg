@@ -1,6 +1,7 @@
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
 const { charDescr } = require('../arena/MiscService');
+const messages = require('../messages');
 
 const create = new Scene('create');
 
@@ -11,10 +12,9 @@ const getProfButtons = () => Object
     `select_${prof}`,
   )]);
 
-create.enter(({ reply }) => {
+create.enter(async ({ reply }) => {
   reply(
-    `Здравствуй, сраный путник. Я вижу ты здесь впервые.
-      Бла бла бла.Вот кнопка, чтобы создать персонажа.`,
+    messages.create.enter,
     Markup.inlineKeyboard([
       Markup.callbackButton('Создать', 'create'),
     ]).resize().extra(),

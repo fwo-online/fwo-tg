@@ -26,7 +26,7 @@ function csl(msgObj) {
       eng: '',
     },
     SILENCED: {
-      ru: `*${initiator}* пытался сотворить _${action}_, но попытка провалилась(затыка)`,
+      ru: `*${initiator}* пытался сотворить _${action}_, но попытка провалилась (безмолвие)`,
       eng: '',
     },
     CHANCE_FAIL: {
@@ -121,7 +121,7 @@ class BattleLog extends ee {
     }
     // Выношу вниз т.к проверка связана с action
     if (msgObj.action === 'handsHeal') {
-      data = `Игрок *${msgObj.target}* был 🤲 вылечен 🤲 на *${msgObj.effect}* \\[ ${expString}]`
+      data = `Игрок *${msgObj.target}* был вылечен 🤲 на *${msgObj.effect}* \\[ ${expString} ]`;
     }
     this.write(data);
   }

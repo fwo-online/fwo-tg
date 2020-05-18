@@ -20,7 +20,7 @@ const eclipse = new CommonMagic({
   aoeType: 'target',
   magType: 'bad',
   chance: ['1d80', '1d90+5', '1d100+5'],
-  profList: ['m'],
+  profList: ['p'],
 });
 
 /**
@@ -31,6 +31,6 @@ const eclipse = new CommonMagic({
  */
 eclipse.run = function run(initiator, target, game) {
   // выставляем глобальный флаг затмения
-  game.round.flags.isEclipsed = true;
+  game.round.flags.global.isEclipsed = true;
 };
 module.exports = eclipse;

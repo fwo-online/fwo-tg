@@ -18,7 +18,7 @@ const RoundService = require('./RoundService');
 const PlayersArr = require('./playerArray');
 const OrderService = require('./OrderService');
 const HistoryService = require('./HistoryService');
-const { charDescr } = require('../arena/MiscService');
+const { charDescr } = require('./MiscService');
 
 /**
  * Класс для обьекта игры
@@ -97,16 +97,6 @@ class Game {
   }
 
   /**
-   * Статик функция возвращающая случайного живого игрока
-   * @param {Number} gameId идентификатор игры
-   * @return {Player} случайный живой игрок
-   */
-  static randomAlive(gameId) {
-    const aliveArr = Game.aliveArr(gameId);
-    return aliveArr[Math.random() * aliveArr.length];
-  }
-
-  /**
    * Отправляет в чат кнопки с заказами
    * @param {Player} player - объект игрока
    */
@@ -155,8 +145,7 @@ class Game {
     arena.games[this.info.id] = this;
 
     this.info.players.forEach((playerId) => {
-      arena.characters[playerId].mm = this.info.id;
-      arena.characters[playerId].currentGame = this.info.id;
+      arena.characters[playerId].gameId = this.info.id;
     });
     // @todo add statistic +1 game for all players
   }
@@ -282,6 +271,7 @@ class Game {
     setTimeout(() => {
       this.sendToAll('Конец игры, распределяем ресурсы...');
       this.forAllPlayers(Game.showExitButton);
+      this.forAllPlayers((player) => { arena.characters[player.id].gameId = null; });
       arena.mm.cancel();
       this.forAllPlayers(/** @param {Player} player */(player) => arena.mm.autoreg(player.id));
     }, 15000);
@@ -320,6 +310,14 @@ class Game {
   }
 
   /**
+  * Очищаем глобальные флаги в бою
+  * затмение, бунт богов, и т.п
+  */
+  refreshRoundFlags() {
+    this.round.flags.global = {};
+  }
+
+  /**
    * Подвес
    */
   initHandlers() {
@@ -337,12 +335,13 @@ class Game {
         }
         case 'endRound': {
           this.sortDead();
-          this.refreshPlayer();
           this.handleEndGameFlags();
           // нужно вызывать готовые функции
           if (this.isGameEnd) {
             this.endGame();
           } else {
+            this.refreshPlayer();
+            this.refreshRoundFlags();
             this.round.goNext('starting', 500);
           }
           break;
@@ -402,6 +401,7 @@ class Game {
    * @return {string} возвращает строку статистики по всем игрокам
    */
   statistic() {
+    this.giveGoldforKill();
     const winners = this.alivePlayers;
     const gold = this.deadPlayers.length ? 5 : 1;
     winners.forEach((p) => p.stats.addGold(gold));
@@ -411,6 +411,17 @@ class Game {
       res += `\nИгрок ${p.nick} получает ${s.exp} опыта и ${s.gold} золота`;
     });
     return res;
+  }
+
+  /**
+  * Функция пробегает всех убитых и раздает золото убийцам
+  */
+  giveGoldforKill() {
+    const deadArray = this.deadPlayers;
+    _.forEach(deadArray, (p) => {
+      const killer = this.getPlayerById(p.flags.isDead);
+      if (killer) killer.stats.addGold(5 * p.lvl);
+    });
   }
 
   /**
@@ -427,6 +438,7 @@ class Game {
         p.alive = false;
       }
     });
+    this.cleanLongMagics();
     if (dead.length) {
       this.sendToAll(`Погибши${
         dead.length === 1 ? 'й' : 'е'
@@ -434,6 +446,34 @@ class Game {
         dead.join(', ')
       }`);
     }
+  }
+
+  /**
+  * Очистка массива длительных магий от умерших
+  */
+  cleanLongMagics() {
+    /**
+    * Очищаем массив длительных магий для мертвецов
+{
+    frostTouch: [
+    {
+      initiator: '5ea330784e5f0354f04edcec',
+      target: '5e05ee58bdf83c6a5ff3f8dd',
+      duration: 0,
+      round: 1,
+      proc: 1
+    }
+  ]
+}
+    */
+    const _this = this;
+    _.forEach(this.longActions, (longMagicType, k) => {
+      _this.longActions[k] = _.filter(longMagicType, (act) => {
+        const p = _this.getPlayerById(act.target) || {};
+        return p.alive;
+      });
+    });
+    this.longActions = _this.longActions;
   }
 
   /**
@@ -448,7 +488,7 @@ class Game {
 
   /**
    * Интерфейс для работы со всеми игроками в игре
-   * @param {function} f функция применяющая ко всем игрокам в игре
+   * @param {function(Player): void} f функция применяющая ко всем игрокам в игре
    */
   forAllPlayers(f) {
     _.forEach(this.players, (p) => f.call(this, p));
@@ -456,7 +496,7 @@ class Game {
 
   /**
    * Интерфейс для работы с живыми
-   * @param {function} f функция применяющая
+   * @param {function(Player): void} f функция применяющая
    */
   forAllAlivePlayers(f) {
     this.alivePlayers.forEach((p) => f.call(this, p));

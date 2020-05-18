@@ -70,10 +70,11 @@ class Magic {
     try {
       this.getCost(initiator);
       this.checkPreAffects(initiator, target, game);
-      this.isblurredMind(initiator, game); // проверка не запудрило
+      this.isblurredMind(); // проверка не запудрило
       this.checkChance();
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.getExp(initiator);
+      this.checkTargetIsDead();
       this.next(initiator, target);
     } catch (failMsg) {
       const bl = this.params.game.battleLog;
@@ -160,7 +161,7 @@ class Magic {
     const acm = initiator.modifiers.magics[this.name] || 0; // мод action'а
     let chance = this.chance[initiatorMagicLvl - 1];
     if (typeof chance === 'string') {
-      chance = MiscService.rndm(chance);
+      chance = MiscService.dice(chance);
     }
     let result = chance + imc;
 
@@ -217,11 +218,10 @@ class Magic {
    * @todo нужно вынести этот метод в orders или к Players Obj
    */
   // eslint-disable-next-line no-unused-vars,class-methods-use-this
-  isblurredMind(initiator, game) {
+  isblurredMind() {
+    const { initiator, game } = this.params;
     if (initiator.flags.isGlitched) {
-      // если кастер находится под глюком/безой/остальными
-      // eslint-disable-next-line no-console
-      console.log('todo isblurredMind');
+      this.params.target = game.playerArr.randomAlive;
     }
   }
 
@@ -242,6 +242,21 @@ class Magic {
   }
 
   /**
+   * Проверка убита ли цель
+   * @todo после того как был нанесен урон любым dmg action, следует произовдить
+   * общую проверку
+   */
+  checkTargetIsDead() {
+    const { initiator, target } = this.params;
+    const hpNow = target.stats.val('hp');
+    if (hpNow <= 0 && !target.getKiller()) {
+      target.setKiller(initiator);
+    }
+  }
+
+  /**
+   * @param {string} msg строка остановки магии (причина)
+   * @return обьект остановки магии
    * @param {string} msg строка остановки магии (причина)
    * @return обьект остановки магии
    */
@@ -249,7 +264,7 @@ class Magic {
     return {
       actionType: 'magic',
       message: msg,
-      action: this.name,
+      action: this.displayName,
       initiator: this.params.initiator.nick,
       target: this.params.target.nick,
     };

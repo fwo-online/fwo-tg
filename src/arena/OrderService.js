@@ -1,7 +1,7 @@
 const pullAllWith = require('lodash.pullallwith');
 const isEqual = require('lodash.isequal');
-const MiscService = require('./MiscService');
-const GameService = require('./GameService');
+// const MiscService = require('./MiscService');
+// const GameService = require('./GameService');
 const arena = require('./index');
 
 /**
@@ -75,8 +75,7 @@ class Orders {
 
     // формируем список заказа для charId
 
-    const gameId = arena.characters[initiator].mm;
-    const Game = arena.games[gameId];
+    const Game = arena.characters[initiator].currentGame;
     // @todo Нужны константы для i18n
     if (!Game) {
       throw Error('Вы не в игре');
@@ -109,33 +108,6 @@ class Orders {
   }
 
   /**
-   * Функция смены цели заказа target
-   * Смена производится на все типы кроме магий
-   * @param {String} charId идентификатор игрока
-   * @param {String} [reason] причина смена цели пока здесь название action
-   * @todo возможно в reason на ещё понадобится инициатор
-   */
-  // eslint-disable-next-line no-unused-vars
-  shuffle(charId, reason) {
-    if (charId) {
-      this.ordersList.forEach((ord) => {
-        const initiator = ord.initiator.id;
-        const { action } = ord;
-        if (!MiscService.isMagic(action) && initiator === charId) {
-          ord.target = GameService.randomAlive(ord.initiator.getGameId());
-        }
-      });
-    } else {
-      this.ordersList.forEach((ord) => {
-        const { action } = ord;
-        if (!MiscService.isMagic(action)) {
-          ord.target = GameService.randomAlive(ord.initiator.getGameId());
-        }
-      });
-    }
-  }
-
-  /**
    * Функция отмены всех действия цели
    * @param {String} charId идентификатор игрока
    */
@@ -154,6 +126,14 @@ class Orders {
   reset() {
     this.hist.push(this.ordersList);
     this.ordersList = [];
+  }
+
+  /**
+   * Возвращает все заказы игрока в текущем раунда
+   * @param {String} charId идентификатор персонажа
+   */
+  getPlayerOrders(charId) {
+    return this.ordersList.filter((o) => o.initiator === charId);
   }
 
   /**
@@ -202,8 +182,7 @@ class Orders {
    */
   resetOrdersForPlayer(charId) {
     this.ordersList = this.ordersList.filter((o) => o.initiator !== charId);
-    const gameId = arena.characters[charId].mm;
-    const Game = arena.games[gameId];
+    const Game = arena.characters[charId].currentGame;
     Game.getPlayerById(charId).proc = 100;
   }
 }

@@ -39,6 +39,17 @@ class PlayersArr {
     if (!playerClanId) return [];
     return this.arr.filter((p) => p.clan.id === playerClanId);
   }
+
+  /**
+  * Функция возвращает рандомного игрока из массива живых
+  * @return {Player{}}
+  */
+  get randomAlive() {
+    const alive = _.filter(this.arr, {
+      alive: true,
+    });
+    return alive[Math.floor(Math.random() * alive.length)];
+  }
 }
 
 module.exports = PlayersArr;

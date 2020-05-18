@@ -45,7 +45,7 @@ magicScene.action(/magics|learn(?=_)/, async ({
   const [, lvl] = match.input.split('_');
   if (lvl) {
     try {
-      session.character = MagicService.learn(session.character.id, lvl);
+      session.character = MagicService.learn(session.character.id, +lvl);
       answerCbQuery('Теперь ты знаешь на одну магию больше');
     } catch (e) {
       answerCbQuery(e.message);
