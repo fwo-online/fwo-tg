@@ -448,6 +448,7 @@ class Game {
       }`);
     }
   }
+
   /**
   * Очистка массива длительных магий от умерших
   */
@@ -467,7 +468,7 @@ class Game {
 }
     */
     const _this = this;
-    _.forEach(this.longActions,(longMagicType,k) => {
+    _.forEach(this.longActions, (longMagicType, k) => {
       _this.longActions[k] = _.filter(longMagicType, (act) => {
         const p = _this.getPlayerById(act.target) || {};
         return p.alive;
@@ -475,6 +476,7 @@ class Game {
     });
     this.longActions = _this.longActions;
   }
+
   /**
    * Сброс состояния игроков
    */
