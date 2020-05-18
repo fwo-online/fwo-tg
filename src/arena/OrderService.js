@@ -106,34 +106,6 @@ class Orders {
     console.log('order :::: ', a);
     this.ordersList.push(a);
   }
-
-  /**
-   * Функция смены цели заказа target
-   * Смена производится на все типы кроме магий
-   * @param {String} charId идентификатор игрока
-   * @param {String} [reason] причина смена цели пока здесь название action
-   * @todo возможно в reason на ещё понадобится инициатор
-   */
-  // eslint-disable-next-line no-unused-vars
-  shuffle(charId, reason) {
-    if (charId) {
-      this.ordersList.forEach((ord) => {
-        const initiator = ord.initiator.id;
-        const { action } = ord;
-        if (!MiscService.isMagic(action) && initiator === charId) {
-          ord.target = GameService.randomAlive(ord.initiator.getGameId());
-        }
-      });
-    } else {
-      this.ordersList.forEach((ord) => {
-        const { action } = ord;
-        if (!MiscService.isMagic(action)) {
-          ord.target = GameService.randomAlive(ord.initiator.getGameId());
-        }
-      });
-    }
-  }
-
   /**
    * Функция отмены всех действия цели
    * @param {String} charId идентификатор игрока

@@ -31,6 +31,7 @@ const magicDefense = new CommonMagic({
  * @param {game} game Обьект игры (не обязателен)
  */
 magicDefense.run = function run(initiator, target) {
-  target.stats.mode('up', 'mgp', this.effectVal(initiator));
+  this.status.effect = this.effectVal(initiator)
+  target.stats.mode('up', 'mgp', this.status.effect);
 };
 module.exports = magicDefense;
