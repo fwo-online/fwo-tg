@@ -439,6 +439,7 @@ class Game {
         p.alive = false;
       }
     });
+    this.cleanLongMagics();
     if (dead.length) {
       this.sendToAll(`Погибши${
         dead.length === 1 ? 'й' : 'е'
@@ -447,7 +448,33 @@ class Game {
       }`);
     }
   }
-
+  /**
+  * Очистка массива длительных магий от умерших
+  */
+  cleanLongMagics() {
+    /**
+    * Очищаем массив длительных магий для мертвецов
+{
+    frostTouch: [
+    {
+      initiator: '5ea330784e5f0354f04edcec',
+      target: '5e05ee58bdf83c6a5ff3f8dd',
+      duration: 0,
+      round: 1,
+      proc: 1
+    }
+  ]
+}
+    */
+    const _this = this;
+    _.forEach(this.longActions,(longMagicType,k) => {
+      _this.longActions[k] = _.filter(longMagicType, (act) => {
+        const p = _this.getPlayerById(act.target) || {};
+        return p.alive;
+      });
+    });
+    this.longActions = _this.longActions;
+  }
   /**
    * Сброс состояния игроков
    */
