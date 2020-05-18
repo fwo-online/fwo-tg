@@ -51,7 +51,7 @@ class DmgMagic extends Magic {
   getExp() {
     const { initiator, target, game } = this.params;
 
-    if (game.isPlayersAlly(initiator, target)) {
+    if (game.isPlayersAlly(initiator, target) && !initiator.flags.isGlitched) {
       this.status.exp = 0;
     } else {
       const dmgExp = Math.round(this.status.hit * 8) + this.baseExp;

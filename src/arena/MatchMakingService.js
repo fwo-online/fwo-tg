@@ -1,4 +1,5 @@
 const { EventEmitter } = require('events');
+const _ = require('lodash');
 const arena = require('./index');
 const config = require('./config');
 const QueueConstructor = require('./Constuructors/QueueConstrucror');
@@ -30,6 +31,13 @@ class MatchMaking extends EventEmitter {
     /** @type {mmObj[]} */
     this.mmQueue = [];
     this.timerId = undefined;
+  }
+
+  checkStatus() {
+    const clans = _.groupBy(this.mmQueue, (mmObj) => arena.characters[mmObj.charId].clan.id);
+    delete clans.undefined;
+    const isEveryEnemy = Object.values(clans).every((c) => c.length < this.mmQueue.length / 2);
+    return this.mmQueue.length >= config.minPlayersLimit && isEveryEnemy;
   }
 
   /**
@@ -101,7 +109,7 @@ class MatchMaking extends EventEmitter {
    */
   main() {
     this.stop();
-    if (this.mmQueue.length >= config.minPlayersLimit) {
+    if (this.checkStatus()) {
       this.timerId = setTimeout(() => { this.start(); }, config.startGameTimeout);
     }
   }

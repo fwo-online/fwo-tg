@@ -103,7 +103,6 @@ module.exports = {
     } else {
       button.push(Markup.callbackButton('Выход в лобби', 'exit'));
     }
-    delete this.statusMessages[player.tgId];
     await this.bot.telegram.sendMessage(
       player.tgId,
       `Награда за бой:

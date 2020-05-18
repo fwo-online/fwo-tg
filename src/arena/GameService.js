@@ -126,7 +126,7 @@ class Game {
    * @param {Player} target
    */
   isPlayersAlly(player, target) {
-    const allies = this.playerArr.getMyTeam(player.clan);
+    const allies = this.playerArr.getMyTeam(player.clan.id);
     if (!allies.length) {
       allies.push(player);
     }
@@ -507,7 +507,7 @@ class Game {
    * @param {Player} player обьект игрока
    */
   sendStatus(player) {
-    const team = this.playerArr.getMyTeam(player.clan);
+    const team = this.playerArr.getMyTeam(player.clan.id);
     if (_.isEmpty(team)) {
       team.push(player);
     }
