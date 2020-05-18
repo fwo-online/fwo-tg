@@ -1,7 +1,7 @@
 const pullAllWith = require('lodash.pullallwith');
 const isEqual = require('lodash.isequal');
-const MiscService = require('./MiscService');
-const GameService = require('./GameService');
+// const MiscService = require('./MiscService');
+// const GameService = require('./GameService');
 const arena = require('./index');
 
 /**
@@ -106,6 +106,7 @@ class Orders {
     console.log('order :::: ', a);
     this.ordersList.push(a);
   }
+
   /**
    * Функция отмены всех действия цели
    * @param {String} charId идентификатор игрока

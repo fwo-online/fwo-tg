@@ -309,6 +309,7 @@ class Game {
     // eslint-disable-next-line no-return-assign
     _.forEach(this.players, (p) => p.proc = 100);
   }
+
   /**
   * Очищаем глобальные флаги в бою
   * затмение, бунт богов, и т.п
@@ -316,6 +317,7 @@ class Game {
   refreshRoundFlags() {
     this.round.flags.global = {};
   }
+
   /**
    * Подвес
    */
