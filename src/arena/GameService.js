@@ -97,16 +97,6 @@ class Game {
   }
 
   /**
-   * Статик функция возвращающая случайного живого игрока
-   * @param {Number} gameId идентификатор игры
-   * @return {Player} случайный живой игрок
-   */
-  static randomAlive(gameId) {
-    const aliveArr = Game.aliveArr(gameId);
-    return aliveArr[Math.random() * aliveArr.length];
-  }
-
-  /**
    * Отправляет в чат кнопки с заказами
    * @param {Player} player - объект игрока
    */
@@ -155,7 +145,8 @@ class Game {
     arena.games[this.info.id] = this;
 
     this.info.players.forEach((playerId) => {
-      arena.characters[playerId].gameId = this.info.id;
+      arena.characters[playerId].mm = this.info.id;
+      arena.characters[playerId].currentGame = this.info.id;
     });
     // @todo add statistic +1 game for all players
   }
@@ -320,6 +311,14 @@ class Game {
   }
 
   /**
+  * Очищаем глобальные флаги в бою
+  * затмение, бунт богов, и т.п
+  */
+  refreshRoundFlags() {
+    this.round.flags.global = {};
+  }
+
+  /**
    * Подвес
    */
   initHandlers() {
@@ -343,6 +342,7 @@ class Game {
             this.endGame();
           } else {
             this.refreshPlayer();
+            this.refreshRoundFlags();
             this.round.goNext('starting', 500);
           }
           break;
@@ -439,6 +439,7 @@ class Game {
         p.alive = false;
       }
     });
+    this.cleanLongMagics();
     if (dead.length) {
       this.sendToAll(`Погибши${
         dead.length === 1 ? 'й' : 'е'
@@ -447,7 +448,33 @@ class Game {
       }`);
     }
   }
-
+  /**
+  * Очистка массива длительных магий от умерших
+  */
+  cleanLongMagics() {
+    /**
+    * Очищаем массив длительных магий для мертвецов
+{
+    frostTouch: [
+    {
+      initiator: '5ea330784e5f0354f04edcec',
+      target: '5e05ee58bdf83c6a5ff3f8dd',
+      duration: 0,
+      round: 1,
+      proc: 1
+    }
+  ]
+}
+    */
+    const _this = this;
+    _.forEach(this.longActions,(longMagicType,k) => {
+      _this.longActions[k] = _.filter(longMagicType, (act) => {
+        const p = _this.getPlayerById(act.target) || {};
+        return p.alive;
+      });
+    });
+    this.longActions = _this.longActions;
+  }
   /**
    * Сброс состояния игроков
    */

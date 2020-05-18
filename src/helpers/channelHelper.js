@@ -103,6 +103,7 @@ module.exports = {
     } else {
       button.push(Markup.callbackButton('Выход в лобби', 'exit'));
     }
+    delete this.statusMessages[player.tgId];
     await this.bot.telegram.sendMessage(
       player.tgId,
       `Награда за бой:
@@ -118,6 +119,7 @@ ${autoreg ? 'Идёт поиск новой игры...' : ''}`,
    * @param {Player} player
    */
   async sendRunButton(player) {
+    delete this.statusMessages[player.tgId];
     await this.bot.telegram.sendMessage(
       player.tgId,
       'Ты бежал из боя',
