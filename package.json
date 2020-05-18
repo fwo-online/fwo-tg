@@ -39,6 +39,7 @@
     "telegraf": "^3.32.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.151",
     "@types/mongoose": "^5.7.14",
     "eslint": "^6.5.1",
     "eslint-config-airbnb-base": "^14.0.0",
