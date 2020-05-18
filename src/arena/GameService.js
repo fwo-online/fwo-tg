@@ -145,8 +145,7 @@ class Game {
     arena.games[this.info.id] = this;
 
     this.info.players.forEach((playerId) => {
-      arena.characters[playerId].mm = this.info.id;
-      arena.characters[playerId].currentGame = this.info.id;
+      arena.characters[playerId].gameId = this.info.id;
     });
     // @todo add statistic +1 game for all players
   }
