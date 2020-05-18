@@ -18,7 +18,7 @@ const RoundService = require('./RoundService');
 const PlayersArr = require('./playerArray');
 const OrderService = require('./OrderService');
 const HistoryService = require('./HistoryService');
-const { charDescr } = require('./MiscService');
+const { getIcon } = require('./MiscService');
 
 /**
  * Класс для обьекта игры
@@ -126,7 +126,7 @@ class Game {
    * @param {Player} target
    */
   isPlayersAlly(player, target) {
-    const allies = this.playerArr.getMyTeam(player.clan.id);
+    const allies = this.playerArr.getMyTeam(player.clan);
     if (!allies.length) {
       allies.push(player);
     }
@@ -507,31 +507,38 @@ class Game {
    * @param {Player} player обьект игрока
    */
   sendStatus(player) {
-    const team = this.playerArr.getMyTeam(player.clan.id);
+    /** @param {Player} p */
+    const getEnemyString = (p) => `\t👤 ${p.nick} (${getIcon(p.prof)}${p.lvl}) ❤️${p.getStatus().hp}`;
+
+    const team = this.playerArr.getMyTeam(player.clan);
     if (_.isEmpty(team)) {
       team.push(player);
     }
-    let enemies = _.difference(this.playerArr.arr, team);
+
     const allies = team.map((p) => {
       const status = p.getFullStatus();
-      const { icon } = Object.values(charDescr).find((el) => el.prof === p.prof);
       if (p.prof === 'l' || p.prof === 'w') {
-        return `\n\t👤 ${p.nick} (${icon}${p.lvl}) ❤️${status.hp} 🔋${status.en}`;
+        return `\t👤 ${p.nick} (${getIcon(p.prof)}${p.lvl}) ❤️${status.hp} 🔋${status.en}`;
       }
-      return `\n\t👤 ${p.nick} (${icon}${p.lvl}) ❤️${status.hp}  \n\t💧${status.mp}  🔋${status.en}`;
+      return `\t👤 ${p.nick} (${getIcon(p.prof)}${p.lvl}) ❤️${status.hp}  \n\t💧${status.mp}  🔋${status.en}`;
     });
-    enemies = enemies.map((p) => {
-      const status = p.getStatus();
-      const { icon } = Object.values(charDescr).find((c) => c.prof === p.prof);
-      return `\n\t👤 ${p.nick} (${icon}${p.lvl}) ❤️${status.hp}`;
-    });
+
+    const enemies = _.difference(this.playerArr.arr, team);
+    const [withClan, withoutClan] = _.partition(enemies, (p) => p.clan);
+    const byClan = _.groupBy(withClan, (p) => p.clan.name);
+    const enemiesWithoutClan = withoutClan.map(getEnemyString);
+    const enemiesWithClan = _.map(byClan, (players, clan) => `_${clan}_\n${players.map(getEnemyString).join('\n')}`);
+
     channelHelper.sendStatus(
-      `*Раунд ${this.round.count}*
+      [`*Раунд ${this.round.count}*
 _Союзники:_\`\`\`
-${allies}\`\`\`
-_Враги:_\`\`\`
-${enemies}\`\`\`
-`,
+
+${allies.join('\n')}\`\`\`
+
+_Враги:_\`\`\``,
+      enemiesWithClan.length && enemiesWithClan.join('\n\n'),
+      enemiesWithoutClan.length && `${enemiesWithoutClan.join('\n')}`,
+      '```'].filter((x) => x).join('\n\n'),
       player.tgId,
     );
   }
