@@ -11,6 +11,8 @@ const settingScene = require('./settings');
 const magicScene = require('./magics');
 const harksScene = require('./harks');
 const skillsScene = require('./skills');
+const clanScene = require('./clan');
+const createClanScene = require('./createClan');
 
 const stage = new Stage();
 const { leave } = Stage;
@@ -30,5 +32,7 @@ stage.register(settingScene);
 stage.register(magicScene);
 stage.register(harksScene);
 stage.register(skillsScene);
+stage.register(clanScene);
+stage.register(createClanScene);
 
 module.exports = stage;

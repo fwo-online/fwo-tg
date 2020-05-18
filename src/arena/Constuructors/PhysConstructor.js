@@ -218,7 +218,7 @@ class PhysConstructor {
   getExp() {
     const { initiator, target, game } = this.params;
 
-    if (game.isPlayersAlly(initiator, target)) {
+    if (game.isPlayersAlly(initiator, target) && !initiator.flags.isGlitched) {
       this.status.exp = 0;
     } else {
       const exp = this.status.hit * 8;

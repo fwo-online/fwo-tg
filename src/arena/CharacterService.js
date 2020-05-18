@@ -4,6 +4,10 @@ const db = require('../helpers/dataBase');
 const { lvlRatio } = require('./config');
 
 /**
+ * @typedef {import ('../models/clan').Clan} Clan
+ */
+
+/**
  * Конструктор персонажа
  * @todo сюда нужны будет get/set функции для intreface части
  * @todo Сейчас массив arena.player не является массивом обьектов Character,
@@ -101,8 +105,10 @@ class Char {
    * @property {Number} bonus
    * @property {Object} mm
    * @property {Object.<string, number>} skills
-   * @property {Number} clan
+   * @property {Clan} clan
+   * @property {import ('./GameService')} currentGame
    * @property {Number} mm
+   * @property {{reason: string, date: Date}[]} penalty
    */
   constructor(charObj) {
     // const defaults = defHarks(charObj.prof);
@@ -211,6 +217,36 @@ class Char {
   /** Суммарное количество опыта, требуемое для следующего уровня */
   get nextLvlExp() {
     return 2 ** (this.lvl - 1) * 1000 * lvlRatio;
+  }
+
+  /**
+   * @param {string} reason
+   */
+  getPenaltyDate(reason) {
+    const penalty = this.charObj.penalty.find((p) => p.reason === reason);
+    if (penalty && penalty.date.valueOf() > Date.now()) {
+      return penalty.date;
+    }
+    return false;
+  }
+
+  /**
+   * @param {string} reason
+   * @param {number} minutes
+   */
+  async updatePenalty(reason, minutes) {
+    const date = new Date();
+    date.setHours(date.getHours(), date.getMinutes() + minutes);
+
+    const penalty = { reason, date };
+    const index = this.charObj.penalty.findIndex((p) => p.reason === reason);
+
+    if (index === -1) {
+      this.charObj.penalty.push(penalty);
+    } else {
+      this.charObj.penalty[index] = penalty;
+    }
+    await this.saveToDb();
   }
 
   /**
@@ -348,6 +384,22 @@ class Char {
   }
 
   /**
+   * @param {Clan} clan
+   */
+  async joinClan(clan) {
+    this.charObj.clan = clan;
+    await this.saveToDb();
+    const char = await Char.getCharacter(this.tgId);
+    return char;
+  }
+
+  async leaveClan() {
+    this.charObj.clan = undefined;
+    await this.updatePenalty('clan_leave', 5 * 24 * 60);
+    return this;
+  }
+
+  /**
    * @desc Получает идентификатор игры из charId участника
    * @return {string} gameId идентификатор игры
    */
@@ -442,7 +494,7 @@ class Char {
       // eslint-disable-next-line no-console
       console.log('Saving char :: id', this.id);
       const {
-        gold, exp, magics, bonus, items, skills, lvl, free,
+        gold, exp, magics, bonus, items, skills, lvl, clan, free,
       } = this;
       return await db.char.update(this.tgId, {
         gold,
@@ -451,6 +503,8 @@ class Char {
         bonus,
         skills,
         lvl,
+        clan,
+        penalty: this.charObj.penalty,
         free,
         inventory: items,
       });
