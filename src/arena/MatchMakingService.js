@@ -35,9 +35,8 @@ class MatchMaking extends EventEmitter {
 
   checkStatus() {
     const clans = _.groupBy(this.mmQueue, (mmObj) => arena.characters[mmObj.charId].clan.id);
-    delete clans.null;
     delete clans.undefined;
-    const isEveryEnemy = Object.values(clans).every((c) => c.length <= this.mmQueue.length / 2);
+    const isEveryEnemy = Object.values(clans).every((c) => c.length < this.mmQueue.length / 2);
     return this.mmQueue.length >= config.minPlayersLimit && isEveryEnemy;
   }
 
