@@ -118,6 +118,7 @@ ${autoreg ? 'Идёт поиск новой игры...' : ''}`,
    * @param {Player} player
    */
   async sendRunButton(player) {
+    delete this.statusMessages[player.tgId];
     await this.bot.telegram.sendMessage(
       player.tgId,
       'Ты бежал из боя',
