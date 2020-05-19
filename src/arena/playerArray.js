@@ -33,7 +33,7 @@ class PlayersArr {
 
   /**
    * Функция вернет массив игроков в моей тиме
-   * @param {Clan} clan идентификатор клана
+   * @param {Clan} clan объект клана
    * @returns {Player[]}
    */
   getMyTeam(clan) {

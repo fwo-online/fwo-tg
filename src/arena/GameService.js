@@ -46,10 +46,18 @@ class Game {
    */
   get isGameEnd() {
     return (
-      this.alivePlayers.length < 2
+      this.isTeamWin
       || this.round.flags.noDamageRound > 2
       || this.round.count > 9
     );
+  }
+
+  get isTeamWin() {
+    const [withClan, withoutClan, byClan] = this.partitionAliveByClan;
+    if (!withoutClan.length) {
+      return Object.keys(byClan).length === 1;
+    }
+    return withoutClan.length === 1 && !withClan.length;
   }
 
   get endGameReason() {
@@ -399,8 +407,17 @@ class Game {
   /**
    * @returns {[Player[], Player[], _.Dictionary<Player[]>]} [withClan, withoutClan, groupByClan]
    */
-  get partionByClan() {
+  get partitionByClan() {
     const [withClan, withoutClan] = _.partition(this.playerArr.arr, (p) => p.clan);
+    const groupByClan = _.groupBy(withClan, (p) => p.clan.name);
+    return [withClan, withoutClan, groupByClan];
+  }
+
+  /**
+   * @returns {[Player[], Player[], _.Dictionary<Player[]>]} [withClan, withoutClan, groupByClan]
+   */
+  get partitionAliveByClan() {
+    const [withClan, withoutClan] = _.partition(this.alivePlayers, (p) => p.clan);
     const groupByClan = _.groupBy(withClan, (p) => p.clan.name);
     return [withClan, withoutClan, groupByClan];
   }
@@ -415,7 +432,7 @@ class Game {
     const gold = this.deadPlayers.length ? 5 : 1;
     winners.forEach((p) => p.stats.addGold(gold));
 
-    const [, withoutClan, byClan] = this.partionByClan;
+    const [, withoutClan, byClan] = this.partitionByClan;
 
     /** @param {Player} p */
     const getStatusString = (p) => `\t👤 ${p.nick} получает ${p.stats.collect.exp}📖 и ${p.stats.collect.gold}💰`;
@@ -528,7 +545,7 @@ class Game {
     /** @param {Player} p */
     const getEnemyString = (p) => `\t👤 ${p.nick} (${getIcon(p.prof)}${p.lvl}) ❤️${p.getStatus().hp}`;
 
-    const [, withoutClan, byClan] = this.partionByClan;
+    const [, withoutClan, byClan] = this.partitionAliveByClan;
 
     let team;
     if (player.clan) {
