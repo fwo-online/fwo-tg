@@ -1,7 +1,7 @@
 const Markup = require('telegraf/markup');
 const BattleKeyboard = require('./BattleKeyboard');
 const arena = require('../arena');
-const { charDescr } = require('../arena/MiscService');
+const { getIcon } = require('../arena/MiscService');
 /**
  * Помощник для отправки сообщений в общий чат
  * @typedef {import ('../arena/PlayerService')} Player
@@ -97,8 +97,7 @@ module.exports = {
     } = arena.characters[player.id];
 
     if (autoreg) {
-      const { icon } = Object.values(charDescr).find((el) => el.prof === prof);
-      await this.broadcast(`Игрок *${nickname}* (${icon}${lvl}) начал поиск игры`);
+      await this.broadcast(`Игрок *${nickname}* (${getIcon(prof)}${lvl}) начал поиск игры`);
       button.push(Markup.callbackButton('Остановить поиск', 'stop'));
     } else {
       button.push(Markup.callbackButton('Выход в лобби', 'exit'));

@@ -1,5 +1,4 @@
-const pullAllWith = require('lodash.pullallwith');
-const isEqual = require('lodash.isequal');
+const _ = require('lodash');
 // const MiscService = require('./MiscService');
 // const GameService = require('./GameService');
 const arena = require('./index');
@@ -112,10 +111,10 @@ class Orders {
    * @param {String} charId идентификатор игрока
    */
   block(charId) {
-    this.ordersList = pullAllWith(this.ordersList, [
+    this.ordersList = _.pullAllWith(this.ordersList, [
       {
         initiator: charId,
-      }], isEqual);
+      }], _.isEqual);
     // eslint-disable-next-line no-console
     console.log('block order', this.ordersList);
   }

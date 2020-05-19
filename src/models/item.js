@@ -2,7 +2,6 @@
 const _ = require('lodash');
 const fs = require('fs');
 const mongoose = require('mongoose');
-const forEach = require('lodash.foreach');
 const arena = require('../arena');
 const config = require('../arena/config');
 const ItemService = require('../arena/ItemService');
@@ -177,7 +176,7 @@ item.statics = {
         // eslint-disable-next-line no-console
         console.log('File Loaded: ', Date.now() - timer1, 'ms');
 
-        forEach(shopArr, async (o, code) => {
+        _.forEach(shopArr, async (o, code) => {
           o.code = code;
           createdItems.push(this.model('Item').create(o));
           return true;

@@ -4,6 +4,7 @@ const PlayerService = require('./PlayerService');
 /**
  * Класс контроля игроков внутри созданной игры
  * @typedef {import ('./PlayerService')} Player
+ * @typedef {import ('../models/clan').Clan} Clan
  */
 class PlayersArr {
   /**
@@ -32,12 +33,12 @@ class PlayersArr {
 
   /**
    * Функция вернет массив игроков в моей тиме
-   * @param {Number|String} playerClanId идентификатор клана
+   * @param {Clan} clan объект клана
    * @returns {Player[]}
    */
-  getMyTeam(playerClanId) {
-    if (!playerClanId) return [];
-    return this.arr.filter((p) => p.clan.id === playerClanId);
+  getMyTeam(clan) {
+    if (!clan || !clan.id) return [];
+    return this.arr.filter((p) => p.clan && p.clan.id === clan.id);
   }
 
   /**

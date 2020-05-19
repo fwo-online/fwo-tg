@@ -6,7 +6,7 @@ const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
 const channelHelper = require('../helpers/channelHelper');
 const arena = require('../arena');
-const { charDescr } = require('../arena/MiscService');
+const { getIcon } = require('../arena/MiscService');
 const loginHelper = require('../helpers/loginHelper');
 const BattleService = require('../arena/BattleService');
 
@@ -65,7 +65,6 @@ battleScene.action('search', async ({ editMessageText, session }) => {
     );
   } else {
     const searchObject = { charId: id, psr: 1000, startTime: Date.now() };
-    const { icon } = Object.values(charDescr).find((el) => el.prof === prof);
     arena.mm.push(searchObject);
     await editMessageText(
       'Идёт поиск игры...',
@@ -74,7 +73,7 @@ battleScene.action('search', async ({ editMessageText, session }) => {
       ]).resize().extra(),
     );
     await channelHelper.broadcast(
-      `Игрок ${clan ? `\\[${clan.name}]` : ''}*${nickname}* (${icon}${lvl}) начал поиск игры`,
+      `Игрок ${clan ? `\\[${clan.name}]` : ''}*${nickname}* (${getIcon(prof)}${lvl}) начал поиск игры`,
     );
   }
 });
