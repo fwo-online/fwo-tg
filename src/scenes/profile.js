@@ -5,23 +5,24 @@ const profile = new Scene('profile');
 
 
 profile.enter(async ({ replyWithMarkdown, session }) => {
-  const magicSkillButton = /m|p/.test(session.character.prof) ? '✨ Магии' : '⚡️ Умения';
+  const { character } = session;
+  const magicSkillButton = /m|p/.test(character.prof) ? '✨ Магии' : '⚡️ Умения';
   await replyWithMarkdown(
-    `*Твой профиль, ${session.character.nickname}*`,
+    `*Твой профиль, ${character.nickname}*`,
     Markup.keyboard([
-      ['💪 Характеристики'],
+      [`💪 Характеристики${character.free ? ' 🆙' : ''}`],
       ['🥋 Инвентарь', magicSkillButton],
       ['🔙 В лобби'],
     ]).resize().extra(),
   );
   await replyWithMarkdown(
     `Статистика:\`\`\`\n
-\t\tИгр:       🎮 ${session.character.games}
-\t\tУбийств:   💀 ${session.character.kills}
-\t\tУровень:   🔺 ${session.character.lvl}
-\t\tЗолото:    💰 ${session.character.gold}
-\t\tОпыт:      📖 ${session.character.exp}
-\t\tБонусы:    💡 ${session.character.bonus}\`\`\``,
+\t\tИгр:       🎮 ${character.games}
+\t\tУбийств:   💀 ${character.kills}
+\t\tУровень:   🔺 ${character.lvl}
+\t\tЗолото:    💰 ${character.gold}
+\t\tОпыт:      📖 ${character.exp}
+\t\tБонусы:    💡 ${character.bonus}\`\`\``,
   );
 });
 
@@ -29,7 +30,7 @@ profile.hears('🥋 Инвентарь', ({ scene }) => {
   scene.enter('inventory');
 });
 
-profile.hears('💪 Характеристики', ({ scene }) => {
+profile.hears(/^💪 Характеристики/g, ({ scene }) => {
   scene.enter('harks');
 });
 

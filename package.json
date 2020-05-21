@@ -29,16 +29,12 @@
   "homepage": "https://github.com/catHD/fwo-tg#readme",
   "dependencies": {
     "lodash": "^4.17.15",
-    "lodash.foreach": "^4.5.0",
-    "lodash.groupby": "^4.6.0",
-    "lodash.isequal": "^4.5.0",
-    "lodash.keyby": "^4.6.0",
-    "lodash.pullallwith": "^4.7.0",
-    "lodash.union": "^4.6.0",
     "mongoose": "^5.7.3",
     "telegraf": "^3.32.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.151",
+    "@types/mongoose": "^5.7.14",
     "eslint": "^6.5.1",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2",

@@ -175,7 +175,14 @@ module.exports = {
   weaponTypes: WEAPON_TYPES,
   harksDescr: HARKS,
   charDescr: PROF,
-  stores: STORES, /**
+  stores: STORES,
+  /**
+   * @param {string} prof
+   */
+  getIcon(prof) {
+    return Object.values(PROF).find((el) => el.prof === prof).icon;
+  },
+  /**
    * Функция рандома по формату 1d100+10;
    * @param {String} diceStr параметры рандома в формате 1d100
    * @return {Number} число в разбросе от diceStr (1d100)

@@ -163,9 +163,8 @@ class PhysConstructor {
    * Функция агрегации данных после выполнениния действия
    */
   next(failMsg) {
-    console.log(failMsg);
-
-    const { initiator, target, game } = this.params;
+    const { initiator, target } = this.params;
+    const { game } = this.params;
     const weapon = initiator.weapon ? arena.items[initiator.weapon.code] : {};
     if (failMsg) {
       game.battleLog.log({ ...failMsg, weapon });
@@ -192,12 +191,10 @@ class PhysConstructor {
    * общую проверку
    */
   checkTargetIsDead() {
-    const { target } = this.params;
+    const { initiator, target } = this.params;
     const hpNow = target.stats.val('hp');
-    if (hpNow <= 0 && !Object.keys(target.flags.isDead).length) {
-      target.flags.isDead = {
-        action: this.name, initiator: this.params.initiator.id,
-      };
+    if (hpNow <= 0 && !target.getKiller()) {
+      target.setKiller(initiator);
     }
   }
 
@@ -221,7 +218,7 @@ class PhysConstructor {
   getExp() {
     const { initiator, target, game } = this.params;
 
-    if (game.isPlayersAlly(initiator, target)) {
+    if (game.isPlayersAlly(initiator, target) && !initiator.flags.isGlitched) {
       this.status.exp = 0;
     } else {
       const exp = this.status.hit * 8;

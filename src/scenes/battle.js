@@ -6,10 +6,9 @@ const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
 const channelHelper = require('../helpers/channelHelper');
 const arena = require('../arena');
-const GameService = require('../arena/GameService');
-const { charDescr } = require('../arena/MiscService');
-const { skills } = require('../arena/SkillService');
+const { getIcon } = require('../arena/MiscService');
 const loginHelper = require('../helpers/loginHelper');
+const BattleService = require('../arena/BattleService');
 
 
 const battleScene = new Scene('battleScene');
@@ -38,20 +37,11 @@ const checkCancelFindCount = (character) => {
   return true;
 };
 
-/**
- * Возвращает кнопки с процентом заказа
- * @param {string} match
- * @param {number} proc
- */
-const getProcentKeyboard = (match, proc) => Array.from(new Set([5, 10, 25, 50, 75, proc]))
-  .filter((key) => key <= proc)
-  .map((key) => Markup.callbackButton(key, `${match}_${key}`));
-
 battleScene.enter(async ({ reply, replyWithMarkdown }) => {
   // @todo При поиске боя хотелось бы ещё выдавать сюда картиночку
   await replyWithMarkdown('*Поиск Боя*', Markup.removeKeyboard().extra());
   const message = await reply(
-    'Кнопки',
+    'Начать поиск',
     Markup.inlineKeyboard([
       [Markup.callbackButton('Искать приключений на ...', 'search')],
       [Markup.callbackButton('Назад', 'exit')],
@@ -62,7 +52,7 @@ battleScene.enter(async ({ reply, replyWithMarkdown }) => {
 
 battleScene.action('search', async ({ editMessageText, session }) => {
   const {
-    id, mm, nickname, lvl, prof,
+    id, mm, nickname, lvl, prof, clan,
   } = session.character;
   if (!checkCancelFindCount(session.character)) {
     const remainingTime = ((penaltyTime - (Date.now() - mm.time)) / 1000).toFixed();
@@ -75,88 +65,79 @@ battleScene.action('search', async ({ editMessageText, session }) => {
     );
   } else {
     const searchObject = { charId: id, psr: 1000, startTime: Date.now() };
-    const { icon } = Object.values(charDescr).find((el) => el.prof === prof);
     arena.mm.push(searchObject);
     await editMessageText(
-      'Кнопки',
+      'Идёт поиск игры...',
       Markup.inlineKeyboard([
         Markup.callbackButton('Нет-нет, остановите, я передумал!', 'stop'),
       ]).resize().extra(),
     );
     await channelHelper.broadcast(
-      `Игрок *${nickname}* (${icon}${lvl}) начал поиск игры`,
+      `Игрок ${clan ? `\\[${clan.name}]` : ''}*${nickname}* (${getIcon(prof)}${lvl}) начал поиск игры`,
     );
   }
 });
 
 battleScene.action('stop', async ({ editMessageText, session }) => {
-  const { id } = session.character;
+  const { id, nickname, clan } = session.character;
   arena.mm.pull(id);
   editMessageText(
-    'Кнопки',
+    'Начать поиск',
     Markup.inlineKeyboard([
       [Markup.callbackButton('Искать приключений на ...', 'search')],
       [Markup.callbackButton('Назад', 'exit')],
     ]).resize().extra(),
   );
   await channelHelper.broadcast(
-    `Игрок ${arena.characters[id].nickname} внезапно передумал`,
+    `Игрок ${clan ? `\\[${clan.name}]` : ''}*${nickname}* внезапно передумал`,
   );
 });
 
+/**
+ * Ожидаем строку 'action_{attack}'
+ */
 battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) => {
-  const gameId = arena.characters[session.character.id].mm;
+  const { currentGame, id } = session.character;
   const [, action] = match.input.split('_');
-  const proc = skills[action] ? `_${skills[action].proc}` : '';
-  const aliveArr = GameService.aliveArr(gameId)
-    .map(({ nick, id }) => Markup.callbackButton(nick,
-      `${action}_${id}${proc}`));
+
+  const [message, keyboard] = BattleService.handleAction(id, currentGame, action);
   editMessageText(
-    `Выбери цель для ${match}`,
-    Markup.inlineKeyboard([
-      ...aliveArr,
-    ]).resize().extra(),
+    message,
+    Markup.inlineKeyboard(
+      keyboard,
+    ).resize().extra({ parse_mode: 'Markdown' }),
   );
 });
 
+/**
+ * Ожидаем строку '{attack}_{target}'
+ */
 battleScene.action(/^([^_]+)_([^_]+)$/, async ({ editMessageText, session, match }) => {
   const [action, target] = match.input.split('_');
-  const { id } = session.character;
-  const gameId = arena.characters[id].mm;
-  /** @type {GameService} */
-  const Game = arena.games[gameId];
-  const player = Game.players[id];
+  const { id, currentGame } = session.character;
+  const [message, keyboard] = BattleService.handleTarget(id, currentGame, action, target);
   editMessageText(
-    `Выбери силу ${action} на игрока ${Game.players[target].nick}`,
-    Markup.inlineKeyboard([
-      ...getProcentKeyboard(match.input, player.proc),
-    ]).resize().extra(),
+    message,
+    Markup.inlineKeyboard(
+      keyboard,
+    ).resize().extra({ parse_mode: 'Markdown' }),
   );
 });
 
+/**
+ * Ожидаем строку '{attack}_{target}_{proc}'
+ */
 battleScene.action(/^([^_]+)_([^_]+)_([^_]+)$/, async ({ editMessageText, session, match }) => {
   const [action, target, proc] = match.input.split('_');
-  const initiator = session.character.id;
-  const gameId = arena.characters[initiator].mm;
-  /** @type {GameService} */
-  const Game = arena.games[gameId];
-  const player = Game.players[initiator];
-  Game.orders.orderAction({
-    initiator, target, action, proc,
-  });
-  const { magics, actions } = arena;
-  const ACTIONS = { ...actions, ...skills, ...magics };
-  const message = Game.orders.ordersList
-    .filter((o) => o.initiator === initiator)
-    .map((o) => `\n_${ACTIONS[o.action].displayName}_ (*${o.proc}%*) на игрока *${Game.players[o.target].nick}*`);
+  const { id, currentGame } = session.character;
+  const [message, keyboard] = BattleService.handlePercent(
+    id, currentGame, action, target, Number(proc),
+  );
   editMessageText(
-    `У тебя осталось *${player.proc}%*
-Заказы: ${message.join()}`,
-    player.proc !== 0
-      ? Markup.inlineKeyboard(
-        channelHelper.getOrderButtons(player),
-      ).resize().extra({ parse_mode: 'Markdown' })
-      : { parse_mode: 'Markdown' },
+    message,
+    Markup.inlineKeyboard(
+      keyboard,
+    ).resize().extra({ parse_mode: 'Markdown' }),
   );
 });
 
@@ -165,14 +146,15 @@ battleScene.action('exit', ({ scene }) => {
 });
 
 battleScene.command('run', async ({ reply, session }) => {
-  const { id } = session.character;
-  const gameId = arena.characters[id].mm;
-  /** @type {GameService} */
-  const Game = arena.games[gameId];
+  const { id, currentGame } = session.character;
 
-  Game.preKick(id, 'run');
+  currentGame.preKick(id, 'run');
 
   reply('Ты будешь выброшен из игры в конце этого раунда');
+});
+
+battleScene.leave(({ session }) => {
+  arena.mm.pull(session.character.id);
 });
 
 /**

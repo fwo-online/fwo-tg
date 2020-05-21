@@ -1,4 +1,6 @@
 const { EventEmitter } = require('events');
+const _ = require('lodash');
+const arena = require('./index');
 const config = require('./config');
 const QueueConstructor = require('./Constuructors/QueueConstrucror');
 
@@ -31,14 +33,23 @@ class MatchMaking extends EventEmitter {
     this.timerId = undefined;
   }
 
+  checkStatus() {
+    const [withClans] = _.partition(this.mmQueue, (mmObj) => arena.characters[mmObj.charId].clan);
+    const clans = _.groupBy(withClans, (mmObj) => arena.characters[mmObj.charId].clan.id);
+    const isEveryEnemy = Object.values(clans).every((c) => c.length <= this.mmQueue.length / 2);
+    return this.mmQueue.length >= config.minPlayersLimit && isEveryEnemy;
+  }
+
   /**
    * Удаление обьекта игрока в очередь поиска
    * @param {String} charId id чара в поиске
    */
   pull(charId) {
     const obj = this.mmQueue.find((el) => el.charId === charId);
-    this.mmQueue.splice(this.mmQueue.indexOf(obj), 1);
-    this.main();
+    if (obj) {
+      this.mmQueue.splice(this.mmQueue.indexOf(obj), 1);
+      this.main();
+    }
     // @todo убрать просле дебага
     // eslint-disable-next-line no-console
     console.log('MM pull debug', this.mmQueue);
@@ -98,8 +109,22 @@ class MatchMaking extends EventEmitter {
    */
   main() {
     this.stop();
-    if (this.mmQueue.length >= config.minPlayersLimit) {
+    if (this.checkStatus()) {
       this.timerId = setTimeout(() => { this.start(); }, config.startGameTimeout);
+    }
+  }
+
+  /**
+   * Автоматическая регистрация игрока
+   * @param {string} charId
+   */
+  autoreg(charId) {
+    if (arena.characters[charId].autoreg) {
+      this.push({
+        charId,
+        psr: 1000,
+        startTime: Date.now(),
+      });
     }
   }
 }

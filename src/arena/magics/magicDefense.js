@@ -28,7 +28,6 @@ const magicDefense = new CommonMagic({
  * Основная функция запуска магии
  * @param {player} initiator Обьект кастера
  * @param {player} target Обьект цели
- * @param {game} game Обьект игры (не обязателен)
  */
 magicDefense.run = function run(initiator, target) {
   this.status.effect = this.effectVal(initiator);

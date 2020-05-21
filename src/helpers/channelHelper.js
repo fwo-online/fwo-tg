@@ -1,5 +1,7 @@
 const Markup = require('telegraf/markup');
 const BattleKeyboard = require('./BattleKeyboard');
+const arena = require('../arena');
+const { getIcon } = require('../arena/MiscService');
 /**
  * Помощник для отправки сообщений в общий чат
  * @typedef {import ('../arena/PlayerService')} Player
@@ -88,13 +90,25 @@ module.exports = {
    */
   async sendExitButton(player) {
     const { exp, gold } = player.stats.collect;
-    delete this.statusMessages[player.tgId];
+    const character = arena.characters[player.id];
+    const button = [];
+    const {
+      autoreg, nickname, lvl, prof,
+    } = arena.characters[player.id];
+
+    if (autoreg) {
+      await this.broadcast(`Игрок *${nickname}* (${getIcon(prof)}${lvl}) начал поиск игры`);
+      button.push(Markup.callbackButton('Остановить поиск', 'stop'));
+    } else {
+      button.push(Markup.callbackButton('Выход в лобби', 'exit'));
+    }
     await this.bot.telegram.sendMessage(
       player.tgId,
       `Награда за бой:
-📖 ${exp}
-💰 ${gold}`,
-      Markup.inlineKeyboard([Markup.callbackButton('Выход в лобби', 'exit')]).resize().extra(),
+📖 ${exp} (${character.exp}/${character.nextLvlExp})
+💰 ${gold} (${character.gold})
+${autoreg ? 'Идёт поиск новой игры...' : ''}`,
+      Markup.inlineKeyboard(button).resize().extra(),
     );
   },
 

@@ -74,6 +74,7 @@ class Magic {
       this.checkChance();
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.getExp(initiator);
+      this.checkTargetIsDead();
       this.next(initiator, target);
     } catch (failMsg) {
       const bl = this.params.game.battleLog;
@@ -241,6 +242,21 @@ class Magic {
   }
 
   /**
+   * Проверка убита ли цель
+   * @todo после того как был нанесен урон любым dmg action, следует произовдить
+   * общую проверку
+   */
+  checkTargetIsDead() {
+    const { initiator, target } = this.params;
+    const hpNow = target.stats.val('hp');
+    if (hpNow <= 0 && !target.getKiller()) {
+      target.setKiller(initiator);
+    }
+  }
+
+  /**
+   * @param {string} msg строка остановки магии (причина)
+   * @return обьект остановки магии
    * @param {string} msg строка остановки магии (причина)
    * @return обьект остановки магии
    */

@@ -1,5 +1,4 @@
-const pullAllWith = require('lodash.pullallwith');
-const isEqual = require('lodash.isequal');
+const _ = require('lodash');
 // const MiscService = require('./MiscService');
 // const GameService = require('./GameService');
 const arena = require('./index');
@@ -47,7 +46,12 @@ class Orders {
   constructor() {
     /** @type {order[]} */
     this.ordersList = [];
-    this.hist = {};
+    /** @type {order[][]} */
+    this.hist = [];
+  }
+
+  get lastOrders() {
+    return this.hist[this.hist.length - 1];
   }
 
   /**
@@ -70,8 +74,7 @@ class Orders {
 
     // формируем список заказа для charId
 
-    const gameId = arena.characters[initiator].mm;
-    const Game = arena.games[gameId];
+    const Game = arena.characters[initiator].currentGame;
     // @todo Нужны константы для i18n
     if (!Game) {
       throw Error('Вы не в игре');
@@ -108,10 +111,10 @@ class Orders {
    * @param {String} charId идентификатор игрока
    */
   block(charId) {
-    this.ordersList = pullAllWith(this.ordersList, [
+    this.ordersList = _.pullAllWith(this.ordersList, [
       {
         initiator: charId,
-      }], isEqual);
+      }], _.isEqual);
     // eslint-disable-next-line no-console
     console.log('block order', this.ordersList);
   }
@@ -120,14 +123,16 @@ class Orders {
    * Очищаем массив заказов
    */
   reset() {
-    const keys = Object.keys(this.hist);
-    const lastKey = keys[keys.length - 1];
-    this.hist[lastKey + 1] = this.ordersList;
-    if (!this.testOrdersList) {
-      this.ordersList = [];
-    } else {
-      this.ordersList = this.testOrdersList;
-    }
+    this.hist.push(this.ordersList);
+    this.ordersList = [];
+  }
+
+  /**
+   * Возвращает все заказы игрока в текущем раунда
+   * @param {String} charId идентификатор персонажа
+   */
+  getPlayerOrders(charId) {
+    return this.ordersList.filter((o) => o.initiator === charId);
   }
 
   /**
@@ -141,6 +146,14 @@ class Orders {
   }
 
   /**
+   * Проверяет делал ли игрок заказ в предыдущем раунде
+   * @param {string} charId идентификатор персонажа
+   */
+  checkPlayerOrderLastRound(charId) {
+    return this.lastOrders.some((o) => o.initiator === charId);
+  }
+
+  /**
    * Возвращает количество заказов игрока для данного умения
    * @param {String} charId идентификатор персонажа
    * @param {string} action название умения или магии
@@ -148,6 +161,28 @@ class Orders {
    */
   getNumberOfOrder(charId, action) {
     return this.ordersList.filter((o) => o.initiator === charId && o.action === action).length;
+  }
+
+  /**
+   * Повторяет заказ для игрока
+   * @param {string} charId идентификатор персонажа
+   */
+  repeatLastOrder(charId) {
+    this.lastOrders.forEach((order) => {
+      if (order.initiator === charId) {
+        this.orderAction(order);
+      }
+    });
+  }
+
+  /**
+   * Сбрасывает заказ для игрока
+   * @param {string} charId идентификатор персонажа
+   */
+  resetOrdersForPlayer(charId) {
+    this.ordersList = this.ordersList.filter((o) => o.initiator !== charId);
+    const Game = arena.characters[charId].currentGame;
+    Game.getPlayerById(charId).proc = 100;
   }
 }
 

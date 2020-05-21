@@ -4,7 +4,7 @@ const Markup = require('telegraf/markup');
 const settingsScene = new Scene('settings');
 const loginHelper = require('../helpers/loginHelper');
 
-settingsScene.enter(async ({ replyWithMarkdown, reply }) => {
+settingsScene.enter(async ({ replyWithMarkdown, reply, session }) => {
   await replyWithMarkdown(
     '*Настройки*',
     Markup.keyboard([
@@ -19,10 +19,31 @@ settingsScene.enter(async ({ replyWithMarkdown, reply }) => {
         'Удалить персонажа',
         'remove',
       )],
+      [Markup.callbackButton(
+        `Авторегистрация ${session.character.autoreg ? '✅' : '⬜️'}`,
+        'autoreg',
+      )],
     ]).resize().extra(),
   );
 });
 
+settingsScene.action('autoreg', ({ session, editMessageText }) => {
+  session.character.autoreg = !session.character.autoreg;
+
+  editMessageText(
+    'Доступные опции',
+    Markup.inlineKeyboard([
+      [Markup.callbackButton(
+        'Удалить персонажа',
+        'remove',
+      )],
+      [Markup.callbackButton(
+        `Авторегистрация ${session.character.autoreg ? '✅' : '⬜️'}`,
+        'autoreg',
+      )],
+    ]).resize().extra(),
+  );
+});
 
 settingsScene.action('remove', async ({
   session,

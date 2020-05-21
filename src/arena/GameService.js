@@ -18,7 +18,7 @@ const RoundService = require('./RoundService');
 const PlayersArr = require('./playerArray');
 const OrderService = require('./OrderService');
 const HistoryService = require('./HistoryService');
-const { charDescr } = require('./MiscService');
+const { getIcon } = require('./MiscService');
 
 /**
  * Класс для обьекта игры
@@ -46,10 +46,18 @@ class Game {
    */
   get isGameEnd() {
     return (
-      this.alivePlayers.length < 2
+      this.isTeamWin
       || this.round.flags.noDamageRound > 2
       || this.round.count > 9
     );
+  }
+
+  get isTeamWin() {
+    const [withClan, withoutClan, byClan] = this.partitionAliveByClan;
+    if (!withoutClan.length) {
+      return Object.keys(byClan).length === 1;
+    }
+    return withoutClan.length === 1 && !withClan.length;
   }
 
   get endGameReason() {
@@ -145,8 +153,7 @@ class Game {
     arena.games[this.info.id] = this;
 
     this.info.players.forEach((playerId) => {
-      arena.characters[playerId].mm = this.info.id;
-      arena.characters[playerId].currentGame = this.info.id;
+      arena.characters[playerId].gameId = this.info.id;
     });
     // @todo add statistic +1 game for all players
   }
@@ -217,6 +224,7 @@ class Game {
     } else {
       channelHelper.broadcast(`Игрок *${player.nick}* был выброшен из игры`);
     }
+    arena.characters[id].autoreg = false;
     delete this.players[id];
     this.info.players.splice(this.info.players.indexOf(id), 1);
   }
@@ -268,10 +276,12 @@ class Game {
     this.sendBattleLog(this.endGameReason);
     this.sendBattleLog(this.statistic());
     this.saveGame();
-    arena.mm.cancel();
     setTimeout(() => {
       this.sendToAll('Конец игры, распределяем ресурсы...');
       this.forAllPlayers(Game.showExitButton);
+      this.forAllPlayers((player) => { arena.characters[player.id].gameId = null; });
+      arena.mm.cancel();
+      this.forAllPlayers(/** @param {Player} player */(player) => arena.mm.autoreg(player.id));
     }, 15000);
   }
 
@@ -333,13 +343,13 @@ class Game {
         }
         case 'endRound': {
           this.sortDead();
-          this.refreshPlayer();
-          this.refreshRoundFlags();
           this.handleEndGameFlags();
           // нужно вызывать готовые функции
           if (this.isGameEnd) {
             this.endGame();
           } else {
+            this.refreshPlayer();
+            this.refreshRoundFlags();
             this.round.goNext('starting', 500);
           }
           break;
@@ -395,19 +405,58 @@ class Game {
   }
 
   /**
+   * @returns {[Player[], Player[], _.Dictionary<Player[]>]} [withClan, withoutClan, groupByClan]
+   */
+  get partitionByClan() {
+    const [withClan, withoutClan] = _.partition(this.playerArr.arr, (p) => p.clan);
+    const groupByClan = _.groupBy(withClan, (p) => p.clan.name);
+    return [withClan, withoutClan, groupByClan];
+  }
+
+  /**
+   * @returns {[Player[], Player[], _.Dictionary<Player[]>]} [withClan, withoutClan, groupByClan]
+   */
+  get partitionAliveByClan() {
+    const [withClan, withoutClan] = _.partition(this.alivePlayers, (p) => p.clan);
+    const groupByClan = _.groupBy(withClan, (p) => p.clan.name);
+    return [withClan, withoutClan, groupByClan];
+  }
+
+  /**
    * Функция послематчевой статистики
    * @return {string} возвращает строку статистики по всем игрокам
    */
   statistic() {
+    this.giveGoldforKill();
     const winners = this.alivePlayers;
     const gold = this.deadPlayers.length ? 5 : 1;
     winners.forEach((p) => p.stats.addGold(gold));
-    let res = `Статистика: игра ${this.info.id} `;
-    _.forEach(this.players, (p) => {
-      const s = p.stats.collect;
-      res += `\nИгрок ${p.nick} получает ${s.exp} опыта и ${s.gold} золота`;
+
+    const [, withoutClan, byClan] = this.partitionByClan;
+
+    /** @param {Player} p */
+    const getStatusString = (p) => `\t👤 ${p.nick} получает ${p.stats.collect.exp}📖 и ${p.stats.collect.gold}💰`;
+
+    const playersWithoutClan = withoutClan.map(getStatusString);
+    const playersWithClan = _.map(byClan, (players, clan) => `${clan}\n${players.map(getStatusString).join('\n')}`);
+
+    return [
+      '*Статистика игры*```',
+      playersWithClan.length && playersWithClan.join('\n\n'),
+      playersWithoutClan.length && playersWithoutClan.join('\n'),
+      '```',
+    ].filter((x) => x).join('\n\n');
+  }
+
+  /**
+  * Функция пробегает всех убитых и раздает золото убийцам
+  */
+  giveGoldforKill() {
+    const deadArray = this.deadPlayers;
+    _.forEach(deadArray, (p) => {
+      const killer = this.getPlayerById(p.flags.isDead);
+      if (killer) killer.stats.addGold(5 * p.lvl);
     });
-    return res;
   }
 
   /**
@@ -433,6 +482,7 @@ class Game {
       }`);
     }
   }
+
   /**
   * Очистка массива длительных магий от умерших
   */
@@ -452,7 +502,7 @@ class Game {
 }
     */
     const _this = this;
-    _.forEach(this.longActions,(longMagicType,k) => {
+    _.forEach(this.longActions, (longMagicType, k) => {
       _this.longActions[k] = _.filter(longMagicType, (act) => {
         const p = _this.getPlayerById(act.target) || {};
         return p.alive;
@@ -460,6 +510,7 @@ class Game {
     });
     this.longActions = _this.longActions;
   }
+
   /**
    * Сброс состояния игроков
    */
@@ -472,7 +523,7 @@ class Game {
 
   /**
    * Интерфейс для работы со всеми игроками в игре
-   * @param {function} f функция применяющая ко всем игрокам в игре
+   * @param {function(Player): void} f функция применяющая ко всем игрокам в игре
    */
   forAllPlayers(f) {
     _.forEach(this.players, (p) => f.call(this, p));
@@ -480,7 +531,7 @@ class Game {
 
   /**
    * Интерфейс для работы с живыми
-   * @param {function} f функция применяющая
+   * @param {function(Player): void} f функция применяющая
    */
   forAllAlivePlayers(f) {
     this.alivePlayers.forEach((p) => f.call(this, p));
@@ -491,31 +542,41 @@ class Game {
    * @param {Player} player обьект игрока
    */
   sendStatus(player) {
-    const team = this.playerArr.getMyTeam(player.clan);
-    if (_.isEmpty(team)) {
-      team.push(player);
+    /** @param {Player} p */
+    const getEnemyString = (p) => `\t👤 ${p.nick} (${getIcon(p.prof)}${p.lvl}) ❤️${p.getStatus().hp}`;
+
+    const [, withoutClan, byClan] = this.partitionAliveByClan;
+
+    let team;
+    if (player.clan) {
+      team = player.clan ? byClan[player.clan.name] : [player];
+      delete byClan[player.clan.name];
+    } else {
+      team = [player];
     }
-    let enemies = _.difference(this.playerArr.arr, team);
+
     const allies = team.map((p) => {
       const status = p.getFullStatus();
-      const { icon } = Object.values(charDescr).find((el) => el.prof === p.prof);
       if (p.prof === 'l' || p.prof === 'w') {
-        return `\n\t👤 ${p.nick} (${icon}${p.lvl}) ❤️${status.hp} 🔋${status.en}`;
+        return `\t👤 ${p.nick} (${getIcon(p.prof)}${p.lvl}) ❤️${status.hp} 🔋${status.en}`;
       }
-      return `\n\t👤 ${p.nick} (${icon}${p.lvl}) ❤️${status.hp}  \n\t💧${status.mp}  🔋${status.en}`;
+      return `\t👤 ${p.nick} (${getIcon(p.prof)}${p.lvl}) ❤️${status.hp}  \n\t💧${status.mp}  🔋${status.en}`;
     });
-    enemies = enemies.map((p) => {
-      const status = p.getStatus();
-      const { icon } = Object.values(charDescr).find((c) => c.prof === p.prof);
-      return `\n\t👤 ${p.nick} (${icon}${p.lvl}) ❤️${status.hp}`;
-    });
+
+    const enemiesWithoutClan = withoutClan.map(getEnemyString);
+    const enemiesWithClan = _.map(byClan, (players, clan) => `_${clan}_\n${players.map(getEnemyString).join('\n')}`);
+
     channelHelper.sendStatus(
-      `*Раунд ${this.round.count}*
+      [`*Раунд ${this.round.count}*
+
 _Союзники:_\`\`\`
-${allies}\`\`\`
-_Враги:_\`\`\`
-${enemies}\`\`\`
-`,
+
+${allies.join('\n')}\`\`\`
+
+_Враги:_\`\`\``,
+      enemiesWithClan.length && enemiesWithClan.join('\n\n'),
+      enemiesWithoutClan.length && `${enemiesWithoutClan.join('\n')}`,
+      '```'].filter((x) => x).join('\n\n'),
       player.tgId,
     );
   }
