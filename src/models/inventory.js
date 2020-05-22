@@ -52,10 +52,28 @@ inventory.statics = {
    * */
   async fullHarks(charId) {
     try {
+      // берем из базы все надетые вещи
       const allItems = await this.getPutOned(charId);
+      // Складываем все характеристики от вещей в одоин общий обьект
       return _.reduce(allItems, (ob, i) => {
+        // берем характеристики вещи
         const f = this.model('Item').getHarks(i.code);
-        return _.merge(ob, f);
+        // делаем слияние общего обьекта и обьекта вещи
+        return _.assignInWith(ob, f, (objValue, srcValue) => {
+          // Если в общем обтекте в этом ключе НЕ пустое значине
+          if (!_.isEmpty(objValue) || _.isNumber(objValue)) {
+            // и если этот ключ обьекта является Обьектом
+            if (_.isObject(objValue)) {
+              // то складываем два этих обьекта
+              _.assignInWith(objValue, srcValue, (o, s) => +o + +s);
+              return objValue;
+            }
+            // если ключ не является Обьектом, складываем значения
+            return +objValue + +srcValue;
+          }
+          // Если в общем обьекте пустое значение, то берем значение вещи
+          return srcValue;
+        });
       }, {});
     } catch (e) {
       // eslint-disable-next-line no-console

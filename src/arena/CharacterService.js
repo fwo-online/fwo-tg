@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const arena = require('./index');
 const floatNumber = require('./floatNumber');
 const db = require('../helpers/dataBase');
@@ -50,15 +51,24 @@ function getDynHarks(charObj) {
    */
   function calcHit() {
     const h = {};
+    let dmgFromHarks = 0;
+    let dmgFromItems = {};
     if (charObj.prof === 'l') {
-      const intDmg = (harks.int - 2) / 10;
-      h.min = floatNumber(intDmg + +charObj.harksFromItems.hit.min);
-      h.max = floatNumber(intDmg + +charObj.harksFromItems.hit.max);
+      dmgFromHarks = (harks.int - 2) / 10;
     } else {
-      const strDmg = (harks.str - 3) / 10;
-      h.min = floatNumber(strDmg + +charObj.harksFromItems.hit.min);
-      h.max = floatNumber(strDmg + +charObj.harksFromItems.hit.max);
+      dmgFromHarks = (harks.str - 3) / 10;
     }
+    if (!_.isEmpty(charObj.harksFromItems.hit)) {
+      dmgFromItems = {
+        max: charObj.harksFromItems.hit.max,
+        min: charObj.harksFromItems.hit.min,
+      };
+    } else {
+      dmgFromItems = { min: 0, max: 0 };
+    }
+
+    h.min = floatNumber(dmgFromHarks + +dmgFromItems.min);
+    h.max = floatNumber(dmgFromHarks + +dmgFromItems.max);
     return h;
   }
 
@@ -317,7 +327,6 @@ class Char {
     await db.inventory.putOnItem(this.id, itemId);
     const inventory = await db.inventory.getItems(this.id);
     this.charObj.inventory = inventory;
-
     await this.updateHarkFromItems();
     return true;
   }
@@ -376,11 +385,10 @@ class Char {
 
   async updateHarkFromItems() {
     this.harksFromItems = await db.inventory.getAllHarks(this.id);
-    console.log('fff:', this.id);
-    console.log(this.harksFromItems.hit);
     if (!this.harksFromItems || !Object.keys(this.harksFromItems).length) {
       this.harksFromItems = { hit: { min: 0, max: 0 } };
     }
+    console.log(this.harksFromItems);
   }
 
   /**
