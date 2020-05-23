@@ -121,9 +121,6 @@ class Char {
    * @property {{reason: string, date: Date}[]} penalty
    */
   constructor(charObj) {
-    // const defaults = defHarks(charObj.prof);
-    // this.clearHarks = defaults.hark;
-    // this.prof = defaults.prof;
     this.charObj = charObj;
     this.tempHarks = {
       ...charObj.harks,
@@ -145,9 +142,32 @@ class Char {
   get lvl() {
     return this.charObj.lvl;
   }
-
+  // Суммарный обьект характеристик + вещей.
   get def() {
-    return getDynHarks(this);
+    const dynHarks = getDynHarks(this);
+    /**
+    * Проблематика на подумать:
+    * характеристики внутри чара имеют имена patk/pdef и т.д, а обьект который
+    * был получен после возвращения updateHarkFromItems, имеет ключи типа:
+    * atk/prt (models/item). Это не позволяет прозрачно проводить сложение.
+    */
+    console.log(dynHarks);
+    _.forEach(this.harksFromItems,(h,i) => {
+      if(_.isObject(h)){
+        console.log('object summ @@@',h,i);
+      } else {
+        if (!_.isUndefined(dynHarks[i])) dynHarks[i] += +h;
+        if (i === 'atc') dynHarks['patk'] += +h;
+        if (i === 'prt') dynHarks['pdef'] += +h;
+        if (i === 'add_hp') dynHarks['maxHp'] += +h;
+        if (i === 'add_mp') dynHarks['maxMp'] += +h;
+        if (i === 'add_en') dynHarks['maxEn'] += +h;
+        if (i === 'hl') dynHarks.hl.max += +h;
+        if (!dynHarks[i]) dynHarks[i] = h;
+      }
+    })
+    console.log('dyn',dynHarks);
+    return dynHarks;
   }
 
   get tgId() {
@@ -191,13 +211,27 @@ class Char {
   set free(value) {
     this.tempHarks.free = value;
   }
-
+  // Нужно помнить, что this.harks это суммарный обьект, с уже полученными от
+  // вещей характеристиками.
   get harks() {
-    return this.charObj.harks;
+    if (_.isEmpty(this.plushark)) {
+      return this.charObj.harks;
+    }
+    return {
+      str: +this.charObj.harks.str + +this.plushark.s,
+      dex: +this.charObj.harks.dex + +this.plushark.d,
+      int: +this.charObj.harks.int + +this.plushark.i,
+      wis: +this.charObj.harks.wis + +this.plushark.w,
+      con: +this.charObj.harks.con + +this.plushark.c,
+    };
   }
 
   get magics() {
     return this.charObj.magics;
+  }
+
+  get plushark() {
+    return this.harksFromItems.plushark;
   }
 
   get skills() {
@@ -330,7 +364,7 @@ class Char {
     await this.updateHarkFromItems();
     return true;
   }
-
+  // В функциях прокачки харок следует использоваться this.charObj.harks
   getIncreaseHarkCount(hark) {
     const count = this.tempHarks[hark] - this.charObj.harks[hark];
     return count || '';
@@ -372,17 +406,26 @@ class Char {
     this.addItem(itemCode);
     return this.saveToDb();
   }
-
-  sellItem(itemId) {
+  /**
+  * Продажа предмета.
+  * Добавил пересчет характеристик т.к сейчас можно продать вещь не снимая.
+  */
+  async sellItem(itemId) {
     const charItem = this.getItem(itemId);
     const item = arena.items[charItem.code];
 
     this.removeItem(itemId);
     this.gold += item.price / 2;
-
-    return this.saveToDb();
+    // Сейчас если продать итем который дает характеристики то не проиходит
+    // перерасчет новых и сброс вещей которые недоступны по харкам
+    await this.saveToDb;
+    return this.updateHarkFromItems();
   }
-
+  /**
+  * Функция пересчитывает все характеристики которые были получены от надетых
+  * вещей в инвентаре персонажа
+  * @returns {Promise<void>}
+  */
   async updateHarkFromItems() {
     this.harksFromItems = await db.inventory.getAllHarks(this.id);
     if (!this.harksFromItems || !Object.keys(this.harksFromItems).length) {
@@ -475,22 +518,6 @@ class Char {
   learnSkill(skillId, lvl) {
     this.skills[skillId] = lvl;
     this.saveToDb();
-  }
-
-  /**
-   * Метод для работы с harks персонажа
-   * @param {String} hark str/dex/wis/int/con
-   * @param {Number} val кол-во на которое будет поднята характеристика
-   * @todo нужно поправить
-   */
-  async upHark(hark, val) {
-    if (!(harkArr.indexOf(hark) + 1) && val <= this.free) {
-      this.free -= +val;
-      this.harks[hark] += +val;
-    } else {
-      throw Error('UPHARK_ERR');
-    }
-    await this.saveToDb();
   }
 
   /**
