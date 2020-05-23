@@ -14,7 +14,6 @@ const { lvlRatio } = require('./config');
  * @todo Сейчас массив arena.player не является массивом обьектов Character,
  * нужно переработать
  */
-const harkArr = ['str', 'dex', 'int', 'wis', 'con'];
 /**
  * Возвращает список динамических характеристик
  * @param {Object} charObj инстанс Char
@@ -142,6 +141,7 @@ class Char {
   get lvl() {
     return this.charObj.lvl;
   }
+
   // Суммарный обьект характеристик + вещей.
   get def() {
     const dynHarks = getDynHarks(this);
@@ -152,21 +152,21 @@ class Char {
     * atk/prt (models/item). Это не позволяет прозрачно проводить сложение.
     */
     console.log(dynHarks);
-    _.forEach(this.harksFromItems,(h,i) => {
-      if(_.isObject(h)){
-        console.log('object summ @@@',h,i);
+    _.forEach(this.harksFromItems, (h, i) => {
+      if (_.isObject(h)) {
+        console.log('object summ @@@', h, i);
       } else {
         if (!_.isUndefined(dynHarks[i])) dynHarks[i] += +h;
-        if (i === 'atc') dynHarks['patk'] += +h;
-        if (i === 'prt') dynHarks['pdef'] += +h;
-        if (i === 'add_hp') dynHarks['maxHp'] += +h;
-        if (i === 'add_mp') dynHarks['maxMp'] += +h;
-        if (i === 'add_en') dynHarks['maxEn'] += +h;
+        if (i === 'atc') dynHarks.patk += +h;
+        if (i === 'prt') dynHarks.pdef += +h;
+        if (i === 'add_hp') dynHarks.maxHp += +h;
+        if (i === 'add_mp') dynHarks.maxMp += +h;
+        if (i === 'add_en') dynHarks.maxEn += +h;
         if (i === 'hl') dynHarks.hl.max += +h;
         if (!dynHarks[i]) dynHarks[i] = h;
       }
-    })
-    console.log('dyn',dynHarks);
+    });
+    console.log('dyn', dynHarks);
     return dynHarks;
   }
 
@@ -211,6 +211,7 @@ class Char {
   set free(value) {
     this.tempHarks.free = value;
   }
+
   // Нужно помнить, что this.harks это суммарный обьект, с уже полученными от
   // вещей характеристиками.
   get harks() {
@@ -364,6 +365,7 @@ class Char {
     await this.updateHarkFromItems();
     return true;
   }
+
   // В функциях прокачки харок следует использоваться this.charObj.harks
   getIncreaseHarkCount(hark) {
     const count = this.tempHarks[hark] - this.charObj.harks[hark];
@@ -406,6 +408,7 @@ class Char {
     this.addItem(itemCode);
     return this.saveToDb();
   }
+
   /**
   * Продажа предмета.
   * Добавил пересчет характеристик т.к сейчас можно продать вещь не снимая.
@@ -421,6 +424,7 @@ class Char {
     await this.saveToDb;
     return this.updateHarkFromItems();
   }
+
   /**
   * Функция пересчитывает все характеристики которые были получены от надетых
   * вещей в инвентаре персонажа
