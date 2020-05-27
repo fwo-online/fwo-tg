@@ -89,6 +89,7 @@ module.exports = {
    * @param {Player} player
    */
   async sendExitButton(player) {
+    delete this.statusMessages[player.tgId];
     const { exp, gold } = player.stats.collect;
     const character = arena.characters[player.id];
     const button = [];
