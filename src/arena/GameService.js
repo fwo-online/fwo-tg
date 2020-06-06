@@ -344,11 +344,11 @@ class Game {
         case 'endRound': {
           this.sortDead();
           this.handleEndGameFlags();
+          this.refreshPlayer();
           // нужно вызывать готовые функции
           if (this.isGameEnd) {
             this.endGame();
           } else {
-            this.refreshPlayer();
             this.refreshRoundFlags();
             this.round.goNext('starting', 500);
           }
