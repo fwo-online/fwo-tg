@@ -92,25 +92,28 @@ module.exports = {
     delete this.statusMessages[player.tgId];
     const { exp, gold } = player.stats.collect;
     const character = arena.characters[player.id];
-    const button = [];
     const {
-      autoreg, nickname, lvl, prof,
+      autoreg, nickname, lvl, prof, clan
     } = arena.characters[player.id];
 
-    if (autoreg) {
-      await this.broadcast(`Игрок *${nickname}* (${getIcon(prof)}${lvl}) начал поиск игры`);
-      button.push(Markup.callbackButton('Остановить поиск', 'stop'));
-    } else {
-      button.push(Markup.callbackButton('Выход в лобби', 'exit'));
-    }
-    await this.bot.telegram.sendMessage(
+    const message = await this.bot.telegram.sendMessage(
       player.tgId,
       `Награда за бой:
 📖 ${exp} (${character.exp}/${character.nextLvlExp})
 💰 ${gold} (${character.gold})
 ${autoreg ? 'Идёт поиск новой игры...' : ''}`,
-      Markup.inlineKeyboard(button).resize().extra(),
+      Markup.inlineKeyboard([
+        Markup.callbackButton('Остановить поиск', 'stop', !autoreg),
+        Markup.callbackButton('Выход в лобби', 'exit', autoreg),
+      ]).resize().extra(),
     );
+
+    if (autoreg) {
+      this.messages[message.chat.id] = message.message_id;
+      this.broadcast(
+        `Игрок ${clan ? `\\[${clan.name}]` : ''}*${nickname}* (${getIcon(prof)}${lvl}) начал поиск игры`,
+      );
+    }
   },
 
   /**
