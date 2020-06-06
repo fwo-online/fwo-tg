@@ -6,6 +6,11 @@ const { lvlRatio } = require('./config');
 
 /**
  * @typedef {import ('../models/clan').Clan} Clan
+ * @typedef {Object} Statistics
+ * @property {number} kills
+ * @property {number} death
+ * @property {number} games
+ * @property {number} runs
  */
 
 /**
@@ -106,7 +111,7 @@ class Char {
    * @property {String} nickname
    * @property {Number} gold
    * @property {Number} exp
-   * @property {Object} statistics
+   * @property {Statistics} statistics
    * @property {Object} inventory
    * @property {Object} harks
    * @property {Object.<string, number>} magics
@@ -204,6 +209,14 @@ class Char {
     return this.charObj.statistics.kills;
   }
 
+  get runs() {
+    return this.charObj.statistics.runs;
+  }
+
+  get death() {
+    return this.charObj.statistics.death;
+  }
+
   get free() {
     return this.tempHarks.free;
   }
@@ -262,6 +275,15 @@ class Char {
   /** Суммарное количество опыта, требуемое для следующего уровня */
   get nextLvlExp() {
     return 2 ** (this.lvl - 1) * 1000 * lvlRatio;
+  }
+
+  /**
+   * @param {Partial<Statistics>} stat
+   */
+  addGameStat(stat) {
+    _.forEach(stat, (val, key) => {
+      this.charObj.statistics[key] += val;
+    });
   }
 
   /**
@@ -533,7 +555,7 @@ class Char {
       // eslint-disable-next-line no-console
       console.log('Saving char :: id', this.id);
       const {
-        gold, exp, magics, bonus, items, skills, lvl, clan, free,
+        gold, exp, magics, bonus, items, skills, lvl, clan, free
       } = this;
       return await db.char.update(this.tgId, {
         gold,
@@ -546,6 +568,7 @@ class Char {
         penalty: this.charObj.penalty,
         free,
         inventory: items,
+        statistics: this.charObj.statistics,
       });
     } catch (e) {
       // eslint-disable-next-line no-console

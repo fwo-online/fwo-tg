@@ -18,7 +18,9 @@ profile.enter(async ({ replyWithMarkdown, session }) => {
   await replyWithMarkdown(
     `Статистика:\`\`\`\n
 \t\tИгр:       🎮 ${character.games}
-\t\tУбийств:   💀 ${character.kills}
+\t\tУбийств:   🔪 ${character.kills}
+\t\tСмертей:   💀 ${character.death}
+\t\tПобегов:   🏃 ${character.runs}
 \t\tУровень:   🔺 ${character.lvl}
 \t\tЗолото:    💰 ${character.gold}
 \t\tОпыт:      📖 ${character.exp}

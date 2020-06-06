@@ -71,7 +71,7 @@ class Player {
 
   /**
   * Возвращает убийцу игрока если он записан
-  * @return {Player<id>}
+  * @return {Player['id']}
   */
   getKiller() {
     return this.flags.isDead;

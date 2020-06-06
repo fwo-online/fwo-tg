@@ -224,6 +224,8 @@ class Game {
     } else {
       channelHelper.broadcast(`Игрок *${player.nick}* был выброшен из игры`);
     }
+    arena.characters[id].addGameStat({ runs: 1 });
+    arena.characters[id].saveToDb();
     arena.characters[id].autoreg = false;
     delete this.players[id];
     this.info.players.splice(this.info.players.indexOf(id), 1);
@@ -396,6 +398,17 @@ class Game {
       _.forEach(this.info.players, async (p) => {
         arena.characters[p].exp += this.players[p].stats.collect.exp;
         arena.characters[p].gold += this.players[p].stats.collect.gold;
+
+        const kills = Object.values(this.players)
+          .reduce((sum, player) => (player.getKiller() === p ? sum + 1 : sum), 0);
+
+        const death = this.players[p].alive ? 0 : 1;
+
+        arena.characters[p].addGameStat({
+          games: 1,
+          death,
+          kills,
+        });
         await arena.characters[p].saveToDb();
       });
     } catch (e) {
