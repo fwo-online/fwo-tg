@@ -553,6 +553,8 @@ class Game {
       delete byClan[player.clan.name];
     } else {
       team = [player];
+      const index = withoutClan.findIndex((p) => p.id === player.id);
+      withoutClan.splice(index, 1);
     }
 
     const allies = team.map((p) => {
