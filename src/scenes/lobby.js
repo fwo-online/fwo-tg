@@ -5,7 +5,9 @@ const { getIcon } = require('../arena/MiscService');
 const lobby = new Scene('lobby');
 
 lobby.enter(async ({ replyWithMarkdown, replyWithPhoto, session }) => {
-  const { nickname, prof, lvl } = session.character;
+  const { 
+    nickname, prof, lvl, exp, nextLvlExp,
+  } = session.character;
 
   try {
     await replyWithPhoto({ source: './assets/market.jpg' });
@@ -15,7 +17,7 @@ lobby.enter(async ({ replyWithMarkdown, replyWithPhoto, session }) => {
   }
   await replyWithMarkdown(
     `*Лобби*
-Так-так, значит ты *${nickname}* (${getIcon(prof)}${lvl})`,
+Так-так, значит ты *${nickname}* ${getIcon(prof)}${lvl} (📖${exp}/${nextLvlExp})`,
     Markup.keyboard([
       ['⚔ В бой'],
       ['🏰 Клан'],
