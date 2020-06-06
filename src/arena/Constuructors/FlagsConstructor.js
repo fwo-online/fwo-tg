@@ -30,7 +30,6 @@ class FlagsConstructors {
     this.isProtected = [];
     this.isGlitched = false;
     this.isSilenced = [];
-    this.isDead = '';
     this.isHealed = [];
     this.isHited = {};
     this.isDodging = 0;
