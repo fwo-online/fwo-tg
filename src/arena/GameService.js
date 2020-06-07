@@ -47,6 +47,7 @@ class Game {
   get isGameEnd() {
     return (
       this.isTeamWin
+      || this.alivePlayers.length === 0
       || this.round.flags.noDamageRound > 2
       || this.round.count > 9
     );
