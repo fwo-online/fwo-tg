@@ -28,11 +28,15 @@ module.exports = {
    * @param {number} id - id чата
    */
   async sendStatus(data, id) {
-    if (!this.statusMessages[id]) {
-      const message = await this.bot.telegram.sendMessage(id, data, { parse_mode: 'Markdown' });
-      this.statusMessages[id] = message.message_id;
-    } else {
-      this.updateStatus(data, id);
+    try {
+      if (!this.statusMessages[id]) {
+        const message = await this.bot.telegram.sendMessage(id, data, { parse_mode: 'Markdown' });
+        this.statusMessages[id] = message.message_id;
+      } else {
+        this.updateStatus(data, id);
+      }
+    } catch (e) {
+      console.log(`error: sendOrderButtons: ${e.message} for ${id}`);
     }
   },
   /**
@@ -65,12 +69,16 @@ module.exports = {
    * @param {Player} player - объект игрока
    */
   async sendOrderButtons(player) {
-    const message = await this.bot.telegram.sendMessage(
-      player.tgId,
-      'Выбери действие',
-      Markup.inlineKeyboard(this.getOrderButtons(player)).resize().extra(),
-    );
-    this.messages[message.chat.id] = message.message_id;
+    try {
+      const message = await this.bot.telegram.sendMessage(
+        player.tgId,
+        'Выбери действие',
+        Markup.inlineKeyboard(this.getOrderButtons(player)).resize().extra(),
+      );
+      this.messages[message.chat.id] = message.message_id;
+    } catch (e) {
+      console.log(`error: sendOrderButtons: ${e.message} for ${player.id}`);
+    }
   },
 
   /**
@@ -78,10 +86,30 @@ module.exports = {
    * @param {Player} player - объект игрока
    */
   async removeMessages(player) {
-    await this.bot.telegram.deleteMessage(
-      player.tgId,
-      this.messages[player.tgId],
-    );
+    try {
+      await this.bot.telegram.deleteMessage(
+        player.tgId,
+        this.messages[player.tgId],
+      );
+    } catch (e) {
+      console.log(`error: removeMessages: ${e.message} for ${player.id}`);
+    }
+  },
+
+  /**
+   * Удаление сообщения со статусом игры
+   * @param {Player} player - объект игрока
+   */
+  async removeStatusMessages(player) {
+    try {
+      await this.bot.telegram.deleteMessage(
+        player.tgId,
+        this.statusMessages[player.tgId],
+      );
+      delete this.statusMessages[player.tgId];
+    } catch (e) {
+      console.log(`error: removeStatusMessages: ${e.message} for ${player.id}`);
+    }
   },
 
   /**
@@ -89,30 +117,35 @@ module.exports = {
    * @param {Player} player
    */
   async sendExitButton(player) {
-    delete this.statusMessages[player.tgId];
-    const { exp, gold } = player.stats.collect;
-    const character = arena.characters[player.id];
-    const {
-      autoreg, nickname, lvl, prof, clan
-    } = arena.characters[player.id];
+    try {
+      await this.removeStatusMessages(player);
 
-    const message = await this.bot.telegram.sendMessage(
-      player.tgId,
-      `Награда за бой:
-📖 ${exp} (${character.exp}/${character.nextLvlExp})
-💰 ${gold} (${character.gold})
-${autoreg ? 'Идёт поиск новой игры...' : ''}`,
-      Markup.inlineKeyboard([
-        Markup.callbackButton('Остановить поиск', 'stop', !autoreg),
-        Markup.callbackButton('Выход в лобби', 'exit', autoreg),
-      ]).resize().extra(),
-    );
+      const { exp, gold } = player.stats.collect;
+      const character = arena.characters[player.id];
+      const {
+        autoreg, nickname, lvl, prof, clan
+      } = arena.characters[player.id];
 
-    if (autoreg) {
-      this.messages[message.chat.id] = message.message_id;
-      this.broadcast(
-        `Игрок ${clan ? `\\[${clan.name}]` : ''}*${nickname}* (${getIcon(prof)}${lvl}) начал поиск игры`,
+      const message = await this.bot.telegram.sendMessage(
+        player.tgId,
+        `Награда за бой:
+  📖 ${exp} (${character.exp}/${character.nextLvlExp})
+  💰 ${gold} (${character.gold})
+  ${autoreg ? 'Идёт поиск новой игры...' : ''}`,
+        Markup.inlineKeyboard([
+          Markup.callbackButton('Остановить поиск', 'stop', !autoreg),
+          Markup.callbackButton('Выход в лобби', 'exit', autoreg),
+        ]).resize().extra(),
       );
+
+      if (autoreg) {
+        this.messages[message.chat.id] = message.message_id;
+        this.broadcast(
+          `Игрок ${clan ? `\\[${clan.name}]` : ''}*${nickname}* (${getIcon(prof)}${lvl}) начал поиск игры`,
+        );
+      }
+    } catch (e) {
+      console.log(`error: sendExitButton: ${e.message} for ${player.id}`);
     }
   },
 
@@ -121,7 +154,8 @@ ${autoreg ? 'Идёт поиск новой игры...' : ''}`,
    * @param {Player} player
    */
   async sendRunButton(player) {
-    delete this.statusMessages[player.tgId];
+    await this.removeStatusMessages(player);
+
     await this.bot.telegram.sendMessage(
       player.tgId,
       'Ты бежал из боя',
