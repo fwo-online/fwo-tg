@@ -73,7 +73,7 @@ battleScene.action('search', async ({ editMessageText, session }) => {
       ]).resize().extra(),
     );
     await channelHelper.broadcast(
-      `Игрок ${clan ? `\\[${clan.name}]` : ''}*${nickname}* (${getIcon(prof)}${lvl}) начал поиск игры`,
+      `Игрок ${clan ? `\\[${clan.name}]` : ''} *${nickname}* (${getIcon(prof)}${lvl}) начал поиск игры`,
     );
   }
 });
@@ -89,7 +89,7 @@ battleScene.action('stop', async ({ editMessageText, session }) => {
     ]).resize().extra(),
   );
   await channelHelper.broadcast(
-    `Игрок ${clan ? `\\[${clan.name}]` : ''}*${nickname}* внезапно передумал`,
+    `Игрок ${clan ? `\\[${clan.name}]` : ''} *${nickname}* внезапно передумал`,
   );
 });
 

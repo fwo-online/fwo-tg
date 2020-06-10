@@ -141,7 +141,7 @@ module.exports = {
       if (autoreg) {
         this.messages[message.chat.id] = message.message_id;
         this.broadcast(
-          `Игрок ${clan ? `\\[${clan.name}]` : ''}*${nickname}* (${getIcon(prof)}${lvl}) начал поиск игры`,
+          `Игрок ${clan ? `\\[${clan.name}]` : ''} *${nickname}* (${getIcon(prof)}${lvl}) начал поиск игры`,
         );
       }
     } catch (e) {
