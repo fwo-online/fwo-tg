@@ -44,9 +44,11 @@ harkScene.enter(async ({ replyWithMarkdown, reply, session }) => {
   );
 });
 
-harkScene.action(/info(?=_)/, ({ answerCbQuery, match }) => {
+harkScene.action(/info(?=_)/, ({ editMessageText, match }) => {
   const [, hark] = match.input.split('_');
-  answerCbQuery(harksDescr[hark].descr);
+  editMessageText(harksDescr[hark].descr, Markup.inlineKeyboard([
+    Markup.callbackButton('Назад', 'back'),
+  ]).resize().extra({ parse_mode: 'Markdown' }));
 });
 
 harkScene.action(/confirm|reset|back|increase(?=_)/, async ({
@@ -101,11 +103,13 @@ harkScene.action('def_harks', ({ session, editMessageText }) => {
   ]).resize().extra({ parse_mode: 'Markdown' }));
 });
 
-harkScene.action('exit', ({ scene }) => {
+harkScene.action('exit', ({ scene, session }) => {
+  session.character.resetHarks();
   scene.enter('profile');
 });
 
-harkScene.hears('🔙 В лобби', ({ scene }) => {
+harkScene.hears('🔙 В лобби', ({ scene, session }) => {
+  session.character.resetHarks();
   scene.enter('lobby');
 });
 
