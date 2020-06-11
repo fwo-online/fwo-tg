@@ -1,5 +1,6 @@
 const Markup = require('telegraf/markup');
 const Skill = require('../arena/Constuructors/SkillConstructor');
+const Magic = require('../arena/Constuructors/MagicConstructor');
 const arena = require('../arena');
 
 class BattleKeyboard {
@@ -120,10 +121,16 @@ class BattleKeyboard {
   render() {
     return [...this.keyboard
       .map((action) => {
+        const button = (text) => [Markup.callbackButton(text, `action_${action.name}`, this.player.proc === 0)];
+
         if (action instanceof Skill) {
-          return [Markup.callbackButton(`${action.displayName} (${action.proc}%)`, `action_${action.name}`, this.player.proc === 0)];
+          const skillLvl = this.player.skills[action.name] - 1;
+          return button(`${action.displayName} (${action.proc}%  🔋${action.cost[skillLvl]})`);
         }
-        return [Markup.callbackButton(action.displayName, `action_${action.name}`, this.player.proc === 0)];
+        if (action instanceof Magic) {
+          return button(`${action.displayName} (💧${action.cost})`);
+        }
+        return button(`${action.displayName}`);
       }), this.setRepeatButton(), this.setResetButton()];
   }
 }
