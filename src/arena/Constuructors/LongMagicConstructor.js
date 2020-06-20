@@ -69,6 +69,7 @@ class LongMagic extends Common {
         }
         this.longRun(i, t, game); // вызов кастомного обработчика
         super.getExp(i);
+        super.checkTargetIsDead(); // проверка трупов в длительных магиях
         this.longNext(i, t);
       } catch (e) {
         game.battleLog.log(e);
