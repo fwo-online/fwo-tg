@@ -1,4 +1,5 @@
 const MiscService = require('../MiscService');
+const floatNumber = require('../floatNumber');
 
 /**
  * @typedef {import ('../PlayerService')} player
@@ -121,7 +122,8 @@ class Magic {
    */
   effectVal(initiator = this.params.initiator) {
     const initiatorMagicLvl = initiator.magics[this.name];
-    return MiscService.dice(this.effect[initiatorMagicLvl - 1]) * initiator.proc;
+    const x = MiscService.dice(this.effect[initiatorMagicLvl - 1]) * initiator.proc;
+    return floatNumber(x);
   }
 
   /**
