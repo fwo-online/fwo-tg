@@ -117,6 +117,7 @@ class LongDmgMagic extends DmgMagic {
         }
         this.longRun(i, t, game); // вызов кастомного обработчика
         super.getExp(i);
+        super.checkTargetIsDead();
         this.longNext(i, t);
       } catch (e) {
         game.battleLog.log(e);
