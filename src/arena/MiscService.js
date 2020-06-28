@@ -177,6 +177,12 @@ module.exports = {
   charDescr: PROF,
   stores: STORES,
   /**
+   * @param {string} string
+   */
+  mono(string) {
+    return `\`\`\`${string}\`\`\``;
+  },
+  /**
    * @param {string} prof
    */
   getIcon(prof) {

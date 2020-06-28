@@ -1,5 +1,5 @@
 const session = require('telegraf/session');
-const bot = require('./bot');
+const Telegraf = require('telegraf');
 const db = require('./models');
 const stage = require('./scenes/stage.js');
 const channelHelper = require('./helpers/channelHelper');
@@ -14,6 +14,7 @@ const magics = require('./arena/magics');
 const skills = require('./arena/skills');
 const actions = require('./arena/actions');
 
+const bot = new Telegraf(process.env.BOT_TOKEN);
 // DB connection
 db.connection.on('open', async () => {
   // eslint-disable-next-line no-console

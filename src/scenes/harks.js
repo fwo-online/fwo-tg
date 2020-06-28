@@ -1,6 +1,6 @@
 const Scene = require('telegraf/scenes/base');
 const Markup = require('telegraf/markup');
-const { harksDescr } = require('../arena/MiscService');
+const { harksDescr, mono } = require('../arena/MiscService');
 
 const harkScene = new Scene('harks');
 
@@ -81,7 +81,7 @@ harkScene.action(/confirm|reset|back|increase(?=_)/, async ({
 
 harkScene.action('def_harks', ({ session, editMessageText }) => {
   const { def, prof } = session.character;
-  const message = [`\`\`\`
+  const message = mono([`
 Урон:                     ${def.hit.min} - ${def.hit.max}
 Атака:                    ${def.patk}
 Защита:                   ${def.pdef}
@@ -95,8 +95,7 @@ harkScene.action('def_harks', ({ session, editMessageText }) => {
 Магическая защита:        ${def.mgp}`,
   prof === 'l' && `${`Кол-во целей для атаки:  ${def.maxTarget}`}`,
   (prof === 'm' || prof === 'p') && `${`Длительность магии:       ${def.lspell}`}`,
-  '```',
-  ].filter((val) => val).join('\n');
+  ].filter((val) => val).join('\n'));
 
   editMessageText(message, Markup.inlineKeyboard([
     Markup.callbackButton('Назад', 'back'),
