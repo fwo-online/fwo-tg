@@ -79,7 +79,7 @@ shopScene.action(/itemInfo(?=_)/, async ({ session, editMessageText, match }) =>
       Markup.callbackButton(
         'Назад',
         `itemType_${item.wear}`,
-      )]).resize().extra(),
+      )]).resize().extra({ parse_mode: 'Markdown' }),
   );
 });
 
