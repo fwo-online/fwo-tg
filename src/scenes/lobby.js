@@ -1,11 +1,12 @@
-const Scene = require('telegraf/scenes/base');
-const Markup = require('telegraf/markup');
+const { BaseScene, Markup } = require('telegraf');
 const { getIcon } = require('../arena/MiscService');
 
-const lobby = new Scene('lobby');
+/** @type {import('./stage').BaseGameScene} */
+const lobby = new BaseScene('lobby');
 
 lobby.enter(async ({ replyWithMarkdown, replyWithPhoto, session }) => {
-  const { 
+  console.log(Object.keys(session));
+  const {
     nickname, prof, lvl, exp, nextLvlExp,
   } = session.character;
 

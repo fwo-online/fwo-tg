@@ -1,7 +1,8 @@
-const Scene = require('telegraf/scenes/base');
+const { BaseScene } = require('telegraf');
 const loginHelper = require('../helpers/loginHelper');
 
-const setNick = new Scene('setNick');
+/** @type {import('./stage').BaseGameScene} */
+const setNick = new BaseScene('setNick');
 
 /**
  * Валидация ника

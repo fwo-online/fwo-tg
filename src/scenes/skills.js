@@ -1,8 +1,8 @@
-const Scene = require('telegraf/scenes/base');
-const Markup = require('telegraf/markup');
+const { BaseScene, Markup } = require('telegraf');
 const SkillService = require('../arena/SkillService');
 
-const skillsScene = new Scene('skills');
+/** @type {import('./stage').BaseGameScene} */
+const skillsScene = new BaseScene('skills');
 
 const getSkillButtons = (list, char) => Object
   .keys(list)

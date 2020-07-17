@@ -1,8 +1,7 @@
-const Scene = require('telegraf/scenes/base');
-const Markup = require('telegraf/markup');
+const { BaseScene, Markup } = require('telegraf');
 
-const profile = new Scene('profile');
-
+/** @type {import('./stage').BaseGameScene} */
+const profile = new BaseScene('profile');
 
 profile.enter(async ({ replyWithMarkdown, session }) => {
   const { character } = session;

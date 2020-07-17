@@ -1,9 +1,9 @@
-const Scene = require('telegraf/scenes/base');
-const Markup = require('telegraf/markup');
+const { BaseScene, Markup } = require('telegraf');
 const db = require('../helpers/dataBase');
 const ClanService = require('../arena/ClanService');
 
-const createClanScene = new Scene('createClan');
+/** @type {import('./stage').BaseGameScene} */
+const createClanScene = new BaseScene('createClan');
 
 /**
  * Валидация названия клана

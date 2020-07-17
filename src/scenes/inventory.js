@@ -1,13 +1,10 @@
-
-const Scene = require('telegraf/scenes/base');
-const Stage = require('telegraf/stage');
-const Markup = require('telegraf/markup');
+const { BaseScene, Markup } = require('telegraf');
 const arena = require('../arena');
 const Inventory = require('../models/inventory');
 const ItemService = require('../arena/ItemService');
 
-const inventoryScene = new Scene('inventory');
-const { leave } = Stage;
+/** @type {import('./stage').BaseGameScene} */
+const inventoryScene = new BaseScene('inventory');
 
 const getInventoryItems = (items) => items.map((item) => [Markup.callbackButton(
   `${item.putOn ? '✔️' : ''} ${Inventory.getItemName(item.code)}`,
@@ -114,7 +111,7 @@ inventoryScene.action('back', ({ scene }) => {
 });
 
 inventoryScene.hears('🔙 В лобби', ({ scene }) => {
-  leave();
+  scene.leave();
   scene.enter('lobby');
 });
 

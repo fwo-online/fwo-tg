@@ -1,8 +1,8 @@
-const Scene = require('telegraf/scenes/base');
-const Markup = require('telegraf/markup');
+const { BaseScene, Markup } = require('telegraf');
 const { harksDescr, mono } = require('../arena/MiscService');
 
-const harkScene = new Scene('harks');
+/** @type {import('./stage').BaseGameScene} */
+const harkScene = new BaseScene('harks');
 
 /**
  * @param {import ('../arena/CharacterService')} character
