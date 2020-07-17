@@ -13,6 +13,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
 const magicDefense = new CommonMagic({
   name: 'magicDefense',
   displayName: 'Магическая защита',
+  desc: '',
   cost: 12,
   baseExp: 40,
   costType: 'mp',

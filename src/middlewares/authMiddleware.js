@@ -1,10 +1,10 @@
 const loginHelper = require('../helpers/loginHelper');
 
-const authMiddleware = async ({ session, chat }, next) => {
-  if (!session.character && chat.type === 'private') {
-    const character = await loginHelper.getChar(chat.id);
+const authMiddleware = async (ctx, next) => {
+  if (!ctx.session.character && ctx.chat.type === 'private') {
+    const character = await loginHelper.getChar(ctx.chat.id);
     if (character) {
-      session.character = character;
+      ctx.session.character = character;
     }
   }
   return next();

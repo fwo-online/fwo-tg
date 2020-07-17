@@ -1,8 +1,8 @@
-const Scene = require('telegraf/scenes/base');
-const Markup = require('telegraf/markup');
-
-const settingsScene = new Scene('settings');
+const { BaseScene, Markup } = require('telegraf');
 const loginHelper = require('../helpers/loginHelper');
+
+/** @type {import('./stage').BaseGameScene} */
+const settingsScene = new BaseScene('settings');
 
 settingsScene.enter(async ({ replyWithMarkdown, reply, session }) => {
   await replyWithMarkdown(

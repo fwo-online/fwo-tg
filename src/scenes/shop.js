@@ -1,12 +1,12 @@
 
 const _ = require('lodash');
-const Scene = require('telegraf/scenes/base');
-const Markup = require('telegraf/markup');
+const { BaseScene, Markup } = require('telegraf');
 const arena = require('../arena');
 const ItemService = require('../arena/ItemService');
 const { stores } = require('../arena/MiscService');
 
-const shopScene = new Scene('shopScene');
+/** @type {import('./stage').BaseGameScene} */
+const shopScene = new BaseScene('shopScene');
 
 const storeKeys = Object.keys(stores);
 

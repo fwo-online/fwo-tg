@@ -97,7 +97,7 @@ module.exports = {
   },
   /**
    * Возвразает список всех кланов из бд
-   * @returns {Promise<import ('telegraf').CallbackButton[][]>}
+   * @returns {Promise<import ('telegraf/typings/markup').CallbackButton[][]>}
    */
   async getClanList(charId) {
     const char = arena.characters[charId];

@@ -1,7 +1,7 @@
+const { BaseScene } = require('telegraf');
 
-const Scene = require('telegraf/scenes/base');
-
-const greeter = new Scene('greeter');
+/** @type {import('./stage').BaseGameScene} */
+const greeter = new BaseScene('greeter');
 
 greeter.enter(async ({
   reply, scene, session,

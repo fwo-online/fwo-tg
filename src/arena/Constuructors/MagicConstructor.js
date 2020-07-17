@@ -14,9 +14,9 @@ const floatNumber = require('../floatNumber');
  * @property {string} orderType Тип цели заклинания self/team/enemy/enemyTeam
  * @property {string} aoeType Тип нанесения урона по цели:
  * @property {number} baseExp Стартовый параметр exp за действие
- * @property {string[]} effect размер рандомного эффект от магии
+ * @property {string[]} [effect] размер рандомного эффект от магии
  * @property {string} magType Тип магии good/bad/neutral
- * @property {number[]} chance
+ * @property {number[] | string[]} chance
  * @property {string[]} profList
  */
 
@@ -215,8 +215,6 @@ class Magic {
 
   /**
    * Проверка на запудревание мозгов
-   * @param {player} initiator обьект персонажаы
-   * @param {game} game Обьект игры для доступа ко всему
    * @todo нужно вынести этот метод в orders или к Players Obj
    */
   // eslint-disable-next-line no-unused-vars,class-methods-use-this
@@ -257,8 +255,6 @@ class Magic {
   }
 
   /**
-   * @param {string} msg строка остановки магии (причина)
-   * @return обьект остановки магии
    * @param {string} msg строка остановки магии (причина)
    * @return обьект остановки магии
    */

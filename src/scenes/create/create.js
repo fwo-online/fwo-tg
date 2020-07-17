@@ -1,9 +1,10 @@
-const Scene = require('telegraf/scenes/base');
+const { BaseScene } = require('telegraf');
 const { charDescr } = require('../../arena/MiscService');
 const messages = require('./messages');
 const keyboards = require('./keyboards');
 
-const create = new Scene('create');
+/** @type {import('../stage').BaseGameScene} */
+const create = new BaseScene('create');
 
 create.enter(async ({ reply }) => reply(
   messages.enter,

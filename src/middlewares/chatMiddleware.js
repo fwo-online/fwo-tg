@@ -1,5 +1,5 @@
-const chatMiddleware = ({ chat }, next) => {
-  if (chat && chat.type !== 'private') {
+const chatMiddleware = (ctx, next) => {
+  if (ctx.chat && ctx.chat.type !== 'private') {
     return;
   }
   return next();
