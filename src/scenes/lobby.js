@@ -5,7 +5,6 @@ const { getIcon } = require('../arena/MiscService');
 const lobby = new BaseScene('lobby');
 
 lobby.enter(async ({ replyWithMarkdown, replyWithPhoto, session }) => {
-  console.log(Object.keys(session));
   const {
     nickname, prof, lvl, exp, nextLvlExp,
   } = session.character;

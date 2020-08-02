@@ -163,7 +163,7 @@ battleScene.command('debug', async ({ reply, session }) => {
   // @todo сделать отдельный признак в базе
   const ADMINS = [358539547, 187930249, 279139400, 371685623];
   const { tgId } = session.character;
-  if (!(ADMINS.indexOf(tgId) + 1)) {
+  if (ADMINS.indexOf(tgId) !== -1) {
     // test players: id 5e05ee58bdf83c6a5ff3f8dd, tgId: 123456789
     await loginHelper.getChar('123456789');
     const searchObject = { charId: '5e05ee58bdf83c6a5ff3f8dd', psr: 1000, startTime: Date.now() };
