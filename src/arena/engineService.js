@@ -5,8 +5,11 @@ const testGame = require('./testGame');
 const actions = require('./actions');
 const magics = require('./magics');
 const skills = require('./skills');
+const postHeal = require('./magics/postHeal');
 
-const ACTIONS = { ...actions, ...magics, ...skills };
+const ACTIONS = {
+  ...actions, ...magics, ...skills, postHeal,
+};
 const STAGES = config.stages;
 
 /**

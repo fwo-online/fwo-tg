@@ -3,6 +3,7 @@ const arena = require('./index');
 const floatNumber = require('./floatNumber');
 const db = require('../helpers/dataBase');
 const { lvlRatio } = require('./config');
+const SetService = require('./SetService');
 
 /**
  * @typedef {import ('../models/clan').Clan} Clan
@@ -272,6 +273,10 @@ class Char {
     return this.charObj.clan;
   }
 
+  get modifiers() {
+    return SetService.getModifiers(this.getPutonedItems());
+  }
+
   /** Суммарное количество опыта, требуемое для следующего уровня */
   get nextLvlExp() {
     return 2 ** (this.lvl - 1) * 1000 * lvlRatio;
@@ -338,8 +343,12 @@ class Char {
     return this.items.find((item) => item._id.equals(itemId));
   }
 
+  getPutonedItems() {
+    return this.items.filter((item) => item.putOn);
+  }
+
   getPutonedWeapon() {
-    return this.items.find((item) => /^ab?$/.test(item.wear) && item.putOn);
+    return this.getPutonedItems().find((item) => /^ab?$/.test(item.wear) && item.putOn);
   }
 
   isCanPutOned(item) {
