@@ -26,25 +26,28 @@ class SetService {
     const playerItemsByComb = _.groupBy(items, groupByComb);
     const itemsByComb = _.groupBy(arena.items, groupByComb);
 
-    const combEntries = Object.keys(playerItemsByComb);
-    const foundSet = combEntries.find((key) => {
+    const playerSetKeys = Object.keys(playerItemsByComb);
+    const [fullSets, smallSets] = _.partition(playerSetKeys, (key) => key.endsWith('f'));
+
+    const foundSmallSet = smallSets.find((key) => {
       if (itemsByComb[key]) {
         return playerItemsByComb[key].length === itemsByComb[key].length;
       }
       return false;
     });
 
-    if (foundSet) {
-      const fullSet = combEntries.find((key) => {
-        if (itemsByComb[key] && key.endsWith('f') && key.startsWith(foundSet)) {
+    if (foundSmallSet) {
+      const foundFullSet = fullSets.find((key) => {
+        if (itemsByComb[key] && key.startsWith(foundSmallSet)) {
           return playerItemsByComb[key].length === itemsByComb[key].length;
         }
         return false;
       });
-      if (fullSet) {
-        return sets[fullSet];
+
+      if (foundFullSet) {
+        return sets[foundFullSet];
       }
-      return sets[foundSet];
+      return sets[foundSmallSet];
     }
     return {};
   }
