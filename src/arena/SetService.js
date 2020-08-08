@@ -4,18 +4,27 @@ const arena = require('./index');
 const sets = {
   coma: {
     harks: {
-      wis: 3,
-      int: 3,
+      wis: (val) => val + 3,
+      int: (val) => val + 3,
     },
     hl: 10,
   },
   comaf: {
     harks: {
-      wis: 10,
-      int: 7,
+      wis: (val) => val + 10,
+      int: (val) => val + 7,
     },
     hl: 20,
   },
+  // ...
+  comd: {
+    resists: {
+      fire: (val) => val * 0.9,
+    },
+    modifiers: {
+      magicDmg: (val) => val * 0.85,
+    }
+  }
   // ...
 };
 const groupByComb = (item) => item.wcomb && item.wcomb.split(',')[0];

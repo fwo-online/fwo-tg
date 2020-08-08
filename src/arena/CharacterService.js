@@ -22,7 +22,7 @@ const SetService = require('./SetService');
  */
 /**
  * Возвращает список динамических характеристик
- * @param {Object} charObj инстанс Char
+ * @param {Char} charObj инстанс Char
  * @return {{patk: number, pdef: number, maxHp: number, maxMp: number,
  * maxEn: number,mga: number, mgp: number, hl: {min: *, max: *}, manaReg: *,
  * enReg: number, hit: boolean, maxTarget: number, lspell: number}}
@@ -273,7 +273,17 @@ class Char {
     return this.charObj.clan;
   }
 
+  get resists() {
+    const { resists } = this.comb;
+    return resists ? resists : {};
+  }
+
   get modifiers() {
+    const { modifiers } = this.comb;
+    return modifiers ? modifiers : {};
+  }
+
+  get comb() {
     return SetService.getModifiers(this.getPutonedItems());
   }
 
