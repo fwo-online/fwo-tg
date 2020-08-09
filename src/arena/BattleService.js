@@ -1,4 +1,4 @@
-const Markup = require('telegraf/markup');
+const { Markup } = require('telegraf');
 const arena = require('./index');
 const channelHelper = require('../helpers/channelHelper');
 
@@ -66,13 +66,13 @@ const getTargetKeyboard = (charId, game, action) => {
 const getProcentKeyboard = (action, target, proc) => Array
   .from(new Set([5, 10, 25, 50, 75, proc]))
   .filter((key) => key <= proc)
-  .map((key) => Markup.callbackButton(key, `${action}_${target}_${key}`));
+  .map((key) => Markup.callbackButton(key.toString(), `${action}_${target}_${key}`));
 
 /**
  * Сообщение для первого этапа
  * @param {string} charId
  * @param {Game} game
- * @returns {[string, CallbackButton[]]}
+ * @returns {[string, CallbackButton[][]]}
  */
 const orderMessage = (charId, game) => {
   const player = game.players[charId];
@@ -120,6 +120,7 @@ module.exports = {
    * @param {string} charId
    * @param {Game} game
    * @param {string} action
+   * @return {[string, CallbackButton[] | CallbackButton[][]]}
    */
   handleAction(charId, game, action) {
     if (action === 'repeat') return this.repeatOrder(charId, game);
