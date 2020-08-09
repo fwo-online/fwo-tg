@@ -4,25 +4,25 @@ const arena = require('./index');
 const sets = {
   coma: {
     harks: {
-      wis: (val) => val + 3,
-      int: (val) => val + 3,
+      wis: 3,
+      int: 3,
     },
     hl: 10,
   },
   comaf: {
     harks: {
-      wis: (val) => val + 10,
-      int: (val) => val + 7,
+      wis: 10,
+      int: 7,
     },
     hl: 20,
   },
   // ...
   comd: {
     resists: {
-      fire: (val) => val * 0.9,
+      fire: 0.9,
     },
     modifiers: {
-      magicDmg: (val) => val * 0.85,
+      magicDmg: 0.85,
     }
   }
   // ...

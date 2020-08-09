@@ -3,7 +3,7 @@ const arena = require('./index');
 const floatNumber = require('./floatNumber');
 const db = require('../helpers/dataBase');
 const { lvlRatio } = require('./config');
-const SetService = require('./SetService');
+const CollectionService = require('./CollectionService');
 
 /**
  * @typedef {import ('../models/clan').Clan} Clan
@@ -12,7 +12,14 @@ const SetService = require('./SetService');
  * @property {number} death
  * @property {number} games
  * @property {number} runs
+ * @typedef {Object} Harks
+ * @property {number} str
+ * @property {number} dex
+ * @property {number} int
+ * @property {number} wis
+ * @property {number} con
  */
+
 
 /**
  * Конструктор персонажа
@@ -25,7 +32,7 @@ const SetService = require('./SetService');
  * @param {Char} charObj инстанс Char
  * @return {{patk: number, pdef: number, maxHp: number, maxMp: number,
  * maxEn: number,mga: number, mgp: number, hl: {min: *, max: *}, manaReg: *,
- * enReg: number, hit: boolean, maxTarget: number, lspell: number}}
+ * enReg: number, hit: {min: number, max: number}, maxTarget: number, lspell: number}}
  * @todo проверить что функция используется при загрузке игрока в игру
  */
 // eslint-disable-next-line no-unused-vars
@@ -52,7 +59,7 @@ function getDynHarks(charObj) {
 
   /**
    * Функция расчета наносимого урона
-   * @return {Object} {min:xx,max:xx}
+   * @return {{min: number, max: number}} {min:xx,max:xx}
    */
   function calcHit() {
     const h = {};
@@ -114,7 +121,7 @@ class Char {
    * @property {Number} exp
    * @property {Statistics} statistics
    * @property {Object} inventory
-   * @property {Object} harks
+   * @property {Harks} harks
    * @property {Object.<string, number>} magics
    * @property {Number} free
    * @property {Number} bonus
@@ -274,17 +281,17 @@ class Char {
   }
 
   get resists() {
-    const { resists } = this.comb;
-    return resists ? resists : {};
+    const { resists } = this.collection;
+    return resists || {};
   }
 
   get modifiers() {
-    const { modifiers } = this.comb;
-    return modifiers ? modifiers : {};
+    const { modifiers } = this.collection;
+    return modifiers || {};
   }
 
-  get comb() {
-    return SetService.getModifiers(this.getPutonedItems());
+  get collection() {
+    return CollectionService.getModifiers(this.getPutonedItems());
   }
 
   /** Суммарное количество опыта, требуемое для следующего уровня */

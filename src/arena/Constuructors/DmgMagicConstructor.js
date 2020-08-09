@@ -39,7 +39,7 @@ class DmgMagic extends Magic {
           * (1 - 0.002 * target.stats.val('mgp'));
       const resist = target.resists[this.dmgType];
       if (resist) {
-        eff = resist(eff);
+        eff *= resist;
       }
     }
     this.status.hit = eff;
