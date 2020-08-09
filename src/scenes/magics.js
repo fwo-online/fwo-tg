@@ -1,9 +1,9 @@
-const Scene = require('telegraf/scenes/base');
-const Markup = require('telegraf/markup');
+const { BaseScene, Markup } = require('telegraf');
 const MagicService = require('../arena/MagicService');
 const arena = require('../arena');
 
-const magicScene = new Scene('magics');
+/** @type {import('./stage').BaseGameScene} */
+const magicScene = new BaseScene('magics');
 
 const getMagicButtons = (character) => Object
   .keys(character.magics)

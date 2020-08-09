@@ -2,16 +2,15 @@
  * Сцена боя
  * Описание:
  */
-const Scene = require('telegraf/scenes/base');
-const Markup = require('telegraf/markup');
+const { BaseScene, Markup } = require('telegraf');
 const channelHelper = require('../helpers/channelHelper');
 const arena = require('../arena');
 const { getIcon } = require('../arena/MiscService');
 const loginHelper = require('../helpers/loginHelper');
 const BattleService = require('../arena/BattleService');
 
-
-const battleScene = new Scene('battleScene');
+/** @type {import('./stage').BaseGameScene} */
+const battleScene = new BaseScene('battleScene');
 
 const penaltyTime = 180000;
 
@@ -162,9 +161,9 @@ battleScene.leave(({ session }) => {
  */
 battleScene.command('debug', async ({ reply, session }) => {
   // @todo сделать отдельный признак в базе
-  const ADMINS = ['358539547', '187930249', '279139400', '371685623'];
+  const ADMINS = [358539547, 187930249, 279139400, 371685623];
   const { tgId } = session.character;
-  if (!(ADMINS.indexOf(tgId) + 1)) {
+  if (ADMINS.indexOf(tgId) !== -1) {
     // test players: id 5e05ee58bdf83c6a5ff3f8dd, tgId: 123456789
     await loginHelper.getChar('123456789');
     const searchObject = { charId: '5e05ee58bdf83c6a5ff3f8dd', psr: 1000, startTime: Date.now() };

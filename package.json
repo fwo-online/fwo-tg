@@ -31,18 +31,17 @@
   "dependencies": {
     "lodash": "^4.17.15",
     "mongoose": "^5.7.3",
-    "telegraf": "^3.32.0"
+    "telegraf": "^3.38.0"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.151",
-    "@types/mongoose": "^5.7.14",
+    "@types/mongoose": "^5.7.32",
+    "@types/jest": "^26.0.4",
     "eslint": "^6.5.1",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2",
     "jest": "^26.0.1",
-    "jsdoc": "^3.6.3",
-    "nodemon": "^1.19.4",
-    "socks5-https-client": "^1.2.1",
+    "nodemon": "^2.0.4",
     "telegraf-test": "^1.2.1"
   }
 }

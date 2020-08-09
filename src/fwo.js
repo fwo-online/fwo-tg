@@ -1,5 +1,4 @@
-const session = require('telegraf/session');
-const Telegraf = require('telegraf');
+const { Telegraf, session } = require('telegraf');
 const db = require('./models');
 const stage = require('./scenes/stage.js');
 const channelHelper = require('./helpers/channelHelper');
@@ -14,6 +13,7 @@ const magics = require('./arena/magics');
 const skills = require('./arena/skills');
 const actions = require('./arena/actions');
 
+/** @type {import('telegraf').Telegraf<import ('telegraf').Context & import ('telegraf/typings/stage').SceneContextMessageUpdate>} */
 const bot = new Telegraf(process.env.BOT_TOKEN);
 // DB connection
 db.connection.on('open', async () => {

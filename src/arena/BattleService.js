@@ -9,7 +9,7 @@ const channelHelper = require('../helpers/channelHelper');
  * 3. Выбор силы ({attack}_{target}_{proc})
  * @typedef {import ('./PlayerService')} Player
  * @typedef {import ('./GameService')} Game
- * @typedef {import('telegraf').CallbackButton} CallbackButton
+ * @typedef {import('telegraf/typings/markup').CallbackButton} CallbackButton
  */
 
 const getActions = () => ({ ...arena.actions, ...arena.skills, ...arena.magics });

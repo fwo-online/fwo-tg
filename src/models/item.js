@@ -169,10 +169,10 @@ item.statics = {
       if (Object.entries(items).length) {
         arena.items = _.keyBy(items, 'code');
       } else {
-        let shopArr = fs.readFileSync('shop.json', 'utf8');
+        const shop = fs.readFileSync('shop.json', 'utf8');
         const createdItems = [];
 
-        shopArr = JSON.parse(shopArr);
+        const shopArr = JSON.parse(shop);
         // eslint-disable-next-line no-console
         console.log('File Loaded: ', Date.now() - timer1, 'ms');
 

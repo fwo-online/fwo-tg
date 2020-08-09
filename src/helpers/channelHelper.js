@@ -1,4 +1,4 @@
-const Markup = require('telegraf/markup');
+const { Markup } = require('telegraf');
 const BattleKeyboard = require('./BattleKeyboard');
 const arena = require('../arena');
 const { getIcon } = require('../arena/MiscService');
@@ -11,8 +11,11 @@ const { getIcon } = require('../arena/MiscService');
 const chatId = process.env.BOT_CHATID || -1001483444452;
 
 module.exports = {
+  /** @type {import('telegraf').Telegraf<import ('telegraf').Context & import ('telegraf/typings/stage').SceneContextMessageUpdate>} */
   bot: null,
+  /** @type {Object<string, number>} */
   messages: {},
+  /** @type {Object<string, number>} */
   statusMessages: {},
   /**
    * @param {string} data - текст отправляемого сообщения
@@ -123,7 +126,7 @@ module.exports = {
       const { exp, gold } = player.stats.collect;
       const character = arena.characters[player.id];
       const {
-        autoreg, nickname, lvl, prof, clan
+        autoreg, nickname, lvl, prof, clan,
       } = arena.characters[player.id];
 
       const message = await this.bot.telegram.sendMessage(

@@ -1,5 +1,5 @@
-const protecredMiddleware = ({ session }, next) => {
-  if (!session.character) {
+const protecredMiddleware = (ctx, next) => {
+  if (!ctx.session.character) {
     return;
   }
   next();

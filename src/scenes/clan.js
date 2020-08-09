@@ -1,10 +1,10 @@
-const Scene = require('telegraf/scenes/base');
-const Markup = require('telegraf/markup');
+const { BaseScene, Markup } = require('telegraf');
 const ClanService = require('../arena/ClanService');
 const arena = require('../arena');
 const { getIcon } = require('../arena/MiscService');
 
-const clanScene = new Scene('clan');
+/** @type {import('./stage').BaseGameScene} */
+const clanScene = new BaseScene('clan');
 
 const startScreen = {
   message: (clan) => `*${clan.name}*`,
