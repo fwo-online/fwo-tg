@@ -137,6 +137,7 @@ module.exports = {
         'acid',
         'lighting',
         'frost',
+        'eff',
       ];
         // eslint-disable-next-line no-bitwise
       const isFound = ~minmaxarr.indexOf(key);

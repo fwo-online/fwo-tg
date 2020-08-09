@@ -1,5 +1,7 @@
 const { BaseScene, Markup } = require('telegraf');
 const { getIcon } = require('../arena/MiscService');
+// const arena = require('../arena');
+// const { itemAtrParser } = require('../arena/ItemService');
 
 /** @type {import('./stage').BaseGameScene} */
 const lobby = new BaseScene('lobby');

@@ -1,20 +1,22 @@
-const { Telegraf, session } = require('telegraf');
-const db = require('./models');
-const stage = require('./scenes/stage.js');
-const channelHelper = require('./helpers/channelHelper');
-const Item = require('./models/item');
-const authMiddleware = require('./middlewares/authMiddleware');
-const protectedMiddleware = require('./middlewares/protectedMiddleware');
-const chatMiddleware = require('./middlewares/chatMiddleware');
-const restartMiddleware = require('./middlewares/restartMiddleware');
-const MM = require('./arena/MatchMakingService');
-const arena = require('./arena');
-const magics = require('./arena/magics');
-const skills = require('./arena/skills');
-const actions = require('./arena/actions');
+import { Telegraf, session, Context } from'telegraf';
+import db from'./models';
+import stage, { SceneContextMessageUpdate } from'./scenes/stage.js';
+import channelHelper from'./helpers/channelHelper';
+import Item from'./models/item';
+import authMiddleware from'./middlewares/authMiddleware';
+import protectedMiddleware from'./middlewares/protectedMiddleware';
+import chatMiddleware from'./middlewares/chatMiddleware';
+import restartMiddleware from'./middlewares/restartMiddleware';
+import MM from'./arena/MatchMakingService';
+import arena from'./arena';
+import magics from'./arena/magics';
+import skills from'./arena/skills';
+import actions from'./arena/actions';
 
-/** @type {import('telegraf').Telegraf<import ('telegraf').Context & import ('telegraf/typings/stage').SceneContextMessageUpdate>} */
-const bot = new Telegraf(process.env.BOT_TOKEN);
+export interface Bot extends Context, SceneContextMessageUpdate {
+}
+
+const bot = new Telegraf<Bot>(process.env.BOT_TOKEN ?? '');
 // DB connection
 db.connection.on('open', async () => {
   // eslint-disable-next-line no-console

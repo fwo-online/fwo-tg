@@ -10,7 +10,7 @@
     "start": "node src/fwo.js",
     "dev": "nodemon src/fwo.js",
     "prod": "node src/fwo.js",
-    "tsc": "tsc -b"
+    "tsc": "tsc -w"
   },
   "repository": {
     "type": "git",
@@ -30,18 +30,20 @@
   "homepage": "https://github.com/catHD/fwo-tg#readme",
   "dependencies": {
     "lodash": "^4.17.15",
-    "mongoose": "^5.7.3",
-    "telegraf": "^3.38.0"
+    "mongoose": "^5.9.28",
+    "telegraf": "^3.38.0",
+    "typescript": "^3.9.7"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.151",
-    "@types/mongoose": "^5.7.32",
     "@types/jest": "^26.0.4",
+    "@types/lodash": "^4.14.151",
+    "@types/mongoose": "^5.7.36",
     "eslint": "^6.5.1",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2",
     "jest": "^26.0.1",
     "nodemon": "^2.0.4",
-    "telegraf-test": "^1.2.1"
+    "telegraf-test": "^1.2.1",
+    "ts-node": "^8.10.2"
   }
 }
