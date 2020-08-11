@@ -364,15 +364,10 @@ class Char {
   async putOnItem(itemId) {
     const charItem = this.getItem(itemId);
     const item = arena.items[charItem.code];
-    const {
-      str, dex, wis, int, con,
-    } = this.harks;
 
     if (item.hark) {
-      const {
-        s, d, w, i, c,
-      } = JSON.parse(item.hark);
-      if (s > str || d > dex || w > wis || i > int || c > con) {
+      const hasRequeredHarks = _.every(item.hark, (val, hark) => val < this.harks[hark]);
+      if (!hasRequeredHarks) {
         return false;
       }
     }
