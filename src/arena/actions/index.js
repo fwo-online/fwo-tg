@@ -1,4 +1,3 @@
-
 const attack = require('./attack');
 const protect = require('./protect');
 const regen = require('./regen');

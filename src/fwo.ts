@@ -1,17 +1,17 @@
-import { Telegraf, session, Context } from'telegraf';
-import db from'./models';
-import stage, { SceneContextMessageUpdate } from'./scenes/stage.js';
-import channelHelper from'./helpers/channelHelper';
-import Item from'./models/item';
-import authMiddleware from'./middlewares/authMiddleware';
-import protectedMiddleware from'./middlewares/protectedMiddleware';
-import chatMiddleware from'./middlewares/chatMiddleware';
-import restartMiddleware from'./middlewares/restartMiddleware';
-import MM from'./arena/MatchMakingService';
-import arena from'./arena';
-import magics from'./arena/magics';
-import skills from'./arena/skills';
-import actions from'./arena/actions';
+import { Telegraf, session, Context } from 'telegraf';
+import db from './models';
+import stage, { SceneContextMessageUpdate } from './scenes/stage';
+import channelHelper from './helpers/channelHelper';
+import Item from './models/item';
+import authMiddleware from './middlewares/authMiddleware';
+import protectedMiddleware from './middlewares/protectedMiddleware';
+import chatMiddleware from './middlewares/chatMiddleware';
+import restartMiddleware from './middlewares/restartMiddleware';
+import MM from './arena/MatchMakingService';
+import arena from './arena';
+import magics from './arena/magics';
+import skills from './arena/skills';
+import actions from './arena/actions';
 
 export interface Bot extends Context, SceneContextMessageUpdate {
 }

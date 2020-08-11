@@ -113,7 +113,6 @@ const percentMessage = (charId, game, action, targetId) => {
   return [message, keyboard];
 };
 
-
 module.exports = {
   /**
    * Обработка выбранного действия (первый этап)

@@ -1,4 +1,3 @@
-
 const _ = require('lodash');
 const { BaseScene, Markup } = require('telegraf');
 const arena = require('../arena');

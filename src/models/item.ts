@@ -1,10 +1,8 @@
-
 import _ from 'lodash';
 import fs from 'fs';
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import arena from '../arena';
 import config from '../arena/config';
-import ItemService from '../arena/ItemService';
 
 export type MinMax = {
   min: number;
@@ -83,7 +81,7 @@ const parseAttr = (p: string) => {
   } catch {
     return null;
   }
-}
+};
 
 /**
  * Item
@@ -268,11 +266,11 @@ item.statics = {
         // eslint-disable-next-line no-console
         console.log('File Loaded: ', Date.now() - timer1, 'ms');
 
-          _.forEach(shopArr, async (o, code) => {
-            o.code = code;
-            createdItems.push(mongoose.model<ItemDocument, ItemModel>('Item').create(o));
-            return true;
-          });
+        _.forEach(shopArr, async (o, code) => {
+          o.code = code;
+          createdItems.push(mongoose.model<ItemDocument, ItemModel>('Item').create(o));
+          return true;
+        });
 
         await Promise.all(createdItems);
 
@@ -291,8 +289,8 @@ item.statics = {
    * @param itemCode код вещи
    */
   getHarks(itemCode: string) {
-    const item = arena.items[itemCode];
-    return _.pick(_.omitBy(item, _.isNull), config.parseAttr);
+    const omittedItem = arena.items[itemCode];
+    return _.pick(_.omitBy(omittedItem, _.isNull), config.parseAttr);
   },
 };
 
