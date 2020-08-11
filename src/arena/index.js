@@ -6,7 +6,7 @@ module.exports = {
   /** @type Object<string, import ('./GameService')> */
   games: {},
   /**
-   * @type Object<string, import ('../models/item')>
+   * @type Record<import ('../models/item').Item['code'], import ('../models/item').Item>
    * @description Item from DB
    */
   items: {},

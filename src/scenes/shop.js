@@ -29,7 +29,7 @@ const getTypeButtons = () => storeKeys.map((type) => [Markup.callbackButton(
 const getItems = (wear, prof) => {
   const items = _.filter(arena.items, { wear });
   const buttons = items
-    .filter((item) => item.race.includes(prof) && !item.onlymake && item.hide === '0')
+    .filter((item) => item.race.includes(prof) && !item.onlymake && !item.hide)
     .sort((a, b) => b.price - a.price)
     .map((item) => [Markup.callbackButton(
       `${item.name} (💰 ${item.price})`,

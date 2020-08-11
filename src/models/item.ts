@@ -23,7 +23,7 @@ export interface Item {
   name: string;
   atc: number | null;
   prt: number | null;
-  price: number | null;
+  price: number;
   wear: string;
   race: string;
   weight: number | null;
@@ -67,11 +67,22 @@ export interface Item {
   frost: MinMax | null;
 }
 
-interface ItemDocument extends Item, Document {
+export interface ItemDocument extends Item, Document {
 }
 
-interface ItemModel extends Model<ItemDocument> {
+export interface ItemModel extends Model<ItemDocument> {
   load(): void;
+}
+
+const parseAttr = (p: string) => {
+  try {
+    if (p !== '') {
+      return JSON.parse(p);
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -116,22 +127,12 @@ const item = new Schema({
     type: String,
   },
   hark: {
-    type: {
-      str: Number,
-      dex: Number,
-      wis: Number,
-      int: Number,
-      con: Number,
-    },
+    type: String,
+    get: parseAttr,
   },
   plushark: {
-    type: {
-      str: Number,
-      dex: Number,
-      wis: Number,
-      int: Number,
-      con: Number,
-    },
+    type: String,
+    get: parseAttr,
   },
   mga: {
     type: Number,
@@ -188,25 +189,30 @@ const item = new Schema({
     type: Number,
   },
   hp_drain: {
-    type: { min: Number, max: Number },
+    type: String,
+    get: parseAttr,
   },
   mp_drain: {
-    type: { min: Number, max: Number },
+    type: String,
+    get: parseAttr,
   },
   en_drain: {
-    type: { min: Number, max: Number },
+    type: String,
+    get: parseAttr,
   },
   type: {
     type: String,
   },
   hit: {
-    type: { min: Number, max: Number },
+    type: String,
+    get: parseAttr,
   },
   edinahp: {
     type: Number,
   },
   eff: {
-    type: { min: Number, max: Number },
+    type: String,
+    get: parseAttr,
   },
   hide: {
     type: Boolean,
@@ -221,18 +227,25 @@ const item = new Schema({
     type: String,
   },
   fire: {
-    type: { min: Number, max: Number },
+    type: String,
+    get: parseAttr,
   },
   acid: {
-    type: { min: Number, max: Number },
+    type: String,
+    get: parseAttr,
   },
   lighting: {
-    type: { min: Number, max: Number },
+    type: String,
+    get: parseAttr,
   },
   frost: {
-    type: { min: Number, max: Number },
+    type: String,
+    get: parseAttr,
   },
-}, { typePojoToMixed: false });
+}, {
+  typePojoToMixed: false,
+  versionKey: false,
+});
 
 item.statics = {
   /**
@@ -243,21 +256,21 @@ item.statics = {
   async load() {
     const timer1 = Date.now();
     try {
-      const items = await this.model('Item').find({});
+      const items = await mongoose.model<ItemDocument, ItemModel>('Item').find({});
       if (Object.entries(items).length) {
         // console.log(items)
         arena.items = _.keyBy(items, 'code');
       } else {
         const shop = fs.readFileSync('shop.json', 'utf8');
-        const createdItems = [];
+        const createdItems: Promise<ItemDocument>[] = [];
 
-        const shopArr = JSON.parse(shop);
+        const shopArr: Record<string, ItemDocument> = JSON.parse(shop);
         // eslint-disable-next-line no-console
         console.log('File Loaded: ', Date.now() - timer1, 'ms');
 
           _.forEach(shopArr, async (o, code) => {
             o.code = code;
-            createdItems.push(this.model('Item').create(o));
+            createdItems.push(mongoose.model<ItemDocument, ItemModel>('Item').create(o));
             return true;
           });
 
@@ -275,12 +288,11 @@ item.statics = {
   },
   /**
    * @description Собираем все харки со шмотки
-   * @param {String} itemCode код вещи
-   * @return {Object}
+   * @param itemCode код вещи
    */
-  getHarks(itemCode) {
-    const itemObj = ItemService.itemAtrParser(arena.items[itemCode]);
-    return _.pick(itemObj, config.parseAttr);
+  getHarks(itemCode: string) {
+    const item = arena.items[itemCode];
+    return _.pick(item, config.parseAttr);
   },
 };
 
