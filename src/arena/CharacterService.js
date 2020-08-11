@@ -21,7 +21,7 @@ const { lvlRatio } = require('./config');
  */
 /**
  * Возвращает список динамических характеристик
- * @param {Object} charObj инстанс Char
+ * @param {Char} charObj инстанс Char
  * @return {{patk: number, pdef: number, maxHp: number, maxMp: number,
  * maxEn: number,mga: number, mgp: number, hl: {min: *, max: *}, manaReg: *,
  * enReg: number, hit: boolean, maxTarget: number, lspell: number}}
@@ -113,7 +113,7 @@ class Char {
    * @property {Number} exp
    * @property {Statistics} statistics
    * @property {Object} inventory
-   * @property {Object} harks
+   * @property {import('../models/item').Hark} harks
    * @property {Object.<string, number>} magics
    * @property {Number} free
    * @property {Number} bonus
@@ -232,11 +232,11 @@ class Char {
       return this.charObj.harks;
     }
     return {
-      str: +this.charObj.harks.str + +this.plushark.s,
-      dex: +this.charObj.harks.dex + +this.plushark.d,
-      int: +this.charObj.harks.int + +this.plushark.i,
-      wis: +this.charObj.harks.wis + +this.plushark.w,
-      con: +this.charObj.harks.con + +this.plushark.c,
+      str: this.charObj.harks.str + +this.plushark.str,
+      dex: this.charObj.harks.dex + +this.plushark.dex,
+      int: this.charObj.harks.int + +this.plushark.int,
+      wis: this.charObj.harks.wis + +this.plushark.wis,
+      con: this.charObj.harks.con + +this.plushark.con,
     };
   }
 

@@ -292,7 +292,7 @@ item.statics = {
    */
   getHarks(itemCode: string) {
     const item = arena.items[itemCode];
-    return _.pick(item, config.parseAttr);
+    return _.pick(_.omitBy(item, _.isNull), config.parseAttr);
   },
 };
 
