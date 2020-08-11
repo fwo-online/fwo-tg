@@ -198,7 +198,6 @@ class PhysConstructor {
     }
   }
 
-
   /**
    * @param {String} msg строка остановки атаки (причина)
    */
