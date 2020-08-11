@@ -23,8 +23,8 @@ const sets = {
     },
     modifiers: {
       magicDmg: 0.85,
-    }
-  }
+    },
+  },
   // ...
 };
 const groupByComb = (item) => item.wcomb && item.wcomb.split(',')[0];

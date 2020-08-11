@@ -30,7 +30,7 @@ class DmgMagic extends Magic {
    * @return {number}
    */
   effectVal() {
-    const {initiator, target} = this.params;
+    const { initiator, target } = this.params;
     const initiatorMagicLvl = initiator.magics[this.name];
     let eff = MiscService.dice(this.effect[initiatorMagicLvl - 1]) * initiator.proc;
     if (this.dmgType !== 'clear') {

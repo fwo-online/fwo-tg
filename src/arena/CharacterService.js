@@ -20,7 +20,6 @@ const CollectionService = require('./CollectionService');
  * @property {number} con
  */
 
-
 /**
  * Конструктор персонажа
  * @todo сюда нужны будет get/set функции для intreface части
@@ -30,9 +29,6 @@ const CollectionService = require('./CollectionService');
 /**
  * Возвращает список динамических характеристик
  * @param {Char} charObj инстанс Char
- * @return {{patk: number, pdef: number, maxHp: number, maxMp: number,
- * maxEn: number,mga: number, mgp: number, hl: {min: *, max: *}, manaReg: *,
- * enReg: number, hit: {min: number, max: number}, maxTarget: number, lspell: number}}
  * @todo проверить что функция используется при загрузке игрока в игру
  */
 // eslint-disable-next-line no-unused-vars
