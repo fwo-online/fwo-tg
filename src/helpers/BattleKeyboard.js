@@ -1,4 +1,4 @@
-const Markup = require('telegraf/markup');
+const { Markup } = require('telegraf');
 const Skill = require('../arena/Constuructors/SkillConstructor');
 const Magic = require('../arena/Constuructors/MagicConstructor');
 const arena = require('../arena');

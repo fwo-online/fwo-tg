@@ -23,9 +23,9 @@ class StatsService {
 
   /**
    * Функция изменения атрибута
-   * @param {String} type тип изменения up/down
-   * @param {String} atr изменяемый атрибут atk/hark.str/def
-   * @param {Number} val значение на которое будет изменено
+   * @param {'up' | 'down' | 'set'} type тип изменения up/down
+   * @param {string} atr изменяемый атрибут atk/hark.str/def
+   * @param {number} val значение на которое будет изменено
    * изменение может происходить только внутри inRound
    */
   mode(type, atr, val) {

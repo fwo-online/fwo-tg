@@ -121,7 +121,7 @@ class Char {
    * @property {Number} exp
    * @property {Statistics} statistics
    * @property {Object} inventory
-   * @property {Harks} harks
+   * @property {import('../models/item').Hark} harks
    * @property {Object.<string, number>} magics
    * @property {Number} free
    * @property {Number} bonus
@@ -240,11 +240,11 @@ class Char {
       return this.charObj.harks;
     }
     return {
-      str: +this.charObj.harks.str + +this.plushark.s,
-      dex: +this.charObj.harks.dex + +this.plushark.d,
-      int: +this.charObj.harks.int + +this.plushark.i,
-      wis: +this.charObj.harks.wis + +this.plushark.w,
-      con: +this.charObj.harks.con + +this.plushark.c,
+      str: this.charObj.harks.str + +this.plushark.str,
+      dex: this.charObj.harks.dex + +this.plushark.dex,
+      int: this.charObj.harks.int + +this.plushark.int,
+      wis: this.charObj.harks.wis + +this.plushark.wis,
+      con: this.charObj.harks.con + +this.plushark.con,
     };
   }
 
@@ -390,15 +390,10 @@ class Char {
   async putOnItem(itemId) {
     const charItem = this.getItem(itemId);
     const item = arena.items[charItem.code];
-    const {
-      str, dex, wis, int, con,
-    } = this.harks;
 
     if (item.hark) {
-      const {
-        s, d, w, i, c,
-      } = JSON.parse(item.hark);
-      if (s > str || d > dex || w > wis || i > int || c > con) {
+      const hasRequeredHarks = _.every(item.hark, (val, hark) => val < this.harks[hark]);
+      if (!hasRequeredHarks) {
         return false;
       }
     }

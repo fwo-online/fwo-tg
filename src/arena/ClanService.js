@@ -1,4 +1,4 @@
-const Markup = require('telegraf/markup');
+const { Markup } = require('telegraf');
 const arena = require('./index');
 const channerHelper = require('../helpers/channelHelper');
 const CharacterService = require('./CharacterService');

@@ -52,7 +52,7 @@ inventoryScene.action(/itemInfo(?=_)/,
         itemAction,
         Markup.callbackButton('Продать', `sell_${itemId}`),
         Markup.callbackButton('Назад', 'back'),
-      ]).resize().extra(),
+      ]).resize().extra({ parse_mode: 'Markdown' }),
     );
   });
 
