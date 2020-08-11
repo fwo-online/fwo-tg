@@ -3,7 +3,7 @@ const arena = require('./index');
 const floatNumber = require('./floatNumber');
 const db = require('../helpers/dataBase');
 const { lvlRatio } = require('./config');
-const CollectionService = require('./CollectionService');
+const { default: CollectionService } = require('./CollectionService');
 
 /**
  * @typedef {import ('../models/clan').Clan} Clan
@@ -12,12 +12,6 @@ const CollectionService = require('./CollectionService');
  * @property {number} death
  * @property {number} games
  * @property {number} runs
- * @typedef {Object} Harks
- * @property {number} str
- * @property {number} dex
- * @property {number} int
- * @property {number} wis
- * @property {number} con
  */
 
 /**

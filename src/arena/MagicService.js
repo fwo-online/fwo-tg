@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const MiscService = require('./MiscService');
-const config = require('./config');
+const { default: config } = require('./config');
 const arena = require('./index');
 
 /**

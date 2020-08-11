@@ -4,7 +4,36 @@
  * @description Конфигурационный файл для арены
  *
  */
-module.exports = {
+
+const parseAttr = [
+  'atc',
+  'prt',
+  'plushark',
+  'mga',
+  'mgp',
+  'hl',
+  'r_fire',
+  'r_acid',
+  'r_lighting',
+  'r_frost',
+  'r_physical',
+  'add_hp',
+  'add_mp',
+  'add_en',
+  'hp_drain',
+  'mp_drain',
+  'en_drain',
+  'hit',
+  'fire',
+  'acid',
+  'lighting',
+  'frost',
+  'weight',
+] as const;
+
+export type ParseAttr = typeof parseAttr[number];
+
+export default {
   Name: 'Arena-Beta',
   noReg: false, // Запрещена регистрация
   // -------------------------- Регистрация ------------
@@ -110,31 +139,5 @@ module.exports = {
     'spirit_unity', 'secondLife'], /**
    * Суммируемые атрибуты для вещей
    */
-  parseAttr: [
-    'atc',
-    'prt',
-    'plushark',
-    'mga',
-    'mgp',
-    'hl',
-    'r_fire',
-    'r_acid',
-    'r_lighting',
-    'r_frost',
-    'r_physical',
-    'add_hp',
-    'add_mp',
-    'add_en',
-    'static_reg_hp',
-    'static_reg_en',
-    'static_reg_mp',
-    'hp_drain',
-    'mp_drain',
-    'en_drain',
-    'hit',
-    'fire',
-    'acid',
-    'lighting',
-    'frost',
-    'weight'],
+  parseAttr,
 };

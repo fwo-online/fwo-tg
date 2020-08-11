@@ -161,6 +161,7 @@ class Magic {
     const initiatorMagicLvl = initiator.magics[this.name];
     const imc = initiator.modifiers.castChance || 0; // мод шанс прохождения
     const acm = initiator.modifiers.magics[this.name] || 0; // мод action'а
+    const targetChanceModifier = target.modifiers.magics[this.name] || 0;
     let chance = this.chance[initiatorMagicLvl - 1];
     if (typeof chance === 'string') {
       chance = MiscService.dice(chance);
@@ -171,6 +172,10 @@ class Magic {
       // если модификатор шанса для этого скила есть,
       // то плюсуем его к шансу
       result += +acm.chance;
+    }
+
+    if (targetChanceModifier && targetChanceModifier.defChance) {
+      result -= +targetChanceModifier.defChance;
     }
     // тут нужно взять получившийся шанс и проверить ещё отношение mga цели
     // @todo magics cast chance

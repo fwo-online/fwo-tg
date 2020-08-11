@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
 const arena = require('../arena');
-const config = require('../arena/config');
+const { default: config } = require('../arena/config');
 
 const { Schema } = mongoose;
 

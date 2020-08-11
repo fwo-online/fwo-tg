@@ -1,4 +1,4 @@
-const config = require('./config');
+const { default: config } = require('./config');
 const CharacterService = require('./CharacterService');
 const GameService = require('./GameService');
 const testGame = require('./testGame');

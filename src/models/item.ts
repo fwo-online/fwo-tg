@@ -2,7 +2,7 @@ import _ from 'lodash';
 import fs from 'fs';
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import arena from '../arena';
-import config from '../arena/config';
+import config, { ParseAttr } from '../arena/config';
 
 export type MinMax = {
   min: number;
@@ -68,8 +68,11 @@ export interface Item {
 export interface ItemDocument extends Item, Document {
 }
 
+export type ParseAttrItem = Pick<Item, ParseAttr>
+
 export interface ItemModel extends Model<ItemDocument> {
   load(): void;
+  getHarks(code: string): Partial<ParseAttrItem>;
 }
 
 const parseAttr = (p: string) => {
@@ -288,9 +291,9 @@ item.statics = {
    * @description Собираем все харки со шмотки
    * @param itemCode код вещи
    */
-  getHarks(itemCode: string) {
-    const omittedItem = arena.items[itemCode];
-    return _.pick(_.omitBy(omittedItem, _.isNull), config.parseAttr);
+  getHarks(itemCode: string): Partial<ParseAttrItem> {
+    const omittedItem = _.omitBy<Item>(arena.items[itemCode], _.isNull);
+    return _.pick(omittedItem, config.parseAttr);
   },
 };
 

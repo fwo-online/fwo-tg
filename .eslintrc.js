@@ -22,5 +22,6 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 0,
     'import/extensions': [0, 'never'],
     'import/no-named-as-default': 0,
+    'lines-between-class-members': 0,
   },
 };
