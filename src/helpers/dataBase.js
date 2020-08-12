@@ -3,7 +3,7 @@
  */
 const CharModel = require('../models/character');
 const GameModel = require('../models/games');
-const InventoryModel = require('../models/inventory');
+const { default: InventoryModel } = require('../models/inventory');
 const ClanModel = require('../models/clan');
 
 function dbErr(e) {

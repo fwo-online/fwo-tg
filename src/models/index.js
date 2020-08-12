@@ -4,7 +4,7 @@ const CharModel = require('./character');
 // eslint-disable-next-line no-unused-vars
 const GameModel = require('./games');
 // eslint-disable-next-line no-unused-vars
-const InventoryModel = require('./inventory');
+const { default: InventoryModel } = require('./inventory');
 
 mongoose.connect(
   'mongodb://duser:IeK7ijooh6aizie7@ds011903.mlab.com:11903/fwo',

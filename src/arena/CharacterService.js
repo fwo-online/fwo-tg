@@ -122,7 +122,7 @@ class Char {
    * @property {Number} gold
    * @property {Number} exp
    * @property {Statistics} statistics
-   * @property {Object} inventory
+   * @property {import('../models/inventory').InventoryDocument[]} inventory
    * @property {import('../models/item').Hark} harks
    * @property {Object.<string, number>} magics
    * @property {Number} free
