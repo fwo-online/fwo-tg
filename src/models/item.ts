@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import fs from 'fs';
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 import arena from '../arena';
 import config, { ParseAttr } from '../arena/config';
 
@@ -245,7 +245,7 @@ const item = new Schema({
 
 const ItemSchema = mongoose.model<ItemDocument>('Item', item);
 
-export class ItemModel extends ItemSchema {
+export default class ItemModel extends ItemSchema {
   static async load(): Promise<void> {
     const timer1 = Date.now();
     try {
@@ -289,5 +289,3 @@ export class ItemModel extends ItemSchema {
     return _.pick(omittedItem, config.parseAttr);
   }
 }
-
-export default ItemModel;

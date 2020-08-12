@@ -1,8 +1,10 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import _ from 'lodash';
 import arena from '../arena';
-import ItemModel from './item';
-import config from '../arena/config';
+import ItemModel, { ParseAttrItem } from './item';
+import config, { ParseAttr } from '../arena/config';
+import CharModel, { CharDocument } from './character';
+import safe from '../utils/safe';
 
 /**
  * getDefaultItem
@@ -48,7 +50,7 @@ const inventory = new Schema({
 
 const InventorySchema = mongoose.model<InventoryDocument>('Inventory', inventory);
 
-class InventoryModel extends InventorySchema {
+export default class InventoryModel extends InventorySchema {
   /**
    * fullHarks
    *
@@ -57,38 +59,32 @@ class InventoryModel extends InventorySchema {
    * @param charId Идентификатор чара чей inventory нужно пропарсить
    * @todo нужна фунция которая выбирает коды всех одеты вещей в инвентаре
    * а затем суммирует все полученные данны в единый обьект.
-   *
-   * */
-  static async fullHarks(charId: string) {
-    try {
-      // берем из базы все надетые вещи
-      const allItems = await this.getPutOned(charId);
-      // Складываем все характеристики от вещей в одоин общий обьект
-      return _.reduce(allItems, (ob, i) => {
-        // берем характеристики вещи
-        const f = ItemModel.getHarks(i.code);
-        // делаем слияние общего обьекта и обьекта вещи
-        return _.assignInWith(ob, f, (objValue, srcValue) => {
-          // Если в общем обтекте в этом ключе НЕ пустое значине
-          if (!_.isEmpty(objValue) || _.isNumber(objValue)) {
-            // и если этот ключ обьекта является Обьектом
-            if (_.isObject(objValue)) {
-              // то складываем два этих обьекта
-              _.assignInWith(objValue, srcValue, (o, s) => +o + +s);
-              return objValue;
-            }
-            // если ключ не является Обьектом, складываем значения
-            return +objValue + +srcValue;
+   */
+  @safe()
+  static async fullHarks(charId: string): Promise<ParseAttrItem> {
+    // берем из базы все надетые вещи
+    const allItems = await this.getPutOned(charId);
+    // Складываем все характеристики от вещей в одоин общий обьект
+    return _.reduce(allItems, (ob, i) => {
+      // берем характеристики вещи
+      const f = ItemModel.getHarks(i.code);
+      // делаем слияние общего обьекта и обьекта вещи
+      return _.assignInWith(ob, f, (objValue, srcValue) => {
+        // Если в общем обтекте в этом ключе НЕ пустое значине
+        if (!_.isEmpty(objValue) || _.isNumber(objValue)) {
+          // и если этот ключ обьекта является Обьектом
+          if (_.isObject(objValue)) {
+            // то складываем два этих обьекта
+            _.assignInWith(objValue, srcValue, (o, s) => +o + +s);
+            return objValue;
           }
-          // Если в общем обьекте пустое значение, то берем значение вещи
-          return srcValue;
-        });
-      }, {});
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log('fail in harks', e);
-      return false;
-    }
+          // если ключ не является Обьектом, складываем значения
+          return +objValue + +srcValue;
+        }
+        // Если в общем обьекте пустое значение, то берем значение вещи
+        return srcValue;
+      });
+    }, {} as ParseAttrItem);
   }
 
   /**
@@ -108,17 +104,12 @@ class InventoryModel extends InventorySchema {
    * @param itemCode Код итема который следует добавить
    * @return Обьект нового инветаря
    */
-  // eslint-disable-next-line consistent-return
+  @safe()
   static async addItem(charId: string, itemCode: string): Promise<InventoryDocument | void> {
-    const item = arena.items[itemCode];
-    try {
-      return await this.create({
-        owner: charId, code: itemCode, wear: item.wear, putOn: false, durable: 10,
-      });
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log('InventoryModel Error:', e);
-    }
+    const item = await this.create({
+      owner: charId, code: itemCode, wear: arena.items[itemCode].wear, putOn: false, durable: 10,
+    });
+    return item;
   }
   /**
    * delItem
@@ -127,19 +118,13 @@ class InventoryModel extends InventorySchema {
    * @param itemId идентификатор итема в инвенторе
    * @return Массив нового инвентаря
    */
-
-  // eslint-disable-next-line consistent-return
+  @safe()
   static async delItem(charId: string, itemId: string): Promise<InventoryDocument[] | void> {
-    try {
-      const char = await mongoose.model('Character').findById(charId);
-      _.pull(char.inventory, itemId);
-      await char?.save();
-      await this.findByIdAndDelete(itemId);
-      return char.inventory;
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log('InventoryModel Error:', e);
-    }
+    const char = await CharModel.findById(charId);
+    _.pull(char?.inventory as unknown as string[], itemId);
+    await char?.save();
+    await this.findByIdAndDelete(itemId);
+    return char?.inventory;
   }
 
   /**
@@ -151,7 +136,7 @@ class InventoryModel extends InventorySchema {
    * @param charObj обьект созданного чара
    * @return Item созданный итем
    */
-  static async firstCreate(charObj: string): Promise<InventoryDocument | void> {
+  static async firstCreate(charObj: CharDocument): Promise<InventoryDocument | void> {
     const defItemCode = getDefaultItem(charObj.prof);
 
     const item = await this.addItem(charObj._id, defItemCode);
@@ -168,7 +153,7 @@ class InventoryModel extends InventorySchema {
    * @param itemId Идентификатор итема внутри инвенторя пользователя
    * @return Массив нового инвентаря
    */
-  static async putOnItem(charId: string, itemId: string) {
+  static async putOnItem(charId: string, itemId: string): Promise<void> {
     console.log('PUT ON ITEM', charId, itemId);
     return this.updateOne({
       owner: charId,
@@ -185,7 +170,7 @@ class InventoryModel extends InventorySchema {
    * @param itemId Идентификатор итема внутри инвенторя пользователя
    * @return ItemObject после изменения его в базе
    */
-  static async putOffItem(charId: string, itemId: string) {
+  static async putOffItem(charId: string, itemId: string): Promise<void> {
     return this.updateOne({
       owner: charId,
       _id: itemId,
@@ -234,5 +219,3 @@ class InventoryModel extends InventorySchema {
     return arena.items[itemCode].name;
   }
 }
-
-export default InventoryModel;
