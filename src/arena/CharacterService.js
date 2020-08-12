@@ -14,6 +14,18 @@ const { default: CollectionService } = require('./CollectionService');
  * @property {number} runs
  */
 
+const sum = (a, b) => {
+  if (_.isObject(b)) {
+    return _.assignWith(a, b, sum);
+  }
+  if (_.isEmpty(a)) {
+    return +b;
+  }
+  return +a + +b;
+};
+
+const assignWithSum = (a, b) => _.assignWith(a, b, sum);
+
 /**
  * Конструктор персонажа
  * @todo сюда нужны будет get/set функции для intreface части
@@ -132,7 +144,6 @@ class Char {
     this.mm = {};
     this.autoreg = false;
     this.modifiers = undefined;
-    this.statical = undefined;
   }
 
   get id() {
@@ -156,10 +167,9 @@ class Char {
     * был получен после возвращения updateHarkFromItems, имеет ключи типа:
     * atk/prt (models/item). Это не позволяет прозрачно проводить сложение.
     */
-    console.log(dynHarks);
     _.forEach(this.harksFromItems, (h, i) => {
       if (_.isObject(h)) {
-        console.log('object summ @@@', h, i);
+        assignWithSum(dynHarks[i], h);
       } else {
         if (!_.isUndefined(dynHarks[i])) dynHarks[i] += +h;
         if (i === 'atc') dynHarks.patk += +h;
@@ -167,7 +177,6 @@ class Char {
         if (i === 'add_hp') dynHarks.maxHp += +h;
         if (i === 'add_mp') dynHarks.maxMp += +h;
         if (i === 'add_en') dynHarks.maxEn += +h;
-        if (i === 'hl') dynHarks.hl.max += +h;
         if (!dynHarks[i]) dynHarks[i] = h;
       }
     });
@@ -228,13 +237,12 @@ class Char {
   // Нужно помнить, что this.harks это суммарный обьект, с уже полученными от
   // вещей характеристиками.
   get harks() {
-    const sum = (a, b) => +a + +b;
     const hark = { ...this.charObj.harks };
     if (!_.isEmpty(this.plushark)) {
-      _.assignWith(hark, this.plushark, sum);
+      assignWithSum(hark, this.plushark);
     }
     if (!_.isUndefined(this.collection.harks)) {
-      _.assignWith(hark, this.collection.harks, sum);
+      assignWithSum(hark, this.plushark);
     }
     return hark;
   }
@@ -282,6 +290,10 @@ class Char {
 
   get chance() {
     return this.collection.chance || {};
+  }
+
+  get statical() {
+    return this.collection.statical;
   }
 
   /** Суммарное количество опыта, требуемое для следующего уровня */
@@ -468,7 +480,10 @@ class Char {
     if (!this.harksFromItems || !Object.keys(this.harksFromItems).length) {
       this.harksFromItems = { hit: { min: 0, max: 0 } };
     }
-    console.log(this.harksFromItems);
+
+    if (this.statical) {
+      assignWithSum(this.harksFromItems, this.statical);
+    }
   }
 
   /**

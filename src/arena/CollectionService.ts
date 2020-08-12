@@ -1,16 +1,13 @@
 import _ from 'lodash';
 import arena from './index';
 import { Item, Hark } from '../models/item';
-import { Resists, Chance } from './PlayerService';
+import { Resists, Chance, Statical } from './PlayerService';
 
 interface WComb {
   harks?: Partial<Hark>;
   resists?: Partial<Resists>;
   chance?: Chance;
-  hl: number;
-  atk: number;
-  prt: number;
-  mgp: number;
+  statical?: Partial<Statical>;
 }
 
 const sets: Record<string, Partial<WComb>> = {
@@ -19,22 +16,30 @@ const sets: Record<string, Partial<WComb>> = {
       wis: 3,
       int: 3,
     },
-    hl: 10,
+    statical: {
+      hl: { min: 0, max: 10 },
+    },
   },
   comaf: {
     harks: {
       wis: 10,
       int: 7,
     },
-    hl: 20,
+    statical: {
+      hl: { min: 0, max: 20 },
+    },
   },
   comi: {
-    atk: 5,
-    prt: 5,
+    statical: {
+      atc: 5,
+      prt: 5,
+    },
   },
   comif: {
-    atk: 10,
-    prt: 10,
+    statical: {
+      atc: 10,
+      prt: 10,
+    },
   },
   comd: {
     resists: {
@@ -45,7 +50,6 @@ const sets: Record<string, Partial<WComb>> = {
     },
   },
   come: {
-    atk: 25,
     chance: {
       fail: {
         paralysis: 40,
@@ -53,9 +57,11 @@ const sets: Record<string, Partial<WComb>> = {
         glitch: 40,
       },
     },
+    statical: {
+      atc: 25,
+    },
   },
   comef: {
-    atk: 50,
     chance: {
       fail: {
         paralysis: 80,
@@ -63,23 +69,30 @@ const sets: Record<string, Partial<WComb>> = {
         glitch: 80,
       },
     },
+    statical: {
+      atc: 50,
+    },
   },
   comg: {
-    mgp: 50,
     resists: {
       fire: 0.95,
       frost: 0.95,
       acid: 0.95,
       lighting: 0.95,
     },
+    statical: {
+      mgp: 50,
+    },
   },
   comgf: {
-    mgp: 90,
     resists: {
       fire: 0.95,
       frost: 0.95,
       acid: 0.95,
       lighting: 0.95,
+    },
+    statical: {
+      mgp: 90,
     },
   },
   // ...

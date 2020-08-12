@@ -3,6 +3,7 @@ import { Clan } from '../models/clan';
 import StatsService from './StatsService';
 import FlagsConstructors from './Constuructors/FlagsConstructor';
 import arena from './index';
+import { MinMax } from '../models/item';
 
 export interface Resists {
   fire: number;
@@ -16,6 +17,22 @@ export interface Chance {
   cast?: Partial<Record<keyof typeof arena['magics'], number>>
 }
 
+export interface Statical {
+  atc: number;
+  prt: number;
+  add_hp: number;
+  add_mp: number;
+  add_en: number;
+  mga: number;
+  mgp: number;
+  hl: MinMax;
+  manaReg: number;
+  enReg: number;
+  hit: MinMax;
+  maxTarget: number;
+  lspell: number;
+  weight: number;
+}
 /**
  * PlayerService
  * @description Обьект игрока внутри боя ! Это не Character!

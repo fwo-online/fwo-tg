@@ -32,7 +32,7 @@ export interface Item {
   plushark: Hark | null;
   mga: number | null;
   mgp: number | null;
-  hl: number | null;
+  hl: MinMax | null;
   r_fire: number | null;
   r_acid: number | null;
   r_lighting: number | null;
@@ -143,6 +143,7 @@ const item = new Schema({
   },
   hl: {
     type: Number,
+    get: (hl) => ({ min: 0, max: hl }),
   },
   r_fire: {
     type: Number,
