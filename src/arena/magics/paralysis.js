@@ -6,7 +6,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
 
 /**
  * @typedef {import ('../GameService')} game
- * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../PlayerService').default} player
  */
 
 const paralysis = new CommonMagic({
@@ -30,10 +30,8 @@ const paralysis = new CommonMagic({
  * @param {player} target Обьект цели
  * @param {game} game Обьект игры (не обязателен)
  */
-// eslint-disable-next-line no-unused-vars
-paralysis.run = function run(initiator, target, game) {
+paralysis.run = function run(_initiator, target, _game) {
   // тут возможно нужен идентификатор кастера и рауд ?
-  // eslint-disable-next-line no-param-reassign
   target.flags.isParalysed = true;
 };
 module.exports = paralysis;

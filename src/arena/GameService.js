@@ -22,7 +22,7 @@ const { getIcon } = require('./MiscService');
 
 /**
  * Класс для обьекта игры
- * @typedef {import ('./PlayerService')} Player
+ * @typedef {import ('./PlayerService').default} Player
  */
 class Game {
   /**

@@ -2,7 +2,7 @@ const _ = require('lodash');
 const arena = require('./index');
 const floatNumber = require('./floatNumber');
 const db = require('../helpers/dataBase');
-const { lvlRatio } = require('./config');
+const { default: { lvlRatio } } = require('./config');
 const { default: CollectionService } = require('./CollectionService');
 
 /**
@@ -131,6 +131,8 @@ class Char {
     this.updateHarkFromItems();
     this.mm = {};
     this.autoreg = false;
+    this.modifiers = undefined;
+    this.statical = undefined;
   }
 
   get id() {
@@ -270,18 +272,17 @@ class Char {
     return this.charObj.clan;
   }
 
+  get collection() {
+    return CollectionService.getCollectionStats(this.getPutonedItems());
+  }
+
   get resists() {
     const { resists } = this.collection;
     return resists || {};
   }
 
-  get modifiers() {
-    const { modifiers } = this.collection;
-    return modifiers || {};
-  }
-
-  get collection() {
-    return CollectionService.getModifiers(this.getPutonedItems());
+  get chance() {
+    return this.collection.chance || {};
   }
 
   /** Суммарное количество опыта, требуемое для следующего уровня */

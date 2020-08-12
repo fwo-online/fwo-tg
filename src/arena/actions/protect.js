@@ -4,7 +4,7 @@
 
 /**
  * @typedef {import ('../GameService')} game
- * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../PlayerService').default} player
  */
 
 class Protect {
@@ -25,8 +25,8 @@ class Protect {
    * @param {player} target Обьект цели
    * @param {game} [game] Обьект игры
    */
-  // eslint-disable-next-line no-unused-vars, class-methods-use-this
-  cast(initiator, target, game) {
+  // eslint-disable-next-line class-methods-use-this
+  cast(initiator, target, _game) {
     const tect = initiator.stats.val('pdef') * initiator.proc;
     target.stats.mode('up', 'pdef', tect);
     target.flags.isProtected.push({

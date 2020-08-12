@@ -1,8 +1,7 @@
-// import Magic from './MagicConstructor';
-const Magic = require('./MagicConstructor');
+const { default: Magic } = require('./MagicConstructor');
 
 /**
- * @typedef {import ('./MagicConstructor').baseMag} baseMag
+ * @typedef {import ('./MagicConstructor').Magic} baseMag
  */
 
 /**

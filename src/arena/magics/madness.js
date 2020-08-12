@@ -6,7 +6,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
 
 /**
  * @typedef {import ('../GameService')} game
- * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../PlayerService').default} player
  */
 
 const madness = new CommonMagic({
@@ -30,9 +30,7 @@ const madness = new CommonMagic({
  * @param {player} target Обьект цели
  * @param {game} game Обьект игры (не обязателен)
  */
-// eslint-disable-next-line no-unused-vars
-madness.run = function run(initiator, target, game) {
-  // eslint-disable-next-line no-param-reassign
+madness.run = function run(_initiator, target, _game) {
   target.flags.isMad = true;
 };
 module.exports = madness;

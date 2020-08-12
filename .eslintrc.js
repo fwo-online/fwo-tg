@@ -23,5 +23,7 @@ module.exports = {
     'import/extensions': [0, 'never'],
     'import/no-named-as-default': 0,
     'lines-between-class-members': 0,
+    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
   },
 };

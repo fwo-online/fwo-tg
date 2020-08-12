@@ -1,8 +1,27 @@
-const MiscService = require('../MiscService');
-const floatNumber = require('../floatNumber');
+import Player from '../PlayerService';
+import Game from '../GameService';
+import MiscService from '../MiscService';
+import floatNumber from '../floatNumber';
+import arena from '../index';
+
+export interface BaseMagic {
+  name: keyof typeof arena['magics'];
+  displayName: string;
+  desc: string;
+  cost: number;
+  costType: 'mp' | 'en';
+  lvl: string;
+  orderType: 'all' | 'any' | 'enemy' | 'self';
+  aoeType: 'target' | 'team';
+  baseExp: number;
+  effect: string[];
+  magType: 'bad' | 'good';
+  chance: number[] | string[];
+  profList: string[];
+}
 
 /**
- * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../PlayerService').default} player
  * @typedef {import ('../GameService')} game
  * @typedef {Object} baseMag
  * @property {string} name Имя магии
@@ -23,14 +42,35 @@ const floatNumber = require('../floatNumber');
 /**
  * Конструктор магии
  */
-class Magic {
+export default abstract class Magic implements BaseMagic {
+  name: keyof typeof arena['magics'];
+  displayName: string;
+  desc: string;
+  cost: number;
+  costType: 'mp' | 'en';
+  lvl: string;
+  orderType: 'all' | 'any' | 'enemy' | 'self';
+  aoeType: 'target' | 'team';
+  baseExp: number;
+  effect: string[];
+  magType: 'bad' | 'good';
+  chance: string[] | number[];
+  profList: string[];
+  status: {
+    exp: number;
+  }
+  params!: {
+    initiator: Player;
+    target: Player;
+    game: Game;
+  }
   /**
    * Создание магии
    * @param {baseMag} magObj Обьект создаваемой магии
    */
-  constructor(magObj) {
+  constructor(magObj: Magic) {
     this.name = magObj.name;
-    this.desk = magObj.desc;
+    this.desc = magObj.desc;
     this.cost = magObj.cost;
     this.costType = magObj.costType;
     this.lvl = magObj.lvl;
@@ -40,18 +80,17 @@ class Magic {
     this.effect = magObj.effect;
     this.magType = magObj.magType;
     this.chance = magObj.chance;
-    this.costType = magObj.costType;
-    this.baseExp = magObj.baseExp;
     this.displayName = magObj.displayName;
     this.profList = magObj.profList;
-    this.status = {};
+    this.status = {
+      exp: 0,
+    };
   }
 
   /**
    * Длительная ли магия
-   * @return {boolean}
    */
-  get isLong() {
+  get isLong(): boolean {
     return this.constructor.name === 'LongMagic' || this.constructor.name
         === 'LongDmgMagic';
   }
@@ -60,11 +99,11 @@ class Magic {
   /**
    * Общий метод каста магии
    * в нём выполняются общие функции для всех магий
-   * @param {player} initiator Обьект кастера
-   * @param {player} target Обьект цели
-   * @param {game} [game] Обьект игры
+   * @param initiator Обьект кастера
+   * @param target Обьект цели
+   * @param game Обьект игры
    */
-  cast(initiator, target, game) {
+  cast(initiator: Player, target: Player, game: Game): void {
     this.params = {
       initiator, target, game,
     };
@@ -90,11 +129,10 @@ class Magic {
    * Функция списывающая с кастера требуемое
    * кол-во единиц за использование магии
    * Если кастеру хватило mp/en продолжаем,если нет, то возвращаем false
-   * @param {player} initiator Обьект кастера
+   * @param initiator Обьект кастера
    */
-  getCost(initiator) {
-    const costValue = parseFloat(initiator.stats.val(this.costType)
-        - parseFloat(this.cost));
+  getCost(initiator: Player): void {
+    const costValue = +initiator.stats.val(this.costType) - this.cost;
     console.log('MP:', costValue);
     if (costValue >= 0) {
       // eslint-disable-next-line no-param-reassign
@@ -108,19 +146,19 @@ class Magic {
    * Функция списывающая с кастера требуемое
    * кол-во единиц за использование магии
    * Если кастеру хватило mp/en продолжаем,если нет, то возвращаем false
-   * @param {player} initiator Обьект кастера
+   * @param initiator Обьект кастера
    */
-  getExp(initiator) {
+  getExp(initiator: Player): void {
     this.status.exp = Math.round(this.baseExp * initiator.proc);
     initiator.stats.mode('up', 'exp', this.baseExp);
   }
 
   /**
    * Функция расчитывай размер эффекат от магии по стандартным дайсам
-   * @param {player} [initiator=this.param.initiator] Обьект персонажа
-   * @return {number} dice число эффекта
+   * @return dice число эффекта
    */
-  effectVal(initiator = this.params.initiator) {
+  effectVal(): number {
+    const { initiator } = this.params;
     const initiatorMagicLvl = initiator.magics[this.name];
     const x = MiscService.dice(this.effect[initiatorMagicLvl - 1]) * initiator.proc;
     return floatNumber(x);
@@ -128,9 +166,9 @@ class Magic {
 
   /**
    * Проверка прошла ли магия
-   * @return {Boolean}
+   * @return
    */
-  checkChance() {
+  checkChance(): true | void {
     // Если шанс > random = true
     if (MiscService.rndm('1d100') <= this.getChance()) {
       // Магия прошла, проверяем что скажут боги
@@ -154,28 +192,28 @@ class Magic {
 
   /**
    * Возвращает шанс прохождения магии
-   * @return {number} result шанс прохождения
+   * @return result шанс прохождения
    */
-  getChance() {
+  getChance(): number {
     const { initiator, target } = this.params;
     const initiatorMagicLvl = initiator.magics[this.name];
-    const imc = initiator.modifiers.castChance || 0; // мод шанс прохождения
-    const acm = initiator.modifiers.magics[this.name] || 0; // мод action'а
-    const targetChanceModifier = target.modifiers.magics[this.name] || 0;
+    const imc = initiator.modifiers.castChance; // мод шанс прохождения
+    const castChance = initiator.castChance[this.name] ?? 0; // мод action'а
+    const failChance = target.failChance[this.name] ?? 0;
     let chance = this.chance[initiatorMagicLvl - 1];
     if (typeof chance === 'string') {
       chance = MiscService.dice(chance);
     }
     let result = chance + imc;
 
-    if (acm && acm.chance) {
+    if (castChance) {
       // если модификатор шанса для этого скила есть,
       // то плюсуем его к шансу
-      result += +acm.chance;
+      result += castChance;
     }
 
-    if (targetChanceModifier && targetChanceModifier.defChance) {
-      result -= +targetChanceModifier.defChance;
+    if (failChance) {
+      result -= failChance;
     }
     // тут нужно взять получившийся шанс и проверить ещё отношение mga цели
     // @todo magics cast chance
@@ -189,41 +227,32 @@ class Magic {
 
   /**
    * Функция воли богов
-   * @return {Boolean} true/false решение богов
+   * @return true/false решение богов
    */
   // eslint-disable-next-line class-methods-use-this
-  godCheck() {
+  godCheck(): boolean {
     return MiscService.rndm('1d100') <= 5;
   }
 
   /**
-   * @param {player} [initiator] обьект персонажа
-   * @param {player} [target] обьект персонажа
-   * @param {game} [game] Обьект игры для доступа ко всему
-   * @return {void}
+   * @param initiator обьект персонажа
+   * @param target обьект персонажа
+   * @param game Обьект игры для доступа ко всему
    */
-  // eslint-disable-next-line class-methods-use-this, no-unused-vars
-  run(initiator, target, game) {
-    return this;
-  }
+  abstract run(initiator: Player, target: Player, game: Game): void
 
   /**
-   * @param {player} [initiator] обьект персонажа
-   * @param {player} [target] обьект персонажа
-   * @param {game} [game] Обьект игры для доступа ко всему
-   * @return {void}
+   * @param initiator обьект персонажа
+   * @param target обьект персонажа
+   * @param game Обьект игры для доступа ко всему
    */
-  // eslint-disable-next-line class-methods-use-this, no-unused-vars
-  longRun(initiator, target, game) {
-    return this;
-  }
+  abstract longRun(initiator: Player, target: Player, game: Game): void
 
   /**
    * Проверка на запудревание мозгов
    * @todo нужно вынести этот метод в orders или к Players Obj
    */
-  // eslint-disable-next-line no-unused-vars,class-methods-use-this
-  isblurredMind() {
+  isblurredMind(): void {
     const { initiator, game } = this.params;
     if (initiator.flags.isGlitched) {
       this.params.target = game.playerArr.randomAlive;
@@ -232,13 +261,13 @@ class Magic {
 
   /**
    * Проверка на запудревание мозгов
-   * @param {player} initiator обьект персонажаы
-   * @param {player} target обьект цели магии
-   * @param {game} game Обьект игры для доступа ко всему
+   * @param initiator обьект персонажаы
+   * @param _target обьект цели магии
+   * @param _game Обьект игры для доступа ко всему
    * @todo нужно вынести этот метод в orders
    */
   // eslint-disable-next-line no-unused-vars
-  checkPreAffects(initiator, target, game) {
+  checkPreAffects(initiator: Player, _target: Player, _game: Game): void {
     const { isSilenced } = initiator.flags;
     if (isSilenced && isSilenced.some((e) => e.initiator !== this.name)) {
       // если кастер находится под безмолвием/бунтом богов
@@ -251,7 +280,7 @@ class Magic {
    * @todo после того как был нанесен урон любым dmg action, следует произовдить
    * общую проверку
    */
-  checkTargetIsDead() {
+  checkTargetIsDead(): void {
     const { initiator, target } = this.params;
     const hpNow = target.stats.val('hp');
     if (hpNow <= 0 && !target.getKiller()) {
@@ -260,10 +289,10 @@ class Magic {
   }
 
   /**
-   * @param {string} msg строка остановки магии (причина)
+   * @param msg строка остановки магии (причина)
    * @return обьект остановки магии
    */
-  breaks(msg) {
+  breaks(msg: string) {
     return {
       actionType: 'magic',
       message: msg,
@@ -275,11 +304,11 @@ class Magic {
 
   /**
    * Магия прошла удачно
-   * @param {player} initiator обьект персонажаы
-   * @param {player} target обьект цели магии
+   * @param initiator обьект персонажаы
+   * @param target обьект цели магии
    * @todo тут нужен вывод требуемых параметров
    */
-  next(initiator, target) {
+  next(initiator: Player, target: Player): void {
     const bl = this.params.game.battleLog;
     bl.success({
       exp: this.status.exp,
@@ -287,10 +316,8 @@ class Magic {
       actionType: 'magic',
       target: target.nick,
       initiator: initiator.nick,
-      effect: this.status.effect,
+      effect: this.effect,
     });
     this.params = null;
   }
 }
-
-module.exports = Magic;

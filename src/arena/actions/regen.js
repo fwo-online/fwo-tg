@@ -4,7 +4,7 @@
 
 /**
  * @typedef {import ('../GameService')} game
- * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../PlayerService').default} player
  */
 
 class Regen {
@@ -26,8 +26,8 @@ class Regen {
    * @param {player} target Обьект цели
    * @param {game} game Обьект игры (не обязателен)
    */
-  // eslint-disable-next-line no-unused-vars, class-methods-use-this
-  cast(initiator, target, game) {
+  // eslint-disable-next-line class-methods-use-this
+  cast(initiator, _target, _game) {
     if ((initiator.prof === 'l') || (initiator.prof === 'w')) {
       const val = initiator.stats.val('enReg') * initiator.proc; // размер восстан
       initiator.stats.mode('up', 'en', val);

@@ -1,23 +1,12 @@
 import _ from 'lodash';
 import arena from './index';
 import { Item, Hark } from '../models/item';
+import { Resists, Chance } from './PlayerService';
 
 interface WComb {
   harks: Partial<Hark>;
-  resists: {
-    fire?: number;
-    acid?: number;
-    lighting?: number;
-    frost?: number;
-  };
-  modifiers: {
-    magic?: {
-      [T in keyof Partial<typeof arena['magics']>]: {
-        chance?: number;
-        defChance?: number;
-      }
-    }
-  };
+  resists: Partial<Resists>;
+  chance: Chance;
   hl: number;
   atk: number;
   prt: number;
@@ -57,33 +46,21 @@ const sets: Record<string, Partial<WComb>> = {
   },
   come: {
     atk: 25,
-    modifiers: {
-      magic: {
-        paralysis: {
-          defChance: 40,
-        },
-        madness: {
-          defChance: 40,
-        },
-        glitch: {
-          defChance: 40,
-        },
+    chance: {
+      fail: {
+        paralysis: 40,
+        madness: 40,
+        glitch: 40,
       },
     },
   },
   comef: {
     atk: 50,
-    modifiers: {
-      magic: {
-        paralysis: {
-          defChance: 80,
-        },
-        madness: {
-          defChance: 80,
-        },
-        glitch: {
-          defChance: 80,
-        },
+    chance: {
+      fail: {
+        paralysis: 80,
+        madness: 80,
+        glitch: 80,
       },
     },
   },
@@ -117,7 +94,7 @@ const groupByComb = (item: Item) => {
 };
 
 class SetService {
-  static getModifiers(inventory): Partial<WComb> {
+  static getCollectionStats(inventory): Partial<WComb> {
     const items: Item[] = inventory.map(({ code }) => arena.items[code]);
     const playerItemsByComb = _.groupBy(items, groupByComb);
     const itemsByComb = _.groupBy(arena.items, groupByComb);

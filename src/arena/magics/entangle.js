@@ -4,7 +4,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
  * Основное описание магии общее требовани есть в конструкторе
  */
 
-/** @typedef {import ('../PlayerService')} player */
+/** @typedef {import ('../PlayerService').default} player */
 const entangle = new CommonMagic({
   name: 'entangle',
   displayName: 'Опутывание',

@@ -6,7 +6,7 @@ const DmgMagic = require('../Constuructors/DmgMagicConstructor');
 
 /**
  * @typedef {import ('../GameService')} game
- * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../PlayerService').default} player
  */
 
 const poisonBreath = new DmgMagic({

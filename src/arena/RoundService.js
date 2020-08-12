@@ -162,9 +162,8 @@ class RoundConstructor extends ee {
    * @param {Number} [timeout=config.roundTimeout] число в мс, через которое следует выполнить
    */
   goNext(newState, timeout = config.roundTimeout) {
-    const self = this;
     const x = setTimeout(() => {
-      self.nextState(newState);
+      this.nextState(newState);
       clearTimeout(x);
     }, timeout);
   }

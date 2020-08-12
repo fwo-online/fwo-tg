@@ -292,7 +292,7 @@ item.statics = {
    * @param itemCode код вещи
    */
   getHarks(itemCode: string): Partial<ParseAttrItem> {
-    const omittedItem = _.omitBy<Item>(arena.items[itemCode], _.isNull);
+    const omittedItem = _.omitBy(arena.items[itemCode], _.isNull);
     return _.pick(omittedItem, config.parseAttr);
   },
 };

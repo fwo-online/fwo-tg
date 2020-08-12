@@ -1,6 +1,21 @@
-const StatsService = require('./StatsService');
-const FlagsConstructors = require('./Constuructors/FlagsConstructor');
-const arena = require('./index');
+import Char from './CharacterService';
+import { Clan } from '../models/clan';
+import StatsService from './StatsService';
+import FlagsConstructors from './Constuructors/FlagsConstructor';
+import arena from './index';
+
+export interface Resists {
+  fire: number;
+  frost: number;
+  acid: number;
+  lighting: number;
+}
+
+export interface Chance {
+  fail?: Partial<Record<keyof typeof arena['magics'], number>>
+  cast?: Partial<Record<keyof typeof arena['magics'], number>>
+}
+
 /**
  * PlayerService
  * @description Обьект игрока внутри боя ! Это не Character!
@@ -13,12 +28,30 @@ const arena = require('./index');
 /**
  * Обьект игрока со всеми плюшками
  */
-class Player {
-  /**
-   * Конструктор обьекта игрока внутри игры
-   * @param {import ('./CharacterService')} params
-   */
-  constructor(params) {
+export default class Player {
+  nick: string;
+  id: string;
+  tgId: number;
+  prof: string;
+  lvl: number;
+  clan: Clan;
+  stats: StatsService;
+  flags: FlagsConstructors;
+  modifiers: {
+    magics: {
+      chance: Chance;
+    }
+    castChance: number;
+  };
+  resists: Partial<Resists>;
+  skills: { [x: string]: number; };
+  magics: { [x: string]: number; };
+  statical: any;
+  alive: boolean;
+  proc: number;
+  weapon: any;
+
+  constructor(params: Char) {
     this.nick = params.nickname;
     this.id = params.id;
     this.tgId = params.tgId;
@@ -28,7 +61,15 @@ class Player {
     this.stats = new StatsService({ ...params.def, ...params.harks });
     this.flags = new FlagsConstructors();
     // @todo закладка для вычисляемых статов
-    this.modifiers = { magics: {}, castChance: 0, ...params.modifiers }; // Обьект
+    this.modifiers = {
+      magics: {
+        chance: {
+          ...params.chance,
+        },
+      },
+      castChance: 0,
+      ...params.modifiers,
+    }; // Обьект
     // модификаторов
     this.resists = params.resists || {}; // Обьект резистов
     this.skills = params.skills || {}; // Обькт доступных скилов
@@ -42,11 +83,19 @@ class Player {
 
   /**
    * Загрузка чара в память
-   * @param {String} charId идентификатор чара
+   * @param charId идентификатор чара
    */
-  static loading(charId) {
+  static loading(charId: string): Player {
     // @todo fast hack
     return new Player(arena.characters[charId]);
+  }
+
+  get failChance(): Chance['fail'] {
+    return this.modifiers.magics.chance.fail ?? {};
+  }
+
+  get castChance(): Chance['cast'] {
+    return this.modifiers.magics.chance.cast ?? {};
   }
 
   /**
@@ -71,19 +120,16 @@ class Player {
 
   /**
   * Возвращает убийцу игрока если он записан
-  * @return {Player['id']}
   */
-  getKiller() {
+  getKiller(): string {
     return this.flags.isDead;
   }
 
   /**
   * Устанавливает убийцу игрока
-  * @param {Player} записывает id убийцы
+  * @param player записывает id убийцы
   */
-  setKiller(player) {
+  setKiller(player: Player): void {
     this.flags.isDead = player.id;
   }
 }
-
-module.exports = Player;

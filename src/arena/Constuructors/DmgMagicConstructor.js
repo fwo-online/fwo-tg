@@ -1,11 +1,11 @@
-const Magic = require('./MagicConstructor');
+const { default: Magic } = require('./MagicConstructor');
 const floatNumber = require('../floatNumber');
 const MiscService = require('../MiscService');
 
 /**
- * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../PlayerService').default} player
  * @typedef {import ('../GameService')} game
- * @typedef {import ('./MagicConstructor').baseMag} baseMag
+ * @typedef {import ('./MagicConstructor').Magic} baseMag
  * @typedef {Object} dmgMag
  * @property {string} dmgType
  */
