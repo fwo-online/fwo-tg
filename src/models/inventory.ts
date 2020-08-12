@@ -46,8 +46,9 @@ const inventory = new Schema({
   },
 });
 
-class InventoryModel {
-  static model = mongoose.model<InventoryDocument>('Inventory', inventory);
+const InventorySchema = mongoose.model<InventoryDocument>('Inventory', inventory);
+
+class InventoryModel extends InventorySchema {
   /**
    * fullHarks
    *
@@ -95,7 +96,7 @@ class InventoryModel {
    * @param charId
    */
   static async getPutOned(charId: string): Promise<InventoryDocument[]> {
-    const invObj = await this.model.find({ owner: charId });
+    const invObj = await this.find({ owner: charId });
     return _.filter(invObj, { putOn: true });
   }
 
@@ -111,7 +112,7 @@ class InventoryModel {
   static async addItem(charId: string, itemCode: string): Promise<InventoryDocument | void> {
     const item = arena.items[itemCode];
     try {
-      return await this.model.create({
+      return await this.create({
         owner: charId, code: itemCode, wear: item.wear, putOn: false, durable: 10,
       });
     } catch (e) {
@@ -133,7 +134,7 @@ class InventoryModel {
       const char = await mongoose.model('Character').findById(charId);
       _.pull(char.inventory, itemId);
       await char?.save();
-      await this.model.findByIdAndDelete(itemId);
+      await this.findByIdAndDelete(itemId);
       return char.inventory;
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -169,7 +170,7 @@ class InventoryModel {
    */
   static async putOnItem(charId: string, itemId: string) {
     console.log('PUT ON ITEM', charId, itemId);
-    return this.model.updateOne({
+    return this.updateOne({
       owner: charId,
       _id: itemId,
     }, {
@@ -185,7 +186,7 @@ class InventoryModel {
    * @return ItemObject после изменения его в базе
    */
   static async putOffItem(charId: string, itemId: string) {
-    return this.model.updateOne({
+    return this.updateOne({
       owner: charId,
       _id: itemId,
     }, {
@@ -198,7 +199,7 @@ class InventoryModel {
    * @param charId
    */
   static async getItem(itemId: string, charId: string): Promise<InventoryDocument | null> {
-    return this.model.findOne({
+    return this.findOne({
       owner: charId,
     }, {
       _id: itemId,
@@ -210,7 +211,7 @@ class InventoryModel {
    * @param itemId идентификатор предмета
    */
   static removeItem(itemId: string, charId: string) {
-    return this.model.remove({
+    return this.remove({
       owner: charId,
       _id: itemId,
     });
@@ -222,7 +223,7 @@ class InventoryModel {
    * @return массив обтектов персонажа
    */
   static async getItems(charId: string): Promise<InventoryDocument[]> {
-    return this.model.find({ owner: charId });
+    return this.find({ owner: charId });
   }
   /**
    * Функция возращает имя вещи

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import fs from 'fs';
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 import arena from '../arena';
 import config, { ParseAttr } from '../arena/config';
 
@@ -243,13 +243,13 @@ const item = new Schema({
   versionKey: false,
 });
 
-export class ItemModel {
-  static model = mongoose.model<ItemDocument>('Item', item)
+const ItemSchema = mongoose.model<ItemDocument>('Item', item);
 
+export class ItemModel extends ItemSchema {
   static async load(): Promise<void> {
     const timer1 = Date.now();
     try {
-      const items = await this.model.find({});
+      const items = await this.find({});
       if (Object.entries(items).length) {
         // console.log(items)
         arena.items = _.keyBy(items, 'code');
@@ -263,7 +263,7 @@ export class ItemModel {
 
         _.forEach(shopArr, async (o, code) => {
           o.code = code;
-          createdItems.push(ItemModel.model.create(o));
+          createdItems.push(ItemModel.create(o));
           return true;
         });
 
