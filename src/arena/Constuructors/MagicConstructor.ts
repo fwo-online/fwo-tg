@@ -198,8 +198,8 @@ export default abstract class Magic implements BaseMagic {
     const { initiator, target } = this.params;
     const initiatorMagicLvl = initiator.magics[this.name];
     const imc = initiator.modifiers.castChance; // мод шанс прохождения
-    const castChance = initiator.castChance[this.name] ?? 0; // мод action'а
-    const failChance = target.failChance[this.name] ?? 0;
+    const castChance = initiator.castChance?.[this.name] ?? 0; // мод action'а
+    const failChance = target.failChance?.[this.name] ?? 0;
     let chance = this.chance[initiatorMagicLvl - 1];
     if (typeof chance === 'string') {
       chance = MiscService.dice(chance);

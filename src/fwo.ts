@@ -1,6 +1,6 @@
-import { Telegraf, session, Context } from 'telegraf';
+import { Telegraf, session } from 'telegraf';
 import db from './models';
-import stage, { SceneContextMessageUpdate } from './scenes/stage';
+import stage, { BaseGameContext } from './scenes/stage';
 import channelHelper from './helpers/channelHelper';
 import Item from './models/item';
 import authMiddleware from './middlewares/authMiddleware';
@@ -13,13 +13,9 @@ import magics from './arena/magics';
 import skills from './arena/skills';
 import actions from './arena/actions';
 
-export interface Bot extends Context, SceneContextMessageUpdate {
-}
-
-const bot = new Telegraf<Bot>(process.env.BOT_TOKEN ?? '');
+const bot = new Telegraf<BaseGameContext>(process.env.BOT_TOKEN ?? '');
 // DB connection
 db.connection.on('open', async () => {
-  // eslint-disable-next-line no-console
   console.log('db online');
   await Item.load();
   bot.launch();

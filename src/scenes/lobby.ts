@@ -1,8 +1,8 @@
-const { BaseScene, Markup } = require('telegraf');
-const { getIcon } = require('../arena/MiscService');
+import { BaseScene, Markup } from 'telegraf';
+import { getIcon } from '../arena/MiscService';
+import type { BaseGameScene } from './stage';
 
-/** @type {import('./stage').BaseGameScene} */
-const lobby = new BaseScene('lobby');
+const lobby: BaseGameScene = new BaseScene('lobby');
 
 lobby.enter(async ({ replyWithMarkdown, replyWithPhoto, session }) => {
   const {
@@ -12,9 +12,9 @@ lobby.enter(async ({ replyWithMarkdown, replyWithPhoto, session }) => {
   try {
     await replyWithPhoto({ source: './assets/market.jpg' });
   } catch (e) {
-    // eslint-disable-next-line no-console
-    console.log(e);
+    console.error(e);
   }
+
   await replyWithMarkdown(
     `*Лобби*
 Так-так, значит ты *${nickname}* ${getIcon(prof)}${lvl} (📖${exp}/${nextLvlExp})`,
@@ -47,4 +47,4 @@ lobby.hears('🏰 Клан', ({ scene }) => {
   scene.enter('clan');
 });
 
-module.exports = lobby;
+export default lobby;
