@@ -228,16 +228,15 @@ class Char {
   // Нужно помнить, что this.harks это суммарный обьект, с уже полученными от
   // вещей характеристиками.
   get harks() {
-    if (_.isEmpty(this.plushark)) {
-      return this.charObj.harks;
+    const sum = (a, b) => +a + +b;
+    const hark = { ...this.charObj.harks };
+    if (!_.isEmpty(this.plushark)) {
+      _.assignWith(hark, this.plushark, sum);
     }
-    return {
-      str: this.charObj.harks.str + +this.plushark.str,
-      dex: this.charObj.harks.dex + +this.plushark.dex,
-      int: this.charObj.harks.int + +this.plushark.int,
-      wis: this.charObj.harks.wis + +this.plushark.wis,
-      con: this.charObj.harks.con + +this.plushark.con,
-    };
+    if (!_.isUndefined(this.collection.harks)) {
+      _.assignWith(hark, this.collection.harks, sum);
+    }
+    return hark;
   }
 
   get magics() {

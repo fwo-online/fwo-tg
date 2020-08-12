@@ -4,9 +4,9 @@ import { Item, Hark } from '../models/item';
 import { Resists, Chance } from './PlayerService';
 
 interface WComb {
-  harks: Partial<Hark>;
-  resists: Partial<Resists>;
-  chance: Chance;
+  harks?: Partial<Hark>;
+  resists?: Partial<Resists>;
+  chance?: Chance;
   hl: number;
   atk: number;
   prt: number;
@@ -93,7 +93,7 @@ const groupByComb = (item: Item) => {
   return undefined;
 };
 
-class SetService {
+class CollectionService {
   static getCollectionStats(inventory): Partial<WComb> {
     const items: Item[] = inventory.map(({ code }) => arena.items[code]);
     const playerItemsByComb = _.groupBy(items, groupByComb);
@@ -126,4 +126,4 @@ class SetService {
   }
 }
 
-export default SetService;
+export default CollectionService;
