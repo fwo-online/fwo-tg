@@ -148,6 +148,9 @@ module.exports = {
     async addItem(charId, itemCode) {
       return InventoryModel.addItem(charId, itemCode);
     },
+    getCollection(inventory) {
+      return InventoryModel.getCollection(inventory);
+    },
   },
   clan: {
     /**

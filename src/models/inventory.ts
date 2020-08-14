@@ -1,10 +1,12 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import _ from 'lodash';
 import arena from '../arena';
-import ItemModel, { ParseAttrItem } from './item';
-import config, { ParseAttr } from '../arena/config';
+import ItemModel, { ParseAttrItem, Hark, Item } from './item';
+import config from '../arena/config';
 import CharModel, { CharDocument } from './character';
 import safe from '../utils/safe';
+import { Resists, Chance, Statical } from '../arena/PlayerService';
+import { collections } from '../data/collection';
 
 /**
  * getDefaultItem
@@ -27,6 +29,14 @@ export interface Inventory {
 }
 
 export interface InventoryDocument extends Inventory, Document {}
+
+export interface Collection {
+  name: string;
+  harks?: Partial<Hark>;
+  resists?: Partial<Resists>;
+  chance?: Chance;
+  statical?: Partial<Statical>;
+}
 
 /**
  * Inventory
@@ -207,9 +217,38 @@ export default class InventoryModel extends InventorySchema {
    * @param charId
    * @return массив обтектов персонажа
    */
+  @safe()
   static async getItems(charId: string): Promise<InventoryDocument[]> {
     return this.find({ owner: charId });
   }
+
+  static getCollection(charInventory: Inventory[]): Collection | undefined {
+    const items: Item[] = charInventory.map(({ code }) => arena.items[code]);
+    const playerCollection = _.groupBy(items, (item) => item.wcomb.split(',')[0]);
+    const itemsCollection = _.groupBy(arena.items, (item) => item.wcomb.split(',')[0]);
+
+    const playerCollectionsKeys: string[] = _.uniq(Object.keys(playerCollection));
+    const [fullSets, smallSets] = _.partition(playerCollectionsKeys, (key) => key.endsWith('f'));
+
+    const findCollection = (key: string): boolean => {
+      if (itemsCollection[key]) {
+        return playerCollection[key].length === itemsCollection[key].length;
+      }
+      return false;
+    };
+
+    const foundFullCollection = fullSets.find(findCollection);
+    if (foundFullCollection) {
+      return collections[foundFullCollection];
+    }
+
+    const foundSmallCollection = smallSets.find(findCollection);
+    if (foundSmallCollection) {
+      return collections[foundSmallCollection];
+    }
+    return undefined;
+  }
+
   /**
    * Функция возращает имя вещи
    * @param itemCode

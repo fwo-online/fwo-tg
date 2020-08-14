@@ -10,6 +10,7 @@ export interface Resists {
   frost: number;
   acid: number;
   lighting: number;
+  physical: number;
 }
 
 export interface Chance {

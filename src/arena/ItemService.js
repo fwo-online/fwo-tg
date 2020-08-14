@@ -115,6 +115,7 @@ const getAdditionalDamage = (item) => {
 };
 
 module.exports = {
+  attrNames,
   /**
    * @param {String} nick
    * @param {Number} itemCode ID итема

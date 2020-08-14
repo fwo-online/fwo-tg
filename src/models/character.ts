@@ -3,11 +3,13 @@ import type { Hark } from './item';
 import type { InventoryDocument } from './inventory';
 import type { ClanDocument } from './clan';
 
-export interface CharDB {
+export type Prof = 'm' | 'w' | 'p' | 'l';
+
+export interface Char {
   tgId: number;
   nickname: string;
   birthday: Date;
-  prof: 'm' | 'w' | 'p' | 'l';
+  prof: Prof;
   exp: number;
   harks: Hark;
   statistics: {
@@ -41,7 +43,7 @@ export interface CharDB {
   deleted: boolean;
 }
 
-export interface CharDocument extends CharDB, Document {}
+export interface CharDocument extends Char, Document {}
 
 const character = new Schema({
   tgId: {

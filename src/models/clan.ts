@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import type { CharDocument } from './character';
 
-export interface ClanDB {
+export interface Clan {
   name: string;
   logo: {
     moderated: boolean;
@@ -15,7 +15,7 @@ export interface ClanDB {
   requests: CharDocument[];
 }
 
-export interface ClanDocument extends ClanDB, Document {}
+export interface ClanDocument extends Clan, Document {}
 
 const clan = new Schema({
   name: { type: String, required: true, unique: true },

@@ -1,17 +1,18 @@
-const _ = require('lodash');
-const { BaseScene, Markup } = require('telegraf');
-const arena = require('../arena');
-const ItemService = require('../arena/ItemService');
-const { stores } = require('../arena/MiscService');
+import _ from 'lodash';
+import { BaseScene, Markup } from 'telegraf';
+import arena from '../arena';
+import ItemService, { attrNames } from '../arena/ItemService';
+import { stores } from '../arena/MiscService';
+import { collections } from '../data/collection';
+import type { BaseGameContext } from './stage';
+import type { Prof } from '../models/character';
 
-/** @type {import('./stage').BaseGameScene} */
-const shopScene = new BaseScene('shopScene');
+const shopScene = new BaseScene<BaseGameContext>('shopScene');
 
 const storeKeys = Object.keys(stores);
 
 /**
  * Возвращет кнопки по всем типам вещей из stores
- * @returns {array}
  */
 const getTypeButtons = () => storeKeys.map((type) => [Markup.callbackButton(
   `${stores[type]}`,
@@ -21,11 +22,10 @@ const getTypeButtons = () => storeKeys.map((type) => [Markup.callbackButton(
 /**
  * Возвращает предметы по выбранному типу.
  * Не показывает вещи, которые не подходят персонажу по профессии
- * @param {string} wear - тип вещей (куда надевается)
- * @param {string} prof - профессия персонажа
- * @returns {array}
+ * @param wear - тип вещей (куда надевается)
+ * @param prof - профессия персонажа
  */
-const getItems = (wear, prof) => {
+const getItems = (wear: string, prof: Prof) => {
   const items = _.filter(arena.items, { wear });
   const buttons = items
     .filter((item) => item.race.includes(prof) && !item.onlymake && !item.hide)
@@ -51,7 +51,10 @@ shopScene.enter(async ({ reply, replyWithMarkdown }) => {
   await reply(
     'Список категорий товаров',
     Markup.inlineKeyboard(
-      getTypeButtons(),
+      [
+        ...getTypeButtons(),
+        [Markup.callbackButton('Коллекции', 'collectionList')],
+      ],
     ).resize().extra(),
   );
 });
@@ -111,10 +114,49 @@ shopScene.action(/buy(?=_)/, async ({
   }
 });
 
+shopScene.action('collectionList', async ({ editMessageText }) => {
+  const keys = Object.keys(collections);
+  const buttons = keys.map((key) => [Markup.callbackButton(collections[key].name, `collection_${key}`)]);
+
+  editMessageText(
+    'Коллекции',
+    Markup.inlineKeyboard(
+      buttons,
+    ).resize().extra(),
+  );
+});
+
+shopScene.action(/collection(?=_)/, async ({ editMessageText, match }) => {
+  if (_.isNil(match)) return;
+  const [, name] = match.input.split('_');
+  const collection = collections[name];
+
+  console.log(collection);
+
+  const text = [
+    collection.name,
+    collection.harks && _.map(collection.harks, (val, key) => `\n${attrNames.hark[key]}: ${val}`).join(),
+    collection.resists && _.map(collection.resists, (val, key) => `\n${attrNames[`r_${key}`]} : ${100 - (val ?? 0) * 100}%`).join(),
+    collection.statical && _.map(collection.statical, (val, key) => `\n${attrNames[key]} : ${_.isObject(val) ? val.max : val}`).join(),
+  ].filter(_.isString).join('\n');
+
+  editMessageText(
+    text,
+    Markup.inlineKeyboard(
+      [Markup.callbackButton('Назад', 'collectionList')],
+    ).resize().extra(),
+  );
+});
+
 shopScene.action('back', ({ editMessageText }) => {
   editMessageText(
-    'Список товаров',
-    Markup.inlineKeyboard(getTypeButtons()).resize().extra(),
+    'Список категорий товаров',
+    Markup.inlineKeyboard(
+      [
+        ...getTypeButtons(),
+        [Markup.callbackButton('Коллекции', 'collectionList')],
+      ],
+    ).resize().extra(),
   );
 });
 
@@ -126,4 +168,4 @@ shopScene.action('inventory', ({ scene }) => {
   scene.enter('inventory');
 });
 
-module.exports = shopScene;
+export default shopScene;

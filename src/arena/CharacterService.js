@@ -3,7 +3,6 @@ const arena = require('./index');
 const floatNumber = require('./floatNumber');
 const db = require('../helpers/dataBase');
 const { default: { lvlRatio } } = require('./config');
-const { default: CollectionService } = require('./CollectionService');
 
 /**
  * @typedef {import ('../models/clan').Clan} Clan
@@ -115,7 +114,7 @@ class Char {
    * @typedef {Object} char
    * @property {String} id
    * @property {String} _id
-   * @property {String} prof
+   * @property {import('../models/character').Prof} prof
    * @property {Number} lvl
    * @property {Number} tgId
    * @property {String} nickname
@@ -280,7 +279,7 @@ class Char {
   }
 
   get collection() {
-    return CollectionService.getCollectionStats(this.getPutonedItems());
+    return db.inventory.getCollection(this.getPutonedItems()) || {};
   }
 
   get resists() {
