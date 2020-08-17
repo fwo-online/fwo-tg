@@ -1,6 +1,49 @@
-const mongoose = require('mongoose');
+import mongoose, { Schema, Document } from 'mongoose';
+import type { ClanDocument } from './clan';
+import type { InventoryDocument } from './inventory';
+import type { Hark } from './item';
 
-const { Schema } = mongoose;
+export type Prof = 'm' | 'w' | 'p' | 'l';
+
+export interface Char {
+  tgId: number;
+  nickname: string;
+  birthday: Date;
+  prof: Prof;
+  exp: number;
+  harks: Hark;
+  statistics: {
+    games: number;
+    kills: number;
+    death: number;
+    runs: number;
+  },
+  gold: number;
+  free: number;
+  weapon?: InventoryDocument;
+  lvl: string;
+  sex: 'm' | 'f';
+  lastFight: Date;
+  inventory?: InventoryDocument[];
+  psr: number;
+  magics?: Record<string, number>
+  skills?: Record<string, number>
+  bonus: number;
+  clan?: ClanDocument;
+  penalty?: [{
+    reason: string;
+    date: Date;
+  }];
+  modifiers?: {
+    crit: number,
+    agile: number,
+    block: number,
+    luck: number,
+  },
+  deleted: boolean;
+}
+
+export interface CharDocument extends Char, Document {}
 
 const character = new Schema({
   tgId: {
@@ -73,4 +116,6 @@ const character = new Schema({
   deleted: { type: Boolean, default: false },
 });
 
-module.exports = mongoose.model('Character', character);
+const CharSchema = mongoose.model<CharDocument>('Character', character);
+
+export default class CharModel extends CharSchema {}

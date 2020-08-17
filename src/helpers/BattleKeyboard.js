@@ -1,11 +1,11 @@
 const { Markup } = require('telegraf');
 const Skill = require('../arena/Constuructors/SkillConstructor');
-const Magic = require('../arena/Constuructors/MagicConstructor');
+const { default: Magic } = require('../arena/Constuructors/MagicConstructor');
 const arena = require('../arena');
 
 class BattleKeyboard {
   /**
-   * @param {import ('../arena/PlayerService')} player
+   * @param {import ('../arena/PlayerService').default} player
    */
   constructor(player) {
     this.keyboard = [];

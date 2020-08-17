@@ -2,7 +2,7 @@ const MiscService = require('../MiscService');
 
 /**
  * @typedef {import ('../GameService')} game
- * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../PlayerService').default} player
  */
 
 /**

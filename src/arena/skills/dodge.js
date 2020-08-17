@@ -3,7 +3,7 @@ const Skill = require('../Constuructors/SkillConstructor');
  * Увертка
  */
 
-/** @typedef {import ('../PlayerService')} player */
+/** @typedef {import ('../PlayerService').default} player */
 
 const dodge = new Skill({
   name: 'dodge',

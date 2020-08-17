@@ -4,7 +4,7 @@ const CommonMagic = require('../Constuructors/LongMagicConstructor');
  * Основное описание магии общее требовани есть в конструкторе
  */
 
-/** @typedef {import ('../PlayerService')} player */
+/** @typedef {import ('../PlayerService').default} player */
 const curse = new CommonMagic({
   name: 'curse',
   displayName: 'Проклятие',

@@ -3,8 +3,11 @@ module.exports = {
     node: true,
   },
   extends: [
+    'eslint:recommended',
     'airbnb-base',
     'plugin:@typescript-eslint/recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings',
     'plugin:import/typescript',
   ],
   parser: '@typescript-eslint/parser',
@@ -22,5 +25,24 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 0,
     'import/extensions': [0, 'never'],
     'import/no-named-as-default': 0,
+    'import/prefer-default-export': 0,
+    'lines-between-class-members': 0,
+    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    'import/order': ['error', {
+      groups: [
+        'builtin',
+        'external',
+        'internal',
+        'parent',
+        'sibling',
+        'index',
+      ],
+      alphabetize: {
+        order: 'asc',
+        caseInsensitive: true,
+      },
+    }],
   },
+
 };

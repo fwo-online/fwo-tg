@@ -2,7 +2,7 @@ const floatNumber = require('../floatNumber');
 const MiscService = require('../MiscService');
 
 /**
- * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../PlayerService').default} player
  * @typedef {import ('../GameService')} game
  */
 

@@ -6,7 +6,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
 
 /**
  * @typedef {import ('../GameService')} game
- * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../PlayerService').default} player
  */
 
 const secondLife = new CommonMagic({
@@ -32,7 +32,7 @@ const secondLife = new CommonMagic({
  * @param {player} target Обьект цели
  */
 // eslint-disable-next-line no-unused-vars
-secondLife.run = function run(initiator, target) {
+secondLife.run = function run(_initiator, _target) {
   // if hp < 0 , wasHP = |hp|
   // set hp 0.05
   // set exp wasHP * baseExp

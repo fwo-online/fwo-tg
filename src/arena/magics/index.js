@@ -24,7 +24,6 @@ const paralysis = require('./paralysis');
 const stoneSkin = require('./stoneSkin');
 const smallAura = require('./smallAura');
 const regeneration = require('../actions/regen');
-const postHeal = require('./postHeal');
 
 module.exports = {
   acidSpittle,
@@ -48,5 +47,4 @@ module.exports = {
   stoneSkin,
   smallAura,
   regeneration,
-  postHeal,
 };

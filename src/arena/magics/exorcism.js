@@ -6,7 +6,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
 
 /**
  * @typedef {import ('../GameService')} game
- * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../PlayerService').default} player
  */
 
 const exorcism = new CommonMagic({
@@ -30,8 +30,7 @@ const exorcism = new CommonMagic({
  * @param {player} target Обьект цели
  * @param {game} game Обьект игры (не обязателен)
  */
-// eslint-disable-next-line no-unused-vars
-exorcism.run = function run(initiator, target, game) {
+exorcism.run = function run(_initiator, _target, _game) {
   // Очищаем все "bad" магии в которых target является target данной магии
 };
 module.exports = exorcism;

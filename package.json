@@ -4,12 +4,12 @@
   "description": "FightWorld Telegram",
   "main": "index.js",
   "scripts": {
-    "test": "node src/fwo.js & sleep 20; jest --env=node",
+    "test": "npm run start & sleep 20; jest --env=node",
     "test-dev": "jest --watch --env=node",
     "lint": "./node_modules/.bin/eslint --fix src/ --ext .js,.ts",
-    "start": "node src/fwo.js",
-    "dev": "nodemon src/fwo.js",
-    "prod": "node src/fwo.js",
+    "start": "ts-node src/fwo.ts",
+    "dev": "nodemon",
+    "prod": "ts-node src/fwo.ts",
     "tsc": "tsc -w"
   },
   "repository": {

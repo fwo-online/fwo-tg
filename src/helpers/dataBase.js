@@ -1,10 +1,10 @@
 /**
  * MongoHelper
  */
-const CharModel = require('../models/character');
-const GameModel = require('../models/games');
-const InventoryModel = require('../models/inventory');
-const ClanModel = require('../models/clan');
+const { default: CharModel } = require('../models/character');
+const { default: GameModel } = require('../models/games');
+const { default: InventoryModel } = require('../models/inventory');
+const { default: ClanModel } = require('../models/clan');
 
 function dbErr(e) {
   throw new Error(`Fail in dbHelper: ${e}`);
@@ -147,6 +147,9 @@ module.exports = {
     },
     async addItem(charId, itemCode) {
       return InventoryModel.addItem(charId, itemCode);
+    },
+    getCollection(inventory) {
+      return InventoryModel.getCollection(inventory);
     },
   },
   clan: {

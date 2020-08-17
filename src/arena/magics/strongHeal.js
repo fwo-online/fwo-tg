@@ -6,7 +6,7 @@ const floatNumber = require('../floatNumber');
  * Основное описание магии общее требовани есть в конструкторе
  */
 
-/** @typedef {import ('../PlayerService')} player */
+/** @typedef {import ('../PlayerService').default} player */
 
 const strongHeal = new CommonMagic({
   name: 'strongHeal',

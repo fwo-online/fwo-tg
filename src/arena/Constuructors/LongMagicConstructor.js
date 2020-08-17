@@ -1,11 +1,10 @@
-// import Magic from './MagicConstructor';
 const Common = require('./CommonMagicConstructor');
 const floatNumber = require('../floatNumber');
 
 /**
- * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../PlayerService').default} player
  * @typedef {import ('../GameService')} game
- * @typedef {import ('./MagicConstructor').baseMag} baseMag
+ * @typedef {import ('./MagicConstructor').Magic} baseMag
  */
 
 /**

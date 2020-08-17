@@ -1,8 +1,8 @@
-import _ from 'lodash';
 import fs from 'fs';
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import _ from 'lodash';
+import mongoose, { Schema, Document } from 'mongoose';
 import arena from '../arena';
-import config from '../arena/config';
+import config, { ParseAttr } from '../arena/config';
 
 export type MinMax = {
   min: number;
@@ -32,7 +32,7 @@ export interface Item {
   plushark: Hark | null;
   mga: number | null;
   mgp: number | null;
-  hl: number | null;
+  hl: MinMax | null;
   r_fire: number | null;
   r_acid: number | null;
   r_lighting: number | null;
@@ -65,12 +65,9 @@ export interface Item {
   frost: MinMax | null;
 }
 
-export interface ItemDocument extends Item, Document {
-}
+export interface ItemDocument extends Item, Document {}
 
-export interface ItemModel extends Model<ItemDocument> {
-  load(): void;
-}
+export type ParseAttrItem = Pick<Item, ParseAttr>
 
 const parseAttr = (p: string) => {
   try {
@@ -140,6 +137,7 @@ const item = new Schema({
   },
   hl: {
     type: Number,
+    get: (hl) => ({ min: 0, max: hl }),
   },
   r_fire: {
     type: Number,
@@ -245,16 +243,13 @@ const item = new Schema({
   versionKey: false,
 });
 
-item.statics = {
-  /**
-   * Load/reload
-   * @description Функция подгрузки итемов в память (arena.items)
-   *
-   */
-  async load() {
+const ItemSchema = mongoose.model<ItemDocument>('Item', item);
+
+export default class ItemModel extends ItemSchema {
+  static async load(): Promise<void> {
     const timer1 = Date.now();
     try {
-      const items = await mongoose.model<ItemDocument, ItemModel>('Item').find({});
+      const items = await this.find({});
       if (Object.entries(items).length) {
         // console.log(items)
         arena.items = _.keyBy(items, 'code');
@@ -268,7 +263,7 @@ item.statics = {
 
         _.forEach(shopArr, async (o, code) => {
           o.code = code;
-          createdItems.push(mongoose.model<ItemDocument, ItemModel>('Item').create(o));
+          createdItems.push(ItemModel.create(o));
           return true;
         });
 
@@ -283,15 +278,14 @@ item.statics = {
       // eslint-disable-next-line no-console
       console.log('Items loaded.T:', Date.now() - timer1, 'ms');
     }
-  },
+  }
+
   /**
    * @description Собираем все харки со шмотки
    * @param itemCode код вещи
    */
-  getHarks(itemCode: string) {
-    const omittedItem = arena.items[itemCode];
-    return _.pick(_.omitBy(omittedItem, _.isNull), config.parseAttr);
-  },
-};
-
-export default mongoose.model<ItemDocument, ItemModel>('Item', item);
+  static getHarks(itemCode: string): Partial<ParseAttrItem> {
+    const omittedItem = _.omitBy(arena.items[itemCode], _.isNull);
+    return _.pick(omittedItem, config.parseAttr);
+  }
+}
