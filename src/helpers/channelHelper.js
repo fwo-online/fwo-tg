@@ -11,7 +11,7 @@ const { getIcon } = require('../arena/MiscService');
 const chatId = process.env.BOT_CHATID || -1001483444452;
 
 module.exports = {
-  /** @type {import('telegraf').Telegraf<import ('telegraf').Context & import ('telegraf/typings/stage').SceneContextMessageUpdate>} */
+  /** @type {import('telegraf').Telegraf<import('../fwo').Bot>} */
   bot: null,
   /** @type {Object<string, number>} */
   messages: {},
