@@ -383,16 +383,26 @@ class Char {
 
   async putOffItem(itemId) {
     await db.inventory.putOffItem(this.id, itemId);
-    const inventory = await db.inventory.getItems(this.id);
-    const notRequeredHarks = inventory.find((inv) => {
-      const item = arena.items[inv.code];
-      return this.hasRequeredHarks(item) && this.isCanPutOned(item);
-    });
-    if (notRequeredHarks) {
-      await this.putOffItem(notRequeredHarks._id);
-    }
+    const inventory = await this.putOffItemsCantPutOned();
     this.charObj.inventory = inventory;
-    return this.updateHarkFromItems();
+  }
+
+  /** @returns {import('../models/inventory').InventoryDocument[]} */
+  async putOffItemsCantPutOned() {
+    const inventory = await db.inventory.getItems(this.id);
+    if (!inventory) return [];
+    this.charObj.inventory = inventory;
+    await this.updateHarkFromItems();
+
+    const items = this.getPutonedItems().filter((i) => !this.hasRequeredHarks(arena.items[i.code]));
+    if (items.length) {
+      const putOffItems = items.map((i) => db.inventory.putOffItem(this.id, i._id));
+      await Promise.all(putOffItems);
+      const inventoryFiltered = await this.putOffItemsCantPutOned();
+      this.charObj.inventory = inventoryFiltered;
+      return inventoryFiltered;
+    }
+    return inventory;
   }
 
   async putOnItem(itemId) {
@@ -466,7 +476,6 @@ class Char {
 
   /**
   * Продажа предмета.
-  * Добавил пересчет характеристик т.к сейчас можно продать вещь не снимая.
   */
   async sellItem(itemId) {
     const charItem = this.getItem(itemId);
@@ -474,10 +483,9 @@ class Char {
 
     this.removeItem(itemId);
     this.gold += item.price / 2;
-    // Сейчас если продать итем который дает характеристики то не проиходит
-    // перерасчет новых и сброс вещей которые недоступны по харкам
-    await this.saveToDb;
-    return this.updateHarkFromItems();
+    const inventory = await this.putOffItemsCantPutOned();
+    this.charObj.inventory = inventory;
+    await this.saveToDb();
   }
 
   /**
