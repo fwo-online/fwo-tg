@@ -4,7 +4,7 @@
   "description": "FightWorld Telegram",
   "main": "index.js",
   "scripts": {
-    "test": "node src/fwo.js & sleep 20; jest --env=node",
+    "test": "npm run start & sleep 20; jest --env=node",
     "test-dev": "jest --watch --env=node",
     "lint": "./node_modules/.bin/eslint --fix src/ --ext .js,.ts",
     "start": "ts-node src/fwo.ts",
