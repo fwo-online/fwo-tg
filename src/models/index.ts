@@ -6,7 +6,6 @@ mongoose.connect(
     useNewUrlParser: true,
     useFindAndModify: false,
   },
-  // eslint-disable-next-line no-console
 ).catch((e) => console.log(e));
 
 export default mongoose;

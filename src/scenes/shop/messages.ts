@@ -26,8 +26,6 @@ export const collectionList = (): string => 'Коллекции';
 export const collectionItem = (name: string): string => {
   const collection = collections[name];
 
-  console.log(collection);
-
   return [
     collection.name,
     collection.harks && _.map(collection.harks, (val, key) => `\n${attrNames.hark[key]}: ${val}`).join(''),
