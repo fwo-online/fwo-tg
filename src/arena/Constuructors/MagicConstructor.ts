@@ -1,8 +1,8 @@
-import Player from '../PlayerService';
-import Game from '../GameService';
-import MiscService from '../MiscService';
 import floatNumber from '../floatNumber';
+import Game from '../GameService';
 import arena from '../index';
+import MiscService from '../MiscService';
+import Player from '../PlayerService';
 
 export interface BaseMagic {
   name: keyof typeof arena['magics'];

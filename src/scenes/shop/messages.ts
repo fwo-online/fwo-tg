@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import { stores } from '../../arena/MiscService';
-import { itemDescription, attrNames } from '../../arena/ItemService';
 import arena from '../../arena';
 import Char from '../../arena/CharacterService';
+import { itemDescription, attrNames } from '../../arena/ItemService';
+import { stores } from '../../arena/MiscService';
 import { collections } from '../../data/collection';
 
 export const enter = (): string => 'Список категорий товаров';

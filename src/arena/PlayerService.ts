@@ -1,9 +1,10 @@
-import Char from './CharacterService';
 import { Clan } from '../models/clan';
-import StatsService from './StatsService';
-import FlagsConstructors from './Constuructors/FlagsConstructor';
-import arena from './index';
+import { Inventory } from '../models/inventory';
 import { MinMax } from '../models/item';
+import Char from './CharacterService';
+import FlagsConstructors from './Constuructors/FlagsConstructor';
+import StatsService from './StatsService';
+import arena from './index';
 
 export interface Resists {
   fire: number;
@@ -64,10 +65,10 @@ export default class Player {
   resists: Partial<Resists>;
   skills: { [x: string]: number; };
   magics: { [x: string]: number; };
-  statical: any;
+  statical: Partial<Statical>;
   alive: boolean;
   proc: number;
-  weapon: any;
+  weapon?: Inventory;
 
   constructor(params: Char) {
     this.nick = params.nickname;

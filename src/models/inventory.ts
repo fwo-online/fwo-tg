@@ -1,12 +1,11 @@
-import mongoose, { Schema, Document } from 'mongoose';
 import _ from 'lodash';
+import mongoose, { Schema, Document } from 'mongoose';
 import arena from '../arena';
-import ItemModel, { ParseAttrItem, Hark, Item } from './item';
 import config from '../arena/config';
-import CharModel, { CharDocument } from './character';
-import safe from '../utils/safe';
-import { Resists, Chance, Statical } from '../arena/PlayerService';
+import type { Resists, Chance, Statical } from '../arena/PlayerService';
 import { collections } from '../data/collection';
+import CharModel, { CharDocument } from './character';
+import ItemModel, { ParseAttrItem, Hark, Item } from './item';
 
 /**
  * getDefaultItem
@@ -70,7 +69,6 @@ export default class InventoryModel extends InventorySchema {
    * @todo нужна фунция которая выбирает коды всех одеты вещей в инвентаре
    * а затем суммирует все полученные данны в единый обьект.
    */
-  @safe()
   static async fullHarks(charId: string): Promise<ParseAttrItem> {
     // берем из базы все надетые вещи
     const allItems = await this.getPutOned(charId);
@@ -114,8 +112,7 @@ export default class InventoryModel extends InventorySchema {
    * @param itemCode Код итема который следует добавить
    * @return Обьект нового инветаря
    */
-  @safe()
-  static async addItem(charId: string, itemCode: string): Promise<InventoryDocument | void> {
+  static async addItem(charId: string, itemCode: string): Promise<InventoryDocument> {
     const item = await this.create({
       owner: charId, code: itemCode, wear: arena.items[itemCode].wear, putOn: false, durable: 10,
     });
@@ -128,7 +125,6 @@ export default class InventoryModel extends InventorySchema {
    * @param itemId идентификатор итема в инвенторе
    * @return Массив нового инвентаря
    */
-  @safe()
   static async delItem(charId: string, itemId: string): Promise<InventoryDocument[] | void> {
     const char = await CharModel.findById(charId);
     _.pull(char?.inventory as unknown as string[], itemId);
@@ -217,7 +213,6 @@ export default class InventoryModel extends InventorySchema {
    * @param charId
    * @return массив обтектов персонажа
    */
-  @safe()
   static async getItems(charId: string): Promise<InventoryDocument[]> {
     return this.find({ owner: charId });
   }

@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { BaseScene, Markup } from 'telegraf';
 import type { BaseGameContext } from '../stage';
-import * as messages from './messages';
 import * as keyboards from './keyboards';
+import * as messages from './messages';
 
 const shopScene = new BaseScene<BaseGameContext>('shopScene');
 

@@ -1,5 +1,5 @@
-import _ from 'lodash';
 import fs from 'fs';
+import _ from 'lodash';
 import mongoose, { Schema, Document } from 'mongoose';
 import arena from '../arena';
 import config, { ParseAttr } from '../arena/config';

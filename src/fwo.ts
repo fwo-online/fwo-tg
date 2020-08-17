@@ -1,17 +1,17 @@
 import { Telegraf, session } from 'telegraf';
-import db from './models';
-import stage, { BaseGameContext } from './scenes/stage';
-import channelHelper from './helpers/channelHelper';
-import Item from './models/item';
-import authMiddleware from './middlewares/authMiddleware';
-import protectedMiddleware from './middlewares/protectedMiddleware';
-import chatMiddleware from './middlewares/chatMiddleware';
-import restartMiddleware from './middlewares/restartMiddleware';
-import MM from './arena/MatchMakingService';
 import arena from './arena';
-import magics from './arena/magics';
-import skills from './arena/skills';
 import actions from './arena/actions';
+import magics from './arena/magics';
+import MM from './arena/MatchMakingService';
+import skills from './arena/skills';
+import channelHelper from './helpers/channelHelper';
+import authMiddleware from './middlewares/authMiddleware';
+import chatMiddleware from './middlewares/chatMiddleware';
+import protectedMiddleware from './middlewares/protectedMiddleware';
+import restartMiddleware from './middlewares/restartMiddleware';
+import db from './models';
+import Item from './models/item';
+import stage, { BaseGameContext } from './scenes/stage';
 
 const bot = new Telegraf<BaseGameContext>(process.env.BOT_TOKEN ?? '');
 // DB connection
