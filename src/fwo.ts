@@ -1,4 +1,4 @@
-import { Telegraf, session } from 'telegraf';
+import { Telegraf, session, Context } from 'telegraf';
 import arena from './arena';
 import actions from './arena/actions';
 import magics from './arena/magics';
@@ -13,7 +13,9 @@ import db from './models';
 import Item from './models/item';
 import stage, { BaseGameContext } from './scenes/stage';
 
-const bot = new Telegraf<BaseGameContext>(process.env.BOT_TOKEN ?? '');
+export interface Bot extends Context, BaseGameContext {}
+
+const bot = new Telegraf<Bot>(process.env.BOT_TOKEN ?? '');
 // DB connection
 db.connection.on('open', async () => {
   console.log('db online');
