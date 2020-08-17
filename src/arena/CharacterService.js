@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const arena = require('./index');
-const floatNumber = require('./floatNumber');
 const db = require('../helpers/dataBase');
 const { default: { lvlRatio } } = require('./config');
+const floatNumber = require('./floatNumber');
+const arena = require('./index');
 
 /**
  * @typedef {import ('../models/clan').Clan} Clan
@@ -384,6 +384,13 @@ class Char {
   async putOffItem(itemId) {
     await db.inventory.putOffItem(this.id, itemId);
     const inventory = await db.inventory.getItems(this.id);
+    const notRequeredHarks = inventory.find((inv) => {
+      const item = arena.items[inv.code];
+      return this.hasRequeredHarks(item) && this.isCanPutOned(item);
+    });
+    if (notRequeredHarks) {
+      await this.putOffItem(notRequeredHarks._id);
+    }
     this.charObj.inventory = inventory;
     return this.updateHarkFromItems();
   }
@@ -392,14 +399,7 @@ class Char {
     const charItem = this.getItem(itemId);
     const item = arena.items[charItem.code];
 
-    if (item.hark) {
-      const hasRequeredHarks = _.every(item.hark, (val, hark) => val < this.harks[hark]);
-      if (!hasRequeredHarks) {
-        return false;
-      }
-    }
-
-    if (!this.isCanPutOned(item)) {
+    if (!this.hasRequeredHarks(item) || !this.isCanPutOned(item)) {
       return false;
     }
 
@@ -407,6 +407,17 @@ class Char {
     const inventory = await db.inventory.getItems(this.id);
     this.charObj.inventory = inventory;
     await this.updateHarkFromItems();
+    return true;
+  }
+
+  /**
+   *
+   * @param {import('../models/item').Item} item
+   */
+  hasRequeredHarks(item) {
+    if (item.hark) {
+      return _.every(item.hark, (val, hark) => val < this.harks[hark]);
+    }
     return true;
   }
 
