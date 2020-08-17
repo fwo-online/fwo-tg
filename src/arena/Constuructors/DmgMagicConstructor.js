@@ -1,6 +1,6 @@
-const { default: Magic } = require('./MagicConstructor');
 const floatNumber = require('../floatNumber');
 const MiscService = require('../MiscService');
+const { default: Magic } = require('./MagicConstructor');
 
 /**
  * @typedef {import ('../PlayerService').default} player

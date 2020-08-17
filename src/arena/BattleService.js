@@ -1,6 +1,6 @@
 const { Markup } = require('telegraf');
-const arena = require('./index');
 const channelHelper = require('../helpers/channelHelper');
+const arena = require('./index');
 
 /**
  * Заказываем в три этапа:

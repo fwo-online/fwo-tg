@@ -1,6 +1,6 @@
 const { BaseScene, Markup } = require('telegraf');
-const ClanService = require('../arena/ClanService');
 const arena = require('../arena');
+const ClanService = require('../arena/ClanService');
 const { getIcon } = require('../arena/MiscService');
 
 /** @type {import('./stage').BaseGameScene} */

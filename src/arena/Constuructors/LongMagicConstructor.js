@@ -1,5 +1,5 @@
-const Common = require('./CommonMagicConstructor');
 const floatNumber = require('../floatNumber');
+const Common = require('./CommonMagicConstructor');
 
 /**
  * @typedef {import ('../PlayerService').default} player

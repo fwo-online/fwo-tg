@@ -1,7 +1,7 @@
 const { Markup } = require('telegraf');
-const Skill = require('../arena/Constuructors/SkillConstructor');
-const { default: Magic } = require('../arena/Constuructors/MagicConstructor');
 const arena = require('../arena');
+const { default: Magic } = require('../arena/Constuructors/MagicConstructor');
+const Skill = require('../arena/Constuructors/SkillConstructor');
 
 class BattleKeyboard {
   /**

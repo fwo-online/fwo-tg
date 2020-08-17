@@ -1,7 +1,7 @@
 const { Markup } = require('telegraf');
-const BattleKeyboard = require('./BattleKeyboard');
 const arena = require('../arena');
 const { getIcon } = require('../arena/MiscService');
+const BattleKeyboard = require('./BattleKeyboard');
 /**
  * Помощник для отправки сообщений в общий чат
  * @typedef {import ('../arena/PlayerService').default} Player

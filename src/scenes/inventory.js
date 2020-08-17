@@ -1,7 +1,7 @@
 const { BaseScene, Markup } = require('telegraf');
 const arena = require('../arena');
-const { default: Inventory } = require('../models/inventory');
 const ItemService = require('../arena/ItemService');
+const { default: Inventory } = require('../models/inventory');
 
 /** @type {import('./stage').BaseGameScene} */
 const inventoryScene = new BaseScene('inventory');

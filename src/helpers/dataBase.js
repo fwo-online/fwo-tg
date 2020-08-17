@@ -2,9 +2,9 @@
  * MongoHelper
  */
 const { default: CharModel } = require('../models/character');
+const { default: ClanModel } = require('../models/clan');
 const { default: GameModel } = require('../models/games');
 const { default: InventoryModel } = require('../models/inventory');
-const { default: ClanModel } = require('../models/clan');
 
 function dbErr(e) {
   throw new Error(`Fail in dbHelper: ${e}`);

@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const arena = require('./index');
 const { mono } = require('./MiscService');
+const arena = require('./index');
 /**
  * Items Service
  *

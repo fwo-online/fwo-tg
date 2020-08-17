@@ -3,11 +3,11 @@
  * Описание:
  */
 const { BaseScene, Markup } = require('telegraf');
-const channelHelper = require('../helpers/channelHelper');
 const arena = require('../arena');
-const { getIcon } = require('../arena/MiscService');
-const loginHelper = require('../helpers/loginHelper');
 const BattleService = require('../arena/BattleService');
+const { getIcon } = require('../arena/MiscService');
+const channelHelper = require('../helpers/channelHelper');
+const loginHelper = require('../helpers/loginHelper');
 
 /** @type {import('./stage').BaseGameScene} */
 const battleScene = new BaseScene('battleScene');

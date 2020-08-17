@@ -1,8 +1,13 @@
 const _ = require('lodash');
+const channelHelper = require('../helpers/channelHelper');
+const db = require('../helpers/dataBase');
 const BattleLog = require('./BattleLog');
 const engineService = require('./engineService');
-const db = require('../helpers/dataBase');
-const channelHelper = require('../helpers/channelHelper');
+const HistoryService = require('./HistoryService');
+const { getIcon } = require('./MiscService');
+const OrderService = require('./OrderService');
+const PlayersArr = require('./playerArray');
+const RoundService = require('./RoundService');
 const testGame = require('./testGame');
 const arena = require('./index');
 /**
@@ -14,11 +19,6 @@ const arena = require('./index');
  * Нужен механизм подключения обратно, если клиент "обновил" страницу или
  * переподключился к игре после disconnect(разрыв соединения)
  */
-const RoundService = require('./RoundService');
-const PlayersArr = require('./playerArray');
-const OrderService = require('./OrderService');
-const HistoryService = require('./HistoryService');
-const { getIcon } = require('./MiscService');
 
 /**
  * Класс для обьекта игры

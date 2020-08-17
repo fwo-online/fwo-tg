@@ -1,6 +1,6 @@
 const { BaseScene, Markup } = require('telegraf');
-const MagicService = require('../arena/MagicService');
 const arena = require('../arena');
+const MagicService = require('../arena/MagicService');
 
 /** @type {import('./stage').BaseGameScene} */
 const magicScene = new BaseScene('magics');

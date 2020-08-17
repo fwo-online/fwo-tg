@@ -1,8 +1,8 @@
 const { Markup } = require('telegraf');
-const arena = require('./index');
 const channerHelper = require('../helpers/channelHelper');
-const CharacterService = require('./CharacterService');
 const db = require('../helpers/dataBase');
+const CharacterService = require('./CharacterService');
+const arena = require('./index');
 
 /**
  * Clan Service
