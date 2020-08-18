@@ -7,7 +7,7 @@ const HistoryService = require('./HistoryService');
 const { getIcon } = require('./MiscService');
 const OrderService = require('./OrderService');
 const PlayersArr = require('./playerArray');
-const RoundService = require('./RoundService');
+const { default: RoundService } = require('./RoundService');
 const testGame = require('./testGame');
 const arena = require('./index');
 /**
