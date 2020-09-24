@@ -8,9 +8,9 @@ const getSkillButtons = (list, char) => Object
   .keys(list)
   .filter((skill) => SkillService.skills[skill].profList.includes(char.prof))
   .map((skill) => {
-    const { name } = SkillService.show(skill);
+    const { displayName } = SkillService.show(skill);
     return [Markup.callbackButton(
-      `${name} ${char.skills[skill] ? `(${char.skills[skill]})` : ''}`,
+      `${displayName} ${char.skills[skill] ? `(${char.skills[skill]})` : ''}`,
       `info_${skill}`,
     )];
   });
@@ -94,11 +94,11 @@ skillsScene.action(/learn(?=_)/, ({
   editMessageText, answerCbQuery, session, match,
 }) => {
   const [, skill] = match.input.split('_');
-  const { name } = SkillService.show(skill);
+  const { displayName } = SkillService.show(skill);
   try {
     session.character = SkillService.learn(session.character.id, skill);
 
-    answerCbQuery(`Изучено умение ${name}`);
+    answerCbQuery(`Изучено умение ${displayName}`);
     editMessageText(
       SkillService.skillDescription(skill, session.character),
       Markup.inlineKeyboard([

@@ -3,7 +3,7 @@ import arena from './arena';
 import actions from './arena/actions';
 import magics from './arena/magics';
 import MM from './arena/MatchMakingService';
-import skills from './arena/skills';
+import * as skills from './arena/skills';
 import channelHelper from './helpers/channelHelper';
 import authMiddleware from './middlewares/authMiddleware';
 import chatMiddleware from './middlewares/chatMiddleware';

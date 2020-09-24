@@ -3,7 +3,6 @@
  * @typedef {import ('./Constuructors/SkillConstructor')} Skill
  * @typedef {import ('./CharacterService')} Char
  */
-/** @type {Object.<string, Skill>} */
 const skills = require('./skills');
 const arena = require('./index');
 
@@ -37,10 +36,10 @@ module.exports = {
    */
   show(skillId) {
     const {
-      name, desc, lvl, bonusCost,
+      name, desc, lvl, bonusCost, displayName
     } = this.skills[skillId];
     return {
-      name, desc, lvl, bonusCost,
+      name, desc, lvl, bonusCost, displayName,
     };
   },
   /**
@@ -51,11 +50,11 @@ module.exports = {
    */
   skillDescription(skillId, char) {
     const {
-      name, desc, lvl, bonusCost,
+      displayName, desc, lvl, bonusCost,
     } = this.show(skillId);
     const charSkillLvl = char.skills[skillId] || 0;
 
-    return `${name} (${charSkillLvl === 0 ? 'Не изучено' : charSkillLvl})
+    return `${displayName} (${charSkillLvl === 0 ? 'Не изучено' : charSkillLvl})
 
 ${desc} ${char.lvl < lvl ? '\n\n❗️Твой уровень ниже уровня умения' : ''}
 
