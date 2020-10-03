@@ -17,7 +17,7 @@ const startScreen = {
       'lvlup',
       clan.lvl >= ClanService.lvlCost.length,
     )],
-    [Markup.callbackButton('Удалить клан', 'remove', !isAdmin)],
+    [Markup.callbackButton('Удалить клан', 'removeConfirm', !isAdmin)],
     [Markup.callbackButton('Покинуть клан', 'leave', isAdmin)],
   ]).resize().extra({ parse_mode: 'Markdown' }),
 };
@@ -53,7 +53,7 @@ clanScene.enter(async ({ replyWithMarkdown, session }) => {
   }
 });
 
-clanScene.action(/lvlup|back|remove|leave/, async ({
+clanScene.action(/^(lvlup|back|remove|leave)$/, async ({
   session, answerCbQuery, match, editMessageText,
 }) => {
   const char = session.character;
@@ -95,6 +95,16 @@ clanScene.action(/lvlup|back|remove|leave/, async ({
       startScreen.markup(clan, isAdmin),
     );
   }
+});
+
+clanScene.action('removeConfirm', ({ editMessageText }) => {
+  editMessageText(
+    `Вы действительно хотите удалить клан?`,
+    Markup.inlineKeyboard([
+      Markup.callbackButton('Да', 'remove'),
+      Markup.callbackButton('Нет', 'back'),
+    ]).resize().extra(),
+  );
 });
 
 clanScene.action(/add(?=_)/, async ({

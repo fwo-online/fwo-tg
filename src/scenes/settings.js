@@ -4,6 +4,20 @@ const loginHelper = require('../helpers/loginHelper');
 /** @type {import('./stage').BaseGameScene} */
 const settingsScene = new BaseScene('settings');
 
+const startScreen = (session) => [
+  'Доступные опции',
+  Markup.inlineKeyboard([
+    [Markup.callbackButton(
+      'Удалить персонажа',
+      'removeConfirm',
+    )],
+    [Markup.callbackButton(
+      `Авторегистрация ${session.character.autoreg ? '✅' : '⬜️'}`,
+      'autoreg',
+    )],
+  ]).resize().extra(),
+];
+
 settingsScene.enter(async ({ replyWithMarkdown, reply, session }) => {
   await replyWithMarkdown(
     '*Настройки*',
@@ -12,19 +26,7 @@ settingsScene.enter(async ({ replyWithMarkdown, reply, session }) => {
     ]).resize().extra(),
   );
 
-  await reply(
-    'Доступные опции',
-    Markup.inlineKeyboard([
-      [Markup.callbackButton(
-        'Удалить персонажа',
-        'remove',
-      )],
-      [Markup.callbackButton(
-        `Авторегистрация ${session.character.autoreg ? '✅' : '⬜️'}`,
-        'autoreg',
-      )],
-    ]).resize().extra(),
-  );
+  await reply(...startScreen(session));
 });
 
 settingsScene.action('autoreg', ({ session, editMessageText }) => {
@@ -45,6 +47,16 @@ settingsScene.action('autoreg', ({ session, editMessageText }) => {
   );
 });
 
+settingsScene.action('removeConfirm', ({ editMessageText }) => {
+  editMessageText(
+    'Вы действительно хотите удалить персонажа?',
+    Markup.inlineKeyboard([
+      Markup.callbackButton('Да', `remove`),
+      Markup.callbackButton('Нет', `back`),
+    ]).resize().extra()
+  );
+});
+
 settingsScene.action('remove', async ({
   session,
   scene,
@@ -60,6 +72,10 @@ settingsScene.action('remove', async ({
     answerCbQuery('Произошла ошибка');
     scene.enter('greeter');
   }
+});
+
+settingsScene.action('back', async ({ editMessageText, session }) => {
+  editMessageText(...startScreen(session));
 });
 
 settingsScene.hears('🔙 В лобби', ({ scene }) => {

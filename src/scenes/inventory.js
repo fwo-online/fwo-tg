@@ -50,7 +50,7 @@ inventoryScene.action(/itemInfo(?=_)/,
       `${itemDescription}`,
       Markup.inlineKeyboard([
         itemAction,
-        Markup.callbackButton('Продать', `sell_${itemId}`),
+        Markup.callbackButton('Продать', `sellConfirm_${itemId}`),
         Markup.callbackButton('Назад', 'back'),
       ]).resize().extra({ parse_mode: 'Markdown' }),
     );
@@ -91,6 +91,23 @@ inventoryScene.action(/putOn(?=_)/,
       );
     }
   });
+
+inventoryScene.action(/sellConfirm(?=_)/,
+  ({ editMessageText, session, match }) => {
+    const [, itemId] = match.input.split('_');
+    const item = session.character.getItem(itemId);
+    console.log(item);
+    const { name, price } = arena.items[item.code];
+
+    editMessageText(
+      `Вы действительно хотите продать _${name}_ (${price / 2} 💰)?`,
+      Markup.inlineKeyboard([
+        Markup.callbackButton('Да', `sell_${itemId}`),
+        Markup.callbackButton('Нет', `itemInfo_${itemId}`),
+      ]).resize().extra({ parse_mode: 'Markdown' }),
+    );
+  }
+);
 
 inventoryScene.action(/sell(?=_)/,
   async ({ session, editMessageText, match }) => {
