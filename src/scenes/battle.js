@@ -3,11 +3,11 @@
  * Описание:
  */
 const { BaseScene, Markup } = require('telegraf');
-const channelHelper = require('../helpers/channelHelper');
 const arena = require('../arena');
-const { getIcon } = require('../arena/MiscService');
-const loginHelper = require('../helpers/loginHelper');
 const BattleService = require('../arena/BattleService');
+const { getIcon } = require('../arena/MiscService');
+const channelHelper = require('../helpers/channelHelper');
+const loginHelper = require('../helpers/loginHelper');
 
 /** @type {import('./stage').BaseGameScene} */
 const battleScene = new BaseScene('battleScene');
@@ -164,9 +164,9 @@ battleScene.command('debug', async ({ reply, session }) => {
   const ADMINS = [358539547, 187930249, 279139400, 371685623];
   const { tgId } = session.character;
   if (ADMINS.indexOf(tgId) !== -1) {
-    // test players: id 5e05ee58bdf83c6a5ff3f8dd, tgId: 123456789
-    await loginHelper.getChar('123456789');
-    const searchObject = { charId: '5e05ee58bdf83c6a5ff3f8dd', psr: 1000, startTime: Date.now() };
+    // test players: tgId: 123456789
+    const char = await loginHelper.getChar(123456789);
+    const searchObject = { charId: char.id, psr: 1000, startTime: Date.now() };
     arena.mm.push(searchObject);
     reply('ok');
   }

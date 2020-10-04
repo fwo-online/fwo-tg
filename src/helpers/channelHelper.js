@@ -1,17 +1,17 @@
 const { Markup } = require('telegraf');
-const BattleKeyboard = require('./BattleKeyboard');
 const arena = require('../arena');
 const { getIcon } = require('../arena/MiscService');
+const BattleKeyboard = require('./BattleKeyboard');
 /**
  * Помощник для отправки сообщений в общий чат
- * @typedef {import ('../arena/PlayerService')} Player
+ * @typedef {import ('../arena/PlayerService').default} Player
  * @typedef {import ('../arena/GameService')} Game
  */
 
 const chatId = process.env.BOT_CHATID || -1001483444452;
 
 module.exports = {
-  /** @type {import('telegraf').Telegraf<import ('telegraf').Context & import ('telegraf/typings/stage').SceneContextMessageUpdate>} */
+  /** @type {import('telegraf').Telegraf<import('../fwo').Bot>} */
   bot: null,
   /** @type {Object<string, number>} */
   messages: {},

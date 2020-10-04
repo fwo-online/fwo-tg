@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const PlayerService = require('./PlayerService');
+const { default: PlayerService } = require('./PlayerService');
 
 /**
  * Класс контроля игроков внутри созданной игры
- * @typedef {import ('./PlayerService')} Player
+ * @typedef {import ('./PlayerService').default} Player
  * @typedef {import ('../models/clan').Clan} Clan
  */
 class PlayersArr {
@@ -43,7 +43,7 @@ class PlayersArr {
 
   /**
   * Функция возвращает рандомного игрока из массива живых
-  * @return {Player{}}
+  * @return {Player}
   */
   get randomAlive() {
     const alive = _.filter(this.arr, {

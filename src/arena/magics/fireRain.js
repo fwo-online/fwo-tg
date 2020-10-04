@@ -5,7 +5,7 @@ const DmgMagic = require('../Constuructors/DmgMagicConstructor');
  */
 
 /**
- * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../PlayerService').default} player
  */
 
 const fireRain = new DmgMagic({
@@ -29,8 +29,7 @@ const fireRain = new DmgMagic({
  * @param {player} initiator Обьект кастера
  * @param {player} target Обьект цели
  */
-// eslint-disable-next-line no-unused-vars
-fireRain.run = function run(initiator, target) {
+fireRain.run = function run(_initiator, _target) {
   // Наносит урон всем участникам команды цели
 };
 module.exports = fireRain;

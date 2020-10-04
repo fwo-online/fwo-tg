@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const arena = require('./index');
-const floatNumber = require('./floatNumber');
 const db = require('../helpers/dataBase');
-const { lvlRatio } = require('./config');
+const { default: { lvlRatio } } = require('./config');
+const floatNumber = require('./floatNumber');
+const arena = require('./index');
 
 /**
  * @typedef {import ('../models/clan').Clan} Clan
@@ -13,6 +13,18 @@ const { lvlRatio } = require('./config');
  * @property {number} runs
  */
 
+const sum = (a, b) => {
+  if (_.isObject(b)) {
+    return _.assignWith(a, b, sum);
+  }
+  if (_.isEmpty(a)) {
+    return +b;
+  }
+  return +a + +b;
+};
+
+const assignWithSum = (a, b) => _.assignWith(a, b, sum);
+
 /**
  * Конструктор персонажа
  * @todo сюда нужны будет get/set функции для intreface части
@@ -21,10 +33,7 @@ const { lvlRatio } = require('./config');
  */
 /**
  * Возвращает список динамических характеристик
- * @param {Object} charObj инстанс Char
- * @return {{patk: number, pdef: number, maxHp: number, maxMp: number,
- * maxEn: number,mga: number, mgp: number, hl: {min: *, max: *}, manaReg: *,
- * enReg: number, hit: boolean, maxTarget: number, lspell: number}}
+ * @param {Char} charObj инстанс Char
  * @todo проверить что функция используется при загрузке игрока в игру
  */
 // eslint-disable-next-line no-unused-vars
@@ -51,7 +60,7 @@ function getDynHarks(charObj) {
 
   /**
    * Функция расчета наносимого урона
-   * @return {Object} {min:xx,max:xx}
+   * @return {{min: number, max: number}} {min:xx,max:xx}
    */
   function calcHit() {
     const h = {};
@@ -105,15 +114,15 @@ class Char {
    * @typedef {Object} char
    * @property {String} id
    * @property {String} _id
-   * @property {String} prof
+   * @property {import('../models/character').Prof} prof
    * @property {Number} lvl
    * @property {Number} tgId
    * @property {String} nickname
    * @property {Number} gold
    * @property {Number} exp
    * @property {Statistics} statistics
-   * @property {Object} inventory
-   * @property {Object} harks
+   * @property {import('../models/inventory').InventoryDocument[]} inventory
+   * @property {import('../models/item').Hark} harks
    * @property {Object.<string, number>} magics
    * @property {Number} free
    * @property {Number} bonus
@@ -133,6 +142,7 @@ class Char {
     this.updateHarkFromItems();
     this.mm = {};
     this.autoreg = false;
+    this.modifiers = undefined;
   }
 
   get id() {
@@ -156,10 +166,9 @@ class Char {
     * был получен после возвращения updateHarkFromItems, имеет ключи типа:
     * atk/prt (models/item). Это не позволяет прозрачно проводить сложение.
     */
-    console.log(dynHarks);
     _.forEach(this.harksFromItems, (h, i) => {
       if (_.isObject(h)) {
-        console.log('object summ @@@', h, i);
+        assignWithSum(dynHarks[i], h);
       } else {
         if (!_.isUndefined(dynHarks[i])) dynHarks[i] += +h;
         if (i === 'atc') dynHarks.patk += +h;
@@ -167,7 +176,6 @@ class Char {
         if (i === 'add_hp') dynHarks.maxHp += +h;
         if (i === 'add_mp') dynHarks.maxMp += +h;
         if (i === 'add_en') dynHarks.maxEn += +h;
-        if (i === 'hl') dynHarks.hl.max += +h;
         if (!dynHarks[i]) dynHarks[i] = h;
       }
     });
@@ -228,16 +236,14 @@ class Char {
   // Нужно помнить, что this.harks это суммарный обьект, с уже полученными от
   // вещей характеристиками.
   get harks() {
-    if (_.isEmpty(this.plushark)) {
-      return this.charObj.harks;
+    const hark = { ...this.charObj.harks };
+    if (!_.isEmpty(this.plushark)) {
+      assignWithSum(hark, this.plushark);
     }
-    return {
-      str: +this.charObj.harks.str + +this.plushark.s,
-      dex: +this.charObj.harks.dex + +this.plushark.d,
-      int: +this.charObj.harks.int + +this.plushark.i,
-      wis: +this.charObj.harks.wis + +this.plushark.w,
-      con: +this.charObj.harks.con + +this.plushark.c,
-    };
+    if (!_.isUndefined(this.collection.harks)) {
+      assignWithSum(hark, this.plushark);
+    }
+    return hark;
   }
 
   get magics() {
@@ -270,6 +276,23 @@ class Char {
 
   get clan() {
     return this.charObj.clan;
+  }
+
+  get collection() {
+    return db.inventory.getCollection(this.getPutonedItems()) || {};
+  }
+
+  get resists() {
+    const { resists } = this.collection;
+    return resists || {};
+  }
+
+  get chance() {
+    return this.collection.chance || {};
+  }
+
+  get statical() {
+    return this.collection.statical;
   }
 
   /** Суммарное количество опыта, требуемое для следующего уровня */
@@ -338,8 +361,12 @@ class Char {
     return this.items.find((item) => item._id.equals(itemId));
   }
 
+  getPutonedItems() {
+    return this.items.filter((item) => item.putOn);
+  }
+
   getPutonedWeapon() {
-    return this.items.find((item) => /^ab?$/.test(item.wear) && item.putOn);
+    return this.getPutonedItems().find((item) => /^ab?$/.test(item.wear) && item.putOn);
   }
 
   isCanPutOned(item) {
@@ -356,28 +383,33 @@ class Char {
 
   async putOffItem(itemId) {
     await db.inventory.putOffItem(this.id, itemId);
-    const inventory = await db.inventory.getItems(this.id);
+    const inventory = await this.putOffItemsCantPutOned();
     this.charObj.inventory = inventory;
-    return this.updateHarkFromItems();
+  }
+
+  /** @returns {import('../models/inventory').InventoryDocument[]} */
+  async putOffItemsCantPutOned() {
+    const inventory = await db.inventory.getItems(this.id);
+    if (!inventory) return [];
+    this.charObj.inventory = inventory;
+    await this.updateHarkFromItems();
+
+    const items = this.getPutonedItems().filter((i) => !this.hasRequeredHarks(arena.items[i.code]));
+    if (items.length) {
+      const putOffItems = items.map((i) => db.inventory.putOffItem(this.id, i._id));
+      await Promise.all(putOffItems);
+      const inventoryFiltered = await this.putOffItemsCantPutOned();
+      this.charObj.inventory = inventoryFiltered;
+      return inventoryFiltered;
+    }
+    return inventory;
   }
 
   async putOnItem(itemId) {
     const charItem = this.getItem(itemId);
     const item = arena.items[charItem.code];
-    const {
-      str, dex, wis, int, con,
-    } = this.harks;
 
-    if (item.hark) {
-      const {
-        s, d, w, i, c,
-      } = JSON.parse(item.hark);
-      if (s > str || d > dex || w > wis || i > int || c > con) {
-        return false;
-      }
-    }
-
-    if (!this.isCanPutOned(item)) {
+    if (!this.hasRequeredHarks(item) || !this.isCanPutOned(item)) {
       return false;
     }
 
@@ -385,6 +417,17 @@ class Char {
     const inventory = await db.inventory.getItems(this.id);
     this.charObj.inventory = inventory;
     await this.updateHarkFromItems();
+    return true;
+  }
+
+  /**
+   *
+   * @param {import('../models/item').Item} item
+   */
+  hasRequeredHarks(item) {
+    if (item.hark) {
+      return _.every(item.hark, (val, hark) => val < this.harks[hark]);
+    }
     return true;
   }
 
@@ -433,7 +476,6 @@ class Char {
 
   /**
   * Продажа предмета.
-  * Добавил пересчет характеристик т.к сейчас можно продать вещь не снимая.
   */
   async sellItem(itemId) {
     const charItem = this.getItem(itemId);
@@ -441,10 +483,9 @@ class Char {
 
     this.removeItem(itemId);
     this.gold += item.price / 2;
-    // Сейчас если продать итем который дает характеристики то не проиходит
-    // перерасчет новых и сброс вещей которые недоступны по харкам
-    await this.saveToDb;
-    return this.updateHarkFromItems();
+    const inventory = await this.putOffItemsCantPutOned();
+    this.charObj.inventory = inventory;
+    await this.saveToDb();
   }
 
   /**
@@ -457,7 +498,10 @@ class Char {
     if (!this.harksFromItems || !Object.keys(this.harksFromItems).length) {
       this.harksFromItems = { hit: { min: 0, max: 0 } };
     }
-    console.log(this.harksFromItems);
+
+    if (this.statical) {
+      assignWithSum(this.harksFromItems, this.statical);
+    }
   }
 
   /**

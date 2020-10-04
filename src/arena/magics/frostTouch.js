@@ -6,7 +6,7 @@ const LongDmgMagic = require('../Constuructors/LongDmgMagicConstructor');
 
 /**
  * @typedef {import ('../GameService')} game
- * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../PlayerService').default} player
  */
 
 const frostTouch = new LongDmgMagic({

@@ -1,59 +1,67 @@
-const MiscService = require('../MiscService');
+import Game from '../GameService';
+import arena from '../index';
+import MiscService from '../MiscService';
+import Player from '../PlayerService';
+import { CostType, OrderType, AOEType, Breaks } from './types';
 
-/**
- * @typedef {import ('../GameService')} game
- * @typedef {import ('../PlayerService')} player
- */
+type SkillName = keyof typeof arena['skills'];
+
+interface SkillArgs {
+  name: SkillName;
+  displayName: string;
+  desc: string;
+  cost: number[];
+  proc: number;
+  baseExp: number;
+  costType: CostType;
+  lvl: number;
+  orderType: OrderType;
+  aoeType: AOEType;
+  chance: number[];
+  effect: number[];
+  msg: (nick: string, exp: number) => string;
+  profList: string[];
+  bonusCost: number[];
+}
 
 /**
  * Основной конструктор класса скилов (войны/лучники)
  */
-class Skill {
+export default abstract class Skill implements SkillArgs {
+  name: SkillName;
+  displayName: string;
+  desc: string;
+  cost: number[];
+  proc: number;
+  baseExp: number;
+  costType: CostType;
+  lvl: number;
+  orderType: OrderType;
+  aoeType: AOEType;
+  chance: number[];
+  effect: number[];
+  msg: (nick: string, exp: number) => string;
+  profList: string[];
+  bonusCost: number[];
+  params!: {
+    initiator: Player;
+    target: Player;
+    game: Game;
+  };
   /**
    * Создание скила
-   * @param {skill} params параметры создания нового скилла
-   * @typedef {Object} skill
-   * @property {String} name
-   * @property {String} displayName;
-   * @property {String} desc
-   * @property {Number[]} cost
-   * @property {Number} proc
-   * @property {Number} baseExp
-   * @property {String} costType
-   * @property {Number} lvl
-   * @property {String} orderType
-   * @property {String} aoeType
-   * @property {Number[]} chance
-   * @property {Number[]} effect
-   * @property {Function} msg
-   * @property {String[]} profList - массив проф
-   * @property {Number[]} bonusCost
    */
-  constructor(params) {
-    this.name = params.name;
-    this.displayName = params.displayName;
-    this.desc = params.desc;
-    this.cost = params.cost;
-    this.proc = params.proc;
-    this.baseExp = params.baseExp;
-    this.costType = params.costType;
-    this.lvl = params.lvl;
-    this.orderType = params.orderType;
-    this.aoeType = params.aoeType;
-    this.chance = params.chance;
-    this.effect = params.effect;
-    this.msg = params.msg;
-    this.profList = params.profList;
-    this.bonusCost = params.bonusCost;
+  constructor(params: SkillArgs) {
+    Object.assign(this, params);
   }
 
   /**
    * Основная точка вхождения в выполнение скила
-   * @param {player} initiator инициатор
-   * @param {player} target цель
-   * @param {game} game Game обьект игры
+   * @param initiator инициатор
+   * @param target цель
+   * @param game Game обьект игры
    */
-  cast(initiator, target, game) {
+  cast(initiator: Player, target: Player, game: Game): void {
     this.params = {
       initiator, target, game,
     };
@@ -64,18 +72,14 @@ class Skill {
       this.next();
       this.getExp(initiator);
     } catch (failMsg) {
-      const { battleLog } = this.params.game;
-      battleLog.log(failMsg);
-      this.params = null;
+      game.battleLog.log(failMsg);
     }
   }
 
   /**
    * Функция снимает требуемое кол-во en за использования скила
-   * @param {player} initiator
    */
-  // eslint-disable-next-line class-methods-use-this
-  getCost() {
+  getCost(): void {
     const { initiator } = this.params;
     // достаем цену за использование согласно lvl скила у пользователя
     const skillCost = this.cost[initiator.skills[this.name] - 1];
@@ -90,7 +94,7 @@ class Skill {
   /**
    * Проверяем шанс прохождения скилла
    */
-  checkChance() {
+  checkChance(): void {
     if (MiscService.rndm('1d100') > this.getChance()) {
       // скил сфейлился
       throw this.breaks('SKILL_FAIL');
@@ -99,9 +103,9 @@ class Skill {
 
   /**
    * Собираем параметр шанса
-   * @return {Number} шанс прохождения
+   * @return шанс прохождения
    */
-  getChance() {
+  getChance(): number {
     const { initiator } = this.params;
     const initiatorSkillLvl = initiator.skills[this.name];
     return this.chance[initiatorSkillLvl - 1];
@@ -110,7 +114,7 @@ class Skill {
   /**
    * Успешное прохождение скила и отправка записи в BattleLog
    */
-  next() {
+  next(): void {
     this.params.game.battleLog.success({
       exp: this.baseExp,
       action: this.displayName,
@@ -119,32 +123,30 @@ class Skill {
       initiator: this.params.initiator.nick,
       msg: this.msg,
     });
-    this.params = null;
   }
 
   /**
    * Пустая функция для потомка
    */
-  // eslint-disable-next-line class-methods-use-this
-  run() {}
+  abstract run(): void
 
   /**
    * Расчитываем полученный exp
    */
-  getExp(initiator) {
+  getExp(initiator: Player): void {
     initiator.stats.mode('up', 'exp', this.baseExp);
   }
 
   /**
    * Обработка провала магии
    */
-  breaks(e) {
+  breaks(e: string): Breaks {
     return {
       action: this.displayName,
       initiator: this.params.initiator.nick,
+      target: this.params.target.nick,
+      actionType: 'skill',
       message: e,
     };
   }
 }
-
-module.exports = Skill;

@@ -1,12 +1,15 @@
-const config = require('./config');
-const CharacterService = require('./CharacterService');
-const GameService = require('./GameService');
-const testGame = require('./testGame');
 const actions = require('./actions');
+const CharacterService = require('./CharacterService');
+const { default: config } = require('./config');
+const GameService = require('./GameService');
 const magics = require('./magics');
+const postHeal = require('./magics/postHeal');
 const skills = require('./skills');
+const testGame = require('./testGame');
 
-const ACTIONS = { ...actions, ...magics, ...skills };
+const ACTIONS = {
+  ...actions, ...magics, ...skills, postHeal,
+};
 const STAGES = config.stages;
 
 /**

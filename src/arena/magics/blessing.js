@@ -5,7 +5,7 @@ const CommonMagic = require('../Constuructors/CommonMagicConstructor');
  * @todo в старой арене на 3 лвл магии она становилась длительной
  */
 
-/** @typedef {import ('../PlayerService')} player */
+/** @typedef {import ('../PlayerService').default} player */
 const blessing = new CommonMagic({
   name: 'blessing',
   displayName: 'Благословление',

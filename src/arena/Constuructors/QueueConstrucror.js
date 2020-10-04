@@ -1,5 +1,5 @@
+const { default: config } = require('../config');
 const GameService = require('../GameService');
-const config = require('../config');
 
 /**
  * @typedef {Object} mmObj

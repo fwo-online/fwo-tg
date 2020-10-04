@@ -1,11 +1,11 @@
-const Magic = require('./MagicConstructor');
 const floatNumber = require('../floatNumber');
 const MiscService = require('../MiscService');
+const { default: Magic } = require('./MagicConstructor');
 
 /**
- * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../PlayerService').default} player
  * @typedef {import ('../GameService')} game
- * @typedef {import ('./MagicConstructor').baseMag} baseMag
+ * @typedef {import ('./MagicConstructor').Magic} baseMag
  * @typedef {Object} dmgMag
  * @property {string} dmgType
  */
@@ -30,14 +30,17 @@ class DmgMagic extends Magic {
    * @return {number}
    */
   effectVal() {
-    const i = this.params.initiator;
-    const t = this.params.target;
-    const initiatorMagicLvl = i.magics[this.name];
-    let eff = MiscService.dice(this.effect[initiatorMagicLvl - 1]) * i.proc;
+    const { initiator, target } = this.params;
+    const initiatorMagicLvl = initiator.magics[this.name];
+    let eff = MiscService.dice(this.effect[initiatorMagicLvl - 1]) * initiator.proc;
     if (this.dmgType !== 'clear') {
       // правим урон от mgp цели и mga кастера
-      eff = eff * (1 + 0.004 * i.stats.val('mga'))
-          * (1 - 0.002 * t.stats.val('mgp'));
+      eff = eff * (1 + 0.004 * initiator.stats.val('mga'))
+          * (1 - 0.002 * target.stats.val('mgp'));
+      const resist = target.resists[this.dmgType];
+      if (resist) {
+        eff *= resist;
+      }
     }
     this.status.hit = eff;
     return eff;

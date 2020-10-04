@@ -1,20 +1,12 @@
 const _ = require('lodash');
-const arena = require('./index');
 const { mono } = require('./MiscService');
+const arena = require('./index');
 /**
  * Items Service
  *
  * @description Набор функций для работы с вещами.
  * @module Service/Item
  */
-
-const itemToCharHark = {
-  s: 'str',
-  d: 'dex',
-  w: 'wis',
-  i: 'int',
-  c: 'con',
-};
 
 const attrNames = {
   name: 'Название',
@@ -24,18 +16,18 @@ const attrNames = {
   race: 'Раса',
   weight: 'Вес',
   hark: {
-    s: 'Сила',
-    d: 'Ловкость',
-    w: 'Мудрость',
-    i: 'Интеллект',
-    c: 'Телосложение',
+    str: 'Сила',
+    dex: 'Ловкость',
+    wis: 'Мудрость',
+    int: 'Интеллект',
+    con: 'Телосложение',
   },
   plushark: {
-    s: 'Сила',
-    d: 'Ловкость',
-    w: 'Мудрость',
-    i: 'Интеллект',
-    c: 'Телосложение',
+    str: 'Сила',
+    dex: 'Ловкость',
+    wis: 'Мудрость',
+    int: 'Интеллект',
+    con: 'Телосложение',
   },
   mga: 'Магическая атака',
   mgp: 'Магическая защита',
@@ -66,16 +58,19 @@ const attrNames = {
   frost: '❄️ Урон холодом',
 };
 
-const getRequiredHark = (char, value, key) => {
-  const name = attrNames.hark[key];
-  const hark = itemToCharHark[key];
+const getRequiredHark = (char, value, hark) => {
+  const name = attrNames.hark[hark];
   const pointToPutOn = char.harks[hark] - value;
   const canPutOn = pointToPutOn <= 0;
   return `\t\t${canPutOn ? '❗️' : '✅'} ${name}: ${value} ${canPutOn ? `(${pointToPutOn})` : ''}`;
 };
 
+/**
+ * @param {number | null} value
+ * @param {string} key
+ */
 const getPlusHark = (value, key) => {
-  if (value > 0) {
+  if (!_.isNull(value) && value > 0) {
     return `\t\t➕ ${attrNames.hark[key]}: ${value}`;
   }
   return '';
@@ -120,38 +115,7 @@ const getAdditionalDamage = (item) => {
 };
 
 module.exports = {
-  /**
-   * @description Парсер hark itema
-   * @param {Object} data параметры вещи из базы
-   * @return {Object} обьект стандартизированных параметров вещи
-   */
-  itemAtrParser: (data) =>
-  // eslint-disable-next-line consistent-return, implicit-arrow-linebreak
-    JSON.parse(JSON.stringify(data), (key, value) => {
-      const minmaxarr = [
-        'hp_drain',
-        'mp_drain',
-        'en_drain',
-        'hit',
-        'fire',
-        'acid',
-        'lighting',
-        'frost',
-      ];
-        // eslint-disable-next-line no-bitwise
-      const isFound = ~minmaxarr.indexOf(key);
-      if (((key === 'hark') || (key === 'plushark')) && (value !== '')) {
-        return JSON.parse(value);
-      }
-      if ((isFound) && value) {
-        const x = value.split(',');
-        return ({
-          min: x[0],
-          max: x[1],
-        });
-      }
-      if (value !== '') return value;
-    }),
+  attrNames,
   /**
    * @param {String} nick
    * @param {Number} itemCode ID итема
@@ -175,28 +139,30 @@ module.exports = {
     }
   },
 
+  /**
+   *
+   * @param {import('./CharacterService')} char
+   * @param {import('../models/item').Item} item
+   */
   itemDescription(char, item) {
-    const i = this.itemAtrParser(item);
-
     return [
-      `${i.name} ${i.price ? `(💰 ${i.price})` : ''}`,
-      i.descr && `\n${i.descr}\n`,
-      i.atc && mono(`  🗡 Атака: ${i.atc}`),
-      i.hit && mono(`  ⚔️ Удар: ${i.hit.min}-${i.hit.max}`),
-      i.prt && mono(`  🛡 Защита: ${i.prt}`),
+      `${item.name} ${item.price ? `(💰 ${item.price})` : ''}`,
+      item.descr && `\n${item.descr}\n`,
+      item.atc && mono(`\t\t🗡 Атака: ${item.atc}`),
+      item.hit && mono(`\t\t⚔️ Удар: ${item.hit.min}-${item.hit.max}`),
+      item.prt && mono(`\t\t🛡 Защита: ${item.prt}`),
 
-      i.hark && `\n👤 Требуемые характеристики:\n${mono(
-        _.map(i.hark, (val, key) => getRequiredHark(char, val, key)).join('\n'),
-      )}\n`,
+      item.hark && `\n👤 Требуемые характеристики:\n${mono(
+        _.map(item.hark, (val, key) => getRequiredHark(char, val, key)).join('\n'),
+      )}`,
 
-      '↗️ Дополнительные характеристики:',
-      i.plushark && `${mono(
-        _.map(i.plushark, getPlusHark).filter((x) => x).join('\n'),
-      )}\n`,
+      item.plushark && `\n↗️ Дополнительные характеристики:\n${mono(
+        _.map(item.plushark, getPlusHark).filter((x) => x).join('\n'),
+      )}`,
 
-      mono(`${getAdditionalDamage(i)}`),
+      mono(`${getAdditionalDamage(item)}`),
 
-      i.weight && `\nВес: ${i.weight} кг`,
+      item.weight && `\nВес: ${item.weight} кг`,
     ]
       .filter((currentItem) => currentItem)
       .join('\n');

@@ -1,13 +1,13 @@
-const Markup = require('telegraf/markup');
-const arena = require('./index');
+const { Markup } = require('telegraf');
 const channelHelper = require('../helpers/channelHelper');
+const arena = require('./index');
 
 /**
  * Заказываем в три этапа:
  * 1. Выбор умения (action_{attack})
  * 2. Выбор цели ({attack}_{target})
  * 3. Выбор силы ({attack}_{target}_{proc})
- * @typedef {import ('./PlayerService')} Player
+ * @typedef {import ('./PlayerService').default} Player
  * @typedef {import ('./GameService')} Game
  * @typedef {import('telegraf/typings/markup').CallbackButton} CallbackButton
  */
@@ -66,13 +66,13 @@ const getTargetKeyboard = (charId, game, action) => {
 const getProcentKeyboard = (action, target, proc) => Array
   .from(new Set([5, 10, 25, 50, 75, proc]))
   .filter((key) => key <= proc)
-  .map((key) => Markup.callbackButton(key, `${action}_${target}_${key}`));
+  .map((key) => Markup.callbackButton(key.toString(), `${action}_${target}_${key}`));
 
 /**
  * Сообщение для первого этапа
  * @param {string} charId
  * @param {Game} game
- * @returns {[string, CallbackButton[]]}
+ * @returns {[string, CallbackButton[][]]}
  */
 const orderMessage = (charId, game) => {
   const player = game.players[charId];
@@ -113,13 +113,13 @@ const percentMessage = (charId, game, action, targetId) => {
   return [message, keyboard];
 };
 
-
 module.exports = {
   /**
    * Обработка выбранного действия (первый этап)
    * @param {string} charId
    * @param {Game} game
    * @param {string} action
+   * @return {[string, CallbackButton[] | CallbackButton[][]]}
    */
   handleAction(charId, game, action) {
     if (action === 'repeat') return this.repeatOrder(charId, game);

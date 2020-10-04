@@ -1,5 +1,5 @@
-const db = require('./dataBase');
 const CharacterService = require('../arena/CharacterService');
+const db = require('./dataBase');
 
 module.exports = {
   /*

@@ -7,9 +7,9 @@ const floatNumber = require('../floatNumber');
 const DmgMagic = require('./DmgMagicConstructor');
 
 /**
- * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../PlayerService').default} player
  * @typedef {import ('../GameService')} game
- * @typedef {import ('./MagicConstructor').baseMag} baseMag
+ * @typedef {import ('./MagicConstructor').Magic} baseMag
  * @typedef {import ('./DmgMagicConstructor').dmgMag} dmgMag
  */
 

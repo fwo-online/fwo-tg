@@ -7,4 +7,4 @@ COPY ./package*.json ./
 RUN npm install
 COPY ./src/ ./
 
-CMD ["node","fwo.js"]
+CMD ["ts-node","fwo.ts"]

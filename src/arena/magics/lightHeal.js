@@ -6,7 +6,7 @@ const floatNumber = require('../floatNumber');
  * @todo в старой арене на 3 лвл магии она становилась длительной
  */
 
-/** @typedef {import ('../PlayerService')} player */
+/** @typedef {import ('../PlayerService').default} player */
 
 const lightHeal = new CommonMagic({
   name: 'lightHeal',

@@ -1,8 +1,8 @@
 const { EventEmitter } = require('events');
 const _ = require('lodash');
-const arena = require('./index');
-const config = require('./config');
+const { default: config } = require('./config');
 const QueueConstructor = require('./Constuructors/QueueConstrucror');
+const arena = require('./index');
 
 /**
  * MatchMaking system

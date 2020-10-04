@@ -1,7 +1,7 @@
 const { BaseScene } = require('telegraf');
 const { charDescr } = require('../../arena/MiscService');
-const messages = require('./messages');
 const keyboards = require('./keyboards');
+const messages = require('./messages');
 
 /** @type {import('../stage').BaseGameScene} */
 const create = new BaseScene('create');

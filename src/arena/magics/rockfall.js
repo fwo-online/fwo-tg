@@ -4,7 +4,7 @@ const DmgMagic = require('../Constuructors/DmgMagicConstructor');
  * Основное описание магии общее требовани есть в конструкторе
  */
 
-/** @typedef {import ('../PlayerService')} player */
+/** @typedef {import ('../PlayerService').default} player */
 
 const rockfall = new DmgMagic({
   name: 'rockfall',

@@ -4,7 +4,7 @@ const LongMagic = require('../Constuructors/LongMagicConstructor');
  * Основное описание магии общее требовани есть в конструкторе
  */
 
-/** @typedef {import ('../PlayerService')} player */
+/** @typedef {import ('../PlayerService').default} player */
 
 const smallAura = new LongMagic({
   name: 'smallAura',

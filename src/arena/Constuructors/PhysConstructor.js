@@ -1,10 +1,10 @@
-const arena = require('../index');
 const floatNumber = require('../floatNumber');
+const arena = require('../index');
 const MiscService = require('../MiscService');
 
 /**
  * @typedef {import ('../GameService')} game
- * @typedef {import ('../PlayerService')} player
+ * @typedef {import ('../PlayerService').default} player
  */
 
 /**
@@ -122,14 +122,12 @@ class PhysConstructor {
     const atc = initiator.stats.val('patk') * initiator.proc;
     const prt = target.flags.isProtected.length > 0 ? target.stats.val('pdef') : 0.1;
     const at = floatNumber(Math.round(atc / prt));
-    // eslint-disable-next-line no-console
     console.log('at', at);
     const r = MiscService.rndm('1d100');
     // const c = Math.round(Math.sqrt(at) + (10 * at) + 5);
     // new formula for phys attack chance
     const c = 20 * at + 50;
     const result = c > r;
-    // eslint-disable-next-line no-console
     console.log('left', c, 'right', r, 'result', result);
     const initiatorHitParam = initiator.stats.val('hit');
     const hitval = MiscService.randInt(initiatorHitParam.min,
@@ -197,7 +195,6 @@ class PhysConstructor {
       target.setKiller(initiator);
     }
   }
-
 
   /**
    * @param {String} msg строка остановки атаки (причина)
