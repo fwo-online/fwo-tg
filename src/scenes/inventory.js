@@ -106,8 +106,7 @@ inventoryScene.action(/sellConfirm(?=_)/,
         Markup.callbackButton('Нет', `itemInfo_${itemId}`),
       ]).resize().extra({ parse_mode: 'Markdown' }),
     );
-  }
-);
+  });
 
 inventoryScene.action(/sell(?=_)/,
   async ({ session, editMessageText, match }) => {

@@ -1,4 +1,4 @@
-import { Clan } from '../models/clan';
+import Clan from '../models/clan';
 import { Inventory } from '../models/inventory';
 import { MinMax } from '../models/item';
 import Char from './CharacterService';
@@ -53,7 +53,7 @@ export default class Player {
   tgId: number;
   prof: string;
   lvl: number;
-  clan: Clan;
+  clan?: Clan;
   stats: StatsService;
   flags: FlagsConstructor;
   modifiers: {

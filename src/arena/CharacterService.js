@@ -5,7 +5,7 @@ const floatNumber = require('./floatNumber');
 const arena = require('./index');
 
 /**
- * @typedef {import ('../models/clan').Clan} Clan
+ * @typedef {import ('../models/clan').default} Clan
  * @typedef {Object} Statistics
  * @property {number} kills
  * @property {number} death
@@ -110,28 +110,7 @@ function getDynHarks(charObj) {
 class Char {
   /**
    * Конструктор игрока
-   * @param {char} charObj обьект персонажа из базы
-   * @typedef {Object} char
-   * @property {String} id
-   * @property {String} _id
-   * @property {import('../models/character').Prof} prof
-   * @property {Number} lvl
-   * @property {Number} tgId
-   * @property {String} nickname
-   * @property {Number} gold
-   * @property {Number} exp
-   * @property {Statistics} statistics
-   * @property {import('../models/inventory').InventoryDocument[]} inventory
-   * @property {import('../models/item').Hark} harks
-   * @property {Object.<string, number>} magics
-   * @property {Number} free
-   * @property {Number} bonus
-   * @property {Object} mm
-   * @property {Object.<string, number>} skills
-   * @property {Clan} clan
-   * @property {import ('./GameService')} currentGame
-   * @property {Number} mm
-   * @property {{reason: string, date: Date}[]} penalty
+   * @param {import ('../models/character').default} charObj обьект персонажа из базы
    */
   constructor(charObj) {
     this.charObj = charObj;

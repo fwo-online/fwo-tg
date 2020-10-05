@@ -51,9 +51,9 @@ settingsScene.action('removeConfirm', ({ editMessageText }) => {
   editMessageText(
     'Вы действительно хотите удалить персонажа?',
     Markup.inlineKeyboard([
-      Markup.callbackButton('Да', `remove`),
-      Markup.callbackButton('Нет', `back`),
-    ]).resize().extra()
+      Markup.callbackButton('Да', 'remove'),
+      Markup.callbackButton('Нет', 'back'),
+    ]).resize().extra(),
   );
 });
 

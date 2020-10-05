@@ -134,9 +134,9 @@ class PhysConstructor {
       initiatorHitParam.max);
     this.status.hit = floatNumber(hitval * initiator.proc);
     if (result) {
-      this.params.target.flags.isHited = ({
+      this.params.target.flags.isHited = {
         initiator: initiator.nick, hit: this.status.hit,
-      });
+      };
       this.run();
     } else {
       throw this.protectorsGetExp();

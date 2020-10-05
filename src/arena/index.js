@@ -17,6 +17,6 @@ module.exports = {
   skills: null,
   /** @type import ('./actions') */
   actions: null,
-  /** @type {Object<string, import ('./ClanService').Clan>} */
+  /** @type {Object<string, import ('./ClanService').default>} */
   clans: {},
 };

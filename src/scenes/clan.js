@@ -99,7 +99,7 @@ clanScene.action(/^(lvlup|back|remove|leave)$/, async ({
 
 clanScene.action('removeConfirm', ({ editMessageText }) => {
   editMessageText(
-    `Вы действительно хотите удалить клан?`,
+    'Вы действительно хотите удалить клан?',
     Markup.inlineKeyboard([
       Markup.callbackButton('Да', 'remove'),
       Markup.callbackButton('Нет', 'back'),
