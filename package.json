@@ -9,7 +9,7 @@
     "lint": "./node_modules/.bin/eslint --fix src/ --ext .js,.ts",
     "start": "ts-node src/fwo.ts",
     "dev": "nodemon",
-    "prod": "ts-node src/fwo.ts",
+    "prod": "ts-node fwo.ts",
     "tsc": "tsc -w"
   },
   "repository": {
