@@ -22,7 +22,7 @@ const getText = {
 };
 /**
  * @param {Game} game
- * @param {import ('./OrderService').order} order
+ * @param {import ('./OrderService').Order} order
  */
 const createOrder = (game, order) => {
   game.orders.orderAction(order);
