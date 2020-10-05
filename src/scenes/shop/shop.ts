@@ -82,6 +82,10 @@ shopScene.action('back', ({ editMessageText }) => {
   );
 });
 
+shopScene.action('inventory', ({ scene }) => {
+  scene.enter('inventory');
+});
+
 shopScene.hears('🔙 В лобби', ({ scene }) => {
   scene.enter('lobby');
 });
