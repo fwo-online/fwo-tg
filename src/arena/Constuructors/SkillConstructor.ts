@@ -2,7 +2,9 @@ import Game from '../GameService';
 import arena from '../index';
 import MiscService from '../MiscService';
 import Player from '../PlayerService';
-import { CostType, OrderType, AOEType, Breaks } from './types';
+import {
+  CostType, OrderType, AOEType, Breaks,
+} from './types';
 
 type SkillName = keyof typeof arena['skills'];
 

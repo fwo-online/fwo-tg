@@ -2,7 +2,7 @@ import { Clan } from '../models/clan';
 import { Inventory } from '../models/inventory';
 import { MinMax } from '../models/item';
 import Char from './CharacterService';
-import FlagsConstructors from './Constuructors/FlagsConstructor';
+import FlagsConstructor from './Constuructors/FlagsConstructor';
 import StatsService from './StatsService';
 import arena from './index';
 
@@ -55,7 +55,7 @@ export default class Player {
   lvl: number;
   clan: Clan;
   stats: StatsService;
-  flags: FlagsConstructors;
+  flags: FlagsConstructor;
   modifiers: {
     magics: {
       chance: Chance;
@@ -78,7 +78,7 @@ export default class Player {
     this.lvl = params.lvl;
     this.clan = params.clan;
     this.stats = new StatsService({ ...params.def, ...params.harks });
-    this.flags = new FlagsConstructors();
+    this.flags = new FlagsConstructor();
     // @todo закладка для вычисляемых статов
     this.modifiers = {
       magics: {
