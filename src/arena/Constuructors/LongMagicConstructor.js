@@ -4,7 +4,7 @@ const Common = require('./CommonMagicConstructor');
 /**
  * @typedef {import ('../PlayerService').default} player
  * @typedef {import ('../GameService')} game
- * @typedef {import ('./MagicConstructor').Magic} baseMag
+ * @typedef {import ('./MagicConstructor').MagicArgs} baseMag
  */
 
 /**
@@ -18,6 +18,7 @@ class LongMagic extends Common {
   // eslint-disable-next-line no-useless-constructor
   constructor(magObj) {
     super(magObj);
+    this.isLong = true;
   }
 
   /**

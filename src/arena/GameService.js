@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const channelHelper = require('../helpers/channelHelper');
 const db = require('../helpers/dataBase');
-const BattleLog = require('./BattleLog');
+const { default: BattleLog } = require('./BattleLog');
 const engineService = require('./engineService');
 const HistoryService = require('./HistoryService');
 const { getIcon } = require('./MiscService');

@@ -4,9 +4,9 @@
 // FIXME: Сюда пока нужно руками добавлять все actions и делать их export
 // после будет glob подгрузка модулей
 const regeneration = require('../actions/regen');
-const acidSpittle = require('./acidSpittle');
+const { default: acidSpittle } = require('./acidSpittle');
 const blessing = require('./blessing');
-const chainLightning = require('./chainLightning');
+const { default: chainLightning } = require('./chainLightning');
 const curse = require('./curse');
 const eclipse = require('./eclipse');
 const entangle = require('./entangle');
@@ -15,12 +15,12 @@ const glitch = require('./glitch');
 const lightHeal = require('./lightHeal');
 const madness = require('./madness');
 const magicArmor = require('./magicArmor');
-const magicArrow = require('./magicArrow');
+const { default: magicArrow } = require('./magicArrow');
 const magicDefense = require('./magicDefense');
 const mediumHeal = require('./mediumHeal');
 const paralysis = require('./paralysis');
-const poisonBreath = require('./poisonBreath');
-const rockfall = require('./rockfall');
+const { default: poisonBreath } = require('./poisonBreath');
+const { default: rockfall } = require('./rockfall');
 const silence = require('./silence');
 const smallAura = require('./smallAura');
 const stoneSkin = require('./stoneSkin');

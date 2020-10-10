@@ -1,35 +1,36 @@
-const floatNumber = require('../floatNumber');
-const MiscService = require('../MiscService');
-const { default: Magic } = require('./MagicConstructor');
+import { SuccessArgs } from '../BattleLog';
+import floatNumber from '../floatNumber';
+import MiscService from '../MiscService';
+import Player from '../PlayerService';
+import { Magic, MagicArgs } from './MagicConstructor';
+import { DamageType } from './types';
 
-/**
- * @typedef {import ('../PlayerService').default} player
- * @typedef {import ('../GameService')} game
- * @typedef {import ('./MagicConstructor').Magic} baseMag
- * @typedef {Object} dmgMag
- * @property {string} dmgType
- */
+export interface DmgMagicArgs extends MagicArgs {
+  dmgType: DamageType;
+}
 
+export interface DmgMagic extends DmgMagicArgs, Magic {
+}
 /**
  * Общий конструктор не длительных магий
  */
-class DmgMagic extends Magic {
+export abstract class DmgMagic extends Magic {
+  status = {
+    exp: 0,
+    hit: 0,
+  }
   /**
    * Создание магии
-   * @param {dmgMag & baseMag} magObj Обьект создаваемой магии
    */
-  constructor(magObj) {
+  constructor({ dmgType, ...magObj }: DmgMagicArgs) {
     super(magObj);
-    this.dmgType = magObj.dmgType;
-    this.status = {};
+    this.dmgType = dmgType;
   }
 
   /**
    * Возвращает шанс прохождения магии
-   * @todo сюда же надо добавить эффекты от resists
-   * @return {number}
    */
-  effectVal() {
+  effectVal(): number {
     const { initiator, target } = this.params;
     const initiatorMagicLvl = initiator.magics[this.name];
     let eff = MiscService.dice(this.effect[initiatorMagicLvl - 1]) * initiator.proc;
@@ -51,7 +52,7 @@ class DmgMagic extends Magic {
    * кол-во единиц за использование магии
    * Если кастеру хватило mp/en продолжаем,если нет, то возвращаем false
    */
-  getExp() {
+  getExp(): void {
     const { initiator, target, game } = this.params;
 
     if (game.isPlayersAlly(initiator, target) && !initiator.flags.isGlitched) {
@@ -65,13 +66,13 @@ class DmgMagic extends Magic {
 
   /**
    * Магия прошла удачно
-   * @param {player} initiator обьект персонажаы
-   * @param {player} target обьект цели магии
+   * @param initiator обьект персонажаы
+   * @param target обьект цели магии
    * @todo тут нужен вывод требуемых параметров
    */
-  next(initiator, target) {
+  next(initiator: Player, target: Player): void {
     const { game } = this.params;
-    const dmgObj = {
+    const dmgObj: SuccessArgs = {
       exp: this.status.exp,
       dmg: floatNumber(this.status.hit),
       action: this.displayName,
@@ -85,5 +86,3 @@ class DmgMagic extends Magic {
     game.battleLog.success(dmgObj);
   }
 }
-
-module.exports = DmgMagic;

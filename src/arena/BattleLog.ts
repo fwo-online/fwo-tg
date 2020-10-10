@@ -1,5 +1,28 @@
-const ee = require('events');
-const { weaponTypes } = require('./MiscService');
+import ee from 'events';
+import { ItemDocument } from '../models/item';
+import { ActionType, BreaksMessage, DamageType } from './Constuructors/types';
+import { weaponTypes } from './MiscService';
+
+export type ExpArr = readonly [name: string, exp: number, heal?: number];
+
+export type SuccessArgs = {
+  expArr?: ExpArr[];
+  exp: number;
+  hp?: number;
+  dmg?: number;
+  initiator: string;
+  target: string;
+  action: string;
+  dmgType?: DamageType;
+  actionType?: ActionType;
+  weapon?: ItemDocument;
+  effect?: string[];
+  msg?: (data: SuccessArgs) => string;
+};
+
+type FailArgs = SuccessArgs & {
+  message: BreaksMessage;
+}
 
 /**
  * msg
@@ -16,42 +39,42 @@ function csl(msgObj) {
 
   const expString = expArr ? expArr.map(([name, exp]) => `${name}: 📖${exp}`).join(', ') : '';
 
-  const TEXT = {
+  const TEXT: Record<BreaksMessage, Record<'en' | 'ru', string>> = {
     NO_MANA: {
       ru: `Не хватило маны для заклинания _${action}_`,
-      eng: '',
+      en: '',
     },
     NO_ENERGY: {
       ru: `Не хватило энерги для умения _${action}_`,
-      eng: '',
+      en: '',
     },
     SILENCED: {
       ru: `*${initiator}* пытался сотворить _${action}_, но попытка провалилась (безмолвие)`,
-      eng: '',
+      en: '',
     },
     CHANCE_FAIL: {
       ru: `*${initiator}* пытался сотворить _${action}_, но у него не вышло`,
-      eng: '',
+      en: '',
     },
     GOD_FAIL: {
       ru: `Заклинание _${action}_ *${initiator}* провалилось по воле богов `,
-      eng: '',
+      en: '',
     },
     HEAL_FAIL: {
       ru: `*${initiator}* пытался _вылечить_ *${target}*, но тот был атакован`,
-      eng: '',
+      en: '',
     },
     SKILL_FAIL: {
       ru: `*${initiator}* пытался использовать умение _${action}_, но у него не вышло`,
-      eng: '',
+      en: '',
     },
     NO_WEAPON: {
       ru: `*${initiator}* пытался атаковать *${target}*, но у него не оказалось оружия в руках`,
-      eng: '',
+      en: '',
     },
     DEF: {
       ru: `*${initiator}* атаковал *${target}* _${weapon ? weapon.case : ''}_, но тот смог защититься \\[${expString}]`,
-      eng: '',
+      en: '',
     },
     DODGED: {
       ru: `*${initiator}* атаковал *${target}* _${weapon ? weapon.case : ''}_, но тот уклонился от атаки`,
@@ -79,21 +102,12 @@ function csl(msgObj) {
  * @todo WIP класс в стадии формирования
  * @see https://trello.com/c/qxnIM1Yq/17
  */
-class BattleLog extends ee {
-  /**
-   * Конструктор обьекта ведущего логику отдачи сообщений для пользовательского
-   * BattleLog
-   */
-  constructor() {
-    super();
-    this.msgArray = [];
-  }
-
+export default class BattleLog extends ee {
   /**
    * Функция логирует действия в console log
    * @param {Object.<string, string>} msgObj тип сообщения
    */
-  log(msgObj) {
+  log(msgObj: FailArgs): void {
     const data = csl(msgObj);
     this.write(data);
   }
@@ -102,14 +116,14 @@ class BattleLog extends ee {
    * Удачный проход action
    * @param {Object.<string, any>} msgObj тип сообщения
    */
-  success(msgObj) {
+  success(msgObj: SuccessArgs): void {
     let data = '';
     const { expArr } = msgObj;
     const expString = expArr ? expArr.map(([name, exp, val]) => `${name}: 💖${val} 📖${exp}`).join(', ') : '';
     // Если обьект содержит кастомную строку испльзуем её
     if (msgObj.msg) {
-      data = msgObj.msg(msgObj.initiator, msgObj.exp);
-    } else if (msgObj.dmgType && msgObj.dmgType === 'phys') {
+      data = msgObj.msg(msgObj);
+    } else if (msgObj.dmgType && msgObj.dmgType === 'physical' && msgObj.weapon) {
       const { action } = weaponTypes[msgObj.weapon.wtype];
       data = `*${msgObj.initiator}* ${action(msgObj.target, msgObj.weapon)} и нанёс *${msgObj.dmg}* урона \\[ 💔-${msgObj.dmg}/${msgObj.hp} 📖${msgObj.exp} ]`;
     } else if (msgObj.dmgType) {
@@ -128,11 +142,9 @@ class BattleLog extends ee {
 
   /**
    * Функция отправки сообщений в Game
-   * @param {string} data обьект сообщения
+   * @param data обьект сообщения
    */
-  write(data) {
+  write(data: string): void {
     this.emit('BattleLog', data);
   }
 }
-
-module.exports = BattleLog;

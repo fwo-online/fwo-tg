@@ -1,4 +1,5 @@
-import Skill from '../Constuructors/SkillConstructor';
+import { bold, brackets } from '../../utils/formatString';
+import { Skill } from '../Constuructors/SkillConstructor';
 
 /**
  * Берсерк
@@ -18,7 +19,6 @@ class Berserk extends Skill {
       aoeType: 'target',
       chance: [70, 75, 80, 85, 90, 95],
       effect: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6],
-      msg: (nick, exp) => `${nick} использовал [berserk] [📖 +${exp}]`,
       profList: ['w'],
       bonusCost: [10, 20, 30, 40, 60, 80],
     });
@@ -34,6 +34,10 @@ class Berserk extends Skill {
     initiator.stats.mode('set', 'hit', effect);
     initiator.stats.mode('set', 'patk', atk * (1 / effect));
     initiator.stats.mode('set', 'mgp', mgp * (1 / effect));
+  }
+
+  customMessage({ initiator, exp }) {
+    return `${bold(initiator)} использовал ${this.displayName} ${brackets(`📖${exp}`)}`;
   }
 }
 

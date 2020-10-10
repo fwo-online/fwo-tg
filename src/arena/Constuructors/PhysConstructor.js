@@ -176,7 +176,7 @@ class PhysConstructor {
         hp: target.stats.val('hp'),
         initiator: initiator.nick,
         weapon,
-        dmgType: 'phys',
+        dmgType: 'physical',
       };
       game.addHistoryDamage(msg);
       game.battleLog.success(msg);

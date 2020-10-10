@@ -4,12 +4,12 @@ const floatNumber = require('../floatNumber');
  *и лишил его 28.33hp. (h:-28.33/1.31, e:+13/650)
  */
 // import Magic from './MagicConstructor';
-const DmgMagic = require('./DmgMagicConstructor');
+const { DmgMagic } = require('./DmgMagicConstructor');
 
 /**
  * @typedef {import ('../PlayerService').default} player
  * @typedef {import ('../GameService')} game
- * @typedef {import ('./MagicConstructor').Magic} baseMag
+ * @typedef {import ('./MagicConstructor').MagicArgs} baseMag
  * @typedef {import ('./DmgMagicConstructor').dmgMag} dmgMag
  */
 
@@ -24,6 +24,7 @@ class LongDmgMagic extends DmgMagic {
   // eslint-disable-next-line no-useless-constructor
   constructor(magObj) {
     super(magObj);
+    this.isLong = true;
   }
 
   /**

@@ -1,4 +1,5 @@
 import { BaseScene, Markup } from 'telegraf';
+import arena from '../arena';
 import { getIcon } from '../arena/MiscService';
 import type { BaseGameScene } from './stage';
 
@@ -9,6 +10,7 @@ lobby.enter(async ({ replyWithMarkdown, replyWithPhoto, session }) => {
     nickname, prof, lvl, exp, nextLvlExp,
   } = session.character;
 
+  console.log(arena.magics.acidSpittle)
   try {
     await replyWithPhoto({ source: './assets/market.jpg' });
   } catch (e) {

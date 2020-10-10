@@ -3,16 +3,11 @@ import { Inventory } from '../models/inventory';
 import { MinMax } from '../models/item';
 import Char from './CharacterService';
 import FlagsConstructor from './Constuructors/FlagsConstructor';
+import { DamageType } from './Constuructors/types';
 import StatsService from './StatsService';
 import arena from './index';
 
-export interface Resists {
-  fire: number;
-  frost: number;
-  acid: number;
-  lighting: number;
-  physical: number;
-}
+export type Resists = Record<DamageType, number>;
 
 export interface Chance {
   fail?: Partial<Record<keyof typeof arena['magics'], number>>
@@ -62,7 +57,7 @@ export default class Player {
     }
     castChance: number;
   };
-  resists: Partial<Resists>;
+  resists: Partial<Omit<Resists, 'clear'>>;
   skills: { [x: string]: number; };
   magics: { [x: string]: number; };
   statical: Partial<Statical>;
