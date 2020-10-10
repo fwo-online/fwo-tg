@@ -1,4 +1,5 @@
-import { bold, brackets } from '../../utils/formatString';
+import { bold, italic } from '../../utils/formatString';
+import BattleLog, { SuccessArgs } from '../BattleLog';
 import { Skill } from '../Constuructors/SkillConstructor';
 
 /**
@@ -36,8 +37,10 @@ class Berserk extends Skill {
     initiator.stats.mode('set', 'mgp', mgp * (1 / effect));
   }
 
-  customMessage({ initiator, exp }) {
-    return `${bold(initiator)} использовал ${this.displayName} ${brackets(`📖${exp}`)}`;
+  customMessage(args: SuccessArgs) {
+    const { initiator } = args;
+    const exp = BattleLog.getExpString(args);
+    return `${bold(initiator)} использовал ${italic(this.displayName)} ${exp}`;
   }
 }
 

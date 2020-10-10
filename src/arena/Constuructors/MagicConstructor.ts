@@ -1,3 +1,4 @@
+import { SuccessArgs } from '../BattleLog';
 import floatNumber from '../floatNumber';
 import Game from '../GameService';
 import MiscService from '../MiscService';
@@ -65,7 +66,7 @@ export abstract class Magic {
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.getExp(initiator);
       this.checkTargetIsDead();
-      this.next(initiator, target);
+      this.next();
     } catch (failMsg) {
       const bl = this.params.game.battleLog;
       // @fixme прокидываем ошибку выше для длительных кастов
@@ -250,15 +251,9 @@ export abstract class Magic {
     };
   }
 
-  /**
-   * Магия прошла удачно
-   * @param initiator обьект персонажаы
-   * @param target обьект цели магии
-   * @todo тут нужен вывод требуемых параметров
-   */
-  next(initiator: Player, target: Player): void {
-    const bl = this.params.game.battleLog;
-    bl.success({
+  protected getNextArgs(): SuccessArgs {
+    const { target, initiator } = this.params;
+    return {
       exp: this.status.exp,
       action: this.displayName,
       actionType: 'magic',
@@ -266,6 +261,17 @@ export abstract class Magic {
       initiator: initiator.nick,
       effect: this.effect,
       msg: this.customMessage?.bind(this),
-    });
+    };
+  }
+
+  /**
+   * Магия прошла удачно
+   * @param initiator обьект персонажаы
+   * @param target обьект цели магии
+   * @todo тут нужен вывод требуемых параметров
+   */
+  next(): void {
+    const { battleLog } = this.params.game;
+    battleLog.success(this.getNextArgs());
   }
 }

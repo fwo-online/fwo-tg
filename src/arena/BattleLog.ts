@@ -10,6 +10,7 @@ export type SuccessArgs = {
   exp: number;
   hp?: number;
   dmg?: number;
+  heal?: number;
   initiator: string;
   target: string;
   action: string;
@@ -97,12 +98,29 @@ function csl(msgObj) {
   return text.ru;
 }
 
+const expBrackets = (str) => `\n\\[ ${str} ]`;
+
 /**
  * Класс вывода данных в battlelog
  * @todo WIP класс в стадии формирования
  * @see https://trello.com/c/qxnIM1Yq/17
  */
 export default class BattleLog extends ee {
+  static getExpString(args: SuccessArgs): string {
+    return expBrackets(`📖${args.exp}`);
+  }
+
+  static getDmgExpString(args: SuccessArgs): string {
+    return expBrackets(`💔-${args.dmg}/${args.hp} 📖${args.exp}`);
+  }
+
+  static getHealExpString(args: SuccessArgs): string {
+    if (args.expArr) {
+      return expBrackets(args.expArr.map(([name, exp, val]) => `${name}: 💖${val} 📖${exp}`).join(', '));
+    }
+    return expBrackets(`💖${args.heal} 📖${args.exp}`);
+  }
+
   /**
    * Функция логирует действия в console log
    * @param {Object.<string, string>} msgObj тип сообщения

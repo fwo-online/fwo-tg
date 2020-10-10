@@ -1,10 +1,12 @@
+import { bold, italic } from '../../utils/formatString';
+import BattleLog, { SuccessArgs } from '../BattleLog';
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 
 /**
  * Камнепад
  * Основное описание магии общее требовани есть в конструкторе
  */
-class AcidSpittle extends DmgMagic {
+class Rockfall extends DmgMagic {
   constructor() {
     super({
       name: 'rockfall',
@@ -31,6 +33,12 @@ class AcidSpittle extends DmgMagic {
     const { target } = this.params;
     target.stats.mode('down', 'hp', this.effectVal());
   }
+
+  customMessage(args: SuccessArgs) {
+    const { initiator, target } = args;
+    const exp = BattleLog.getDmgExpString(args);
+    return `${bold(initiator)} обрушивает ${italic(this.displayName)} на ${bold(target)} ${exp}`;
+  }
 }
 
-export default new AcidSpittle();
+export default new Rockfall();

@@ -1,7 +1,6 @@
 import { SuccessArgs } from '../BattleLog';
 import floatNumber from '../floatNumber';
 import MiscService from '../MiscService';
-import Player from '../PlayerService';
 import { Magic, MagicArgs } from './MagicConstructor';
 import { DamageType } from './types';
 
@@ -64,25 +63,29 @@ export abstract class DmgMagic extends Magic {
     }
   }
 
+  protected getNextArgs(): SuccessArgs {
+    const args = super.getNextArgs();
+    const { target } = this.params;
+    return {
+      ...args,
+      effect: undefined,
+      dmg: floatNumber(this.status.hit),
+      hp: target.stats.val('hp'),
+      dmgType: this.dmgType,
+    };
+  }
+
   /**
    * Магия прошла удачно
    * @param initiator обьект персонажаы
    * @param target обьект цели магии
    * @todo тут нужен вывод требуемых параметров
    */
-  next(initiator: Player, target: Player): void {
+  next(): void {
     const { game } = this.params;
-    const dmgObj: SuccessArgs = {
-      exp: this.status.exp,
-      dmg: floatNumber(this.status.hit),
-      action: this.displayName,
-      actionType: 'magic',
-      target: target.nick,
-      hp: target.stats.val('hp'),
-      initiator: initiator.nick,
-      dmgType: this.dmgType,
-    };
-    game.addHistoryDamage(dmgObj);
-    game.battleLog.success(dmgObj);
+    const args = this.getNextArgs();
+
+    game.addHistoryDamage(args);
+    game.battleLog.success(args);
   }
 }

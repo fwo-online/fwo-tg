@@ -1,3 +1,5 @@
+import { bold, italic } from '../../utils/formatString';
+import BattleLog, { SuccessArgs } from '../BattleLog';
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 
 /**
@@ -5,6 +7,8 @@ import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
  * Основное описание магии общее требовани есть в конструкторе
  */
 class MagicArrow extends DmgMagic {
+  private case = 'Магической стрелой';
+
   constructor() {
     super({
       name: 'magicArrow',
@@ -30,6 +34,12 @@ class MagicArrow extends DmgMagic {
   run(): void {
     const { target } = this.params;
     target.stats.mode('down', 'hp', this.effectVal());
+  }
+
+  customMessage(args: SuccessArgs): string {
+    const { initiator, target } = args;
+    const exp = BattleLog.getDmgExpString(args);
+    return `${bold(initiator)} выстреливает ${italic(this.case)} в ${bold(target)} ${exp}`;
   }
 }
 
