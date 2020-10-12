@@ -1,5 +1,5 @@
 import { bold, italic } from '../../utils/formatString';
-import BattleLog, { SuccessArgs } from '../BattleLog';
+import { SuccessArgs } from '../BattleLog';
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 
 /**
@@ -36,8 +36,7 @@ class Rockfall extends DmgMagic {
 
   customMessage(args: SuccessArgs) {
     const { initiator, target } = args;
-    const exp = BattleLog.getDmgExpString(args);
-    return `${bold(initiator)} обрушивает ${italic(this.displayName)} на ${bold(target)} ${exp}`;
+    return `${bold(initiator)} обрушивает ${italic(this.displayName)} на ${bold(target)}`;
   }
 }
 

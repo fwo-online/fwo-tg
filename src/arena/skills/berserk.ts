@@ -1,5 +1,5 @@
 import { bold, italic } from '../../utils/formatString';
-import BattleLog, { SuccessArgs } from '../BattleLog';
+import { SuccessArgs } from '../BattleLog';
 import { Skill } from '../Constuructors/SkillConstructor';
 
 /**
@@ -38,9 +38,7 @@ class Berserk extends Skill {
   }
 
   customMessage(args: SuccessArgs) {
-    const { initiator } = args;
-    const exp = BattleLog.getExpString(args);
-    return `${bold(initiator)} использовал ${italic(this.displayName)} ${exp}`;
+    return `${bold(args.initiator)} использовал ${italic(this.displayName)}`;
   }
 }
 

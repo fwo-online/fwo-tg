@@ -107,18 +107,16 @@ const expBrackets = (str) => `\n\\[ ${str} ]`;
  */
 export default class BattleLog extends ee {
   static getExpString(args: SuccessArgs): string {
-    return expBrackets(`📖${args.exp}`);
-  }
-
-  static getDmgExpString(args: SuccessArgs): string {
-    return expBrackets(`💔-${args.dmg}/${args.hp} 📖${args.exp}`);
-  }
-
-  static getHealExpString(args: SuccessArgs): string {
-    if (args.expArr) {
-      return expBrackets(args.expArr.map(([name, exp, val]) => `${name}: 💖${val} 📖${exp}`).join(', '));
+    if (args.actionType === 'magic' && args.dmgType) {
+      return expBrackets(`💔-${args.dmg}/${args.hp} 📖${args.exp}`);
     }
-    return expBrackets(`💖${args.heal} 📖${args.exp}`);
+    if (args.actionType === 'heal') {
+      if (args.expArr) {
+        return expBrackets(args.expArr.map(([name, exp, val]) => `${name}: 💖${val} 📖${exp}`).join(', '));
+      }
+      return expBrackets(`💖${args.heal} 📖${args.exp}`);
+    }
+    return expBrackets(`📖${args.exp}`);
   }
 
   /**
@@ -138,9 +136,10 @@ export default class BattleLog extends ee {
     let data = '';
     const { expArr } = msgObj;
     const expString = expArr ? expArr.map(([name, exp, val]) => `${name}: 💖${val} 📖${exp}`).join(', ') : '';
+    const exp = BattleLog.getExpString(msgObj);
     // Если обьект содержит кастомную строку испльзуем её
     if (msgObj.msg) {
-      data = msgObj.msg(msgObj);
+      data = `${msgObj.msg(msgObj)} ${exp}`;
     } else if (msgObj.dmgType && msgObj.dmgType === 'physical' && msgObj.weapon) {
       const { action } = weaponTypes[msgObj.weapon.wtype];
       data = `*${msgObj.initiator}* ${action(msgObj.target, msgObj.weapon)} и нанёс *${msgObj.dmg}* урона \\[ 💔-${msgObj.dmg}/${msgObj.hp} 📖${msgObj.exp} ]`;

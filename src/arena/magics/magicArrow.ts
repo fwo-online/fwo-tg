@@ -1,5 +1,5 @@
 import { bold, italic } from '../../utils/formatString';
-import BattleLog, { SuccessArgs } from '../BattleLog';
+import { SuccessArgs } from '../BattleLog';
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 
 /**
@@ -38,8 +38,7 @@ class MagicArrow extends DmgMagic {
 
   customMessage(args: SuccessArgs): string {
     const { initiator, target } = args;
-    const exp = BattleLog.getDmgExpString(args);
-    return `${bold(initiator)} выстреливает ${italic(this.case)} в ${bold(target)} ${exp}`;
+    return `${bold(initiator)} выстреливает ${italic(this.case)} в ${bold(target)}`;
   }
 }
 
