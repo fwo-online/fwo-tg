@@ -90,7 +90,7 @@ class BattleKeyboard {
       this.concat(arena.actions.protect);
     }
 
-    this.concat(arena.actions.regen);
+    this.concat(arena.actions.regeneration);
     this.concat(arena.actions.handsHeal);
 
     return this;

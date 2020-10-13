@@ -1,7 +1,6 @@
 /**
  * Первичный загрузчик магий
  */
-export { default as regeneration } from '../actions/regen';
 export { default as acidSpittle } from './acidSpittle';
 export { default as chainLightning } from './chainLightning';
 export { default as curse } from './curse';

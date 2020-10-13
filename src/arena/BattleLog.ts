@@ -1,6 +1,7 @@
 import ee from 'events';
 import { ItemDocument } from '../models/item';
 import { bold, italic } from '../utils/formatString';
+import * as icons from '../utils/icons';
 import { ActionType, BreaksMessage, DamageType } from './Constuructors/types';
 import { weaponTypes } from './MiscService';
 
@@ -19,6 +20,7 @@ export type SuccessArgs = {
   actionType?: ActionType;
   weapon?: ItemDocument;
   effect?: string[];
+  duration?: number;
   msg?: (data: SuccessArgs) => string;
 };
 
@@ -112,8 +114,9 @@ const expBrackets = (str) => `\n\\[ ${str} ]`;
  */
 export default class BattleLog extends ee {
   static getExpString(args: SuccessArgs): string {
-    if (args.actionType === 'magic' && args.dmgType) {
-      return expBrackets(`💔-${args.dmg}/${args.hp} 📖${args.exp}`);
+    if (args.actionType === 'magic' && args.dmgType && args.dmg) {
+      const damageType = icons.damageType[args.dmgType]();
+      return expBrackets(`${damageType} 💔-${args.dmg}/${args.hp} 📖${args.exp}`);
     }
     if (args.actionType === 'heal') {
       if (args.expArr) {
@@ -139,26 +142,29 @@ export default class BattleLog extends ee {
    */
   success(msgObj: SuccessArgs): void {
     let data = '';
-    const { expArr } = msgObj;
-    const expString = expArr ? expArr.map(([name, exp, val]) => `${name}: 💖${val} 📖${exp}`).join(', ') : '';
     const exp = BattleLog.getExpString(msgObj);
     // Если обьект содержит кастомную строку испльзуем её
     if (msgObj.msg) {
-      data = `${msgObj.msg(msgObj)} ${exp}`;
+      data = `${msgObj.msg(msgObj)}`;
     } else if (msgObj.dmgType && msgObj.dmgType === 'physical' && msgObj.weapon) {
       const { action } = weaponTypes[msgObj.weapon.wtype];
-      data = `*${msgObj.initiator}* ${action(msgObj.target, msgObj.weapon)} и нанёс *${msgObj.dmg}* урона \\[ 💔-${msgObj.dmg}/${msgObj.hp} 📖${msgObj.exp} ]`;
+      data = `*${msgObj.initiator}* ${action(msgObj.target, msgObj.weapon)} и нанёс *${msgObj.dmg}* урона`;
     } else if (msgObj.dmgType) {
-      data = `*${msgObj.initiator}* сотворил _${msgObj.action}_ на *${msgObj.target}* нанеся ${msgObj.dmg}  \\[ 💔-${msgObj.dmg}/${msgObj.hp} 📖${msgObj.exp} ]`;
+      data = `*${msgObj.initiator}* сотворил _${msgObj.action}_ на *${msgObj.target}* нанеся ${msgObj.dmg}`;
     } else if (!msgObj.effect) {
-      data = `*${msgObj.initiator}* использовал _${msgObj.action}_ на *${msgObj.target}* \\[ 📖${msgObj.exp} ]`;
+      data = `*${msgObj.initiator}* использовал _${msgObj.action}_ на *${msgObj.target}*`;
     } else {
-      data = `*${msgObj.initiator}* использовав _${msgObj.action}_ на *${msgObj.target}* с эффектом ${msgObj.effect} \\[ 📖${msgObj.exp} ]`;
+      data = `*${msgObj.initiator}* использовав _${msgObj.action}_ на *${msgObj.target}* с эффектом ${msgObj.effect}`;
     }
     // Выношу вниз т.к проверка связана с action
     if (msgObj.action === 'handsHeal') {
+      const { expArr } = msgObj;
+      const expString = expArr ? expArr.map(([name, e, val]) => `${name}: 💖${val} 📖${e}`).join(', ') : '';
       data = `Игрок *${msgObj.target}* был вылечен 🤲 на *${msgObj.effect}* \\[ ${expString} ]`;
+      this.write(data);
+      return;
     }
+    data += exp;
     this.write(data);
   }
 
