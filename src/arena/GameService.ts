@@ -1,15 +1,15 @@
 import _ from 'lodash';
 import channelHelper from '../helpers/channelHelper';
 import db from '../helpers/dataBase';
-import GamesModel from '../models/games';
+import type GamesModel from '../models/games';
 import { BattleLog } from './BattleLog';
-import { LongItem } from './Constuructors/LongMagicConstructor';
+import type { LongItem } from './Constuructors/LongMagicConstructor';
 import engineService from './engineService';
 import HistoryService, { historyObj } from './HistoryService';
 import { getIcon } from './MiscService';
 import OrderService from './OrderService';
 import PlayersArr from './playerArray';
-import Player from './PlayerService';
+import type Player from './PlayerService';
 import { RoundService } from './RoundService';
 import testGame from './testGame';
 import arena from './index';

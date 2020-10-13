@@ -1,5 +1,5 @@
 import _, { Dictionary } from 'lodash';
-import { Clan } from '../helpers/dataBase';
+import type { Clan } from '../helpers/dataBase';
 import Player from './PlayerService';
 
 export default class PlayersArr {

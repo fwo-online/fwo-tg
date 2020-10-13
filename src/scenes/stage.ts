@@ -1,6 +1,6 @@
 import { Stage } from 'telegraf';
-import { SceneContextMessageUpdate, BaseScene } from 'telegraf/typings/stage';
-import Char from '../arena/CharacterService';
+import type { SceneContextMessageUpdate, BaseScene } from 'telegraf/typings/stage';
+import type Char from '../arena/CharacterService';
 import battleScene from './battle';
 import clanScene from './clan';
 import create from './create';

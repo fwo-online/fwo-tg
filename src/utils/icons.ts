@@ -1,4 +1,4 @@
-import { DamageType } from '../arena/Constuructors/types';
+import type { DamageType } from '../arena/Constuructors/types';
 
 type GetIcon = (str?: string | number) => string;
 

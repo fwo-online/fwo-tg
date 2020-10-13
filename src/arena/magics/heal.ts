@@ -1,6 +1,6 @@
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 import floatNumber from '../floatNumber';
-import Player from '../PlayerService';
+import type Player from '../PlayerService';
 
 export class Heal extends CommonMagic {
   status = {

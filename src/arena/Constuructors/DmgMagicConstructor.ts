@@ -1,8 +1,8 @@
-import { SuccessArgs } from '../BattleLog';
+import type { SuccessArgs } from '../BattleLog';
 import floatNumber from '../floatNumber';
 import MiscService from '../MiscService';
 import { Magic, MagicArgs } from './MagicConstructor';
-import { DamageType } from './types';
+import type { DamageType } from './types';
 
 export interface DmgMagicArgs extends MagicArgs {
   dmgType: DamageType;

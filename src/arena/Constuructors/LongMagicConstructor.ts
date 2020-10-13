@@ -1,7 +1,7 @@
-import Game from '../GameService';
-import Player from '../PlayerService';
+import type Game from '../GameService';
+import type Player from '../PlayerService';
 import { CommonMagic } from './CommonMagicConstructor';
-import { LongCustomMessage } from './types';
+import type { LongCustomMessage } from './types';
 
 export type LongItem = {
   initiator: string;

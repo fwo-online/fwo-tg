@@ -1,7 +1,7 @@
 import { bold } from '../../utils/formatString';
-import { SuccessArgs } from '../BattleLog';
+import type { SuccessArgs } from '../BattleLog';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
-import { LongItem } from '../Constuructors/LongMagicConstructor';
+import type { LongItem } from '../Constuructors/LongMagicConstructor';
 
 /**
  * Снятие магии

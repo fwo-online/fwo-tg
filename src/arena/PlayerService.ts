@@ -1,9 +1,9 @@
-import Clan from '../models/clan';
-import { Inventory } from '../models/inventory';
-import { MinMax } from '../models/item';
-import Char from './CharacterService';
+import type Clan from '../models/clan';
+import type { Inventory } from '../models/inventory';
+import type { MinMax } from '../models/item';
+import type Char from './CharacterService';
 import FlagsConstructor from './Constuructors/FlagsConstructor';
-import { DamageType } from './Constuructors/types';
+import type { DamageType } from './Constuructors/types';
 import StatsService from './StatsService';
 import arena from './index';
 

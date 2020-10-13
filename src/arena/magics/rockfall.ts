@@ -1,5 +1,5 @@
 import { bold, italic } from '../../utils/formatString';
-import { SuccessArgs } from '../BattleLog';
+import type { SuccessArgs } from '../BattleLog';
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 
 /**

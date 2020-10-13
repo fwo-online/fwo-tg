@@ -1,9 +1,9 @@
-import { SuccessArgs } from '../BattleLog';
+import type { SuccessArgs } from '../BattleLog';
 import floatNumber from '../floatNumber';
-import Game from '../GameService';
+import type Game from '../GameService';
 import MiscService from '../MiscService';
-import Player from '../PlayerService';
-import { Breaks, BreaksMessage, CustomMessage } from './types';
+import type Player from '../PlayerService';
+import type { Breaks, BreaksMessage, CustomMessage } from './types';
 
 export interface MagicArgs {
   name: string;

@@ -1,10 +1,10 @@
-import { SuccessArgs } from '../BattleLog';
+import type { SuccessArgs } from '../BattleLog';
 import floatNumber from '../floatNumber';
-import Game from '../GameService';
-import Player from '../PlayerService';
+import type Game from '../GameService';
+import type Player from '../PlayerService';
 import { DmgMagic } from './DmgMagicConstructor';
-import { LongItem } from './LongMagicConstructor';
-import { LongCustomMessage } from './types';
+import type { LongItem } from './LongMagicConstructor';
+import type { LongCustomMessage } from './types';
 
 export interface LongDmgMagic extends DmgMagic, LongCustomMessage {
 }

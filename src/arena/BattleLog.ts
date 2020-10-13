@@ -1,8 +1,8 @@
 import ee from 'events';
-import { ItemDocument } from '../models/item';
+import type { ItemDocument } from '../models/item';
 import { bold, italic } from '../utils/formatString';
 import * as icons from '../utils/icons';
-import { ActionType, BreaksMessage, DamageType } from './Constuructors/types';
+import type { ActionType, BreaksMessage, DamageType } from './Constuructors/types';
 import { weaponTypes } from './MiscService';
 
 export type ExpArr = readonly [name: string, exp: number, heal?: number];

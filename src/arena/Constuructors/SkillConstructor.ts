@@ -1,7 +1,7 @@
-import Game from '../GameService';
+import type Game from '../GameService';
 import MiscService from '../MiscService';
-import Player from '../PlayerService';
-import {
+import type Player from '../PlayerService';
+import type {
   CostType, OrderType, AOEType, Breaks, BreaksMessage, CustomMessage,
 } from './types';
 
