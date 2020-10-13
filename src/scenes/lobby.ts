@@ -10,7 +10,7 @@ lobby.enter(async ({ replyWithMarkdown, replyWithPhoto, session }) => {
   } = session.character;
 
   try {
-    await replyWithPhoto({ source: './assets/market.jpg' });
+    await replyWithPhoto({ source: './src/assets/market.jpg' });
   } catch (e) {
     console.error(e);
   }
