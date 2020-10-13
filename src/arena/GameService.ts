@@ -1,15 +1,21 @@
-const _ = require('lodash');
-const channelHelper = require('../helpers/channelHelper');
-const db = require('../helpers/dataBase');
-const { default: BattleLog } = require('./BattleLog');
-const engineService = require('./engineService');
-const HistoryService = require('./HistoryService');
-const { getIcon } = require('./MiscService');
-const { default: OrderService } = require('./OrderService');
-const PlayersArr = require('./playerArray');
-const { default: RoundService } = require('./RoundService');
-const testGame = require('./testGame');
-const arena = require('./index');
+import _ from 'lodash';
+import channelHelper from '../helpers/channelHelper';
+import db from '../helpers/dataBase';
+import GamesModel from '../models/games';
+import { BattleLog } from './BattleLog';
+import { LongItem } from './Constuructors/LongMagicConstructor';
+import engineService from './engineService';
+import HistoryService, { historyObj } from './HistoryService';
+import { getIcon } from './MiscService';
+import OrderService from './OrderService';
+import PlayersArr from './playerArray';
+import Player from './PlayerService';
+import { RoundService } from './RoundService';
+import testGame from './testGame';
+import arena from './index';
+
+export type KickReason = 'afk' | 'run';
+
 /**
  * GameService
  *
@@ -22,30 +28,28 @@ const arena = require('./index');
 
 /**
  * Класс для обьекта игры
- * @typedef {import ('./PlayerService').default} Player
  */
-class Game {
+export default class Game {
+  playerArr: PlayersArr;
+  players: Record<string, Player> = {};
+  round = new RoundService();
+  orders = new OrderService();
+  battleLog = new BattleLog();
+  history = new HistoryService();
+  longActions: Partial<Record<keyof typeof arena.magics, LongItem[]>> = {};
+  info: GamesModel;
   /**
    * Конструктор обьекта игры
-   * @param {Array} playerArr массив игроков
+   * @param playerArr массив игроков
    */
-  constructor(playerArr) {
+  constructor(playerArr: string[]) {
     this.playerArr = new PlayersArr(playerArr);
-    /** @type {Object<string, Player>} */
-    this.players = {};
-    this.round = new RoundService();
-    this.orders = new OrderService();
-    this.battleLog = new BattleLog();
-    this.history = new HistoryService();
-    /** @type {Object<string, import('./Constuructors/LongMagicConstructor').LongItem[]>} */
-    this.longActions = {};
   }
 
   /**
    * Функция проверки окончания игры
-   * @return {boolean}
    */
-  get isGameEnd() {
+  get isGameEnd(): boolean {
     return (
       this.isTeamWin
       || this.alivePlayers.length === 0
@@ -54,7 +58,7 @@ class Game {
     );
   }
 
-  get isTeamWin() {
+  get isTeamWin(): boolean {
     const [withClan, withoutClan, byClan] = this.partitionAliveByClan;
     if (!withoutClan.length) {
       return Object.keys(byClan).length === 1;
@@ -62,7 +66,7 @@ class Game {
     return withoutClan.length === 1 && !withClan.length;
   }
 
-  get endGameReason() {
+  get endGameReason(): string {
     const base = 'Игра завершена.';
     if (this.round.flags.noDamageRound > 2) {
       return `${base} Причина: 3 рауда подряд никто из участников не наносил урона`;
@@ -72,9 +76,8 @@ class Game {
 
   /**
    * Возвращает массив мёртвых игроков
-   * @return {Player[]}
    */
-  get deadPlayers() {
+  get deadPlayers(): Player[] {
     return _.filter(this.players, {
       alive: false,
     });
@@ -82,24 +85,23 @@ class Game {
 
   /**
    * Возвращает массив живых игроков
-   * @return {Player[]}
    */
-  get alivePlayers() {
+  get alivePlayers(): Player[] {
     return _.filter(this.players, {
       alive: true,
     });
   }
 
-  get checkRoundDamage() {
+  get checkRoundDamage(): boolean {
     return !!this.history.getRoundDamage(this.round.count).length;
   }
 
   /**
    * Статик функция возвращающая массив живых игроков в игре
-   * @param {Number} gameId идентификатор игры
-   * @return {Player[]} массив живых игроков
+   * @param gameId идентификатор игры
+   * @return массив живых игроков
    */
-  static aliveArr(gameId) {
+  static aliveArr(gameId: string): Player[] {
     const game = arena.games[gameId];
     return _.filter(game.players, {
       alive: true,
@@ -108,34 +110,34 @@ class Game {
 
   /**
    * Отправляет в чат кнопки с заказами
-   * @param {Player} player - объект игрока
+   * @param player - объект игрока
    */
-  static showOrderButtons(player) {
+  static showOrderButtons(player: Player): void {
     channelHelper.sendOrderButtons(player);
   }
 
   /**
    * Удаляет кнопки заказа в чате
-   * @param {Player} player - объект игрока
+   * @param player - объект игрока
    */
-  static hideLastMessage(player) {
+  static hideLastMessage(player: Player): void {
     channelHelper.removeMessages(player);
   }
 
   /**
    * Отправляет в чат кнопки с заказами
-   * @param {Player} player - объект игрока
+   * @param player - объект игрока
    */
-  static showExitButton(player) {
+  static showExitButton(player: Player): void {
     channelHelper.sendExitButton(player);
   }
 
   /**
    * Проверяет являются ли игроки союзниками
-   * @param {Player} player
-   * @param {Player} target
+   * @param player
+   * @param target
    */
-  isPlayersAlly(player, target) {
+  isPlayersAlly(player: Player, target: Player): boolean {
     const allies = this.playerArr.getMyTeam(player.clan);
     if (!allies.length) {
       allies.push(player);
@@ -146,8 +148,7 @@ class Game {
   /**
    * Предзагрузка игры
    */
-  preLoading() {
-    this.info.status = 'preload';
+  preLoading(): void {
     this.forAllAlivePlayers(Game.hideLastMessage);
     this.initHandlers();
     this.startGame();
@@ -163,7 +164,7 @@ class Game {
   /**
    * Старт игры
    */
-  startGame() {
+  startGame(): void {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: startGame', 'gameId:', this.info.id);
     // рассылаем статусы хп команды и врагов
@@ -176,7 +177,7 @@ class Game {
    * @param {String} data строка, отправляемая в общий чат
    *
    */
-  sendBattleLog(data) {
+  sendBattleLog(data: string): void {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: SBL', 'gameId:', this.info.id, 'data:', data);
     channelHelper.broadcast(data);
@@ -185,7 +186,7 @@ class Game {
   /**
    * @param {String} data строка, отправляемая в общий чат
    */
-  sendToAll(data) {
+  sendToAll(data: string): void {
     // eslint-disable-next-line no-console
     console.debug('GC debug:: sendToAll', this.info.id);
     channelHelper.broadcast(data);
@@ -194,17 +195,17 @@ class Game {
   /**
    *@todo Остановка игры
    */
-  pauseGame() {
+  pauseGame(): void {
     // eslint-disable-next-line no-console
     console.debug(this.info.id);
   }
 
   /**
    * Прекик, помечаем что пользователь не выполнил заказ и дальше будет выброшен
-   * @param {string} id id игрока, который будет помочен как бездействующий
-   * @param {'afk' | 'run'} reason строка, подставляющаяся в флаг isKicked
+   * @param id id игрока, который будет помочен как бездействующий
+   * @param reason строка, подставляющаяся в флаг isKicked
    */
-  preKick(id, reason) {
+  preKick(id: string, reason: KickReason): void {
     const player = this.players[id];
     // eslint-disable-next-line no-console
     if (!player) return console.log('GC debug:: preKick', id, 'no player');
@@ -213,31 +214,32 @@ class Game {
 
   /**
    * Функция "выброса игрока" из игры без сохранения накопленных статов
-   * @param {string} id id игрока, который будет выброшен
-   * @param {'afk' | 'run'} [reason] причина кика
+   * @param id id игрока, который будет выброшен
+   * @param reason причина кика
    */
-  kick(id, reason) {
-    // const player = this.players[id];
-    // // eslint-disable-next-line no-console
-    // if (!player) return console.log('GC debug:: kick', id, 'no player');
-    // channelHelper.sendRunButton(player);
-    // if (reason === 'run') {
-    //   channelHelper.broadcast(`Игрок *${player.nick}* сбежал из боя`);
-    // } else {
-    //   channelHelper.broadcast(`Игрок *${player.nick}* был выброшен из игры`);
-    // }
-    // arena.characters[id].addGameStat({ runs: 1 });
-    // arena.characters[id].saveToDb();
-    // arena.characters[id].autoreg = false;
-    // delete this.players[id];
-    // this.info.players.splice(this.info.players.indexOf(id), 1);
+  kick(id: string, reason?: KickReason): void {
+    const player = this.players[id];
+    // eslint-disable-next-line no-console
+    if (!player) return console.log('GC debug:: kick', id, 'no player');
+    channelHelper.sendRunButton(player);
+    if (reason === 'run') {
+      channelHelper.broadcast(`Игрок *${player.nick}* сбежал из боя`);
+    } else {
+      channelHelper.broadcast(`Игрок *${player.nick}* был выброшен из игры`);
+    }
+    const char = arena.characters[id];
+    char.addGameStat({ runs: 1 });
+    char.saveToDb();
+    char.autoreg = false;
+    delete this.players[id];
+    this.info.players.splice(this.info.players.indexOf(id), 1);
   }
 
   /**
    * Проверяем делал ли игрок заказ. Помечает isKicked, если нет
-   * @param {Player} player
+   * @param player
    */
-  checkOrders(player) {
+  checkOrders(player: Player): void {
     if (!player.alive) {
       return;
     }
@@ -250,14 +252,14 @@ class Game {
     if (player.flags.isKicked === 'afk' && !this.orders.checkPlayerOrder(player.id)) {
       this.kick(player.id, player.flags.isKicked);
     } else {
-      player.flags.isKicked = this.orders.checkPlayerOrder(player.id) ? '' : 'afk';
+      player.flags.isKicked = this.orders.checkPlayerOrder(player.id) ? undefined : 'afk';
     }
   }
 
   /**
    * Ставим флаги, влияющие на окончание игры
    */
-  handleEndGameFlags() {
+  handleEndGameFlags(): void {
     if (this.checkRoundDamage) {
       this.round.flags.noDamageRound = 0;
     } else {
@@ -265,7 +267,7 @@ class Game {
     }
   }
 
-  addHistoryDamage(dmgObj) {
+  addHistoryDamage(dmgObj: historyObj): void {
     this.history.addDamage(dmgObj, this.round.count);
   }
 
@@ -273,7 +275,7 @@ class Game {
    * @description Завершение игры
    *
    */
-  endGame() {
+  endGame(): void {
     // eslint-disable-next-line no-console
     console.log('GC debug:: endGame', this.info.id);
     // Отправляем статистику
@@ -283,7 +285,7 @@ class Game {
     setTimeout(() => {
       this.sendToAll('Конец игры, распределяем ресурсы...');
       this.forAllPlayers(Game.showExitButton);
-      this.forAllPlayers((player) => { arena.characters[player.id].gameId = null; });
+      this.forAllPlayers((player) => { arena.characters[player.id].gameId = ''; });
       arena.mm.cancel();
       this.forAllPlayers(/** @param {Player} player */(player) => arena.mm.autoreg(player.id));
     }, 15000);
@@ -291,9 +293,9 @@ class Game {
 
   /**
    * Создание обьекта в базе // потребуется для ведения истории
-   * @return {Promise<true>} Обьект созданный в базе
+   * @return Обьект созданный в базе
    */
-  async createGame() {
+  async createGame(): Promise<boolean> {
     const dbGame = await db.game.create({
       players: this.playerArr.init,
     });
@@ -306,39 +308,36 @@ class Game {
 
   /**
    * Возвращает обьект персонажа внутри игры [engine]
-   * @param {string} id идентификатор чара
-   * @return {Player} PlayerObj
+   * @param id идентификатор чара
+   * @return PlayerObj
    */
-  getPlayerById(id) {
+  getPlayerById(id: string): Player {
     return this.players[id];
   }
 
   /**
    * Сбрасываем всем игрокам кол-во доступных процентов на 100
    */
-  resetProc() {
-    // eslint-disable-next-line no-return-assign
-    _.forEach(this.players, (p) => p.proc = 100);
+  resetProc(): void {
+    _.forEach(this.players, (p) => { p.proc = 100; });
   }
 
   /**
   * Очищаем глобальные флаги в бою
   * затмение, бунт богов, и т.п
   */
-  refreshRoundFlags() {
+  refreshRoundFlags(): void {
     this.round.flags.global = {};
   }
 
   /**
    * Подвес
    */
-  initHandlers() {
+  initHandlers(): void {
     // Обработка сообщений от Round Module
     this.round.on('Round', async (data) => {
       switch (data.event) {
         case 'startRound': {
-          // eslint-disable-next-line no-console
-          console.log('Handler: ', data);
           this.sendToAll(`⚡️ Раунд ${data.round} начинается ⚡`);
           this.resetProc();
           this.orders.reset();
@@ -377,14 +376,13 @@ class Game {
           break;
         }
         default: {
-          // eslint-disable-next-line no-console
           console.log('InitHandler:', data.event, 'undef event');
         }
       }
     });
     // Обработка сообщений от BattleLog Module
     // @todo пока прокидываем напрямую из battlelog
-    this.battleLog.on('BattleLog', async (data) => {
+    this.battleLog.on('BattleLog', (data) => {
       // eslint-disable-next-line no-console
       console.log('BattleLog:', data);
       this.sendBattleLog(data);
@@ -395,7 +393,7 @@ class Game {
    * Метод сохраняющий накопленную статистику игроков в базу и сharObj
    * @todo нужен общий метод сохраниющий всю статистику
    */
-  saveGame() {
+  saveGame(): void {
     try {
       _.forEach(this.info.players, async (p) => {
         arena.characters[p].exp += this.players[p].stats.collect.exp;
@@ -420,28 +418,28 @@ class Game {
   }
 
   /**
-   * @returns {[Player[], Player[], _.Dictionary<Player[]>]} [withClan, withoutClan, groupByClan]
+   * @returns [withClan, withoutClan, groupByClan]
    */
-  get partitionByClan() {
+  get partitionByClan(): [Player[], Player[], _.Dictionary<Player[]>] {
     const [withClan, withoutClan] = _.partition(this.playerArr.arr, (p) => p.clan);
-    const groupByClan = _.groupBy(withClan, (p) => p.clan.name);
+    const groupByClan = _.groupBy(withClan, (p) => p.clan?.name);
     return [withClan, withoutClan, groupByClan];
   }
 
   /**
-   * @returns {[Player[], Player[], _.Dictionary<Player[]>]} [withClan, withoutClan, groupByClan]
+   * @returns [withClan, withoutClan, groupByClan]
    */
-  get partitionAliveByClan() {
+  get partitionAliveByClan(): [Player[], Player[], _.Dictionary<Player[]>] {
     const [withClan, withoutClan] = _.partition(this.alivePlayers, (p) => p.clan);
-    const groupByClan = _.groupBy(withClan, (p) => p.clan.name);
+    const groupByClan = _.groupBy(withClan, (p) => p.clan?.name);
     return [withClan, withoutClan, groupByClan];
   }
 
   /**
    * Функция послематчевой статистики
-   * @return {string} возвращает строку статистики по всем игрокам
+   * @return возвращает строку статистики по всем игрокам
    */
-  statistic() {
+  statistic(): string {
     this.giveGoldforKill();
     const winners = this.alivePlayers;
     const gold = this.deadPlayers.length ? 5 : 1;
@@ -466,7 +464,7 @@ class Game {
   /**
   * Функция пробегает всех убитых и раздает золото убийцам
   */
-  giveGoldforKill() {
+  giveGoldforKill(): void {
     const deadArray = this.deadPlayers;
     _.forEach(deadArray, (p) => {
       const killer = this.getPlayerById(p.getKiller());
@@ -480,8 +478,8 @@ class Game {
    * @todo сообщение о смерти как-то нормально нужно сделать,
    * чтобы выводило от чего и от кого умер игрок
    */
-  sortDead() {
-    const dead = [];
+  sortDead(): void {
+    const dead: string[] = [];
     _.forEach(this.players, (p) => {
       if (p.stats.val('hp') <= 0 && p.alive) {
         dead.push(p.nick);
@@ -501,7 +499,7 @@ class Game {
   /**
   * Очистка массива длительных магий от умерших
   */
-  cleanLongMagics() {
+  cleanLongMagics(): void {
     /**
     * Очищаем массив длительных магий для мертвецов
 {
@@ -516,6 +514,7 @@ class Game {
   ]
 }
     */
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const _this = this;
     _.forEach(this.longActions, (longMagicType, k) => {
       _this.longActions[k] = _.filter(longMagicType, (act) => {
@@ -529,7 +528,7 @@ class Game {
   /**
    * Сброс состояния игроков
    */
-  refreshPlayer() {
+  refreshPlayer(): void {
     _.forEach(this.players, (p) => {
       p.stats.refresh();
       p.flags.refresh();
@@ -538,25 +537,25 @@ class Game {
 
   /**
    * Интерфейс для работы со всеми игроками в игре
-   * @param {function(Player): void} f функция применяющая ко всем игрокам в игре
+   * @param f функция применяющая ко всем игрокам в игре
    */
-  forAllPlayers(f) {
+  forAllPlayers(f: (player: Player) => void): void {
     _.forEach(this.players, (p) => f.call(this, p));
   }
 
   /**
    * Интерфейс для работы с живыми
-   * @param {function(Player): void} f функция применяющая
+   * @param f функция применяющая ко всем живым игрокам
    */
-  forAllAlivePlayers(f) {
+  forAllAlivePlayers(f: (player: Player) => void): void {
     this.alivePlayers.forEach((p) => f.call(this, p));
   }
 
   /**
    * Рассылка состояний живым игрокам
-   * @param {Player} player обьект игрока
+   * @param player обьект игрока
    */
-  sendStatus(player) {
+  sendStatus(player: Player): void {
     /** @param {Player} p */
     const getEnemyString = (p) => `\t👤 ${p.nick} (${getIcon(p.prof)}${p.lvl}) ❤️${p.getStatus().hp}`;
 
@@ -598,5 +597,3 @@ _Враги:_\`\`\``,
     );
   }
 }
-
-module.exports = Game;

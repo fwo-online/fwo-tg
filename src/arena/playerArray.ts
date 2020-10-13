@@ -1,31 +1,27 @@
-const _ = require('lodash');
-const { default: PlayerService } = require('./PlayerService');
+import _, { Dictionary } from 'lodash';
+import { Clan } from '../helpers/dataBase';
+import Player from './PlayerService';
 
-/**
- * Класс контроля игроков внутри созданной игры
- * @typedef {import ('./PlayerService').default} Player
- * @typedef {import ('../models/clan').Clan} Clan
- */
-class PlayersArr {
+export default class PlayersArr {
+  init: string[];
+  arr: Player[] = [];
   /**
    * Конструктор обьекта
-   * @param {String[]} arr [charId,charId,...]
+   * @param arr [charId,charId,...]
    */
-  constructor(arr) {
+  constructor(arr: string[]) {
     this.init = arr;
-    /** @type {Player[]} */
-    this.arr = [];
   }
 
   /**
    * round_json
    * @description JSON пользователей нужно хратить в определенном формате
-   * @return {Promise<Object<string, Player>>} userjson Обьект на начало игры
+   * @return userjson Обьект на начало игры
    * @todo переделать это, убрать внутрь конструктора playersArr
    */
-  async roundJson() {
+  async roundJson(): Promise<Dictionary<Player>> {
     const result = await Promise.all(
-      this.init.map((p) => PlayerService.loading(p)),
+      this.init.map((p) => Player.loading(p)),
     );
     this.arr = result;
     return _.keyBy(result, 'id');
@@ -33,24 +29,23 @@ class PlayersArr {
 
   /**
    * Функция вернет массив игроков в моей тиме
-   * @param {Clan} clan объект клана
-   * @returns {Player[]}
+   * @param clan объект клана
    */
-  getMyTeam(clan) {
-    if (!clan || !clan.id) return [];
+  getMyTeam(clan?: Clan): Player[] {
+    if (!clan?.id) return [];
     return this.arr.filter((p) => p.clan && p.clan.id === clan.id);
   }
 
+  getRan
+
   /**
   * Функция возвращает рандомного игрока из массива живых
-  * @return {Player}
+  * @return
   */
-  get randomAlive() {
+  get randomAlive(): Player {
     const alive = _.filter(this.arr, {
       alive: true,
     });
     return alive[Math.floor(Math.random() * alive.length)];
   }
 }
-
-module.exports = PlayersArr;

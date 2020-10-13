@@ -5,7 +5,7 @@ const BattleKeyboard = require('./BattleKeyboard');
 /**
  * Помощник для отправки сообщений в общий чат
  * @typedef {import ('../arena/PlayerService').default} Player
- * @typedef {import ('../arena/GameService')} Game
+ * @typedef {import ('../arena/GameService').default} Game
  */
 
 const chatId = process.env.BOT_CHATID || -1001483444452;

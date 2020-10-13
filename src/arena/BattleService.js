@@ -8,7 +8,7 @@ const arena = require('./index');
  * 2. Выбор цели ({attack}_{target})
  * 3. Выбор силы ({attack}_{target}_{proc})
  * @typedef {import ('./PlayerService').default} Player
- * @typedef {import ('./GameService')} Game
+ * @typedef {import ('./GameService').default} Game
  * @typedef {import('telegraf/typings/markup').CallbackButton} CallbackButton
  */
 

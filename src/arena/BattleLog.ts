@@ -107,12 +107,18 @@ function csl(msgObj) {
 
 const expBrackets = (str) => `\n\\[ ${str} ]`;
 
+type BattleLogEvent = 'BattleLog';
+
+export interface BattleLog {
+  on(event: BattleLogEvent, listener: (data: string) => void);
+  emit(event: BattleLogEvent, data: string);
+}
 /**
  * Класс вывода данных в battlelog
  * @todo WIP класс в стадии формирования
  * @see https://trello.com/c/qxnIM1Yq/17
  */
-export default class BattleLog extends ee {
+export class BattleLog extends ee {
   static getExpString(args: SuccessArgs): string {
     if (args.actionType === 'magic' && args.dmgType && args.dmg) {
       const damageType = icons.damageType[args.dmgType]();

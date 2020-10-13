@@ -2,7 +2,7 @@ const floatNumber = require('../floatNumber');
 
 /**
  * @typedef {import ('../PlayerService').default} player
- * @typedef {import ('../GameService')} game
+ * @typedef {import ('../GameService').default} game
  */
 
 module.exports = {

@@ -1,7 +1,7 @@
 const actions = require('./actions');
 const CharacterService = require('./CharacterService');
 const { default: config } = require('./config');
-const GameService = require('./GameService');
+const { default: GameService } = require('./GameService');
 const magics = require('./magics');
 const postHeal = require('./magics/postHeal');
 const skills = require('./skills');

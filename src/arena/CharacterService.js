@@ -226,7 +226,7 @@ class Char {
   }
 
   get magics() {
-    return this.charObj.magics;
+    return this.charObj.magics || {};
   }
 
   get plushark() {
@@ -234,7 +234,7 @@ class Char {
   }
 
   get skills() {
-    return this.charObj.skills;
+    return this.charObj.skills || {};
   }
 
   get bonus() {

@@ -3,7 +3,7 @@ module.exports = {
   mm: null,
   /** @type Object<string, import ('./CharacterService')> */
   characters: {},
-  /** @type Object<string, import ('./GameService')> */
+  /** @type Object<string, import ('./GameService').default> */
   games: {},
   /**
    * @type Record<import ('../models/item').Item['code'], import ('../models/item').Item>
