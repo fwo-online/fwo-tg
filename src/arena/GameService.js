@@ -37,6 +37,7 @@ class Game {
     this.orders = new OrderService();
     this.battleLog = new BattleLog();
     this.history = new HistoryService();
+    /** @type {Object<string, import('./Constuructors/LongMagicConstructor').LongItem[]>} */
     this.longActions = {};
   }
 
@@ -216,20 +217,20 @@ class Game {
    * @param {'afk' | 'run'} [reason] причина кика
    */
   kick(id, reason) {
-    const player = this.players[id];
-    // eslint-disable-next-line no-console
-    if (!player) return console.log('GC debug:: kick', id, 'no player');
-    channelHelper.sendRunButton(player);
-    if (reason === 'run') {
-      channelHelper.broadcast(`Игрок *${player.nick}* сбежал из боя`);
-    } else {
-      channelHelper.broadcast(`Игрок *${player.nick}* был выброшен из игры`);
-    }
-    arena.characters[id].addGameStat({ runs: 1 });
-    arena.characters[id].saveToDb();
-    arena.characters[id].autoreg = false;
-    delete this.players[id];
-    this.info.players.splice(this.info.players.indexOf(id), 1);
+    // const player = this.players[id];
+    // // eslint-disable-next-line no-console
+    // if (!player) return console.log('GC debug:: kick', id, 'no player');
+    // channelHelper.sendRunButton(player);
+    // if (reason === 'run') {
+    //   channelHelper.broadcast(`Игрок *${player.nick}* сбежал из боя`);
+    // } else {
+    //   channelHelper.broadcast(`Игрок *${player.nick}* был выброшен из игры`);
+    // }
+    // arena.characters[id].addGameStat({ runs: 1 });
+    // arena.characters[id].saveToDb();
+    // arena.characters[id].autoreg = false;
+    // delete this.players[id];
+    // this.info.players.splice(this.info.players.indexOf(id), 1);
   }
 
   /**

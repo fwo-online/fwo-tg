@@ -50,7 +50,7 @@ function runStage(ar, gameObj) {
       }
       if (act[x] && act[x].isLong) {
         // запуск LongMagic
-        act[x].checkLong(gameObj);
+        act[x].castLong(gameObj);
       }
       if (act[x] && act[x].postEffect) {
         act[x].postEffect(gameObj);

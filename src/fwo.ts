@@ -1,7 +1,7 @@
 import { Telegraf, session, Context } from 'telegraf';
 import arena from './arena';
 import actions from './arena/actions';
-import magics from './arena/magics';
+import * as magics from './arena/magics';
 import MM from './arena/MatchMakingService';
 import * as skills from './arena/skills';
 import channelHelper from './helpers/channelHelper';

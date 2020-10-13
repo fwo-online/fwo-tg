@@ -6,6 +6,7 @@ export type AOEType = 'target' | 'team';
 export type ActionType = 'magic' | 'heal' | 'phys' | 'skill';
 export type DamageType = 'acid' | 'fire' | 'lightning' | 'frost' | 'physical' | 'clear';
 export type BreaksMessage =
+  'NO_TARGET' |
   'NO_MANA' |
   'NO_ENERGY' |
   'SILENCED' |
@@ -21,6 +22,10 @@ export type BreaksMessage =
 
 export interface CustomMessage {
   customMessage?(args: SuccessArgs): string;
+}
+
+export interface LongCustomMessage extends CustomMessage {
+  longCustomMessage?(args: SuccessArgs): string;
 }
 
 export interface Breaks {

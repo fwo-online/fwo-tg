@@ -218,7 +218,7 @@ export abstract class Magic {
   // eslint-disable-next-line no-unused-vars
   checkPreAffects(initiator: Player, _target: Player, _game: Game): void {
     const { isSilenced } = initiator.flags;
-    if (isSilenced && isSilenced.some((e) => e.initiator !== this.name)) {
+    if (isSilenced.some((e) => e.initiator !== this.name)) {
       // если кастер находится под безмолвием/бунтом богов
       throw this.breaks('SILENCED');
     }
@@ -266,8 +266,6 @@ export abstract class Magic {
 
   /**
    * Магия прошла удачно
-   * @param initiator обьект персонажаы
-   * @param target обьект цели магии
    * @todo тут нужен вывод требуемых параметров
    */
   next(): void {

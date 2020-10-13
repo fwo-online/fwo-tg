@@ -10,7 +10,7 @@ lobby.enter(async ({ replyWithMarkdown, replyWithPhoto, session }) => {
     nickname, prof, lvl, exp, nextLvlExp,
   } = session.character;
 
-  console.log(arena.magics.acidSpittle)
+  console.log(Object.values(arena.magics));
   try {
     await replyWithPhoto({ source: './assets/market.jpg' });
   } catch (e) {

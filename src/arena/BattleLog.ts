@@ -1,5 +1,6 @@
 import ee from 'events';
 import { ItemDocument } from '../models/item';
+import { bold, italic } from '../utils/formatString';
 import { ActionType, BreaksMessage, DamageType } from './Constuructors/types';
 import { weaponTypes } from './MiscService';
 
@@ -41,6 +42,10 @@ function csl(msgObj) {
   const expString = expArr ? expArr.map(([name, exp]) => `${name}: 📖${exp}`).join(', ') : '';
 
   const TEXT: Record<BreaksMessage, Record<'en' | 'ru', string>> = {
+    NO_TARGET: {
+      ru: `Цель для заклинания ${italic(action)} игрока ${bold(initiator)} не была найдена`,
+      en: '',
+    },
     NO_MANA: {
       ru: `Не хватило маны для заклинания _${action}_`,
       en: '',
