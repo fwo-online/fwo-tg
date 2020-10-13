@@ -4,7 +4,7 @@ export type CostType = 'en' | 'mp';
 export type OrderType = 'all' | 'any' | 'enemy' | 'self';
 export type AOEType = 'target' | 'team';
 export type ActionType = 'magic' | 'heal' | 'phys' | 'skill';
-export type DamageType = 'acid' | 'fire' | 'lightning' | 'frost' | 'physical' | 'clear';
+export type DamageType = 'acid' | 'fire' | 'lighting' | 'frost' | 'physical' | 'clear';
 export type BreaksMessage =
   'NO_TARGET' |
   'NO_MANA' |

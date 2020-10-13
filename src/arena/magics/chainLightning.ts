@@ -18,7 +18,7 @@ class ChainLightning extends DmgMagic {
       magType: 'bad',
       chance: [92, 94, 95],
       effect: ['1d3+1', '1d3+2', '1d3+3'],
-      dmgType: 'lightning',
+      dmgType: 'lighting',
       profList: ['m'],
     });
   }

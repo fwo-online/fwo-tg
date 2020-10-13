@@ -125,7 +125,7 @@ export default {
       'magicArrow',
       'poisonBreath',
       'frostTouch', 'acidSpittle', 'chainLightning', 'fireRain',
-      'wild_lightning',
+      'wild_lighting',
       'rockfall',
       'physical_sadness'],
     'magic_sadness',

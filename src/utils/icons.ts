@@ -6,7 +6,7 @@ export const damageType: Record<DamageType, GetIcon> = {
   acid: (str) => `☣${str ?? ''}`,
   fire: (str) => `🔥${str ?? ''}`,
   frost: (str) => `❄️${str ?? ''}`,
-  lightning: (str) => `⚡${str ?? ''}`,
+  lighting: (str) => `⚡${str ?? ''}`,
   physical: (str) => `👊${str ?? ''}`,
   clear: (str) => `${str ?? ''}`,
 };
