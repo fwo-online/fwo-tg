@@ -1,8 +1,5 @@
 version: '3'
 
-networks:
-  internals:
-
 volumes:
   db:
     driver: local
@@ -13,10 +10,10 @@ services:
     environment:
       BOT_TOKEN: "184570216:AAF5G80kEX_0tdwXPcnXO8Uttqc21EUPqaA"
     restart: always
-    networks:
-      internals:
   db:
     image: mongo:4.4
+    mem_limit: 512M
+    cpu_percent: 60
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
