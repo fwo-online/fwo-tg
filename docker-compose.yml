@@ -3,13 +3,16 @@ version: '3'
 volumes:
   db:
     driver: local
-
 services:
   server:
-    image: cathd/fwo:latest
-    environment:
-      BOT_TOKEN: "184570216:AAF5G80kEX_0tdwXPcnXO8Uttqc21EUPqaA"
+    build: .
+    env_file:
+      - .tg-token
     restart: always
+    links:
+      - "db"
+    depends_on:
+      - db
   db:
     image: mongo:4.4
     mem_limit: 512M
