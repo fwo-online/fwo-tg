@@ -29,10 +29,10 @@ class Regen {
   // eslint-disable-next-line class-methods-use-this
   cast(initiator, _target, _game) {
     if ((initiator.prof === 'l') || (initiator.prof === 'w')) {
-      const val = initiator.stats.val('enReg') * initiator.proc; // размер восстан
+      const val = initiator.stats.val('reg_en') * initiator.proc; // размер восстан
       initiator.stats.mode('up', 'en', val);
     } else {
-      const val = initiator.stats.val('manaReg') * initiator.proc; // размер восстан
+      const val = initiator.stats.val('reg_mp') * initiator.proc; // размер восстан
       initiator.stats.mode('up', 'mp', val);
     }
   }

@@ -54,9 +54,9 @@ function getDynHarks(charObj) {
     min: floatNumber(harks.int / 10), max: floatNumber(harks.int / 5),
   });
 
-  const manaReg = floatNumber((harks.wis * 0.4) + (harks.int * 0.6));
+  const reg_mp = floatNumber((harks.wis * 0.4) + (harks.int * 0.6));
 
-  const enReg = floatNumber((harks.con * 0.4) + (harks.dex * 0.6));
+  const reg_en = floatNumber((harks.con * 0.4) + (harks.dex * 0.6));
 
   /**
    * Функция расчета наносимого урона
@@ -97,8 +97,8 @@ function getDynHarks(charObj) {
     mga,
     mgp,
     hl,
-    manaReg,
-    enReg,
+    reg_mp,
+    reg_en,
     hit,
     maxTarget,
     lspell,

@@ -23,8 +23,8 @@ export interface Statical {
   mga: number;
   mgp: number;
   hl: MinMax;
-  manaReg: number;
-  enReg: number;
+  reg_mp: number;
+  reg_en: number;
   hit: MinMax;
   maxTarget: number;
   lspell: number;

@@ -88,9 +88,9 @@ harkScene.action('def_harks', ({ session, editMessageText }) => {
 Здоровье:                 ${def.maxHp}
 Лечение:                  ${def.hl.min} - ${def.hl.max}
 Мана:                     ${def.maxMp}
-Восстановление маны:      ${def.manaReg}
+Восстановление маны:      ${def.reg_mp}
 Энергия:                  ${def.maxEn}
-Восстановление энергии:   ${def.enReg}
+Восстановление энергии:   ${def.reg_en}
 Магическая атака:         ${def.mga}
 Магическая защита:        ${def.mgp}`,
   prof === 'l' && `${`Кол-во целей для атаки:  ${def.maxTarget}`}`,
