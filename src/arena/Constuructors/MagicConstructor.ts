@@ -190,13 +190,6 @@ export abstract class Magic {
    */
   abstract run(initiator: Player, target: Player, game: Game): void
 
-  // /**
-  //  * @param initiator обьект персонажа
-  //  * @param target обьект персонажа
-  //  * @param game Обьект игры для доступа ко всему
-  //  */
-  // abstract longRun(initiator: Player, target: Player, game: Game): void
-
   /**
    * Проверка на запудревание мозгов
    * @todo нужно вынести этот метод в orders или к Players Obj

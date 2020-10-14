@@ -3,8 +3,7 @@ FROM node:12-slim
 # Create app directory
 
 WORKDIR /fwo
-COPY ./package*.json ./
+COPY . ./
 RUN npm install
-COPY ./src/ ./
 
-CMD ["ts-node","fwo.ts"]
+CMD ["npm", "run", "prod"]

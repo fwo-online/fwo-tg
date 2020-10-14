@@ -137,7 +137,7 @@ const item = new Schema({
   },
   hl: {
     type: Number,
-    get: (hl) => ({ min: 0, max: hl }),
+    get: (hl) => ({ min: 0, max: hl ?? 0 }),
   },
   r_fire: {
     type: Number,
