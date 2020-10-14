@@ -33,8 +33,9 @@ export abstract class Magic {
     target: Player;
     game: Game;
   };
-  status = {
-    exp: 0,
+  status: {
+    exp: number;
+    effect?: number;
   };
   isLong = false;
 
@@ -44,6 +45,9 @@ export abstract class Magic {
    */
   constructor(magObj: MagicArgs) {
     Object.assign(this, magObj);
+    this.status = {
+      exp: 0,
+    }
   }
 
   // Дальше идут общие методы для всех магий
@@ -252,7 +256,7 @@ export abstract class Magic {
       actionType: 'magic',
       target: target.nick,
       initiator: initiator.nick,
-      effect: this.effect,
+      effect: this.status.effect,
       msg: this.customMessage?.bind(this),
     };
   }

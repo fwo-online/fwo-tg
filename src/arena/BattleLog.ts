@@ -19,7 +19,7 @@ export type SuccessArgs = {
   dmgType?: DamageType;
   actionType?: ActionType;
   weapon?: ItemDocument;
-  effect?: string[];
+  effect?: number;
   duration?: number;
   msg?: (data: SuccessArgs) => string;
 };
