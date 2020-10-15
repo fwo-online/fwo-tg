@@ -1,7 +1,7 @@
 const actions = require('./actions');
 const CharacterService = require('./CharacterService');
 const { default: config } = require('./config');
-const GameService = require('./GameService');
+const { default: GameService } = require('./GameService');
 const magics = require('./magics');
 const postHeal = require('./magics/postHeal');
 const skills = require('./skills');
@@ -50,7 +50,7 @@ function runStage(ar, gameObj) {
       }
       if (act[x] && act[x].isLong) {
         // запуск LongMagic
-        act[x].checkLong(gameObj);
+        act[x].castLong(gameObj);
       }
       if (act[x] && act[x].postEffect) {
         act[x].postEffect(gameObj);

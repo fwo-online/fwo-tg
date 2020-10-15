@@ -14,7 +14,7 @@ const handsHeal = new HealMagicConstructor(params);
 
 handsHeal.run = function run() {
   const { initiator, target } = this.params;
-  if (Object.keys(target.flags.isHited).length) {
+  if (target.flags.isHited) {
     throw new Error('HEAL_FAIL');
   } else {
     this.status.val = this.effectVal();

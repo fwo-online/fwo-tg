@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import arena from '../../arena';
-import Char from '../../arena/CharacterService';
+import type Char from '../../arena/CharacterService';
 import { itemDescription, attrNames } from '../../arena/ItemService';
 import { stores } from '../../arena/MiscService';
 import { collections } from '../../data/collection';

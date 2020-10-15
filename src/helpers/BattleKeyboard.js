@@ -1,7 +1,7 @@
 const { Markup } = require('telegraf');
 const arena = require('../arena');
-const { default: Magic } = require('../arena/Constuructors/MagicConstructor');
-const { default: Skill } = require('../arena/Constuructors/SkillConstructor');
+const { Magic } = require('../arena/Constuructors/MagicConstructor');
+const { Skill } = require('../arena/Constuructors/SkillConstructor');
 
 class BattleKeyboard {
   /**
@@ -90,7 +90,7 @@ class BattleKeyboard {
       this.concat(arena.actions.protect);
     }
 
-    this.concat(arena.actions.regen);
+    this.concat(arena.actions.regeneration);
     this.concat(arena.actions.handsHeal);
 
     return this;

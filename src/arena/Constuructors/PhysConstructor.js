@@ -3,7 +3,7 @@ const arena = require('../index');
 const MiscService = require('../MiscService');
 
 /**
- * @typedef {import ('../GameService')} game
+ * @typedef {import ('../GameService').default} game
  * @typedef {import ('../PlayerService').default} player
  */
 
@@ -134,9 +134,9 @@ class PhysConstructor {
       initiatorHitParam.max);
     this.status.hit = floatNumber(hitval * initiator.proc);
     if (result) {
-      this.params.target.flags.isHited = ({
+      this.params.target.flags.isHited = {
         initiator: initiator.nick, hit: this.status.hit,
-      });
+      };
       this.run();
     } else {
       throw this.protectorsGetExp();
@@ -176,7 +176,7 @@ class PhysConstructor {
         hp: target.stats.val('hp'),
         initiator: initiator.nick,
         weapon,
-        dmgType: 'phys',
+        dmgType: 'physical',
       };
       game.addHistoryDamage(msg);
       game.battleLog.success(msg);

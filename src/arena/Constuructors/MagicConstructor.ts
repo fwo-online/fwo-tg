@@ -1,18 +1,19 @@
+import type { SuccessArgs } from '../BattleLog';
 import floatNumber from '../floatNumber';
-import Game from '../GameService';
-import arena from '../index';
+import type Game from '../GameService';
 import MiscService from '../MiscService';
-import Player from '../PlayerService';
+import type Player from '../PlayerService';
+import type { Breaks, BreaksMessage, CustomMessage } from './types';
 
-export interface BaseMagic {
-  name: keyof typeof arena['magics'];
+export interface MagicArgs {
+  name: string;
   displayName: string;
   desc: string;
   cost: number;
   costType: 'mp' | 'en';
-  lvl: string;
+  lvl: number;
   orderType: 'all' | 'any' | 'enemy' | 'self';
-  aoeType: 'target' | 'team';
+  aoeType: 'target' | 'team' | 'targetAoe';
   baseExp: number;
   effect: string[];
   magType: 'bad' | 'good';
@@ -21,78 +22,32 @@ export interface BaseMagic {
 }
 
 /**
- * @typedef {import ('../PlayerService').default} player
- * @typedef {import ('../GameService')} game
- * @typedef {Object} baseMag
- * @property {string} name Имя магии
- * @property {string} displayName Отображаемое имя
- * @property {string} desc Короткое описание
- * @property {number} cost Стоимость за использование
- * @property {string} costType Тип единицы стоимости {en/mp}
- * @property {number} lvl Требуемый уровень круга магий для использования
- * @property {string} orderType Тип цели заклинания self/team/enemy/enemyTeam
- * @property {string} aoeType Тип нанесения урона по цели:
- * @property {number} baseExp Стартовый параметр exp за действие
- * @property {string[]} [effect] размер рандомного эффект от магии
- * @property {string} magType Тип магии good/bad/neutral
- * @property {number[] | string[]} chance
- * @property {string[]} profList
- */
-
-/**
  * Конструктор магии
  */
-export default abstract class Magic implements BaseMagic {
-  name: keyof typeof arena['magics'];
-  displayName: string;
-  desc: string;
-  cost: number;
-  costType: 'mp' | 'en';
-  lvl: string;
-  orderType: 'all' | 'any' | 'enemy' | 'self';
-  aoeType: 'target' | 'team';
-  baseExp: number;
-  effect: string[];
-  magType: 'bad' | 'good';
-  chance: string[] | number[];
-  profList: string[];
-  status: {
-    exp: number;
-  }
+export interface Magic extends MagicArgs, CustomMessage {
+}
+
+export abstract class Magic {
   params!: {
     initiator: Player;
     target: Player;
     game: Game;
-  }
-  /**
-   * Создание магии
-   * @param {baseMag} magObj Обьект создаваемой магии
-   */
-  constructor(magObj: Magic) {
-    this.name = magObj.name;
-    this.desc = magObj.desc;
-    this.cost = magObj.cost;
-    this.costType = magObj.costType;
-    this.lvl = magObj.lvl;
-    this.orderType = magObj.orderType;
-    this.aoeType = magObj.aoeType;
-    this.baseExp = magObj.baseExp;
-    this.effect = magObj.effect;
-    this.magType = magObj.magType;
-    this.chance = magObj.chance;
-    this.displayName = magObj.displayName;
-    this.profList = magObj.profList;
-    this.status = {
-      exp: 0,
-    };
-  }
+  };
+  status: {
+    exp: number;
+    effect?: number;
+  };
+  isLong = false;
 
   /**
-   * Длительная ли магия
+   * Создание магии
+   * @param magObj Обьект создаваемой магии
    */
-  get isLong(): boolean {
-    return this.constructor.name === 'LongMagic' || this.constructor.name
-        === 'LongDmgMagic';
+  constructor(magObj: MagicArgs) {
+    Object.assign(this, magObj);
+    this.status = {
+      exp: 0,
+    }
   }
 
   // Дальше идут общие методы для всех магий
@@ -115,13 +70,12 @@ export default abstract class Magic implements BaseMagic {
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.getExp(initiator);
       this.checkTargetIsDead();
-      this.next(initiator, target);
+      this.next();
     } catch (failMsg) {
       const bl = this.params.game.battleLog;
       // @fixme прокидываем ошибку выше для длительных кастов
       if (this.isLong) throw (failMsg);
       bl.log(failMsg);
-      this.params = null;
     }
   }
 
@@ -135,7 +89,6 @@ export default abstract class Magic implements BaseMagic {
     const costValue = +initiator.stats.val(this.costType) - this.cost;
     console.log('MP:', costValue);
     if (costValue >= 0) {
-      // eslint-disable-next-line no-param-reassign
       initiator.stats.mode('set', this.costType, costValue);
     } else {
       throw this.breaks('NO_MANA');
@@ -242,13 +195,6 @@ export default abstract class Magic implements BaseMagic {
   abstract run(initiator: Player, target: Player, game: Game): void
 
   /**
-   * @param initiator обьект персонажа
-   * @param target обьект персонажа
-   * @param game Обьект игры для доступа ко всему
-   */
-  abstract longRun(initiator: Player, target: Player, game: Game): void
-
-  /**
    * Проверка на запудревание мозгов
    * @todo нужно вынести этот метод в orders или к Players Obj
    */
@@ -269,7 +215,7 @@ export default abstract class Magic implements BaseMagic {
   // eslint-disable-next-line no-unused-vars
   checkPreAffects(initiator: Player, _target: Player, _game: Game): void {
     const { isSilenced } = initiator.flags;
-    if (isSilenced && isSilenced.some((e) => e.initiator !== this.name)) {
+    if (isSilenced.some((e) => e.initiator !== this.name)) {
       // если кастер находится под безмолвием/бунтом богов
       throw this.breaks('SILENCED');
     }
@@ -292,7 +238,7 @@ export default abstract class Magic implements BaseMagic {
    * @param msg строка остановки магии (причина)
    * @return обьект остановки магии
    */
-  breaks(msg: string) {
+  breaks(msg: BreaksMessage): Breaks {
     return {
       actionType: 'magic',
       message: msg,
@@ -302,22 +248,25 @@ export default abstract class Magic implements BaseMagic {
     };
   }
 
-  /**
-   * Магия прошла удачно
-   * @param initiator обьект персонажаы
-   * @param target обьект цели магии
-   * @todo тут нужен вывод требуемых параметров
-   */
-  next(initiator: Player, target: Player): void {
-    const bl = this.params.game.battleLog;
-    bl.success({
+  protected getNextArgs(): SuccessArgs {
+    const { target, initiator } = this.params;
+    return {
       exp: this.status.exp,
       action: this.displayName,
       actionType: 'magic',
       target: target.nick,
       initiator: initiator.nick,
-      effect: this.effect,
-    });
-    this.params = null;
+      effect: this.status.effect,
+      msg: this.customMessage?.bind(this),
+    };
+  }
+
+  /**
+   * Магия прошла удачно
+   * @todo тут нужен вывод требуемых параметров
+   */
+  next(): void {
+    const { battleLog } = this.params.game;
+    battleLog.success(this.getNextArgs());
   }
 }

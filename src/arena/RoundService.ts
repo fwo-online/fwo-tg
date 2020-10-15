@@ -17,15 +17,20 @@ export interface Round {
 
 export type LastRound = Omit<Round, 'event'>;
 
+type RoundServiceEvent = 'Round';
+
+export interface RoundService {
+  on(event: RoundServiceEvent, listener: (data: Round) => void);
+  emit(event: RoundServiceEvent, data: Round)
+}
 /**
  * RoundService
  *
  * Конструктор раунда
  * @description Обработка раунда
  * @module Service/Round
- * @todo переписать прототипы внутрь класса
  */
-export default class RoundConstructor extends ee {
+export class RoundService extends ee {
   count = 0;
   status: RoundStatus = 'init';
   flags: {

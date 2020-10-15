@@ -3,7 +3,7 @@
  */
 
 /**
- * @typedef {import ('../GameService')} game
+ * @typedef {import ('../GameService').default} game
  * @typedef {import ('../PlayerService').default} player
  */
 

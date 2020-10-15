@@ -1,18 +1,13 @@
-import { Clan } from '../models/clan';
-import { Inventory } from '../models/inventory';
-import { MinMax } from '../models/item';
-import Char from './CharacterService';
-import FlagsConstructors from './Constuructors/FlagsConstructor';
+import type Clan from '../models/clan';
+import type { Inventory } from '../models/inventory';
+import type { MinMax } from '../models/item';
+import type Char from './CharacterService';
+import FlagsConstructor from './Constuructors/FlagsConstructor';
+import type { DamageType } from './Constuructors/types';
 import StatsService from './StatsService';
 import arena from './index';
 
-export interface Resists {
-  fire: number;
-  frost: number;
-  acid: number;
-  lighting: number;
-  physical: number;
-}
+export type Resists = Record<DamageType, number>;
 
 export interface Chance {
   fail?: Partial<Record<keyof typeof arena['magics'], number>>
@@ -28,8 +23,8 @@ export interface Statical {
   mga: number;
   mgp: number;
   hl: MinMax;
-  manaReg: number;
-  enReg: number;
+  reg_mp: number;
+  reg_en: number;
   hit: MinMax;
   maxTarget: number;
   lspell: number;
@@ -53,16 +48,16 @@ export default class Player {
   tgId: number;
   prof: string;
   lvl: number;
-  clan: Clan;
+  clan?: Clan;
   stats: StatsService;
-  flags: FlagsConstructors;
+  flags: FlagsConstructor;
   modifiers: {
     magics: {
       chance: Chance;
     }
     castChance: number;
   };
-  resists: Partial<Resists>;
+  resists: Partial<Omit<Resists, 'clear'>>;
   skills: { [x: string]: number; };
   magics: { [x: string]: number; };
   statical: Partial<Statical>;
@@ -78,7 +73,7 @@ export default class Player {
     this.lvl = params.lvl;
     this.clan = params.clan;
     this.stats = new StatsService({ ...params.def, ...params.harks });
-    this.flags = new FlagsConstructors();
+    this.flags = new FlagsConstructor();
     // @todo закладка для вычисляемых статов
     this.modifiers = {
       magics: {

@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { mono } = require('./MiscService');
 const arena = require('./index');
+const { damageType } = require('../utils/icons');
 /**
  * Items Service
  *
@@ -32,10 +33,10 @@ const attrNames = {
   mga: 'Магическая атака',
   mgp: 'Магическая защита',
   hl: 'Эффективность лечения',
-  r_fire: '🔥 Защита от огня',
-  r_acid: '🧪 Защита от яда',
-  r_lighting: '⚡️ Защита от молнии',
-  r_frost: '❄️ Защита от холода',
+  r_fire: damageType.fire(' Защита от огня'),
+  r_acid: damageType.acid(' Защита от яда'),
+  r_lighting: damageType.lighting(' Защита от молнии'),
+  r_frost: damageType.frost(' Защита от холода'),
   r_physical: 'Физическая защита',
   descr: 'Описание',
   add_hp: 'Здоровье',
@@ -52,10 +53,10 @@ const attrNames = {
   edinahp: '',
   eff: '',
   '2handed': 'Двуручное',
-  fire: '🔥 Урон огнём',
-  acid: '🧪 Урон ядом',
-  lighting: '⚡️ Урон молнией',
-  frost: '❄️ Урон холодом',
+  fire: damageType.fire(' Урон огнём'),
+  acid: damageType.acid(' Урон ядом'),
+  lighting: damageType.lighting(' Урон молнией'),
+  frost: damageType.frost(' Урон холодом'),
 };
 
 const getRequiredHark = (char, value, hark) => {

@@ -9,8 +9,7 @@ const arena = require('./index');
  *
  * @description Набор функций для работы с кланами.
  * @module Service/Clan
- * @typedef {import ('../models/clan').Clan} Clan
- * @typedef {import ('../models/clan').ClanDocument} ClanDocument
+ * @typedef {import ('../models/clan').default} Clan
  */
 
 module.exports = {

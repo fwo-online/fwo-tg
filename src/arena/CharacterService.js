@@ -5,7 +5,7 @@ const floatNumber = require('./floatNumber');
 const arena = require('./index');
 
 /**
- * @typedef {import ('../models/clan').Clan} Clan
+ * @typedef {import ('../models/clan').default} Clan
  * @typedef {Object} Statistics
  * @property {number} kills
  * @property {number} death
@@ -54,9 +54,9 @@ function getDynHarks(charObj) {
     min: floatNumber(harks.int / 10), max: floatNumber(harks.int / 5),
   });
 
-  const manaReg = floatNumber((harks.wis * 0.4) + (harks.int * 0.6));
+  const reg_mp = floatNumber((harks.wis * 0.4) + (harks.int * 0.6));
 
-  const enReg = floatNumber((harks.con * 0.4) + (harks.dex * 0.6));
+  const reg_en = floatNumber((harks.con * 0.4) + (harks.dex * 0.6));
 
   /**
    * Функция расчета наносимого урона
@@ -97,8 +97,8 @@ function getDynHarks(charObj) {
     mga,
     mgp,
     hl,
-    manaReg,
-    enReg,
+    reg_mp,
+    reg_en,
     hit,
     maxTarget,
     lspell,
@@ -110,28 +110,7 @@ function getDynHarks(charObj) {
 class Char {
   /**
    * Конструктор игрока
-   * @param {char} charObj обьект персонажа из базы
-   * @typedef {Object} char
-   * @property {String} id
-   * @property {String} _id
-   * @property {import('../models/character').Prof} prof
-   * @property {Number} lvl
-   * @property {Number} tgId
-   * @property {String} nickname
-   * @property {Number} gold
-   * @property {Number} exp
-   * @property {Statistics} statistics
-   * @property {import('../models/inventory').InventoryDocument[]} inventory
-   * @property {import('../models/item').Hark} harks
-   * @property {Object.<string, number>} magics
-   * @property {Number} free
-   * @property {Number} bonus
-   * @property {Object} mm
-   * @property {Object.<string, number>} skills
-   * @property {Clan} clan
-   * @property {import ('./GameService')} currentGame
-   * @property {Number} mm
-   * @property {{reason: string, date: Date}[]} penalty
+   * @param {import ('../models/character').default} charObj обьект персонажа из базы
    */
   constructor(charObj) {
     this.charObj = charObj;
@@ -247,7 +226,7 @@ class Char {
   }
 
   get magics() {
-    return this.charObj.magics;
+    return this.charObj.magics || {};
   }
 
   get plushark() {
@@ -255,7 +234,7 @@ class Char {
   }
 
   get skills() {
-    return this.charObj.skills;
+    return this.charObj.skills || {};
   }
 
   get bonus() {

@@ -279,8 +279,8 @@ export const collections: Record<string, Collection> = {
       add_hp: 5,
       add_en: 20,
       add_mp: 20,
-      manaReg: 2,
-      enReg: 2,
+      reg_mp: 2,
+      reg_en: 2,
     },
   },
 };

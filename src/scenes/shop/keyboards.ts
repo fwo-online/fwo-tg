@@ -1,12 +1,12 @@
 import _ from 'lodash';
 import { Markup } from 'telegraf';
-import { ExtraReplyMessage } from 'telegraf/typings/telegram-types';
+import type { ExtraReplyMessage } from 'telegraf/typings/telegram-types';
 import arena from '../../arena';
-import Char from '../../arena/CharacterService';
+import type Char from '../../arena/CharacterService';
 import { stores } from '../../arena/MiscService';
 import { collections } from '../../data/collection';
-import { Prof } from '../../models/character';
-import { Item } from '../../models/item';
+import type { Prof } from '../../models/character';
+import type { Item } from '../../models/item';
 
 const storeKeys = Object.keys(stores);
 

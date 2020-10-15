@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import type { ClanDocument } from './clan';
+import type Clan from './clan';
 import type { InventoryDocument } from './inventory';
 import type { Hark } from './item';
 
@@ -21,7 +21,7 @@ export interface Char {
   gold: number;
   free: number;
   weapon?: InventoryDocument;
-  lvl: string;
+  lvl: number;
   sex: 'm' | 'f';
   lastFight: Date;
   inventory?: InventoryDocument[];
@@ -29,7 +29,7 @@ export interface Char {
   magics?: Record<string, number>
   skills?: Record<string, number>
   bonus: number;
-  clan?: ClanDocument;
+  clan?: Clan;
   penalty?: [{
     reason: string;
     date: Date;

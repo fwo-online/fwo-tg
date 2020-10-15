@@ -36,7 +36,7 @@ module.exports = {
    */
   show(skillId) {
     const {
-      name, desc, lvl, bonusCost, displayName
+      name, desc, lvl, bonusCost, displayName,
     } = this.skills[skillId];
     return {
       name, desc, lvl, bonusCost, displayName,

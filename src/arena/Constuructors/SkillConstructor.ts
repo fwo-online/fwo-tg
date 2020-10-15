@@ -1,13 +1,12 @@
-import Game from '../GameService';
-import arena from '../index';
+import type Game from '../GameService';
 import MiscService from '../MiscService';
-import Player from '../PlayerService';
-import { CostType, OrderType, AOEType, Breaks } from './types';
-
-type SkillName = keyof typeof arena['skills'];
+import type Player from '../PlayerService';
+import type {
+  CostType, OrderType, AOEType, Breaks, BreaksMessage, CustomMessage,
+} from './types';
 
 interface SkillArgs {
-  name: SkillName;
+  name: string;
   displayName: string;
   desc: string;
   cost: number[];
@@ -19,7 +18,6 @@ interface SkillArgs {
   aoeType: AOEType;
   chance: number[];
   effect: number[];
-  msg: (nick: string, exp: number) => string;
   profList: string[];
   bonusCost: number[];
 }
@@ -27,22 +25,10 @@ interface SkillArgs {
 /**
  * Основной конструктор класса скилов (войны/лучники)
  */
-export default abstract class Skill implements SkillArgs {
-  name: SkillName;
-  displayName: string;
-  desc: string;
-  cost: number[];
-  proc: number;
-  baseExp: number;
-  costType: CostType;
-  lvl: number;
-  orderType: OrderType;
-  aoeType: AOEType;
-  chance: number[];
-  effect: number[];
-  msg: (nick: string, exp: number) => string;
-  profList: string[];
-  bonusCost: number[];
+export interface Skill extends SkillArgs, CustomMessage {
+}
+
+export abstract class Skill {
   params!: {
     initiator: Player;
     target: Player;
@@ -54,6 +40,11 @@ export default abstract class Skill implements SkillArgs {
   constructor(params: SkillArgs) {
     Object.assign(this, params);
   }
+
+  /**
+   * Пустая функция для потомка
+   */
+  abstract run(): void
 
   /**
    * Основная точка вхождения в выполнение скила
@@ -121,14 +112,9 @@ export default abstract class Skill implements SkillArgs {
       actionType: 'skill',
       target: this.params.target.nick,
       initiator: this.params.initiator.nick,
-      msg: this.msg,
+      msg: this.customMessage?.bind(this),
     });
   }
-
-  /**
-   * Пустая функция для потомка
-   */
-  abstract run(): void
 
   /**
    * Расчитываем полученный exp
@@ -140,7 +126,7 @@ export default abstract class Skill implements SkillArgs {
   /**
    * Обработка провала магии
    */
-  breaks(e: string): Breaks {
+  breaks(e: BreaksMessage): Breaks {
     return {
       action: this.displayName,
       initiator: this.params.initiator.nick,

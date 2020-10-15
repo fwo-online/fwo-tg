@@ -8,7 +8,7 @@ const arena = require('./index');
  * 2. Выбор цели ({attack}_{target})
  * 3. Выбор силы ({attack}_{target}_{proc})
  * @typedef {import ('./PlayerService').default} Player
- * @typedef {import ('./GameService')} Game
+ * @typedef {import ('./GameService').default} Game
  * @typedef {import('telegraf/typings/markup').CallbackButton} CallbackButton
  */
 
@@ -22,7 +22,7 @@ const getText = {
 };
 /**
  * @param {Game} game
- * @param {import ('./OrderService').order} order
+ * @param {import ('./OrderService').Order} order
  */
 const createOrder = (game, order) => {
   game.orders.orderAction(order);
