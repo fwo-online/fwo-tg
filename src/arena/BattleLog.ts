@@ -130,6 +130,9 @@ export class BattleLog extends ee {
       }
       return expBrackets(`💖${args.heal} 📖${args.exp}`);
     }
+    if (args.actionType === 'phys') {
+      return expBrackets(`💔-${args.dmg}/${args.hp} 📖${args.exp}`)
+    }
     return expBrackets(`📖${args.exp}`);
   }
 

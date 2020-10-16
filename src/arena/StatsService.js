@@ -72,12 +72,12 @@ class StatsService {
     }
     this.inRound = _.clone(this.defStat);
     // выставляем ману и хп на начало раунда
-    this.inRound.hp = oldData.hp || this.defStat.maxHp; // @todo hardcord
-    this.inRound.mp = oldData.mp || this.defStat.maxMp; // @todo hardcord
-    this.inRound.en = oldData.en || this.defStat.maxEn;
+    this.inRound.hp = oldData.hp ?? this.defStat.maxHp; // @todo hardcord
+    this.inRound.mp = oldData.mp ?? this.defStat.maxMp; // @todo hardcord
+    this.inRound.en = oldData.en ?? this.defStat.maxEn;
     this.inRound.exp = 0; // кол-во Exp на начало раунда
     this.inRound.def = 0; // кол-во дефа на начало
-    this.inRound.dex = oldData.dex || this.defStat.dex; // кол-во ловкости на начало
+    this.inRound.dex = oldData.dex ?? this.defStat.dex; // кол-во ловкости на начало
   }
 
   /**
