@@ -36,8 +36,6 @@ export default class PlayersArr {
     return this.arr.filter((p) => p.clan && p.clan.id === clan.id);
   }
 
-  getRan
-
   /**
   * Функция возвращает рандомного игрока из массива живых
   * @return

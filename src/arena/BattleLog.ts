@@ -36,7 +36,7 @@ type FailArgs = SuccessArgs & {
  * если это не BattleLog выброс, его нужно прокидывать дальше вверх
  * @return {String} ({type:String,message:String})
  */
-function csl(msgObj) {
+function csl(msgObj: FailArgs) {
   const {
     action, message, target, initiator, expArr, weapon,
   } = msgObj;
@@ -105,7 +105,7 @@ function csl(msgObj) {
   return text.ru;
 }
 
-const expBrackets = (str) => `\n\\[ ${str} ]`;
+const expBrackets = (str: string) => `\n\\[ ${str} ]`;
 
 type BattleLogEvent = 'BattleLog';
 
@@ -131,7 +131,7 @@ export class BattleLog extends ee {
       return expBrackets(`💖${args.heal} 📖${args.exp}`);
     }
     if (args.actionType === 'phys') {
-      return expBrackets(`💔-${args.dmg}/${args.hp} 📖${args.exp}`)
+      return expBrackets(`💔-${args.dmg}/${args.hp} 📖${args.exp}`);
     }
     return expBrackets(`📖${args.exp}`);
   }
