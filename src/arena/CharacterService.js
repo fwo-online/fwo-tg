@@ -17,7 +17,7 @@ const sum = (a, b) => {
   if (_.isObject(b)) {
     return _.assignWith(a, b, sum);
   }
-  if (_.isNull(a)) {
+  if (_.isNil(a)) {
     return +b;
   }
   return +a + +b;
