@@ -67,7 +67,7 @@ export default class Orders {
       throw Error('Раунд ещё не начался');
       // @todo тут надо выбирать из живых целей
     }
-    if (!Game.players[target].alive) {
+    if (!Game.players[target]?.alive) {
       throw Error('Нет цели или цель мертва');
     }
     if (Number(proc) > Game.players[initiator].proc) {
