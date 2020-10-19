@@ -327,6 +327,7 @@ class Char {
       this.charObj.lvl += 1;
       this.free += 10;
       this.addLvl(currentExp);
+      this.saveToDb();
     }
   }
 

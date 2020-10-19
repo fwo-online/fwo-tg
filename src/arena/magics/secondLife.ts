@@ -13,7 +13,7 @@ class SecondLife extends CommonMagic {
       cost: 20,
       baseExp: 8,
       costType: 'mp',
-      lvl: 1,
+      lvl: 3,
       orderType: 'all',
       aoeType: 'target',
       magType: 'good',

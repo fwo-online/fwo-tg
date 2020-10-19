@@ -13,7 +13,7 @@ class Eclipse extends CommonMagic {
       cost: 16,
       baseExp: 80,
       costType: 'mp',
-      lvl: 2,
+      lvl: 3,
       orderType: 'enemy',
       aoeType: 'target',
       magType: 'bad',
