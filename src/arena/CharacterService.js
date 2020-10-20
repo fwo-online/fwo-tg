@@ -184,8 +184,8 @@ class Char {
 
   set exp(value) {
     this.bonus += Math.round(value / 100) - Math.round(this.charObj.exp / 100);
-    this.addLvl(value);
     this.charObj.exp = value;
+    this.addLvl(value);
   }
 
   get games() {
@@ -321,13 +321,15 @@ class Char {
   /**
    * Проверяет количество опыта для следующего уровня. Добавляет уровень, если опыта достаточно
    * @param {number} currentExp - текущее количество опыта
+   * @returns {void}
    */
-  addLvl(currentExp) {
-    if (this.nextLvlExp < currentExp) {
+  async addLvl(currentExp) {
+    if (currentExp >= this.nextLvlExp) {
       this.charObj.lvl += 1;
       this.free += 10;
-      this.addLvl(currentExp);
-      this.saveToDb();
+      await this.addLvl(currentExp);
+    } else {
+      await this.saveToDb();
     }
   }
 

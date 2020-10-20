@@ -174,7 +174,7 @@ export default class Game {
 
   /**
    * @description Отправляем event BattleLog все подключенным к игре
-   * @param {String} data строка, отправляемая в общий чат
+   * @param data строка, отправляемая в общий чат
    *
    */
   sendBattleLog(data: string): void {
@@ -184,7 +184,7 @@ export default class Game {
   }
 
   /**
-   * @param {String} data строка, отправляемая в общий чат
+   * @param data строка, отправляемая в общий чат
    */
   sendToAll(data: string): void {
     // eslint-disable-next-line no-console
@@ -285,9 +285,9 @@ export default class Game {
     setTimeout(() => {
       this.sendToAll('Конец игры, распределяем ресурсы...');
       this.forAllPlayers(Game.showExitButton);
-      this.forAllPlayers((player) => { arena.characters[player.id].gameId = ''; });
+      this.forAllPlayers((player: Player) => { arena.characters[player.id].gameId = ''; });
       arena.mm.cancel();
-      this.forAllPlayers(/** @param {Player} player */(player) => arena.mm.autoreg(player.id));
+      this.forAllPlayers((player: Player) => arena.mm.autoreg(player.id));
     }, 15000);
   }
 
@@ -447,8 +447,7 @@ export default class Game {
 
     const [, withoutClan, byClan] = this.partitionByClan;
 
-    /** @param {Player} p */
-    const getStatusString = (p) => `\t👤 ${p.nick} получает ${p.stats.collect.exp}📖 и ${p.stats.collect.gold}💰`;
+    const getStatusString = (p: Player) => `\t👤 ${p.nick} получает ${p.stats.collect.exp}📖 и ${p.stats.collect.gold}💰`;
 
     const playersWithoutClan = withoutClan.map(getStatusString);
     const playersWithClan = _.map(byClan, (players, clan) => `${clan}\n${players.map(getStatusString).join('\n')}`);
@@ -556,8 +555,7 @@ export default class Game {
    * @param player обьект игрока
    */
   sendStatus(player: Player): void {
-    /** @param {Player} p */
-    const getEnemyString = (p) => `\t👤 ${p.nick} (${getIcon(p.prof)}${p.lvl}) ❤️${p.getStatus().hp}`;
+    const getEnemyString = (p: Player) => `\t👤 ${p.nick} (${getIcon(p.prof)}${p.lvl}) ❤️${p.getStatus().hp}`;
 
     const [, withoutClan, byClan] = this.partitionAliveByClan;
 
