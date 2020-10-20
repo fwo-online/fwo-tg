@@ -47,7 +47,7 @@ export abstract class Magic {
     Object.assign(this, magObj);
     this.status = {
       exp: 0,
-    }
+    };
   }
 
   // Дальше идут общие методы для всех магий
