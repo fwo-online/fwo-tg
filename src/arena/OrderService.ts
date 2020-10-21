@@ -62,21 +62,21 @@ export default class Orders {
     const Game = arena.characters[initiator].currentGame;
     // @todo Нужны константы для i18n
     if (!Game) {
-      throw new OrderError('Вы не в игре');
+      throw new OrderError('Вы не в игре', order);
     }
     if (Game.round.status !== 'orders') {
-      throw new OrderError('Раунд ещё не начался');
+      throw new OrderError('Раунд ещё не начался', order);
       // @todo тут надо выбирать из живых целей
     }
     if (!Game.players[target]?.alive) {
-      throw new OrderError('Нет цели или цель мертва');
+      throw new OrderError('Нет цели или цель мертва', order);
     }
     if (Number(proc) > Game.players[initiator].proc) {
-      throw new OrderError('Нет процентов');
+      throw new OrderError('Нет процентов', order);
       // тут нужен геттер из Player
     }
     if (this.isMaxTargets(order)) {
-      throw new OrderError('Слишком много целей');
+      throw new OrderError('Слишком много целей', order);
     }
     if (!Orders.isValidAct(order)) {
       throw new OrderError(`action spoof:${action}`);

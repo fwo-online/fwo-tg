@@ -1,7 +1,8 @@
+import type { Order } from '../OrderService';
+
 export default class OrderError extends Error {
-  constructor(message: string) {
+  constructor(public message: string, public order?: Order) {
     super(message);
     this.name = 'OrderError';
-    this.message = message;
   }
 }
