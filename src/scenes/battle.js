@@ -5,6 +5,7 @@
 const { BaseScene, Markup } = require('telegraf');
 const arena = require('../arena');
 const BattleService = require('../arena/BattleService');
+const { default: OrderError } = require('../arena/errors/OrderError');
 const { getIcon } = require('../arena/MiscService');
 const channelHelper = require('../helpers/channelHelper');
 const loginHelper = require('../helpers/loginHelper');
@@ -22,17 +23,20 @@ const catchOrderError = (ctx, orderFn) => {
   try {
     orderFn(ctx);
   } catch (e) {
-    console.log(e);
-    const { answerCbQuery, session, editMessageText } = ctx;
-    answerCbQuery(e.message);
-    const { currentGame, id } = session.character;
-    const [message, keyboard] = BattleService.getDefaultMessage(id, currentGame);
-    editMessageText(
-      message,
-      Markup.inlineKeyboard(
-        keyboard,
-      ).resize().extra({ parse_mode: 'Markdown' }),
-    );
+    if (e instanceof OrderError) {
+      const { answerCbQuery, session, editMessageText } = ctx;
+      answerCbQuery(e.message);
+      const { currentGame, id } = session.character;
+      const [message, keyboard] = BattleService.getDefaultMessage(id, currentGame);
+      editMessageText(
+        message,
+        Markup.inlineKeyboard(
+          keyboard,
+        ).resize().extra({ parse_mode: 'Markdown' }),
+      );
+    } else {
+      throw e;
+    }
   }
 };
 

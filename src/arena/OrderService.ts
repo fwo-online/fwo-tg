@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import actions from './actions';
+import OrderError from './errors/OrderError';
 import arena from './index';
 
 export interface Order {
@@ -48,7 +49,7 @@ export default class Orders {
    *  proc: 10,
    *  action: 'handsHeal',
    * }
-   * @throws {Error}
+   * @throws {OrderError}
    */
   orderAction(order: Order): void {
     const {
@@ -61,24 +62,24 @@ export default class Orders {
     const Game = arena.characters[initiator].currentGame;
     // @todo Нужны константы для i18n
     if (!Game) {
-      throw Error('Вы не в игре');
+      throw new OrderError('Вы не в игре');
     }
     if (Game.round.status !== 'orders') {
-      throw Error('Раунд ещё не начался');
+      throw new OrderError('Раунд ещё не начался');
       // @todo тут надо выбирать из живых целей
     }
     if (!Game.players[target]?.alive) {
-      throw Error('Нет цели или цель мертва');
+      throw new OrderError('Нет цели или цель мертва');
     }
     if (Number(proc) > Game.players[initiator].proc) {
-      throw Error('Нет процентов');
+      throw new OrderError('Нет процентов');
       // тут нужен геттер из Player
     }
     if (this.isMaxTargets(order)) {
-      throw Error('Слишком много целей');
+      throw new OrderError('Слишком много целей');
     }
     if (!Orders.isValidAct(order)) {
-      throw Error(`action spoof:${action}`);
+      throw new OrderError(`action spoof:${action}`);
     }
     // временный хак для атаки руками
     // @todo нужно дописать структуру атаки руками
@@ -163,7 +164,7 @@ export default class Orders {
     this.lastOrders.forEach((order) => {
       if (order.initiator === charId) {
         try {
-              this.orderAction(order);
+          this.orderAction(order);
         } catch (e) {
           console.log('Error in orders:', e);
         }
