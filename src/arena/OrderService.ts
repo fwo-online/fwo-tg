@@ -162,7 +162,11 @@ export default class Orders {
   repeatLastOrder(charId: string): void {
     this.lastOrders.forEach((order) => {
       if (order.initiator === charId) {
-        this.orderAction(order);
+        try {
+              this.orderAction(order);
+        } catch (e) {
+          console.log('Error in orders:', e);
+        }
       }
     });
   }
