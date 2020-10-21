@@ -15,6 +15,28 @@ const battleScene = new BaseScene('battleScene');
 const penaltyTime = 180000;
 
 /**
+ * @param {import('./stage').BaseGameContext} ctx
+ * @param {(ctx: import('./stage').BaseGameContext) => void} orderFn
+ */
+const catchOrderError = (ctx, orderFn) => {
+  try {
+    orderFn(ctx);
+  } catch (e) {
+    console.log(e);
+    const { answerCbQuery, session, editMessageText } = ctx;
+    answerCbQuery(e.message);
+    const { currentGame, id } = session.character;
+    const [message, keyboard] = BattleService.getDefaultMessage(id, currentGame);
+    editMessageText(
+      message,
+      Markup.inlineKeyboard(
+        keyboard,
+      ).resize().extra({ parse_mode: 'Markdown' }),
+    );
+  }
+};
+
+/**
  * Проверяет можно ли игроку начать поиск
  * Если сделано слишком много попыток за заданное время, возвращает false
  * @param {Object} character - объект персонажа
@@ -95,49 +117,54 @@ battleScene.action('stop', async ({ editMessageText, session }) => {
 /**
  * Ожидаем строку 'action_{attack}'
  */
-battleScene.action(/action(?=_)/, async ({ editMessageText, session, match }) => {
-  const { currentGame, id } = session.character;
-  const [, action] = match.input.split('_');
-
-  const [message, keyboard] = BattleService.handleAction(id, currentGame, action);
-  editMessageText(
-    message,
-    Markup.inlineKeyboard(
-      keyboard,
-    ).resize().extra({ parse_mode: 'Markdown' }),
-  );
+battleScene.action(/action(?=_)/, (ctx) => {
+  catchOrderError(ctx, ({ match, session, editMessageText }) => {
+    const { currentGame, id } = session.character;
+    const [, action] = match.input.split('_');
+    const [message, keyboard] = BattleService.handleAction(id, currentGame, action);
+    editMessageText(
+      message,
+      Markup.inlineKeyboard(
+        keyboard,
+      ).resize().extra({ parse_mode: 'Markdown' }),
+    );
+  });
 });
 
 /**
  * Ожидаем строку '{attack}_{target}'
  */
-battleScene.action(/^([^_]+)_([^_]+)$/, async ({ editMessageText, session, match }) => {
-  const [action, target] = match.input.split('_');
-  const { id, currentGame } = session.character;
-  const [message, keyboard] = BattleService.handleTarget(id, currentGame, action, target);
-  editMessageText(
-    message,
-    Markup.inlineKeyboard(
-      keyboard,
-    ).resize().extra({ parse_mode: 'Markdown' }),
-  );
+battleScene.action(/^([^_]+)_([^_]+)$/, (ctx) => {
+  catchOrderError(ctx, ({ editMessageText, session, match }) => {
+    const [action, target] = match.input.split('_');
+    const { id, currentGame } = session.character;
+    const [message, keyboard] = BattleService.handleTarget(id, currentGame, action, target);
+    editMessageText(
+      message,
+      Markup.inlineKeyboard(
+        keyboard,
+      ).resize().extra({ parse_mode: 'Markdown' }),
+    );
+  });
 });
 
 /**
  * Ожидаем строку '{attack}_{target}_{proc}'
  */
-battleScene.action(/^([^_]+)_([^_]+)_([^_]+)$/, async ({ editMessageText, session, match }) => {
-  const [action, target, proc] = match.input.split('_');
-  const { id, currentGame } = session.character;
-  const [message, keyboard] = BattleService.handlePercent(
-    id, currentGame, action, target, Number(proc),
-  );
-  editMessageText(
-    message,
-    Markup.inlineKeyboard(
-      keyboard,
-    ).resize().extra({ parse_mode: 'Markdown' }),
-  );
+battleScene.action(/^([^_]+)_([^_]+)_([^_]+)$/, (ctx) => {
+  catchOrderError(ctx, ({ editMessageText, session, match }) => {
+    const [action, target, proc] = match.input.split('_');
+    const { id, currentGame } = session.character;
+    const [message, keyboard] = BattleService.handlePercent(
+      id, currentGame, action, target, Number(proc),
+    );
+    editMessageText(
+      message,
+      Markup.inlineKeyboard(
+        keyboard,
+      ).resize().extra({ parse_mode: 'Markdown' }),
+    );
+  });
 });
 
 battleScene.action('exit', ({ scene }) => {

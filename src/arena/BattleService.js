@@ -20,13 +20,6 @@ const getText = {
   proc: (displayName, target) => `Выбери силу _${displayName}_ на ${target ? `игрока ${target}` : 'себя'}`,
   target: (displayName) => `Выбери цель для _${displayName}_`,
 };
-/**
- * @param {Game} game
- * @param {import ('./OrderService').Order} order
- */
-const createOrder = (game, order) => {
-  game.orders.orderAction(order);
-};
 
 /**
  * @param {string} charId
@@ -114,6 +107,9 @@ const percentMessage = (charId, game, action, targetId) => {
 };
 
 module.exports = {
+  getDefaultMessage(charId, game) {
+    return orderMessage(charId, game);
+  },
   /**
    * Обработка выбранного действия (первый этап)
    * @param {string} charId
@@ -131,7 +127,7 @@ module.exports = {
     // Если умение направлено на себя и имеет процент (умения), то делаем заказ сразу
     if (orderType === 'self') {
       if (typeof proc !== 'undefined') {
-        createOrder(game, {
+        game.orders.orderAction({
           initiator: charId, target: charId, action, proc,
         });
         return orderMessage(charId, game);
@@ -151,7 +147,7 @@ module.exports = {
     const proc = arena.skills[action] ? arena.skills[action].proc : undefined;
 
     if (typeof proc !== 'undefined') {
-      createOrder(game, {
+      game.orders.orderAction({
         initiator: charId, target, action, proc,
       });
       return orderMessage(charId, game);
@@ -167,7 +163,7 @@ module.exports = {
    * @param {number} proc
    */
   handlePercent(charId, game, action, target, proc) {
-    createOrder(game, {
+    game.orders.orderAction({
       initiator: charId, target, action, proc,
     });
     return orderMessage(charId, game);
