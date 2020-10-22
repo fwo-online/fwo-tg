@@ -1,5 +1,6 @@
 const { BaseScene, Markup } = require('telegraf');
-const SkillService = require('../arena/SkillService');
+const { default: LearnError } = require('../arena/errors/LearnError');
+const { default: SkillService } = require('../arena/SkillService');
 
 /** @type {import('./stage').BaseGameScene} */
 const skillsScene = new BaseScene('skills');
@@ -8,7 +9,7 @@ const getSkillButtons = (list, char) => Object
   .keys(list)
   .filter((skill) => SkillService.skills[skill].profList.includes(char.prof))
   .map((skill) => {
-    const { displayName } = SkillService.show(skill);
+    const { displayName } = SkillService.skills[skill];
     return [Markup.callbackButton(
       `${displayName} ${char.skills[skill] ? `(${char.skills[skill]})` : ''}`,
       `info_${skill}`,
@@ -90,13 +91,13 @@ skillsScene.action(/info(?=_)/, ({ editMessageText, session, match }) => {
   );
 });
 
-skillsScene.action(/learn(?=_)/, ({
+skillsScene.action(/learn(?=_)/, async ({
   editMessageText, answerCbQuery, session, match,
 }) => {
   const [, skill] = match.input.split('_');
-  const { displayName } = SkillService.show(skill);
+  const { displayName } = SkillService.skills[skill];
   try {
-    session.character = SkillService.learn(session.character.id, skill);
+    session.character = await SkillService.learn(session.character, skill);
 
     answerCbQuery(`Изучено умение ${displayName}`);
     editMessageText(
@@ -113,7 +114,11 @@ skillsScene.action(/learn(?=_)/, ({
       ]).resize().extra(),
     );
   } catch (e) {
-    answerCbQuery(e.message);
+    if (e instanceof LearnError) {
+      answerCbQuery(e.message);
+    } else {
+      throw e;
+    }
   }
 });
 

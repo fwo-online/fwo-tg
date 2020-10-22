@@ -567,9 +567,9 @@ class Char {
    * @param {string} skillId идентификатор умения
    * @param {number} lvl уровень проученного умения
    */
-  learnSkill(skillId, lvl) {
+  async learnSkill(skillId, lvl) {
     this.skills[skillId] = lvl;
-    this.saveToDb();
+    await this.saveToDb();
   }
 
   /**
