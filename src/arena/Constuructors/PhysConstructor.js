@@ -1,4 +1,4 @@
-const floatNumber = require('../floatNumber');
+const { floatNumber } = require('../../utils/floatNumber');
 const arena = require('../index');
 const MiscService = require('../MiscService');
 

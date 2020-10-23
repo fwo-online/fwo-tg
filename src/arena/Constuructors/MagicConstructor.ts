@@ -1,5 +1,5 @@
+import { floatNumber } from '../../utils/floatNumber';
 import type { SuccessArgs } from '../BattleLog';
-import floatNumber from '../floatNumber';
 import type Game from '../GameService';
 import MiscService from '../MiscService';
 import type Player from '../PlayerService';

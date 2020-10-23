@@ -1,4 +1,4 @@
-const floatNumber = require('../floatNumber');
+const { floatNumber } = require('../../utils/floatNumber');
 
 /**
  * @typedef {import ('../PlayerService').default} player

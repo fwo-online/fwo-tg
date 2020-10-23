@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const db = require('../helpers/dataBase');
+const { floatNumber } = require('../utils/floatNumber');
 const { default: { lvlRatio } } = require('./config');
-const floatNumber = require('./floatNumber');
 const arena = require('./index');
 
 /**
@@ -50,6 +50,7 @@ function getDynHarks(charObj) {
 
   const mga = floatNumber((harks.wis * 0.6) + (harks.int * 0.4));
   const mgp = floatNumber((harks.wis * 0.6) + (harks.int * 0.4));
+  /** @type {import('../models/item').MinMax} */
   const hl = ({
     min: floatNumber(harks.int / 10), max: floatNumber(harks.int / 5),
   });
@@ -60,7 +61,7 @@ function getDynHarks(charObj) {
 
   /**
    * Функция расчета наносимого урона
-   * @return {{min: number, max: number}} {min:xx,max:xx}
+   * @return {import('../models/item').MinMax} {min:xx,max:xx}
    */
   function calcHit() {
     const h = {};

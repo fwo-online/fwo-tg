@@ -1,5 +1,5 @@
+import { floatNumber } from '../../utils/floatNumber';
 import type { SuccessArgs } from '../BattleLog';
-import floatNumber from '../floatNumber';
 import MiscService from '../MiscService';
 import { Magic, MagicArgs } from './MagicConstructor';
 import type { DamageType } from './types';
