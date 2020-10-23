@@ -29,12 +29,10 @@ class Berserk extends Skill {
     const { initiator } = this.params;
     const initiatorMagicLvl = initiator.skills[this.name];
     const effect = this.effect[initiatorMagicLvl - 1] || 1;
-    const atk = initiator.stats.val('patk');
-    const mgp = initiator.stats.val('mgp');
     // изменяем
-    initiator.stats.mode('set', 'hit', effect);
-    initiator.stats.mode('set', 'patk', atk * (1 / effect));
-    initiator.stats.mode('set', 'mgp', mgp * (1 / effect));
+    initiator.stats.mul('hit', effect);
+    initiator.stats.mul('patk', (1 / effect));
+    initiator.stats.mul('mgp', (1 / effect));
   }
 
   customMessage(args: SuccessArgs) {
