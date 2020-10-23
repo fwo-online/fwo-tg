@@ -89,7 +89,7 @@ export abstract class Magic {
     const costValue = +initiator.stats.val(this.costType) - this.cost;
     console.log('MP:', costValue);
     if (costValue >= 0) {
-      initiator.stats.mode('set', this.costType, costValue);
+      initiator.stats.set(this.costType, costValue);
     } else {
       throw this.breaks('NO_MANA');
     }

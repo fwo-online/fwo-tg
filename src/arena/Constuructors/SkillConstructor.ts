@@ -76,7 +76,7 @@ export abstract class Skill {
     const skillCost = this.cost[initiator.skills[this.name] - 1];
     const remainingEnergy = initiator.stats.val(this.costType) - skillCost;
     if (remainingEnergy >= 0) {
-      initiator.stats.mode('set', this.costType, +remainingEnergy);
+      initiator.stats.set(this.costType, remainingEnergy);
     } else {
       throw this.breaks('NO_ENERGY');
     }
