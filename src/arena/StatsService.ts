@@ -90,16 +90,16 @@ export default class StatsService {
     }
     switch (type) {
       case 'up':
-        // @ts-expect-error deplecated
+        // @ts-expect-error @deplecated
         this.inRound[atr] = floatNumber(oldValue + val);
         break;
       case 'down':
-        // @ts-expect-error deplecated
+        // @ts-expect-error @deplecated
         this.inRound[atr] = floatNumber(oldValue - val);
         break;
       case 'set':
         if (atr === 'hit' || atr === 'hl') {
-          // @ts-expect-error deplecated
+          // @ts-expect-error @deplecated
           oldValue = floatNumber(a * val);
           this.inRound[atr].max = oldValue;
         } else {
