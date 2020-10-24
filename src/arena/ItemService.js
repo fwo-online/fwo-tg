@@ -62,8 +62,8 @@ const attrNames = {
 const getRequiredHark = (char, value, hark) => {
   const name = attrNames.hark[hark];
   const pointToPutOn = char.harks[hark] - value;
-  const canPutOn = pointToPutOn <= 0;
-  return `\t\t${canPutOn ? '❗️' : '✅'} ${name}: ${value} ${canPutOn ? `(${pointToPutOn})` : ''}`;
+  const canPutOn = pointToPutOn >= 0;
+  return `\t\t${canPutOn ? '✅' : '❗️'} ${name}: ${value} ${canPutOn ? '' : `(${pointToPutOn})`}`;
 };
 
 /**

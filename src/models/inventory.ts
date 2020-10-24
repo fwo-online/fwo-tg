@@ -4,7 +4,7 @@ import arena from '../arena';
 import config from '../arena/config';
 import type { Resists, Chance, Statical } from '../arena/PlayerService';
 import { collections } from '../data/collection';
-import CharModel, { CharDocument } from './character';
+import CharModel, { CharDocument, Prof } from './character';
 import ItemModel, { ParseAttrItem, Hark, Item } from './item';
 
 /**
@@ -14,7 +14,7 @@ import ItemModel, { ParseAttrItem, Hark, Item } from './item';
  * @description Получаем код дефолтного итема для данной профы
  *
  */
-function getDefaultItem(prof: string) {
+function getDefaultItem(prof: Prof) {
   // eslint-disable-next-line no-console
   return config.defaultItems[prof] || console.log('no prof in getDefaultItem');
 }
