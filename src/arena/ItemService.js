@@ -77,12 +77,12 @@ const getPlusHark = (value, key) => {
   return '';
 };
 
-const getAdditionalDamage = (item) => {
+const getAdditionalHarks = (item) => {
   const elementMessage = (key) => {
     const value = item[key];
     if (value) {
       if (typeof value === 'object') {
-        return `\t\t➕ ${attrNames[key]}: ${value.min}-${value.max}`;
+        return value.max > 0 ? `\t\t➕ ${attrNames[key]}: ${value.min}-${value.max}` : '';
       }
       return `\t\t➕ ${attrNames[key]}: ${value}`;
     }
@@ -90,10 +90,13 @@ const getAdditionalDamage = (item) => {
   };
 
   return [
+    'mga',
+    'mgp',
     'fire',
     'acid',
     'lighting',
     'frost',
+    'hl',
 
     'r_fire',
     'r_acid',
@@ -146,6 +149,7 @@ module.exports = {
    * @param {import('../models/item').Item} item
    */
   itemDescription(char, item) {
+    const additionalHarks = getAdditionalHarks(item);
     return [
       `${item.name} ${item.price ? `(💰 ${item.price})` : ''}`,
       item.descr && `\n${item.descr}\n`,
@@ -161,7 +165,7 @@ module.exports = {
         _.map(item.plushark, getPlusHark).filter((x) => x).join('\n'),
       )}`,
 
-      mono(`${getAdditionalDamage(item)}`),
+      additionalHarks && `\n${mono(additionalHarks)}`,
 
       item.weight && `\nВес: ${item.weight} кг`,
     ]
