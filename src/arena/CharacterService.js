@@ -159,7 +159,7 @@ class Char {
         if (!dynHarks[i]) dynHarks[i] = h;
       }
     });
-    console.log('dyn', dynHarks);
+    // console.log('dyn', dynHarks);
     return dynHarks;
   }
 
@@ -409,7 +409,7 @@ class Char {
    */
   hasRequeredHarks(item) {
     if (item.hark) {
-      return _.every(item.hark, (val, hark) => val < this.harks[hark]);
+      return _.every(item.hark, (val, hark) => val <= this.harks[hark]);
     }
     return true;
   }
