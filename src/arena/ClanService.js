@@ -1,6 +1,7 @@
 const { Markup } = require('telegraf');
 const channerHelper = require('../helpers/channelHelper');
 const db = require('../helpers/dataBase');
+const { default: ClanModel } = require('../models/clan');
 const CharacterService = require('./CharacterService');
 const arena = require('./index');
 
@@ -13,7 +14,6 @@ const arena = require('./index');
  */
 
 module.exports = {
-  lvlCost: [100, 250, 750, 1500],
   async getClanById(id) {
     if (arena.clans[id]) {
       return arena.clans[id];
@@ -73,10 +73,10 @@ module.exports = {
    */
   async createClan(charId, name) {
     const char = arena.characters[charId];
-    if (char.gold < this.lvlCost[0]) {
+    if (char.gold < ClanModel.lvlCost[0]) {
       throw new Error('Нужно больше золота');
     }
-    char.gold -= this.lvlCost[0];
+    char.gold -= ClanModel.lvlCost[0];
     const clan = await db.clan.create(char.id, name);
     return char.joinClan(clan);
   },
@@ -128,26 +128,6 @@ module.exports = {
     char.gold -= gold;
     await char.saveToDb();
     const updated = await db.clan.update(clan.id, { gold: clan.gold + gold });
-    Object.assign(clan, updated);
-  },
-  /**
-   * Снимает золото из казны и повышает уровань
-   * @param {string} clanId
-   */
-  async levelUp(clanId) {
-    const clan = await this.getClanById(clanId);
-    const cost = this.lvlCost[clan.lvl];
-    if (clan.gold < cost) {
-      throw new Error('Недостаточно золота');
-    }
-    if (clan.lvl >= this.lvlCost.length) {
-      throw new Error('Клан имеет максимальный уровень');
-    }
-    const newParams = {
-      gold: clan.gold - cost,
-      lvl: clan.lvl + 1,
-    };
-    const updated = await db.clan.update(clan.id, newParams);
     Object.assign(clan, updated);
   },
   /**

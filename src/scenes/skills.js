@@ -1,5 +1,5 @@
 const { BaseScene, Markup } = require('telegraf');
-const { default: LearnError } = require('../arena/errors/LearnError');
+const { default: ValidationError } = require('../arena/errors/ValidationError');
 const { default: SkillService } = require('../arena/SkillService');
 
 /** @type {import('./stage').BaseGameScene} */
@@ -114,7 +114,7 @@ skillsScene.action(/learn(?=_)/, async ({
       ]).resize().extra(),
     );
   } catch (e) {
-    if (e instanceof LearnError) {
+    if (e instanceof ValidationError) {
       answerCbQuery(e.message);
     } else {
       throw e;

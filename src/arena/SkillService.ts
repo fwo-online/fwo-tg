@@ -1,5 +1,5 @@
 import type Char from './CharacterService';
-import LearnError from './errors/LearnError';
+import ValidationError from './errors/ValidationError';
 import * as skills from './skills';
 
 export type SkillsNames = keyof typeof skills;
@@ -11,13 +11,13 @@ export default class SkillService {
     const skill = SkillService.skills[skillId];
     const charSkillLvl = char.skills[skillId] ?? 0;
     if (skill.lvl > char.lvl) {
-      throw new LearnError('Твой уровень ниже уровня умения');
+      throw new ValidationError('Твой уровень ниже уровня умения');
     }
     if (skill.bonusCost[charSkillLvl] > char.bonus) {
-      throw new LearnError('Не хватает бонусов');
+      throw new ValidationError('Не хватает бонусов');
     }
     if (charSkillLvl + 1 > skill.bonusCost.length) {
-      throw new LearnError(`Умение ${skill.displayName} имеет максимальный уровень`);
+      throw new ValidationError(`Умение ${skill.displayName} имеет максимальный уровень`);
     }
     char.bonus -= skill.bonusCost[charSkillLvl];
     await char.learnSkill(skillId, charSkillLvl + 1);
