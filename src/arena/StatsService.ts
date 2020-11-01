@@ -61,6 +61,7 @@ export default class StatsService {
     } else {
       this.inRound[atr] = floatNumber(this.inRound[atr] * val);
     }
+    console.log('Mul:', atr, ' val:', val, 'new val:', this.inRound[atr])
   }
 
   set(atr: keyof Stats, val: number): void {
