@@ -19,6 +19,7 @@ export type BreaksMessage =
   'ECLIPSE' |
   'NO_WEAPON' |
   'PARRYED' |
+  'DISARM' |
   'PARALYSED';
 
 export interface CustomMessage {
@@ -36,3 +37,5 @@ export interface Breaks {
   initiator: string;
   target: string;
 }
+
+export type ProfListLvl = { [x: string]: number; };

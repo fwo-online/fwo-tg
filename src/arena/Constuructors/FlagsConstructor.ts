@@ -16,7 +16,9 @@ export default class FlagsConstructor {
   isDodging = 0;
   isParry = 0;
   isMad = false;
+  isShielded = 0;
   isParalysed = false;
+  isDisarmed = false;
 
   /**
    * Обнуление флагов

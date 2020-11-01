@@ -1,17 +1,20 @@
-import { ScriptTarget } from 'typescript';
 import { bold, italic } from '../../utils/formatString';
 import type { SuccessArgs } from '../BattleLog';
 import { Skill } from '../Constuructors/SkillConstructor';
 
 /**
  * Парирование
+ * {me      {((0.3*str) + (0.7*con)) * level}}
+ * {enemy   {(0.7*str) + (0.3*con)}}
+ * {fall    {2*me - enemy}}
+ * 
  */
-class Parry extends Skill {
+class ShieldBlock extends Skill {
     constructor() {
         super({
-            name: 'parry',
-            displayName: '🤺 Парирование',
-            desc: 'Шанс спарировать одну атаку. На 6 уровне обучения парирование будет отбивать несколько атак.',
+            name: 'shieldBlock',
+            displayName: 'Блок щитом',
+            desc: 'Умение позволяет заблокировать щитом одну физическую атаку (требуется наличие щита)',
             cost: [8, 9, 10, 11, 12, 13],
             proc: 10,
             baseExp: 8,
@@ -20,7 +23,7 @@ class Parry extends Skill {
             aoeType: 'target',
             chance: [70, 75, 80, 85, 90, 95],
             effect: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6],
-            profList: { 'w': 1 },
+            profList: { 'w': 2, 'l': 6, 'p': 5, 'm': 5 },
             bonusCost: [10, 20, 30, 40, 60, 80],
         });
     }
@@ -30,7 +33,7 @@ class Parry extends Skill {
         const initiatorSkillLvl = initiator.skills[this.name];
         const effect = this.effect[initiatorSkillLvl - 1] || 1;
         // изменяем
-        initiator.flags.isParry = initiator.stats.val('dex') * effect
+        initiator.flags.isShielded = ((0.3 * initiator.stats.val('str')) + (0.7 * initiator.stats.val('con'))) * effect
     }
 
     customMessage(args: SuccessArgs) {
@@ -38,4 +41,4 @@ class Parry extends Skill {
     }
 }
 
-export default new Parry();
+export default new ShieldBlock();

@@ -15,12 +15,11 @@ class Berserk extends Skill {
       proc: 10,
       baseExp: 8,
       costType: 'en',
-      lvl: 1,
       orderType: 'self',
       aoeType: 'target',
       chance: [70, 75, 80, 85, 90, 95],
       effect: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6],
-      profList: ['w'],
+      profList: { 'w': 4 },
       bonusCost: [10, 20, 30, 40, 60, 80],
     });
   }
