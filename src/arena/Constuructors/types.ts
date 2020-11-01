@@ -18,6 +18,7 @@ export type BreaksMessage =
   'DODGED' |
   'ECLIPSE' |
   'NO_WEAPON' |
+  'PARRYED' |
   'PARALYSED';
 
 export interface CustomMessage {

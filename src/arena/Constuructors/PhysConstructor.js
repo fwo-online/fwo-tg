@@ -64,6 +64,7 @@ class PhysConstructor {
    */
   checkPreAffects() {
     const { initiator, target, game } = this.params;
+    const iDex = initiator.stats.val('dex');
     // Глабальная проверка не весит ли затмение на арене
     if (game.round.flags.global.isEclipsed) throw this.breaks('ECLIPSE');
     const weapon = arena.items[initiator.weapon.code];
@@ -75,7 +76,7 @@ class PhysConstructor {
       * значение. Сейчас эти проверки сильно раздувают PhysConstructor
       */
       //  проверяем имеет ли цель достаточно dex для того что бы уклониться
-      const iDex = initiator.stats.val('dex');
+
       const at = floatNumber(Math.round(target.flags.isDodging / iDex));
       // eslint-disable-next-line no-console
       console.log('Dodging: ', at);
@@ -84,6 +85,13 @@ class PhysConstructor {
       // eslint-disable-next-line no-console
       console.log('left:', c, ' right:', r, ' result:', c > r);
       if (c > r) throw this.breaks('DODGED');
+    }
+    if (target.flags.isParry) {
+      if (+(target.flags.isParry - iDex) < 0) {
+        throw this.breaks('PARRYED')
+      } else {
+        target.flags.isParry -= +iDex;
+      }
     }
   }
 

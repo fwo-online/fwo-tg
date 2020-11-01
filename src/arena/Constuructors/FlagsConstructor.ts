@@ -14,6 +14,7 @@ export default class FlagsConstructor {
   isHited?: Flag;
   isKicked?: 'run' | 'afk' = undefined;
   isDodging = 0;
+  isParry = 0;
   isMad = false;
   isParalysed = false;
 
