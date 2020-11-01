@@ -3,7 +3,7 @@ const arena = require('../arena');
 const ClanService = require('../arena/ClanService');
 const { default: ValidationError } = require('../arena/errors/ValidationError');
 const { getIcon } = require('../arena/MiscService');
-const { default: ClanModel } = require('../models/clan');
+const { ClanModel } = require('../models/clan');
 
 /** @type {import('./stage').BaseGameScene} */
 const clanScene = new BaseScene('clan');
@@ -15,9 +15,9 @@ const startScreen = {
     [Markup.callbackButton('Казна', 'add_gold')],
     [Markup.callbackButton(`Заявки на вступление (${clan.requests.length})`, 'requests_list')],
     [Markup.callbackButton(
-      `Улучшить клан (-${ClanModel.lvlCost[clan.lvl]}💰 +1👤)`,
+      `Улучшить клан (-${ClanModel.lvlCost()[clan.lvl]}💰 +1👤)`,
       'lvlup',
-      clan.lvl >= ClanModel.lvlCost.length,
+      clan.lvl >= ClanModel.lvlCost().length,
     )],
     [Markup.callbackButton('Удалить клан', 'removeConfirm', !isAdmin)],
     [Markup.callbackButton('Покинуть клан', 'leave', isAdmin)],
@@ -81,7 +81,7 @@ clanScene.action(/^(lvlup|back|remove|leave)$/, async ({
     session.character = arena.characters[session.character.id];
     const clan = await ClanService.getClanById(session.character.clan.id);
     if (match.input === 'lvlup') {
-      const cost = ClanModel.lvlCost[clan.lvl];
+      const cost = ClanModel.lvlCost()[clan.lvl];
       try {
         const updated = await clan.levelUp(clan.id);
         arena.clans[clan.id] = updated;

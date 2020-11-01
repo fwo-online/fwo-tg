@@ -30,14 +30,14 @@
   "homepage": "https://github.com/catHD/fwo-tg#readme",
   "dependencies": {
     "lodash": "^4.17.15",
-    "mongoose": "^5.9.28",
+    "mongoose": "^5.10.7",
     "telegraf": "^3.38.0",
     "typescript": "^4.0.3"
   },
   "devDependencies": {
     "@types/jest": "^26.0.4",
     "@types/lodash": "^4.14.151",
-    "@types/mongoose": "^5.7.36",
+    "@types/mongoose": "^5.7.37",
     "@typescript-eslint/eslint-plugin": "^4.3.0",
     "@typescript-eslint/parser": "^4.3.0",
     "eslint": "^7.10.0",

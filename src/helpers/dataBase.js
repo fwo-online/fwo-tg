@@ -2,7 +2,7 @@
  * MongoHelper
  */
 const { default: CharModel } = require('../models/character');
-const { default: ClanModel } = require('../models/clan');
+const { ClanModel } = require('../models/clan');
 const { default: GameModel } = require('../models/games');
 const { default: InventoryModel } = require('../models/inventory');
 
@@ -12,7 +12,6 @@ function dbErr(e) {
 
 /**
  * @typedef {import ('../models/clan').ClanDocument} ClanDocument
- * @typedef {import ('../models/clan').default} Clan
  */
 
 module.exports = {
@@ -157,7 +156,7 @@ module.exports = {
      * Создаёт новый клан
      * @param {string} owner - id создателя клана
      * @param {string} name - название клана
-     * @returns {Promise<Clan>}
+     * @returns {Promise<ClanDocument>}
      */
     async create(owner, name) {
       try {
@@ -176,7 +175,7 @@ module.exports = {
     /**
      * Возвращает клан по query
      * @param {Partial<ClanDocument>} query
-     * @returns {Promise<Clan>}
+     * @returns {Promise<ClanDocument>}
      */
     async findOne(query) {
       try {
@@ -214,8 +213,8 @@ module.exports = {
     },
     /**
      * @param {string} clanId - id клана
-     * @param {Partial<Clan>} params - параметры, которые требуется обновить
-     * @returns {Promise<Clan>}
+     * @param {Partial<ClanDocument>} params - параметры, которые требуется обновить
+     * @returns {Promise<ClanDocument>}
      */
     async update(clanId, params) {
       try {
