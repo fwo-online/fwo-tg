@@ -100,6 +100,10 @@ function csl(msgObj: FailArgs) {
       ru: `*${initiator}* пытался атаковать *${target}*, но атака была \\[_Парированна_]`,
       en: '',
     },
+    DISARM: {
+      ru: `*${initiator}* пытался атаковать *${target}*, но оказался \\[_Обезаружен_]`,
+      en: '',
+    }
   };
   const text = TEXT[message] || {
     ru: 'Ошибка парсинга строки магии',

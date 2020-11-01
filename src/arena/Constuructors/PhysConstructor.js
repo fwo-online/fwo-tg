@@ -101,6 +101,7 @@ class PhysConstructor {
   fitsCheck() {
     const { initiator } = this.params;
     if (!initiator.weapon) throw this.breaks('NO_WEAPON');
+    if (initiator.flags.isDisarmed) throw this.breaks('DISARM')
   }
 
   /**
