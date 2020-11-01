@@ -2,7 +2,7 @@ import type Game from '../GameService';
 import MiscService from '../MiscService';
 import type Player from '../PlayerService';
 import type {
-  CostType, OrderType, AOEType, Breaks, BreaksMessage, CustomMessage, ProfListLvlType
+  CostType, OrderType, AOEType, Breaks, BreaksMessage, CustomMessage, ProfListLvl
 } from './types';
 
 interface SkillArgs {
@@ -17,7 +17,7 @@ interface SkillArgs {
   aoeType: AOEType;
   chance: number[];
   effect: number[];
-  profList: ProfListLvlType;
+  profList: ProfListLvl;
   bonusCost: number[];
 }
 
