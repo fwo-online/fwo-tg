@@ -138,7 +138,7 @@ export default class Game {
    * @param target
    */
   isPlayersAlly(player: Player, target: Player): boolean {
-    const allies = this.playerArr.getMyTeam(player.clan);
+    const allies = this.playerArr.getMyTeam(player);
     if (!allies.length) {
       allies.push(player);
     }

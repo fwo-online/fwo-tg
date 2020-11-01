@@ -31,9 +31,10 @@ export default class PlayersArr {
    * Функция вернет массив игроков в моей тиме
    * @param clan объект клана
    */
-  getMyTeam(clan?: ClanDocument): Player[] {
+  getMyTeam(player: Player): Player[] {
+    const { clan } = player;
     if (!clan?.id) return [];
-    return this.arr.filter((p) => p.clan && p.clan.id === clan.id);
+    return this.arr.filter((p) => p.clan?.id === clan.id);
   }
 
   /**
