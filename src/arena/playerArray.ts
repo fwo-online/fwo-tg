@@ -1,5 +1,4 @@
 import _, { Dictionary } from 'lodash';
-import type { ClanDocument } from '../models/clan';
 import Player from './PlayerService';
 
 export default class PlayersArr {
