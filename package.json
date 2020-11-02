@@ -1,6 +1,6 @@
 {
   "name": "fwo-tg",
-  "version": "0.0.1",
+  "version": "0.3.1",
   "description": "FightWorld Telegram",
   "main": "index.js",
   "scripts": {
