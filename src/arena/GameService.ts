@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import channelHelper from '../helpers/channelHelper';
 import db from '../helpers/dataBase';
-import type GamesModel from '../models/games';
+import type { GameDocument } from '../models/game';
 import { BattleLog } from './BattleLog';
 import type { LongItem } from './Constuructors/LongMagicConstructor';
 import engineService from './engineService';
@@ -37,7 +37,7 @@ export default class Game {
   battleLog = new BattleLog();
   history = new HistoryService();
   longActions: Partial<Record<keyof typeof arena.magics, LongItem[]>> = {};
-  info: GamesModel;
+  info!: GameDocument;
   /**
    * Конструктор обьекта игры
    * @param playerArr массив игроков

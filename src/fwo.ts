@@ -10,7 +10,7 @@ import chatMiddleware from './middlewares/chatMiddleware';
 import protectedMiddleware from './middlewares/protectedMiddleware';
 import restartMiddleware from './middlewares/restartMiddleware';
 import db from './models';
-import Item from './models/item';
+import { ItemModel } from './models/item';
 import stage, { BaseGameContext } from './scenes/stage';
 
 export interface Bot extends Context, BaseGameContext {}
@@ -19,7 +19,7 @@ const bot = new Telegraf<Bot>(process.env.BOT_TOKEN ?? '');
 // DB connection
 db.connection.on('open', async () => {
   console.log('db online');
-  await Item.load();
+  await ItemModel.load();
   bot.launch();
 });
 

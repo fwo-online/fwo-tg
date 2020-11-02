@@ -1,8 +1,21 @@
 import fs from 'fs';
 import _ from 'lodash';
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, {
+  Schema, Document, Model, DocumentDefinition,
+} from 'mongoose';
 import arena from '../arena';
 import config, { ParseAttr } from '../arena/config';
+
+const parseAttr = (p: string) => {
+  try {
+    if (p !== '') {
+      return JSON.parse(p);
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
 
 export type MinMax = {
   min: number;
@@ -16,7 +29,7 @@ export type Hark = {
   con: number;
 }
 
-export interface Item {
+export interface ItemDocument extends Document {
   code: string;
   name: string;
   atc: number | null;
@@ -65,20 +78,56 @@ export interface Item {
   frost: MinMax | null;
 }
 
-export interface ItemDocument extends Item, Document {}
+export type Item = DocumentDefinition<ItemDocument>
 
 export type ParseAttrItem = Pick<Item, ParseAttr>
 
-const parseAttr = (p: string) => {
-  try {
-    if (p !== '') {
-      return JSON.parse(p);
+export type ItemModel = Model<ItemDocument> & typeof ItemDocument;
+
+export class ItemDocument {
+  static async load(this: ItemModel): Promise<void> {
+    const timer1 = Date.now();
+    try {
+      const items = await this.find({});
+      if (Object.entries(items).length) {
+        // console.log(items)
+        arena.items = _.keyBy(items, 'code');
+      } else {
+        const shop = fs.readFileSync('shop.json', 'utf8');
+        const createdItems: Promise<ItemDocument>[] = [];
+
+        const shopArr: Record<string, ItemDocument> = JSON.parse(shop);
+        // eslint-disable-next-line no-console
+        console.log('File Loaded: ', Date.now() - timer1, 'ms');
+
+        _.forEach(shopArr, async (o, code) => {
+          o.code = code;
+          createdItems.push(ItemModel.create(o));
+          return true;
+        });
+
+        await Promise.all(createdItems);
+
+        arena.items = _.keyBy(items, 'code');
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+    } finally {
+      // eslint-disable-next-line no-console
+      console.log('Items loaded.T:', Date.now() - timer1, 'ms');
     }
-    return null;
-  } catch {
-    return null;
   }
-};
+
+  /**
+   * @description Собираем все харки со шмотки
+   * @param itemCode код вещи
+   */
+  static getHarks(this: ItemModel, itemCode: string): Partial<Pick<Item, ParseAttr>> {
+    const omittedItem = _.omitBy(arena.items[itemCode], _.isNull);
+    return _.pick(omittedItem, config.parseAttr);
+  }
+}
 
 /**
  * Item
@@ -137,7 +186,7 @@ const item = new Schema({
   },
   hl: {
     type: Number,
-    get: (hl) => ({ min: 0, max: hl ?? 0 }),
+    get: (hl: null | number) => ({ min: 0, max: hl ?? 0 }),
   },
   r_fire: {
     type: Number,
@@ -243,49 +292,6 @@ const item = new Schema({
   versionKey: false,
 });
 
-const ItemSchema = mongoose.model<ItemDocument>('Item', item);
+item.loadClass(ItemDocument);
 
-export default class ItemModel extends ItemSchema {
-  static async load(): Promise<void> {
-    const timer1 = Date.now();
-    try {
-      const items = await this.find({});
-      if (Object.entries(items).length) {
-        // console.log(items)
-        arena.items = _.keyBy(items, 'code');
-      } else {
-        const shop = fs.readFileSync('shop.json', 'utf8');
-        const createdItems: Promise<ItemDocument>[] = [];
-
-        const shopArr: Record<string, ItemDocument> = JSON.parse(shop);
-        // eslint-disable-next-line no-console
-        console.log('File Loaded: ', Date.now() - timer1, 'ms');
-
-        _.forEach(shopArr, async (o, code) => {
-          o.code = code;
-          createdItems.push(ItemModel.create(o));
-          return true;
-        });
-
-        await Promise.all(createdItems);
-
-        arena.items = _.keyBy(items, 'code');
-      }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e);
-    } finally {
-      // eslint-disable-next-line no-console
-      console.log('Items loaded.T:', Date.now() - timer1, 'ms');
-    }
-  }
-
-  /**
-   * @description Собираем все харки со шмотки
-   * @param itemCode код вещи
-   */
-  static getHarks(itemCode: string): Partial<ParseAttrItem> {
-    const omittedItem = _.omitBy(arena.items[itemCode], _.isNull);
-    return _.pick(omittedItem, config.parseAttr);
-  }
-}
+export const ItemModel = mongoose.model<ItemDocument, ItemModel>('Item', item);

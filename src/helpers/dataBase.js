@@ -1,9 +1,9 @@
 /**
  * MongoHelper
  */
-const { default: CharModel } = require('../models/character');
+const { CharModel } = require('../models/character');
 const { ClanModel } = require('../models/clan');
-const { default: GameModel } = require('../models/games');
+const { GameModel } = require('../models/game');
 const { InventoryModel } = require('../models/inventory');
 
 function dbErr(e) {

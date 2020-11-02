@@ -6,8 +6,10 @@ import arena from '../arena';
 import config from '../arena/config';
 import type { Resists, Chance, Statical } from '../arena/PlayerService';
 import { collections } from '../data/collection';
-import CharModel, { CharDocument, Prof } from './character';
-import ItemModel, { ParseAttrItem, Hark, Item } from './item';
+import { CharModel, CharDocument, Prof } from './character';
+import {
+  ItemModel, ParseAttrItem, Hark, Item,
+} from './item';
 
 /**
  * getDefaultItem

@@ -1,11 +1,13 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, {
+  Schema, Document, Model, DocumentDefinition,
+} from 'mongoose';
 import type { ClanDocument } from './clan';
 import type { InventoryDocument } from './inventory';
 import type { Hark } from './item';
 
 export type Prof = 'm' | 'w' | 'p' | 'l';
 
-export interface Char {
+export interface CharDocument extends Document {
   tgId: number;
   nickname: string;
   birthday: Date;
@@ -43,7 +45,13 @@ export interface Char {
   deleted: boolean;
 }
 
-export interface CharDocument extends Char, Document {}
+export type CharModel = Model<CharDocument> & typeof CharDocument
+
+export class CharDocument {
+  //
+}
+
+export type Char = DocumentDefinition<CharDocument>
 
 const character = new Schema({
   tgId: {
@@ -116,6 +124,6 @@ const character = new Schema({
   deleted: { type: Boolean, default: false },
 });
 
-const CharSchema = mongoose.model<CharDocument>('Character', character);
+character.loadClass(CharDocument);
 
-export default class CharModel extends CharSchema {}
+export const CharModel = mongoose.model<CharDocument, CharModel>('Character', character);
