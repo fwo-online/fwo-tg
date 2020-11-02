@@ -1,13 +1,13 @@
 const { BaseScene, Markup } = require('telegraf');
 const arena = require('../arena');
 const ItemService = require('../arena/ItemService');
-const { default: Inventory } = require('../models/inventory');
+const { InventoryModel } = require('../models/inventory');
 
 /** @type {import('./stage').BaseGameScene} */
 const inventoryScene = new BaseScene('inventory');
 
 const getInventoryItems = (items) => items.map((item) => [Markup.callbackButton(
-  `${item.putOn ? '✔️' : ''} ${Inventory.getItemName(item.code)}`,
+  `${item.putOn ? '✔️' : ''} ${InventoryModel.getItemName(item.code)}`,
   `itemInfo_${item._id}`,
 )]);
 

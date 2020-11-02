@@ -4,7 +4,7 @@
 const { default: CharModel } = require('../models/character');
 const { ClanModel } = require('../models/clan');
 const { default: GameModel } = require('../models/games');
-const { default: InventoryModel } = require('../models/inventory');
+const { InventoryModel } = require('../models/inventory');
 
 function dbErr(e) {
   throw new Error(`Fail in dbHelper: ${e}`);

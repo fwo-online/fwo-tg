@@ -17,8 +17,11 @@ export interface ClanDocument extends Document {
   players: CharDocument[];
   requests: CharDocument[];
 }
+
+type ClanModel = Model<ClanDocument> & typeof ClanDocument;
+
 export class ClanDocument {
-  static lvlCost(): number[] {
+  static lvlCost(this: ClanModel): number[] {
     const cost = [100, 250, 750, 1500];
     return cost;
   }
@@ -37,10 +40,10 @@ export class ClanDocument {
    * @throws {ValidationError}
    */
   async levelUp(): Promise<this> {
-    if (this.lvl >= ClanDocument.lvlCost().length) {
+    if (this.lvl >= ClanModel.lvlCost().length) {
       throw new ValidationError('Клан имеет максимальный уровень');
     }
-    const cost = ClanDocument.lvlCost()[this.lvl];
+    const cost = ClanModel.lvlCost()[this.lvl];
     if (this.gold < cost) {
       throw new ValidationError('Недостаточно золота');
     }
@@ -76,7 +79,5 @@ const schema = new Schema<ClanDocument>({
 });
 
 schema.loadClass(ClanDocument);
-
-type ClanModel = Model<ClanDocument> & typeof ClanDocument;
 
 export const ClanModel = mongoose.model<ClanDocument, ClanModel>('Clan', schema);

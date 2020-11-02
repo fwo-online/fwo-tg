@@ -1,5 +1,7 @@
 import _ from 'lodash';
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, {
+  Schema, Document, Model, DocumentDefinition,
+} from 'mongoose';
 import arena from '../arena';
 import config from '../arena/config';
 import type { Resists, Chance, Statical } from '../arena/PlayerService';
@@ -19,16 +21,6 @@ function getDefaultItem(prof: Prof) {
   return config.defaultItems[prof] || console.log('no prof in getDefaultItem');
 }
 
-export interface Inventory {
-  code: string;
-  wear: string;
-  putOn: boolean;
-  durable: number;
-  owner: string;
-}
-
-export interface InventoryDocument extends Inventory, Document {}
-
 export interface Collection {
   name: string;
   harks?: Partial<Hark>;
@@ -37,29 +29,17 @@ export interface Collection {
   statical?: Partial<Statical>;
 }
 
-/**
- * Inventory
- *
- * @description Модель инвентаря чара
- * @module Model/Inventory
- */
+export interface InventoryDocument extends Document {
+  code: string;
+  wear: string;
+  putOn: boolean;
+  durable: number;
+  owner: string;
+}
 
-const inventory = new Schema({
-  code: { type: String, required: true },
-  wear: { type: String, required: true },
-  putOn: { type: Boolean, default: false },
-  durable: { type: Number, default: 10 },
-  // Добавляем связь инвенторя с персонажем charID
-  owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Character',
-    required: true,
-  },
-});
+export type InventoryModel = Model<InventoryDocument> & typeof InventoryDocument;
 
-const InventorySchema = mongoose.model<InventoryDocument>('Inventory', inventory);
-
-export default class InventoryModel extends InventorySchema {
+export class InventoryDocument {
   /**
    * fullHarks
    *
@@ -69,7 +49,10 @@ export default class InventoryModel extends InventorySchema {
    * @todo нужна фунция которая выбирает коды всех одеты вещей в инвентаре
    * а затем суммирует все полученные данны в единый обьект.
    */
-  static async fullHarks(charId: string): Promise<ParseAttrItem> {
+  static async fullHarks(
+    this: InventoryModel,
+    charId: string,
+  ): Promise<ParseAttrItem> {
     // берем из базы все надетые вещи
     const allItems = await this.getPutOned(charId);
     // Складываем все характеристики от вещей в одоин общий обьект
@@ -99,7 +82,10 @@ export default class InventoryModel extends InventorySchema {
    * Возвращает массив одетых вещей в инвентаре
    * @param charId
    */
-  static async getPutOned(charId: string): Promise<InventoryDocument[]> {
+  static async getPutOned(
+    this: InventoryModel,
+    charId: string,
+  ): Promise<InventoryDocument[]> {
     const invObj = await this.find({ owner: charId });
     return _.filter(invObj, { putOn: true });
   }
@@ -112,7 +98,11 @@ export default class InventoryModel extends InventorySchema {
    * @param itemCode Код итема который следует добавить
    * @return Обьект нового инветаря
    */
-  static async addItem(charId: string, itemCode: string): Promise<InventoryDocument> {
+  static async addItem(
+    this: InventoryModel,
+    charId: string,
+    itemCode: string,
+  ): Promise<InventoryDocument> {
     const item = await this.create({
       owner: charId, code: itemCode, wear: arena.items[itemCode].wear, putOn: false, durable: 10,
     });
@@ -125,7 +115,11 @@ export default class InventoryModel extends InventorySchema {
    * @param itemId идентификатор итема в инвенторе
    * @return Массив нового инвентаря
    */
-  static async delItem(charId: string, itemId: string): Promise<InventoryDocument[] | void> {
+  static async delItem(
+    this: InventoryModel,
+    charId: string,
+    itemId: string,
+  ): Promise<InventoryDocument[] | void> {
     const char = await CharModel.findById(charId);
     _.pull(char?.inventory as unknown as string[], itemId);
     await char?.save();
@@ -142,7 +136,10 @@ export default class InventoryModel extends InventorySchema {
    * @param charObj обьект созданного чара
    * @return Item созданный итем
    */
-  static async firstCreate(charObj: CharDocument): Promise<InventoryDocument | void> {
+  static async firstCreate(
+    this: InventoryModel,
+    charObj: CharDocument,
+  ): Promise<InventoryDocument | void> {
     const defItemCode = getDefaultItem(charObj.prof);
 
     const item = await this.addItem(charObj._id, defItemCode);
@@ -159,7 +156,11 @@ export default class InventoryModel extends InventorySchema {
    * @param itemId Идентификатор итема внутри инвенторя пользователя
    * @return Массив нового инвентаря
    */
-  static async putOnItem(charId: string, itemId: string): Promise<void> {
+  static async putOnItem(
+    this: InventoryModel,
+    charId: string,
+    itemId: string,
+  ): Promise<void> {
     console.log('PUT ON ITEM', charId, itemId);
     return this.updateOne({
       owner: charId,
@@ -176,7 +177,11 @@ export default class InventoryModel extends InventorySchema {
    * @param itemId Идентификатор итема внутри инвенторя пользователя
    * @return ItemObject после изменения его в базе
    */
-  static async putOffItem(charId: string, itemId: string): Promise<void> {
+  static async putOffItem(
+    this: InventoryModel,
+    charId: string,
+    itemId: string,
+  ): Promise<void> {
     return this.updateOne({
       owner: charId,
       _id: itemId,
@@ -189,7 +194,11 @@ export default class InventoryModel extends InventorySchema {
    * @param itemId
    * @param charId
    */
-  static async getItem(itemId: string, charId: string): Promise<InventoryDocument | null> {
+  static async getItem(
+    this: InventoryModel,
+    itemId: string,
+    charId: string,
+  ): Promise<InventoryDocument | null> {
     return this.findOne({
       owner: charId,
     }, {
@@ -201,7 +210,11 @@ export default class InventoryModel extends InventorySchema {
    * @param charId идентификатор персонажа
    * @param itemId идентификатор предмета
    */
-  static removeItem(itemId: string, charId: string) {
+  static removeItem(
+    this: InventoryModel,
+    itemId: string,
+    charId: string,
+  ) {
     return this.remove({
       owner: charId,
       _id: itemId,
@@ -213,11 +226,17 @@ export default class InventoryModel extends InventorySchema {
    * @param charId
    * @return массив обтектов персонажа
    */
-  static async getItems(charId: string): Promise<InventoryDocument[]> {
+  static async getItems(
+    this: InventoryModel,
+    charId: string,
+  ): Promise<InventoryDocument[]> {
     return this.find({ owner: charId });
   }
 
-  static getCollection(charInventory: Inventory[]): Collection | undefined {
+  static getCollection(
+    this: InventoryModel,
+    charInventory: InventoryDocument[],
+  ): Collection | undefined {
     const items: Item[] = charInventory.map(({ code }) => arena.items[code]);
     const playerCollection = _.groupBy(items, (item) => item.wcomb.split(',')[0]);
     const itemsCollection = _.groupBy(arena.items, (item) => item.wcomb.split(',')[0]);
@@ -249,7 +268,36 @@ export default class InventoryModel extends InventorySchema {
    * @param itemCode
    * @return displayName вещи
    */
-  static getItemName(itemCode: string): string {
+  static getItemName(
+    this: InventoryModel,
+    itemCode: string,
+  ): string {
     return arena.items[itemCode].name;
   }
 }
+
+export type Inventory = DocumentDefinition<InventoryDocument>
+
+/**
+ * Inventory
+ *
+ * @description Модель инвентаря чара
+ * @module Model/Inventory
+ */
+
+const inventory = new Schema({
+  code: { type: String, required: true },
+  wear: { type: String, required: true },
+  putOn: { type: Boolean, default: false },
+  durable: { type: Number, default: 10 },
+  // Добавляем связь инвенторя с персонажем charID
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Character',
+    required: true,
+  },
+});
+
+inventory.loadClass(InventoryDocument);
+
+export const InventoryModel = mongoose.model<InventoryDocument, InventoryModel>('Inventory', inventory);
