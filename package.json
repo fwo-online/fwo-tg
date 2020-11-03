@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/catHD/fwo-tg#readme",
   "dependencies": {
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.20",
     "mongoose": "^5.10.7",
     "telegraf": "^3.38.0",
     "typescript": "^4.0.3"
