@@ -1,32 +1,45 @@
-const { floatNumber } = require('../../utils/floatNumber');
-const MiscService = require('../MiscService');
+import { floatNumber } from '../../utils/floatNumber';
+import type Game from '../GameService';
+import MiscService from '../MiscService';
+import type Player from '../PlayerService';
+import type { BaseNext, CustomMessage, OrderType } from './types';
 
 /**
  * @typedef {import ('../PlayerService').default} player
  * @typedef {import ('../GameService').default} game
  */
 
+export type HealNext = BaseNext & {
+  actionType: 'heal';
+  effect: number;
+}
+
+export interface HealArgs {
+  name: string;
+  displayName: string;
+  desc: string;
+  lvl: number;
+  orderType: OrderType;
+}
+
+export interface Heal extends HealArgs, CustomMessage {
+}
 /**
  * Heal Class
  */
-class Heal {
-  /**
-   * Конструктор атаки
-   * @param {params} params имя actions
-   * @typedef {Object} params
-   * @property {string} name
-   * @property {string} displayName
-   * @property {string} desc
-   * @property {number} lvl
-   * @property {string} orderType
-   */
-  constructor(params) {
-    this.name = params.name;
-    this.displayName = params.displayName;
-    this.desc = params.desc;
-    this.lvl = params.lvl;
-    this.orderType = params.orderType;
-    this.status = {};
+export abstract class Heal {
+  params!: {
+    initiator: Player;
+    target: Player;
+    game: Game;
+  };
+  status = {
+    exp: 0,
+    val: 0,
+  }
+
+  constructor(params: HealArgs) {
+    Object.assign(this, params);
   }
 
   /**
@@ -37,7 +50,7 @@ class Heal {
    * @param {player} target Обьект цели
    * @param {game} game Обьект игры (не обязателен)
    */
-  cast(initiator, target, game) {
+  cast(initiator: Player, target: Player, game: Game): void {
     this.params = {
       initiator, target, game,
     };
@@ -48,12 +61,14 @@ class Heal {
       // за самим хилом, дабы выдать exp всем хиллерам после формирования
       // общего массива хила
       //     this.getExp(initiator, target, game);
-      this.backToLife();
+      // this.backToLife();
       this.next();
     } catch (e) {
       this.breaks(e);
     }
   }
+
+  abstract run(initiator: Player, target: Player, game: Game): void;
 
   /**
    * Функция выполняет проверку, является ли хил "воскресившим", т.е если
@@ -61,12 +76,12 @@ class Heal {
    * Значит накидываем хилеру 1 голды :)
    */
   // eslint-disable-next-line class-methods-use-this
-  backToLife() {}
+  // backToLife() {}
 
   /**
    * @param {Object} obj
    */
-  breaks(obj) {
+  breaks(obj: any): void {
     const { target, initiator } = this.params;
     const msg = {
       message: obj.message,
@@ -79,9 +94,9 @@ class Heal {
 
   /**
    * Функция вычисления размера хила
-   * @return {Number} размер хила
+   * @return размер хила
    */
-  effectVal() {
+  effectVal(): number {
     const i = this.params.initiator;
     const proc = i.proc || 0;
     const eff = MiscService.randInt(i.stats.val('hl').min,
@@ -90,18 +105,12 @@ class Heal {
   }
 
   /**
-   * Пустая run
-   */
-  // eslint-disable-next-line class-methods-use-this
-  run() {}
-
-  /**
    * Функция положительного прохождения
    */
-  next() {
+  next(): void {
     const { target, initiator } = this.params;
     const { battleLog } = this.params.game;
-    const args = {
+    const args: HealNext = {
       exp: this.status.exp,
       action: this.displayName,
       actionType: 'heal',
@@ -112,5 +121,3 @@ class Heal {
     battleLog.success(args);
   }
 }
-
-module.exports = Heal;

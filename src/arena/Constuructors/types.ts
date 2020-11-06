@@ -1,6 +1,8 @@
 import type { Item } from '../../models/item';
 import type { SuccessArgs } from '../BattleLog';
+import type { PostHealNext } from '../magics/postHeal';
 import type { DmgMagicNext } from './DmgMagicConstructor';
+import type { HealNext } from './HealMagicConstructor';
 import type { LongDmgMagicNext } from './LongDmgMagicConstructor';
 import type { LongMagicNext } from './LongMagicConstructor';
 import type { MagicNext } from './MagicConstructor';
@@ -9,7 +11,6 @@ import type { SkillNext } from './SkillConstructor';
 export type CostType = 'en' | 'mp';
 export type OrderType = 'all' | 'any' | 'enemy' | 'self';
 export type AOEType = 'target' | 'team';
-export type ActionType = 'magic' | 'heal' | 'phys' | 'skill' | 'long';
 export type DamageType = 'acid' | 'fire' | 'lighting' | 'frost' | 'physical' | 'clear';
 export type BreaksMessage =
   'NO_TARGET' |
@@ -29,19 +30,11 @@ export type BreaksMessage =
 export type CustomMessageFn = (args: SuccessArgs) => string;
 
 export interface CustomMessage {
-  customMessage?(args: SuccessArgs): string;
+  customMessage?: CustomMessageFn;
 }
 
 export interface LongCustomMessage extends CustomMessage {
   longCustomMessage?(args: SuccessArgs): string;
-}
-
-export interface Breaks {
-  actionType: ActionType
-  message: BreaksMessage;
-  action: string;
-  initiator: string;
-  target: string;
 }
 
 export type BaseNext = {
@@ -62,19 +55,6 @@ export type PhysNext = BaseNext & {
 
 export type ExpArr = readonly [name: string, exp: number, heal?: number];
 
-export type PostHealNext = Omit<BaseNext, 'initiator'> & {
-  actionType: 'post-heal';
-  action: string;
-  target: string;
-  effect: number,
-  expArr: ExpArr[];
-}
-
-export type HealNext = BaseNext & {
-  actionType: 'heal';
-  effect: number;
-}
-
 export type NextArgs =
   MagicNext |
   DmgMagicNext |
@@ -84,3 +64,13 @@ export type NextArgs =
   PhysNext |
   PostHealNext |
   HealNext;
+
+export type ActionType = NextArgs['actionType'];
+
+export interface Breaks {
+  actionType: ActionType;
+  message: BreaksMessage;
+  action: string;
+  initiator: string;
+  target: string;
+}
