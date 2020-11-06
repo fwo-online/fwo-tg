@@ -1,32 +1,22 @@
 import ee from 'events';
-import type { ItemDocument } from '../models/item';
+import _ from 'lodash';
 import { bold, italic } from '../utils/formatString';
 import * as icons from '../utils/icons';
-import type { ActionType, BreaksMessage, DamageType } from './Constuructors/types';
+import { LongDmgMagic, LongDmgMagicNext } from './Constuructors/LongDmgMagicConstructor';
+import type {
+  BreaksMessage, NextArgs,
+} from './Constuructors/types';
 import { weaponTypes } from './MiscService';
 
-export type ExpArr = readonly [name: string, exp: number, heal?: number];
+const MAX_MESSAGE_LENGTH = 2 ** 12;
 
-export type SuccessArgs = {
-  expArr?: ExpArr[];
-  exp: number;
-  hp?: number;
-  dmg?: number;
-  heal?: number;
-  initiator: string;
-  target: string;
-  action: string;
-  dmgType?: DamageType;
-  actionType?: ActionType;
-  weapon?: ItemDocument;
-  effect?: number;
-  duration?: number;
-  msg?: (data: SuccessArgs) => string;
-};
+export type SuccessArgs = NextArgs;
 
-type FailArgs = SuccessArgs & {
+type FailArgs = {
   message: BreaksMessage;
 }
+
+type LogMessage = (NextArgs & { __success: true } | { __success: false });
 
 /**
  * msg
@@ -34,9 +24,9 @@ type FailArgs = SuccessArgs & {
  * уметь работать с i18n
  * сейчас (е) не обрабатывается, нужно обрабатывать только нужный тип Error
  * если это не BattleLog выброс, его нужно прокидывать дальше вверх
- * @return {String} ({type:String,message:String})
+ * @return {string} ({type:String,message:String})
  */
-function csl(msgObj: FailArgs) {
+function csl(msgObj: any): string {
   const {
     action, message, target, initiator, expArr, weapon,
   } = msgObj;
@@ -97,6 +87,7 @@ function csl(msgObj: FailArgs) {
       en: '',
     },
   };
+
   const text = TEXT[message] || {
     ru: 'Ошибка парсинга строки магии',
   };
@@ -107,11 +98,22 @@ function csl(msgObj: FailArgs) {
 
 const expBrackets = (str: string) => `\n\\[ ${str} ]`;
 
+const partitionAction = (
+  messages: LogMessage[],
+  msgObj: LogMessage,
+): [LongDmgMagicNext[], LogMessage[]] => _.partition(messages, (msg) => (
+  msg.__success
+  && msgObj.__success
+  && msg.action === msgObj.action
+  && msg.actionType === 'dmg-magic-long'
+  && msgObj.actionType === 'dmg-magic-long'
+)) as [LongDmgMagicNext[], LogMessage[]];
+
 type BattleLogEvent = 'BattleLog';
 
 export interface BattleLog {
-  on(event: BattleLogEvent, listener: (data: string) => void);
-  emit(event: BattleLogEvent, data: string);
+  on(event: BattleLogEvent, listener: (data: string) => void): this;
+  emit(event: BattleLogEvent, data: string): boolean;
 }
 /**
  * Класс вывода данных в battlelog
@@ -119,62 +121,107 @@ export interface BattleLog {
  * @see https://trello.com/c/qxnIM1Yq/17
  */
 export class BattleLog extends ee {
+  private messages: LogMessage[] = [];
+
   static getExpString(args: SuccessArgs): string {
-    if (args.actionType === 'magic' && args.dmgType && args.dmg) {
-      const damageType = icons.damageType[args.dmgType]();
-      return expBrackets(`${damageType} 💔-${args.dmg}/${args.hp} 📖${args.exp}`);
-    }
-    if (args.actionType === 'heal') {
-      if (args.expArr) {
-        return expBrackets(args.expArr.map(([name, exp, val]) => `${name}: 💖${val} 📖${exp}`).join(', '));
+    switch (args.actionType) {
+      case 'dmg-magic':
+      case 'dmg-magic-long': {
+        const damageType = icons.damageType[args.dmgType]();
+        return expBrackets(`${damageType} 💔-${args.dmg}/${args.hp} 📖${args.exp}`);
       }
-      return expBrackets(`💖${args.heal} 📖${args.exp}`);
+      case 'post-heal':
+        return expBrackets(args.expArr.map(([name, exp, val]) => `${name}: 💖${val} 📖${exp}`).join(', '));
+      case 'phys':
+        return expBrackets(`💔-${args.dmg}/${args.hp} 📖${args.exp}`);
+      default:
+        return expBrackets(`📖${args.exp}`);
     }
-    if (args.actionType === 'phys') {
-      return expBrackets(`💔-${args.dmg}/${args.hp} 📖${args.exp}`);
+  }
+
+  private static humanReadable(msgObj: LogMessage): string {
+    if (msgObj.__success) {
+      return this.humanReadableSuccess(msgObj);
     }
-    return expBrackets(`📖${args.exp}`);
+    return csl(msgObj);
+  }
+
+  private static humanReadableSuccess(msgObj: SuccessArgs): string {
+    const expString = this.getExpString(msgObj);
+
+    if (msgObj.msg) {
+      return `${msgObj.msg(msgObj)} ${expString}`;
+    }
+
+    let data = '';
+
+    switch (msgObj.actionType) {
+      case 'post-heal':
+        data = `Игрок *${msgObj.target}* был вылечен 🤲 на *${msgObj.effect}*`;
+        break;
+      case 'phys': {
+        const { action } = weaponTypes[msgObj.weapon.wtype];
+        data = `*${msgObj.initiator}* ${action(msgObj.target, msgObj.weapon)} и нанёс *${msgObj.dmg}* урона`;
+        break;
+      }
+      case 'dmg-magic':
+      case 'dmg-magic-long':
+        data = `*${msgObj.initiator}* сотворил _${msgObj.action}_ на *${msgObj.target}* нанеся ${msgObj.dmg}`;
+        break;
+      case 'magic':
+      case 'heal':
+        data = `*${msgObj.initiator}* использовав _${msgObj.action}_ на *${msgObj.target}* с эффектом ${msgObj.effect}`;
+        break;
+      default:
+        data = `*${msgObj.initiator}* использовал _${msgObj.action}_ на *${msgObj.target}*`;
+    }
+
+    return data + expString;
   }
 
   /**
    * Функция логирует действия в console log
-   * @param {Object.<string, string>} msgObj тип сообщения
+   * @param msgObj тип сообщения
    */
   log(msgObj: FailArgs): void {
-    const data = csl(msgObj);
-    this.write(data);
+    this.messages.push({ ...msgObj, __success: false });
   }
 
   /**
    * Удачный проход action
-   * @param {Object.<string, any>} msgObj тип сообщения
+   * @param msgObj тип сообщения
    */
   success(msgObj: SuccessArgs): void {
-    let data = '';
-    const exp = BattleLog.getExpString(msgObj);
-    // Если обьект содержит кастомную строку испльзуем её
-    if (msgObj.msg) {
-      data = `${msgObj.msg(msgObj)}`;
-    } else if (msgObj.dmgType && msgObj.dmgType === 'physical' && msgObj.weapon) {
-      const { action } = weaponTypes[msgObj.weapon.wtype];
-      data = `*${msgObj.initiator}* ${action(msgObj.target, msgObj.weapon)} и нанёс *${msgObj.dmg}* урона`;
-    } else if (msgObj.dmgType) {
-      data = `*${msgObj.initiator}* сотворил _${msgObj.action}_ на *${msgObj.target}* нанеся ${msgObj.dmg}`;
-    } else if (!msgObj.effect) {
-      data = `*${msgObj.initiator}* использовал _${msgObj.action}_ на *${msgObj.target}*`;
-    } else {
-      data = `*${msgObj.initiator}* использовав _${msgObj.action}_ на *${msgObj.target}* с эффектом ${msgObj.effect}`;
-    }
-    // Выношу вниз т.к проверка связана с action
-    if (msgObj.action === 'handsHeal') {
-      const { expArr } = msgObj;
-      const expString = expArr ? expArr.map(([name, e, val]) => `${name}: 💖${val} 📖${e}`).join(', ') : '';
-      data = `Игрок *${msgObj.target}* был вылечен 🤲 на *${msgObj.effect}* \\[ ${expString} ]`;
-      this.write(data);
-      return;
-    }
-    data += exp;
-    this.write(data);
+    this.messages.push({ ...msgObj, __success: true });
+  }
+
+  getMessages(): string[] {
+    let temp = '';
+    const messagesByMaxLength: string[] = [];
+    this.messages.forEach((msgObj, __, messages) => {
+      if (msgObj.__success && msgObj.actionType === 'dmg-magic-long') {
+        const [withAction, withoutAction] = partitionAction(messages, msgObj);
+        const sumMsgObj: LogMessage = {
+          ...LongDmgMagic.sumNextParams(withAction),
+          __success: true,
+        };
+        // Мутируем массив, записывая в него массив msgObg без текущего long action
+        messages.splice(0, messages.length, ...withoutAction);
+        msgObj = sumMsgObj;
+      }
+      const message = BattleLog.humanReadable(msgObj);
+      if (temp.length + message.length <= MAX_MESSAGE_LENGTH) {
+        temp = temp.concat('\n\n', message);
+      } else {
+        messagesByMaxLength.push(temp);
+      }
+    });
+    messagesByMaxLength.push(temp);
+    return messagesByMaxLength;
+  }
+
+  clearMessages(): void {
+    this.messages = [];
   }
 
   /**

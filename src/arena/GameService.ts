@@ -330,6 +330,13 @@ export default class Game {
     this.round.flags.global = {};
   }
 
+  async sendMessages(): Promise<void> {
+    const messages = this.battleLog.getMessages();
+    const promises = messages.map(this.sendBattleLog.bind(this));
+    await Promise.all(promises);
+    this.battleLog.clearMessages();
+  }
+
   /**
    * Подвес
    */
@@ -345,10 +352,10 @@ export default class Game {
           break;
         }
         case 'endRound': {
+          await this.sendMessages();
           this.sortDead();
           this.handleEndGameFlags();
           this.refreshPlayer();
-          // нужно вызывать готовые функции
           if (this.isGameEnd) {
             this.endGame();
           } else {

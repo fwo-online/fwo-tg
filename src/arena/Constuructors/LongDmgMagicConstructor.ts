@@ -1,10 +1,17 @@
 import { floatNumber } from '../../utils/floatNumber';
-import type { SuccessArgs } from '../BattleLog';
 import type Game from '../GameService';
 import type Player from '../PlayerService';
 import { DmgMagic } from './DmgMagicConstructor';
 import type { LongItem } from './LongMagicConstructor';
-import type { LongCustomMessage } from './types';
+import type { BaseNext, DamageType, LongCustomMessage } from './types';
+
+export type LongDmgMagicNext = BaseNext & {
+  exp: number;
+  dmg: number;
+  actionType: 'dmg-magic-long';
+  hp: number;
+  dmgType: DamageType;
+}
 
 export interface LongDmgMagic extends DmgMagic, LongCustomMessage {
 }
@@ -14,6 +21,19 @@ export interface LongDmgMagic extends DmgMagic, LongCustomMessage {
 export abstract class LongDmgMagic extends DmgMagic {
   isLong = true;
   buff: LongItem[] = [];
+
+  /**
+   * Принимает массив сообщений длительной магии. Возвращает одно сообщение
+   * с объединёнными характеристиками
+   */
+  static sumNextParams(msgObj: LongDmgMagicNext[]): LongDmgMagicNext {
+    return msgObj.reduce((sum, curr) => ({
+      ...sum,
+      dmg: floatNumber(sum.dmg + curr.dmg),
+      hp: Math.min(sum.hp, curr.hp),
+      exp: floatNumber(sum.exp + curr.exp),
+    }));
+  }
 
   /**
    * Добавляем в основной каст postRun для записи длительной магии в массив
@@ -56,10 +76,10 @@ export abstract class LongDmgMagic extends DmgMagic {
     // делаю просто перебор по массиву, контроль лежащей здесь магии должен
     // осуществлять Game, т.е при смерти кастера или таргета, нужно вычищать,
     // обьект longActions и удалять касты связанные с трупами
-    if (!game.longActions[this.name]) return;
+    const longArray = game.longActions[this.name];
+    if (!longArray) return;
     // [ { initiator: 2, target: 1, duration: 1, round: 0, proc: 1 } ]
     // выполняем обычный запуск магии
-    const longArray = game.longActions[this.name];
     longArray.forEach((item) => {
       if (game.round.count === item.round) return;
       try {
@@ -94,7 +114,7 @@ export abstract class LongDmgMagic extends DmgMagic {
    * buff = { frostTouch = [{initiator,target,duration},{}] }
    */
   postRun(initiator: Player, target: Player, game: Game): void {
-    game.longActions[this.name].push({
+    game.longActions[this.name]?.push({
       initiator: this.params.initiator.id || initiator.id,
       target: this.params.target.id || target.id,
       duration: this.params.initiator.stats.val('lspell')
@@ -113,11 +133,11 @@ export abstract class LongDmgMagic extends DmgMagic {
    */
   longNext(initiator: Player, target: Player): void {
     const { game } = this.params;
-    const dmgObj: SuccessArgs = {
+    const dmgObj: LongDmgMagicNext = {
       exp: this.status.exp,
       dmg: floatNumber(this.status.hit),
       action: this.displayName,
-      actionType: 'magic',
+      actionType: 'dmg-magic-long',
       target: target.nick,
       initiator: initiator.nick,
       hp: target.stats.val('hp'),

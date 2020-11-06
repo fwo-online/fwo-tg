@@ -54,13 +54,16 @@ module.exports = {
       /** effect показывает кол-во хп на которое была выхилена цель
       * При этом expArr содержит кол-во хп на которую "мог бы похилить хилер"
       * но exp будет выдано в % от размера хила с учетом максимального хп цели
+      * @type {import('../Constuructors/types').PostHealNext}
       */
-      Game.battleLog.success({
+      const args = {
+        actionType: 'post-heal',
         action: 'handsHeal',
         target: target.nick,
         effect: healEffect,
         expArr,
-      });
+      };
+      Game.battleLog.success(args);
       expArr.length = 0;
     }
 
