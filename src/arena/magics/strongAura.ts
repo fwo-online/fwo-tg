@@ -1,6 +1,7 @@
 import { Aura } from './aura';
 
 export default new Aura({
+  // @ts-expect-error не используется
   name: 'strongAura',
   displayName: 'Сильная аура',
   desc: 'Создает вокруг цели слабую ауру',

@@ -1,8 +1,8 @@
 import { BaseScene, Markup } from 'telegraf';
 import { getIcon } from '../arena/MiscService';
-import type { BaseGameScene } from './stage';
+import type { BotContext } from '../fwo';
 
-const lobby: BaseGameScene = new BaseScene('lobby');
+const lobby = new BaseScene<BotContext>('lobby');
 
 lobby.enter(async ({ replyWithMarkdown, replyWithPhoto, session }) => {
   const {

@@ -29,7 +29,7 @@ export type BreaksMessage =
 export type CustomMessageFn = (args: SuccessArgs) => string;
 
 export interface CustomMessage {
-  customMessage?: CustomMessageFn;
+  customMessage?(args: SuccessArgs): string;
 }
 
 export interface LongCustomMessage extends CustomMessage {

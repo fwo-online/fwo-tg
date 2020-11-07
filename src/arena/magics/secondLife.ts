@@ -7,6 +7,7 @@ import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 class SecondLife extends CommonMagic {
   constructor() {
     super({
+      // @ts-expect-error не используется
       name: 'secondLife',
       displayName: 'Вторая жизнь',
       desc: 'Воскрешает цель',
