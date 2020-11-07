@@ -267,8 +267,11 @@ export default class Game {
     }
   }
 
-  addHistoryDamage(dmgObj: historyObj): void {
-    this.history.addDamage(dmgObj, this.round.count);
+  addHistoryDamage(dmgObj: Omit<historyObj, 'round'>): void {
+    this.history.addDamage({
+      ...dmgObj,
+      round: this.round.count,
+    });
   }
 
   /**
