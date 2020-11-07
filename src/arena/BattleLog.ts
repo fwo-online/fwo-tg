@@ -2,21 +2,18 @@ import ee from 'events';
 import _ from 'lodash';
 import { bold, italic } from '../utils/formatString';
 import * as icons from '../utils/icons';
+import { Heal, HealNext } from './Constuructors/HealMagicConstructor';
 import { LongDmgMagic, LongDmgMagicNext } from './Constuructors/LongDmgMagicConstructor';
-import type {
-  BreaksMessage, NextArgs,
-} from './Constuructors/types';
+import type { Breaks, BreaksMessage, NextArgs } from './Constuructors/types';
 import { weaponTypes } from './MiscService';
 
 const MAX_MESSAGE_LENGTH = 2 ** 12;
 
 export type SuccessArgs = NextArgs;
 
-type FailArgs = {
-  message: BreaksMessage;
-}
+type FailArgs = Breaks;
 
-type LogMessage = (NextArgs & { __success: true } | { __success: false });
+type LogMessage = (SuccessArgs & { __success: true } | (FailArgs & { __success: false }));
 
 /**
  * msg
@@ -26,12 +23,12 @@ type LogMessage = (NextArgs & { __success: true } | { __success: false });
  * если это не BattleLog выброс, его нужно прокидывать дальше вверх
  * @return {string} ({type:String,message:String})
  */
-function csl(msgObj: any): string {
+function csl(msgObj: FailArgs): string {
   const {
     action, message, target, initiator, expArr, weapon,
   } = msgObj;
 
-  const expString = expArr ? expArr.map(([name, exp]) => `${name}: 📖${exp}`).join(', ') : '';
+  const expString = expArr ? expArr.map(({ name, exp }) => `${name}: 📖${exp}`).join(', ') : '';
 
   const TEXT: Record<BreaksMessage, Record<'en' | 'ru', string>> = {
     NO_TARGET: {
@@ -101,13 +98,12 @@ const expBrackets = (str: string) => `\n\\[ ${str} ]`;
 const partitionAction = (
   messages: LogMessage[],
   msgObj: LogMessage,
-): [LongDmgMagicNext[], LogMessage[]] => _.partition(messages, (msg) => (
+): [LogMessage[], LogMessage[]] => _.partition(messages, (msg) => (
   msg.__success
   && msgObj.__success
   && msg.action === msgObj.action
-  && msg.actionType === 'dmg-magic-long'
-  && msgObj.actionType === 'dmg-magic-long'
-)) as [LongDmgMagicNext[], LogMessage[]];
+  && msg.actionType === msgObj.actionType
+));
 
 type BattleLogEvent = 'BattleLog';
 
@@ -130,8 +126,9 @@ export class BattleLog extends ee {
         const damageType = icons.damageType[args.dmgType]();
         return expBrackets(`${damageType} 💔-${args.dmg}/${args.hp} 📖${args.exp}`);
       }
-      case 'post-heal':
-        return expBrackets(args.expArr.map(([name, exp, val]) => `${name}: 💖${val} 📖${exp}`).join(', '));
+      case 'heal':
+      // case 'post-heal':
+        return expBrackets(args.expArr.map(({ name, exp, val }) => `${name}: 💖${val} 📖${exp}`).join(', '));
       case 'phys':
         return expBrackets(`💔-${args.dmg}/${args.hp} 📖${args.exp}`);
       default:
@@ -156,7 +153,7 @@ export class BattleLog extends ee {
     let data = '';
 
     switch (msgObj.actionType) {
-      case 'post-heal':
+      case 'heal':
         data = `Игрок *${msgObj.target}* был вылечен 🤲 на *${msgObj.effect}*`;
         break;
       case 'phys': {
@@ -169,7 +166,7 @@ export class BattleLog extends ee {
         data = `*${msgObj.initiator}* сотворил _${msgObj.action}_ на *${msgObj.target}* нанеся ${msgObj.dmg}`;
         break;
       case 'magic':
-      case 'heal':
+      // case 'heal':
         data = `*${msgObj.initiator}* использовав _${msgObj.action}_ на *${msgObj.target}* с эффектом ${msgObj.effect}`;
         break;
       default:
@@ -195,20 +192,49 @@ export class BattleLog extends ee {
     this.messages.push({ ...msgObj, __success: true });
   }
 
+  private sumLong(): LogMessage[] {
+    const messages = [...this.messages];
+    messages.forEach((msgObj, i, arr) => {
+      if (msgObj.__success && msgObj.actionType === 'dmg-magic-long') {
+        const [
+          withAction,
+          withoutAction,
+        ] = partitionAction(messages, msgObj) as [LongDmgMagicNext[], LogMessage[]];
+
+        const sumMsgObj: LogMessage[] = LongDmgMagic
+          .sumNextParams(withAction)
+          .map((msg) => ({ ...msg, __success: true }));
+        withoutAction.splice(i, 0, ...sumMsgObj);
+        arr.splice(0, messages.length, ...withoutAction);
+      }
+    });
+    return messages;
+  }
+
+  private sumHeal(): LogMessage[] {
+    const messages = [...this.messages];
+    messages.forEach((msgObj, i, arr) => {
+      if (msgObj.__success && msgObj.actionType === 'heal') {
+        const [
+          withAction,
+          withoutAction,
+        ] = partitionAction(messages, msgObj) as [HealNext[], LogMessage[]];
+        const sumMsgObj: LogMessage[] = Heal
+          .sumNextParams(withAction)
+          .map((msg) => ({ ...msg, __success: true }));
+        withoutAction.splice(i, 0, ...sumMsgObj);
+        arr.splice(0, messages.length, ...withoutAction);
+      }
+    });
+    return messages;
+  }
+
   getMessages(): string[] {
     let temp = '';
     const messagesByMaxLength: string[] = [];
-    this.messages.forEach((msgObj, __, messages) => {
-      if (msgObj.__success && msgObj.actionType === 'dmg-magic-long') {
-        const [withAction, withoutAction] = partitionAction(messages, msgObj);
-        const sumMsgObj: LogMessage = {
-          ...LongDmgMagic.sumNextParams(withAction),
-          __success: true,
-        };
-        // Мутируем массив, записывая в него массив msgObg без текущего long action
-        messages.splice(0, messages.length, ...withoutAction);
-        msgObj = sumMsgObj;
-      }
+    this.messages = this.sumLong();
+    this.messages = this.sumHeal();
+    this.messages.forEach((msgObj) => {
       const message = BattleLog.humanReadable(msgObj);
       if (temp.length + message.length <= MAX_MESSAGE_LENGTH) {
         temp = temp.concat('\n\n', message);

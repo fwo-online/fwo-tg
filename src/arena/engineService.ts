@@ -1,16 +1,12 @@
 import actions from './actions';
-import CharacterService from './CharacterService';
 import config from './config';
 import type Game from './GameService';
-import GameService from './GameService';
 import * as magics from './magics';
-import postHeal from './magics/postHeal';
 import type { Order } from './OrderService';
 import * as skills from './skills';
-import testGame from './testGame';
 
 const ACTIONS = {
-  ...actions, ...magics, ...skills, postHeal,
+  ...actions, ...magics, ...skills,
 };
 type ActionKeys = keyof typeof ACTIONS;
 type Stages = (ActionKeys | ActionKeys[])[]
@@ -46,10 +42,6 @@ function runStage(ar: Stages, gameObj: Game) {
       console.log('stage run:', x);
       if (!act) return;
 
-      if ('postEffect' in act) {
-        act.postEffect(gameObj);
-        return;
-      }
       if (ord[x]) {
         const ordObj = ord[x];
         ordObj.forEach((o) => {
@@ -76,29 +68,12 @@ function runStage(ar: Stages, gameObj: Game) {
 /**
  * @param gameObj Обьект игры
 */
-async function engine(gameObj: Game): Promise<Game | void> {
+export function engine(gameObj: Game): Game | void {
   try {
-    if (!gameObj) {
-      // кастылик для запуска debug fight
-      await CharacterService.getCharacter(1); // загрузка 2х чаров
-      await CharacterService.getCharacter(2);
-      const gameObject = new GameService(['1', '2']);
-      await gameObject.createGame();
-      gameObject.orders.ordersList = testGame.orders;
-      return runStage(STAGES, gameObject);
-    }
     return runStage(STAGES, gameObj);
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.debug(e);
   } finally {
-    // eslint-disable-next-line no-console
     console.info('engine done');
   }
 }
-
-/**
- * Нужна функция которая отценивает на каком уровне выполняется action
- * Для возможности шафла порядка actions
- */
-module.exports = engine;

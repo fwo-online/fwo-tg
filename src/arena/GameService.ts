@@ -4,7 +4,7 @@ import db from '../helpers/dataBase';
 import type { GameDocument } from '../models/game';
 import { BattleLog } from './BattleLog';
 import type { LongItem } from './Constuructors/LongMagicConstructor';
-import engineService from './engineService';
+import { engine } from './engineService';
 import HistoryService, { historyObj } from './HistoryService';
 import { getIcon } from './MiscService';
 import OrderService from './OrderService';
@@ -365,7 +365,7 @@ export default class Game {
           break;
         }
         case 'engine': {
-          await engineService(this);
+          await engine(this);
           break;
         }
         case 'orders': {

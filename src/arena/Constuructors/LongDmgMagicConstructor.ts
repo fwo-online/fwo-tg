@@ -26,13 +26,24 @@ export abstract class LongDmgMagic extends DmgMagic {
    * Принимает массив сообщений длительной магии. Возвращает одно сообщение
    * с объединёнными характеристиками
    */
-  static sumNextParams(msgObj: LongDmgMagicNext[]): LongDmgMagicNext {
-    return msgObj.reduce((sum, curr) => ({
-      ...sum,
-      dmg: floatNumber(sum.dmg + curr.dmg),
-      hp: Math.min(sum.hp, curr.hp),
-      exp: floatNumber(sum.exp + curr.exp),
-    }));
+  static sumNextParams(msgObj: LongDmgMagicNext[]): LongDmgMagicNext[] {
+    const messagesByTarget: LongDmgMagicNext[] = [];
+    return msgObj.reduce((sum, curr) => {
+      const index = sum.findIndex((val) => (
+        val.initiator === curr.initiator && val.target === curr.target
+      ));
+      if (index !== -1) {
+        const found = sum[index];
+        sum[index] = {
+          ...found,
+          dmg: floatNumber(found.dmg + curr.dmg),
+          hp: Math.min(found.hp, curr.hp),
+          exp: floatNumber(found.exp + curr.exp),
+        };
+        return sum;
+      }
+      return [...sum, curr];
+    }, messagesByTarget);
   }
 
   /**

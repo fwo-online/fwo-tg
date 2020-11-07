@@ -1,6 +1,5 @@
 import type { Item } from '../../models/item';
 import type { SuccessArgs } from '../BattleLog';
-import type { PostHealNext } from '../magics/postHeal';
 import type { DmgMagicNext } from './DmgMagicConstructor';
 import type { HealNext } from './HealMagicConstructor';
 import type { LongDmgMagicNext } from './LongDmgMagicConstructor';
@@ -53,7 +52,11 @@ export type PhysNext = BaseNext & {
   dmgType: DamageType,
 }
 
-export type ExpArr = readonly [name: string, exp: number, heal?: number];
+export type ExpArr = {
+  name: string,
+  exp: number,
+  val?: number
+}[];
 
 export type NextArgs =
   MagicNext |
@@ -62,7 +65,6 @@ export type NextArgs =
   LongMagicNext |
   SkillNext |
   PhysNext |
-  PostHealNext |
   HealNext;
 
 export type ActionType = NextArgs['actionType'];

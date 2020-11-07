@@ -8,7 +8,7 @@ export type PostHealNext = Omit<BaseNext, 'initiator' | 'exp'> & {
   action: string;
   target: string;
   effect: number,
-  expArr: ExpArr[];
+  expArr: ExpArr;
 }
 
 export default class PostHeal {
@@ -17,7 +17,7 @@ export default class PostHeal {
    * @param game Game
    */
   static postEffect(game: Game): void {
-    const expArr: ExpArr[] = [];
+    const expArr: ExpArr = [];
 
     /**
      * Раздаем exp всем участникам хила
@@ -45,9 +45,17 @@ export default class PostHeal {
         if (game.isPlayersAlly(initiator, target)) {
           const playerExp = Math.round(exp * (hpProc / 100));
           initiator.stats.up('exp', playerExp);
-          expArr.push([initiator.nick, playerExp, healVal]);
+          expArr.push({
+            name: initiator.nick,
+            exp: playerExp,
+            val: healVal,
+          });
         } else {
-          expArr.push([initiator.nick, 0, healVal]);
+          expArr.push({
+            name: initiator.nick,
+            exp: 0,
+            val: healVal,
+          });
         }
       });
       /** effect показывает кол-во хп на которое была выхилена цель
