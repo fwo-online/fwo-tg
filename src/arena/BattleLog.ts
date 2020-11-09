@@ -4,14 +4,16 @@ import { bold, italic } from '../utils/formatString';
 import * as icons from '../utils/icons';
 import { Heal, HealNext } from './Constuructors/HealMagicConstructor';
 import { LongDmgMagic, LongDmgMagicNext } from './Constuructors/LongDmgMagicConstructor';
-import type { Breaks, BreaksMessage, NextArgs } from './Constuructors/types';
+import type {
+  Breaks, BreaksMessage, NextArgs, PhysBreak,
+} from './Constuructors/types';
 import { weaponTypes } from './MiscService';
 
 const MAX_MESSAGE_LENGTH = 2 ** 12;
 
 export type SuccessArgs = NextArgs;
 
-type FailArgs = Breaks;
+type FailArgs = Breaks | PhysBreak;
 
 type LogMessage = (SuccessArgs & { __success: true } | (FailArgs & { __success: false }));
 
@@ -25,10 +27,11 @@ type LogMessage = (SuccessArgs & { __success: true } | (FailArgs & { __success: 
  */
 function csl(msgObj: FailArgs): string {
   const {
-    action, message, target, initiator, expArr, weapon,
+    action, message, target, initiator,
   } = msgObj;
 
-  const expString = expArr ? expArr.map(({ name, exp }) => `${name}: 📖${exp}`).join(', ') : '';
+  const expString = 'expArr' in msgObj ? msgObj.expArr.map(({ name, exp }) => `${name}: 📖${exp}`).join(', ') : '';
+  const weapon = 'weapon' in msgObj ? msgObj.weapon.case : '';
 
   const TEXT: Record<BreaksMessage, Record<'en' | 'ru', string>> = {
     NO_TARGET: {
@@ -68,11 +71,11 @@ function csl(msgObj: FailArgs): string {
       en: '',
     },
     DEF: {
-      ru: `*${initiator}* атаковал *${target}* _${weapon ? weapon.case : ''}_, но тот смог защититься \\[${expString}]`,
+      ru: `*${initiator}* атаковал *${target}* _${weapon}_, но тот смог защититься \\[${expString}]`,
       en: '',
     },
     DODGED: {
-      ru: `*${initiator}* атаковал *${target}* _${weapon ? weapon.case : ''}_, но тот уклонился от атаки`,
+      ru: `*${initiator}* атаковал *${target}* _${weapon}_, но тот уклонился от атаки`,
       en: '',
     },
     ECLIPSE: {

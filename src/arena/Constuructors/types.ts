@@ -26,6 +26,12 @@ export type BreaksMessage =
   'NO_WEAPON' |
   'PARALYSED';
 
+export type ExpArr = {
+  name: string,
+  exp: number,
+  val?: number
+}[];
+
 export type CustomMessageFn = (args: SuccessArgs) => string;
 
 export interface CustomMessage {
@@ -52,11 +58,12 @@ export type PhysNext = BaseNext & {
   dmgType: DamageType,
 }
 
-export type ExpArr = {
-  name: string,
-  exp: number,
-  val?: number
-}[];
+export type PhysBreak = Omit<BaseNext, 'exp'> & {
+  actionType: 'phys';
+  message: BreaksMessage;
+  weapon: Item;
+  expArr: ExpArr;
+}
 
 export type NextArgs =
   MagicNext |
