@@ -65,6 +65,7 @@ const checkCancelFindCount = (character) => {
 battleScene.enter(async ({ reply, replyWithMarkdown, session }) => {
   // @todo При поиске боя хотелось бы ещё выдавать сюда картиночку
   await replyWithMarkdown('*Поиск Боя*', Markup.removeKeyboard().extra());
+  session.character.resetExpLimit();
   const canStartSearch = session.character.expEarnedToday < session.character.expLimitToday;
   const message = await reply(
     canStartSearch ? 'Начать поиск' : 'Достигнут лимит опыта на сегодня',
