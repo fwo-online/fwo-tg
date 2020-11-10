@@ -88,7 +88,7 @@ class PhysConstructor {
     }
     if (target.flags.isParry) {
       if (+(target.flags.isParry - iDex) < 0) {
-        throw this.breaks('PARRYED')
+        throw this.breaks('PARRYED');
       } else {
         target.flags.isParry -= +iDex;
       }
@@ -101,7 +101,7 @@ class PhysConstructor {
   fitsCheck() {
     const { initiator } = this.params;
     if (!initiator.weapon) throw this.breaks('NO_WEAPON');
-    if (initiator.flags.isDisarmed) throw this.breaks('DISARM')
+    if (initiator.flags.isDisarmed) throw this.breaks('DISARM');
   }
 
   /**

@@ -6,39 +6,39 @@ import { Skill } from '../Constuructors/SkillConstructor';
  * Обезаруживание
  */
 class Disarm extends Skill {
-    constructor() {
-        super({
-            name: 'disarm',
-            displayName: '🥊 Обезаруживание',
-            desc: 'Обезаруживает противника, не давая ему совершить атаку оружием',
-            cost: [12, 13, 14, 15, 16, 17],
-            proc: 10,
-            baseExp: 20,
-            costType: 'en',
-            orderType: 'enemy',
-            aoeType: 'target',
-            chance: [70, 75, 80, 85, 90, 95],
-            effect: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6],
-            profList: { 'w': 3, 'l': 5 },
-            bonusCost: [10, 20, 30, 40, 60, 80],
-        });
-    }
+  constructor() {
+    super({
+      name: 'disarm',
+      displayName: '🥊 Обезаруживание',
+      desc: 'Обезаруживает противника, не давая ему совершить атаку оружием',
+      cost: [12, 13, 14, 15, 16, 17],
+      proc: 10,
+      baseExp: 20,
+      costType: 'en',
+      orderType: 'enemy',
+      aoeType: 'target',
+      chance: [70, 75, 80, 85, 90, 95],
+      effect: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6],
+      profList: { w: 3, l: 5 },
+      bonusCost: [10, 20, 30, 40, 60, 80],
+    });
+  }
 
-    run() {
-        const { initiator, target } = this.params;
-        const initiatorMagicLvl = initiator.skills[this.name];
-        const effect = this.effect[initiatorMagicLvl - 1] || 1;
-        // изменяем
-        const iDex = initiator.stats.val('dex') * effect;
-        const tDex = target.stats.val('dex');
-        if (iDex >= tDex) {
-            target.flags.isDisarmed = true;
-        }
+  run() {
+    const { initiator, target } = this.params;
+    const initiatorMagicLvl = initiator.skills[this.name];
+    const effect = this.effect[initiatorMagicLvl - 1] || 1;
+    // изменяем
+    const iDex = initiator.stats.val('dex') * effect;
+    const tDex = target.stats.val('dex');
+    if (iDex >= tDex) {
+      target.flags.isDisarmed = true;
     }
+  }
 
-    customMessage(args: SuccessArgs) {
-        return `${bold(args.initiator)} использовал ${italic(this.displayName)} `;
-    }
+  customMessage(args: SuccessArgs) {
+    return `${bold(args.initiator)} использовал ${italic(this.displayName)} `;
+  }
 }
 
 export default new Disarm();

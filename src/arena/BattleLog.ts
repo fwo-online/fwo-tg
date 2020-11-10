@@ -103,7 +103,7 @@ function csl(msgObj: FailArgs) {
     DISARM: {
       ru: `*${initiator}* пытался атаковать *${target}*, но оказался \\[_Обезаружен_]`,
       en: '',
-    }
+    },
   };
   const text = TEXT[message] || {
     ru: 'Ошибка парсинга строки магии',

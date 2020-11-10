@@ -1,3 +1,4 @@
+import type { Prof } from '../../models/character';
 import type { SuccessArgs } from '../BattleLog';
 
 export type CostType = 'en' | 'mp';
@@ -38,4 +39,4 @@ export interface Breaks {
   target: string;
 }
 
-export type ProfListLvl = { [x: string]: number; };
+export type ProfListLvl = Partial<Record<Prof, number>>;

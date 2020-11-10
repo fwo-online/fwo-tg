@@ -2,7 +2,7 @@ import type Game from '../GameService';
 import MiscService from '../MiscService';
 import type Player from '../PlayerService';
 import type {
-  CostType, OrderType, AOEType, Breaks, BreaksMessage, CustomMessage, ProfListLvl
+  CostType, OrderType, AOEType, Breaks, BreaksMessage, CustomMessage, ProfListLvl,
 } from './types';
 
 interface SkillArgs {

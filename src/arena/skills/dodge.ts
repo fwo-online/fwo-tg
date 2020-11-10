@@ -19,7 +19,7 @@ class Dodge extends Skill {
       aoeType: 'target',
       chance: [75, 80, 85, 90, 95, 99],
       effect: [1.2, 1.25, 1.3, 1.35, 1.4, 1.45],
-      profList: { 'l': 2 },
+      profList: { l: 2 },
       bonusCost: [10, 20, 30, 40, 60, 80],
     });
   }
