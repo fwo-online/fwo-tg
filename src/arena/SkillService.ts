@@ -10,7 +10,8 @@ export default class SkillService {
   static async learn(char: Char, skillId: SkillsNames): Promise<Char> {
     const skill = SkillService.skills[skillId];
     const charSkillLvl = char.skills[skillId] ?? 0;
-    if (skill.lvl > char.lvl) {
+    const skillLvl = skill.profList[char.prof] ?? 0;
+    if (skillLvl > char.lvl) {
       throw new ValidationError('Твой уровень ниже уровня умения');
     }
     if (skill.bonusCost[charSkillLvl] > char.bonus) {
@@ -26,13 +27,14 @@ export default class SkillService {
 
   static skillDescription(skillId: SkillsNames, char: Char): string {
     const {
-      displayName, desc, lvl, bonusCost,
+      displayName, desc, profList, bonusCost,
     } = SkillService.skills[skillId];
     const charSkillLvl = char.skills[skillId] ?? 0;
+    const skillLvl = profList[char.prof] ?? 0;
 
     return `${displayName} (${charSkillLvl === 0 ? 'Не изучено' : charSkillLvl})
 
-${desc} ${char.lvl < lvl ? '\n\n❗️Твой уровень ниже уровня умения' : ''}
+${desc} ${char.lvl < skillLvl ? '\n\n❗️Твой уровень ниже уровня умения' : ''}
 
 ${charSkillLvl >= bonusCost.length ? 'Изучен максимальный уровень умения'
     : `Стоимость изучения: ${bonusCost[charSkillLvl]}💡 (${char.bonus}💡) ${bonusCost[charSkillLvl] > char.bonus ? '❗️' : '✅'}`

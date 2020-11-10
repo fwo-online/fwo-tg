@@ -7,7 +7,7 @@ const skillsScene = new BaseScene('skills');
 
 const getSkillButtons = (list, char) => Object
   .keys(list)
-  .filter((skill) => SkillService.skills[skill].profList.includes(char.prof))
+  .filter((skill) => SkillService.skills[skill].profList[char.prof])
   .map((skill) => {
     const { displayName } = SkillService.skills[skill];
     return [Markup.callbackButton(

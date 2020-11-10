@@ -1,3 +1,4 @@
+import type { Prof } from '../../models/character';
 import type { Item } from '../../models/item';
 import type { SuccessArgs } from '../BattleLog';
 import type { DmgMagicNext } from './DmgMagicConstructor';
@@ -24,6 +25,8 @@ export type BreaksMessage =
   'DODGED' |
   'ECLIPSE' |
   'NO_WEAPON' |
+  'PARRYED' |
+  'DISARM' |
   'PARALYSED';
 
 export type ExpArr = {
@@ -83,3 +86,5 @@ export interface Breaks {
   initiator: string;
   target: string;
 }
+
+export type ProfListLvl = Partial<Record<Prof, number>>;

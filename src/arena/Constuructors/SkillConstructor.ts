@@ -2,7 +2,7 @@ import type Game from '../GameService';
 import MiscService from '../MiscService';
 import type Player from '../PlayerService';
 import type {
-  CostType, OrderType, AOEType, Breaks, BreaksMessage, CustomMessage, BaseNext,
+  CostType, OrderType, AOEType, Breaks, BreaksMessage, CustomMessage, ProfListLvl, BaseNext,
 } from './types';
 
 export type SkillNext = BaseNext & {
@@ -17,12 +17,11 @@ interface SkillArgs {
   proc: number;
   baseExp: number;
   costType: CostType;
-  lvl: number;
   orderType: OrderType;
   aoeType: AOEType;
   chance: number[];
   effect: number[];
-  profList: string[];
+  profList: ProfListLvl;
   bonusCost: number[];
 }
 
