@@ -210,7 +210,7 @@ class Char {
   }
 
   set free(value) {
-    this.tempHarks.free = value;
+    this.charObj.free = value;
   }
 
   // Нужно помнить, что this.harks это суммарный обьект, с уже полученными от
