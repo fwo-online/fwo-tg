@@ -61,6 +61,7 @@ export default class StatsService {
     } else {
       this.inRound[atr] = floatNumber(this.inRound[atr] * val);
     }
+    console.log('Mul:', atr, ' val:', val, 'new val:', this.inRound[atr]);
   }
 
   set(atr: keyof Stats, val: number): void {
@@ -120,14 +121,14 @@ export default class StatsService {
    * Функция обнуления состояние inRound Object
    */
   refresh(): void {
-    const oldData = _.clone(this.inRound ?? {}); // ссылаемся на внешний обьект
+    const oldData = _.cloneDeep(this.inRound ?? {}); // ссылаемся на внешний обьект
     if (oldData.exp) {
       this.collect.exp += +oldData.exp;
     }
 
     // выставляем ману и хп на начало раунда
     this.inRound = {
-      ..._.clone(this.defStat),
+      ..._.cloneDeep(this.defStat),
       hp: oldData.hp ?? this.defStat.maxHp, // @todo hardcord
       mp: oldData.mp ?? this.defStat.maxMp,
       en: oldData.en ?? this.defStat.maxEn,

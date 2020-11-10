@@ -2,8 +2,12 @@ import type Game from '../GameService';
 import MiscService from '../MiscService';
 import type Player from '../PlayerService';
 import type {
-  CostType, OrderType, AOEType, Breaks, BreaksMessage, CustomMessage, ProfListLvl,
+  CostType, OrderType, AOEType, Breaks, BreaksMessage, CustomMessage, ProfListLvl, BaseNext,
 } from './types';
+
+export type SkillNext = BaseNext & {
+  actionType: 'skill';
+}
 
 interface SkillArgs {
   name: string;
@@ -105,14 +109,15 @@ export abstract class Skill {
    * Успешное прохождение скила и отправка записи в BattleLog
    */
   next(): void {
-    this.params.game.battleLog.success({
+    const args: SkillNext = {
       exp: this.baseExp,
       action: this.displayName,
       actionType: 'skill',
       target: this.params.target.nick,
       initiator: this.params.initiator.nick,
       msg: this.customMessage?.bind(this),
-    });
+    };
+    this.params.game.battleLog.success(args);
   }
 
   /**

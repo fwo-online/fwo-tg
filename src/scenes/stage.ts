@@ -1,6 +1,5 @@
 import { Stage } from 'telegraf';
-import type { SceneContextMessageUpdate, BaseScene } from 'telegraf/typings/stage';
-import type Char from '../arena/CharacterService';
+import type { BotContext } from '../fwo';
 import battleScene from './battle';
 import clanScene from './clan';
 import create from './create';
@@ -16,17 +15,7 @@ import settingScene from './settings';
 import shopScene from './shop';
 import skillsScene from './skills';
 
-export type Session = {
-  session: {
-    character: Char;
-  }
-}
-
-export type BaseGameContext = SceneContextMessageUpdate & Session
-
-export type BaseGameScene = BaseScene<BaseGameContext>
-
-const stage = new Stage([
+const stage = new Stage<BotContext>([
   battleScene,
   clanScene,
   create,
@@ -45,7 +34,7 @@ const stage = new Stage([
 const { leave } = Stage;
 
 // Глобальная команда выхода из сцен
-stage.command('cancel', leave());
+stage.command('cancel', () => { leave(); });
 // Scene registration
 
 export default stage;

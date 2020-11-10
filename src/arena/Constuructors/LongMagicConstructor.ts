@@ -1,7 +1,8 @@
 import type Game from '../GameService';
 import type Player from '../PlayerService';
 import { CommonMagic } from './CommonMagicConstructor';
-import type { LongCustomMessage } from './types';
+import type { MagicNext } from './MagicConstructor';
+import type { BaseNext, LongCustomMessage } from './types';
 
 export type LongItem = {
   initiator: string;
@@ -9,6 +10,10 @@ export type LongItem = {
   duration: number;
   proc: number;
   round: number;
+}
+
+export type LongMagicNext = BaseNext & {
+  actionType: 'magic-long';
 }
 
 export interface LongMagic extends CommonMagic, LongCustomMessage {
@@ -33,7 +38,7 @@ export abstract class LongMagic extends CommonMagic {
     };
     try {
       game.longActions[this.name] ??= [];
-      this.buff = game.longActions[this.name];
+      this.buff = game.longActions[this.name] ?? [];
       this.getCost(initiator);
       this.checkPreAffects(initiator, target, game);
       this.isblurredMind(); // проверка не запудрило
@@ -58,10 +63,10 @@ export abstract class LongMagic extends CommonMagic {
     // делаю просто перебор по массиву, контроль лежащей здесь магии должен
     // осуществлять Game, т.е при смерти кастера или таргета, нужно вычищать,
     // обьект longActions и удалять касты связанные с трупами
-    if (!game.longActions[this.name]) return;
+    const longArray = game.longActions[this.name];
+    if (!longArray) return;
     // [ { initiator: 2, target: 1, duration: 1, round: 0, proc: 1 } ]
     // выполняем обычный запуск магии
-    const longArray = game.longActions[this.name];
     longArray.forEach((item) => {
       if (game.round.count === item.round) return;
       try {
@@ -97,7 +102,7 @@ export abstract class LongMagic extends CommonMagic {
    * @todo нужно разрулить этот треш ибо оно работает ужасно
    */
   postRun(initiator: Player, target: Player, game: Game): void {
-    game.longActions[this.name].push({
+    game.longActions[this.name]?.push({
       initiator: this.params.initiator.id || initiator.id,
       target: this.params.target.id || target.id,
       duration: this.params.initiator.stats.val('lspell')
@@ -109,14 +114,15 @@ export abstract class LongMagic extends CommonMagic {
 
   next(): void {
     const { battleLog } = this.params.game;
-    battleLog.success({
+    const args: MagicNext = {
       exp: this.status.exp,
       action: this.displayName,
       actionType: 'magic',
       target: this.params.target.nick,
       initiator: this.params.initiator.nick,
       msg: this.customMessage?.bind(this),
-    });
+    };
+    battleLog.success(args);
   }
 
   /**
@@ -126,14 +132,15 @@ export abstract class LongMagic extends CommonMagic {
    */
   longNext(initiator: Player, target: Player): void {
     const { battleLog } = this.params.game;
-    battleLog.success({
+    const args: LongMagicNext = {
       exp: this.status.exp,
       action: this.displayName,
-      actionType: 'magic',
+      actionType: 'magic-long',
       target: target.nick,
       initiator: initiator.nick,
       msg: this.longCustomMessage?.bind(this),
-    });
+    };
+    battleLog.success(args);
   }
 }
 

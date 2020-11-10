@@ -1,6 +1,8 @@
-import { Telegraf, session, Context } from 'telegraf';
+import { Telegraf, session } from 'telegraf';
+import type { SceneContextMessageUpdate } from 'telegraf/typings/stage';
 import arena from './arena';
 import actions from './arena/actions';
+import type Char from './arena/CharacterService';
 import * as magics from './arena/magics';
 import MM from './arena/MatchMakingService';
 import * as skills from './arena/skills';
@@ -10,16 +12,20 @@ import chatMiddleware from './middlewares/chatMiddleware';
 import protectedMiddleware from './middlewares/protectedMiddleware';
 import restartMiddleware from './middlewares/restartMiddleware';
 import db from './models';
-import Item from './models/item';
-import stage, { BaseGameContext } from './scenes/stage';
+import { ItemModel } from './models/item';
+import stage from './scenes/stage';
 
-export interface Bot extends Context, BaseGameContext {}
+export interface BotContext extends SceneContextMessageUpdate {
+  session: {
+    character: Char;
+  }
+}
 
-const bot = new Telegraf<Bot>(process.env.BOT_TOKEN ?? '');
+const bot = new Telegraf<BotContext>(process.env.BOT_TOKEN ?? '');
 // DB connection
 db.connection.on('open', async () => {
   console.log('db online');
-  await Item.load();
+  await ItemModel.load();
   bot.launch();
 });
 

@@ -1,5 +1,4 @@
 import _, { Dictionary } from 'lodash';
-import type { Clan } from '../helpers/dataBase';
 import Player from './PlayerService';
 
 export default class PlayersArr {
@@ -31,9 +30,10 @@ export default class PlayersArr {
    * Функция вернет массив игроков в моей тиме
    * @param clan объект клана
    */
-  getMyTeam(clan?: Clan): Player[] {
+  getMyTeam(player: Player): Player[] {
+    const { clan } = player;
     if (!clan?.id) return [];
-    return this.arr.filter((p) => p.clan && p.clan.id === clan.id);
+    return this.arr.filter((p) => p.clan?.id === clan.id);
   }
 
   /**

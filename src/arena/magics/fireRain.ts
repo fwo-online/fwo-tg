@@ -7,6 +7,7 @@ import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 class FireRain extends DmgMagic {
   constructor() {
     super({
+      // @ts-expect-error не используется
       name: 'fireRain',
       displayName: 'Огненный дождь',
       desc: 'Обрушивает на команду противника огненный дождь',

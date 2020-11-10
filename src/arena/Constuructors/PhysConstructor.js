@@ -144,7 +144,7 @@ class PhysConstructor {
     this.status.hit = floatNumber(hitval * initiator.proc);
     if (result) {
       this.params.target.flags.isHited = {
-        initiator: initiator.nick, hit: this.status.hit,
+        initiator: initiator.nick, val: this.status.hit,
       };
       this.run();
     } else {
@@ -240,27 +240,20 @@ class PhysConstructor {
    * за протектом
    */
   protectorsGetExp() {
+    if (!this.params) return;
     const { initiator, target, game } = this.params;
-    const f = target.flags.isProtected; // Коллекция защищающих [{id,кол-во дефа},..]
-    const expArr = [];
-    const prt = target.stats.val('pdef'); // общий показатель защиты цели
-    if (f.length >= 1) {
-      f.forEach((p) => {
-        const defender = game.getPlayerById(p.initiator);
-        if (game.isPlayersAlly(initiator, target)) {
-          expArr.push([defender.nick, 0]);
-        } else {
-          const pr = (Math.floor(p.val * 100) / prt);
-          const e = Math.round(this.status.hit * 0.8 * pr);
-          expArr.push([defender.nick, e]);
-          defender.stats.mode('up', 'exp', e);
-        }
-      });
-    } else {
-      const player = game.getPlayerById(f[0].initiator);
-      const e = Math.round(this.status.hit * 0.8);
-      player.stats.mode('up', 'exp', e);
-    }
+    const pdef = target.stats.val('pdef'); // общий показатель защиты цели
+    const expArr = target.flags.isProtected.map((flag) => {
+      const defender = game.getPlayerById(flag.initiator);
+      if (defender.id === initiator.id || !game.isPlayersAlly(defender, target)) {
+        return [defender.nick, 0];
+      }
+      const protect = Math.floor(flag.val * 100) / pdef;
+      const exp = Math.round(this.status.hit * 0.8 * protect);
+      defender.stats.up('exp', exp);
+      return [defender.nick, exp];
+    });
+
     return { ...this.breaks('DEF'), expArr };
   }
 }

@@ -1,7 +1,7 @@
 const { Markup } = require('telegraf');
 const channerHelper = require('../helpers/channelHelper');
 const db = require('../helpers/dataBase');
-const { default: ClanModel } = require('../models/clan');
+const { ClanModel } = require('../models/clan');
 const CharacterService = require('./CharacterService');
 const arena = require('./index');
 
@@ -10,7 +10,6 @@ const arena = require('./index');
  *
  * @description Набор функций для работы с кланами.
  * @module Service/Clan
- * @typedef {import ('../models/clan').default} Clan
  */
 
 module.exports = {
@@ -73,10 +72,10 @@ module.exports = {
    */
   async createClan(charId, name) {
     const char = arena.characters[charId];
-    if (char.gold < ClanModel.lvlCost[0]) {
+    if (char.gold < ClanModel.lvlCost()[0]) {
       throw new Error('Нужно больше золота');
     }
-    char.gold -= ClanModel.lvlCost[0];
+    char.gold -= ClanModel.lvlCost()[0];
     const clan = await db.clan.create(char.id, name);
     return char.joinClan(clan);
   },

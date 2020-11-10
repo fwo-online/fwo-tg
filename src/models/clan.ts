@@ -1,8 +1,10 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, {
+  Schema, Document, Model, DocumentDefinition,
+} from 'mongoose';
 import ValidationError from '../arena/errors/ValidationError';
 import type { CharDocument } from './character';
 
-export interface Clan {
+export interface ClanDocument extends Document {
   name: string;
   logo: {
     moderated: boolean;
@@ -16,9 +18,45 @@ export interface Clan {
   requests: CharDocument[];
 }
 
-export interface ClanDocument extends Clan, Document {}
+type ClanModel = Model<ClanDocument> & typeof ClanDocument;
 
-const clanSchema = new Schema({
+export class ClanDocument {
+  static lvlCost(this: ClanModel): number[] {
+    const cost = [100, 250, 750, 1500];
+    return cost;
+  }
+
+  get maxPlayers(): number {
+    return this.lvl + 1;
+  }
+
+  get hasEmptySlot(): boolean {
+    return this.players.length < this.maxPlayers;
+  }
+
+  /**
+   * Снимает золото из казны и повышает уровань
+   * @param {string} clanId
+   * @throws {ValidationError}
+   */
+  async levelUp(): Promise<this> {
+    if (this.lvl >= ClanModel.lvlCost().length) {
+      throw new ValidationError('Клан имеет максимальный уровень');
+    }
+    const cost = ClanModel.lvlCost()[this.lvl];
+    if (this.gold < cost) {
+      throw new ValidationError('Недостаточно золота');
+    }
+    this.gold -= cost;
+    this.lvl += 1;
+    const updated = await this.save();
+    return updated;
+  }
+}
+
+export type Clan = DocumentDefinition<ClanDocument>
+
+const schema = new Schema<ClanDocument>({
   name: { type: String, required: true, unique: true },
   logo: {
     moderated: {
@@ -40,35 +78,6 @@ const clanSchema = new Schema({
   },
 });
 
-const ClanSchema = mongoose.model<ClanDocument>('Clan', clanSchema);
+schema.loadClass(ClanDocument);
 
-export default class ClanModel extends ClanSchema {
-  static lvlCost = [100, 250, 750, 1500] as const;
-
-  get maxPlayers(): number {
-    return this.lvl + 1;
-  }
-
-  get hasEmptySlot(): boolean {
-    return this.players.length < this.maxPlayers;
-  }
-
-  /**
-   * Снимает золото из казны и повышает уровань
-   * @param {string} clanId
-   * @throws {ValidationError}
-   */
-  async levelUp(): Promise<this> {
-    if (this.lvl >= ClanModel.lvlCost.length) {
-      throw new ValidationError('Клан имеет максимальный уровень');
-    }
-    const cost = ClanModel.lvlCost[this.lvl];
-    if (this.gold < cost) {
-      throw new ValidationError('Недостаточно золота');
-    }
-    this.gold -= cost;
-    this.lvl += 1;
-    const updated = await this.save();
-    return updated;
-  }
-}
+export const ClanModel = mongoose.model<ClanDocument, ClanModel>('Clan', schema);

@@ -20,8 +20,8 @@ export type LastRound = Omit<Round, 'event'>;
 type RoundServiceEvent = 'Round';
 
 export interface RoundService {
-  on(event: RoundServiceEvent, listener: (data: Round) => void);
-  emit(event: RoundServiceEvent, data: Round)
+  on(event: RoundServiceEvent, listener: (data: Round) => void): this;
+  emit(event: RoundServiceEvent, data: Round): boolean;
 }
 /**
  * RoundService

@@ -1,12 +1,19 @@
+import type arena from '..';
 import { floatNumber } from '../../utils/floatNumber';
-import type { SuccessArgs } from '../BattleLog';
 import type Game from '../GameService';
 import MiscService from '../MiscService';
 import type Player from '../PlayerService';
-import type { Breaks, BreaksMessage, CustomMessage } from './types';
+import type {
+  BaseNext, Breaks, BreaksMessage, CustomMessage,
+} from './types';
+
+export type MagicNext = BaseNext & {
+  actionType: 'magic';
+  effect?: number;
+}
 
 export interface MagicArgs {
-  name: string;
+  name: keyof typeof arena.magics;
   displayName: string;
   desc: string;
   cost: number;
@@ -248,7 +255,7 @@ export abstract class Magic {
     };
   }
 
-  protected getNextArgs(): SuccessArgs {
+  protected getNextArgs(): MagicNext {
     const { target, initiator } = this.params;
     return {
       exp: this.status.exp,

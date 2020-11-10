@@ -5,7 +5,7 @@ const { default: { lvlRatio } } = require('./config');
 const arena = require('./index');
 
 /**
- * @typedef {import ('../models/clan').default} Clan
+ * @typedef {import ('../models/clan').ClanDocument} ClanDocument
  * @typedef {Object} Statistics
  * @property {number} kills
  * @property {number} death
@@ -111,7 +111,7 @@ function getDynHarks(charObj) {
 class Char {
   /**
    * Конструктор игрока
-   * @param {import ('../models/character').default} charObj обьект персонажа из базы
+   * @param {import ('../models/character').CharDocument} charObj обьект персонажа из базы
    */
   constructor(charObj) {
     this.charObj = charObj;
@@ -488,7 +488,7 @@ class Char {
   }
 
   /**
-   * @param {Clan} clan
+   * @param {ClanDocument} clan
    */
   async joinClan(clan) {
     this.charObj.clan = clan;
