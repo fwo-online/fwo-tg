@@ -10,6 +10,7 @@ import * as magics from './index';
 class Exorcism extends CommonMagic {
   constructor() {
     super({
+      // @ts-expect-error не используется
       name: 'exorcism',
       displayName: 'Экзорцизм',
       desc: 'Экзорцизм снимает все отрицательные эффекты с цели',

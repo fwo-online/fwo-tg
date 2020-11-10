@@ -26,15 +26,15 @@ class HistoryService {
    * @param {historyObj} dmgObj
    * @param {number} round
    */
-  addDamage(dmgObj, round) {
+  addDamage(dmgObj) {
     const historyObj = _.pick(dmgObj, [
       'initiator',
       'target',
       'dmgType',
       'dmg',
       'actionType',
+      'round',
     ]);
-    historyObj.round = round;
     this.damages.push(historyObj);
   }
 

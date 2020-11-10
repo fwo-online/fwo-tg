@@ -1,6 +1,5 @@
 import { bold, italic } from '../../utils/formatString';
-import type { SuccessArgs } from '../BattleLog';
-import { Skill } from '../Constuructors/SkillConstructor';
+import { Skill, SkillNext } from '../Constuructors/SkillConstructor';
 
 /**
  * Берсерк
@@ -35,7 +34,7 @@ class Berserk extends Skill {
     initiator.stats.mul('mgp', (1 / effect));
   }
 
-  customMessage(args: SuccessArgs) {
+  customMessage(args: SkillNext) {
     return `${bold(args.initiator)} использовал ${italic(this.displayName)}`;
   }
 }

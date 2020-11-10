@@ -4,7 +4,7 @@ import db from '../helpers/dataBase';
 import type { GameDocument } from '../models/game';
 import { BattleLog } from './BattleLog';
 import type { LongItem } from './Constuructors/LongMagicConstructor';
-import engineService from './engineService';
+import { engine } from './engineService';
 import HistoryService, { historyObj } from './HistoryService';
 import { getIcon } from './MiscService';
 import OrderService from './OrderService';
@@ -267,8 +267,11 @@ export default class Game {
     }
   }
 
-  addHistoryDamage(dmgObj: historyObj): void {
-    this.history.addDamage(dmgObj, this.round.count);
+  addHistoryDamage(dmgObj: Omit<historyObj, 'round'>): void {
+    this.history.addDamage({
+      ...dmgObj,
+      round: this.round.count,
+    });
   }
 
   /**
@@ -330,6 +333,13 @@ export default class Game {
     this.round.flags.global = {};
   }
 
+  async sendMessages(): Promise<void> {
+    const messages = this.battleLog.getMessages();
+    const promises = messages.map(this.sendBattleLog.bind(this));
+    await Promise.all(promises);
+    this.battleLog.clearMessages();
+  }
+
   /**
    * Подвес
    */
@@ -345,10 +355,10 @@ export default class Game {
           break;
         }
         case 'endRound': {
+          await this.sendMessages();
           this.sortDead();
           this.handleEndGameFlags();
           this.refreshPlayer();
-          // нужно вызывать готовые функции
           if (this.isGameEnd) {
             this.endGame();
           } else {
@@ -358,7 +368,7 @@ export default class Game {
           break;
         }
         case 'engine': {
-          await engineService(this);
+          await engine(this);
           break;
         }
         case 'orders': {

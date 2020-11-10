@@ -1,5 +1,5 @@
 const attack = require('./attack');
-const handsHeal = require('./handsHeal');
+const { default: handsHeal } = require('./handsHeal');
 const protect = require('./protect');
 const regeneration = require('./regen');
 

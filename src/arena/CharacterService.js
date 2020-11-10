@@ -111,7 +111,7 @@ function getDynHarks(charObj) {
 class Char {
   /**
    * Конструктор игрока
-   * @param {import ('../models/character').CharModel} charObj обьект персонажа из базы
+   * @param {import ('../models/character').CharDocument} charObj обьект персонажа из базы
    */
   constructor(charObj) {
     this.charObj = charObj;
