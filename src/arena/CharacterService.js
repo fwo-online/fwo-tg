@@ -111,7 +111,7 @@ function getDynHarks(charObj) {
 class Char {
   /**
    * Конструктор игрока
-   * @param {import ('../models/character').CharModel} charObj обьект персонажа из базы
+   * @param {import ('../models/character').CharDocument} charObj обьект персонажа из базы
    */
   constructor(charObj) {
     this.charObj = charObj;
@@ -123,6 +123,7 @@ class Char {
     this.mm = {};
     this.autoreg = false;
     this.modifiers = undefined;
+    this.resetExpLimit();
   }
 
   get id() {
@@ -184,9 +185,22 @@ class Char {
   }
 
   set exp(value) {
+    this.resetExpLimit();
     this.bonus += Math.round(value / 100) - Math.round(this.charObj.exp / 100);
     this.charObj.exp = value;
-    this.addLvl(value);
+    this.addLvl();
+  }
+
+  set expEarnedToday(value) {
+    this.charObj.expLimit.earn = value;
+  }
+
+  get expEarnedToday() {
+    return this.charObj.expLimit.earn;
+  }
+
+  get expLimitToday() {
+    return this.lvl * 2000;
   }
 
   get games() {
@@ -280,6 +294,15 @@ class Char {
     return 2 ** (this.lvl - 1) * 1000 * lvlRatio;
   }
 
+  async resetExpLimit() {
+    const date = new Date();
+    if (date > this.charObj.expLimit.expiresAt) {
+      date.setUTCHours(24, 0, 0, 0);
+      this.charObj.expLimit.expiresAt = date;
+      this.charObj.expLimit.earn = 0;
+    }
+  }
+
   /**
    * @param {Partial<Statistics>} stat
    */
@@ -321,14 +344,13 @@ class Char {
 
   /**
    * Проверяет количество опыта для следующего уровня. Добавляет уровень, если опыта достаточно
-   * @param {number} currentExp - текущее количество опыта
    * @returns {void}
    */
-  async addLvl(currentExp) {
-    if (currentExp >= this.nextLvlExp) {
+  async addLvl() {
+    if (this.exp >= this.nextLvlExp) {
       this.charObj.lvl += 1;
       this.free += 10;
-      await this.addLvl(currentExp);
+      await this.addLvl();
     } else {
       await this.saveToDb();
     }
@@ -594,6 +616,7 @@ class Char {
         clan,
         penalty: this.charObj.penalty,
         free,
+        expLimit: this.charObj.expLimit,
         inventory: items,
         statistics: this.charObj.statistics,
       });

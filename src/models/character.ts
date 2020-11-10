@@ -42,6 +42,10 @@ export interface CharDocument extends Document {
     block: number,
     luck: number,
   },
+  expLimit: {
+    earn: number;
+    expiresAt: Date;
+  }
   deleted: boolean;
 }
 
@@ -119,6 +123,16 @@ const character = new Schema({
       heal: 0,
       mp: 0,
       physDef: 0,
+    },
+  },
+  expLimit: {
+    type: new Schema({
+      earn: { type: Number, default: 0 },
+      expiresAt: { type: Date, default: Date.now },
+    }),
+    default: {
+      earn: 0,
+      expiresAt: Date.now(),
     },
   },
   deleted: { type: Boolean, default: false },

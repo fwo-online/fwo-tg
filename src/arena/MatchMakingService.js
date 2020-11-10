@@ -113,20 +113,6 @@ class MatchMaking extends EventEmitter {
       this.timerId = setTimeout(() => { this.start(); }, config.startGameTimeout);
     }
   }
-
-  /**
-   * Автоматическая регистрация игрока
-   * @param {string} charId
-   */
-  autoreg(charId) {
-    if (arena.characters[charId].autoreg) {
-      this.push({
-        charId,
-        psr: 1000,
-        startTime: Date.now(),
-      });
-    }
-  }
 }
 
 module.exports = new MatchMaking();
