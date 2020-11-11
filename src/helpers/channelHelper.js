@@ -126,13 +126,20 @@ module.exports = {
       const { exp, gold } = player.stats.collect;
       const character = arena.characters[player.id];
       const {
-        autoreg, nickname, lvl, prof, clan,
-      } = arena.characters[player.id];
+        autoreg, nickname, lvl, prof, clan, expLimitToday, expEarnedToday,
+      } = character;
+
+      let expMessage = `${exp}`;
+      if (expEarnedToday >= expLimitToday) {
+        expMessage += ' (достигнут лимит опыта на сегодня)';
+      } else {
+        expMessage += ` (доступно ещё 📖 ${expLimitToday - expEarnedToday} сегодня)`;
+      }
 
       const message = await this.bot.telegram.sendMessage(
         player.tgId,
         `Награда за бой:
-  📖 ${exp} (${character.exp}/${character.nextLvlExp})
+  📖 ${expMessage} (${character.exp}/${character.nextLvlExp})
   💰 ${gold} (${character.gold})
   ${autoreg ? 'Идёт поиск новой игры...' : ''}`,
         Markup.inlineKeyboard([

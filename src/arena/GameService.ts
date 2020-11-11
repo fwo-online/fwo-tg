@@ -290,7 +290,18 @@ export default class Game {
       this.forAllPlayers(Game.showExitButton);
       this.forAllPlayers((player: Player) => { arena.characters[player.id].gameId = ''; });
       arena.mm.cancel();
-      this.forAllPlayers((player: Player) => arena.mm.autoreg(player.id));
+      this.forAllPlayers((player: Player) => {
+        const char = arena.characters[player.id];
+        if (char.expEarnedToday >= char.expLimitToday) {
+          char.autoreg = false;
+        }
+        if (!char.autoreg) return;
+        arena.mm.push({
+          charId: player.id,
+          psr: 1000,
+          startTime: Date.now(),
+        });
+      });
     }, 15000);
   }
 
@@ -407,6 +418,7 @@ export default class Game {
     try {
       _.forEach(this.info.players, async (p) => {
         arena.characters[p].exp += this.players[p].stats.collect.exp;
+        arena.characters[p].expEarnedToday += this.players[p].stats.collect.exp;
         arena.characters[p].gold += this.players[p].stats.collect.gold;
 
         const kills = Object.values(this.players)

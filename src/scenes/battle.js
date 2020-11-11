@@ -62,13 +62,15 @@ const checkCancelFindCount = (character) => {
   return true;
 };
 
-battleScene.enter(async ({ reply, replyWithMarkdown }) => {
+battleScene.enter(async ({ reply, replyWithMarkdown, session }) => {
   // @todo При поиске боя хотелось бы ещё выдавать сюда картиночку
   await replyWithMarkdown('*Поиск Боя*', Markup.removeKeyboard().extra());
+  session.character.resetExpLimit();
+  const canStartSearch = session.character.expEarnedToday < session.character.expLimitToday;
   const message = await reply(
-    'Начать поиск',
+    canStartSearch ? 'Начать поиск' : 'Достигнут лимит опыта на сегодня',
     Markup.inlineKeyboard([
-      [Markup.callbackButton('Искать приключений на ...', 'search')],
+      [Markup.callbackButton('Искать приключений на ...', 'search', !canStartSearch)],
       [Markup.callbackButton('Назад', 'exit')],
     ]).resize().extra(),
   );
@@ -105,11 +107,12 @@ battleScene.action('search', async ({ editMessageText, session }) => {
 
 battleScene.action('stop', async ({ editMessageText, session }) => {
   const { id, nickname, clan } = session.character;
+  const canStartSearch = session.character.expEarnedToday < session.character.expLimitToday;
   arena.mm.pull(id);
   editMessageText(
-    'Начать поиск',
+    canStartSearch ? 'Начать поиск' : 'Достигнут лимит опыта на сегодня',
     Markup.inlineKeyboard([
-      [Markup.callbackButton('Искать приключений на ...', 'search')],
+      [Markup.callbackButton('Искать приключений на ...', 'search', !canStartSearch)],
       [Markup.callbackButton('Назад', 'exit')],
     ]).resize().extra(),
   );
