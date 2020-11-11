@@ -112,6 +112,8 @@ export default {
     // SKILLS:
     'berserk',
     'dodge',
+    'parry',
+    'disarm',
     [
       'protect',
       'regen_energy',
