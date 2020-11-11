@@ -240,8 +240,8 @@ export class InventoryDocument {
     charInventory: InventoryDocument[],
   ): Collection | undefined {
     const items: Item[] = charInventory.map(({ code }) => arena.items[code]);
-    const playerCollection = _.groupBy(items, (item) => item.wcomb.split(',')[0]);
-    const itemsCollection = _.groupBy(arena.items, (item) => item.wcomb.split(',')[0]);
+    const playerCollection = _.groupBy(items, (item) => item.wcomb[0]);
+    const itemsCollection = _.groupBy(arena.items, (item) => item.wcomb[0]);
 
     const playerCollectionsKeys: string[] = _.uniq(Object.keys(playerCollection));
     const [fullSets, smallSets] = _.partition(playerCollectionsKeys, (key) => key.endsWith('f'));
@@ -253,13 +253,12 @@ export class InventoryDocument {
       return false;
     };
 
-    const foundFullCollection = fullSets.find(findCollection);
-    if (foundFullCollection) {
-      return collections[foundFullCollection];
-    }
-
     const foundSmallCollection = smallSets.find(findCollection);
     if (foundSmallCollection) {
+      const foundFullCollection = fullSets.find(findCollection);
+      if (foundFullCollection) {
+        return collections[foundFullCollection];
+      }
       return collections[foundSmallCollection];
     }
     return undefined;

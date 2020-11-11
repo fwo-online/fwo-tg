@@ -86,7 +86,7 @@ export const collectionList = (): ExtraReplyMessage => {
 };
 
 export const collectionItem = (key: string): ExtraReplyMessage => {
-  const items = _.filter(arena.items, (item) => item.wcomb.endsWith(key));
+  const items = _.filter(arena.items, (item) => item.wcomb.includes(key));
   const buttons = items.map(itemToButton);
   return Markup.inlineKeyboard([
     ...buttons,

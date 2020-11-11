@@ -1,7 +1,7 @@
 const { BaseScene, Markup } = require('telegraf');
 const { harksDescr, mono } = require('../arena/MiscService');
 
-/** @type {import('./stage').BaseGameScene} */
+/** @type {BaseScene<import('../fwo').BotContext>} */
 const harkScene = new BaseScene('harks');
 
 /**

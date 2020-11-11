@@ -40,7 +40,7 @@ export interface ItemDocument extends Document {
   weight: number | null;
   gskill: string;
   gprice: string;
-  wcomb: string;
+  wcomb: string[];
   hark: Hark | null;
   plushark: Hark | null;
   mga: number | null;
@@ -169,6 +169,7 @@ const item = new Schema({
   },
   wcomb: {
     type: String,
+    get: (comb: string) => comb.split(','),
   },
   hark: {
     type: String,
