@@ -235,7 +235,7 @@ class Char {
       assignWithSum(hark, this.plushark);
     }
     if (!_.isUndefined(this.collection.harks)) {
-      assignWithSum(hark, this.plushark);
+      assignWithSum(hark, this.collection.harks);
     }
     return hark;
   }
