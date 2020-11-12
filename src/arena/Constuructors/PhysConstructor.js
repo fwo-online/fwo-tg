@@ -87,7 +87,7 @@ class PhysConstructor {
       if (c > r) throw this.breaks('DODGED');
     }
     if (target.flags.isParry) {
-      if (+(target.flags.isParry - iDex) < 0) {
+      if (+(target.flags.isParry - iDex) > 0) {
         throw this.breaks('PARRYED');
       } else {
         target.flags.isParry -= +iDex;
