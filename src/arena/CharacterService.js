@@ -109,6 +109,7 @@ function getDynHarks(charObj) {
  * Класс описывающий персонажа внутри игры
  */
 class Char {
+  wasLvlUp = false;
   /**
    * Конструктор игрока
    * @param {import ('../models/character').CharDocument} charObj обьект персонажа из базы
@@ -351,6 +352,7 @@ class Char {
       this.charObj.lvl += 1;
       this.free += 10;
       await this.addLvl();
+      this.wasLvlUp = true;
     } else {
       await this.saveToDb();
     }

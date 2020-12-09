@@ -25,6 +25,11 @@ lobby.enter(async ({ replyWithMarkdown, replyWithPhoto, session }) => {
       ['☸ Настройки', '❓ Помощь'],
     ]).resize().extra(),
   );
+
+  if (session.character.wasLvlUp) {
+    await replyWithMarkdown('Получен новый уровень!🌟');
+    session.character.wasLvlUp = false;
+  }
 });
 
 lobby.hears('😎 Профиль', ({ scene }) => {
