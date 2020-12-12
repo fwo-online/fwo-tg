@@ -21,7 +21,7 @@ class Anathema extends CommonMagic {
       lvl: 4,
       orderType: 'enemy',
       aoeType: 'target',
-      magType: 'good',
+      magType: 'bad',
       chance: ['1d60', '1d70', '1d85'],
       profList: ['m'],
       effect: [],
