@@ -243,15 +243,16 @@ class PhysConstructor {
     if (!this.params) return;
     const { initiator, target, game } = this.params;
     const pdef = target.stats.val('pdef'); // общий показатель защиты цели
+    /** @type {import('./types').ExpArr} */
     const expArr = target.flags.isProtected.map((flag) => {
       const defender = game.getPlayerById(flag.initiator);
       if (defender.id === initiator.id || !game.isPlayersAlly(defender, target)) {
-        return [defender.nick, 0];
+        return { name: defender.nick, exp: 0 };
       }
       const protect = Math.floor(flag.val * 100) / pdef;
       const exp = Math.round(this.status.hit * 0.8 * protect);
       defender.stats.up('exp', exp);
-      return [defender.nick, exp];
+      return { name: defender.nick, exp };
     });
 
     return { ...this.breaks('DEF'), expArr };
