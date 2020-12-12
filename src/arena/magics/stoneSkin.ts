@@ -1,3 +1,5 @@
+import { bold, italic } from '../../utils/formatString';
+import type { SuccessArgs } from '../BattleLog';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 
 /**
@@ -26,7 +28,12 @@ class StoneSkin extends CommonMagic {
 
   run() {
     const { target } = this.params;
-    target.stats.mode('up', 'pdef', this.effectVal());
+    target.stats.up('pdef', this.effectVal());
+  }
+
+  customMessage(args: SuccessArgs) {
+    const { initiator, target } = args;
+    return `${bold(initiator)} превращяет кожу ${bold(target)} в камень`;
   }
 }
 

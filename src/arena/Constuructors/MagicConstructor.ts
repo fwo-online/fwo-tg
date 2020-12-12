@@ -94,7 +94,7 @@ export abstract class Magic {
    */
   getCost(initiator: Player): void {
     const costValue = +initiator.stats.val(this.costType) - this.cost;
-    console.log('MP:', costValue);
+    console.log(initiator, 'MP:', costValue);
     if (costValue >= 0) {
       initiator.stats.set(this.costType, costValue);
     } else {
