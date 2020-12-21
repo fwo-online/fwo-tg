@@ -61,50 +61,6 @@ const WEAPON_TYPES = {
 /**
  * Константа дефотлный параметров професcий при создание чара
  */
-const PROF = {
-  Warrior: {
-    prof: 'w',
-    hark: {
-      str: 10, dex: 8, int: 3, wis: 3, con: 6,
-    },
-    descr: 'стронг',
-    name: 'Воин',
-    icon: '🛡',
-  },
-  Archer: {
-    prof: 'l',
-    hark: {
-      str: 3, dex: 8, int: 10, wis: 3, con: 6,
-    },
-    descr: 'ахуенный',
-    name: 'Лучник',
-    icon: '🏹',
-  },
-  Mage: {
-    prof: 'm',
-    hark: {
-      str: 3, dex: 3, int: 8, wis: 10, con: 6,
-    },
-    mag: {
-      lightHeal: 1,
-    },
-    descr: 'волшебный',
-    name: 'Маг',
-    icon: '🔮',
-  },
-  Priest: {
-    prof: 'p',
-    hark: {
-      str: 3, dex: 3, int: 10, wis: 8, con: 6,
-    },
-    mag: {
-      lightHeal: 1,
-    },
-    descr: 'хилит',
-    name: 'Лекарь',
-    icon: '♱',
-  },
-};
 const STORES = {
   a: 'Пр.рука',
   b: 'Лв.рука',
@@ -174,19 +130,12 @@ function randInt(min, max) {
 module.exports = {
   weaponTypes: WEAPON_TYPES,
   harksDescr: HARKS,
-  charDescr: PROF,
   stores: STORES,
   /**
    * @param {string} string
    */
   mono(string) {
     return `\`\`\`${string}\`\`\``;
-  },
-  /**
-   * @param {string} prof
-   */
-  getIcon(prof) {
-    return Object.values(PROF).find((el) => el.prof === prof).icon;
   },
   /**
    * Функция рандома по формату 1d100+10;

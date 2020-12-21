@@ -1,8 +1,9 @@
+import type { ProfListLvl } from '../../data/profs';
 import type Game from '../GameService';
 import MiscService from '../MiscService';
 import type Player from '../PlayerService';
 import type {
-  CostType, OrderType, AOEType, Breaks, BreaksMessage, CustomMessage, ProfListLvl, BaseNext,
+  CostType, OrderType, AOEType, Breaks, BreaksMessage, CustomMessage, BaseNext,
 } from './types';
 
 export type SkillNext = BaseNext & {

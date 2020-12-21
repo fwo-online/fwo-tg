@@ -2,7 +2,7 @@ const { BaseScene, Markup } = require('telegraf');
 const arena = require('../arena');
 const ClanService = require('../arena/ClanService');
 const { default: ValidationError } = require('../arena/errors/ValidationError');
-const { getIcon } = require('../arena/MiscService');
+const { profs } = require('../data/profs');
 const { ClanModel } = require('../models/clan');
 
 /** @type {import('./stage').BaseGameScene} */
@@ -142,7 +142,7 @@ clanScene.action('players_list', async ({ session, editMessageText }) => {
   const clan = await ClanService.getClanById(session.character.clan.id);
   const list = clan.players.map((player) => {
     const { nickname, prof, lvl } = player;
-    return `${player.id === clan.owner.id ? '👑 ' : ''}*${nickname}* (${getIcon(prof)}${lvl})`;
+    return `${player.id === clan.owner.id ? '👑 ' : ''}*${nickname}* (${profs[prof].icon}${lvl})`;
   });
   editMessageText(
     `Список участников:
@@ -174,7 +174,7 @@ clanScene.action(/requests_list|(accept|reject)(?=_)/, async ({
   const list = clan.requests.map((player) => {
     const { nickname, prof, lvl } = player;
     return [
-      Markup.callbackButton(`${nickname} (${getIcon(prof)}${lvl})`, 'todo'),
+      Markup.callbackButton(`${nickname} (${profs[prof].icon}${lvl})`, 'todo'),
       Markup.callbackButton('Принять', `accept_${player.tgId}`, !isAdmin),
       Markup.callbackButton('Отклонить', `reject_${player.tgId}`, !isAdmin),
     ];

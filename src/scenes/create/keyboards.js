@@ -1,14 +1,14 @@
 const Markup = require('telegraf/markup');
-const { charDescr } = require('../../arena/MiscService');
+const { profs } = require('../../data/profs');
 
 module.exports = {
   create: Markup.inlineKeyboard([
     Markup.callbackButton('Создать', 'create'),
   ]).resize().extra(),
   profButtons: Markup.inlineKeyboard(Object
-    .keys(charDescr)
+    .keys(profs)
     .map((prof) => [Markup.callbackButton(
-      `${charDescr[prof].name} ${charDescr[prof].icon}`,
+      `${profs[prof].name} ${profs[prof].icon}`,
       `select_${prof}`,
     )])).resize().extra(),
   select: Markup.inlineKeyboard([
