@@ -1,3 +1,4 @@
+import type { Prof } from '../data/profs';
 import type { ClanDocument } from '../models/clan';
 import type { Inventory } from '../models/inventory';
 import type { MinMax } from '../models/item';
@@ -46,7 +47,7 @@ export default class Player {
   nick: string;
   id: string;
   tgId: number;
-  prof: string;
+  prof: Prof;
   lvl: number;
   clan?: ClanDocument;
   stats: StatsService;

@@ -1,5 +1,4 @@
 const { BaseScene } = require('telegraf');
-const { charDescr } = require('../../arena/MiscService');
 const keyboards = require('./keyboards');
 const messages = require('./messages');
 
@@ -20,9 +19,8 @@ create.action('create', ({ editMessageText }) => {
 
 create.action(/select(?=_)/, ({ editMessageText, session, match }) => {
   const [, prof] = match.input.split('_');
-  const { name } = charDescr[prof];
 
-  session.prof = name;
+  session.prof = prof;
   editMessageText(
     messages.select(prof),
     keyboards.select,

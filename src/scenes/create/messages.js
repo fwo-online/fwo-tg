@@ -1,14 +1,14 @@
-const { charDescr } = require('../../arena/MiscService');
+const { profs } = require('../../data/profs');
 
 module.exports = {
   enter: `Здравствуй, сраный путник. Я вижу ты здесь впервые.
     Бла бла бла.Вот кнопка, чтобы создать персонажа.`,
   create: 'Странные упыри ползут со всех сторон, нам нужны бойцы, кем ты желаешь стать в этом мире?',
   select: (prof) => {
-    const { name, descr } = charDescr[prof];
+    const { name, descr } = profs[prof];
 
     return `Ты выбрал класс ${name}.
-    ${name} – ${descr}. 
+    ${name} – ${descr}.
     Выбрать или вернуться назад?`;
   },
   selectDone: 'Отлично',

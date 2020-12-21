@@ -6,7 +6,7 @@ const { BaseScene, Markup } = require('telegraf');
 const arena = require('../arena');
 const BattleService = require('../arena/BattleService');
 const { default: OrderError } = require('../arena/errors/OrderError');
-const { getIcon } = require('../arena/MiscService');
+const { profs } = require('../data/profs');
 const channelHelper = require('../helpers/channelHelper');
 const loginHelper = require('../helpers/loginHelper');
 
@@ -100,7 +100,7 @@ battleScene.action('search', async ({ editMessageText, session }) => {
       ]).resize().extra(),
     );
     await channelHelper.broadcast(
-      `Игрок ${clan ? `\\[${clan.name}]` : ''} *${nickname}* (${getIcon(prof)}${lvl}) начал поиск игры`,
+      `Игрок ${clan ? `\\[${clan.name}]` : ''} *${nickname}* (${profs[prof].icon}${lvl}) начал поиск игры`,
     );
   }
 });

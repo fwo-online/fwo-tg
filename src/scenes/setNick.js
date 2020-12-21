@@ -1,4 +1,5 @@
 const { BaseScene } = require('telegraf');
+const { profs } = require('../data/profs');
 const loginHelper = require('../helpers/loginHelper');
 
 /** @type {import('./stage').BaseGameScene} */
@@ -30,7 +31,7 @@ async function valid(nickname) {
 
 setNick.enter(({ reply, session }) => {
   reply(
-    `Твой класс — ${session.prof}. Теперь нужно определиться с ником. Как будут звать тебя о великий воен?`,
+    `Твой класс — ${profs[session.prof].name}. Теперь нужно определиться с ником. Как будут звать тебя о великий воен?`,
   );
 });
 

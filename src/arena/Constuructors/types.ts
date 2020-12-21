@@ -1,4 +1,3 @@
-import type { Prof } from '../../models/character';
 import type { Item } from '../../models/item';
 import type { SuccessArgs } from '../BattleLog';
 import type { DmgMagicNext } from './DmgMagicConstructor';
@@ -86,5 +85,3 @@ export interface Breaks {
   initiator: string;
   target: string;
 }
-
-export type ProfListLvl = Partial<Record<Prof, number>>;

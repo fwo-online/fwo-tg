@@ -1,6 +1,6 @@
 const { Markup } = require('telegraf');
 const arena = require('../arena');
-const { getIcon } = require('../arena/MiscService');
+const { profs } = require('../data/profs');
 const BattleKeyboard = require('./BattleKeyboard');
 /**
  * Помощник для отправки сообщений в общий чат
@@ -151,7 +151,7 @@ module.exports = {
       if (autoreg) {
         this.messages[message.chat.id] = message.message_id;
         this.broadcast(
-          `Игрок ${clan ? `\\[${clan.name}]` : ''} *${nickname}* (${getIcon(prof)}${lvl}) начал поиск игры`,
+          `Игрок ${clan ? `\\[${clan.name}]` : ''} *${nickname}* (${profs[prof].icon}${lvl}) начал поиск игры`,
         );
       }
     } catch (e) {

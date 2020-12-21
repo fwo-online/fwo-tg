@@ -1,11 +1,10 @@
 import mongoose, {
   Schema, Document, Model, DocumentDefinition,
 } from 'mongoose';
+import type { Prof } from '../data/profs';
 import type { ClanDocument } from './clan';
 import type { InventoryDocument } from './inventory';
 import type { Hark } from './item';
-
-export type Prof = 'm' | 'w' | 'p' | 'l';
 
 export interface CharDocument extends Document {
   tgId: number;
