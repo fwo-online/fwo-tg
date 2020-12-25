@@ -134,7 +134,7 @@ export class BattleLog extends ee {
     switch (args.actionType) {
       case 'dmg-magic':
       case 'dmg-magic-long': {
-        const damageType = icons.damageType[args.dmgType]();
+        const damageType = icons.damageType[args.dmgType];
         return expBrackets(`${damageType} 💔-${args.dmg}/${args.hp} 📖${args.exp}`);
       }
       case 'heal':
