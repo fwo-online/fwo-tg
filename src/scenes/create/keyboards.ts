@@ -11,8 +11,7 @@ export const keyboards = {
       `${profs[prof].name} ${profs[prof].icon}`,
       `select_${prof}`,
     )])),
-  select: Markup.inlineKeyboard([
-    Markup.button.callback('Выбрать', 'select'),
+  back: Markup.inlineKeyboard([
     Markup.button.callback('Назад', 'back'),
   ]),
   empty: Markup.inlineKeyboard([]),

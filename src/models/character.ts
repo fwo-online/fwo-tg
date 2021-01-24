@@ -31,7 +31,7 @@ export interface CharDocument extends Document {
   skills?: Record<string, number>
   bonus: number;
   clan?: ClanDocument;
-  penalty?: [{
+  penalty: [{
     reason: string;
     date: Date;
   }];

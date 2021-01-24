@@ -10,7 +10,6 @@ import { inventoryScene } from './inventory';
 import { lobby } from './lobby';
 import { magicScene } from './magics';
 import { profile } from './profile';
-import { setNick } from './setNick';
 import { settingsScene } from './settings';
 import { shopScene } from './shop';
 import { skillsScene } from './skills';
@@ -26,7 +25,6 @@ export const stage = new Scenes.Stage<BotContext>([
   lobby,
   magicScene,
   profile,
-  setNick,
   settingsScene,
   shopScene,
   skillsScene,

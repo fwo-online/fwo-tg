@@ -8,9 +8,9 @@ export const messages = {
     const { name, descr } = profs[prof];
 
     return `Ты выбрал класс ${name}.
-    ${name} – ${descr}.
-    Выбрать или вернуться назад?`;
+${name} – ${descr}.
+
+Введи ник для подтверждения выбора`;
   },
-  selectDone: 'Отлично',
   back: 'Думаешь лучше попробовать кем то другим?',
 };
