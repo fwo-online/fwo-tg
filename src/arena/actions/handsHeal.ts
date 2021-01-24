@@ -17,6 +17,7 @@ class HandsHeal extends Heal {
     super(params);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   run(initiator: Player, target: Player, _game: Game): void {
     if (target.flags.isHited) {
       throw this.breaks('HEAL_FAIL');

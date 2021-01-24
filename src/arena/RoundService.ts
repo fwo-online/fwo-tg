@@ -122,7 +122,7 @@ export class RoundService extends ee {
    * @description Функция изменения состояний обьекта
    * @param state строка нового состояния
    */
-  nextState(state = this.status): void {
+  nextState(state: RoundStatus = 'init'): void {
     switch (state) {
       case 'init':
         // Состояние инициации раунда после создани игры

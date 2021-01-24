@@ -56,7 +56,7 @@ export class CharDocument {
 
 export type Char = DocumentDefinition<CharDocument>
 
-const character = new Schema({
+const character = new Schema<CharDocument, CharModel>({
   tgId: {
     type: Number, required: true,
   },

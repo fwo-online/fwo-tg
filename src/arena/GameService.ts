@@ -1,12 +1,13 @@
 import _ from 'lodash';
 import { profs } from '../data/profs';
-import channelHelper from '../helpers/channelHelper';
+import * as channelHelper from '../helpers/channelHelper';
 import db from '../helpers/dataBase';
 import type { GameDocument } from '../models/game';
 import { BattleLog } from './BattleLog';
 import type { LongItem } from './Constuructors/LongMagicConstructor';
 import { engine } from './engineService';
 import HistoryService, { historyObj } from './HistoryService';
+import type * as magics from './magics';
 import OrderService from './OrderService';
 import PlayersArr from './playerArray';
 import type Player from './PlayerService';
@@ -36,7 +37,7 @@ export default class Game {
   orders = new OrderService();
   battleLog = new BattleLog();
   history = new HistoryService();
-  longActions: Partial<Record<keyof typeof arena.magics, LongItem[]>> = {};
+  longActions: Partial<Record<keyof typeof magics, LongItem[]>> = {};
   info!: GameDocument;
   /**
    * Конструктор обьекта игры

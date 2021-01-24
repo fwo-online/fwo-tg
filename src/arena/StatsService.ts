@@ -5,7 +5,7 @@ import type Char from './CharacterService';
 
 type StatsServiceArgs = Char['def'] & Hark;
 
-type Stats = StatsServiceArgs & {
+export type Stats = StatsServiceArgs & {
   hp: number;
   mp: number;
   en: number;

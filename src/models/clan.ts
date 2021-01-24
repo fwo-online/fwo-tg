@@ -4,7 +4,7 @@ import mongoose, {
 import ValidationError from '../arena/errors/ValidationError';
 import type { CharDocument } from './character';
 
-export interface ClanDocument extends Document {
+export interface ClanDocument extends Document<string> {
   name: string;
   logo: {
     moderated: boolean;
@@ -21,7 +21,7 @@ export interface ClanDocument extends Document {
 type ClanModel = Model<ClanDocument> & typeof ClanDocument;
 
 export class ClanDocument {
-  static lvlCost(this: ClanModel): number[] {
+  static lvlCost(): number[] {
     const cost = [100, 250, 750, 1500];
     return cost;
   }

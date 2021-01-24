@@ -1,4 +1,3 @@
-import type arena from '../arena';
 import type { Hark } from '../models/item';
 
 export type Prof = 'm' | 'w' | 'p' | 'l';
@@ -10,7 +9,7 @@ type ProfItem = {
   descr: string;
   name: string;
   icon: string;
-  mag?: Record<typeof arena.magics, number>;
+  mag?: Record<string, number>;
 }
 
 export const profs: Record<Prof, ProfItem> = {

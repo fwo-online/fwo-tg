@@ -14,8 +14,8 @@ import {
 
 /**
  * getDefaultItem
- * @param {String} prof ID профы w/l/m/p
- * @return {String} itemCode код дефолтного итема для данной профы
+ * @param prof ID профы w/l/m/p
+ * @return itemCode код дефолтного итема для данной профы
  * @description Получаем код дефолтного итема для данной профы
  *
  */
@@ -32,7 +32,7 @@ export interface Collection {
   statical?: Partial<Statical>;
 }
 
-export interface InventoryDocument extends Document {
+export interface InventoryDocument extends Document<string> {
   code: string;
   wear: string;
   putOn: boolean;
@@ -144,6 +144,8 @@ export class InventoryDocument {
     charObj: CharDocument,
   ): Promise<InventoryDocument | void> {
     const defItemCode = getDefaultItem(charObj.prof);
+
+    if (!defItemCode) return;
 
     const item = await this.addItem(charObj._id, defItemCode);
     if (item) {
@@ -287,7 +289,7 @@ export type Inventory = DocumentDefinition<InventoryDocument>
  * @module Model/Inventory
  */
 
-const inventory = new Schema({
+const inventory = new Schema<InventoryDocument, InventoryModel>({
   code: { type: String, required: true },
   wear: { type: String, required: true },
   putOn: { type: Boolean, default: false },

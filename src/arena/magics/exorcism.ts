@@ -1,7 +1,7 @@
 import { bold, italic } from '../../utils/formatString';
 import type { SuccessArgs } from '../BattleLog';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
-import * as magics from './index';
+import arena from '../index';
 
 /**
  * Экзорцизм
@@ -33,7 +33,7 @@ class Exorcism extends CommonMagic {
     const { ordersList } = game.orders;
     game.orders.ordersList = ordersList.filter((order) => {
       if (order.target === target.id) {
-        return magics[order.action]?.magType !== 'bad';
+        return arena.magics[order.action]?.magType !== 'bad';
       }
       return true;
     });

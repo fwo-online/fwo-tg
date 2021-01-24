@@ -29,7 +29,7 @@ export type Hark = {
   con: number;
 }
 
-export interface ItemDocument extends Document {
+export interface ItemDocument extends Document<string> {
   code: string;
   name: string;
   atc: number | null;
@@ -136,7 +136,7 @@ export class ItemDocument {
  * @module Model/Item
  */
 
-const item = new Schema({
+const item = new Schema<ItemDocument, ItemModel>({
   code: {
     type: String, unique: true, required: true, dominant: true,
   },

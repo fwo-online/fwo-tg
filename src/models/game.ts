@@ -15,7 +15,7 @@ export class GameDocument {
 
 export type Game = DocumentDefinition<GameDocument>
 
-const game = new Schema({
+const game = new Schema<GameDocument, GameModel>({
   gameId: {
     type: Number, index: true,
   },

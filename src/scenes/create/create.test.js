@@ -2,8 +2,8 @@
 const assert = require('assert');
 const TelegrafTest = require('telegraf-test');
 
-const keyboards = require('./keyboards');
-const messages = require('./messages');
+const { keyboards } = require('./keyboards');
+const { messages } = require('./messages');
 
 const test = new TelegrafTest({
   url: 'http://127.0.0.1:3000/test',

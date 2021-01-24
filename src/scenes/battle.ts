@@ -1,0 +1,215 @@
+/**
+ * Сцена боя
+ * Описание:
+ */
+import { Scenes, Markup } from 'telegraf';
+import arena from '../arena';
+import * as BattleService from '../arena/BattleService';
+import OrderError from '../arena/errors/OrderError';
+import { profs } from '../data/profs';
+import type { BotContext } from '../fwo';
+import * as channelHelper from '../helpers/channelHelper';
+import loginHelper from '../helpers/loginHelper';
+
+export const battleScene = new Scenes.BaseScene<BotContext>('battleScene');
+
+const penaltyTime = 180000;
+
+type OrderFn = (ctx: BotContext) => void;
+
+const catchOrderError = (ctx: BotContext, orderFn: OrderFn) => {
+  try {
+    orderFn(ctx);
+  } catch (e) {
+    if (e instanceof OrderError) {
+      const { answerCbQuery, session, editMessageText } = ctx;
+      answerCbQuery(e.message);
+      const { currentGame, id } = session.character;
+      const { message, keyboard } = BattleService.getDefaultMessage(id, currentGame);
+      editMessageText(
+        message,
+        {
+          parse_mode: 'Markdown',
+          ...Markup.inlineKeyboard(keyboard),
+        },
+      );
+    } else {
+      throw e;
+    }
+  }
+};
+
+/**
+ * Проверяет можно ли игроку начать поиск
+ * Если сделано слишком много попыток за заданное время, возвращает false
+ * @param {Object} character - объект персонажа
+ * @return {boolean}
+ */
+const checkCancelFindCount = (character) => {
+  const time = Date.now();
+  if (!character.mm) {
+    character.mm = {
+      time,
+      try: 0,
+    };
+  }
+  if (character.mm.try >= 3 && time - character.mm.time < penaltyTime) {
+    return false;
+  }
+  character.mm.try += 1;
+  character.mm.time = time;
+  return true;
+};
+
+battleScene.enter(async (ctx) => {
+  // @todo При поиске боя хотелось бы ещё выдавать сюда картиночку
+  await ctx.replyWithMarkdown('*Поиск Боя*', Markup.removeKeyboard());
+  ctx.session.character.resetExpLimit();
+  const canStartSearch = ctx.session.character.expEarnedToday < ctx.session.character.expLimitToday;
+  const message = await ctx.reply(
+    canStartSearch ? 'Начать поиск' : 'Достигнут лимит опыта на сегодня',
+    Markup.inlineKeyboard([
+      [Markup.button.callback('Искать приключений на ...', 'search', !canStartSearch)],
+      [Markup.button.callback('Назад', 'exit')],
+    ]),
+  );
+  channelHelper.setMessage(message.chat.id, message.message_id);
+});
+
+battleScene.action('search', async (ctx) => {
+  const {
+    id, mm, nickname, lvl, prof, clan,
+  } = ctx.session.character;
+  if (!checkCancelFindCount(ctx.session.character)) {
+    const remainingTime = ((penaltyTime - (Date.now() - mm.time)) / 1000).toFixed();
+    await ctx.editMessageText(
+      `Слишком много жмёшь кнопку, жди ${remainingTime} секунд до следующей попытки`,
+      Markup.inlineKeyboard([
+        [Markup.button.callback('Искать приключений на ...', 'search')],
+        [Markup.button.callback('Назад', 'exit')],
+      ]),
+    );
+  } else {
+    const searchObject = { charId: id, psr: 1000, startTime: Date.now() };
+    arena.mm.push(searchObject);
+    await ctx.editMessageText(
+      'Идёт поиск игры...',
+      Markup.inlineKeyboard([
+        Markup.button.callback('Нет-нет, остановите, я передумал!', 'stop'),
+      ]),
+    );
+    await channelHelper.broadcast(
+      `Игрок ${clan ? `\\[${clan.name}]` : ''} *${nickname}* (${profs[prof].icon}${lvl}) начал поиск игры`,
+    );
+  }
+});
+
+battleScene.action('stop', async (ctx) => {
+  const { id, nickname, clan } = ctx.session.character;
+  const canStartSearch = ctx.session.character.expEarnedToday < ctx.session.character.expLimitToday;
+  arena.mm.pull(id);
+  ctx.editMessageText(
+    canStartSearch ? 'Начать поиск' : 'Достигнут лимит опыта на сегодня',
+    Markup.inlineKeyboard([
+      [Markup.button.callback('Искать приключений на ...', 'search', !canStartSearch)],
+      [Markup.button.callback('Назад', 'exit')],
+    ]),
+  );
+  await channelHelper.broadcast(
+    `Игрок ${clan ? `\\[${clan.name}]` : ''} *${nickname}* внезапно передумал`,
+  );
+});
+
+/**
+ * Ожидаем строку 'action_{attack}'
+ */
+battleScene.action(/action(?=_)/, (ctx) => {
+  catchOrderError(ctx, () => {
+    const { currentGame, id } = ctx.session.character;
+    const [, action] = ctx.match.input.split('_');
+    const { message, keyboard } = BattleService.handleAction(id, currentGame, action);
+    ctx.editMessageText(
+      message,
+      {
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: keyboard,
+        },
+      },
+    );
+  });
+});
+
+/**
+ * Ожидаем строку '{attack}_{target}'
+ */
+battleScene.action(/^([^_]+)_([^_]+)$/, (ctx) => {
+  catchOrderError(ctx, () => {
+    const [action, target] = ctx.match.input.split('_');
+    const { id, currentGame } = ctx.session.character;
+    const { message, keyboard } = BattleService.handleTarget(id, currentGame, action, target);
+    ctx.editMessageText(
+      message,
+      {
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: keyboard,
+        },
+      },
+    );
+  });
+});
+
+/**
+ * Ожидаем строку '{attack}_{target}_{proc}'
+ */
+battleScene.action(/^([^_]+)_([^_]+)_(\d{1,2}|100)$/, (ctx) => {
+  catchOrderError(ctx, () => {
+    const [action, target, proc] = ctx.match.input.split('_');
+    const { id, currentGame } = ctx.session.character;
+    const { message, keyboard } = BattleService.handlePercent(
+      id, currentGame, action, target, Number(proc),
+    );
+    ctx.editMessageText(
+      message,
+      {
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: keyboard,
+        },
+      },
+    );
+  });
+});
+
+battleScene.action('exit', (ctx) => {
+  ctx.scene.enter('lobby');
+});
+
+battleScene.command('run', async (ctx) => {
+  const { id, currentGame } = ctx.session.character;
+
+  currentGame.preKick(id, 'run');
+
+  ctx.reply('Ты будешь выброшен из игры в конце этого раунда');
+});
+
+battleScene.leave((ctx) => {
+  arena.mm.pull(ctx.session.character.id);
+});
+
+/**
+ * Запус тестового боя
+ */
+battleScene.command('debug', async (ctx) => {
+  // @todo сделать отдельный признак в базе
+  const ADMINS = [358539547, 187930249, 279139400, 371685623];
+  const { tgId } = ctx.session.character;
+  if (ADMINS.indexOf(tgId) !== -1) {
+    // test players: tgId: 123456789
+    const char = await loginHelper.getChar(123456789);
+    const searchObject = { charId: char.id, psr: 1000, startTime: Date.now() };
+    arena.mm.push(searchObject);
+    ctx.reply('ok');
+  }
+});

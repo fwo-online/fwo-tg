@@ -102,11 +102,11 @@ module.exports = {
     const clans = await db.clan.list();
     const requestClan = await this.getPlayerClanRequest(char.id) || {};
     return clans.map((clan) => [
-      Markup.callbackButton(
+      Markup.button.callback(
         `${clan.name} (👥${clan.players.length} / ${clan.maxPlayers})`,
         `info_${clan.id}`,
       ),
-      Markup.callbackButton(
+      Markup.button.callback(
         `${clan.id === requestClan.id ? 'Отменить' : 'Вступить'}`,
         `request_${clan.id}`,
       ),

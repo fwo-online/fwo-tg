@@ -5,14 +5,15 @@ import type { MinMax } from '../models/item';
 import type Char from './CharacterService';
 import FlagsConstructor from './Constuructors/FlagsConstructor';
 import type { DamageType } from './Constuructors/types';
-import StatsService from './StatsService';
+import type * as magics from './magics';
+import StatsService, { Stats } from './StatsService';
 import arena from './index';
 
 export type Resists = Record<DamageType, number>;
 
 export interface Chance {
-  fail?: Partial<Record<keyof typeof arena['magics'], number>>
-  cast?: Partial<Record<keyof typeof arena['magics'], number>>
+  fail?: Partial<Record<keyof typeof magics, number>>
+  cast?: Partial<Record<keyof typeof magics, number>>
 }
 
 export interface Statical {
@@ -116,7 +117,7 @@ export default class Player {
   /**
    * Функция вернет обьект состояния Player
    */
-  getStatus() {
+  getStatus(): Pick<Stats, 'hp'> {
     return {
       hp: this.stats.val('hp'),
     };
@@ -125,7 +126,7 @@ export default class Player {
   /**
    * Функция вернет обьект состояния Player для отображения команде
    */
-  getFullStatus() {
+  getFullStatus(): Pick<Stats, 'hp' | 'mp' | 'en'> {
     return {
       hp: this.stats.val('hp'),
       mp: this.stats.val('mp'),

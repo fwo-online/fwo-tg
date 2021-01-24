@@ -1,6 +1,6 @@
-import type arena from '..';
 import { floatNumber } from '../../utils/floatNumber';
 import type Game from '../GameService';
+import type * as magics from '../magics';
 import MiscService from '../MiscService';
 import type Player from '../PlayerService';
 import type {
@@ -13,7 +13,7 @@ export type MagicNext = BaseNext & {
 }
 
 export interface MagicArgs {
-  name: keyof typeof arena.magics;
+  name: keyof typeof magics;
   displayName: string;
   desc: string;
   cost: number;
@@ -219,7 +219,7 @@ export abstract class Magic {
    * @param _game Обьект игры для доступа ко всему
    * @todo нужно вынести этот метод в orders
    */
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   checkPreAffects(initiator: Player, _target: Player, _game: Game): void {
     const { isSilenced } = initiator.flags;
     if (isSilenced.some((e) => e.initiator !== this.name)) {
