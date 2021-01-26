@@ -6,7 +6,7 @@ import { Scenes, Markup } from 'telegraf';
 import arena from '../arena';
 import * as BattleService from '../arena/BattleService';
 import OrderError from '../arena/errors/OrderError';
-import { profs } from '../data/profs';
+import { Profs } from '../data';
 import type { BotContext } from '../fwo';
 import * as channelHelper from '../helpers/channelHelper';
 import loginHelper from '../helpers/loginHelper';
@@ -99,7 +99,7 @@ battleScene.action('search', async (ctx) => {
       ]),
     );
     await channelHelper.broadcast(
-      `Игрок ${clan ? `\\[${clan.name}]` : ''} *${nickname}* (${profs[prof].icon}${lvl}) начал поиск игры`,
+      `Игрок ${clan ? `\\[${clan.name}]` : ''} *${nickname}* (${Profs.profsData[prof].icon}${lvl}) начал поиск игры`,
     );
   }
 });

@@ -1,7 +1,7 @@
 import { Markup } from 'telegraf';
 import arena from '../arena';
 import type Player from '../arena/PlayerService';
-import { profs } from '../data/profs';
+import { Profs } from '../data';
 import BattleKeyboard from './BattleKeyboard';
 
 const chatId = process.env.BOT_CHATID || -1001483444452;
@@ -149,7 +149,7 @@ export async function sendExitButton(player: Player): Promise<void> {
     if (autoreg) {
       messages[message.chat.id] = message.message_id;
       broadcast(
-        `Игрок ${clan ? `\\[${clan.name}]` : ''} *${nickname}* (${profs[prof].icon}${lvl}) начал поиск игры`,
+        `Игрок ${clan ? `\\[${clan.name}]` : ''} *${nickname}* (${Profs.profsData[prof].icon}${lvl}) начал поиск игры`,
       );
     }
   } catch (e) {

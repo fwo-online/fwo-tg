@@ -5,6 +5,7 @@ import mongoose, {
 } from 'mongoose';
 import arena from '../arena';
 import config, { ParseAttr } from '../arena/config';
+import type { Harks } from '../data';
 
 const parseAttr = (p: string) => {
   try {
@@ -21,13 +22,6 @@ export type MinMax = {
   min: number;
   max: number;
 }
-export type Hark = {
-  str: number;
-  dex: number;
-  wis: number;
-  int: number;
-  con: number;
-}
 
 export interface ItemDocument extends Document<string> {
   code: string;
@@ -41,8 +35,8 @@ export interface ItemDocument extends Document<string> {
   gskill: string;
   gprice: string;
   wcomb: string[];
-  hark: Hark | null;
-  plushark: Hark | null;
+  hark: Harks.HarksLvl | null;
+  plushark: Harks.HarksLvl | null;
   mga: number | null;
   mgp: number | null;
   hl: MinMax | null;

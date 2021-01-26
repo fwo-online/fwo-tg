@@ -1,16 +1,16 @@
 import { Scenes, Markup } from 'telegraf';
 import type Char from '../arena/CharacterService';
-import { harksDescr, mono } from '../arena/MiscService';
+import { Harks } from '../data';
 import type { BotContext } from '../fwo';
+import { mono } from '../utils/formatString';
 
 export const harkScene = new Scenes.BaseScene<BotContext>('harks');
 
 const getInlineKeyboard = (character: Char) => {
-  const inlineKeyboardArr = Object
-    .keys(harksDescr)
+  const inlineKeyboardArr = Harks.harksList
     .map((hark) => [
       Markup.button.callback(
-        `${harksDescr[hark].name}: ${character.harks[hark]}`,
+        `${Harks.harksData[hark].name}: ${character.harks[hark]}`,
         `info_${hark}`,
       ),
       Markup.button.callback(
@@ -43,9 +43,9 @@ harkScene.enter(async (ctx) => {
 });
 
 harkScene.action(/info(?=_)/, (ctx) => {
-  const [, hark] = ctx.match.input.split('_');
+  const [, hark] = ctx.match.input.split('_') as [string, Harks.Hark];
   ctx.editMessageText(
-    harksDescr[hark].descr,
+    Harks.harksData[hark].descr,
     {
       parse_mode: 'Markdown',
       reply_markup: {

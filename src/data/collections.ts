@@ -1,6 +1,15 @@
-import type { Collection } from '../models/inventory';
+import type { Resists, Chance, Statical } from '../arena/PlayerService';
+import type { Harks } from '.';
 
-export const collections: Record<string, Collection> = {
+export interface Collection {
+  name: string;
+  harks?: Partial<Harks.HarksLvl>;
+  resists?: Partial<Resists>;
+  chance?: Chance;
+  statical?: Partial<Statical>;
+}
+
+export const collectionsData: Record<string, Collection> = {
   coma: {
     name: 'Малый астральный комплект',
     harks: {

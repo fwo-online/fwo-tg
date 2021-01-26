@@ -1,8 +1,9 @@
+// @ts-nocheck
 import { Scenes, Markup } from 'telegraf';
 import arena from '../arena';
 import ClanService from '../arena/ClanService';
 import ValidationError from '../arena/errors/ValidationError';
-import { profs } from '../data/profs';
+import { Profs } from '../data';
 import type { BotContext } from '../fwo';
 import { ClanModel } from '../models/clan';
 
@@ -70,12 +71,10 @@ clanScene.action(/^(lvlup|back|remove|leave)$/, async (ctx) => {
       'Сейчас ты не состоишь ни в одном клане',
       {
         parse_mode: 'Markdown',
-        reply_markup: {
-          inline_keyboard: [[
-            Markup.button.callback('Создать клан', 'create'),
-            Markup.button.callback('Вступить в клан', 'clanlist'),
-          ]],
-        },
+        reply_markup: Markup.inlineKeyboard([
+          Markup.button.callback('Создать клан', 'create'),
+          Markup.button.callback('Вступить в клан', 'clanlist'),
+        ]),
       },
     );
   } else {
@@ -141,7 +140,7 @@ clanScene.action('players_list', async (ctx) => {
   const clan = await ClanService.getClanById(ctx.session.character.clan.id);
   const list = clan.players.map((player) => {
     const { nickname, prof, lvl } = player;
-    return `${player.id === clan.owner.id ? '👑 ' : ''}*${nickname}* (${profs[prof].icon}${lvl})`;
+    return `${player.id === clan.owner.id ? '👑 ' : ''}*${nickname}* (${Profs.profsData[prof].icon}${lvl})`;
   });
   ctx.editMessageText(
     `Список участников:
@@ -176,7 +175,7 @@ clanScene.action(/requests_list|(accept|reject)(?=_)/, async (ctx) => {
   const list = clan.requests.map((player) => {
     const { nickname, prof, lvl } = player;
     return [
-      Markup.button.callback(`${nickname} (${profs[prof].icon}${lvl})`, 'todo'),
+      Markup.button.callback(`${nickname} (${Profs.profsData[prof].icon}${lvl})`, 'todo'),
       Markup.button.callback('Принять', `accept_${player.tgId}`, !isAdmin),
       Markup.button.callback('Отклонить', `reject_${player.tgId}`, !isAdmin),
     ];

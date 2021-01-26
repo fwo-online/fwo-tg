@@ -1,18 +1,20 @@
-import type { Hark } from '../models/item';
+import type { Harks } from '.';
 
-export type Prof = 'm' | 'w' | 'p' | 'l';
+export const profsList = ['m', 'w', 'p', 'l'] as const;
 
-export type ProfListLvl = Partial<Record<Prof, number>>;
+export type Prof = typeof profsList[number];
+
+export type ProfsLvl = Partial<Record<Prof, number>>;
 
 type ProfItem = {
-  hark: Hark;
+  hark: Harks.HarksLvl;
   descr: string;
   name: string;
   icon: string;
   mag?: Record<string, number>;
 }
 
-export const profs: Record<Prof, ProfItem> = {
+export const profsData: Record<Prof, ProfItem> = {
   w: {
     hark: {
       str: 10, dex: 8, int: 3, wis: 3, con: 6,

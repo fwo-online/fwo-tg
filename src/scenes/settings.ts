@@ -57,6 +57,7 @@ settingsScene.action('removeConfirm', (ctx) => {
 
 settingsScene.action('remove', async (ctx) => {
   const resp = await loginHelper.remove(ctx.from?.id);
+  // @ts-expect-error todo
   ctx.session.character = null;
   if (resp) {
     ctx.answerCbQuery('Твой персонаж был удалён!');

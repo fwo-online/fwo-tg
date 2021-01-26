@@ -1,16 +1,17 @@
 import { Markup } from 'telegraf';
-import { profs } from '../../data/profs';
+import { Profs } from '../../data';
 
 export const keyboards = {
   create: Markup.inlineKeyboard([
     Markup.button.callback('Создать', 'create'),
   ]),
-  profButtons: Markup.inlineKeyboard(Object
-    .keys(profs)
-    .map((prof) => [Markup.button.callback(
-      `${profs[prof].name} ${profs[prof].icon}`,
-      `select_${prof}`,
-    )])),
+  profButtons: Markup.inlineKeyboard(
+    Profs.profsList
+      .map((prof) => [Markup.button.callback(
+        `${Profs.profsData[prof].name} ${Profs.profsData[prof].icon}`,
+        `select_${prof}`,
+      )]),
+  ),
   back: Markup.inlineKeyboard([
     Markup.button.callback('Назад', 'back'),
   ]),

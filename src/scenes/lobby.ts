@@ -1,5 +1,5 @@
 import { Scenes, Markup } from 'telegraf';
-import { profs } from '../data/profs';
+import { Profs } from '../data';
 import type { BotContext } from '../fwo';
 
 export const lobby = new Scenes.BaseScene<BotContext>('lobby');
@@ -17,7 +17,7 @@ lobby.enter(async (ctx) => {
 
   await ctx.replyWithMarkdown(
     `*Лобби*
-Так-так, значит ты *${nickname}* ${profs[prof].icon}${lvl} (📖${exp}/${nextLvlExp})`,
+Так-так, значит ты *${nickname}* ${Profs.profsData[prof].icon}${lvl} (📖${exp}/${nextLvlExp})`,
     Markup.keyboard([
       ['⚔ В бой'],
       ['🏰 Клан'],

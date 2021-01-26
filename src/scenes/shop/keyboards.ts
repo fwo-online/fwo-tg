@@ -4,8 +4,7 @@ import type { ExtraEditMessageText } from 'telegraf/typings/telegram-types';
 import arena from '../../arena';
 import type Char from '../../arena/CharacterService';
 import { stores } from '../../arena/MiscService';
-import { collections } from '../../data/collection';
-import type { Prof } from '../../data/profs';
+import { Collections, Profs } from '../../data';
 import type { Item } from '../../models/item';
 
 const storeKeys = Object.keys(stores);
@@ -29,7 +28,7 @@ const getTypeButtons = () => storeKeys.map((type) => [Markup.button.callback(
  * @param wear - тип вещей (куда надевается)
  * @param prof - профессия персонажа
  */
-const getItems = (wear: string, prof: Prof) => {
+const getItems = (wear: string, prof: Profs.Prof) => {
   const items = _.filter(
     arena.items,
     (item) => item.wear === wear && item.race.includes(prof) && !item.onlymake && !item.hide,
@@ -84,9 +83,9 @@ export const buy = (code: string): ExtraEditMessageText => Markup.inlineKeyboard
 ]);
 
 export const collectionList = (): ExtraEditMessageText => {
-  const keys = Object.keys(collections);
+  const keys = Object.keys(Collections.collectionsData);
   const buttons = keys.map((key) => [
-    Markup.button.callback(collections[key].name, `collection_${key}`),
+    Markup.button.callback(Collections.collectionsData[key].name, `collection_${key}`),
   ]);
 
   return Markup.inlineKeyboard(
