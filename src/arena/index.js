@@ -19,4 +19,7 @@ module.exports = {
   actions: null,
   /** @type {Object<string, import ('../models/clan').ClanDocument>} */
   clans: {},
+
+  /** @type {import('telegraf').Telegraf<import('../fwo').BotContext>} */
+  bot: null,
 };

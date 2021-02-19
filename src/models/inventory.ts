@@ -1,38 +1,28 @@
 import _ from 'lodash';
 import mongoose, {
-  Schema, Document, Model, DocumentDefinition,
+  Schema, Document, Model, DocumentDefinition, Query,
 } from 'mongoose';
 import arena from '../arena';
 import config from '../arena/config';
 import type { Resists, Chance, Statical } from '../arena/PlayerService';
-import { collections } from '../data/collection';
-import type { Prof } from '../data/profs';
+import { Harks, Collections, Profs } from '../data';
 import { CharModel, CharDocument } from './character';
 import {
-  ItemModel, ParseAttrItem, Hark, Item,
+  ItemModel, ParseAttrItem, Item,
 } from './item';
 
 /**
  * getDefaultItem
- * @param {String} prof ID профы w/l/m/p
- * @return {String} itemCode код дефолтного итема для данной профы
+ * @param prof ID профы w/l/m/p
+ * @return itemCode код дефолтного итема для данной профы
  * @description Получаем код дефолтного итема для данной профы
  *
  */
-function getDefaultItem(prof: Prof) {
+function getDefaultItem(prof: Profs.Prof) {
   // eslint-disable-next-line no-console
   return config.defaultItems[prof] || console.log('no prof in getDefaultItem');
 }
-
-export interface Collection {
-  name: string;
-  harks?: Partial<Hark>;
-  resists?: Partial<Resists>;
-  chance?: Chance;
-  statical?: Partial<Statical>;
-}
-
-export interface InventoryDocument extends Document {
+export interface InventoryDocument extends Document<string> {
   code: string;
   wear: string;
   putOn: boolean;
@@ -145,6 +135,8 @@ export class InventoryDocument {
   ): Promise<InventoryDocument | void> {
     const defItemCode = getDefaultItem(charObj.prof);
 
+    if (!defItemCode) return;
+
     const item = await this.addItem(charObj._id, defItemCode);
     if (item) {
       await this.putOnItem(charObj._id, item.id);
@@ -217,7 +209,7 @@ export class InventoryDocument {
     this: InventoryModel,
     itemId: string,
     charId: string,
-  ) {
+  ): Query<unknown, InventoryDocument> {
     return this.remove({
       owner: charId,
       _id: itemId,
@@ -239,7 +231,7 @@ export class InventoryDocument {
   static getCollection(
     this: InventoryModel,
     charInventory: InventoryDocument[],
-  ): Collection | undefined {
+  ): Collections.Collection | undefined {
     const items: Item[] = charInventory.map(({ code }) => arena.items[code]);
     const playerCollection = _.groupBy(items, (item) => item.wcomb[0]);
     const itemsCollection = _.groupBy(arena.items, (item) => item.wcomb[0]);
@@ -258,9 +250,9 @@ export class InventoryDocument {
     if (foundSmallCollection) {
       const foundFullCollection = fullSets.find(findCollection);
       if (foundFullCollection) {
-        return collections[foundFullCollection];
+        return Collections.collectionsData[foundFullCollection];
       }
-      return collections[foundSmallCollection];
+      return Collections.collectionsData[foundSmallCollection];
     }
     return undefined;
   }
@@ -287,7 +279,7 @@ export type Inventory = DocumentDefinition<InventoryDocument>
  * @module Model/Inventory
  */
 
-const inventory = new Schema({
+const inventory = new Schema<InventoryDocument, InventoryModel>({
   code: { type: String, required: true },
   wear: { type: String, required: true },
   putOn: { type: Boolean, default: false },

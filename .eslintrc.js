@@ -10,13 +10,15 @@ module.exports = {
     'plugin:import/warnings',
     'plugin:import/typescript',
   ],
-  parser: '@typescript-eslint/parser',
   parserOptions: {
+    parser: '@typescript-eslint/parser',
     ecmaVersion: 2018,
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint'],
   rules: {
+    'no-use-before-define': 0,
+    '@typescript-eslint/no-use-before-define': ['error'],
     'no-param-reassign': 0,
     'no-console': 0,
     'no-underscore-dangle': 0,
@@ -27,8 +29,6 @@ module.exports = {
     'import/no-named-as-default': 0,
     'import/prefer-default-export': 0,
     'lines-between-class-members': 0,
-    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/ban-ts-comment': ['error', {
       'ts-expect-error': 'allow-with-description',
       'ts-ignore': true,

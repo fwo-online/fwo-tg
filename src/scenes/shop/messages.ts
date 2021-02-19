@@ -3,7 +3,7 @@ import arena from '../../arena';
 import type Char from '../../arena/CharacterService';
 import { itemDescription, attrNames } from '../../arena/ItemService';
 import { stores } from '../../arena/MiscService';
-import { collections } from '../../data/collection';
+import { Collections } from '../../data';
 
 export const enter = (): string => 'Список категорий товаров';
 
@@ -24,7 +24,7 @@ export const noGold = (): string => 'Недостаточно голды';
 export const collectionList = (): string => 'Коллекции';
 
 export const collectionItem = (name: string): string => {
-  const collection = collections[name];
+  const collection = Collections.collectionsData[name];
 
   return [
     collection.name,

@@ -1,55 +1,53 @@
-import { BaseScene, Markup } from 'telegraf';
-import { profs } from '../data/profs';
+import { Scenes, Markup } from 'telegraf';
+import { Profs } from '../data';
 import type { BotContext } from '../fwo';
 
-const lobby = new BaseScene<BotContext>('lobby');
+export const lobby = new Scenes.BaseScene<BotContext>('lobby');
 
-lobby.enter(async ({ replyWithMarkdown, replyWithPhoto, session }) => {
+lobby.enter(async (ctx) => {
   const {
     nickname, prof, lvl, exp, nextLvlExp,
-  } = session.character;
+  } = ctx.session.character;
 
   try {
-    await replyWithPhoto({ source: './src/assets/market.jpg' });
+    await ctx.replyWithPhoto({ source: './src/assets/market.jpg' });
   } catch (e) {
     console.error(e);
   }
 
-  await replyWithMarkdown(
+  await ctx.replyWithMarkdown(
     `*Лобби*
-Так-так, значит ты *${nickname}* ${profs[prof].icon}${lvl} (📖${exp}/${nextLvlExp})`,
+Так-так, значит ты *${nickname}* ${Profs.profsData[prof].icon}${lvl} (📖${exp}/${nextLvlExp})`,
     Markup.keyboard([
       ['⚔ В бой'],
       ['🏰 Клан'],
       ['😎 Профиль', '🏪 Магазин'],
       ['☸ Настройки', '❓ Помощь'],
-    ]).resize().extra(),
+    ]).resize(),
   );
 
-  if (session.character.wasLvlUp) {
-    await replyWithMarkdown('Получен новый уровень!🌟');
-    session.character.wasLvlUp = false;
+  if (ctx.session.character.wasLvlUp) {
+    await ctx.replyWithMarkdown('Получен новый уровень!🌟');
+    ctx.session.character.wasLvlUp = false;
   }
 });
 
-lobby.hears('😎 Профиль', ({ scene }) => {
-  scene.enter('profile');
+lobby.hears('😎 Профиль', (ctx) => {
+  ctx.scene.enter('profile');
 });
 
-lobby.hears('⚔ В бой', ({ scene }) => {
-  scene.enter('battleScene');
+lobby.hears('⚔ В бой', (ctx) => {
+  ctx.scene.enter('battleScene');
 });
 
-lobby.hears('🏪 Магазин', ({ scene }) => {
-  scene.enter('shopScene');
+lobby.hears('🏪 Магазин', (ctx) => {
+  ctx.scene.enter('shopScene');
 });
 
-lobby.hears('☸ Настройки', ({ scene }) => {
-  scene.enter('settings');
+lobby.hears('☸ Настройки', (ctx) => {
+  ctx.scene.enter('settings');
 });
 
-lobby.hears('🏰 Клан', ({ scene }) => {
-  scene.enter('clan');
+lobby.hears('🏰 Клан', (ctx) => {
+  ctx.scene.enter('clan');
 });
-
-export default lobby;

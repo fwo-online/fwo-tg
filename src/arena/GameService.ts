@@ -1,12 +1,13 @@
 import _ from 'lodash';
-import { profs } from '../data/profs';
-import channelHelper from '../helpers/channelHelper';
+import { Profs } from '../data';
+import * as channelHelper from '../helpers/channelHelper';
 import db from '../helpers/dataBase';
 import type { GameDocument } from '../models/game';
 import { BattleLog } from './BattleLog';
 import type { LongItem } from './Constuructors/LongMagicConstructor';
 import { engine } from './engineService';
 import HistoryService, { historyObj } from './HistoryService';
+import type * as magics from './magics';
 import OrderService from './OrderService';
 import PlayersArr from './playerArray';
 import type Player from './PlayerService';
@@ -36,7 +37,7 @@ export default class Game {
   orders = new OrderService();
   battleLog = new BattleLog();
   history = new HistoryService();
-  longActions: Partial<Record<keyof typeof arena.magics, LongItem[]>> = {};
+  longActions: Partial<Record<keyof typeof magics, LongItem[]>> = {};
   info!: GameDocument;
   /**
    * Конструктор обьекта игры
@@ -577,7 +578,7 @@ export default class Game {
    * @param player обьект игрока
    */
   sendStatus(player: Player): void {
-    const getEnemyString = (p: Player) => `\t👤 ${p.nick} (${profs[p.prof].icon}${p.lvl}) ❤️${p.getStatus().hp}`;
+    const getEnemyString = (p: Player) => `\t👤 ${p.nick} (${Profs.profsData[p.prof].icon}${p.lvl}) ❤️${p.getStatus().hp}`;
 
     const [, withoutClan, byClan] = this.partitionAliveByClan;
 
@@ -594,9 +595,9 @@ export default class Game {
     const allies = team.map((p) => {
       const status = p.getFullStatus();
       if (p.prof === 'l' || p.prof === 'w') {
-        return `\t👤 ${p.nick} (${profs[p.prof].icon}${p.lvl}) ❤️${status.hp} 🔋${status.en}`;
+        return `\t👤 ${p.nick} (${Profs.profsData[p.prof].icon}${p.lvl}) ❤️${status.hp} 🔋${status.en}`;
       }
-      return `\t👤 ${p.nick} (${profs[p.prof].icon}${p.lvl}) ❤️${status.hp}  \n\t💧${status.mp}  🔋${status.en}`;
+      return `\t👤 ${p.nick} (${Profs.profsData[p.prof].icon}${p.lvl}) ❤️${status.hp}  \n\t💧${status.mp}  🔋${status.en}`;
     });
 
     const enemiesWithoutClan = withoutClan.map(getEnemyString);

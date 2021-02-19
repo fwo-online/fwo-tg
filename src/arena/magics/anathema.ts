@@ -4,7 +4,7 @@ import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 import type { LongItem } from '../Constuructors/LongMagicConstructor';
 import arena from '../index';
 
-type LongActionsEntry = [magic: keyof typeof arena.magics, item?: LongItem[]]
+type LongActionsEntry = [magic: string, item?: LongItem[]]
 /**
  * Экзорцизм
  * Основное описание магии общее требовани есть в конструкторе

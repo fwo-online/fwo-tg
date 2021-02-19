@@ -1,18 +1,18 @@
 import mongoose, {
   Schema, Document, Model, DocumentDefinition,
 } from 'mongoose';
-import type { Prof } from '../data/profs';
+import type { Profs, Harks } from '../data';
 import type { ClanDocument } from './clan';
 import type { InventoryDocument } from './inventory';
-import type { Hark } from './item';
+// import type { Hark } from '../data/harks';
 
 export interface CharDocument extends Document {
   tgId: number;
   nickname: string;
   birthday: Date;
-  prof: Prof;
+  prof: Profs.Prof;
   exp: number;
-  harks: Hark;
+  harks: Harks.HarksLvl;
   statistics: {
     games: number;
     kills: number;
@@ -31,7 +31,7 @@ export interface CharDocument extends Document {
   skills?: Record<string, number>
   bonus: number;
   clan?: ClanDocument;
-  penalty?: [{
+  penalty: [{
     reason: string;
     date: Date;
   }];
@@ -56,7 +56,7 @@ export class CharDocument {
 
 export type Char = DocumentDefinition<CharDocument>
 
-const character = new Schema({
+const character = new Schema<CharDocument, CharModel>({
   tgId: {
     type: Number, required: true,
   },

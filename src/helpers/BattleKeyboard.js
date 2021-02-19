@@ -61,7 +61,7 @@ class BattleKeyboard {
    * @private
    */
   setRepeatButton() {
-    return [Markup.callbackButton(
+    return [Markup.button.callback(
       '🔁 Повторить',
       'action_repeat',
       this.player.proc !== 100
@@ -74,7 +74,7 @@ class BattleKeyboard {
    * @private
    */
   setResetButton() {
-    return [Markup.callbackButton(
+    return [Markup.button.callback(
       '↩️ Очистить заказ',
       'action_reset',
       this.player.proc === 100,
@@ -121,7 +121,7 @@ class BattleKeyboard {
   render() {
     return [...this.keyboard
       .map((action) => {
-        const button = (text) => [Markup.callbackButton(text, `action_${action.name}`, this.player.proc === 0)];
+        const button = (text) => [Markup.button.callback(text, `action_${action.name}`, this.player.proc === 0)];
 
         if (action instanceof Skill) {
           const skillLvl = this.player.skills[action.name] - 1;

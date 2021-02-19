@@ -1,16 +1,16 @@
-const { profs } = require('../../data/profs');
+import { Profs } from '../../data';
 
-module.exports = {
+export const messages = {
   enter: `Здравствуй, сраный путник. Я вижу ты здесь впервые.
     Бла бла бла.Вот кнопка, чтобы создать персонажа.`,
   create: 'Странные упыри ползут со всех сторон, нам нужны бойцы, кем ты желаешь стать в этом мире?',
-  select: (prof) => {
-    const { name, descr } = profs[prof];
+  select: (prof: Profs.Prof): string => {
+    const { name, descr } = Profs.profsData[prof];
 
     return `Ты выбрал класс ${name}.
-    ${name} – ${descr}.
-    Выбрать или вернуться назад?`;
+${name} – ${descr}.
+
+Введи ник для подтверждения выбора`;
   },
-  selectDone: 'Отлично',
   back: 'Думаешь лучше попробовать кем то другим?',
 };

@@ -1,11 +1,11 @@
 import _ from 'lodash';
-import type { Hark } from '../models/item';
+import type { Harks } from '../data';
 import { floatNumber } from '../utils/floatNumber';
 import type Char from './CharacterService';
 
-type StatsServiceArgs = Char['def'] & Hark;
+type StatsServiceArgs = Char['def'] & Harks.HarksLvl;
 
-type Stats = StatsServiceArgs & {
+export type Stats = StatsServiceArgs & {
   hp: number;
   mp: number;
   en: number;
@@ -91,11 +91,11 @@ export default class StatsService {
     }
     switch (type) {
       case 'up':
-        // @ts-expect-error @deplecated
+        // @ts-expect-error @deprecated
         this.inRound[atr] = floatNumber(oldValue + val);
         break;
       case 'down':
-        // @ts-expect-error @deplecated
+        // @ts-expect-error @deprecated
         this.inRound[atr] = floatNumber(oldValue - val);
         break;
       case 'set':

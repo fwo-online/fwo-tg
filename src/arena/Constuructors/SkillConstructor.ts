@@ -1,4 +1,4 @@
-import type { ProfListLvl } from '../../data/profs';
+import type { Profs } from '../../data';
 import type Game from '../GameService';
 import MiscService from '../MiscService';
 import type Player from '../PlayerService';
@@ -22,7 +22,7 @@ interface SkillArgs {
   aoeType: AOEType;
   chance: number[];
   effect: number[];
-  profList: ProfListLvl;
+  profList: Profs.ProfsLvl;
   bonusCost: number[];
 }
 

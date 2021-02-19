@@ -58,7 +58,7 @@ export abstract class LongDmgMagic extends DmgMagic {
     };
     try {
       game.longActions[this.name] ??= [];
-      this.buff = game.longActions[this.name];
+      this.buff = game.longActions[this.name] ?? [];
       this.getCost(initiator);
       this.checkPreAffects(initiator, target, game);
       this.isblurredMind(); // проверка не запудрило
