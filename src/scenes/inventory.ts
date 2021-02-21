@@ -50,16 +50,14 @@ inventoryScene.action(/itemInfo(?=_)/, async (ctx) => {
   ctx.editMessageText(
     `${itemDescription}`,
     {
-      parse_mode: 'Markdown',
-      reply_markup: {
-        inline_keyboard: [
-          [
-            itemAction,
-            Markup.button.callback('Продать', `sellConfirm_${itemId}`),
-            Markup.button.callback('Назад', 'back'),
-          ],
+      ...Markup.inlineKeyboard([
+        [
+          itemAction,
+          Markup.button.callback('Продать', `sellConfirm_${itemId}`),
+          Markup.button.callback('Назад', 'back'),
         ],
-      },
+      ]),
+      parse_mode: 'Markdown',
     },
   );
 });
@@ -109,15 +107,13 @@ inventoryScene.action(/sellConfirm(?=_)/, (ctx) => {
   ctx.editMessageText(
     `Вы действительно хотите продать _${name}_ (${price / 2} 💰)?`,
     {
-      parse_mode: 'Markdown',
-      reply_markup: {
-        inline_keyboard: [
-          [
-            Markup.button.callback('Да', `sell_${itemId}`),
-            Markup.button.callback('Нет', `itemInfo_${itemId}`),
-          ],
+      ...Markup.inlineKeyboard([
+        [
+          Markup.button.callback('Да', `sell_${itemId}`),
+          Markup.button.callback('Нет', `itemInfo_${itemId}`),
         ],
-      },
+      ]),
+      parse_mode: 'Markdown',
     },
   );
 });

@@ -47,12 +47,10 @@ harkScene.action(/info(?=_)/, (ctx) => {
   ctx.editMessageText(
     Harks.harksData[hark].descr,
     {
+      ...Markup.inlineKeyboard([
+        [Markup.button.callback('Назад', 'back')],
+      ]),
       parse_mode: 'Markdown',
-      reply_markup: {
-        inline_keyboard: [
-          [Markup.button.callback('Назад', 'back')],
-        ],
-      },
     },
   );
 });
@@ -104,12 +102,10 @@ harkScene.action('def_harks', (ctx) => {
   ctx.editMessageText(
     message,
     {
+      ...Markup.inlineKeyboard([
+        [Markup.button.callback('Назад', 'back')],
+      ]),
       parse_mode: 'Markdown',
-      reply_markup: {
-        inline_keyboard: [
-          [Markup.button.callback('Назад', 'back')],
-        ],
-      },
     },
   );
 });

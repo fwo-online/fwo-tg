@@ -54,16 +54,14 @@ magicScene.action(/magics|learn(?=_)/, async (ctx) => {
     `Известные магии. Нажми на магию, чтобы узнать о ней больше.
 ${ctx.session.character.lvl === 1 ? `Стоимость изучения магии *1💡*(${ctx.session.character.bonus}💡)` : ''}`,
     {
-      parse_mode: 'Markdown',
-      reply_markup: {
-        inline_keyboard: [
-          ...getMagicButtons(ctx.session.character),
-          [
-            Markup.button.callback('Учить', ctx.session.character.lvl === 1 ? 'learn_1' : 'select_lvl'),
-            Markup.button.callback('В профиль', 'back'),
-          ],
+      ...Markup.inlineKeyboard([
+        ...getMagicButtons(ctx.session.character),
+        [
+          Markup.button.callback('Учить', ctx.session.character.lvl === 1 ? 'learn_1' : 'select_lvl'),
+          Markup.button.callback('В профиль', 'back'),
         ],
-      },
+      ]),
+      parse_mode: 'Markdown',
     },
   );
 });
@@ -74,15 +72,13 @@ magicScene.action('select_lvl', (ctx) => {
   ctx.editMessageText(
     `Выбери уровень изучаемой магии. Стоимость изучения равна уровню магии (*${ctx.session.character.bonus}💡*)`,
     {
-      parse_mode: 'Markdown',
-      reply_markup: {
-        inline_keyboard: [
-          getLvlButtons(lvl),
-          [
-            Markup.button.callback('Назад', 'magics'),
-          ],
+      ...Markup.inlineKeyboard([
+        getLvlButtons(lvl),
+        [
+          Markup.button.callback('Назад', 'magics'),
         ],
-      },
+      ]),
+      parse_mode: 'Markdown',
     },
   );
 });

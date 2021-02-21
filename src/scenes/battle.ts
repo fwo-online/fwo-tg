@@ -131,10 +131,8 @@ battleScene.action(/action(?=_)/, (ctx) => {
     ctx.editMessageText(
       message,
       {
+        ...Markup.inlineKeyboard(keyboard),
         parse_mode: 'Markdown',
-        reply_markup: {
-          inline_keyboard: keyboard,
-        },
       },
     );
   });
@@ -151,10 +149,8 @@ battleScene.action(/^([^_]+)_([^_]+)$/, (ctx) => {
     ctx.editMessageText(
       message,
       {
+        ...Markup.inlineKeyboard(keyboard),
         parse_mode: 'Markdown',
-        reply_markup: {
-          inline_keyboard: keyboard,
-        },
       },
     );
   });
@@ -170,13 +166,13 @@ battleScene.action(/^([^_]+)_([^_]+)_(\d{1,2}|100)$/, (ctx) => {
     const { message, keyboard } = BattleService.handlePercent(
       id, currentGame, action, target, Number(proc),
     );
+    // console.log()
     ctx.editMessageText(
       message,
+
       {
+        ...Markup.inlineKeyboard(keyboard),
         parse_mode: 'Markdown',
-        reply_markup: {
-          inline_keyboard: keyboard,
-        },
       },
     );
   });
