@@ -1,5 +1,5 @@
 const CharacterService = require('../arena/CharacterService');
-const { profs } = require('../data/profs');
+const { profsData } = require('../data/profs');
 const db = require('./dataBase');
 
 module.exports = {
@@ -24,15 +24,15 @@ module.exports = {
     @param {import('../data/profs').Prof} prof id чара
   */
   async regChar(tgId, prof, nickname, sex) {
-    if (!profs[prof]) throw new Error('prof error');
+    if (!profsData[prof]) throw new Error('prof error');
     // eslint-disable-next-line no-return-await
     return await db.char.create({
       prof,
       sex,
       tgId,
       nickname,
-      harks: profs[prof].hark,
-      magics: profs[prof].mag,
+      harks: profsData[prof].hark,
+      magics: profsData[prof].mag,
     });
   },
   /*
