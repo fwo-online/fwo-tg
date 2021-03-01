@@ -4,8 +4,7 @@ import mongoose, {
 } from 'mongoose';
 import arena from '../arena';
 import config from '../arena/config';
-import type { Resists, Chance, Statical } from '../arena/PlayerService';
-import { Harks, Collections, Profs } from '../data';
+import { Collections, Profs } from '../data';
 import { CharModel, CharDocument } from './character';
 import {
   ItemModel, ParseAttrItem, Item,
@@ -155,7 +154,7 @@ export class InventoryDocument {
     this: InventoryModel,
     charId: string,
     itemId: string,
-  ): Promise<void> {
+  ): Promise<unknown> {
     console.log('PUT ON ITEM', charId, itemId);
     return this.updateOne({
       owner: charId,
@@ -176,7 +175,7 @@ export class InventoryDocument {
     this: InventoryModel,
     charId: string,
     itemId: string,
-  ): Promise<void> {
+  ): Promise<unknown> {
     return this.updateOne({
       owner: charId,
       _id: itemId,
