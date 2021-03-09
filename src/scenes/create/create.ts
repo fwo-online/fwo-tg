@@ -22,10 +22,8 @@ async function validNickname(nickname: string) {
     throw new Error('Слишком длинный. Попробуй короче');
   } else if (trimNickname.length < 3) {
     throw new Error('Напрягись, ещё пару символов!');
-  } else if (trimNickname.charAt(0) === '/') {
-    throw new Error('Запрещено начинать ник с "/" ');
-  } else if (trimNickname.includes('_')) {
-    throw new Error('Запрещено использовать "_" в нике');
+  } else if (/[^a-zA-Zа-яА-ЯёЁ0-9-]/.test(trimNickname)) {
+    throw new Error('Можно использовать только буквы, числа и "-"');
   }
 
   const resp = await loginHelper.checkNick(trimNickname);
