@@ -53,22 +53,19 @@ export const itemType = (type: string, char: Char): ExtraEditMessageText => Mark
 );
 
 export const itemInfo = (code: string): ExtraEditMessageText => ({
-  parse_mode: 'Markdown',
-  reply_markup: {
-
-    inline_keyboard: [
-      [
-        Markup.button.callback(
-          'Купить',
-          `buy_${code}`,
-        ),
-        Markup.button.callback(
-          'Назад',
-          `itemType_${arena.items[code].wear}`,
-        ),
-      ],
+  ...Markup.inlineKeyboard([
+    [
+      Markup.button.callback(
+        'Купить',
+        `buy_${code}`,
+      ),
+      Markup.button.callback(
+        'Назад',
+        `itemType_${arena.items[code].wear}`,
+      ),
     ],
-  },
+  ]),
+  parse_mode: 'Markdown',
 });
 
 export const buy = (code: string): ExtraEditMessageText => Markup.inlineKeyboard([

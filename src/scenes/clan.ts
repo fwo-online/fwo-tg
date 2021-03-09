@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { Scenes, Markup } from 'telegraf';
 import arena from '../arena';
@@ -146,12 +147,10 @@ clanScene.action('players_list', async (ctx) => {
     `Список участников:
 ${list.join('\n')}`,
     {
+      ...Markup.inlineKeyboard([
+        [Markup.button.callback('Назад', 'back')],
+      ]),
       parse_mode: 'Markdown',
-      reply_markup: {
-        inline_keyboard: [
-          [Markup.button.callback('Назад', 'back')],
-        ],
-      },
     },
   );
 });
@@ -183,13 +182,11 @@ clanScene.action(/requests_list|(accept|reject)(?=_)/, async (ctx) => {
   ctx.editMessageText(
     'Список заявок:',
     {
+      ...Markup.inlineKeyboard([
+        ...list,
+        [Markup.button.callback('Назад', 'back')],
+      ]),
       parse_mode: 'Markdown',
-      reply_markup: {
-        inline_keyboard: [
-          ...list,
-          [Markup.button.callback('Назад', 'back')],
-        ],
-      },
     },
   );
 });
@@ -209,13 +206,11 @@ clanScene.action(/clanlist|request(?=_)/, async (ctx) => {
   ctx.editMessageText(
     'Список доступных кланов:',
     {
+      ...Markup.inlineKeyboard([
+        ...list,
+        [Markup.button.callback('Назад', 'back')],
+      ]),
       parse_mode: 'Markdown',
-      reply_markup: {
-        inline_keyboard: [
-          ...list,
-          [Markup.button.callback('Назад', 'back')],
-        ],
-      },
     },
   );
 });
