@@ -1,8 +1,10 @@
 import { floatNumber } from '../../utils/floatNumber';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
+import type { SuccessArgs } from '../BattleLog';
 import type Player from '../PlayerService';
+import type { HealMagicNext } from '../Constuructors/HealMagicConstructor';
 
-export class Heal extends CommonMagic {
+export class HealMagic extends CommonMagic {
   status = {
     exp: 0,
     effect: 0,
@@ -22,5 +24,20 @@ export class Heal extends CommonMagic {
   getExp(initiator: Player): void {
     this.status.exp = Math.round(this.status.effect * 10 * initiator.proc);
     initiator.stats.mode('up', 'exp', this.status.exp);
+  }
+  next(): void {
+    const { target, initiator } = this.params;
+    const { battleLog } = this.params.game;
+    const args: HealMagicNext = {
+      exp: this.status.exp,
+      action: this.displayName,
+      actionType: 'heal-magic',
+      target: target.nick,
+      hp: target.stats.val('hp'),
+      initiator: initiator.nick,
+      effect: this.status.effect,
+      msg: this.customMessage?.bind(this),
+    }
+    battleLog.success(args);
   }
 }

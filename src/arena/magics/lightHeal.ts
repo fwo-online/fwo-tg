@@ -1,9 +1,8 @@
-import { Heal } from './heal';
+import { HealMagic } from './heal';
 import { bold, italic } from '../../utils/formatString';
-import type { SuccessArgs } from '../BattleLog';
-import type { HealArgs, HealNext } from '../Constuructors/HealMagicConstructor';
+import type { HealNext } from '../Constuructors/HealMagicConstructor';
 
-class LightHeal extends Heal {
+class LightHeal extends HealMagic {
   constructor() {
     super({
       name: 'lightHeal',
@@ -23,7 +22,7 @@ class LightHeal extends Heal {
   }
   customMessage(args: HealNext) {
     const { initiator, target, effect } = args;
-    return `${bold(initiator)} применил ${italic(this.displayName)} на ${bold(target)} излечив его на${bold('' + effect)}`;
+    return `${bold(initiator)} применил ${italic(this.displayName)} на ${bold(target)} излечив его на ${bold('' + effect)}`;
   }
 }
 
