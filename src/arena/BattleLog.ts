@@ -137,8 +137,11 @@ export class BattleLog extends ee {
         const damageType = icons.damageType[args.dmgType];
         return expBrackets(`${damageType} 💔-${args.dmg}/${args.hp} 📖${args.exp}`);
       }
+      case 'heal-magic': {
+        return expBrackets(`❤️+${args.effect}/${args.hp} 📖${args.exp}`);
+      }
       case 'heal':
-      // case 'post-heal':
+        // case 'post-heal':
         return expBrackets(args.expArr.map(({ name, exp, val }) => `${name}: 💖${val} 📖${exp}`).join(', '));
       case 'phys':
         return expBrackets(`💔-${args.dmg}/${args.hp} 📖${args.exp}`);
@@ -177,7 +180,7 @@ export class BattleLog extends ee {
         data = `*${msgObj.initiator}* сотворил _${msgObj.action}_ на *${msgObj.target}* нанеся ${msgObj.dmg}`;
         break;
       case 'magic':
-      // case 'heal':
+        // case 'heal':
         data = `*${msgObj.initiator}* использовав _${msgObj.action}_ на *${msgObj.target}* с эффектом ${msgObj.effect}`;
         break;
       default:

@@ -1,7 +1,7 @@
 import type { Item } from '../../models/item';
 import type { SuccessArgs } from '../BattleLog';
 import type { DmgMagicNext } from './DmgMagicConstructor';
-import type { HealNext } from './HealMagicConstructor';
+import type { HealMagicNext, HealNext } from './HealMagicConstructor';
 import type { LongDmgMagicNext } from './LongDmgMagicConstructor';
 import type { LongMagicNext } from './LongMagicConstructor';
 import type { MagicNext } from './MagicConstructor';
@@ -74,6 +74,7 @@ export type NextArgs =
   LongMagicNext |
   SkillNext |
   PhysNext |
+  HealMagicNext |
   HealNext;
 
 export type ActionType = NextArgs['actionType'];

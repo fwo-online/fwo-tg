@@ -17,6 +17,13 @@ export type HealNext = Omit<BaseNext, 'exp'> & {
   expArr: ExpArr;
 }
 
+export type HealMagicNext = Omit<BaseNext, 'exp'> & {
+  actionType: 'heal-magic';
+  effect: number;
+  exp: number;
+  hp: number;
+}
+
 export interface HealArgs {
   name: string;
   displayName: string;
