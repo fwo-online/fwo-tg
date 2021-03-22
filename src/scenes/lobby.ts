@@ -51,3 +51,7 @@ lobby.hears('☸ Настройки', (ctx) => {
 lobby.hears('🏰 Клан', (ctx) => {
   ctx.scene.enter('clan');
 });
+
+lobby.hears('❓ Помощь', (ctx) => {
+  ctx.reply('https://telegra.ph/Fight-Wold-Online-Help-11-05')
+})
