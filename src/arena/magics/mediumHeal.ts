@@ -25,3 +25,4 @@ class MediumHeal extends HealMagic {
     return `${bold(initiator)} применил ${italic(this.displayName)} на ${bold(target)} излечив его на ${bold('' + effect)}`;
   }
 };
+export default new MediumHeal();

@@ -2,7 +2,7 @@ import { HealMagic } from './heal';
 import { bold, italic } from '../../utils/formatString';
 import type { HealNext } from '../Constuructors/HealMagicConstructor';
 
-class MediumHeal extends HealMagic {
+class StrongHeal extends HealMagic {
   constructor() {
     super({
       name: 'strongHeal',
@@ -25,3 +25,4 @@ class MediumHeal extends HealMagic {
     return `${bold(initiator)} применил ${italic(this.displayName)} на ${bold(target)} излечив его на ${bold('' + effect)}`;
   }
 };
+export default new StrongHeal();
