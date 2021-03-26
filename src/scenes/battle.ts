@@ -22,11 +22,10 @@ const catchOrderError = (ctx: BotContext, orderFn: OrderFn) => {
     orderFn(ctx);
   } catch (e) {
     if (e instanceof OrderError) {
-      const { answerCbQuery, session, editMessageText } = ctx;
       ctx.answerCbQuery(e.message);
-      const { currentGame, id } = session.character;
+      const { currentGame, id } = ctx.session.character;
       const { message, keyboard } = BattleService.getDefaultMessage(id, currentGame);
-      editMessageText(
+      ctx.editMessageText(
         message,
         {
           parse_mode: 'Markdown',
