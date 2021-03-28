@@ -98,7 +98,7 @@ battleScene.action('search', async (ctx) => {
       ]),
     );
     await channelHelper.broadcast(
-      `Игрок ${clan ? `\\[${clan.name}]` : ''} *${nickname}* (${Profs.profsData[prof].icon}${lvl}) начал поиск игры`,
+      `Игрок ${clan ? `\\[${clan.name}] ` : ''}*${nickname}* (${Profs.profsData[prof].icon}${lvl}) начал поиск игры`,
     );
   }
 });
