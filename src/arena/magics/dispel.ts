@@ -2,6 +2,7 @@ import { bold } from '../../utils/formatString';
 import type { SuccessArgs } from '../BattleLog';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 import type { LongItem } from '../Constuructors/LongMagicConstructor';
+import _ from 'lodash';
 
 /**
  * Снятие магии

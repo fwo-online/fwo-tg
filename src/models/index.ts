@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
 
+// MONGO - полный mongo uri:
+// "mongodb://user:password@db:27017/fwo?retryWrites=true&w=majority&authSource=admin 
 mongoose.connect(
-  'mongodb://root:fworootpassword@db:27017/fwo?retryWrites=true&w=majority&authSource=admin',
+  process.env.MONGO,
   {
     useNewUrlParser: true,
     useFindAndModify: false,
