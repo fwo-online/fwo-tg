@@ -91,20 +91,18 @@ skillsScene.action(/info(?=_)/, (ctx) => {
   );
 });
 
-skillsScene.action(/learn(?=_)/, async ({
-  editMessageText, answerCbQuery, session, match,
-}) => {
-  const [, skill] = match.input.split('_') as [string, SkillsNames];
+skillsScene.action(/learn(?=_)/, async (ctx) => {
+  const [, skill] = ctx.match.input.split('_') as [string, SkillsNames];
   const { displayName } = SkillService.skills[skill];
   try {
-    session.character = await SkillService.learn(session.character, skill);
+    ctx.session.character = await SkillService.learn(ctx.session.character, skill);
 
-    answerCbQuery(`Изучено умение ${displayName}`);
-    editMessageText(
-      SkillService.skillDescription(skill, session.character),
+    ctx.answerCbQuery(`Изучено умение ${displayName}`);
+    ctx.editMessageText(
+      SkillService.skillDescription(skill, ctx.session.character),
       Markup.inlineKeyboard([
         [Markup.button.callback(
-          `${session.character.skills[skill] ? 'Повысить уровень' : 'Учить'}`,
+          `${ctx.session.character.skills[skill] ? 'Повысить уровень' : 'Учить'}`,
           `learn_${skill}`,
         )],
         [Markup.button.callback(
@@ -115,7 +113,7 @@ skillsScene.action(/learn(?=_)/, async ({
     );
   } catch (e) {
     if (e instanceof ValidationError) {
-      answerCbQuery(e.message);
+      ctx.answerCbQuery(e.message);
     } else {
       throw e;
     }
