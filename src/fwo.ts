@@ -11,7 +11,7 @@ import * as middlewares from './middlewares';
 import db from './models';
 import { ItemModel } from './models/item';
 import { stage } from './scenes/stage';
-import { http } from 'http';
+import * as http from 'http';
 
 interface BotSession extends Scenes.SceneSession {
   character: Char;
