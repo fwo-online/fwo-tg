@@ -62,5 +62,5 @@ const server = http.createServer((req, res) => {
     data: 'Hello FightWorld!'
   }));
 });
-
-server.listen(80);
+const PORT = process.env.PORT || 8080;
+server.listen({PORT});
