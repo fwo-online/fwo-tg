@@ -1,0 +1,19 @@
+name: production
+
+on:
+  release:
+    types: [published, created, edited]
+
+  workflow_dispatch:
+    inputs:
+      server:
+        description: 'prod server for deployment'
+        required: true
+        default: 'fog'
+
+jobs:
+  remote-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Deploy on: ${{ github.event.inputs.name }}!"

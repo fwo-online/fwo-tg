@@ -11,6 +11,7 @@ import * as middlewares from './middlewares';
 import db from './models';
 import { ItemModel } from './models/item';
 import { stage } from './scenes/stage';
+import * as http from 'http';
 
 interface BotSession extends Scenes.SceneSession {
   character: Char;
@@ -52,3 +53,14 @@ bot.command('inventory', (ctx) => ctx.scene.enter('inventory'));
 // нужно поставить условие, что бы это поднималось только в деве
 // bot.startWebhook('/test', null, 3000);
 arena.bot = bot;
+
+// Heroku health check hack
+// Create a local server to receive data from
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({
+    data: 'Hello FightWorld!'
+  }));
+});
+const PORT = process.env.PORT || 8080;
+server.listen(PORT);
