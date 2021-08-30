@@ -1,10 +1,12 @@
 # FWO Telegram Game
 
-NodeJS реалзиация старой tcl IRC игры Arena
+NodeJS реалзиация старой tcl IRC игры Arena [TypeScript/JS]
 
 ```
  "Arena/v.xxx by Chpock (rusnet team); additions and modifications by: akhkharu, dismembered, murrena, eerie (new.arena team); optimization and modifications by: DoS (@WeNet), frippy (@IrcNet.RU), LightAngel (@IrcNet.RU)"
 ```
+Отдельное спасибо: @freaky за TCL версию и помощь в 2014 году
+
 ## Готово:
 
 1. Создание персонажей и интерфейс.
@@ -18,8 +20,14 @@ NodeJS реалзиация старой tcl IRC игры Arena
 
 ### BOT
 
-@FightWorldBot
+Prod: [@FightWorldBot](https://t.me/FightWorldBot)
+Test: [@fwo_bot](https://t.me/fwo_bot)
 
-http://t.me/FightWorldBot
+### Help
 
-Test: @fwo_bot
+В чате доступна кнопка "Помощь" с ссылкой на мануал: [Описание игры](https://telegra.ph/Fight-Wold-Online-Help-11-05)
+
+### Help Wanted
+
+Приветствуется помощь с проектом :)
+
