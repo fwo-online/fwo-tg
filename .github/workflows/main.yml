@@ -39,4 +39,6 @@ jobs:
     runs-on: ubuntu-latest
     need: deploy-to-test
     environment: prod
-    run: echo ${{ env.PROD_URL }}
+    steps:
+      - name: Deploy on production server
+        run: echo ${{ env.PROD_URL }}
