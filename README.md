@@ -23,6 +23,10 @@ NodeJS реалзиация старой tcl IRC игры Arena [TypeScript/JS]
 Prod: [@FightWorldBot](https://t.me/FightWorldBot)
 Test: [@fwo_bot](https://t.me/fwo_bot)
 
+### Screen
+
+![image](https://user-images.githubusercontent.com/5936445/131505977-9fd805c0-9a08-4fe3-97ca-f3cb242bfd12.png)
+
 ### Help
 
 В чате доступна кнопка "Помощь" с ссылкой на мануал: [Описание игры](https://telegra.ph/Fight-Wold-Online-Help-11-05)
