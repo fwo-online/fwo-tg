@@ -37,7 +37,7 @@ jobs:
           heroku_email: "cat@nxt.ru"
   deploy-to-prod:
     runs-on: ubuntu-latest
-    need: deploy-to-test
+    needs: deploy-to-test
     environment: prod
     steps:
       - name: Deploy on production server
