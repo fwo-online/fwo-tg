@@ -18,10 +18,25 @@ NodeJS реалзиация старой tcl IRC игры Arena [TypeScript/JS]
 7. 3 круга магий.
 8. Инвентарь и работа с ним.
 
-### BOT
 
-Prod: [@FightWorldBot](https://t.me/FightWorldBot)
-Test: [@fwo_bot](https://t.me/fwo_bot)
+## Разработка:
+
+1. Для запуска потребуется установленный Docker [(здесь)](https://docs.docker.com/engine/install/) и Docker Compose [(здесь)](https://docs.docker.com/compose/install/)
+2. Далее создаем Telegram Bot Token [(описание)](https://core.telegram.org/bots#3-how-do-i-create-a-bot) или [Ru версия](https://tlgrm.ru/docs/bots#kak-sozdat-bota)
+3. В корневой папке репозитория создаем файл: `.tg-token`
+4. Содержимое файла:
+    ```
+    BOT_TOKEN="<ваш_токен>"
+    ```
+### BOT:
+
+#### Prod: [@FightWorldBot](https://t.me/FightWorldBot)
+
+Основной бот на канале Arena
+
+#### Test: [@fwo_bot](https://t.me/fwo_bot)
+
+Для тестовых сборок
 
 ### Screen
 
