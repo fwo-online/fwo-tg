@@ -26,7 +26,8 @@ NodeJS реалзиация старой tcl IRC игры Arena [TypeScript/JS]
 3. В корневой папке репозитория создаем файл: `.tg-token`
 4. Содержимое файла:
     ```
-    BOT_TOKEN="<ваш_токен>"
+    BOT_TOKEN="<ваш_токен_от_botfather>"
+    BOT_CHATID="<telegram chat ID вашего канали или личного чата>"
     ```
 ### BOT:
 
