@@ -48,7 +48,7 @@ export abstract class Magic {
 
   /**
    * Создание магии
-   * @param magObj Обьект создаваемой магии
+   * @param magObj Объект создаваемой магии
    */
   constructor(magObj: MagicArgs) {
     Object.assign(this, magObj);
@@ -61,9 +61,9 @@ export abstract class Magic {
   /**
    * Общий метод каста магии
    * в нём выполняются общие функции для всех магий
-   * @param initiator Обьект кастера
-   * @param target Обьект цели
-   * @param game Обьект игры
+   * @param initiator Объект кастера
+   * @param target Объект цели
+   * @param game Объект игры
    */
   cast(initiator: Player, target: Player, game: Game): void {
     this.params = {
@@ -72,7 +72,7 @@ export abstract class Magic {
     try {
       this.getCost(initiator);
       this.checkPreAffects(initiator, target, game);
-      this.isblurredMind(); // проверка не запудрило
+      this.isBlurredMind(); // проверка не запудрило
       this.checkChance();
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.getExp(initiator);
@@ -90,7 +90,7 @@ export abstract class Magic {
    * Функция списывающая с кастера требуемое
    * кол-во единиц за использование магии
    * Если кастеру хватило mp/en продолжаем,если нет, то возвращаем false
-   * @param initiator Обьект кастера
+   * @param initiator Объект кастера
    */
   getCost(initiator: Player): void {
     const costValue = +initiator.stats.val(this.costType) - this.cost;
@@ -106,7 +106,7 @@ export abstract class Magic {
    * Функция списывающая с кастера требуемое
    * кол-во единиц за использование магии
    * Если кастеру хватило mp/en продолжаем,если нет, то возвращаем false
-   * @param initiator Обьект кастера
+   * @param initiator Объект кастера
    */
   getExp(initiator: Player): void {
     this.status.exp = Math.round(this.baseExp * initiator.proc);
@@ -114,7 +114,7 @@ export abstract class Magic {
   }
 
   /**
-   * Функция расчитывай размер эффекат от магии по стандартным дайсам
+   * Функция расчитывай размер эффект от магии по стандартным дайсам
    * @return dice число эффекта
    */
   effectVal(): number {
@@ -145,7 +145,7 @@ export abstract class Magic {
         // Боги помогают
         return true;
       }
-      // Магия остается феловой
+      // Магия остается фейловой
       throw this.breaks('CHANCE_FAIL');
     }
   }
@@ -195,17 +195,17 @@ export abstract class Magic {
   }
 
   /**
-   * @param initiator обьект персонажа
-   * @param target обьект персонажа
-   * @param game Обьект игры для доступа ко всему
+   * @param initiator объект персонажа
+   * @param target объект персонажа
+   * @param game Объект игры для доступа ко всему
    */
   abstract run(initiator: Player, target: Player, game: Game): void
 
   /**
-   * Проверка на запудревание мозгов
+   * Проверка на запудривание мозгов
    * @todo нужно вынести этот метод в orders или к Players Obj
    */
-  isblurredMind(): void {
+  isBlurredMind(): void {
     const { initiator, game } = this.params;
     if (initiator.flags.isGlitched) {
       this.params.target = game.playerArr.randomAlive;
@@ -213,10 +213,10 @@ export abstract class Magic {
   }
 
   /**
-   * Проверка на запудревание мозгов
-   * @param initiator обьект персонажаы
-   * @param _target обьект цели магии
-   * @param _game Обьект игры для доступа ко всему
+   * Проверка на запудривание мозгов
+   * @param initiator объект персонажа
+   * @param _target объект цели магии
+   * @param _game Объект игры для доступа ко всему
    * @todo нужно вынести этот метод в orders
    */
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
@@ -230,7 +230,7 @@ export abstract class Magic {
 
   /**
    * Проверка убита ли цель
-   * @todo после того как был нанесен урон любым dmg action, следует произовдить
+   * @todo после того как был нанесен урон любым dmg action, следует производить
    * общую проверку
    */
   checkTargetIsDead(): void {
@@ -243,7 +243,7 @@ export abstract class Magic {
 
   /**
    * @param msg строка остановки магии (причина)
-   * @return обьект остановки магии
+   * @return объект остановки магии
    */
   breaks(msg: BreaksMessage): Breaks {
     return {

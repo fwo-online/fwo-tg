@@ -16,14 +16,11 @@ function dbErr(e) {
 
 module.exports = {
   char: {
-    // eslint-disable-next-line consistent-return
     async find(query) {
       try {
         const x = await CharModel.findOne({ ...query, deleted: false });
         if (x) {
-          // eslint-disable-next-line no-underscore-dangle
           x._doc.id = x._id;
-          // eslint-disable-next-line no-underscore-dangle
           return x._doc;
         }
         return x;
@@ -36,7 +33,6 @@ module.exports = {
      * @param query
      * @return {Promise<any|{}>}
      */
-    // eslint-disable-next-line consistent-return
     async load(query) {
       try {
         const x = await CharModel.findOne({ ...query, deleted: false })
@@ -52,13 +48,12 @@ module.exports = {
     },
     async save(charObj) {
       try {
-        // @todo проверка на родителя и целостность обьекта
+        // @todo проверка на родителя и целостность объекта
         await CharModel.save(charObj);
       } catch (e) {
         dbErr(e);
       }
     },
-    // eslint-disable-next-line consistent-return
     async remove(tgId) {
       try {
         return await CharModel.findOneAndUpdate({ tgId, deleted: false },
@@ -67,7 +62,6 @@ module.exports = {
         dbErr(e);
       }
     },
-    // eslint-disable-next-line consistent-return
     /**
      * Создание персонажа
      * @param charObj
@@ -85,7 +79,6 @@ module.exports = {
     /*
     @param Nick string имя персонажа
      */
-    // eslint-disable-next-line consistent-return
     async findNick(nickname) {
       try {
         return await CharModel.findOne({ nickname, deleted: false });
@@ -93,7 +86,6 @@ module.exports = {
         dbErr(e);
       }
     },
-    // eslint-disable-next-line consistent-return
     async update(tgId, params) {
       try {
         return await CharModel.findOneAndUpdate({ tgId, deleted: false }, params);
@@ -103,12 +95,10 @@ module.exports = {
     },
   },
   game: {
-    // eslint-disable-next-line consistent-return
     async create(gameObject) {
       try {
         const x = new GameModel(gameObject);
         x.save();
-        // eslint-disable-next-line no-underscore-dangle
         return x._doc;
       } catch (e) {
         dbErr(e);
@@ -116,7 +106,6 @@ module.exports = {
     },
   },
   inventory: {
-    // eslint-disable-next-line consistent-return
     async getAllHarks(charId) {
       try {
         return await InventoryModel.fullHarks(charId);
@@ -124,7 +113,6 @@ module.exports = {
         dbErr(e);
       }
     },
-    // eslint-disable-next-line consistent-return
     async getItems(charId) {
       try {
         return await InventoryModel.getItems(charId);

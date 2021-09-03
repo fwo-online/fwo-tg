@@ -21,9 +21,9 @@ class Protect {
 
   /**
    * Каст протекта
-   * @param {player} initiator Обьект кастера
-   * @param {player} target Обьект цели
-   * @param {game} [game] Обьект игры
+   * @param {player} initiator Объект кастера
+   * @param {player} target Объект цели
+   * @param {game} [game] Объект игры
    */
   // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
   cast(initiator, target, _game) {

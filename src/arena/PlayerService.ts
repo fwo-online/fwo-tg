@@ -34,7 +34,7 @@ export interface Statical {
 }
 /**
  * PlayerService
- * @description Обьект игрока внутри боя ! Это не Character!
+ * @description Объект игрока внутри боя ! Это не Character!
  * @module Service/Player
  */
 
@@ -42,7 +42,7 @@ export interface Statical {
 // аналогично парсеру.
 
 /**
- * Обьект игрока со всеми плюшками
+ * Объект игрока со всеми плюшками
  */
 export default class Player {
   nick: string;
@@ -85,11 +85,11 @@ export default class Player {
       },
       castChance: 0,
       ...params.modifiers,
-    }; // Обьект
+    }; // Объект
     // модификаторов
-    this.resists = params.resists || {}; // Обьект резистов
+    this.resists = params.resists || {}; // Объект резистов
     this.skills = params.skills || {}; // Обькт доступных скилов
-    this.magics = params.magics || {}; // обьект изученых магий
+    this.magics = params.magics || {}; // объект изученых магий
     this.statical = params.statical || {}; // статически реген
     this.alive = true;
     this.proc = 100;
@@ -115,7 +115,7 @@ export default class Player {
   }
 
   /**
-   * Функция вернет обьект состояния Player
+   * Функция вернет объект состояния Player
    */
   getStatus(): Pick<Stats, 'hp'> {
     return {
@@ -124,7 +124,7 @@ export default class Player {
   }
 
   /**
-   * Функция вернет обьект состояния Player для отображения команде
+   * Функция вернет объект состояния Player для отображения команде
    */
   getFullStatus(): Pick<Stats, 'hp' | 'mp' | 'en'> {
     return {

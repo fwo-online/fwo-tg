@@ -49,8 +49,8 @@ export class RoundService extends ee {
   }
 
   /**
-   * @description Возвращает обьект с текущим состоянием раунда
-   * @return обьект последнего состояния рануда
+   * @description Возвращает объект с текущим состоянием раунда
+   * @return объект последнего состояния рануда
    */
   get lastRound(): LastRound {
     return {
@@ -119,7 +119,7 @@ export class RoundService extends ee {
 
   /**
    * goNext
-   * @description Функция изменения состояний обьекта
+   * @description Функция изменения состояний объекта
    * @param state строка нового состояния
    */
   nextState(state: RoundStatus = 'init'): void {

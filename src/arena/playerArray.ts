@@ -5,7 +5,7 @@ export default class PlayersArr {
   init: string[];
   arr: Player[] = [];
   /**
-   * Конструктор обьекта
+   * Конструктор объекта
    * @param arr [charId,charId,...]
    */
   constructor(arr: string[]) {
@@ -15,7 +15,7 @@ export default class PlayersArr {
   /**
    * round_json
    * @description JSON пользователей нужно хратить в определенном формате
-   * @return userjson Обьект на начало игры
+   * @return userjson Объект на начало игры
    * @todo переделать это, убрать внутрь конструктора playersArr
    */
   async roundJson(): Promise<Dictionary<Player>> {

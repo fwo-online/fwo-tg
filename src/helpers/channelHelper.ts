@@ -22,8 +22,8 @@ export async function broadcast(data: string, id: number | string = chatId): Pro
 
 /**
  * Обновляет статус игры у игроков
- * @param {string} data - текст отправляемого сообщения
- * @param {number} id - id чата
+ * @param data - текст отправляемого сообщения
+ * @param id - id чата
  */
 export async function updateStatus(data: string, id: number): Promise<void> {
   await arena.bot.telegram.editMessageText(

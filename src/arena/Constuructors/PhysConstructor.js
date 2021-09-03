@@ -10,7 +10,7 @@ const MiscService = require('../MiscService');
 /**
  * Конструктор физической атаки
  * (возможно физ скилы)
- * @todo Сейчас при осутствие защиты на целе, не учитывается статик протект(
+ * @todo Сейчас при отсутствие защиты на цели, не учитывается статик протект(
  * ???) Т.е если цель не защищается атака по ней на 95% удачна
  * */
 class PhysConstructor {
@@ -36,9 +36,9 @@ class PhysConstructor {
   /**
    * Основная функция выполнения. Из неё дёргаются все зависимости
    * Общий метод для скилов физической атаки
-   * @param {player} initiator Обьект кастера
-   * @param {player} target Обьект цели
-   * @param {game} game Обьект игры (не обязателен)
+   * @param {player} initiator Объект кастера
+   * @param {player} target Объект цели
+   * @param {game} game Объект игры (не обязателен)
    */
   cast(initiator, target, game) {
     this.params = {
@@ -48,7 +48,7 @@ class PhysConstructor {
     try {
       this.fitsCheck();
       this.checkPreAffects();
-      this.isblurredMind();
+      this.isBlurredMind();
       this.protectCheck();
       // тут должен идти просчет дефа
       this.checkPostEffect();
@@ -60,12 +60,12 @@ class PhysConstructor {
   }
 
   /**
-   * Проверка флагаов влияющих на физический урон
+   * Проверка флагов влияющих на физический урон
    */
   checkPreAffects() {
     const { initiator, target, game } = this.params;
     const iDex = initiator.stats.val('dex');
-    // Глабальная проверка не весит ли затмение на арене
+    // Глобальная проверка не весит ли затмение на арене
     if (game.round.flags.global.isEclipsed) throw this.breaks('ECLIPSE');
     const weapon = arena.items[initiator.weapon.code];
     const hasDodgeableItems = MiscService.weaponTypes[weapon.wtype].dodge;
@@ -78,11 +78,9 @@ class PhysConstructor {
       //  проверяем имеет ли цель достаточно dex для того что бы уклониться
 
       const at = floatNumber(Math.round(target.flags.isDodging / iDex));
-      // eslint-disable-next-line no-console
       console.log('Dodging: ', at);
       const r = MiscService.rndm('1d100');
       const c = Math.round(Math.sqrt(at) + (10 * at) + 5);
-      // eslint-disable-next-line no-console
       console.log('left:', c, ' right:', r, ' result:', c > r);
       if (c > r) throw this.breaks('DODGED');
     }
@@ -96,7 +94,7 @@ class PhysConstructor {
   }
 
   /**
-   * Проверка флагаов влияющих на физический урон
+   * Проверка флагов влияющих на физический урон
    */
   fitsCheck() {
     const { initiator } = this.params;
@@ -105,9 +103,9 @@ class PhysConstructor {
   }
 
   /**
-   * Проверка флагаов влияющих на выбор цели
+   * Проверка флагов влияющих на выбор цели
    */
-  isblurredMind() {
+  isBlurredMind() {
     const { initiator, game } = this.params;
     if (initiator.flags.isGlitched) {
       // Меняем цель внутри атаки на любого живого в игре
@@ -167,7 +165,7 @@ class PhysConstructor {
   }
 
   /**
-   * Функция агрегации данных после выполнениния действия
+   * Функция агрегации данных после выполннения действия
    */
   next(failMsg) {
     const { initiator, target } = this.params;
@@ -194,7 +192,7 @@ class PhysConstructor {
 
   /**
    * Проверка убита ли цель
-   * @todo после того как был нанесен урон любым dmg action, следует произовдить
+   * @todo после того как был нанесен урон любым dmg action, следует производить
    * общую проверку
    */
   checkTargetIsDead() {

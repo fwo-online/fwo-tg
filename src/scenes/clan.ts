@@ -71,11 +71,11 @@ clanScene.action(/^(lvlup|back|remove|leave)$/, async (ctx) => {
     ctx.editMessageText(
       'Сейчас ты не состоишь ни в одном клане',
       {
-        parse_mode: 'Markdown',
-        reply_markup: Markup.inlineKeyboard([
+        ...Markup.inlineKeyboard([
           Markup.button.callback('Создать клан', 'create'),
           Markup.button.callback('Вступить в клан', 'clanlist'),
         ]),
+        parse_mode: 'Markdown',
       },
     );
   } else {

@@ -61,7 +61,7 @@ export abstract class LongDmgMagic extends DmgMagic {
       this.buff = game.longActions[this.name] ?? [];
       this.getCost(initiator);
       this.checkPreAffects(initiator, target, game);
-      this.isblurredMind(); // проверка не запудрило
+      this.isBlurredMind(); // проверка не запудрило
       this.checkChance();
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.checkTargetIsDead();
@@ -76,7 +76,7 @@ export abstract class LongDmgMagic extends DmgMagic {
 
   /**
    * Кастыль для обработки длительной магии
-   * @param game обьект игры
+   * @param game объект игры
    * @todo hardcode =(
    * @todo возможно нужно вынести это в отдельный конструктор с которого будет
    * наследоваться вся логика "длительных" , сейча пока делаю так для mvp
@@ -86,7 +86,7 @@ export abstract class LongDmgMagic extends DmgMagic {
   castLong(game: Game): void {
     // делаю просто перебор по массиву, контроль лежащей здесь магии должен
     // осуществлять Game, т.е при смерти кастера или таргета, нужно вычищать,
-    // обьект longActions и удалять касты связанные с трупами
+    // объект longActions и удалять касты связанные с трупами
     const longArray = game.longActions[this.name];
     if (!longArray) return;
     // [ { initiator: 2, target: 1, duration: 1, round: 0, proc: 1 } ]
@@ -100,7 +100,7 @@ export abstract class LongDmgMagic extends DmgMagic {
         this.params = { initiator, target, game };
         this.params.initiator.proc = item.proc;
         this.checkPreAffects(initiator, target, game);
-        this.isblurredMind(); // проверка не запудрило
+        this.isBlurredMind(); // проверка не запудрило
         this.checkChance();
         this.runLong(initiator, target, game); // вызов кастомного обработчика
         this.getExp();
@@ -117,7 +117,7 @@ export abstract class LongDmgMagic extends DmgMagic {
   abstract runLong(initiator: Player, target: Player, game: Game): void
 
   /**
-   * Функция формирует обьект параметров длительной магии внутри Game, для
+   * Функция формирует объект параметров длительной магии внутри Game, для
    * текущего типа action
    * @param initiator  initiator
    * @param target  target

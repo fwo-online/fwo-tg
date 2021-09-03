@@ -35,8 +35,8 @@ export class ClanDocument {
   }
 
   /**
-   * Снимает золото из казны и повышает уровань
-   * @param {string} clanId
+   * Снимает золото из казны и повышает уровень
+   * @param clanId
    * @throws {ValidationError}
    */
   async levelUp(): Promise<this> {
