@@ -1,6 +1,6 @@
-import { HealMagic } from './heal';
 import { bold, italic } from '../../utils/formatString';
 import type { HealNext } from '../Constuructors/HealMagicConstructor';
+import { HealMagic } from './heal';
 
 class LightHeal extends HealMagic {
   constructor() {
@@ -18,11 +18,11 @@ class LightHeal extends HealMagic {
       chance: [100, 100, 100],
       effect: ['1d2', '1d2+1', '1d2+2'],
       profList: ['m', 'p'],
-    })
+    });
   }
   customMessage(args: HealNext) {
     const { initiator, target, effect } = args;
-    return `${bold(initiator)} применил ${italic(this.displayName)} на ${bold(target)} излечив его на ${bold('' + effect)}`;
+    return `${bold(initiator)} применил ${italic(this.displayName)} на ${bold(target)} излечив его на ${bold(`${effect}`)}`;
   }
 }
 

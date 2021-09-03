@@ -53,5 +53,5 @@ lobby.hears('🏰 Клан', (ctx) => {
 });
 
 lobby.hears('❓ Помощь', (ctx) => {
-  ctx.reply('https://telegra.ph/Fight-Wold-Online-Help-11-05')
-})
+  ctx.reply('https://telegra.ph/Fight-Wold-Online-Help-11-05');
+});

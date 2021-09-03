@@ -1,3 +1,4 @@
+import * as http from 'http';
 import {
   Telegraf, session, Context, Scenes,
 } from 'telegraf';
@@ -8,10 +9,9 @@ import * as magics from './arena/magics';
 import MM from './arena/MatchMakingService';
 import * as skills from './arena/skills';
 import * as middlewares from './middlewares';
-import db from './models';
+import { connect } from './models';
 import { ItemModel } from './models/item';
 import { stage } from './scenes/stage';
-import * as http from 'http';
 
 interface BotSession extends Scenes.SceneSession {
   character: Char;
@@ -23,10 +23,10 @@ export interface BotContext extends Context {
 
 export const bot = new Telegraf<BotContext>(process.env.BOT_TOKEN ?? '');
 // DB connection
-db.connection.on('open', async () => {
+connect(async () => {
   console.log('db online');
   await ItemModel.load();
-  bot.launch();
+  await bot.launch();
 });
 
 arena.mm = MM;
@@ -59,7 +59,7 @@ arena.bot = bot;
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({
-    data: 'Hello FightWorld!'
+    data: 'Hello FightWorld!',
   }));
 });
 const PORT = process.env.PORT || 8080;
