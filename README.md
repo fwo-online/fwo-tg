@@ -28,6 +28,7 @@ NodeJS реалзиация старой tcl IRC игры Arena [TypeScript/JS]
     ```
     BOT_TOKEN="<ваш_токен_от_botfather>"
     BOT_CHATID="<telegram chat ID вашего канали или личного чата>"
+5. Запускаем: docker-compose up -d
     ```
 ### BOT:
 
