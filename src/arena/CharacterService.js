@@ -28,7 +28,7 @@ const assignWithSum = (a, b) => _.assignWith(a, b, sum);
 /**
  * Конструктор персонажа
  * @todo сюда нужны будет get/set функции для intreface части
- * @todo Сейчас массив arena.player не является массивом обьектов Character,
+ * @todo Сейчас массив arena.player не является массивом объектов Character,
  * нужно переработать
  */
 /**
@@ -36,7 +36,6 @@ const assignWithSum = (a, b) => _.assignWith(a, b, sum);
  * @param {Char} charObj инстанс Char
  * @todo проверить что функция используется при загрузке игрока в игру
  */
-// eslint-disable-next-line no-unused-vars
 function getDynHarks(charObj) {
   const { harks } = charObj;
   const patk = (charObj.prof === 'l')
@@ -112,7 +111,7 @@ class Char {
   wasLvlUp = false;
   /**
    * Конструктор игрока
-   * @param {import ('../models/character').CharDocument} charObj обьект персонажа из базы
+   * @param {import ('../models/character').CharDocument} charObj объект персонажа из базы
    */
   constructor(charObj) {
     this.charObj = charObj;
@@ -139,12 +138,12 @@ class Char {
     return this.charObj.lvl;
   }
 
-  // Суммарный обьект характеристик + вещей.
+  // Суммарный объект характеристик + вещей.
   get def() {
     const dynHarks = getDynHarks(this);
     /**
     * Проблематика на подумать:
-    * характеристики внутри чара имеют имена patk/pdef и т.д, а обьект который
+    * характеристики внутри чара имеют имена patk/pdef и т.д, а объект который
     * был получен после возвращения updateHarkFromItems, имеет ключи типа:
     * atk/prt (models/item). Это не позволяет прозрачно проводить сложение.
     */
@@ -228,7 +227,7 @@ class Char {
     this.charObj.free = value;
   }
 
-  // Нужно помнить, что this.harks это суммарный обьект, с уже полученными от
+  // Нужно помнить, что this.harks это суммарный объект, с уже полученными от
   // вещей характеристиками.
   get harks() {
     const hark = { ...this.charObj.harks };
@@ -564,9 +563,9 @@ class Char {
   }
 
   /**
-   * Возвращает обьект игры по Id чара
+   * Возвращает объект игры по Id чара
    * @param {String} charId идентификатор чара;
-   * @return {this} Обьект игры
+   * @return {this} Объект игры
    * @todo нужно перенести это не в static а во внутрь экземпляра класса
    */
   static getGameFromCharId(charId) {
@@ -603,7 +602,6 @@ class Char {
    */
   async saveToDb() {
     try {
-      // eslint-disable-next-line no-console
       console.log('Saving char :: id', this.id);
       const {
         gold, exp, magics, bonus, items, skills, lvl, clan, free,
@@ -623,7 +621,6 @@ class Char {
         statistics: this.charObj.statistics,
       });
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error('Fail on CharSave:', e);
     }
   }

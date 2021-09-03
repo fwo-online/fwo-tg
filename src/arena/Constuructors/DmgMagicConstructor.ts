@@ -71,8 +71,8 @@ export abstract class DmgMagic extends Magic {
 
   /**
    * Магия прошла удачно
-   * @param initiator обьект персонажаы
-   * @param target обьект цели магии
+   * @param initiator объект персонажаы
+   * @param target объект цели магии
    * @todo тут нужен вывод требуемых параметров
    */
   next(): void {

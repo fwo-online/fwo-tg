@@ -41,8 +41,7 @@ const catchOrderError = (ctx: BotContext, orderFn: OrderFn) => {
 /**
  * Проверяет можно ли игроку начать поиск
  * Если сделано слишком много попыток за заданное время, возвращает false
- * @param {Object} character - объект персонажа
- * @return {boolean}
+ * @param character - объект персонажа
  */
 const checkCancelFindCount = (character) => {
   const time = Date.now();
@@ -194,7 +193,7 @@ battleScene.leave((ctx) => {
 });
 
 /**
- * Запус тестового боя
+ * Запуск тестового боя
  */
 battleScene.command('debug', async (ctx) => {
   // @todo сделать отдельный признак в базе

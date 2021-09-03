@@ -18,7 +18,6 @@ import {
  *
  */
 function getDefaultItem(prof: Profs.Prof) {
-  // eslint-disable-next-line no-console
   return config.defaultItems[prof] || console.log('no prof in getDefaultItem');
 }
 export interface InventoryDocument extends Document<string> {
@@ -35,11 +34,11 @@ export class InventoryDocument {
   /**
    * fullHarks
    *
-   * @desc Возвращает  суммарный обьект всех суммирующихся характеристик от
+   * @desc Возвращает  суммарный объект всех суммирующихся характеристик от
    * одетых вещей внутри инвентаря чара
    * @param charId Идентификатор чара чей inventory нужно пропарсить
    * @todo нужна фунция которая выбирает коды всех одеты вещей в инвентаре
-   * а затем суммирует все полученные данны в единый обьект.
+   * а затем суммирует все полученные данны в единый объект.
    */
   static async fullHarks(
     this: InventoryModel,
@@ -47,24 +46,24 @@ export class InventoryDocument {
   ): Promise<ParseAttrItem> {
     // берем из базы все надетые вещи
     const allItems = await this.getPutOned(charId);
-    // Складываем все характеристики от вещей в одоин общий обьект
+    // Складываем все характеристики от вещей в одоин общий объект
     return _.reduce(allItems, (ob, i) => {
       // берем характеристики вещи
       const f = ItemModel.getHarks(i.code);
-      // делаем слияние общего обьекта и обьекта вещи
+      // делаем слияние общего объекта и объекта вещи
       return _.assignInWith(ob, f, (objValue, srcValue) => {
         // Если в общем обтекте в этом ключе НЕ пустое значине
         if (!_.isEmpty(objValue) || _.isNumber(objValue)) {
-          // и если этот ключ обьекта является Обьектом
+          // и если этот ключ объекта является Объектом
           if (_.isObject(objValue)) {
-            // то складываем два этих обьекта
+            // то складываем два этих объекта
             _.assignInWith(objValue, srcValue, (o, s) => +o + +s);
             return objValue;
           }
-          // если ключ не является Обьектом, складываем значения
+          // если ключ не является Объектом, складываем значения
           return +objValue + +srcValue;
         }
-        // Если в общем обьекте пустое значение, то берем значение вещи
+        // Если в общем объекте пустое значение, то берем значение вещи
         return srcValue;
       });
     }, {} as ParseAttrItem);
@@ -88,7 +87,7 @@ export class InventoryDocument {
    * @description Функция добавления итема в инвентарь
    * @param charId Идентификатор чара
    * @param itemCode Код итема который следует добавить
-   * @return Обьект нового инветаря
+   * @return Объект нового инветаря
    */
   static async addItem(
     this: InventoryModel,
@@ -125,7 +124,7 @@ export class InventoryDocument {
    * Данная функция нужна для создания инвенторя в момент создания чара
    * т.к инветарь не связан на прямую и для его создания нужно сначала получить
    * ownerId чара.
-   * @param charObj обьект созданного чара
+   * @param charObj объект созданного чара
    * @return Item созданный итем
    */
   static async firstCreate(
@@ -184,7 +183,7 @@ export class InventoryDocument {
     });
   }
   /**
-   * Функция возвращает обьект ItemObj привязанному к персонажу
+   * Функция возвращает объект ItemObj привязанному к персонажу
    * @param itemId
    * @param charId
    */
@@ -216,7 +215,7 @@ export class InventoryDocument {
   }
 
   /**
-   * Функция возвращает массив всех обьектов относящихся к персонажу
+   * Функция возвращает массив всех объектов относящихся к персонажу
    * @param charId
    * @return массив обтектов персонажа
    */

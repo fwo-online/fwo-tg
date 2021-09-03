@@ -6,11 +6,6 @@ import type {
   BaseNext, Breaks, BreaksMessage, CustomMessage, ExpArr, OrderType,
 } from './types';
 
-/**
- * @typedef {import ('../PlayerService').default} player
- * @typedef {import ('../GameService').default} game
- */
-
 export type HealNext = Omit<BaseNext, 'exp'> & {
   actionType: 'heal';
   effect: number;
@@ -73,9 +68,9 @@ export abstract class Heal {
    * Основная функция выполнения. Из неё дёргаются все зависимости
    * Общий метод каста магии
    * в нём выполняются общие функции для всех магий
-   * @param {player} initiator Обьект кастера
-   * @param {player} target Обьект цели
-   * @param {game} game Обьект игры (не обязателен)
+   * @param initiator Объект кастера
+   * @param target Объект цели
+   * @param game Объект игры (не обязателен)
    */
   cast(initiator: Player, target: Player, game: Game): void {
     this.params = {
@@ -100,10 +95,9 @@ export abstract class Heal {
 
   /**
    * Функция выполняет проверку, является ли хил "воскресившим", т.е если
-   * цель до выпонения личения имела статус "isDead", а после хила имее хп > 0
+   * цель до выполнения лечения имела статус "isDead", а после хила имеет хп > 0
    * Значит накидываем хилеру 1 голды :)
    */
-  // eslint-disable-next-line class-methods-use-this
   // backToLife() {}
 
   /**

@@ -137,12 +137,12 @@ export function handleAction(charId: string, game: Game, action: string): Battle
   return targetMessage(charId, game, action);
 }
 /**
-   * Обработка выбранной цели (второй этап)
-   * @param charId
-   * @param game
-   * @param action
-   * @param target
-   */
+ * Обработка выбранной цели (второй этап)
+ * @param charId
+ * @param game
+ * @param action
+ * @param target
+ */
 // eslint-disable-next-line max-len
 export function handleTarget(charId: string, game: Game, action: string, target: string): BattleReply {
   const proc = arena.skills[action] ? arena.skills[action].proc : undefined;
@@ -156,13 +156,13 @@ export function handleTarget(charId: string, game: Game, action: string, target:
   return percentMessage(charId, game, action, target);
 }
 /**
-   * Обработка выбранных процентов (третий этап)
-   * @param charId
-   * @param game
-   * @param action
-   * @param target
-   * @param proc
-   */
+ * Обработка выбранных процентов (третий этап)
+ * @param charId
+ * @param game
+ * @param action
+ * @param target
+ * @param proc
+ */
 // eslint-disable-next-line max-len
 export function handlePercent(charId: string, game: Game, action: string, target: string, proc: number): BattleReply {
   game.orders.orderAction({
@@ -171,17 +171,17 @@ export function handlePercent(charId: string, game: Game, action: string, target
   return orderMessage(charId, game);
 }
 /**
-   * @param charId
-   * @param game
-   */
+ * @param charId
+ * @param game
+ */
 export function repeatOrder(charId: string, game: Game): BattleReply {
   game.orders.repeatLastOrder(charId);
   return orderMessage(charId, game);
 }
 /**
-   * @param {string} charId
-   * @param {Game} game
-   */
+ * @param charId
+ * @param game
+ */
 export function resetOrder(charId: string, game: Game): BattleReply {
   game.orders.resetOrdersForPlayer(charId);
   return orderMessage(charId, game);

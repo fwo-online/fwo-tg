@@ -23,7 +23,7 @@ export default class StatsService {
   public collect = { exp: 0, gold: 0 };
   /**
    * Конструктор класса stats
-   * @param defStat обьект параметров
+   * @param defStat объект параметров
    */
   constructor(private defStat: StatsServiceArgs) {
     this.refresh();
@@ -109,11 +109,9 @@ export default class StatsService {
         }
         break;
       default:
-        // eslint-disable-next-line no-console
         console.error('Stats mode type error', type);
         throw new Error('stat mode fail');
     }
-    // eslint-disable-next-line no-console
     console.log('new stat:', this.inRound[atr], 'atr', atr, 'val', val);
   }
 
@@ -121,7 +119,7 @@ export default class StatsService {
    * Функция обнуления состояние inRound Object
    */
   refresh(): void {
-    const oldData = _.cloneDeep(this.inRound ?? {}); // ссылаемся на внешний обьект
+    const oldData = _.cloneDeep(this.inRound ?? {}); // ссылаемся на внешний объект
     if (oldData.exp) {
       this.collect.exp += +oldData.exp;
     }

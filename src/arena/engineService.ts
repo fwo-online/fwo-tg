@@ -17,7 +17,6 @@ const STAGES = config.stages as Stages;
  * @param ordersArr
  */
 function sortOrders(ordersArr: Order[]): Record<string, Order[]> {
-  // eslint-disable-next-line no-return-assign, no-sequences
   const sortedOrder: Record<string, Order[]> = {};
   return ordersArr.reduce(
     // eslint-disable-next-line no-sequences,no-return-assign
@@ -27,8 +26,8 @@ function sortOrders(ordersArr: Order[]): Record<string, Order[]> {
 
 /**
  * @param ar массив строк
- * @param gameObj обьект игры
- * @return измененный обьет игры
+ * @param gameObj объект игры
+ * @return измененный объект игры
  */
 function runStage(ar: Stages, gameObj: Game) {
   const allActions = { ...ACTIONS };
@@ -37,7 +36,6 @@ function runStage(ar: Stages, gameObj: Game) {
     if (typeof x !== 'string') {
       runStage(x, gameObj);
     } else {
-      // eslint-disable-next-line no-console
       const act = allActions[x];
       console.log('stage run:', x);
       if (!act) return;
@@ -66,7 +64,7 @@ function runStage(ar: Stages, gameObj: Game) {
  */
 
 /**
- * @param gameObj Обьект игры
+ * @param gameObj Объект игры
 */
 export function engine(gameObj: Game): Game | void {
   try {

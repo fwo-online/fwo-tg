@@ -91,7 +91,6 @@ export class ItemDocument {
         const createdItems: Promise<ItemDocument>[] = [];
 
         const shopArr: Record<string, ItemDocument> = JSON.parse(shop);
-        // eslint-disable-next-line no-console
         console.log('File Loaded: ', Date.now() - timer1, 'ms');
 
         _.forEach(shopArr, async (o, code) => {
@@ -105,10 +104,8 @@ export class ItemDocument {
         arena.items = _.keyBy(items, 'code');
       }
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error(e);
     } finally {
-      // eslint-disable-next-line no-console
       console.log('Items loaded.T:', Date.now() - timer1, 'ms');
     }
   }

@@ -25,8 +25,7 @@ module.exports = {
   */
   async regChar(tgId, prof, nickname, sex) {
     if (!profsData[prof]) throw new Error('prof error');
-    // eslint-disable-next-line no-return-await
-    return await db.char.create({
+    return db.char.create({
       prof,
       sex,
       tgId,
@@ -45,24 +44,20 @@ module.exports = {
   },
   /**
    * @function
-   * @return {Promise<CharacterService>} обьект персонажа
+   * @return {Promise<CharacterService>} объект персонажа
    */
-  // eslint-disable-next-line consistent-return
   async getChar(tgId) {
     try {
       return await CharacterService.getCharacter(tgId);
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.log(e);
     }
   },
-  // eslint-disable-next-line consistent-return
   async saveHarks(tgId, params) {
     try {
       const resp = await db.char.update(tgId, params);
       return !!resp;
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.log(e);
     }
   },

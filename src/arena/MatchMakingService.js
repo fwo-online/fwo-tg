@@ -7,7 +7,7 @@ const arena = require('./index');
 /**
  * MatchMaking system
  * @module Service/MatchMaking
- * @description Класс обьекта MM, для сбора игр
+ * @description Класс объекта MM, для сбора игр
  * */
 
 /**
@@ -18,16 +18,16 @@ const arena = require('./index');
  */
 
 /**
- * Общий класс обьекта MatchMaking
+ * Общий класс объекта MatchMaking
  */
 class MatchMaking extends EventEmitter {
   /**
-   * Пустой конструктор, предполагается что сам обьект будет 1н
+   * Пустой конструктор, предполагается что сам объект будет 1н
    */
   constructor() {
     super();
     /** @type {QueueConstructor[]} */
-    this.allQueue = []; // обьект очередей ! < 10
+    this.allQueue = []; // объект очередей ! < 10
     /** @type {mmObj[]} */
     this.mmQueue = [];
     this.timerId = undefined;
@@ -41,7 +41,7 @@ class MatchMaking extends EventEmitter {
   }
 
   /**
-   * Удаление обьекта игрока в очередь поиска
+   * Удаление объекта игрока в очередь поиска
    * @param {String} charId id чара в поиске
    */
   pull(charId) {
@@ -50,14 +50,13 @@ class MatchMaking extends EventEmitter {
       this.mmQueue.splice(this.mmQueue.indexOf(obj), 1);
       this.main();
     }
-    // @todo убрать просле дебага
-    // eslint-disable-next-line no-console
+    // @todo убрать после дебага
     console.log('MM pull debug', this.mmQueue);
   }
 
   /**
-   * Добавление обьекта игрока в очередь поиска
-   * @param {mmObj} obj Обьект запроса поиска {charId,psr,startTime}
+   * Добавление объекта игрока в очередь поиска
+   * @param {mmObj} obj Объект запроса поиска {charId,psr,startTime}
    */
   push(obj) {
     this.mmQueue.push(obj);
@@ -105,7 +104,7 @@ class MatchMaking extends EventEmitter {
   }
 
   /**
-   * Основная функци работы с очередями
+   * Основная функции работы с очередями
    */
   main() {
     this.stop();

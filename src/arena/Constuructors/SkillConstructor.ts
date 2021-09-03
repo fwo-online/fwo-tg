@@ -54,7 +54,7 @@ export abstract class Skill {
    * Основная точка вхождения в выполнение скила
    * @param initiator инициатор
    * @param target цель
-   * @param game Game обьект игры
+   * @param game Game объект игры
    */
   cast(initiator: Player, target: Player, game: Game): void {
     this.params = {

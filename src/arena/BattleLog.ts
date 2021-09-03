@@ -23,7 +23,6 @@ type LogMessage = (SuccessArgs & { __success: true } | (FailArgs & { __success: 
  * уметь работать с i18n
  * сейчас (е) не обрабатывается, нужно обрабатывать только нужный тип Error
  * если это не BattleLog выброс, его нужно прокидывать дальше вверх
- * @return {string} ({type:String,message:String})
  */
 function csl(msgObj: FailArgs): string {
   const {
@@ -43,7 +42,7 @@ function csl(msgObj: FailArgs): string {
       en: '',
     },
     NO_ENERGY: {
-      ru: `Не хватило энерги для умения _${action}_`,
+      ru: `Не хватило энергии для умения _${action}_`,
       en: '',
     },
     SILENCED: {
@@ -100,7 +99,7 @@ function csl(msgObj: FailArgs): string {
     ru: 'Ошибка парсинга строки магии',
   };
   // @todo сейчас battleLog на стороне клиента не понимает типы магий, и
-  // просто отображает оплученную строку
+  // просто отображает полученную строку
   return text.ru;
 }
 
@@ -266,7 +265,7 @@ export class BattleLog extends ee {
 
   /**
    * Функция отправки сообщений в Game
-   * @param data обьект сообщения
+   * @param data объект сообщения
    */
   write(data: string): void {
     this.emit('BattleLog', data);

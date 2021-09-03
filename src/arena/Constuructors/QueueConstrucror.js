@@ -9,7 +9,7 @@ const { default: GameService } = require('../GameService');
  */
 
 /**
- * Конструктор обьекта очереди
+ * Конструктор объекта очереди
  */
 class QueueConstructor {
   /**
@@ -25,7 +25,7 @@ class QueueConstructor {
 
   /**
    * Добавление чара в предсобранную комнату для игры
-   * @param {mmObj} searcherObj Обьект чара начавшего поиск
+   * @param {mmObj} searcherObj Объект чара начавшего поиск
    */
   async addTo(searcherObj) {
     try {
@@ -35,13 +35,12 @@ class QueueConstructor {
         await this.goStartGame();
       }
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error(e);
     }
   }
 
   /**
-   * Описание политики обьекта очереди
+   * Описание политики объекта очереди
    * @param {mmObj} searcherObj
    * @return {Boolean}
    */
@@ -60,7 +59,7 @@ class QueueConstructor {
   }
 
   /**
-   * Функция создания обьекта игры после того как достаточное кол-во игроков,
+   * Функция создания объекта игры после того как достаточное кол-во игроков,
    * уже найдено в игру.
    */
   async goStartGame() {
@@ -69,7 +68,6 @@ class QueueConstructor {
       await newGame.createGame();
       this.open = false;
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error(e);
     }
   }

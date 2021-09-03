@@ -22,13 +22,13 @@ export type KickReason = 'afk' | 'run';
  *
  * @description Обработка около игровой логики
  * @module Service/Game
- * @todo сейчас после того как Player отлючился, socket выходит из room.
+ * @todo сейчас после того как Player отключился, socket выходит из room.
  * Нужен механизм подключения обратно, если клиент "обновил" страницу или
  * переподключился к игре после disconnect(разрыв соединения)
  */
 
 /**
- * Класс для обьекта игры
+ * Класс для объекта игры
  */
 export default class Game {
   playerArr: PlayersArr;
@@ -40,7 +40,7 @@ export default class Game {
   longActions: Partial<Record<keyof typeof magics, LongItem[]>> = {};
   info!: GameDocument;
   /**
-   * Конструктор обьекта игры
+   * Конструктор объекта игры
    * @param playerArr массив игроков
    */
   constructor(playerArr: string[]) {
@@ -70,7 +70,7 @@ export default class Game {
   get endGameReason(): string {
     const base = 'Игра завершена.';
     if (this.round.flags.noDamageRound > 2) {
-      return `${base} Причина: 3 рауда подряд никто из участников не наносил урона`;
+      return `${base} Причина: 3 раунда подряд никто из участников не наносил урона`;
     }
     return base;
   }
@@ -166,7 +166,6 @@ export default class Game {
    * Старт игры
    */
   startGame(): void {
-    // eslint-disable-next-line no-console
     console.debug('GC debug:: startGame', 'gameId:', this.info.id);
     // рассылаем статусы хп команды и врагов
     this.sendToAll('Игра начинается');
@@ -179,7 +178,6 @@ export default class Game {
    *
    */
   sendBattleLog(data: string): void {
-    // eslint-disable-next-line no-console
     console.debug('GC debug:: SBL', 'gameId:', this.info.id, 'data:', data);
     channelHelper.broadcast(data);
   }
@@ -188,7 +186,6 @@ export default class Game {
    * @param data строка, отправляемая в общий чат
    */
   sendToAll(data: string): void {
-    // eslint-disable-next-line no-console
     console.debug('GC debug:: sendToAll', this.info.id);
     channelHelper.broadcast(data);
   }
@@ -197,7 +194,6 @@ export default class Game {
    *@todo Остановка игры
    */
   pauseGame(): void {
-    // eslint-disable-next-line no-console
     console.debug(this.info.id);
   }
 
@@ -208,7 +204,6 @@ export default class Game {
    */
   preKick(id: string, reason: KickReason): void {
     const player = this.players[id];
-    // eslint-disable-next-line no-console
     if (!player) return console.log('GC debug:: preKick', id, 'no player');
     player.flags.isKicked = reason;
   }
@@ -220,7 +215,6 @@ export default class Game {
    */
   kick(id: string, reason?: KickReason): void {
     const player = this.players[id];
-    // eslint-disable-next-line no-console
     if (!player) return console.log('GC debug:: kick', id, 'no player');
     channelHelper.sendRunButton(player);
     if (reason === 'run') {
@@ -280,7 +274,6 @@ export default class Game {
    *
    */
   endGame(): void {
-    // eslint-disable-next-line no-console
     console.log('GC debug:: endGame', this.info.id);
     // Отправляем статистику
     this.sendBattleLog(this.endGameReason);
@@ -307,8 +300,8 @@ export default class Game {
   }
 
   /**
-   * Создание обьекта в базе // потребуется для ведения истории
-   * @return Обьект созданный в базе
+   * Создание объекта в базе // потребуется для ведения истории
+   * @return Объект созданный в базе
    */
   async createGame(): Promise<boolean> {
     const dbGame = await db.game.create({
@@ -322,7 +315,7 @@ export default class Game {
   }
 
   /**
-   * Возвращает обьект персонажа внутри игры [engine]
+   * Возвращает объект персонажа внутри игры [engine]
    * @param id идентификатор чара
    * @return PlayerObj
    */
@@ -405,7 +398,6 @@ export default class Game {
     // Обработка сообщений от BattleLog Module
     // @todo пока прокидываем напрямую из battlelog
     this.battleLog.on('BattleLog', (data) => {
-      // eslint-disable-next-line no-console
       console.log('BattleLog:', data);
       this.sendBattleLog(data);
     });
@@ -413,7 +405,7 @@ export default class Game {
 
   /**
    * Метод сохраняющий накопленную статистику игроков в базу и сharObj
-   * @todo нужен общий метод сохраниющий всю статистику
+   * @todo нужен общий метод сохраняющий всю статистику
    */
   saveGame(): void {
     try {
@@ -435,7 +427,6 @@ export default class Game {
         await arena.characters[p].saveToDb();
       });
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.log('Game:', e);
     }
   }
@@ -575,7 +566,7 @@ export default class Game {
 
   /**
    * Рассылка состояний живым игрокам
-   * @param player обьект игрока
+   * @param player объект игрока
    */
   sendStatus(player: Player): void {
     const getEnemyString = (p: Player) => `\t👤 ${p.nick} (${Profs.profsData[p.prof].icon}${p.lvl}) ❤️${p.getStatus().hp}`;
