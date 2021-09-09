@@ -12,12 +12,12 @@ export enum RoundStatus {
   TIMEOUT
 }
 
-export interface Round {
+interface Round {
   state: RoundStatus;
   round: number;
 }
 
-export const ROUND_SERVICE_EVENT = 'Round';
+const ROUND_SERVICE_EVENT = 'Round';
 
 /**
  * RoundService
