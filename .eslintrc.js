@@ -12,15 +12,12 @@ module.exports = {
   ],
   parserOptions: {
     parser: '@typescript-eslint/parser',
-    ecmaVersion: 2018,
-    sourceType: 'module',
   },
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'import'],
   rules: {
     'no-use-before-define': 0,
     '@typescript-eslint/no-use-before-define': ['error'],
     'no-param-reassign': 0,
-    'no-console': 0,
     'no-underscore-dangle': 0,
     'consistent-return': 0,
     camelcase: 0,
@@ -51,5 +48,12 @@ module.exports = {
       },
     }],
   },
-
+  settings: {
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
+    },
+    'import/resolver': {
+      typescript: {},
+    },
+  },
 };

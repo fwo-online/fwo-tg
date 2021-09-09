@@ -1,28 +1,24 @@
-import ee from 'events';
-import config from './config';
+import RoundEmitter from 'events';
+import config from '@/arena/config';
 
-export type RoundStatus = 'init' | 'starting' | 'orders' | 'ending' | 'engine' | 'waiting' | 'timeout';
-
-export type RoundEvent = 'startRound' | 'endRound' | 'engine' | 'orders' | 'endOrders'
-
-export interface GlobalFlags {
-  isEclipsed?: boolean;
+// eslint-disable-next-line no-shadow
+export enum RoundStatus {
+  INIT,
+  START_ROUND,
+  START_ORDERS,
+  END_ORDERS,
+  ENGINE,
+  END_ROUND,
+  TIMEOUT
 }
 
 export interface Round {
-  state?: RoundStatus;
-  round?: number;
-  event: RoundEvent;
+  state: RoundStatus;
+  round: number;
 }
 
-export type LastRound = Omit<Round, 'event'>;
+export const ROUND_SERVICE_EVENT = 'Round';
 
-type RoundServiceEvent = 'Round';
-
-export interface RoundService {
-  on(event: RoundServiceEvent, listener: (data: Round) => void): this;
-  emit(event: RoundServiceEvent, data: Round): boolean;
-}
 /**
  * RoundService
  *
@@ -30,128 +26,100 @@ export interface RoundService {
  * @description Обработка раунда
  * @module Service/Round
  */
-export class RoundService extends ee {
+export class RoundService {
+  private emitter = new RoundEmitter();
   count = 0;
-  status: RoundStatus = 'init';
-  flags: {
-    noDamageRound: number;
-    global: GlobalFlags;
-  }
-  /**
-   * Конструктор
-   */
-  constructor() {
-    super();
-    this.flags = {
-      noDamageRound: 0,
-      global: {},
-    };
-  }
+  status = RoundStatus.INIT;
 
   /**
    * @description Возвращает объект с текущим состоянием раунда
    * @return объект последнего состояния рануда
    */
-  get lastRound(): LastRound {
+  get lastRound(): Round {
     return {
       state: this.status, round: this.count,
     };
   }
 
-  /**
-   * @param data
-   */
-  write(data: Round): void {
-    this.emit('Round', data);
+  private write(): void {
+    this.emitter.emit(ROUND_SERVICE_EVENT, this.lastRound);
+  }
+
+  subscribe(listener: (data: Round) => void): void {
+    this.emitter.on(ROUND_SERVICE_EVENT, listener);
   }
 
   /**
    * Иницилизируем начало раунда
    */
-  start(): void {
-    this.status = 'starting';
+  private startRound(): void {
+    this.status = RoundStatus.START_ROUND;
     this.count += 1;
-    this.write({
-      event: 'startRound',
-      round: this.count,
-      state: this.status,
-    });
+    this.write();
     console.debug('RC debug:: start round:', this.count);
   }
 
   /**
    * Фаза заказов
+   * Рассылаем всем состояние HP отправляем сервисное о старте раунда
    */
-  orders(): void {
-    this.status = 'orders';
-    // Рассылаем всем состояние HP отправляем сервисное о старте раунда
-    console.debug('Round State: orders');
-    this.write({
-      event: 'orders',
-      round: this.count,
-      state: this.status,
-    });
-    this.goNext('waiting', config.ordersTime);
+  private startOrders(): void {
+    this.status = RoundStatus.START_ORDERS;
+    this.write();
   }
 
   /**
    * Инициация окончания игры
+   * Запускаем завершение раунда, и переход к следующему
+   * сюда нужны таймауты проверки на end и т.п
    */
-  end(): void {
-    // Запускаем завершение раунда, и переход к следующему
-    // сюда нужны таймауты проверки на end и т.п
-    console.debug('RC debug:: end');
-    this.status = 'ending';
-    this.write({ event: 'endRound' });
+  private endRound(): void {
+    this.status = RoundStatus.END_ROUND;
+    this.write();
   }
 
   /**
-   * Расстылаем состояние об окончание order phase, приступаем к выполнению
+   * Рассылаем состояние об окончание order phase, приступаем к выполнению
    * engine function
    */
-  engine(): void {
-    this.status = 'engine';
-    console.debug('Round State: waiting');
-    this.write({ event: 'endOrders', round: this.count, state: this.status });
-    this.write({ event: 'engine', round: this.count, state: this.status });
-    this.goNext('ending');
+  private engine(): void {
+    this.status = RoundStatus.END_ORDERS;
+    this.write();
+    this.status = RoundStatus.ENGINE;
+    this.write();
   }
 
   /**
-   * goNext
    * @description Функция изменения состояний объекта
    * @param state строка нового состояния
    */
-  nextState(state: RoundStatus = 'init'): void {
+  private onNextState(state: RoundStatus = RoundStatus.INIT): void {
+    console.log('Round State:', state);
     switch (state) {
-      case 'init':
-        // Состояние инициации раунда после создани игры
-        console.debug('Round State: init');
-        this.goNext('starting');
+      case RoundStatus.INIT:
+        // Состояние инициации раунда после создания игры
+        this.nextState(RoundStatus.START_ROUND);
         break;
-      case 'starting':
-        // Начало рануда, pre-round
-        console.debug('Round State: starting');
-        this.start();
-        this.goNext('orders');
+      case RoundStatus.START_ROUND:
+        this.startRound();
+        this.nextState(RoundStatus.START_ORDERS);
         break;
-      case 'orders':
-        this.orders();
+      case RoundStatus.START_ORDERS:
+        this.startOrders();
+        this.nextState(RoundStatus.END_ORDERS, config.ordersTime);
         break;
-      case 'waiting':
-        // code
+      case RoundStatus.END_ORDERS:
         this.engine();
+        this.nextState(RoundStatus.END_ROUND);
         break;
-      case 'timeout':
+      case RoundStatus.TIMEOUT:
         // code
         break;
-      case 'ending':
-        console.debug('Round State: ending');
-        this.end();
+      case RoundStatus.END_ROUND:
+        this.endRound();
         break;
 
       default:
-        // code
         console.error('Unknown Round State', state);
     }
   }
@@ -163,10 +131,18 @@ export class RoundService extends ee {
    * @param newState строка нового состояния перевод состояния
    * @param timeout число в мс, через которое следует выполнить
    */
-  goNext(newState: RoundStatus, timeout = config.roundTimeout): void {
+  private nextState(newState: RoundStatus, timeout = config.roundTimeout): void {
     const x = setTimeout(() => {
-      this.nextState(newState);
+      this.onNextState(newState);
       clearTimeout(x);
     }, timeout);
+  }
+
+  initRound(): void {
+    this.nextState(RoundStatus.INIT, 0);
+  }
+
+  nextRound(): void {
+    this.nextState(RoundStatus.START_ROUND, 500);
   }
 }

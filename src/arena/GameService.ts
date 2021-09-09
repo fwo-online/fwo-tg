@@ -11,11 +11,15 @@ import type * as magics from './magics';
 import OrderService from './OrderService';
 import PlayersArr from './playerArray';
 import type Player from './PlayerService';
-import { RoundService } from './RoundService';
+import { RoundService, RoundStatus } from './RoundService';
 import testGame from './testGame';
 import arena from './index';
 
 export type KickReason = 'afk' | 'run';
+
+export interface GlobalFlags {
+  isEclipsed?: boolean;
+}
 
 /**
  * GameService
@@ -39,6 +43,10 @@ export default class Game {
   history = new HistoryService();
   longActions: Partial<Record<keyof typeof magics, LongItem[]>> = {};
   info!: GameDocument;
+  flags: {
+    noDamageRound: number;
+    global: GlobalFlags;
+  }
   /**
    * Конструктор объекта игры
    * @param playerArr массив игроков
@@ -54,7 +62,7 @@ export default class Game {
     return (
       this.isTeamWin
       || this.alivePlayers.length === 0
-      || this.round.flags.noDamageRound > 2
+      || this.flags.noDamageRound > 2
       || this.round.count > 9
     );
   }
@@ -69,7 +77,7 @@ export default class Game {
 
   get endGameReason(): string {
     const base = 'Игра завершена.';
-    if (this.round.flags.noDamageRound > 2) {
+    if (this.flags.noDamageRound > 2) {
       return `${base} Причина: 3 раунда подряд никто из участников не наносил урона`;
     }
     return base;
@@ -169,7 +177,7 @@ export default class Game {
     console.debug('GC debug:: startGame', 'gameId:', this.info.id);
     // рассылаем статусы хп команды и врагов
     this.sendToAll('Игра начинается');
-    this.round.nextState();
+    this.round.initRound();
   }
 
   /**
@@ -256,9 +264,9 @@ export default class Game {
    */
   handleEndGameFlags(): void {
     if (this.checkRoundDamage) {
-      this.round.flags.noDamageRound = 0;
+      this.flags.noDamageRound = 0;
     } else {
-      this.round.flags.noDamageRound += 1;
+      this.flags.noDamageRound += 1;
     }
   }
 
@@ -335,7 +343,7 @@ export default class Game {
   * затмение, бунт богов, и т.п
   */
   refreshRoundFlags(): void {
-    this.round.flags.global = {};
+    this.flags.global = {};
   }
 
   async sendMessages(): Promise<void> {
@@ -350,16 +358,16 @@ export default class Game {
    */
   initHandlers(): void {
     // Обработка сообщений от Round Module
-    this.round.on('Round', async (data) => {
-      switch (data.event) {
-        case 'startRound': {
+    this.round.subscribe(async (data) => {
+      switch (data.state) {
+        case RoundStatus.START_ROUND: {
           this.sendToAll(`⚡️ Раунд ${data.round} начинается ⚡`);
           this.resetProc();
           this.orders.reset();
           this.forAllPlayers(this.sendStatus);
           break;
         }
-        case 'endRound': {
+        case RoundStatus.END_ROUND: {
           await this.sendMessages();
           this.sortDead();
           this.handleEndGameFlags();
@@ -368,20 +376,20 @@ export default class Game {
             this.endGame();
           } else {
             this.refreshRoundFlags();
-            this.round.goNext('starting', 500);
+            this.round.nextRound();
           }
           break;
         }
-        case 'engine': {
+        case RoundStatus.ENGINE: {
           await engine(this);
           break;
         }
-        case 'orders': {
+        case RoundStatus.START_ORDERS: {
           channelHelper.broadcast('Пришло время делать заказы!');
           this.forAllAlivePlayers(Game.showOrderButtons);
           break;
         }
-        case 'endOrders': {
+        case RoundStatus.END_ORDERS: {
           this.forAllAlivePlayers(Game.hideLastMessage);
           // Debug Game Hack
           if (this.players['5e05ee58bdf83c6a5ff3f8dd']) {
@@ -391,7 +399,7 @@ export default class Game {
           break;
         }
         default: {
-          console.log('InitHandler:', data.event, 'undef event');
+          console.log('InitHandler:', data.state, 'undef event');
         }
       }
     });
