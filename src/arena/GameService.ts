@@ -53,6 +53,10 @@ export default class Game {
    */
   constructor(playerArr: string[]) {
     this.playerArr = new PlayersArr(playerArr);
+    this.flags = {
+      noDamageRound: 0,
+      global: {},
+    };
   }
 
   /**

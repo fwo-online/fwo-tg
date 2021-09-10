@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import actions from './actions';
 import OrderError from './errors/OrderError';
+import { RoundStatus } from './RoundService';
 import arena from './index';
 
 export interface Order {
@@ -64,7 +65,7 @@ export default class Orders {
     if (!Game) {
       throw new OrderError('Вы не в игре', order);
     }
-    if (Game.round.status !== 'orders') {
+    if (Game.round.status !== RoundStatus.START_ORDERS) {
       throw new OrderError('Раунд ещё не начался', order);
       // @todo тут надо выбирать из живых целей
     }

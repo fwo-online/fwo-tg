@@ -3,13 +3,13 @@ import config from '@/arena/config';
 
 // eslint-disable-next-line no-shadow
 export enum RoundStatus {
-  INIT,
-  START_ROUND,
-  START_ORDERS,
-  END_ORDERS,
-  ENGINE,
-  END_ROUND,
-  TIMEOUT
+  INIT = 'INIT',
+  START_ROUND = 'START_ROUND',
+  START_ORDERS = 'START_ORDERS',
+  END_ORDERS = 'END_ORDERS',
+  ENGINE = 'ENGINE',
+  END_ROUND = 'END_ROUND',
+  TIMEOUT = 'TIMEOUT'
 }
 
 interface Round {
@@ -132,9 +132,9 @@ export class RoundService {
    * @param timeout число в мс, через которое следует выполнить
    */
   private nextState(newState: RoundStatus, timeout = config.roundTimeout): void {
-    const x = setTimeout(() => {
+    const timer = setTimeout(() => {
       this.onNextState(newState);
-      clearTimeout(x);
+      clearTimeout(timer);
     }, timeout);
   }
 

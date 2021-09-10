@@ -17,7 +17,11 @@ export function setMessage(key: number, data: number): void {
  * @param id - id чата
  */
 export async function broadcast(data: string, id: number | string = chatId): Promise<void> {
+  try {
   await arena.bot.telegram.sendMessage(id, data, { parse_mode: 'Markdown' });
+  } catch (e) {
+    console.log(`error: broadcast: ${e.message} for ${id}`);
+  }
 }
 
 /**
@@ -162,6 +166,7 @@ export async function sendExitButton(player: Player): Promise<void> {
  * @param player
  */
 export async function sendRunButton(player: Player): Promise<void> {
+  try {
   await removeStatusMessages(player);
 
   await arena.bot.telegram.sendMessage(
@@ -169,4 +174,7 @@ export async function sendRunButton(player: Player): Promise<void> {
     'Ты бежал из боя',
     Markup.inlineKeyboard([Markup.button.callback('Выход в лобби', 'exit')]),
   );
+  } catch (e) {
+    console.log(`error: sendRunButton: ${e.message} for ${player.id}`);
+  }
 }
