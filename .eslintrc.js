@@ -15,8 +15,8 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'import'],
   rules: {
-    'no-use-before-define': 0,
-    '@typescript-eslint/no-use-before-define': ['error'],
+    'no-use-before-define': ['error', { functions: false }],
+    '@typescript-eslint/no-use-before-define': ['error', { functions: false }],
     'no-param-reassign': 0,
     'no-underscore-dangle': 0,
     'consistent-return': 0,
