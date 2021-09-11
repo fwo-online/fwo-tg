@@ -84,16 +84,15 @@ export class ItemDocument {
     try {
       const items = await this.find({});
       if (Object.entries(items).length) {
-        // console.log(items)
         arena.items = _.keyBy(items, 'code');
       } else {
         const shop = fs.readFileSync('shop.json', 'utf8');
         const createdItems: Promise<ItemDocument>[] = [];
 
-        const shopArr: Record<string, ItemDocument> = JSON.parse(shop);
+        const parsedShop: Record<string, ItemDocument> = JSON.parse(shop);
         console.log('File Loaded: ', Date.now() - timer1, 'ms');
 
-        _.forEach(shopArr, async (o, code) => {
+        _.forEach(parsedShop, async (o, code) => {
           o.code = code;
           createdItems.push(ItemModel.create(o));
           return true;
@@ -101,7 +100,7 @@ export class ItemDocument {
 
         await Promise.all(createdItems);
 
-        arena.items = _.keyBy(items, 'code');
+        arena.items = _.keyBy(createdItems, 'code');
       }
     } catch (e) {
       console.error(e);

@@ -7,9 +7,9 @@
     "test": "npm run start & sleep 20; jest --env=node",
     "test-dev": "jest --watch --env=node",
     "lint": "./node_modules/.bin/eslint --fix src/ --ext .js,.ts",
-    "start": "ts-node src/fwo.ts",
+    "start": "ts-node -r tsconfig-paths/register src/fwo.ts",
     "dev": "nodemon",
-    "prod": "ts-node src/fwo.ts",
+    "prod": "ts-node -r tsconfig-paths/register src/fwo.ts",
     "tsc": "tsc -w"
   },
   "repository": {
@@ -42,8 +42,10 @@
     "@typescript-eslint/parser": "^4.30.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-import-resolver-typescript": "^2.4.0",
     "eslint-plugin-import": "^2.24.2",
     "jest": "^27.1.0",
-    "nodemon": "^2.0.12"
+    "nodemon": "^2.0.12",
+    "tsconfig-paths": "^3.11.0"
   }
 }

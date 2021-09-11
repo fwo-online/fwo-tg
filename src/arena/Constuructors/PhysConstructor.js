@@ -66,7 +66,7 @@ class PhysConstructor {
     const { initiator, target, game } = this.params;
     const iDex = initiator.stats.val('dex');
     // Глобальная проверка не весит ли затмение на арене
-    if (game.round.flags.global.isEclipsed) throw this.breaks('ECLIPSE');
+    if (game.flags.global.isEclipsed) throw this.breaks('ECLIPSE');
     const weapon = arena.items[initiator.weapon.code];
     const hasDodgeableItems = MiscService.weaponTypes[weapon.wtype].dodge;
     // Проверяем увёртку

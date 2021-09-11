@@ -26,7 +26,7 @@ class Eclipse extends CommonMagic {
   run() {
     const { game } = this.params;
     // выставляем глобальный флаг затмения
-    game.round.flags.global.isEclipsed = true;
+    game.flags.global.isEclipsed = true;
   }
 }
 
