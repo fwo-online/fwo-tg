@@ -35,10 +35,3 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "fwo-tg-test"
           heroku_email: "cat@nxt.ru"
-  deploy-to-prod:
-    runs-on: ubuntu-latest
-    needs: deploy-to-test
-    environment: prod
-    steps:
-      - name: Deploy on production server
-        run: echo ${{ env.PROD_URL }}
