@@ -1,8 +1,8 @@
 import { Scenes, Markup } from 'telegraf';
-import arena from '../arena';
-import ItemService from '../arena/ItemService';
-import type { BotContext } from '../fwo';
-import { InventoryModel } from '../models/inventory';
+import arena from '@/arena';
+import ItemService from '@/arena/ItemService';
+import type { BotContext } from '@/fwo';
+import { InventoryModel } from '@/models/inventory';
 
 export const inventoryScene = new Scenes.BaseScene<BotContext>('inventory');
 
@@ -101,7 +101,6 @@ inventoryScene.action(/sellConfirm(?=_)/, (ctx) => {
   const item = ctx.session.character.getItem(itemId);
   if (!item) return;
 
-  console.log(item);
   const { name, price } = arena.items[item.code];
 
   ctx.editMessageText(

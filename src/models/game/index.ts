@@ -1,10 +1,10 @@
 import mongoose, {
-  Schema, Document, DocumentDefinition, Model,
+  Schema, Document, Model, Types
 } from 'mongoose';
 
 export interface GameDocument extends Document {
   gameId: number;
-  players: string[];
+  players: Types.Array<string>;
 }
 
 export type GameModel = Model<GameDocument> & typeof GameDocument
@@ -13,14 +13,12 @@ export class GameDocument {
   //
 }
 
-export type Game = DocumentDefinition<GameDocument>
-
 const game = new Schema<GameDocument, GameModel>({
   gameId: {
     type: Number, index: true,
   },
   players: {
-    type: Array,
+    type: [Schema.Types.String]
   },
 });
 

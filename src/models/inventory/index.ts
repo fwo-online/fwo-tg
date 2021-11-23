@@ -1,14 +1,15 @@
 import _ from 'lodash';
 import mongoose, {
-  Schema, Document, Model, DocumentDefinition, Query,
+  Schema, Document, Model, Query, Types, LeanDocument, PopulatedDoc
 } from 'mongoose';
-import arena from '../arena';
-import config from '../arena/config';
-import { Collections, Profs } from '../data';
-import { CharModel, CharDocument } from './character';
+import arena from '@/arena';
+import config from '@/arena/config';
+import { Collections, Profs } from '@/data';
+import { CharModel, CharDocument } from '@/models/character';
+import type { Inventory } from '@/models/inventory/api';
 import {
   ItemModel, ParseAttrItem, Item,
-} from './item';
+} from '@/models/item';
 
 /**
  * getDefaultItem
@@ -20,12 +21,12 @@ import {
 function getDefaultItem(prof: Profs.Prof) {
   return config.defaultItems[prof] || console.log('no prof in getDefaultItem');
 }
-export interface InventoryDocument extends Document<string> {
+export interface InventoryDocument extends Document {
   code: string;
   wear: string;
   putOn: boolean;
   durable: number;
-  owner: string;
+  owner: PopulatedDoc<CharDocument, Types.ObjectId>;
 }
 
 export type InventoryModel = Model<InventoryDocument> & typeof InventoryDocument;
@@ -110,7 +111,7 @@ export class InventoryDocument {
     this: InventoryModel,
     charId: string,
     itemId: string,
-  ): Promise<InventoryDocument[] | void> {
+  ) {
     const char = await CharModel.findById(charId);
     _.pull(char?.inventory as unknown as string[], itemId);
     await char?.save();
@@ -153,9 +154,9 @@ export class InventoryDocument {
     this: InventoryModel,
     charId: string,
     itemId: string,
-  ): Promise<unknown> {
+  ) {
     console.log('PUT ON ITEM', charId, itemId);
-    return this.updateOne({
+    return this.findOneAndUpdate({
       owner: charId,
       _id: itemId,
     }, {
@@ -174,8 +175,8 @@ export class InventoryDocument {
     this: InventoryModel,
     charId: string,
     itemId: string,
-  ): Promise<unknown> {
-    return this.updateOne({
+  ) {
+    return this.findOneAndUpdate({
       owner: charId,
       _id: itemId,
     }, {
@@ -228,7 +229,7 @@ export class InventoryDocument {
 
   static getCollection(
     this: InventoryModel,
-    charInventory: InventoryDocument[],
+    charInventory: LeanDocument<Inventory>[],
   ): Collections.Collection | undefined {
     const items: Item[] = charInventory.map(({ code }) => arena.items[code]);
     const playerCollection = _.groupBy(items, (item) => item.wcomb[0]);
@@ -268,8 +269,6 @@ export class InventoryDocument {
   }
 }
 
-export type Inventory = DocumentDefinition<InventoryDocument>
-
 /**
  * Inventory
  *
@@ -284,7 +283,7 @@ const inventory = new Schema<InventoryDocument, InventoryModel>({
   durable: { type: Number, default: 10 },
   // Добавляем связь инвенторя с персонажем charID
   owner: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'Character',
     required: true,
   },

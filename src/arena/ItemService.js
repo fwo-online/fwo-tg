@@ -123,7 +123,6 @@ module.exports = {
   /**
    * @param {String} nick
    * @param {Number} itemCode ID итема
-   * @return {Boolean}
    *
    */
   // eslint-disable-next-line consistent-return

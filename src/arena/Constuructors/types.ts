@@ -1,4 +1,3 @@
-import type { Item } from '../../models/item';
 import type { SuccessArgs } from '../BattleLog';
 import type { DmgMagicNext } from './DmgMagicConstructor';
 import type { HealMagicNext, HealNext } from './HealMagicConstructor';
@@ -6,6 +5,7 @@ import type { LongDmgMagicNext } from './LongDmgMagicConstructor';
 import type { LongMagicNext } from './LongMagicConstructor';
 import type { MagicNext } from './MagicConstructor';
 import type { SkillNext } from './SkillConstructor';
+import type { Item } from '@/models/item';
 
 export type CostType = 'en' | 'mp';
 export type OrderType = 'all' | 'any' | 'enemy' | 'self';

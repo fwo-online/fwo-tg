@@ -1,6 +1,6 @@
 import { Scenes, Markup } from 'telegraf';
-import type { BotContext } from '../fwo';
-import loginHelper from '../helpers/loginHelper';
+import type { BotContext } from '@/fwo';
+import * as loginHelper from '@/helpers/loginHelper';
 
 export const settingsScene = new Scenes.BaseScene<BotContext>('settings');
 

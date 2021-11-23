@@ -24,7 +24,6 @@ class HistoryService {
 
   /**
    * @param {historyObj} dmgObj
-   * @param {number} round
    */
   addDamage(dmgObj) {
     const historyObj = _.pick(dmgObj, [

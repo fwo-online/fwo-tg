@@ -1,11 +1,12 @@
 const _ = require('lodash');
-const db = require('../helpers/dataBase');
 const { floatNumber } = require('../utils/floatNumber');
 const { default: { lvlRatio } } = require('./config');
 const arena = require('./index');
+const { updateCharacter, loadCharacter } = require('@/models/character/api');
+const { addItem, getCollection, removeItem, putOffItem, getItems, putOnItem, getAllHarks } = require('@/models/inventory/api');
 
 /**
- * @typedef {import ('../models/clan').ClanDocument} ClanDocument
+ * @typedef {import ('../models/clan/api').ClanDocument} ClanDocument
  * @typedef {Object} Statistics
  * @property {number} kills
  * @property {number} death
@@ -71,10 +72,10 @@ function getDynHarks(charObj) {
     } else {
       dmgFromHarks = (harks.str - 3) / 10;
     }
-    if (!_.isEmpty(charObj.harksFromItems.hit)) {
+    if (!_.isEmpty(charObj.harksFromItems?.hit)) {
       dmgFromItems = {
-        max: charObj.harksFromItems.hit.max,
-        min: charObj.harksFromItems.hit.min,
+        max: charObj.harksFromItems?.hit?.max,
+        min: charObj.harksFromItems?.hit?.min,
       };
     } else {
       dmgFromItems = { min: 0, max: 0 };
@@ -111,7 +112,7 @@ class Char {
   wasLvlUp = false;
   /**
    * Конструктор игрока
-   * @param {import ('../models/character').CharDocument} charObj объект персонажа из базы
+   * @param {import ('../models/character').Character} charObj объект персонажа из базы
    */
   constructor(charObj) {
     this.charObj = charObj;
@@ -234,8 +235,8 @@ class Char {
     if (!_.isEmpty(this.plushark)) {
       assignWithSum(hark, this.plushark);
     }
-    if (!_.isUndefined(this.collection.harks)) {
-      assignWithSum(hark, this.collection.harks);
+    if (!_.isUndefined(this.collection?.harks)) {
+      assignWithSum(hark, this.collection?.harks);
     }
     return hark;
   }
@@ -245,7 +246,10 @@ class Char {
   }
 
   get plushark() {
-    return this.harksFromItems.plushark;
+    if (this.harksFromItems && 'plushark' in this.harksFromItems) {
+      return this.harksFromItems.plushark;
+    }
+    return undefined;
   }
 
   get skills() {
@@ -273,20 +277,19 @@ class Char {
   }
 
   get collection() {
-    return db.inventory.getCollection(this.getPutonedItems()) || {};
+    return getCollection(this.getPutonedItems() ?? []);
   }
 
   get resists() {
-    const { resists } = this.collection;
-    return resists || {};
+    return this.collection?.resists;
   }
 
   get chance() {
-    return this.collection.chance || {};
+    return this.collection?.chance;
   }
 
   get statical() {
-    return this.collection.statical;
+    return this.collection?.statical;
   }
 
   /** Суммарное количество опыта, требуемое для следующего уровня */
@@ -344,7 +347,6 @@ class Char {
 
   /**
    * Проверяет количество опыта для следующего уровня. Добавляет уровень, если опыта достаточно
-   * @returns {void}
    */
   async addLvl() {
     if (this.exp >= this.nextLvlExp) {
@@ -358,51 +360,51 @@ class Char {
   }
 
   async addItem(itemCode) {
-    const item = await db.inventory.addItem(this.id, itemCode);
-    this.charObj.inventory.push(item);
+    const item = await addItem(this.id, itemCode);
+    this.charObj.inventory?.push(item);
     return this.saveToDb();
   }
 
   getItem(itemId) {
-    return this.items.find((item) => item._id.equals(itemId));
+    return this.items?.find((item) => item._id.equals(itemId));
   }
 
   getPutonedItems() {
-    return this.items.filter((item) => item.putOn);
+    return this.items?.filter((item) => item.putOn);
   }
 
   getPutonedWeapon() {
-    return this.getPutonedItems().find((item) => /^ab?$/.test(item.wear) && item.putOn);
+    return this.getPutonedItems()?.find((item) => /^ab?$/.test(item.wear) && item.putOn);
   }
 
   isCanPutOned(item) {
-    return !this.items.find((currentItem) => currentItem.putOn
+    return !this.items?.find((currentItem) => currentItem.putOn
       && (item.wear.indexOf(currentItem.wear) !== -1
       || currentItem.wear.indexOf(item.wear) !== -1));
   }
 
   async removeItem(itemId) {
-    this.items = this.items.filter((item) => !item._id.equals(itemId));
-    await db.inventory.removeItem(itemId, this.id);
+    this.items = this.items?.filter((item) => !item._id.equals(itemId));
+    await removeItem(itemId, this.id);
     return this.saveToDb();
   }
 
   async putOffItem(itemId) {
-    await db.inventory.putOffItem(this.id, itemId);
+    await putOffItem(this.id, itemId);
     const inventory = await this.putOffItemsCantPutOned();
     this.charObj.inventory = inventory;
   }
 
-  /** @returns {import('../models/inventory').InventoryDocument[]} */
+  /** @returns {Promise<import('../models/inventory').InventoryDocument[]>} */
   async putOffItemsCantPutOned() {
-    const inventory = await db.inventory.getItems(this.id);
+    const inventory = await getItems(this.id);
     if (!inventory) return [];
     this.charObj.inventory = inventory;
     await this.updateHarkFromItems();
 
-    const items = this.getPutonedItems().filter((i) => !this.hasRequeredHarks(arena.items[i.code]));
-    if (items.length) {
-      const putOffItems = items.map((i) => db.inventory.putOffItem(this.id, i._id));
+    const items = this.getPutonedItems()?.filter((i) => !this.hasRequeredHarks(arena.items[i.code]));
+    if (items?.length) {
+      const putOffItems = items.map((i) => putOffItem(this.id, i._id));
       await Promise.all(putOffItems);
       const inventoryFiltered = await this.putOffItemsCantPutOned();
       this.charObj.inventory = inventoryFiltered;
@@ -413,14 +415,17 @@ class Char {
 
   async putOnItem(itemId) {
     const charItem = this.getItem(itemId);
+    if (!charItem) {
+      return false;
+    }
     const item = arena.items[charItem.code];
 
     if (!this.hasRequeredHarks(item) || !this.isCanPutOned(item)) {
       return false;
     }
 
-    await db.inventory.putOnItem(this.id, itemId);
-    const inventory = await db.inventory.getItems(this.id);
+    await putOnItem(this.id, itemId);
+    const inventory = await getItems(this.id);
     this.charObj.inventory = inventory;
     await this.updateHarkFromItems();
     return true;
@@ -465,7 +470,7 @@ class Char {
     this.charObj.free = free;
 
     // @todo сюда нужно будет предусмотреть проверки на корректность сохраняемых данных
-    return db.char.update(this.charObj.tgId, this.charObj);
+    return updateCharacter(this.charObj.tgId, this.charObj);
   }
 
   async buyItem(itemCode) {
@@ -500,7 +505,7 @@ class Char {
   * @returns {Promise<void>}
   */
   async updateHarkFromItems() {
-    this.harksFromItems = await db.inventory.getAllHarks(this.id);
+    this.harksFromItems = await getAllHarks(this.id);
     if (!this.harksFromItems || !Object.keys(this.harksFromItems).length) {
       this.harksFromItems = { hit: { min: 0, max: 0 } };
     }
@@ -549,10 +554,9 @@ class Char {
   /**
    * Загрузка чара в память
    * @param {Number} tgId идентификатор пользователя в TG (tgId)
-   * @return {Promise<Char>}
    */
   static async getCharacter(tgId) {
-    const charFromDb = await db.char.load({ tgId });
+    const charFromDb = await loadCharacter({ tgId });
     if (!charFromDb) {
       return null;
     }
@@ -565,7 +569,7 @@ class Char {
   /**
    * Возвращает объект игры по Id чара
    * @param {String} charId идентификатор чара;
-   * @return {this} Объект игры
+   * @return {Char} Объект игры
    * @todo нужно перенести это не в static а во внутрь экземпляра класса
    */
   static getGameFromCharId(charId) {
@@ -606,7 +610,7 @@ class Char {
       const {
         gold, exp, magics, bonus, items, skills, lvl, clan, free,
       } = this;
-      return await db.char.update(this.tgId, {
+      return await updateCharacter(this.tgId, {
         gold,
         exp,
         magics,

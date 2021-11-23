@@ -1,10 +1,10 @@
 import mongoose, {
-  Schema, Document, Model, DocumentDefinition,
+  Schema, Document, Model, Types, PopulatedDoc,
 } from 'mongoose';
-import ValidationError from '../arena/errors/ValidationError';
-import type { CharDocument } from './character';
+import ValidationError from '@/arena/errors/ValidationError';
+import type { CharDocument } from '@/models/character';
 
-export interface ClanDocument extends Document<string> {
+export interface ClanDocument extends Document {
   name: string;
   logo: {
     moderated: boolean;
@@ -13,17 +13,16 @@ export interface ClanDocument extends Document<string> {
   },
   gold: number;
   lvl: number;
-  owner: CharDocument;
-  players: CharDocument[];
-  requests: CharDocument[];
+  owner: PopulatedDoc<CharDocument, Types.ObjectId>;
+  players: PopulatedDoc<CharDocument, Types.ObjectId>[];
+  requests: PopulatedDoc<CharDocument, Types.ObjectId>[];
 }
 
 type ClanModel = Model<ClanDocument> & typeof ClanDocument;
 
 export class ClanDocument {
   static lvlCost(): number[] {
-    const cost = [100, 250, 750, 1500];
-    return cost;
+    return [100, 250, 750, 1500];
   }
 
   get maxPlayers(): number {
@@ -53,8 +52,6 @@ export class ClanDocument {
     return updated;
   }
 }
-
-export type Clan = DocumentDefinition<ClanDocument>
 
 const schema = new Schema<ClanDocument>({
   name: { type: String, required: true, unique: true },

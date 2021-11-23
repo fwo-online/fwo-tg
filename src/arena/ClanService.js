@@ -1,9 +1,9 @@
 const { Markup } = require('telegraf');
 const channerHelper = require('../helpers/channelHelper');
-const db = require('../helpers/dataBase');
-const { ClanModel } = require('../models/clan');
+const { ClanModel } = require('../models/clan/api');
 const CharacterService = require('./CharacterService');
 const arena = require('./index');
+const { findClan, clanList, updateClan, removeClan, createClan } = require('@/models/clan/api');
 
 /**
  * Clan Service
@@ -17,7 +17,7 @@ module.exports = {
     if (arena.clans[id]) {
       return arena.clans[id];
     }
-    const clan = await db.clan.findOne({ _id: id });
+    const clan = await findClan({ _id: id });
     arena.clans[clan.id] = clan;
     return clan;
   },
@@ -62,7 +62,7 @@ module.exports = {
   * @param {string} charId - id порсонажа
   */
   async getPlayerClanRequest(charId) {
-    const clan = await db.clan.findOne({ requests: charId });
+    const clan = await findClan({ 'requests.id': charId });
     return clan;
   },
   /**
@@ -76,7 +76,7 @@ module.exports = {
       throw new Error('Нужно больше золота');
     }
     char.gold -= ClanModel.lvlCost()[0];
-    const clan = await db.clan.create(char.id, name);
+    const clan = await createClan(char.id, name);
     return char.joinClan(clan);
   },
   /**
@@ -91,7 +91,7 @@ module.exports = {
         char.leaveClan();
       }
     });
-    return db.clan.remove(clan.id);
+    return removeClan(clan.id);
   },
   /**
    * Возвразает список всех кланов из бд
@@ -99,7 +99,7 @@ module.exports = {
    */
   async getClanList(charId) {
     const char = arena.characters[charId];
-    const clans = await db.clan.list();
+    const clans = await clanList();
     const requestClan = await this.getPlayerClanRequest(char.id) || {};
     return clans.map((clan) => [
       Markup.button.callback(
@@ -126,7 +126,7 @@ module.exports = {
     }
     char.gold -= gold;
     await char.saveToDb();
-    const updated = await db.clan.update(clan.id, { gold: clan.gold + gold });
+    const updated = await updateClan(clan.id, { gold: clan.gold + gold });
     Object.assign(clan, updated);
   },
   /**
@@ -136,7 +136,7 @@ module.exports = {
    */
   async createRequest(clanId, charId) {
     const clan = await this.getClanById(clanId);
-    const updated = await db.clan.update(clanId, { requests: clan.requests.concat(charId) });
+    const updated = await updateClan(clanId, { requests: clan.requests.concat(charId) });
     Object.assign(clan, updated);
   },
   /**
@@ -147,7 +147,7 @@ module.exports = {
   async removeRequest(clanId, charId) {
     const char = arena.characters[charId];
     const clan = await this.getClanById(clanId);
-    const updated = await db.clan.update(clanId, {
+    const updated = await updateClan(clanId, {
       requests: clan.requests.filter((p) => p.tgId !== char.tgId),
     });
     await char.updatePenalty('clan_request', 60);
@@ -162,7 +162,7 @@ module.exports = {
     const clan = await this.getClanById(clanId);
     if (clan.hasEmptySlot) {
       const char = await CharacterService.getCharacter(tgId);
-      const updated = await db.clan.update(clan.id, {
+      const updated = await updateClan(clan.id, {
         players: [...clan.players, char.id],
         requests: clan.requests.filter((player) => player.tgId !== char.tgId),
       });
@@ -186,7 +186,7 @@ module.exports = {
   async rejectRequest(clanId, tgId) {
     const clan = await this.getClanById(clanId);
     const char = await CharacterService.getCharacter(tgId);
-    const updated = await db.clan.update(clan.id, {
+    const updated = await updateClan(clan.id, {
       requests: clan.requests.filter((player) => player.tgId !== char.tgId),
     });
     Object.assign(clan, updated);
@@ -203,7 +203,7 @@ module.exports = {
   async leaveClan(clanId, tgId) {
     const clan = await this.getClanById(clanId);
     const char = await CharacterService.getCharacter(tgId);
-    const updated = await db.clan.update(clan.id, {
+    const updated = await updateClan(clan.id, {
       players: clan.players.filter((player) => player.tgId !== char.tgId),
     });
     Object.assign(clan, updated);

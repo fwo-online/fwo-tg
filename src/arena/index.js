@@ -11,13 +11,13 @@ module.exports = {
    */
   items: {},
 
-  /** @type import ('./magics')  */
+  /** @type {import ('./magics/')}  */
   magics: null,
-  /** @type import ('./skills/') */
+  /** @type {import ('./skills/')}*/
   skills: null,
   /** @type import ('./actions') */
   actions: null,
-  /** @type {Object<string, import ('../models/clan').ClanDocument>} */
+  /** @type {Object<string, import ('../models/clan/api').ClanDocument>} */
   clans: {},
 
   /** @type {import('telegraf').Telegraf<import('../fwo').BotContext>} */

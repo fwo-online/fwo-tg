@@ -1,5 +1,5 @@
 import type { Middleware } from 'telegraf';
-import type { BotContext } from '../fwo';
+import type { BotContext } from '@/fwo';
 
 export function restartMiddleware(): Middleware<BotContext> {
   return (ctx, next) => {

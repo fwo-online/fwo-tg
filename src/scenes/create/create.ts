@@ -1,9 +1,9 @@
 import { Scenes } from 'telegraf';
-import type { Prof } from '../../data/profs';
-import type { BotContext } from '../../fwo';
-import loginHelper from '../../helpers/loginHelper';
 import { keyboards } from './keyboards';
 import { messages } from './messages';
+import type { Prof } from '@/data/profs';
+import type { BotContext } from '@/fwo';
+import * as loginHelper from '@/helpers/loginHelper';
 
 type CreateBotContext = BotContext & {
   session: {

@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import { Markup } from 'telegraf';
 import type { ExtraEditMessageText } from 'telegraf/typings/telegram-types';
-import arena from '../../arena';
-import type Char from '../../arena/CharacterService';
-import { stores } from '../../arena/MiscService';
-import { Collections, Profs } from '../../data';
-import type { Item } from '../../models/item';
+import arena from '@/arena';
+import type Char from '@/arena/CharacterService';
+import { stores } from '@/arena/MiscService';
+import { Collections, Profs } from '@/data';
+import type { Item } from '@/models/item';
 
 const storeKeys = Object.keys(stores);
 

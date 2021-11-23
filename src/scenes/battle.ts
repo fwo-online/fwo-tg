@@ -3,13 +3,13 @@
  * Описание:
  */
 import { Scenes, Markup } from 'telegraf';
-import arena from '../arena';
-import * as BattleService from '../arena/BattleService';
-import OrderError from '../arena/errors/OrderError';
-import { Profs } from '../data';
-import type { BotContext } from '../fwo';
-import * as channelHelper from '../helpers/channelHelper';
-import loginHelper from '../helpers/loginHelper';
+import arena from '@/arena';
+import * as BattleService from '@/arena/BattleService';
+import OrderError from '@/arena/errors/OrderError';
+import { Profs } from '@/data';
+import type { BotContext } from '@/fwo';
+import * as channelHelper from '@/helpers/channelHelper';
+import * as loginHelper from '@/helpers/loginHelper';
 
 export const battleScene = new Scenes.BaseScene<BotContext>('battleScene');
 
@@ -202,8 +202,10 @@ battleScene.command('debug', async (ctx) => {
   if (ADMINS.indexOf(tgId) !== -1) {
     // test players: tgId: 123456789
     const char = await loginHelper.getChar(123456789);
-    const searchObject = { charId: char.id, psr: 1000, startTime: Date.now() };
-    arena.mm.push(searchObject);
-    ctx.reply('ok');
+    if (char) {
+      const searchObject = { charId: char.id, psr: 1000, startTime: Date.now() };
+      arena.mm.push(searchObject);
+      ctx.reply('ok');
+    }
   }
 });

@@ -3,11 +3,11 @@ import _ from 'lodash';
 import mongoose, {
   Schema, Document, Model, DocumentDefinition,
 } from 'mongoose';
-import arena from '../arena';
-import config, { ParseAttr } from '../arena/config';
-import type { Harks } from '../data';
+import arena from '../../arena';
+import config, { ParseAttr } from '../../arena/config';
+import type { Harks } from '../../data';
 
-const parseAttr = (p: string) => {
+const parseAttr = <T>(p: string): T | null => {
   try {
     if (p !== '') {
       return JSON.parse(p);
@@ -23,7 +23,7 @@ export type MinMax = {
   max: number;
 }
 
-export interface ItemDocument extends Document<string> {
+export interface ItemDocument extends Document {
   code: string;
   name: string;
   atc: number | null;
@@ -34,7 +34,7 @@ export interface ItemDocument extends Document<string> {
   weight: number | null;
   gskill: string;
   gprice: string;
-  wcomb: string[];
+  wcomb: string;
   hark: Harks.HarksLvl | null;
   plushark: Harks.HarksLvl | null;
   mga: number | null;
@@ -128,158 +128,157 @@ export class ItemDocument {
 
 const item = new Schema<ItemDocument, ItemModel>({
   code: {
-    type: String, unique: true, required: true, dominant: true,
+    type: Schema.Types.String, unique: true, required: true, dominant: true,
   },
   name: {
-    type: String,
+    type: Schema.Types.String,
   },
   atc: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   prt: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   price: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   wear: {
-    type: String,
+    type: Schema.Types.String,
   },
   race: {
-    type: String,
+    type: Schema.Types.String,
   },
   weight: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   gskill: {
-    type: String,
+    type: Schema.Types.String,
   },
   gprice: {
-    type: String,
+    type: Schema.Types.String,
   },
   wcomb: {
-    type: String,
+    type: Schema.Types.String,
     get: (comb: string) => comb.split(','),
   },
   hark: {
-    type: String,
-    get: parseAttr,
+    type: Schema.Types.String,
+    get: (value) => parseAttr<Harks.Hark>(value),
   },
   plushark: {
-    type: String,
-    get: parseAttr,
+    type: Schema.Types.String,
+    get: (value) => parseAttr<Harks.Hark>(value),
   },
   mga: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   mgp: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   hl: {
-    type: Number,
-    get: (hl: null | number) => ({ min: 0, max: hl ?? 0 }),
+    type: Schema.Types.Number,
+    get: (hl) => ({ min: 0, max: hl ?? 0 }),
   },
   r_fire: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   r_acid: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   r_lighting: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   r_frost: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   r_physical: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   chance: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   descr: {
-    type: String,
+    type: Schema.Types.String,
   },
   add_hp: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   add_mp: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   add_en: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   onlymake: {
-    type: Boolean,
+    type: Schema.Types.Boolean,
   },
   subclass: {
-    type: Boolean,
+    type: Schema.Types.Boolean,
   },
   reg_hp: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   reg_en: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   reg_mp: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   hp_drain: {
-    type: String,
-    get: parseAttr,
+    type: Schema.Types.String,
+    get: (value) => parseAttr<MinMax>(value),
   },
   mp_drain: {
-    type: String,
-    get: parseAttr,
+    type: Schema.Types.String,
+    get: (value) => parseAttr<MinMax>(value),
   },
   en_drain: {
-    type: String,
-    get: parseAttr,
+    type: Schema.Types.String,
+    get: (value) => parseAttr<MinMax>(value),
   },
   type: {
-    type: String,
+    type: Schema.Types.String,
   },
   hit: {
-    type: String,
-    get: parseAttr,
+    type: Schema.Types.String,
+    get: (value) => parseAttr<MinMax>(value),
   },
   edinahp: {
-    type: Number,
+    type: Schema.Types.Number,
   },
   eff: {
-    type: String,
-    get: parseAttr,
+    type: Schema.Types.String,
+    get: (value) => parseAttr<MinMax>(value),
   },
   hide: {
-    type: Boolean,
+    type: Schema.Types.Boolean,
   },
   wtype: {
-    type: String,
+    type: Schema.Types.String,
   },
   '2handed': {
-    type: Boolean,
+    type: Schema.Types.Boolean,
   },
   case: {
-    type: String,
+    type: Schema.Types.String,
   },
   fire: {
-    type: String,
-    get: parseAttr,
+    type: Schema.Types.String,
+    get: (value) => parseAttr<MinMax>(value),
   },
   acid: {
-    type: String,
-    get: parseAttr,
+    type: Schema.Types.String,
+    get: (value) => parseAttr<MinMax>(value),
   },
   lighting: {
-    type: String,
-    get: parseAttr,
+    type: Schema.Types.String,
+    get: (value) => parseAttr<MinMax>(value),
   },
   frost: {
-    type: String,
-    get: parseAttr,
+    type: Schema.Types.String,
+    get: (value) => parseAttr<MinMax>(value),
   },
 }, {
-  typePojoToMixed: false,
   versionKey: false,
 });
 

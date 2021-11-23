@@ -1,12 +1,12 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { Scenes, Markup } from 'telegraf';
-import arena from '../arena';
-import ClanService from '../arena/ClanService';
-import ValidationError from '../arena/errors/ValidationError';
-import { Profs } from '../data';
-import type { BotContext } from '../fwo';
-import { ClanModel } from '../models/clan';
+import arena from '@/arena';
+import ClanService from '@/arena/ClanService';
+import ValidationError from '@/arena/errors/ValidationError';
+import { Profs } from '@/data';
+import type { BotContext } from '@/fwo';
+import { ClanModel } from '@/models/clan/api';
 
 export const clanScene = new Scenes.BaseScene<BotContext>('clan');
 

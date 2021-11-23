@@ -1,13 +1,14 @@
-import type { Prof } from '../data/profs';
-import type { ClanDocument } from '../models/clan';
-import type { Inventory } from '../models/inventory';
-import type { MinMax } from '../models/item';
+import type { LeanDocument } from 'mongoose';
 import type Char from './CharacterService';
 import FlagsConstructor from './Constuructors/FlagsConstructor';
 import type { DamageType } from './Constuructors/types';
 import type * as magics from './magics';
 import StatsService, { Stats } from './StatsService';
 import arena from './index';
+import type { Prof } from '@/data/profs';
+import type { ClanDocument } from '@/models/clan';
+import type { Inventory } from '@/models/inventory/api';
+import type { MinMax } from '@/models/item';
 
 export type Resists = Record<DamageType, number>;
 
@@ -50,7 +51,7 @@ export default class Player {
   tgId: number;
   prof: Prof;
   lvl: number;
-  clan?: ClanDocument;
+  clan?: LeanDocument<ClanDocument>;
   stats: StatsService;
   flags: FlagsConstructor;
   modifiers: {

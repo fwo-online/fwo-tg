@@ -1,8 +1,6 @@
 import _ from 'lodash';
 import { Profs } from '../data';
 import * as channelHelper from '../helpers/channelHelper';
-import db from '../helpers/dataBase';
-import type { GameDocument } from '../models/game';
 import { BattleLog } from './BattleLog';
 import type { LongItem } from './Constuructors/LongMagicConstructor';
 import { engine } from './engineService';
@@ -14,6 +12,7 @@ import type Player from './PlayerService';
 import { RoundService, RoundStatus } from './RoundService';
 import testGame from './testGame';
 import arena from './index';
+import { createGame, Game as LeanGame } from '@/models/game/api';
 
 export type KickReason = 'afk' | 'run';
 
@@ -42,7 +41,7 @@ export default class Game {
   battleLog = new BattleLog();
   history = new HistoryService();
   longActions: Partial<Record<keyof typeof magics, LongItem[]>> = {};
-  info!: GameDocument;
+  info!: LeanGame;
   flags: {
     noDamageRound: number;
     global: GlobalFlags;
@@ -168,8 +167,8 @@ export default class Game {
 
     arena.games[this.info.id] = this;
 
-    this.info.players.forEach((playerId) => {
-      arena.characters[playerId].gameId = this.info.id;
+    this.info.players.forEach((id) => {
+      arena.characters[id].gameId = this.info.id;
     });
     // @todo add statistic +1 game for all players
   }
@@ -315,15 +314,17 @@ export default class Game {
    * Создание объекта в базе // потребуется для ведения истории
    * @return Объект созданный в базе
    */
-  async createGame(): Promise<boolean> {
-    const dbGame = await db.game.create({
+  async createGame(): Promise<void> {
+    const dbGame = await createGame({
       players: this.playerArr.init,
     });
+    if (!dbGame) {
+      throw new Error('game was not found');
+    }
     this.players = await this.playerArr.roundJson();
     this.info = dbGame;
     this.info.id = this.info._id;
     this.preLoading();
-    return true;
   }
 
   /**
@@ -421,22 +422,22 @@ export default class Game {
    */
   saveGame(): void {
     try {
-      _.forEach(this.info.players, async (p) => {
-        arena.characters[p].exp += this.players[p].stats.collect.exp;
-        arena.characters[p].expEarnedToday += this.players[p].stats.collect.exp;
-        arena.characters[p].gold += this.players[p].stats.collect.gold;
+      _.forEach(this.info.players, async (id) => {
+        arena.characters[id].exp += this.players[id].stats.collect.exp;
+        arena.characters[id].expEarnedToday += this.players[id].stats.collect.exp;
+        arena.characters[id].gold += this.players[id].stats.collect.gold;
 
         const kills = Object.values(this.players)
-          .reduce((sum, player) => (player.getKiller() === p ? sum + 1 : sum), 0);
+          .reduce((sum, player) => (player.getKiller() === id ? sum + 1 : sum), 0);
 
-        const death = this.players[p].alive ? 0 : 1;
+        const death = this.players[id].alive ? 0 : 1;
 
-        arena.characters[p].addGameStat({
+        arena.characters[id].addGameStat({
           games: 1,
           death,
           kills,
         });
-        await arena.characters[p].saveToDb();
+        await arena.characters[id].saveToDb();
       });
     } catch (e) {
       console.log('Game:', e);

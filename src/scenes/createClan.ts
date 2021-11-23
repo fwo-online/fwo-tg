@@ -1,7 +1,7 @@
 import { Scenes, Markup } from 'telegraf';
-import ClanService from '../arena/ClanService';
-import type { BotContext } from '../fwo';
-import db from '../helpers/dataBase';
+import ClanService from '@/arena/ClanService';
+import type { BotContext } from '@/fwo';
+import { checkClanName } from '@/models/clan/api';
 
 export const createClanScene = new Scenes.BaseScene<BotContext>('createClan');
 
@@ -19,7 +19,7 @@ async function valid(name: string) {
     throw new Error('Запрещено начинать клан с "/" ');
   }
 
-  const resp = await db.clan.findName(trimName);
+  const resp = await checkClanName(trimName);
   if (resp) {
     throw new Error('Кто-то придумал это до тебя!');
   } else {

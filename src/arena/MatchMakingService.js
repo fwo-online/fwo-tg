@@ -68,7 +68,9 @@ class MatchMaking extends EventEmitter {
    * admin only
    */
   stop() {
-    clearInterval(this.timerId);
+    if (this.timerId) {
+      clearInterval(this.timerId);
+    }
   }
 
   /**
