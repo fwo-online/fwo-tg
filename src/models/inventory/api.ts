@@ -1,7 +1,6 @@
 import type { LeanDocument } from "mongoose";
 import { InventoryDocument, InventoryModel } from "@/models/inventory";
-
-const dbErr = (e) => console.log(e);
+import { dbErr } from "@/models/utils";
 
 export type Inventory = LeanDocument<InventoryDocument>
 

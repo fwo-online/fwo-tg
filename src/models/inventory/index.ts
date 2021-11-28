@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import mongoose, {
-  Schema, Document, Model, Query, Types, LeanDocument, PopulatedDoc
+  Schema, Document, Model, Query, Types, PopulatedDoc
 } from 'mongoose';
 import arena from '@/arena';
 import config from '@/arena/config';
@@ -229,7 +229,7 @@ export class InventoryDocument {
 
   static getCollection(
     this: InventoryModel,
-    charInventory: LeanDocument<Inventory>[],
+    charInventory: Inventory[],
   ): Collections.Collection | undefined {
     const items: Item[] = charInventory.map(({ code }) => arena.items[code]);
     const playerCollection = _.groupBy(items, (item) => item.wcomb[0]);

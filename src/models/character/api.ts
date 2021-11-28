@@ -2,8 +2,7 @@ import type { FilterQuery, LeanDocument, UpdateQuery } from "mongoose";
 import { CharDocument, CharModel } from "@/models/character";
 import type { ClanDocument } from "@/models/clan";
 import { InventoryDocument, InventoryModel } from "@/models/inventory";
-
-const dbErr = (e) => console.log(e);
+import { dbErr } from "@/models/utils";
 
 type PopulatePaths = {
   inventory?: InventoryDocument[];

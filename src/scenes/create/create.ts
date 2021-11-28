@@ -75,7 +75,12 @@ create.on('text', async (ctx) => {
   try {
     const nickname = await validNickname(ctx.message.text);
     await loginHelper.regChar(ctx.from?.id, ctx.session.prof, nickname, 'm');
-    ctx.session.character = await loginHelper.getChar(ctx.from?.id);
+    const char = await loginHelper.getChar(ctx.from?.id);
+    if (!char) {
+      ctx.scene.enter('greeter');
+      return;
+    }
+    ctx.session.character = char;
     ctx.scene.enter('lobby');
     ctx.session.hearNick = false;
   } catch (e) {

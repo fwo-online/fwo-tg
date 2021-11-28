@@ -1,8 +1,7 @@
 import type { FilterQuery, LeanDocument, UpdateQuery } from "mongoose";
 import type { CharDocument } from "@/models/character";
 import { ClanDocument, ClanModel } from "@/models/clan";
-
-const dbErr = (e) => console.log(e);
+import { dbErr } from "@/models/utils";
 
 type PopulatePaths = {
   owner: CharDocument;
