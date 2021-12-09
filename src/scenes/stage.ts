@@ -28,7 +28,9 @@ export const stage = new Scenes.Stage<BotContext>([
   settingsScene,
   shopScene,
   skillsScene,
-]);
+], {
+  default: 'greeter'
+});
 const { leave } = Scenes.Stage;
 
 // Глобальная команда выхода из сцен

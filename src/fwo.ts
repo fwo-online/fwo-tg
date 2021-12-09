@@ -42,7 +42,6 @@ bot.use(middlewares.authMiddleware());
 bot.start(async ({ scene }) => { scene.enter('greeter'); });
 bot.command('greeter', (ctx) => ctx.scene.enter('greeter'));
 
-bot.use(middlewares.restartMiddleware());
 bot.use(middlewares.protectedMiddleware());
 
 // далее идут роуты для которых необходимо что бы персонаж был создан
