@@ -17,6 +17,7 @@ module.exports = {
   rules: {
     'no-use-before-define': ['error', { functions: false }],
     '@typescript-eslint/no-use-before-define': ['error', { functions: false }],
+    'no-console': 0,
     'no-param-reassign': 0,
     'no-underscore-dangle': 0,
     'consistent-return': 0,

@@ -18,10 +18,8 @@ const STAGES = config.stages as Stages;
  */
 function sortOrders(ordersArr: Order[]): Record<string, Order[]> {
   const sortedOrder: Record<string, Order[]> = {};
-  return ordersArr.reduce(
-    // eslint-disable-next-line no-sequences,no-return-assign
-    (r, v, _a, _b, k = v.action) => ((r[k] || (r[k] = [])).push(v), r), sortedOrder,
-  );
+  // eslint-disable-next-line no-sequences,no-return-assign, max-len
+  return ordersArr.reduce((r, v, _a, _b, k = v.action) => ((r[k] || (r[k] = [])).push(v), r), sortedOrder);
 }
 
 /**

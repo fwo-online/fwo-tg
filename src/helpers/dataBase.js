@@ -56,8 +56,10 @@ module.exports = {
     },
     async remove(tgId) {
       try {
-        return await CharModel.findOneAndUpdate({ tgId, deleted: false },
-          { deleted: true });
+        return await CharModel.findOneAndUpdate(
+          { tgId, deleted: false },
+          { deleted: true },
+        );
       } catch (e) {
         dbErr(e);
       }

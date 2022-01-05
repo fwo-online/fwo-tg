@@ -161,9 +161,10 @@ battleScene.action(/^([^_]+)_([^_]+)_(\d{1,2}|100)$/, (ctx) => {
   catchOrderError(ctx, () => {
     const [action, target, proc] = ctx.match.input.split('_');
     const { id, currentGame } = ctx.session.character;
-    const { message, keyboard } = BattleService.handlePercent(
-      id, currentGame, action, target, Number(proc),
-    );
+    const {
+      message,
+      keyboard,
+    } = BattleService.handlePercent(id, currentGame, action, target, Number(proc));
     // console.log()
     ctx.editMessageText(
       message,

@@ -9,7 +9,7 @@ import type { LongItem } from '../Constuructors/LongMagicConstructor';
  * Основное описание магии общее требовани есть в конструкторе
  */
 class Dispel extends CommonMagic {
-  dispelled!: Record<string, LongItem[]> // закладка для customMessage
+  dispelled!: Record<string, LongItem[]>; // закладка для customMessage
 
   constructor() {
     super({

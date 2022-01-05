@@ -43,9 +43,14 @@ inventoryScene.action(/itemInfo(?=_)/, async (ctx) => {
     ctx.session.character,
     arena.items[item.code],
   );
-  const itemAction = item.putOn ? Markup.button.callback('Снять',
-    `putOff_${itemId}`) : Markup.button.callback('Надеть',
-    `putOn_${itemId}`);
+  const itemAction = item.putOn
+    ? Markup.button.callback(
+      'Снять',
+      `putOff_${itemId}`,
+    ) : Markup.button.callback(
+      'Надеть',
+      `putOn_${itemId}`,
+    );
 
   ctx.editMessageText(
     `${itemDescription}`,

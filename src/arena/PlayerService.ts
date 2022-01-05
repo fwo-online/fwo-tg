@@ -94,7 +94,6 @@ export default class Player {
     this.alive = true;
     this.proc = 100;
     this.weapon = params.getPutonedWeapon();
-    return this;
   }
 
   /**

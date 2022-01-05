@@ -46,7 +46,7 @@ export default class Game {
   flags: {
     noDamageRound: number;
     global: GlobalFlags;
-  }
+  };
   /**
    * Конструктор объекта игры
    * @param playerArr массив игроков
