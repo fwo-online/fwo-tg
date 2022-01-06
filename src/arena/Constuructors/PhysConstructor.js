@@ -137,8 +137,10 @@ class PhysConstructor {
     const result = c > r;
     console.log('left', c, 'right', r, 'result', result);
     const initiatorHitParam = initiator.stats.val('hit');
-    const hitval = MiscService.randInt(initiatorHitParam.min,
-      initiatorHitParam.max);
+    const hitval = MiscService.randInt(
+      initiatorHitParam.min,
+      initiatorHitParam.max,
+    );
     this.status.hit = floatNumber(hitval * initiator.proc);
     if (result) {
       this.params.target.flags.isHited = {

@@ -7,7 +7,7 @@ export class HealMagic extends CommonMagic {
   status = {
     exp: 0,
     effect: 0,
-  }
+  };
 
   run(): void {
     const { target } = this.params;

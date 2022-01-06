@@ -41,7 +41,7 @@ export abstract class Heal {
   status = {
     exp: 0,
     val: 0,
-  }
+  };
 
   constructor(params: HealArgs) {
     Object.assign(this, params);
