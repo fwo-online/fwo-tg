@@ -20,11 +20,6 @@ export interface ClanDocument extends Document<string> {
 type ClanModel = Model<ClanDocument> & typeof ClanDocument
 
 export class ClanDocument {
-  static lvlCost(): number[] {
-    const cost = [100, 250, 750, 1500];
-    return cost;
-  }
-
   get maxPlayers(): number {
     return this.lvl + 1;
   }

@@ -1,4 +1,4 @@
-import type { FilterQuery } from 'mongoose';
+import type { UpdateQuery } from 'mongoose';
 import type { Char, CharDocument } from '@/models/character';
 import { ClanDocument, ClanModel } from '@/models/clan';
 
@@ -12,7 +12,7 @@ export async function getClans() {
   return clans.map((clan) => clan.toObject());
 }
 
-export async function updateClan(id, query: FilterQuery<ClanDocument>) {
+export async function updateClan(id: string, query: UpdateQuery<ClanDocument>) {
   const clan = await ClanModel
     .findByIdAndUpdate(id, query)
     .orFail(new Error('Клан не найден'))
@@ -24,14 +24,8 @@ export async function updateClan(id, query: FilterQuery<ClanDocument>) {
 }
 
 export async function getClanByPlayerRequest(id: string) {
-  const clan = await ClanModel
-    .findOne({ requests: id })
-    .orFail(new Error('Клан не найден'))
-    .populate<{players: Char[]}>('players')
-    .populate<{requests: Char[]}>('requests')
-    .populate<{owner: Char}>('owner');
-
-  return clan.toObject();
+  const clan = await ClanModel.findOne({ requests: id });
+  return clan?.toObject();
 }
 
 export async function getClanById(id: string) {

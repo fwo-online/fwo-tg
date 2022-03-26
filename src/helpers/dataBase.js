@@ -38,9 +38,7 @@ module.exports = {
         const x = await CharModel.findOne({ ...query, deleted: false })
           .populate('inventory')
           .populate('clan');
-        if (x) {
-          x.id = x._id;
-        }
+
         return x;
       } catch (e) {
         dbErr(e);
@@ -88,6 +86,10 @@ module.exports = {
         dbErr(e);
       }
     },
+    /**
+     * @param {number} tgId
+     * @param {import('mongoose').UpdateQuery<import('@/models/character').CharDocument>} params
+     */
     async update(tgId, params) {
       try {
         return await CharModel.findOneAndUpdate({ tgId, deleted: false }, params);

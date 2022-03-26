@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { Scenes, Markup } from 'telegraf';
 import { broadcast } from '@/helpers/channelHelper';
@@ -6,7 +7,6 @@ import { ClanService } from '../arena/ClanService';
 import ValidationError from '../arena/errors/ValidationError';
 import { Profs } from '../data';
 import type { BotContext } from '../fwo';
-import { ClanModel } from '../models/clan';
 
 export const clanScene = new Scenes.BaseScene<BotContext>('clan');
 
@@ -17,9 +17,9 @@ const startScreen = {
     [Markup.button.callback('Казна', 'add_gold')],
     [Markup.button.callback(`Заявки на вступление (${clan.requests.length})`, 'requests_list')],
     [Markup.button.callback(
-      `Улучшить клан (-${ClanModel.lvlCost()[clan.lvl]}💰 +1👤)`,
+      `Улучшить клан (-${ClanService.lvlCost[clan.lvl]}💰 +1👤)`,
       'lvlup',
-      clan.lvl >= ClanModel.lvlCost().length,
+      clan.lvl >= ClanService.lvlCost.length,
     )],
     [Markup.button.callback('Удалить клан', 'removeConfirm', !isAdmin)],
     [Markup.button.callback('Покинуть клан', 'leave', isAdmin)],
@@ -65,9 +65,9 @@ clanScene.action(/^(lvlup|back|remove|leave)$/, async (ctx) => {
       await ctx.answerCbQuery('Клан был удалён');
     }
     if (ctx.match.input === 'leave') {
-      await ClanService.leaveClan(char.clan.id, char.id);
+      await ClanService.leaveClan(char.clan.id, char.tgId);
     }
-  } catch(e) {
+  } catch (e) {
     ctx.answerCbQuery(e.message);
   }
 
@@ -207,7 +207,8 @@ clanScene.action(/clanlist|request(?=_)/, async (ctx) => {
   const [, id] = ctx.match.input.split('_');
   if (id) {
     try {
-      await ClanService.handleRequest(ctx.session.character.id, id);
+      const message = await ClanService.handleRequest(ctx.session.character.id, id);
+      ctx.answerCbQuery(message);
     } catch (e) {
       ctx.answerCbQuery(e.message);
     }

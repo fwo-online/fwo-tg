@@ -23,3 +23,5 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: fworootpassword
     volumes:
     - db:/data/db
+    ports:
+      - 27017:27017

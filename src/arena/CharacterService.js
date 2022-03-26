@@ -127,7 +127,7 @@ class Char {
   }
 
   get id() {
-    return this.charObj.id || this.charObj._id;
+    return this.charObj.id;
   }
 
   get prof() {
@@ -521,9 +521,8 @@ class Char {
   }
 
   async leaveClan() {
-    this.charObj.clan = undefined;
+    this.charObj.clan = null;
     await this.updatePenalty('clan_leave', 5 * 24 * 60);
-    return this;
   }
 
   /**
@@ -562,6 +561,21 @@ class Char {
     return char;
   }
 
+  /**
+   * Загрузка чара в память
+   * @param {Number} tgId идентификатор пользователя
+   * @return {Promise<Char>}
+   */
+  static async getCharacterById(id) {
+    const charFromDb = await db.char.load({ id });
+    if (!charFromDb) {
+      return null;
+    }
+
+    const char = new Char(charFromDb);
+    arena.characters[char.id] = char;
+    return char;
+  }
   /**
    * Возвращает объект игры по Id чара
    * @param {String} charId идентификатор чара;
