@@ -5,7 +5,7 @@ const { default: { lvlRatio } } = require('./config');
 const arena = require('./index');
 
 /**
- * @typedef {import ('../models/clan').ClanDocument} ClanDocument
+ * @typedef {import ('../models/clan').Clan} Clan
  * @typedef {Object} Statistics
  * @property {number} kills
  * @property {number} death
@@ -511,7 +511,7 @@ class Char {
   }
 
   /**
-   * @param {ClanDocument} clan
+   * @param {Clan} clan
    */
   async joinClan(clan) {
     this.charObj.clan = clan;

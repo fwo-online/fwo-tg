@@ -15,6 +15,7 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'import'],
   rules: {
+    'no-shadow': 0,
     'no-use-before-define': ['error', { functions: false }],
     '@typescript-eslint/no-use-before-define': ['error', { functions: false }],
     'no-console': 0,

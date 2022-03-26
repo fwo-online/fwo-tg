@@ -17,7 +17,7 @@ module.exports = {
   skills: null,
   /** @type import ('./actions') */
   actions: null,
-  /** @type {Object<string, import ('../models/clan').ClanDocument>} */
+  /** @type {Record<string, import ('@/models/clan').ClanDocument>} */
   clans: {},
 
   /** @type {import('telegraf').Telegraf<import('../fwo').BotContext>} */

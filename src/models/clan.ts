@@ -1,7 +1,6 @@
 import mongoose, {
-  Schema, Document, Model, DocumentDefinition,
+  Schema, Document, Model, Types, LeanDocument,
 } from 'mongoose';
-import ValidationError from '../arena/errors/ValidationError';
 import type { CharDocument } from './character';
 
 export interface ClanDocument extends Document<string> {
@@ -14,11 +13,11 @@ export interface ClanDocument extends Document<string> {
   gold: number;
   lvl: number;
   owner: CharDocument;
-  players: CharDocument[];
-  requests: CharDocument[];
+  players: Types.DocumentArray<CharDocument>;
+  requests: Types.DocumentArray<CharDocument>;
 }
 
-type ClanModel = Model<ClanDocument> & typeof ClanDocument;
+type ClanModel = Model<ClanDocument> & typeof ClanDocument
 
 export class ClanDocument {
   static lvlCost(): number[] {
@@ -33,28 +32,9 @@ export class ClanDocument {
   get hasEmptySlot(): boolean {
     return this.players.length < this.maxPlayers;
   }
-
-  /**
-   * Снимает золото из казны и повышает уровень
-   * @param clanId
-   * @throws {ValidationError}
-   */
-  async levelUp(): Promise<this> {
-    if (this.lvl >= ClanModel.lvlCost().length) {
-      throw new ValidationError('Клан имеет максимальный уровень');
-    }
-    const cost = ClanModel.lvlCost()[this.lvl];
-    if (this.gold < cost) {
-      throw new ValidationError('Недостаточно золота');
-    }
-    this.gold -= cost;
-    this.lvl += 1;
-    const updated = await this.save();
-    return updated;
-  }
 }
 
-export type Clan = DocumentDefinition<ClanDocument>
+export type Clan = LeanDocument<ClanDocument>;
 
 const schema = new Schema<ClanDocument>({
   name: { type: String, required: true, unique: true },

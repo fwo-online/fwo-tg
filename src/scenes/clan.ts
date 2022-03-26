@@ -2,7 +2,7 @@
 // @ts-nocheck
 import { Scenes, Markup } from 'telegraf';
 import arena from '../arena';
-import ClanService from '../arena/ClanService';
+import { ClanService } from '../arena/ClanService';
 import ValidationError from '../arena/errors/ValidationError';
 import { Profs } from '../data';
 import type { BotContext } from '../fwo';
@@ -64,7 +64,7 @@ clanScene.action(/^(lvlup|back|remove|leave)$/, async (ctx) => {
     await ctx.answerCbQuery('Клан был удалён');
   }
   if (ctx.match.input === 'leave') {
-    ctx.session.character = await ClanService.leaveClan(char.clan.id, char.tgId);
+    await ClanService.leaveClan(char.clan.id, char.id);
   }
 
   if (!ctx.session.character.clan) {
@@ -82,11 +82,10 @@ clanScene.action(/^(lvlup|back|remove|leave)$/, async (ctx) => {
     ctx.session.character = arena.characters[ctx.session.character.id];
     const clan = await ClanService.getClanById(ctx.session.character.clan.id);
     if (ctx.match.input === 'lvlup') {
-      const cost = ClanModel.lvlCost()[clan.lvl];
+      const cost = ClanService.lvlCost[clan.lvl];
       try {
-        const updated = await clan.levelUp(clan.id);
-        arena.clans[clan.id] = updated;
-        ctx.answerCbQuery(`Клан достиг ${clan.lvl} уровня. Списано ${cost}💰`);
+        const updated = await ClanService.levelUp(clan.id);
+        ctx.answerCbQuery(`Клан достиг ${updated.lvl + 1} уровня. Списано ${cost}💰`);
       } catch (e) {
         if (e instanceof ValidationError) {
           return ctx.answerCbQuery(e.message);
@@ -156,14 +155,14 @@ ${list.join('\n')}`,
 });
 
 clanScene.action(/requests_list|(accept|reject)(?=_)/, async (ctx) => {
-  const [action, tgId] = ctx.match.input.split('_') as [string, number];
+  const [action, charId] = ctx.match.input.split('_') as [string, number];
   const clan = await ClanService.getClanById(ctx.session.character.clan.id);
   try {
     if (action === 'accept') {
-      await ClanService.acceptRequest(clan.id, tgId);
+      await ClanService.acceptRequest(clan.id, charId);
     }
     if (action === 'reject') {
-      await ClanService.rejectRequest(clan.id, tgId);
+      await ClanService.rejectRequest(clan.id, charId);
     }
   } catch (e) {
     ctx.answerCbQuery(e.message);
@@ -175,8 +174,8 @@ clanScene.action(/requests_list|(accept|reject)(?=_)/, async (ctx) => {
     const { nickname, prof, lvl } = player;
     return [
       Markup.button.callback(`${nickname} (${Profs.profsData[prof].icon}${lvl})`, 'todo'),
-      Markup.button.callback('Принять', `accept_${player.tgId}`, !isAdmin),
-      Markup.button.callback('Отклонить', `reject_${player.tgId}`, !isAdmin),
+      Markup.button.callback('Принять', `accept_${player.id}`, !isAdmin),
+      Markup.button.callback('Отклонить', `reject_${player.id}`, !isAdmin),
     ];
   });
   ctx.editMessageText(
@@ -201,13 +200,24 @@ clanScene.action(/clanlist|request(?=_)/, async (ctx) => {
     }
   }
 
-  const list = await ClanService.getClanList(ctx.session.character.id);
+  const clans = await ClanService.getClanList(ctx.session.character.id);
+
+  const buttons = clans.map((clan) => [
+    Markup.button.callback(
+      `${clan.name} (👥${clan.players.length} / ${clan.maxPlayers})`,
+      `info_${clan.id}`,
+    ),
+    Markup.button.callback(
+      `${clan.requested ? 'Отменить' : 'Вступить'}`,
+      `request_${clan.id}`,
+    ),
+  ]);
 
   ctx.editMessageText(
     'Список доступных кланов:',
     {
       ...Markup.inlineKeyboard([
-        ...list,
+        ...buttons,
         [Markup.button.callback('Назад', 'back')],
       ]),
       parse_mode: 'Markdown',

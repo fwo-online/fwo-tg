@@ -1,34 +1,140 @@
-const { Markup } = require('telegraf');
-const channerHelper = require('../helpers/channelHelper');
-const db = require('../helpers/dataBase');
-const { ClanModel } = require('../models/clan');
-const CharacterService = require('./CharacterService');
-const arena = require('./index');
-
+import type { UpdateQuery } from 'mongoose';
+import {
+  createClan, deleteClan, getClanById, getClanByPlayerRequest, getClans, updateClan,
+} from '@/api/clan';
+import arena from '@/arena';
+import * as channelHelper from '@/helpers/channelHelper';
+import type { Clan, ClanDocument } from '@/models/clan';
+import { commitWithTransaction } from '@/utils/withTransaction';
+import CharacterService from './CharacterService';
+import ValidationError from './errors/ValidationError';
 /**
  * Clan Service
  *
  * @description Набор функций для работы с кланами.
  * @module Service/Clan
  */
+export class ClanService {
+  static cache = new Map<string, Clan>();
+  static lvlCost = [100, 250, 750, 1500];
 
-module.exports = {
-  async getClanById(id) {
-    if (arena.clans[id]) {
-      return arena.clans[id];
+  static async getClanById(id: string) {
+    const cachedClan = this.cache.get(id);
+    if (typeof cachedClan !== 'undefined') {
+      return cachedClan;
     }
-    const clan = await db.clan.findOne({ _id: id });
-    arena.clans[clan.id] = clan;
+    const clan = await getClanById(id);
+    this.cache.set(clan.id, clan);
+
     return clan;
-  },
+  }
+
   /**
-   * @param {string} clanId - id клана
-   * @param {string} charId - id порсонажа
+   * Возвразает список всех кланов из бд
    */
-  async handleRequest(charId, clanId) {
+  static async getClanList(charId: string) {
+    const char = arena.characters[charId];
+    const [clans, requestClan] = await Promise.all([getClans(), getClanByPlayerRequest(char.id)]);
+    return clans.map((clan) => ({ ...clan, requested: clan.id === requestClan.id }));
+  }
+
+  /**
+   * Создаёт новый клан
+   * @param charId - id создателя клана
+   * @param name - название клана
+   */
+  static async createClan(charId: string, name: string) {
+    return commitWithTransaction(async (session) => {
+      const clan = await createClan(session, charId, name);
+
+      const char: CharacterService = arena.characters[charId];
+      if (char.gold < this.lvlCost[0]) {
+        throw new Error('Нужно больше золота');
+      }
+      char.gold -= this.lvlCost[0];
+      char.joinClan(clan);
+
+      return clan;
+    });
+  }
+
+  private static async updateClan(id: string, query: UpdateQuery<ClanDocument>) {
+    const updated = await updateClan(id, query);
+    this.cache.set(updated.id, updated);
+
+    return updated;
+  }
+
+  /**
+   * Удаляет клан у всех участников и удаляет его
+   * @param clanId
+   */
+  static async removeClan(clanId: string, owner: string) {
+    await commitWithTransaction(async () => {
+      const clan = await this.getClanById(clanId);
+
+      const promises = clan.players.map((player) => {
+        // todo: брать персонажей из бд
+        const char: CharacterService = arena.characters[player.id];
+        if (char) {
+          return char.leaveClan();
+        }
+        return Promise.resolve();
+      });
+
+      await Promise.all(promises);
+
+      await deleteClan(clan.id, owner);
+    });
+  }
+
+  /**
+   * Снимает золото из казны и повышает уровень
+   * @param clanId
+   * @throws {ValidationError}
+   */
+  static async levelUp(clanId) {
+    const clan = await this.getClanById(clanId);
+    if (clan.lvl >= this.lvlCost.length) {
+      throw new ValidationError('Клан имеет максимальный уровень');
+    }
+    const cost = this.lvlCost[clan.lvl];
+    if (clan.gold < cost) {
+      throw new ValidationError('Недостаточно золота');
+    }
+    const updated = await this.updateClan(clanId, { $inc: { gold: -cost, lvl: 1 } });
+    return updated;
+  }
+
+  /**
+   * Добавляет золото в клан и забирает у персонажа
+   * @param clanId - id клана
+   * @param charId - id игрока
+   * @param gold - количество золота
+   */
+  static async addGold(clanId: string, charId: string, gold: number) {
+    return commitWithTransaction(async () => {
+      const clan = await this.updateClan(clanId, { $inc: { gold } });
+
+      const char: CharacterService = arena.characters[charId];
+      if (char.gold < gold) {
+        throw new Error('Недостаточно золота');
+      }
+      char.gold -= gold;
+      await char.saveToDb();
+
+      return clan;
+    });
+  }
+
+  /**
+   * @param clanId - id клана
+   * @param charId - id порсонажа
+   */
+  static async handleRequest(charId: string, clanId: string) {
     const char = arena.characters[charId];
     const clan = await this.getClanById(clanId);
-    const requestClan = await this.getPlayerClanRequest(charId);
+    const requestClan = await getClanByPlayerRequest(charId);
 
     const remainingTime = (date) => ((date.valueOf() - Date.now()) / 60000).toFixed();
 
@@ -56,158 +162,89 @@ module.exports = {
     } else {
       throw new Error('Клан уже сформирован');
     }
-  },
-  /**
-  * Возвращает клан, в который игрок делал заявку
-  * @param {string} charId - id порсонажа
-  */
-  async getPlayerClanRequest(charId) {
-    const clan = await db.clan.findOne({ requests: charId });
-    return clan;
-  },
-  /**
-   * Создаёт новый клан
-   * @param {string} charId - id создателя клана
-   * @param {string} name - название клана
-   */
-  async createClan(charId, name) {
-    const char = arena.characters[charId];
-    if (char.gold < ClanModel.lvlCost()[0]) {
-      throw new Error('Нужно больше золота');
-    }
-    char.gold -= ClanModel.lvlCost()[0];
-    const clan = await db.clan.create(char.id, name);
-    return char.joinClan(clan);
-  },
-  /**
-   * Удаляет клан у всех участников и удаляет его
-   * @param {string} clanId
-   */
-  async removeClan(clanId) {
-    const clan = await this.getClanById(clanId);
-    clan.players.forEach((player) => {
-      const char = arena.characters[player.id];
-      if (char) {
-        char.leaveClan();
-      }
-    });
-    return db.clan.remove(clan.id);
-  },
-  /**
-   * Возвразает список всех кланов из бд
-   * @returns {Promise<import ('telegraf/typings/markup').CallbackButton[][]>}
-   */
-  async getClanList(charId) {
-    const char = arena.characters[charId];
-    const clans = await db.clan.list();
-    const requestClan = await this.getPlayerClanRequest(char.id) || {};
-    return clans.map((clan) => [
-      Markup.button.callback(
-        `${clan.name} (👥${clan.players.length} / ${clan.maxPlayers})`,
-        `info_${clan.id}`,
-      ),
-      Markup.button.callback(
-        `${clan.id === requestClan.id ? 'Отменить' : 'Вступить'}`,
-        `request_${clan.id}`,
-      ),
-    ]);
-  },
-  /**
-   * Добавляет золото в клан и забирает у персонажа
-   * @param {string} clanId
-   * @param {string} charId - id персонажа
-   * @param {number} gold - количество золота
-   */
-  async addGold(clanId, charId, gold) {
-    const clan = await this.getClanById(clanId);
-    const char = arena.characters[charId];
-    if (char.gold < gold) {
-      throw new Error('Недостаточно золота');
-    }
-    char.gold -= gold;
-    await char.saveToDb();
-    const updated = await db.clan.update(clan.id, { gold: clan.gold + gold });
-    Object.assign(clan, updated);
-  },
+  }
+
   /**
    * Создаёт заявку на вступление в клан
-   * @param {string} clanId
-   * @param {string} charId
+   * @param clanId - id клана
+   * @param charId - id игрока
    */
-  async createRequest(clanId, charId) {
-    const clan = await this.getClanById(clanId);
-    const updated = await db.clan.update(clanId, { requests: clan.requests.concat(charId) });
-    Object.assign(clan, updated);
-  },
+  static async createRequest(clanId: string, charId: string) {
+    await this.updateClan(clanId, { $push: { requests: charId } });
+  }
+
   /**
    * Отмена заявки игроком
-   * @param {string} clanId
-   * @param {string} charId
+   * @param clanId - id клана
+   * @param charId - id игрока
    */
-  async removeRequest(clanId, charId) {
-    const char = arena.characters[charId];
-    const clan = await this.getClanById(clanId);
-    const updated = await db.clan.update(clanId, {
-      requests: clan.requests.filter((p) => p.tgId !== char.tgId),
+  static async removeRequest(clanId: string, charId: string) {
+    const char: CharacterService = arena.characters[charId];
+    await commitWithTransaction(async () => {
+      await this.updateClan(clanId, { $pull: { requests: { $in: [charId] } } });
+      await char.updatePenalty('clan_request', 60);
     });
-    await char.updatePenalty('clan_request', 60);
-    Object.assign(clan, updated);
-  },
+  }
+
   /**
    * Добавляет игрока в клан и отправляет ему сообщение
-   * @param {string} clanId
-   * @param {number} tgId
+   * @param clanId - id клана
+   * @param charId - id игрока
    */
-  async acceptRequest(clanId, tgId) {
+  static async acceptRequest(clanId: string, charId: string) {
     const clan = await this.getClanById(clanId);
-    if (clan.hasEmptySlot) {
-      const char = await CharacterService.getCharacter(tgId);
-      const updated = await db.clan.update(clan.id, {
-        players: [...clan.players, char.id],
-        requests: clan.requests.filter((player) => player.tgId !== char.tgId),
+    if (!clan.hasEmptySlot) {
+      throw new Error('Клан уже сформирован');
+    }
+    const char: CharacterService = arena.characters[charId];
+
+    await commitWithTransaction(async () => {
+      await this.updateClan(clan.id, {
+        $push: { players: charId },
+        $pull: { requests: { $in: [charId] } },
       });
-      Object.assign(clan, updated);
 
       /** @todo не сохраняется клан у игрока */
       arena.characters[char.id] = await char.joinClan(clan);
-      channerHelper.broadcast(
-        `Твоя заявка на вступление в клан *${clan.name}* была одобрена`,
-        char.tgId,
-      );
-    } else {
-      throw new Error('Клан уже сформирован');
-    }
-  },
+    });
+
+    channelHelper.broadcast(
+      `Твоя заявка на вступление в клан *${clan.name}* была одобрена`,
+      char.tgId,
+    );
+  }
+
   /**
    * Отклоняет запрос игрока
-   * @param {string} clanId
-   * @param {number} tgId
+   * @param clanId - id клана
+   * @param charId - id игрока
    */
-  async rejectRequest(clanId, tgId) {
+  static async rejectRequest(clanId: string, charId: string) {
     const clan = await this.getClanById(clanId);
-    const char = await CharacterService.getCharacter(tgId);
-    const updated = await db.clan.update(clan.id, {
-      requests: clan.requests.filter((player) => player.tgId !== char.tgId),
+    const char: CharacterService = arena.characters[charId];
+
+    await this.updateClan(clan.id, {
+      $pull: { requests: { $in: [charId] } },
     });
-    Object.assign(clan, updated);
-    channerHelper.broadcast(
+
+    channelHelper.broadcast(
       `Твоя заявка на вступление в клан *${clan.name}* была отклонена`,
       char.tgId,
     );
-  },
+  }
+
   /**
    * Удаляет игрока из клана
-   * @param {string} clanId
-   * @param {number} tgId
+   * @param clanId - id клана
+   * @param tgId - telegram id игрока
    */
-  async leaveClan(clanId, tgId) {
-    const clan = await this.getClanById(clanId);
-    const char = await CharacterService.getCharacter(tgId);
-    const updated = await db.clan.update(clan.id, {
-      players: clan.players.filter((player) => player.tgId !== char.tgId),
+  static async leaveClan(clanId: string, tgId: number) {
+    await commitWithTransaction(async () => {
+      const char = await CharacterService.getCharacter(tgId);
+      await this.updateClan(clanId, {
+        $pull: { players: { $in: [tgId] } },
+      });
+      await char.leaveClan();
     });
-    Object.assign(clan, updated);
-    await char.leaveClan();
-    return char;
-  },
-};
+  }
+}
