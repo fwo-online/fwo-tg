@@ -1,6 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { Scenes, Markup } from 'telegraf';
+import { broadcast } from '@/helpers/channelHelper';
 import arena from '../arena';
 import { ClanService } from '../arena/ClanService';
 import ValidationError from '../arena/errors/ValidationError';
@@ -59,12 +59,16 @@ clanScene.enter(async (ctx) => {
 
 clanScene.action(/^(lvlup|back|remove|leave)$/, async (ctx) => {
   const char = ctx.session.character;
-  if (ctx.match.input === 'remove') {
-    await ClanService.removeClan(char.clan.id);
-    await ctx.answerCbQuery('Клан был удалён');
-  }
-  if (ctx.match.input === 'leave') {
-    await ClanService.leaveClan(char.clan.id, char.id);
+  try {
+    if (ctx.match.input === 'remove') {
+      await ClanService.removeClan(char.clan.id, char.id);
+      await ctx.answerCbQuery('Клан был удалён');
+    }
+    if (ctx.match.input === 'leave') {
+      await ClanService.leaveClan(char.clan.id, char.id);
+    }
+  } catch(e) {
+    ctx.answerCbQuery(e.message);
   }
 
   if (!ctx.session.character.clan) {
@@ -155,14 +159,23 @@ ${list.join('\n')}`,
 });
 
 clanScene.action(/requests_list|(accept|reject)(?=_)/, async (ctx) => {
-  const [action, charId] = ctx.match.input.split('_') as [string, number];
+  const [action, charId] = ctx.match.input.split('_') as [string, string];
   const clan = await ClanService.getClanById(ctx.session.character.clan.id);
   try {
     if (action === 'accept') {
       await ClanService.acceptRequest(clan.id, charId);
+      broadcast(
+        `Твоя заявка на вступление в клан *${clan.name}* была одобрена`,
+        ctx.session.character.tgId,
+      );
     }
     if (action === 'reject') {
       await ClanService.rejectRequest(clan.id, charId);
+
+      broadcast(
+        `Твоя заявка на вступление в клан *${clan.name}* была отклонена`,
+        ctx.session.character.tgId,
+      );
     }
   } catch (e) {
     ctx.answerCbQuery(e.message);
@@ -200,7 +213,10 @@ clanScene.action(/clanlist|request(?=_)/, async (ctx) => {
     }
   }
 
-  const clans = await ClanService.getClanList(ctx.session.character.id);
+  const [clans, requestedClan] = await Promise.all([
+    ClanService.getClanList(),
+    ClanService.getClanByPlayerRequest(ctx.session.character.id),
+  ]);
 
   const buttons = clans.map((clan) => [
     Markup.button.callback(
@@ -208,7 +224,7 @@ clanScene.action(/clanlist|request(?=_)/, async (ctx) => {
       `info_${clan.id}`,
     ),
     Markup.button.callback(
-      `${clan.requested ? 'Отменить' : 'Вступить'}`,
+      `${requestedClan._id === clan._id ? 'Отменить' : 'Вступить'}`,
       `request_${clan.id}`,
     ),
   ]);

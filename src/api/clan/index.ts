@@ -1,4 +1,4 @@
-import type { ClientSession, FilterQuery } from 'mongoose';
+import type { FilterQuery } from 'mongoose';
 import type { Char, CharDocument } from '@/models/character';
 import { ClanDocument, ClanModel } from '@/models/clan';
 
@@ -15,10 +15,10 @@ export async function getClans() {
 export async function updateClan(id, query: FilterQuery<ClanDocument>) {
   const clan = await ClanModel
     .findByIdAndUpdate(id, query)
+    .orFail(new Error('Клан не найден'))
     .populate<{players: Char[]}>('players')
     .populate<{requests: Char[]}>('requests')
-    .populate<{owner: Char}>('owner')
-    .orFail(new Error('Клан не найден'));
+    .populate<{owner: Char}>('owner');
 
   return clan.toObject();
 }
@@ -26,10 +26,10 @@ export async function updateClan(id, query: FilterQuery<ClanDocument>) {
 export async function getClanByPlayerRequest(id: string) {
   const clan = await ClanModel
     .findOne({ requests: id })
+    .orFail(new Error('Клан не найден'))
     .populate<{players: Char[]}>('players')
     .populate<{requests: Char[]}>('requests')
-    .populate<{owner: Char}>('owner')
-    .orFail(new Error('Клан не найден'));
+    .populate<{owner: Char}>('owner');
 
   return clan.toObject();
 }
@@ -37,10 +37,10 @@ export async function getClanByPlayerRequest(id: string) {
 export async function getClanById(id: string) {
   const clan = await ClanModel
     .findById(id)
+    .orFail(new Error('Клан не найден'))
     .populate<{players: Char[]}>('players')
     .populate<{requests: Char[]}>('requests')
-    .populate<{owner: Char}>('owner')
-    .orFail(new Error('Клан не найден'));
+    .populate<{owner: Char}>('owner');
 
   return clan.toObject();
 }
@@ -49,7 +49,7 @@ export async function deleteClan(id: string, owner: string) {
   await ClanModel.deleteOne({ id, owner }).orFail(new Error('Клан не найден'));
 }
 
-export async function createClan(session: ClientSession, owner: string, name: string) {
+export async function createClan(owner: string, name: string) {
   const exists = await ClanModel.exists({ name: { $regex: name, $options: 'i' } });
   if (exists) {
     throw new Error('Кто-то придумал это до тебя!');
@@ -64,11 +64,10 @@ export async function createClan(session: ClientSession, owner: string, name: st
 
   const clan = await ClanModel
     .findById(createdClan.id)
-    .session(session)
+    .orFail(new Error('Клан не найден'))
     .populate<{players: CharDocument[]}>('players')
     .populate<{requests: Char[]}>('requests')
-    .populate<{owner: Char}>('owner')
-    .orFail(new Error('Клан не найден'));
+    .populate<{owner: Char}>('owner');
 
   return clan.toObject();
 }

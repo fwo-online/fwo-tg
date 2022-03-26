@@ -2,7 +2,7 @@ const _ = require('lodash');
 const db = require('../helpers/dataBase');
 const { floatNumber } = require('../utils/floatNumber');
 const { default: { lvlRatio } } = require('./config');
-const arena = require('./index');
+const { default: arena } = require('./index');
 
 /**
  * @typedef {import ('../models/clan').Clan} Clan

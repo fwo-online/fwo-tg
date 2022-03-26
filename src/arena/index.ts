@@ -1,4 +1,6 @@
-module.exports = {
+import type { Clan } from '@/models/clan';
+
+export default {
   /** @type {import ('./MatchMakingService')} */
   mm: null,
   /** @type Object<string, import ('./CharacterService')> */
@@ -17,8 +19,7 @@ module.exports = {
   skills: null,
   /** @type import ('./actions') */
   actions: null,
-  /** @type {Record<string, import ('@/models/clan').ClanDocument>} */
-  clans: {},
+  clans: new Map<string, Clan>(),
 
   /** @type {import('telegraf').Telegraf<import('../fwo').BotContext>} */
   bot: null,

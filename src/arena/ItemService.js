@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { mono } = require('../utils/formatString');
 const { damageType } = require('../utils/icons');
-const arena = require('./index');
+const { default: arena } = require('./index');
 /**
  * Items Service
  *
