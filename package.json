@@ -4,14 +4,10 @@
   "description": "FightWorld Telegram",
   "main": "index.js",
   "scripts": {
+    "start": "NODE_ENV=production ts-node -r tsconfig-paths/register src/fwo.ts",
+    "dev": "node ./cli/dev.js",
     "test": "node ./cli/test.js",
-    "test-dev": "jest --watch --env=node",
-    "lint": "./node_modules/.bin/eslint --fix src/ --ext .js,.ts",
-    "start": "ts-node -r tsconfig-paths/register src/fwo.ts",
-    "dev": "nodemon",
-    "prod": "ts-node -r tsconfig-paths/register src/fwo.ts",
-    "tsc": "tsc -w",
-    "jest": "jest"
+    "lint": "eslint --fix src/ --ext .js,.ts"
   },
   "repository": {
     "type": "git",
@@ -30,6 +26,7 @@
   },
   "homepage": "https://github.com/catHD/fwo-tg#readme",
   "dependencies": {
+    "dotenv": "^16.0.0",
     "lodash": "^4.17.21",
     "mongoose": "^6.2.8",
     "telegraf": "^4.4.1",

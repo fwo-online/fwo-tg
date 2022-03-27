@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 const execa = require('execa');
 
 async function test() {
@@ -6,9 +5,8 @@ async function test() {
     const { stdout, stderr } = process;
     await execa('docker-compose', ['up', '-d', '--build', 'test_db'], { stdout, stderr });
 
-    await execa('jest', [], { stdout, stderr });
+    await execa('nodemon', { stdout, stderr });
 
-    await execa('docker-compose', ['stop', 'test_db'], { stdout, stderr });
     process.exit(0);
   } catch (e) {
     process.exit(1);

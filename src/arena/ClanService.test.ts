@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { connect, disconnect } from '@/models';
+import { connect } from '@/models';
 import type { Char } from '@/models/character';
 import type { Clan } from '@/models/clan';
 import TestUtils from '@/utils/test-utils';
