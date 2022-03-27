@@ -223,13 +223,14 @@ export class ClanService {
    * @param tgId - telegram id игрока
    */
   static async leaveClan(clanId: string, charId: string) {
-    const char = await CharacterService.getCharacterById(charId.toString());
-    if (clanId === char?.clan?.id) {
+    const clan = await ClanService.getClanById(clanId);
+    if (clan.owner.id === charId) {
       throw new Error('Невозможно покинуть клан, где вы являетесь владельцем');
     }
     await this.updateClan(clanId, {
       $pull: { players: { $in: [charId] } },
     });
+    const char = await CharacterService.getCharacterById(charId);
     await char.leaveClan();
   }
 }
