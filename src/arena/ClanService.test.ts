@@ -1,5 +1,4 @@
-import mongoose from 'mongoose';
-import { connect } from '@/models';
+import { connect, closeDatabase, clearDatabase } from '@/models';
 import type { Char } from '@/models/character';
 import type { Clan } from '@/models/clan';
 import TestUtils from '@/utils/test-utils';
@@ -14,21 +13,19 @@ describe('ClanService', () => {
 
   beforeAll(async () => {
     await connect();
-    await mongoose.connection.dropDatabase();
   });
 
   beforeEach(async () => {
-    await connect();
     char = await TestUtils.createCharacter({ gold: 100_000 });
     clan = await TestUtils.createClan(char.id);
   });
 
   afterEach(async () => {
-    await mongoose.connection.dropDatabase();
+    await clearDatabase();
   });
 
   afterAll(async () => {
-    await mongoose.disconnect();
+    await closeDatabase();
   });
 
   it('should create clan', async () => {

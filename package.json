@@ -6,7 +6,7 @@
   "scripts": {
     "start": "NODE_ENV=production ts-node -r tsconfig-paths/register src/fwo.ts",
     "dev": "node ./cli/dev.js",
-    "test": "node ./cli/test.js",
+    "test": "node ./cli/test.js -i",
     "lint": "eslint --fix src/ --ext .js,.ts"
   },
   "repository": {
