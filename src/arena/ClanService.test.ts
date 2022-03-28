@@ -148,12 +148,12 @@ describe('ClanService', () => {
     expect(requestedClan?.requests).toHaveLength(0);
   });
 
-  it.only('should leave from clan', async () => {
+  it('should leave from clan', async () => {
     const [owner, player] = await Promise.all([
       TestUtils.createCharacter(),
       TestUtils.createCharacter(),
     ]);
-    const clan = await TestUtils.createClan(owner.id, { players: [owner.id, player.id] });
+    const clan = await TestUtils.createClan(owner.id, { players: [player.id] });
     expect(clan?.players).toHaveLength(2);
 
     await ClanService.leaveClan(clan.id, player.id);

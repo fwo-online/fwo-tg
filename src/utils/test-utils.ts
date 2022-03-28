@@ -37,12 +37,12 @@ export default class TestUtils {
       players,
     });
     const clan = await created.save();
-    await CharModel.updateOne({id: charId}, {clan: clan.id});
+    await CharModel.updateOne({ id: charId }, { clan: clan.id });
     return ClanService.getClanById(clan.id);
   }
 
   static getClan(id: string) {
-    return ClanModel.findById(id);
+    return ClanModel.findById(id).populate('owner').populate('players').populate('requests');
   }
 
   static getClans() {

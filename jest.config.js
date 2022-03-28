@@ -15,5 +15,5 @@ module.exports = {
       isolatedModules: true,
     },
   },
-  setupFilesAfterEnv : ['./tools/jest.setup.ts']
+  setupFilesAfterEnv: ['<rootDir>/src/tools/jest.setup.ts'],
 };

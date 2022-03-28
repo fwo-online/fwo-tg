@@ -1,11 +1,11 @@
-import { clearDatabase, closeDatabase, connect } from "@/models";
+import { clearDatabase, closeDatabase, connect } from '@/models';
 
 beforeAll(async () => {
   await connect();
 });
 
 afterEach(async () => {
-  await clearDatabase()
+  await clearDatabase();
 });
 
 afterAll(async () => {
