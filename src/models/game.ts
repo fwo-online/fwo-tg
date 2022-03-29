@@ -15,7 +15,7 @@ export class GameDocument {
 
 export type Game = DocumentDefinition<GameDocument>
 
-const game = new Schema<GameDocument, GameModel>({
+const schema = new Schema<GameDocument, GameModel>({
   gameId: {
     type: Number, index: true,
   },
@@ -24,6 +24,6 @@ const game = new Schema<GameDocument, GameModel>({
   },
 });
 
-game.loadClass(GameDocument);
+schema.loadClass(GameDocument);
 
-export const GameModel = mongoose.model<GameDocument, GameModel>('Games', game);
+export const GameModel = mongoose.model<GameDocument, GameModel>('Games', schema);
