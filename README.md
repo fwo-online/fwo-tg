@@ -27,6 +27,12 @@ NodeJS реалзиация старой tcl IRC игры Arena [TypeScript/JS]
     npm t
     ```
 
+При запуске команды создаётся контейнер с тестовой базой, выполняется подключение к ней и запускается [jest](https://jestjs.io/docs/getting-started). [CLI флаги](https://jestjs.io/docs/cli) для jest пробрасываются через `--`
+    ```
+    nmp t -- -silent --watch
+    ```
+По умолчанию уже стоит флаг `-i` (--runInBand), который запускает тесты поочерёдно, чтобы избежать race condition
+
 ## Разработка:
 
 1. Для запуска потребуется установленный Docker [(здесь)](https://docs.docker.com/engine/install/) и Docker Compose [(здесь)](https://docs.docker.com/compose/install/)
