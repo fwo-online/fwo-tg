@@ -68,7 +68,7 @@ export abstract class Skill {
       this.next();
       this.getExp(initiator);
     } catch (failMsg) {
-      game.battleLog.log(failMsg);
+      game.battleLog.fail(failMsg);
     }
   }
 

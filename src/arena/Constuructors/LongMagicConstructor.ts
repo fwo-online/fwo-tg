@@ -50,7 +50,7 @@ export abstract class LongMagic extends CommonMagic {
       this.postRun(initiator, target, game);
     } catch (failMsg) {
       const { battleLog } = this.params.game;
-      battleLog.log(failMsg);
+      battleLog.fail(failMsg);
     }
   }
 
@@ -83,7 +83,7 @@ export abstract class LongMagic extends CommonMagic {
         this.checkTargetIsDead(); // проверка трупов в длительных магиях
         this.longNext(initiator, target);
       } catch (e) {
-        game.battleLog.log(e);
+        game.battleLog.fail(e);
       }
     });
     const filteredLongArray = longArray.filter((item) => item.duration !== 0);

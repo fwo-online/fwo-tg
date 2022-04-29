@@ -48,23 +48,6 @@ export abstract class Heal {
     Object.assign(this, params);
   }
 
-  static sumNextParams(msgObj: HealNext[]): HealNext[] {
-    const messages = msgObj.reduce((sum, curr) => {
-      const { target } = curr;
-      if (!sum[target]) {
-        sum[target] = curr;
-        return sum;
-      }
-      sum[target] = {
-        ...sum[target],
-        expArr: [...sum[target].expArr, ...curr.expArr],
-        effect: sum[target].effect + curr.effect,
-      };
-      return sum;
-    }, {} as Record<string, HealNext>);
-    return Object.values(messages);
-  }
-
   /**
    * Основная функция выполнения. Из неё дёргаются все зависимости
    * Общий метод каста магии
@@ -88,7 +71,7 @@ export abstract class Heal {
       this.next();
     } catch (e) {
       const { battleLog } = this.params.game;
-      battleLog.log(e);
+      battleLog.fail(e);
     }
   }
 

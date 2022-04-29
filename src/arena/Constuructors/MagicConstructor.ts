@@ -84,7 +84,7 @@ export abstract class Magic {
       const bl = this.params.game.battleLog;
       // @fixme прокидываем ошибку выше для длительных кастов
       if (this.isLong) throw (failMsg);
-      bl.log(failMsg);
+      bl.fail(failMsg);
     }
   }
 

@@ -406,12 +406,6 @@ export default class GameService {
         }
       }
     });
-    // Обработка сообщений от BattleLog Module
-    // @todo пока прокидываем напрямую из battlelog
-    this.battleLog.on('BattleLog', (data) => {
-      console.log('BattleLog:', data);
-      this.sendBattleLog(data);
-    });
   }
 
   /**

@@ -1,5 +1,5 @@
+/* eslint-disable no-use-before-define */
 import type { Item } from '../../models/item';
-import type { SuccessArgs } from '../BattleLog';
 import type { DmgMagicNext } from './DmgMagicConstructor';
 import type { HealMagicNext, HealNext } from './HealMagicConstructor';
 import type { LongDmgMagicNext } from './LongDmgMagicConstructor';
@@ -67,7 +67,7 @@ export type PhysBreak = Omit<BaseNext, 'exp'> & {
   expArr: ExpArr;
 }
 
-export type NextArgs =
+export type SuccessArgs =
   MagicNext |
   DmgMagicNext |
   LongDmgMagicNext |
@@ -77,7 +77,7 @@ export type NextArgs =
   HealMagicNext |
   HealNext;
 
-export type ActionType = NextArgs['actionType'];
+export type ActionType = SuccessArgs['actionType'];
 
 export interface Breaks {
   actionType: ActionType;
