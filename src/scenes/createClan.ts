@@ -1,7 +1,6 @@
 import { Scenes, Markup } from 'telegraf';
-import ClanService from '../arena/ClanService';
+import { ClanService } from '../arena/ClanService';
 import type { BotContext } from '../fwo';
-import db from '../helpers/dataBase';
 
 export const createClanScene = new Scenes.BaseScene<BotContext>('createClan');
 
@@ -19,12 +18,7 @@ async function valid(name: string) {
     throw new Error('Запрещено начинать клан с "/" ');
   }
 
-  const resp = await db.clan.findName(trimName);
-  if (resp) {
-    throw new Error('Кто-то придумал это до тебя!');
-  } else {
-    return trimName;
-  }
+  return trimName;
 }
 
 createClanScene.enter(async (ctx) => {
@@ -44,8 +38,7 @@ createClanScene.hears('🔙 В лобби', (ctx) => {
 createClanScene.on('text', async (ctx) => {
   try {
     const clanName = await valid(ctx.message.text);
-    const char = await ClanService.createClan(ctx.session.character.id, clanName);
-    ctx.session.character = char;
+    await ClanService.createClan(ctx.session.character.id, clanName);
     ctx.scene.enter('clan');
   } catch (e) {
     await ctx.reply(e.message);

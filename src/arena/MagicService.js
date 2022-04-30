@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { default: config } = require('./config');
 const MiscService = require('./MiscService');
-const arena = require('./index');
+const { default: arena } = require('./index');
 
 /**
  * Сервис работы с магиями

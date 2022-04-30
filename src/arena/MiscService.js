@@ -1,4 +1,4 @@
-const arena = require('./index');
+const { default: arena } = require('./index');
 
 /**
  * @description Просто мусорка с кастомными функциями

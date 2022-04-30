@@ -1,5 +1,5 @@
 const { Markup } = require('telegraf');
-const arena = require('../arena');
+const { default: arena } = require('../arena');
 const { Magic } = require('../arena/Constuructors/MagicConstructor');
 const { Skill } = require('../arena/Constuructors/SkillConstructor');
 
