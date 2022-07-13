@@ -197,10 +197,7 @@ battleScene.leave((ctx) => {
  * Запуск тестового боя
  */
 battleScene.command('debug', async (ctx) => {
-  // @todo сделать отдельный признак в базе
-  const ADMINS = [358539547, 187930249, 279139400, 371685623];
-  const { tgId } = ctx.session.character;
-  if (ADMINS.indexOf(tgId) !== -1) {
+  if (process.env.NODE_ENV === 'development') {
     // test players: tgId: 123456789
     const char = await loginHelper.getChar(123456789);
     const searchObject = { charId: char.id, psr: 1000, startTime: Date.now() };
