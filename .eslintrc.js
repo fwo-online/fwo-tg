@@ -50,6 +50,7 @@ module.exports = {
         caseInsensitive: true,
       },
     }],
+    'import/namespace': ['error', { allowComputed: true }],
   },
   settings: {
     'import/parsers': {

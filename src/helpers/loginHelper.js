@@ -1,6 +1,8 @@
-const CharacterService = require('../arena/CharacterService');
+const {
+  findCharacter, createCharacter, removeCharacter, updateCharacter,
+} = require('@/api/character');
+const { default: CharacterService } = require('../arena/CharacterService');
 const { profsData } = require('../data/profs');
-const db = require('./dataBase');
 
 module.exports = {
   /*
@@ -8,7 +10,7 @@ module.exports = {
   @return Boolean
    */
   async check(tgId) {
-    const re = await db.char.find({ tgId });
+    const re = await findCharacter({ tgId });
     return !!re;
   },
   /*
@@ -16,7 +18,7 @@ module.exports = {
   @return Boolean Наличие живого ника в базе
    */
   async checkNick(nickname) {
-    const re = await db.char.findNick(nickname);
+    const re = await findCharacter({ nickname });
     return !!re;
   },
   /**
@@ -25,7 +27,7 @@ module.exports = {
   */
   async regChar(tgId, prof, nickname, sex) {
     if (!profsData[prof]) throw new Error('prof error');
-    return db.char.create({
+    return createCharacter({
       prof,
       sex,
       tgId,
@@ -39,7 +41,7 @@ module.exports = {
   @return Boolean
    */
   async remove(tgId) {
-    const resp = await db.char.remove(tgId);
+    const resp = await removeCharacter(tgId);
     return !!resp;
   },
   /**
@@ -55,7 +57,7 @@ module.exports = {
   },
   async saveHarks(tgId, params) {
     try {
-      const resp = await db.char.update(tgId, params);
+      const resp = await updateCharacter(tgId, params);
       return !!resp;
     } catch (e) {
       console.log(e);

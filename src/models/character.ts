@@ -24,7 +24,7 @@ export interface CharDocument extends Document {
   weapon?: InventoryDocument;
   lvl: number;
   sex: 'm' | 'f';
-  lastFight: Date;
+  lastFight: Date | null;
   inventory?: InventoryDocument[];
   psr: number;
   magics?: Record<string, number>
@@ -106,32 +106,14 @@ const character = new Schema<CharDocument, CharModel>({
       luck: 0,
     },
   },
-  panel: { type: Object, default: {} },
-  resists: {
-    type: Object,
-    default: {
-      ice: 0,
-      fire: 0,
-      light: 0,
-      acid: 0,
-    },
-  },
-  statical: {
-    type: Object,
-    default: {
-      heal: 0,
-      mp: 0,
-      physDef: 0,
-    },
-  },
   expLimit: {
     type: new Schema({
-      earn: { type: Number, default: 0 },
-      expiresAt: { type: Date, default: Date.now },
+      earn: Number,
+      expiresAt: Date,
     }),
     default: {
       earn: 0,
-      expiresAt: Date.now(),
+      expiresAt: new Date(),
     },
   },
   deleted: { type: Boolean, default: false },

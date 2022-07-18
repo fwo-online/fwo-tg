@@ -1,5 +1,8 @@
 const _ = require('lodash');
-const db = require('../helpers/dataBase');
+const { findCharacter, updateCharacter } = require('../api/character');
+const {
+  getCollection, getItems, addItem, removeItem, putOnItem, putOffItem, getHarksFromItems,
+} = require('../api/inventory');
 const { floatNumber } = require('../utils/floatNumber');
 const { default: { lvlRatio } } = require('./config');
 const { default: arena } = require('./index');
@@ -33,7 +36,7 @@ const assignWithSum = (a, b) => _.assignWith(a, b, sum);
  */
 /**
  * Возвращает список динамических характеристик
- * @param {Char} charObj инстанс Char
+ * @param {CharacterService} charObj инстанс Char
  * @todo проверить что функция используется при загрузке игрока в игру
  */
 function getDynHarks(charObj) {
@@ -107,7 +110,7 @@ function getDynHarks(charObj) {
 /**
  * Класс описывающий персонажа внутри игры
  */
-class Char {
+class CharacterService {
   wasLvlUp = false;
   /**
    * Конструктор игрока
@@ -273,7 +276,7 @@ class Char {
   }
 
   get collection() {
-    return db.inventory.getCollection(this.getPutonedItems()) || {};
+    return getCollection(this.getPutonedItems()) || {};
   }
 
   get resists() {
@@ -358,7 +361,7 @@ class Char {
   }
 
   async addItem(itemCode) {
-    const item = await db.inventory.addItem(this.id, itemCode);
+    const item = await addItem({ charId: this.id, itemCode });
     this.charObj.inventory.push(item);
     return this.saveToDb();
   }
@@ -383,26 +386,26 @@ class Char {
 
   async removeItem(itemId) {
     this.items = this.items.filter((item) => !item._id.equals(itemId));
-    await db.inventory.removeItem(itemId, this.id);
+    await removeItem({ charId: this.id, itemId });
     return this.saveToDb();
   }
 
   async putOffItem(itemId) {
-    await db.inventory.putOffItem(this.id, itemId);
+    await putOffItem({ charId: this.id, itemId });
     const inventory = await this.putOffItemsCantPutOned();
     this.charObj.inventory = inventory;
   }
 
   /** @returns {import('../models/inventory').InventoryDocument[]} */
   async putOffItemsCantPutOned() {
-    const inventory = await db.inventory.getItems(this.id);
+    const inventory = await getItems(this.id);
     if (!inventory) return [];
     this.charObj.inventory = inventory;
     await this.updateHarkFromItems();
 
     const items = this.getPutonedItems().filter((i) => !this.hasRequeredHarks(arena.items[i.code]));
     if (items.length) {
-      const putOffItems = items.map((i) => db.inventory.putOffItem(this.id, i._id));
+      const putOffItems = items.map((i) => putOffItem({ charId: this.id, itemId: i._id }));
       await Promise.all(putOffItems);
       const inventoryFiltered = await this.putOffItemsCantPutOned();
       this.charObj.inventory = inventoryFiltered;
@@ -419,8 +422,8 @@ class Char {
       return false;
     }
 
-    await db.inventory.putOnItem(this.id, itemId);
-    const inventory = await db.inventory.getItems(this.id);
+    await putOnItem({ charId: this.id, itemId });
+    const inventory = await getItems(this.id);
     this.charObj.inventory = inventory;
     await this.updateHarkFromItems();
     return true;
@@ -465,7 +468,7 @@ class Char {
     this.charObj.free = free;
 
     // @todo сюда нужно будет предусмотреть проверки на корректность сохраняемых данных
-    return db.char.update(this.charObj.tgId, this.charObj);
+    return this.saveToDb();
   }
 
   async buyItem(itemCode) {
@@ -500,7 +503,7 @@ class Char {
   * @returns {Promise<void>}
   */
   async updateHarkFromItems() {
-    this.harksFromItems = await db.inventory.getAllHarks(this.id);
+    this.harksFromItems = await getHarksFromItems(this.id);
     if (!this.harksFromItems || !Object.keys(this.harksFromItems).length) {
       this.harksFromItems = { hit: { min: 0, max: 0 } };
     }
@@ -516,7 +519,7 @@ class Char {
   async joinClan(clan) {
     this.charObj.clan = clan;
     await this.saveToDb();
-    const char = await Char.getCharacter(this.tgId);
+    const char = await CharacterService.getCharacter(this.tgId);
     return char;
   }
 
@@ -551,12 +554,12 @@ class Char {
    * @return {Promise<Char>}
    */
   static async getCharacter(tgId) {
-    const charFromDb = await db.char.load({ tgId });
+    const charFromDb = await findCharacter({ tgId });
     if (!charFromDb) {
       return null;
     }
 
-    const char = new Char(charFromDb);
+    const char = new CharacterService(charFromDb);
     arena.characters[char.id] = char;
     return char;
   }
@@ -567,12 +570,12 @@ class Char {
    * @return {Promise<Char>}
    */
   static async getCharacterById(id) {
-    const charFromDb = await db.char.load({ id });
+    const charFromDb = await findCharacter({ id });
     if (!charFromDb) {
       return null;
     }
 
-    const char = new Char(charFromDb);
+    const char = new CharacterService(charFromDb);
     arena.characters[char.id] = char;
     return char;
   }
@@ -620,7 +623,7 @@ class Char {
       const {
         gold, exp, magics, bonus, items, skills, lvl, clan, free,
       } = this;
-      return await db.char.update(this.tgId, {
+      return await updateCharacter(this.tgId, {
         gold,
         exp,
         magics,
@@ -640,4 +643,4 @@ class Char {
   }
 }
 
-module.exports = Char;
+module.exports = CharacterService;
