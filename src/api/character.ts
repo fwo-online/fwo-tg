@@ -33,8 +33,8 @@ export async function createCharacter(charObj: Pick<Char, 'nickname' | 'prof' | 
   return findCharacter({ id: character.id });
 }
 
-export async function updateCharacter(id: string, query: UpdateQuery<CharDocument>) {
+export async function updateCharacter(tgId: number, query: UpdateQuery<CharDocument>) {
   return CharModel
-    .findOneAndUpdate({ id, deleted: false }, query)
+    .findOneAndUpdate({ tgId, deleted: false }, query)
     .orFail(new Error('Персонаж не найден'));
 }

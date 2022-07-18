@@ -94,8 +94,10 @@ const character = new Schema<CharDocument, CharModel>({
   skills: { type: Object, default: {} },
   clan: { type: Schema.Types.ObjectId, ref: 'Clan' },
   penalty: [{
-    reason: String,
-    date: Date,
+    type: new Schema({
+      reason: String,
+      date: Date,
+    }),
   }],
   modifiers: {
     type: Object,
