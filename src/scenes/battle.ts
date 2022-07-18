@@ -9,7 +9,7 @@ import OrderError from '../arena/errors/OrderError';
 import { Profs } from '../data';
 import type { BotContext } from '../fwo';
 import * as channelHelper from '../helpers/channelHelper';
-import loginHelper from '../helpers/loginHelper';
+import * as loginHelper from '../helpers/loginHelper';
 
 export const battleScene = new Scenes.BaseScene<BotContext>('battleScene');
 

@@ -623,7 +623,7 @@ class CharacterService {
       const {
         gold, exp, magics, bonus, items, skills, lvl, clan, free,
       } = this;
-      return await updateCharacter(this.tgId, {
+      return await updateCharacter(this.id, {
         gold,
         exp,
         magics,
