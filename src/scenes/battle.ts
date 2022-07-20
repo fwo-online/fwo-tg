@@ -118,6 +118,18 @@ battleScene.action('stop', async (ctx) => {
   );
 });
 
+battleScene.action('back', async (ctx) => {
+  const { currentGame, id } = ctx.session.character;
+  const { message, keyboard } = BattleService.getDefaultMessage(id, currentGame);
+  await ctx.editMessageText(
+    message,
+    {
+      parse_mode: 'Markdown',
+      ...Markup.inlineKeyboard(keyboard),
+    },
+  );
+});
+
 /**
  * Ожидаем строку 'action_{attack}'
  */
@@ -193,15 +205,15 @@ battleScene.leave((ctx) => {
   arena.mm.pull(ctx.session.character.id);
 });
 
-/**
- * Запуск тестового боя
- */
-battleScene.command('debug', async (ctx) => {
-  if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'development') {
+  /**
+   * Запуск тестового боя
+   */
+  battleScene.command('debug', async (ctx) => {
     // test players: tgId: 123456789
     const char = await loginHelper.getChar(123456789);
     const searchObject = { charId: char.id, psr: 1000, startTime: Date.now() };
     arena.mm.push(searchObject);
     ctx.reply('ok');
-  }
-});
+  });
+}
