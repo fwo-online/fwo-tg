@@ -24,10 +24,6 @@ const getText = {
   target: (displayName: string) => `Выбери цель для _${displayName}_`,
 };
 
-/**
- * @param charId
- * @param game
- */
 function getCurrentOrders(charId: string, game: Game) {
   return game.orders.getPlayerOrders(charId)
     .map((o) => {
@@ -39,11 +35,6 @@ function getCurrentOrders(charId: string, game: Game) {
     .join('\n');
 }
 
-/**
- * @param charId
- * @param game
- * @param action
- */
 function getTargetKeyboard(charId: string, game: Game, action: string) {
   const player = game.players[charId];
   const { orderType } = getActions()[action];
@@ -55,9 +46,6 @@ function getTargetKeyboard(charId: string, game: Game, action: string) {
 
 /**
  * Возвращает кнопки с процентом заказа
- * @param action
- * @param target
- * @param proc
  */
 function getProcentKeyboard(action: string, target: string, proc: number) {
   return Array
@@ -81,30 +69,39 @@ function orderMessage(charId: string, game: Game): BattleReply {
 
 /**
  * Сообщение для второго этапа
- * @param charId
- * @param game
- * @param action
  */
 function targetMessage(charId: string, game: Game, action: string): BattleReply {
   const { displayName } = getActions()[action];
   const message = getText.target(displayName);
-  const keyboard = [getTargetKeyboard(charId, game, action)];
+  const keyboard = [
+    getTargetKeyboard(charId, game, action),
+    [Markup.button.callback('🔙 Назад', 'back')],
+  ];
   return { message, keyboard };
 }
 
+type PercentMessageParams = {
+  initiator: string;
+  game: Game;
+  action: string;
+  target: string;
+  isSelfAction?: boolean;
+}
 /**
  * Сообщение для третьего этапа
- * @param charId
- * @param game
- * @param action
- * @param targetId
  */
-function percentMessage(charId: string, game: Game, action: string, targetId: string): BattleReply {
-  const { proc } = game.players[charId];
-  const { nick } = game.players[targetId];
+function percentMessage({
+  initiator, game, action, target, isSelfAction = false,
+}: PercentMessageParams) {
+  const { proc } = game.players[initiator];
+  const { nick } = game.players[target];
   const { displayName } = getActions()[action];
-  const message = getText.proc(displayName, targetId === charId ? '' : nick);
-  const keyboard = [getProcentKeyboard(action, targetId, proc)];
+  const backButtonData = isSelfAction ? 'back' : `action_${action}`;
+  const message = getText.proc(displayName, isSelfAction ? '' : nick);
+  const keyboard = [
+    getProcentKeyboard(action, target, proc),
+    [Markup.button.callback('🔙 Назад', backButtonData)],
+  ];
   return { message, keyboard };
 }
 
@@ -113,11 +110,8 @@ export function getDefaultMessage(charId: string, game: Game): BattleReply {
 }
 /**
    * Обработка выбранного действия (первый этап)
-   * @param charId
-   * @param game
-   * @param action
    */
-export function handleAction(charId: string, game: Game, action: string): BattleReply {
+export function handleAction(initiator: string, game: Game, action: string): BattleReply {
   if (action === 'repeat') return this.repeatOrder(charId, game);
   if (action === 'reset') return this.resetOrder(charId, game);
 
@@ -128,40 +122,35 @@ export function handleAction(charId: string, game: Game, action: string): Battle
   if (orderType === 'self') {
     if (typeof proc !== 'undefined') {
       game.orders.orderAction({
-        initiator: charId, target: charId, action, proc,
+        initiator, target: initiator, action, proc,
       });
-      return orderMessage(charId, game);
+      return orderMessage(initiator, game);
     }
-    return percentMessage(charId, game, action, charId);
+    return percentMessage({
+      initiator, game, action, target: initiator, isSelfAction: true,
+    });
   }
-  return targetMessage(charId, game, action);
+  return targetMessage(initiator, game, action);
 }
 /**
  * Обработка выбранной цели (второй этап)
- * @param charId
- * @param game
- * @param action
- * @param target
  */
 // eslint-disable-next-line max-len
-export function handleTarget(charId: string, game: Game, action: string, target: string): BattleReply {
+export function handleTarget(initiator: string, game: Game, action: string, target: string): BattleReply {
   const proc = arena.skills[action] ? arena.skills[action].proc : undefined;
 
   if (typeof proc !== 'undefined') {
     game.orders.orderAction({
-      initiator: charId, target, action, proc,
+      initiator, target, action, proc,
     });
-    return orderMessage(charId, game);
+    return orderMessage(initiator, game);
   }
-  return percentMessage(charId, game, action, target);
+  return percentMessage({
+    initiator, game, action, target,
+  });
 }
 /**
  * Обработка выбранных процентов (третий этап)
- * @param charId
- * @param game
- * @param action
- * @param target
- * @param proc
  */
 // eslint-disable-next-line max-len
 export function handlePercent(charId: string, game: Game, action: string, target: string, proc: number): BattleReply {
@@ -170,18 +159,12 @@ export function handlePercent(charId: string, game: Game, action: string, target
   });
   return orderMessage(charId, game);
 }
-/**
- * @param charId
- * @param game
- */
+
 export function repeatOrder(charId: string, game: Game): BattleReply {
   game.orders.repeatLastOrder(charId);
   return orderMessage(charId, game);
 }
-/**
- * @param charId
- * @param game
- */
+
 export function resetOrder(charId: string, game: Game): BattleReply {
   game.orders.resetOrdersForPlayer(charId);
   return orderMessage(charId, game);
