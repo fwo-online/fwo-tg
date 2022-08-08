@@ -20,7 +20,7 @@ const schema = new Schema<GameDocument, GameModel>({
     type: Number, index: true,
   },
   players: {
-    type: Array,
+    type: [String],
   },
 });
 

@@ -1,8 +1,8 @@
 import _ from 'lodash';
+import { createGame } from '@/api/game';
 import { Profs } from '../data';
 import * as channelHelper from '../helpers/channelHelper';
-import db from '../helpers/dataBase';
-import type { GameDocument } from '../models/game';
+import type { Game } from '../models/game';
 import { BattleLog } from './BattleLog';
 import type { LongItem } from './Constuructors/LongMagicConstructor';
 import { engine } from './engineService';
@@ -34,7 +34,7 @@ export interface GlobalFlags {
 /**
  * Класс для объекта игры
  */
-export default class Game {
+export default class GameService {
   playerArr: PlayersArr;
   players: Record<string, Player> = {};
   round = new RoundService();
@@ -162,7 +162,7 @@ export default class Game {
    * Предзагрузка игры
    */
   preLoading(): void {
-    this.forAllAlivePlayers(Game.hideLastMessage);
+    this.forAllAlivePlayers(GameService.hideLastMessage);
     this.initHandlers();
     this.startGame();
 
@@ -293,7 +293,7 @@ export default class Game {
     this.saveGame();
     setTimeout(() => {
       this.sendToAll('Конец игры, распределяем ресурсы...');
-      this.forAllPlayers(Game.showExitButton);
+      this.forAllPlayers(GameService.showExitButton);
       this.forAllPlayers((player: Player) => { arena.characters[player.id].gameId = ''; });
       arena.mm.cancel();
       this.forAllPlayers((player: Player) => {
@@ -316,9 +316,7 @@ export default class Game {
    * @return Объект созданный в базе
    */
   async createGame(): Promise<boolean> {
-    const dbGame = await db.game.create({
-      players: this.playerArr.init,
-    });
+    const dbGame = await createGame(this.playerArr.init);
     this.players = await this.playerArr.roundJson();
     this.info = dbGame;
     this.info.id = this.info._id;
@@ -390,11 +388,11 @@ export default class Game {
         }
         case RoundStatus.START_ORDERS: {
           channelHelper.broadcast('Пришло время делать заказы!');
-          this.forAllAlivePlayers(Game.showOrderButtons);
+          this.forAllAlivePlayers(GameService.showOrderButtons);
           break;
         }
         case RoundStatus.END_ORDERS: {
-          this.forAllAlivePlayers(Game.hideLastMessage);
+          this.forAllAlivePlayers(GameService.hideLastMessage);
           // Debug Game Hack
           if (this.players['5e05ee58bdf83c6a5ff3f8dd']) {
             this.orders.ordersList = this.orders.ordersList.concat(testGame.orders);

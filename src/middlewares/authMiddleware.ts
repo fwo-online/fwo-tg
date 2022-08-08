@@ -1,6 +1,6 @@
 import type { Middleware } from 'telegraf';
 import type { BotContext } from '../fwo';
-import loginHelper from '../helpers/loginHelper';
+import * as loginHelper from '../helpers/loginHelper';
 
 export function authMiddleware(): Middleware<BotContext> {
   return async (ctx, next) => {

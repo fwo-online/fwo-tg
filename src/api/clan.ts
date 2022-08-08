@@ -1,5 +1,5 @@
 import type { UpdateQuery } from 'mongoose';
-import type { Char, CharDocument } from '@/models/character';
+import type { Char } from '@/models/character';
 import { ClanDocument, ClanModel } from '@/models/clan';
 
 export async function getClans() {
@@ -56,12 +56,5 @@ export async function createClan(owner: string, name: string) {
   });
   await createdClan.save();
 
-  const clan = await ClanModel
-    .findById(createdClan.id)
-    .orFail(new Error('Клан не найден'))
-    .populate<{players: CharDocument[]}>('players')
-    .populate<{requests: Char[]}>('requests')
-    .populate<{owner: Char}>('owner');
-
-  return clan.toObject();
+  return getClanById(createdClan.id);
 }

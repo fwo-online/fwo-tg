@@ -1,7 +1,7 @@
 import { Scenes } from 'telegraf';
 import type { Prof } from '../../data/profs';
 import type { BotContext } from '../../fwo';
-import loginHelper from '../../helpers/loginHelper';
+import * as loginHelper from '../../helpers/loginHelper';
 import { keyboards } from './keyboards';
 import { messages } from './messages';
 
@@ -74,7 +74,12 @@ create.on('text', async (ctx) => {
 
   try {
     const nickname = await validNickname(ctx.message.text);
-    await loginHelper.regChar(ctx.from?.id, ctx.session.prof, nickname, 'm');
+    await loginHelper.regChar({
+      tgId: ctx.from?.id,
+      prof: ctx.session.prof,
+      nickname,
+      sex: 'm',
+    });
     ctx.session.character = await loginHelper.getChar(ctx.from?.id);
     ctx.scene.enter('lobby');
     ctx.session.hearNick = false;
