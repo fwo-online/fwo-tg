@@ -1,47 +1,43 @@
+import { cloneDeep } from 'lodash';
 import type { LongDmgMagicNext } from '@/arena/Constuructors/LongDmgMagicConstructor';
-import { floatNumber } from '@/utils/floatNumber';
-import type { LogMessage } from '../types';
-import { partitionAction } from './partition-action';
+import type { LongMagicNext } from '@/arena/Constuructors/LongMagicConstructor';
+import type { SuccessArgs } from '@/arena/Constuructors/types';
+import type { Message } from '../BattleLog';
 
-type LongDmgMagicNextSussess = LongDmgMagicNext & {__success: true};
-/**
- * Принимает массив сообщений длительной магии. Возвращает одно сообщение
- * с объединёнными характеристиками
- */
-function sumNextParams(msgObj: LongDmgMagicNextSussess[]): LongDmgMagicNextSussess[] {
-  const messagesByTarget: LongDmgMagicNextSussess[] = [];
-  return msgObj.reduce((sum, curr) => {
-    const index = sum.findIndex((val) => (
-      val.initiator === curr.initiator && val.target === curr.target
-    ));
-    if (index !== -1) {
-      const found = sum[index];
-      sum[index] = {
-        ...found,
-        dmg: floatNumber(found.dmg + curr.dmg),
-        hp: Math.min(found.hp, curr.hp),
-        exp: floatNumber(found.exp + curr.exp),
-      };
-    } else {
-      sum.push(curr);
-    }
-    return sum;
-  }, messagesByTarget);
-}
+export function joinLongMessages(messages: Message[], newMessage: LongMagicNext): Message[] {
+  const copy = cloneDeep(messages);
 
-export function joinLongMessages(messages: LogMessage[]): LogMessage[] {
-  for (let i = 0; i < messages.length; i += 1) {
-    const message = messages[i];
-    if (message.__success && message.actionType === 'dmg-magic-long') {
-      const [
-        withAction,
-        withoutAction,
-      ] = partitionAction(messages, message);
-
-      const sumMsgObj = sumNextParams(withAction);
-
-      return joinLongMessages(withoutAction.splice(i, 0, ...sumMsgObj));
+  for (const message of copy) {
+    if (isSameMessage(message, newMessage)) {
+      message.exp += newMessage.exp;
+      return messages;
     }
   }
+
+  messages.push(newMessage);
   return messages;
+}
+
+export function joinLongDmgMessages(messages: Message[], newMessage: LongDmgMagicNext): Message[] {
+  const copy = cloneDeep(messages);
+
+  for (const message of copy) {
+    if (isSameMessage(message, newMessage)) {
+      message.exp += newMessage.exp;
+      message.dmg += newMessage.dmg;
+      message.hp = Math.min(message.hp, newMessage.hp);
+      return messages;
+    }
+  }
+
+  messages.push(newMessage);
+  return messages;
+}
+
+function isSameMessage<T extends SuccessArgs>(a: Message, b: T): a is T {
+  return a.action === b.action
+    && a.actionType === b.actionType
+    && a.initiator === b.initiator
+    && a.target === b.target
+    && !('message' in a);
 }

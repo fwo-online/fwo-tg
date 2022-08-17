@@ -86,3 +86,5 @@ export interface Breaks {
   initiator: string;
   target: string;
 }
+
+export type FailArgs = Breaks | PhysBreak;

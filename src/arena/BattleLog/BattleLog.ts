@@ -1,15 +1,10 @@
-import type {
-  Breaks, SuccessArgs, PhysBreak,
-} from '@/arena/Constuructors/types';
+import type { SuccessArgs, FailArgs } from '@/arena/Constuructors/types';
 import { formatMessage } from './utils/format-message';
-import { joinHealMessages } from './utils/join-heal-messages';
-import { joinLongMessages } from './utils/join-long-messages';
+import { joinLongDmgMessages, joinLongMessages } from './utils/join-long-messages';
+
+export type Message = SuccessArgs | FailArgs
 
 const MAX_MESSAGE_LENGTH = 2 ** 12;
-
-type FailArgs = Breaks | PhysBreak;
-
-type LogMessage = (SuccessArgs & { __success: true } | (FailArgs & { __success: false }));
 
 /**
  * Класс вывода данных в battlelog
@@ -17,29 +12,38 @@ type LogMessage = (SuccessArgs & { __success: true } | (FailArgs & { __success: 
  * @see https://trello.com/c/qxnIM1Yq/17
  */
 export class BattleLog {
-  private messages: LogMessage[] = [];
-
-  /**
-   * Функция логирует действия в console log
-   * @param msgObj тип сообщения
-   */
-  fail(msgObj: FailArgs): void {
-    this.messages.push({ ...msgObj, __success: false });
-  }
+  private messages: Message[] = [];
 
   /**
    * Удачный проход action
-   * @param msgObj тип сообщения
+   * @param message сообщение
    */
-  success(msgObj: SuccessArgs): void {
-    this.messages.push({ ...msgObj, __success: true });
+  success(message: SuccessArgs) {
+    switch (message.actionType) {
+      case 'magic-long':
+        this.messages = joinLongMessages(this.messages, message);
+        break;
+      case 'dmg-magic-long':
+        this.messages = joinLongDmgMessages(this.messages, message);
+        break;
+      default:
+        this.messages.push(message);
+        break;
+    }
+  }
+
+  /**
+   * Неудачный проход action
+   * @param message сообщение
+   */
+  fail(message: FailArgs): void {
+    this.messages.push(message);
   }
 
   getMessages(): string[] {
     let temp = '';
     const messagesByMaxLength: string[] = [];
-    this.messages = joinLongMessages(this.messages);
-    this.messages = joinHealMessages(this.messages);
+
     this.messages.forEach((msgObj) => {
       const message = formatMessage(msgObj);
       if (temp.length + message.length <= MAX_MESSAGE_LENGTH) {

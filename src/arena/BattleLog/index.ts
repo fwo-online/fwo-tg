@@ -1,1 +1,1 @@
-export { BattleLog } from './BattleLog';
+export * from './BattleLog';
