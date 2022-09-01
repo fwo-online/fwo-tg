@@ -1,5 +1,4 @@
-import type { BreaksMessage } from '@/arena/Constuructors/types';
-import type { FailArgs } from '../types';
+import type { BreaksMessage, FailArgs } from '@/arena/Constuructors/types';
 
 /**
  * msg

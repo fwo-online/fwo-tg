@@ -350,10 +350,9 @@ export default class GameService {
   }
 
   async sendMessages(): Promise<void> {
-    const messages = this.battleLog.getMessages();
-    const promises = messages.map(this.sendBattleLog.bind(this));
-    await Promise.all(promises);
-    this.battleLog.clearMessages();
+    const messages = this.battleLog.format();
+    await channelHelper.sendBattleLogMessages(messages);
+    this.battleLog.reset();
   }
 
   /**

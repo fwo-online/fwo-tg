@@ -16,6 +16,8 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'import'],
   rules: {
+    'no-useless-constructor': 'off',
+    '@typescript-eslint/no-useless-constructor': 'warn',
     'no-restricted-syntax': 0,
     'no-shadow': 0,
     'no-use-before-define': ['error', { functions: false }],

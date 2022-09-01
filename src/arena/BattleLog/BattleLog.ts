@@ -1,10 +1,9 @@
 import type { SuccessArgs, FailArgs } from '@/arena/Constuructors/types';
-import { formatMessage } from './utils/format-message';
-import { joinLongDmgMessages, joinLongMessages } from './utils/join-long-messages';
+import { joinLongDmgMessages, joinLongMessages, formatMessage } from './utils';
 
 export type Message = SuccessArgs | FailArgs
 
-const MAX_MESSAGE_LENGTH = 2 ** 12;
+type Formatter = (message: Message) => string;
 
 /**
  * Класс вывода данных в battlelog
@@ -13,6 +12,10 @@ const MAX_MESSAGE_LENGTH = 2 ** 12;
  */
 export class BattleLog {
   private messages: Message[] = [];
+
+  constructor(
+    private formatter: Formatter = formatMessage,
+  ) {}
 
   /**
    * Удачный проход action
@@ -40,23 +43,11 @@ export class BattleLog {
     this.messages.push(message);
   }
 
-  getMessages(): string[] {
-    let temp = '';
-    const messagesByMaxLength: string[] = [];
-
-    this.messages.forEach((msgObj) => {
-      const message = formatMessage(msgObj);
-      if (temp.length + message.length <= MAX_MESSAGE_LENGTH) {
-        temp = temp.concat('\n\n', message);
-      } else {
-        messagesByMaxLength.push(temp);
-      }
-    });
-    messagesByMaxLength.push(temp);
-    return messagesByMaxLength;
+  format() {
+    return this.messages.map(this.formatter, this);
   }
 
-  clearMessages(): void {
+  reset() {
     this.messages = [];
   }
 }
