@@ -1,8 +1,8 @@
 import type { UpdateQuery } from 'mongoose';
 import type { Char } from '@/models/character';
-import { ClanDocument, ClanModel } from '@/models/clan';
+import { Clan, ClanModel } from '@/models/clan';
 
-export async function getClans() {
+export async function getClans(): Promise<Clan[]> {
   const clans = await ClanModel
     .find()
     .populate<{players: Char[]}>('players')
@@ -12,7 +12,7 @@ export async function getClans() {
   return clans.map((clan) => clan.toObject());
 }
 
-export async function updateClan(id: string, query: UpdateQuery<ClanDocument>) {
+export async function updateClan(id: string, query: UpdateQuery<Clan>): Promise<Clan> {
   const clan = await ClanModel
     .findByIdAndUpdate(id, query)
     .orFail(new Error('Клан не найден'))
@@ -23,12 +23,12 @@ export async function updateClan(id: string, query: UpdateQuery<ClanDocument>) {
   return clan.toObject();
 }
 
-export async function getClanByPlayerRequest(id: string) {
+export async function getClanByPlayerRequest(id: string): Promise<Clan | undefined> {
   const clan = await ClanModel.findOne({ requests: id });
   return clan?.toObject();
 }
 
-export async function getClanById(id: string) {
+export async function getClanById(id: string): Promise<Clan> {
   const clan = await ClanModel
     .findById(id)
     .orFail(new Error('Клан не найден'))
@@ -39,11 +39,11 @@ export async function getClanById(id: string) {
   return clan.toObject();
 }
 
-export async function deleteClan(id: string, owner: string) {
+export async function deleteClan(id: string, owner: string): Promise<void> {
   await ClanModel.deleteOne({ id, owner }).orFail(new Error('Клан не найден'));
 }
 
-export async function createClan(owner: string, name: string) {
+export async function createClan(owner: string, name: string): Promise<Clan> {
   const exists = await ClanModel.exists({ name: { $regex: name, $options: 'i' } });
   if (exists) {
     throw new Error('Кто-то придумал это до тебя!');

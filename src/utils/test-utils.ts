@@ -1,4 +1,5 @@
 import casual from 'casual';
+import type { AnyKeys } from 'mongoose';
 import CharacterService from '@/arena/CharacterService';
 import { ClanService } from '@/arena/ClanService';
 import { profsList, profsData } from '@/data/profs';
@@ -27,8 +28,7 @@ export default class TestUtils {
     return CharModel.findById(id);
   }
 
-  static async createClan(charId: string, params?: Partial<Omit<Clan, 'owner'>>) {
-    // @ts-expect-error todo
+  static async createClan(charId: string, params?: AnyKeys<Clan>) {
     const players = params?.players?.concat([charId]) ?? [charId];
     const created = await ClanModel.create({
       owner: charId,
