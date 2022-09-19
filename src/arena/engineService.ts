@@ -2,7 +2,6 @@ import actions from './actions';
 import config from './config';
 import type Game from './GameService';
 import * as magics from './magics';
-import type { Order } from './OrderService';
 import * as skills from './skills';
 
 const ACTIONS = {
@@ -13,23 +12,13 @@ type Stages = (ActionKeys | ActionKeys[])[]
 const STAGES = config.stages as Stages;
 
 /**
- * Сортируем список заказов
- * @param ordersArr
- */
-function sortOrders(ordersArr: Order[]): Record<string, Order[]> {
-  const sortedOrder: Record<string, Order[]> = {};
-  // eslint-disable-next-line no-sequences,no-return-assign, max-len
-  return ordersArr.reduce((r, v, _a, _b, k = v.action) => ((r[k] || (r[k] = [])).push(v), r), sortedOrder);
-}
-
-/**
  * @param ar массив строк
  * @param gameObj объект игры
  * @return измененный объект игры
  */
 function runStage(ar: Stages, gameObj: Game) {
   const allActions = { ...ACTIONS };
-  const ord = sortOrders(gameObj.orders.ordersList);
+  const ord = _.groupBy(gameObj.orders.ordersList, ({ action }) => action);
   ar.forEach((x) => {
     if (typeof x !== 'string') {
       runStage(x, gameObj);
