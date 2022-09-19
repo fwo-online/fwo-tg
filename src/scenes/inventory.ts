@@ -35,6 +35,7 @@ inventoryScene.action('inventoryBack', async (ctx) => {
 });
 
 inventoryScene.action(/itemInfo(?=_)/, async (ctx) => {
+  console.log('1');
   const [, itemId] = ctx.match.input.split('_');
   const item = ctx.session.character.getItem(itemId);
   if (!item) return;
@@ -52,7 +53,7 @@ inventoryScene.action(/itemInfo(?=_)/, async (ctx) => {
       `putOn_${itemId}`,
     );
 
-  ctx.editMessageText(
+  await ctx.editMessageText(
     `${itemDescription}`,
     {
       ...Markup.inlineKeyboard([
@@ -71,7 +72,7 @@ inventoryScene.action(/putOff(?=_)/, async (ctx) => {
   const [, itemId] = ctx.match.input.split('_');
   await ctx.session.character.putOffItem(itemId);
 
-  ctx.editMessageText(
+  await ctx.editMessageText(
     'Предмет успешно снят!',
     Markup.inlineKeyboard([
       Markup.button.callback('Назад', 'inventoryBack'),
@@ -85,14 +86,14 @@ inventoryScene.action(/putOn(?=_)/, async (ctx) => {
   const result = await ctx.session.character.putOnItem(itemId);
 
   if (result) {
-    ctx.editMessageText(
+    await ctx.editMessageText(
       'Предмет успешно надет!',
       Markup.inlineKeyboard([
         Markup.button.callback('Назад', 'inventoryBack'),
       ]),
     );
   } else {
-    ctx.editMessageText(
+    await ctx.editMessageText(
       'Недостаточно характеристик либо на этом место уже надет предмет',
       Markup.inlineKeyboard([
         Markup.button.callback('Назад', 'inventoryBack'),
@@ -101,7 +102,7 @@ inventoryScene.action(/putOn(?=_)/, async (ctx) => {
   }
 });
 
-inventoryScene.action(/sellConfirm(?=_)/, (ctx) => {
+inventoryScene.action(/sellConfirm(?=_)/, async (ctx) => {
   const [, itemId] = ctx.match.input.split('_');
   const item = ctx.session.character.getItem(itemId);
   if (!item) return;
@@ -109,7 +110,7 @@ inventoryScene.action(/sellConfirm(?=_)/, (ctx) => {
   console.log(item);
   const { name, price } = arena.items[item.code];
 
-  ctx.editMessageText(
+  await ctx.editMessageText(
     `Вы действительно хотите продать _${name}_ (${price / 2} 💰)?`,
     {
       ...Markup.inlineKeyboard([
@@ -126,9 +127,9 @@ inventoryScene.action(/sellConfirm(?=_)/, (ctx) => {
 inventoryScene.action(/sell(?=_)/, async (ctx) => {
   const [, itemId] = ctx.match.input.split('_');
 
-  ctx.session.character.sellItem(itemId);
+  await ctx.session.character.sellItem(itemId);
 
-  ctx.editMessageText(
+  await ctx.editMessageText(
     'Предмет успешно продан!',
     Markup.inlineKeyboard([
       Markup.button.callback('Назад', 'inventoryBack'),
@@ -136,11 +137,11 @@ inventoryScene.action(/sell(?=_)/, async (ctx) => {
   );
 });
 
-inventoryScene.action('back', (ctx) => {
-  ctx.scene.reenter();
+inventoryScene.action('back', async (ctx) => {
+  await ctx.scene.reenter();
 });
 
-inventoryScene.hears('🔙 В лобби', (ctx) => {
-  ctx.scene.leave();
-  ctx.scene.enter('lobby');
+inventoryScene.hears('🔙 В лобби', async (ctx) => {
+  await ctx.scene.leave();
+  await ctx.scene.enter('lobby');
 });

@@ -22,7 +22,7 @@ async function valid(name: string) {
 }
 
 createClanScene.enter(async (ctx) => {
-  ctx.reply(
+  await ctx.reply(
     `Стоимость создания клана: 100💰.
 ${ctx.session.character.clan ? 'Сначала тебе нужно покинуть свой клан' : 'Введи название клана:'}`,
     Markup.inlineKeyboard([
@@ -31,20 +31,20 @@ ${ctx.session.character.clan ? 'Сначала тебе нужно покину�
   );
 });
 
-createClanScene.hears('🔙 В лобби', (ctx) => {
-  ctx.scene.enter('lobby');
+createClanScene.hears('🔙 В лобби', async (ctx) => {
+  await ctx.scene.enter('lobby');
 });
 
 createClanScene.on('text', async (ctx) => {
   try {
     const clanName = await valid(ctx.message.text);
     await ClanService.createClan(ctx.session.character.id, clanName);
-    ctx.scene.enter('clan');
+    await ctx.scene.enter('clan');
   } catch (e) {
     await ctx.reply(e.message);
   }
 });
 
-createClanScene.action('back', (ctx) => {
-  ctx.scene.enter('clan');
+createClanScene.action('back', async (ctx) => {
+  await ctx.scene.enter('clan');
 });

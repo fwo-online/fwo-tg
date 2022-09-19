@@ -12,6 +12,7 @@ module.exports = {
   ],
   parserOptions: {
     parser: '@typescript-eslint/parser',
+    project: ['./tsconfig.json']
   },
   plugins: ['@typescript-eslint', 'import'],
   rules: {
@@ -29,6 +30,8 @@ module.exports = {
     'import/no-named-as-default': 0,
     'import/prefer-default-export': 0,
     'lines-between-class-members': 0,
+    'no-void': ['error', { allowAsStatement: true }],
+    '@typescript-eslint/no-floating-promises': ['error', {ignoreVoid: true}],
     '@typescript-eslint/ban-ts-comment': ['error', {
       'ts-expect-error': 'allow-with-description',
       'ts-ignore': true,

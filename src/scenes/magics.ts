@@ -43,14 +43,14 @@ magicScene.action(/magics|learn(?=_)/, async (ctx) => {
   const [, lvl] = ctx.match.input.split('_');
   if (lvl) {
     try {
-      ctx.session.character = MagicService.learn(ctx.session.character.id, +lvl);
-      ctx.answerCbQuery('Теперь ты знаешь на одну магию больше');
+      ctx.session.character = await MagicService.learn(ctx.session.character.id, +lvl);
+      await ctx.answerCbQuery('Теперь ты знаешь на одну магию больше');
     } catch (e) {
-      ctx.answerCbQuery(e.message);
+      await ctx.answerCbQuery(e.message);
     }
   }
 
-  ctx.editMessageText(
+  await ctx.editMessageText(
     `Известные магии. Нажми на магию, чтобы узнать о ней больше.
 ${ctx.session.character.lvl === 1 ? `Стоимость изучения магии *1💡*(${ctx.session.character.bonus}💡)` : ''}`,
     {
@@ -66,10 +66,10 @@ ${ctx.session.character.lvl === 1 ? `Стоимость изучения маг�
   );
 });
 
-magicScene.action('select_lvl', (ctx) => {
+magicScene.action('select_lvl', async (ctx) => {
   const lvl = Math.min(ctx.session.character.lvl, 4);
 
-  ctx.editMessageText(
+  await ctx.editMessageText(
     `Выбери уровень изучаемой магии. Стоимость изучения равна уровню магии (*${ctx.session.character.bonus}💡*)`,
     {
       ...Markup.inlineKeyboard([
@@ -84,10 +84,10 @@ magicScene.action('select_lvl', (ctx) => {
 });
 
 /** Ожиадем "about_${name}", где name - название магии */
-magicScene.action(/about(?=_)/, (ctx) => {
+magicScene.action(/about(?=_)/, async (ctx) => {
   const [, name] = ctx.match.input.split('_');
   const magic = MagicService.show(name);
-  ctx.editMessageText(
+  await ctx.editMessageText(
     `${magic.name}: ${magic.desc}`,
     Markup.inlineKeyboard([
       Markup.button.callback('Назад', 'magics'),
@@ -95,10 +95,10 @@ magicScene.action(/about(?=_)/, (ctx) => {
   );
 });
 
-magicScene.action('back', (ctx) => {
-  ctx.scene.enter('profile');
+magicScene.action('back', async (ctx) => {
+  await ctx.scene.enter('profile');
 });
 
-magicScene.hears('🔙 В лобби', (ctx) => {
-  ctx.scene.enter('lobby');
+magicScene.hears('🔙 В лобби', async (ctx) => {
+  await ctx.scene.enter('lobby');
 });

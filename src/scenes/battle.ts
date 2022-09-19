@@ -15,17 +15,17 @@ export const battleScene = new Scenes.BaseScene<BotContext>('battleScene');
 
 const penaltyTime = 180000;
 
-type OrderFn = (ctx: BotContext) => void;
+type OrderFn = (ctx: BotContext) => void | Promise<void>;
 
-const catchOrderError = (ctx: BotContext, orderFn: OrderFn) => {
+const catchOrderError = async (ctx: BotContext, orderFn: OrderFn) => {
   try {
-    orderFn(ctx);
+    await orderFn(ctx);
   } catch (e) {
     if (e instanceof OrderError) {
-      ctx.answerCbQuery(e.message);
+      await ctx.answerCbQuery(e.message);
       const { currentGame, id } = ctx.session.character;
       const { message, keyboard } = BattleService.getDefaultMessage(id, currentGame);
-      ctx.editMessageText(
+      await ctx.editMessageText(
         message,
         {
           parse_mode: 'Markdown',
@@ -62,7 +62,7 @@ const checkCancelFindCount = (character) => {
 battleScene.enter(async (ctx) => {
   // @todo При поиске боя хотелось бы ещё выдавать сюда картиночку
   await ctx.replyWithMarkdown('*Поиск Боя*', Markup.removeKeyboard());
-  ctx.session.character.resetExpLimit();
+  await ctx.session.character.resetExpLimit();
   const canStartSearch = ctx.session.character.expEarnedToday < ctx.session.character.expLimitToday;
   const message = await ctx.reply(
     canStartSearch ? 'Начать поиск' : 'Достигнут лимит опыта на сегодня',
@@ -106,7 +106,7 @@ battleScene.action('stop', async (ctx) => {
   const { id, nickname, clan } = ctx.session.character;
   const canStartSearch = ctx.session.character.expEarnedToday < ctx.session.character.expLimitToday;
   arena.mm.pull(id);
-  ctx.editMessageText(
+  await ctx.editMessageText(
     canStartSearch ? 'Начать поиск' : 'Достигнут лимит опыта на сегодня',
     Markup.inlineKeyboard([
       [Markup.button.callback('Искать приключений на ...', 'search', !canStartSearch)],
@@ -133,12 +133,12 @@ battleScene.action('back', async (ctx) => {
 /**
  * Ожидаем строку 'action_{attack}'
  */
-battleScene.action(/action(?=_)/, (ctx) => {
-  catchOrderError(ctx, () => {
+battleScene.action(/action(?=_)/, async (ctx) => {
+  await catchOrderError(ctx, async () => {
     const { currentGame, id } = ctx.session.character;
     const [, action] = ctx.match.input.split('_');
     const { message, keyboard } = BattleService.handleAction(id, currentGame, action);
-    ctx.editMessageText(
+    await ctx.editMessageText(
       message,
       {
         ...Markup.inlineKeyboard(keyboard),
@@ -151,12 +151,12 @@ battleScene.action(/action(?=_)/, (ctx) => {
 /**
  * Ожидаем строку '{attack}_{target}'
  */
-battleScene.action(/^([^_]+)_([^_]+)$/, (ctx) => {
-  catchOrderError(ctx, () => {
+battleScene.action(/^([^_]+)_([^_]+)$/, async (ctx) => {
+  await catchOrderError(ctx, async () => {
     const [action, target] = ctx.match.input.split('_');
     const { id, currentGame } = ctx.session.character;
     const { message, keyboard } = BattleService.handleTarget(id, currentGame, action, target);
-    ctx.editMessageText(
+    await ctx.editMessageText(
       message,
       {
         ...Markup.inlineKeyboard(keyboard),
@@ -169,8 +169,8 @@ battleScene.action(/^([^_]+)_([^_]+)$/, (ctx) => {
 /**
  * Ожидаем строку '{attack}_{target}_{proc}'
  */
-battleScene.action(/^([^_]+)_([^_]+)_(\d{1,2}|100)$/, (ctx) => {
-  catchOrderError(ctx, () => {
+battleScene.action(/^([^_]+)_([^_]+)_(\d{1,2}|100)$/, async (ctx) => {
+  await catchOrderError(ctx, async () => {
     const [action, target, proc] = ctx.match.input.split('_');
     const { id, currentGame } = ctx.session.character;
     const {
@@ -178,7 +178,7 @@ battleScene.action(/^([^_]+)_([^_]+)_(\d{1,2}|100)$/, (ctx) => {
       keyboard,
     } = BattleService.handlePercent(id, currentGame, action, target, Number(proc));
     // console.log()
-    ctx.editMessageText(
+    await ctx.editMessageText(
       message,
 
       {
@@ -189,8 +189,8 @@ battleScene.action(/^([^_]+)_([^_]+)_(\d{1,2}|100)$/, (ctx) => {
   });
 });
 
-battleScene.action('exit', (ctx) => {
-  ctx.scene.enter('lobby');
+battleScene.action('exit', async (ctx) => {
+  await ctx.scene.enter('lobby');
 });
 
 battleScene.command('run', async (ctx) => {
@@ -198,7 +198,7 @@ battleScene.command('run', async (ctx) => {
 
   currentGame.preKick(id, 'run');
 
-  ctx.reply('Ты будешь выброшен из игры в конце этого раунда');
+  await ctx.reply('Ты будешь выброшен из игры в конце этого раунда');
 });
 
 battleScene.leave((ctx) => {
@@ -214,6 +214,6 @@ if (process.env.NODE_ENV === 'development') {
     const char = await loginHelper.getChar(123456789);
     const searchObject = { charId: char.id, psr: 1000, startTime: Date.now() };
     arena.mm.push(searchObject);
-    ctx.reply('ok');
+    await ctx.reply('ok');
   });
 }

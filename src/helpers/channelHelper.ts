@@ -50,7 +50,7 @@ export async function sendStatus(data: string, id: number): Promise<void> {
       const message = await arena.bot.telegram.sendMessage(id, data, { parse_mode: 'Markdown' });
       statusMessages[id] = message.message_id;
     } else {
-      updateStatus(data, id);
+      await updateStatus(data, id);
     }
   } catch (e) {
     console.log(`error: sendOrderButtons: ${e.message} for ${id}`);
@@ -152,7 +152,7 @@ export async function sendExitButton(player: Player): Promise<void> {
 
     if (autoreg) {
       messages[message.chat.id] = message.message_id;
-      broadcast(
+      await broadcast(
         `Игрок ${clan ? `\\[${clan.name}]` : ''} *${nickname}* (${Profs.profsData[prof].icon}${lvl}) начал поиск игры`,
       );
     }

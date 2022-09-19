@@ -21,7 +21,7 @@ shopScene.enter(async (ctx) => {
 shopScene.action(/itemType(?=_)/, async (ctx) => {
   const [, type] = ctx.match.input.split('_');
 
-  ctx.editMessageText(
+  await ctx.editMessageText(
     messages.itemType(type),
     keyboards.itemType(type, ctx.session.character),
   );
@@ -29,7 +29,7 @@ shopScene.action(/itemType(?=_)/, async (ctx) => {
 
 shopScene.action(/itemInfo(?=_)/, async (ctx) => {
   const [, code] = ctx.match.input.split('_');
-  ctx.editMessageText(
+  await ctx.editMessageText(
     messages.itemInfo(code, ctx.session.character),
     keyboards.itemInfo(code),
   );
@@ -40,9 +40,9 @@ shopScene.action(/buy(?=_)/, async (ctx) => {
   const result = await ctx.session.character.buyItem(code);
 
   if (!result) {
-    ctx.answerCbQuery(messages.noGold());
+    await ctx.answerCbQuery(messages.noGold());
   } else {
-    ctx.editMessageText(
+    await ctx.editMessageText(
       messages.buy(code, ctx.session.character),
       keyboards.buy(code),
     );
@@ -50,7 +50,7 @@ shopScene.action(/buy(?=_)/, async (ctx) => {
 });
 
 shopScene.action('collectionList', async (ctx) => {
-  ctx.editMessageText(
+  await ctx.editMessageText(
     messages.collectionList(),
     keyboards.collectionList(),
   );
@@ -59,23 +59,23 @@ shopScene.action('collectionList', async (ctx) => {
 shopScene.action(/collection(?=_)/, async (ctx) => {
   const [, key] = ctx.match.input.split('_');
 
-  ctx.editMessageText(
+  await ctx.editMessageText(
     messages.collectionItem(key),
     keyboards.collectionItem(key),
   );
 });
 
-shopScene.action('back', (ctx) => {
-  ctx.editMessageText(
+shopScene.action('back', async (ctx) => {
+  await ctx.editMessageText(
     messages.enter(),
     keyboards.enter(),
   );
 });
 
-shopScene.action('inventory', (ctx) => {
-  ctx.scene.enter('inventory');
+shopScene.action('inventory', async (ctx) => {
+  await ctx.scene.enter('inventory');
 });
 
-shopScene.hears('🔙 В лобби', (ctx) => {
-  ctx.scene.enter('lobby');
+shopScene.hears('🔙 В лобби', async (ctx) => {
+  await ctx.scene.enter('lobby');
 });

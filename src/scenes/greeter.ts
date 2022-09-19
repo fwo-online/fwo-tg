@@ -6,8 +6,8 @@ export const greeter = new Scenes.BaseScene<BotContext>('greeter');
 greeter.enter(async (ctx) => {
   if (ctx.session.character) {
     await ctx.reply('FWO - Arena');
-    ctx.scene.enter('lobby');
+    await ctx.scene.enter('lobby');
   } else {
-    ctx.scene.enter('create');
+    await ctx.scene.enter('create');
   }
 });

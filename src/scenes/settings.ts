@@ -21,21 +21,21 @@ settingsScene.enter(async (ctx) => {
       )],
       [Markup.button.callback(
         `Авторегистрация ${ctx.session.character.autoreg ? '✅' : '⬜️'}`,
-        `autoreg_${ctx.session.character.id}`,
+        'autoreg',
       )],
     ]),
   );
 });
 
-settingsScene.action(/autoreg/, (ctx) => {
+settingsScene.action('autoreg', async (ctx) => {
   ctx.session.character.autoreg = !ctx.session.character.autoreg;
 
-  ctx.editMessageText(
+  await ctx.editMessageText(
     'Доступные опции',
     Markup.inlineKeyboard([
       [Markup.button.callback(
         'Удалить персонажа',
-        'remove',
+        'removeConfirm',
       )],
       [Markup.button.callback(
         `Авторегистрация ${ctx.session.character.autoreg ? '✅' : '⬜️'}`,
@@ -45,8 +45,8 @@ settingsScene.action(/autoreg/, (ctx) => {
   );
 });
 
-settingsScene.action('removeConfirm', (ctx) => {
-  ctx.editMessageText(
+settingsScene.action('removeConfirm', async (ctx) => {
+  await ctx.editMessageText(
     'Вы действительно хотите удалить персонажа?',
     Markup.inlineKeyboard([
       Markup.button.callback('Да', 'remove'),
@@ -60,16 +60,16 @@ settingsScene.action('remove', async (ctx) => {
   // @ts-expect-error todo
   ctx.session.character = null;
   if (resp) {
-    ctx.answerCbQuery('Твой персонаж был удалён!');
-    ctx.scene.enter('greeter');
+    await ctx.answerCbQuery('Твой персонаж был удалён!');
+    await ctx.scene.enter('greeter');
   } else {
-    ctx.answerCbQuery('Произошла ошибка');
-    ctx.scene.enter('greeter');
+    await ctx.answerCbQuery('Произошла ошибка');
+    await ctx.scene.enter('greeter');
   }
 });
 
 settingsScene.action('back', async (ctx) => {
-  ctx.editMessageText(
+  await ctx.editMessageText(
     'Доступные опции',
     Markup.inlineKeyboard([
       [Markup.button.callback(
@@ -78,12 +78,12 @@ settingsScene.action('back', async (ctx) => {
       )],
       [Markup.button.callback(
         `Авторегистрация ${ctx.session.character.autoreg ? '✅' : '⬜️'}`,
-        `autoreg_${ctx.session.character.id}`,
+        'autoreg',
       )],
     ]),
   );
 });
 
-settingsScene.hears('🔙 В лобби', (ctx) => {
-  ctx.scene.enter('lobby');
+settingsScene.hears('🔙 В лобби', async (ctx) => {
+  await ctx.scene.enter('lobby');
 });

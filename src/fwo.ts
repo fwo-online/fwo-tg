@@ -23,7 +23,7 @@ export interface BotContext extends Context {
 
 export const bot = new Telegraf<BotContext>(process.env.BOT_TOKEN ?? '');
 // DB connection
-connect(async () => {
+void connect(async () => {
   console.log('db online');
   await ItemModel.load();
   await bot.launch();
@@ -39,7 +39,7 @@ bot.use(stage.middleware());
 bot.use(middlewares.chatMiddleware());
 bot.use(middlewares.authMiddleware());
 
-bot.start(async ({ scene }) => { scene.enter('greeter'); });
+bot.start(async ({ scene }) => { await scene.enter('greeter'); });
 bot.command('greeter', (ctx) => ctx.scene.enter('greeter'));
 
 bot.use(middlewares.restartMiddleware());

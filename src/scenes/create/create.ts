@@ -36,27 +36,27 @@ async function validNickname(nickname: string) {
 
 export const create = new Scenes.BaseScene<CreateBotContext>('create');
 
-create.enter((ctx) => {
+create.enter(async (ctx) => {
   ctx.session.hearNick = false;
-  ctx.reply(
+  await ctx.reply(
     messages.enter,
     keyboards.create,
   );
 });
 
-create.action('create', (ctx) => {
-  ctx.editMessageText(
+create.action('create', async (ctx) => {
+  await ctx.editMessageText(
     messages.create,
     keyboards.profButtons,
   );
 });
 
-create.action(/select(?=_)/, (ctx) => {
+create.action(/select(?=_)/, async (ctx) => {
   const [, prof] = ctx.match.input.split('_') as [string, Prof];
 
   ctx.session.hearNick = true;
   ctx.session.prof = prof;
-  ctx.editMessageText(
+  await ctx.editMessageText(
     messages.select(prof),
     keyboards.back,
   );
@@ -64,7 +64,7 @@ create.action(/select(?=_)/, (ctx) => {
 
 create.on('text', async (ctx) => {
   if (!ctx.from) {
-    ctx.scene.enter('greeter');
+    await ctx.scene.enter('greeter');
     return;
   }
 
@@ -81,10 +81,10 @@ create.on('text', async (ctx) => {
       sex: 'm',
     });
     ctx.session.character = await loginHelper.getChar(ctx.from?.id);
-    ctx.scene.enter('lobby');
+    await ctx.scene.enter('lobby');
     ctx.session.hearNick = false;
   } catch (e) {
-    ctx.reply(e.message);
+    await ctx.reply(e.message);
   }
 });
 

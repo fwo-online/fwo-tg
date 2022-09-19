@@ -61,8 +61,8 @@ skillsScene.action('skills', async (ctx) => {
   );
 });
 
-skillsScene.action('list', (ctx) => {
-  ctx.editMessageText(
+skillsScene.action('list', async (ctx) => {
+  await ctx.editMessageText(
     'Доступные умения',
     Markup.inlineKeyboard([
       ...getSkillButtons(SkillService.skills, ctx.session.character),
@@ -74,9 +74,9 @@ skillsScene.action('list', (ctx) => {
   );
 });
 
-skillsScene.action(/info(?=_)/, (ctx) => {
+skillsScene.action(/info(?=_)/, async (ctx) => {
   const [, skill] = ctx.match.input.split('_') as [string, SkillsNames];
-  ctx.editMessageText(
+  await ctx.editMessageText(
     SkillService.skillDescription(skill, ctx.session.character),
     Markup.inlineKeyboard([
       [Markup.button.callback(
@@ -97,8 +97,8 @@ skillsScene.action(/learn(?=_)/, async (ctx) => {
   try {
     ctx.session.character = await SkillService.learn(ctx.session.character, skill);
 
-    ctx.answerCbQuery(`Изучено умение ${displayName}`);
-    ctx.editMessageText(
+    await ctx.answerCbQuery(`Изучено умение ${displayName}`);
+    await ctx.editMessageText(
       SkillService.skillDescription(skill, ctx.session.character),
       Markup.inlineKeyboard([
         [Markup.button.callback(
@@ -113,17 +113,17 @@ skillsScene.action(/learn(?=_)/, async (ctx) => {
     );
   } catch (e) {
     if (e instanceof ValidationError) {
-      ctx.answerCbQuery(e.message);
+      await ctx.answerCbQuery(e.message);
     } else {
       throw e;
     }
   }
 });
 
-skillsScene.action('exit', ({ scene }) => {
-  scene.enter('profile');
+skillsScene.action('exit', async ({ scene }) => {
+  await scene.enter('profile');
 });
 
-skillsScene.hears('🔙 В лобби', ({ scene }) => {
-  scene.enter('lobby');
+skillsScene.hears('🔙 В лобби', async ({ scene }) => {
+  await scene.enter('lobby');
 });

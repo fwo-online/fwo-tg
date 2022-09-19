@@ -37,7 +37,7 @@ clanScene.enter(async (ctx) => {
   ctx.session.character = arena.characters[ctx.session.character.id];
 
   if (!ctx.session.character.clan) {
-    ctx.replyWithMarkdown(
+    await ctx.replyWithMarkdown(
       'Сейчас ты не состоишь ни в одном клане',
       Markup.inlineKeyboard([
         Markup.button.callback('Создать клан', 'create'),
@@ -50,7 +50,7 @@ clanScene.enter(async (ctx) => {
 
     const isAdmin = clan.owner.tgId === ctx.session.character.tgId;
 
-    ctx.replyWithMarkdown(
+    await ctx.replyWithMarkdown(
       startScreen.message(clan),
       startScreen.markup(clan, isAdmin),
     );
@@ -68,11 +68,11 @@ clanScene.action(/^(lvlup|back|remove|leave)$/, async (ctx) => {
       await ClanService.leaveClan(char.clan.id, char.tgId);
     }
   } catch (e) {
-    ctx.answerCbQuery(e.message);
+    await ctx.answerCbQuery(e.message);
   }
 
   if (!ctx.session.character.clan) {
-    ctx.editMessageText(
+    await ctx.editMessageText(
       'Сейчас ты не состоишь ни в одном клане',
       {
         ...Markup.inlineKeyboard([
@@ -89,7 +89,7 @@ clanScene.action(/^(lvlup|back|remove|leave)$/, async (ctx) => {
       const cost = ClanService.lvlCost[clan.lvl];
       try {
         const updated = await ClanService.levelUp(clan.id);
-        ctx.answerCbQuery(`Клан достиг ${updated.lvl + 1} уровня. Списано ${cost}💰`);
+        await ctx.answerCbQuery(`Клан достиг ${updated.lvl + 1} уровня. Списано ${cost}💰`);
       } catch (e) {
         if (e instanceof ValidationError) {
           return ctx.answerCbQuery(e.message);
@@ -100,15 +100,15 @@ clanScene.action(/^(lvlup|back|remove|leave)$/, async (ctx) => {
 
     const isAdmin = clan.owner.tgId === ctx.session.character.tgId;
 
-    ctx.editMessageText(
+    await ctx.editMessageText(
       startScreen.message(clan),
       startScreen.markup(clan, isAdmin),
     );
   }
 });
 
-clanScene.action('removeConfirm', (ctx) => {
-  ctx.editMessageText(
+clanScene.action('removeConfirm', async (ctx) => {
+  await ctx.editMessageText(
     'Вы действительно хотите удалить клан?',
     Markup.inlineKeyboard([
       Markup.button.callback('Да', 'remove'),
@@ -124,13 +124,13 @@ clanScene.action(/add(?=_)/, async (ctx) => {
   if (!Number.isNaN(Number(gold))) {
     try {
       await ClanService.addGold(clan.id, ctx.session.character.id, Number(gold));
-      ctx.answerCbQuery(`Списано ${gold}💰`);
+      await ctx.answerCbQuery(`Списано ${gold}💰`);
     } catch (e) {
-      ctx.answerCbQuery(e.message);
+      await ctx.answerCbQuery(e.message);
     }
   }
 
-  ctx.editMessageText(
+  await ctx.editMessageText(
     `В казне ${clan.gold}💰
 Пополнить казну:`,
     Markup.inlineKeyboard([
@@ -146,7 +146,7 @@ clanScene.action('players_list', async (ctx) => {
     const { nickname, prof, lvl } = player;
     return `${player.id === clan.owner.id ? '👑 ' : ''}*${nickname}* (${Profs.profsData[prof].icon}${lvl})`;
   });
-  ctx.editMessageText(
+  await ctx.editMessageText(
     `Список участников:
 ${list.join('\n')}`,
     {
@@ -164,7 +164,7 @@ clanScene.action(/requests_list|(accept|reject)(?=_)/, async (ctx) => {
   try {
     if (action === 'accept') {
       await ClanService.acceptRequest(clan.id, charId);
-      broadcast(
+      await broadcast(
         `Твоя заявка на вступление в клан *${clan.name}* была одобрена`,
         ctx.session.character.tgId,
       );
@@ -172,13 +172,13 @@ clanScene.action(/requests_list|(accept|reject)(?=_)/, async (ctx) => {
     if (action === 'reject') {
       await ClanService.rejectRequest(clan.id, charId);
 
-      broadcast(
+      await broadcast(
         `Твоя заявка на вступление в клан *${clan.name}* была отклонена`,
         ctx.session.character.tgId,
       );
     }
   } catch (e) {
-    ctx.answerCbQuery(e.message);
+    await ctx.answerCbQuery(e.message);
   }
 
   const isAdmin = clan.owner.tgId === ctx.session.character.tgId;
@@ -191,7 +191,7 @@ clanScene.action(/requests_list|(accept|reject)(?=_)/, async (ctx) => {
       Markup.button.callback('Отклонить', `reject_${player.id}`, !isAdmin),
     ];
   });
-  ctx.editMessageText(
+  await ctx.editMessageText(
     'Список заявок:',
     {
       ...Markup.inlineKeyboard([
@@ -208,9 +208,9 @@ clanScene.action(/clanlist|request(?=_)/, async (ctx) => {
   if (id) {
     try {
       const message = await ClanService.handleRequest(ctx.session.character.id, id);
-      ctx.answerCbQuery(message);
+      await ctx.answerCbQuery(message);
     } catch (e) {
-      ctx.answerCbQuery(e.message);
+      await ctx.answerCbQuery(e.message);
     }
   }
 
@@ -230,7 +230,7 @@ clanScene.action(/clanlist|request(?=_)/, async (ctx) => {
     ),
   ]);
 
-  ctx.editMessageText(
+  await ctx.editMessageText(
     'Список доступных кланов:',
     {
       ...Markup.inlineKeyboard([
@@ -244,9 +244,9 @@ clanScene.action(/clanlist|request(?=_)/, async (ctx) => {
 
 clanScene.action('create', async (ctx) => {
   await ctx.deleteMessage();
-  ctx.scene.enter('createClan');
+  await ctx.scene.enter('createClan');
 });
 
-clanScene.hears('🔙 В лобби', (ctx) => {
-  ctx.scene.enter('lobby');
+clanScene.hears('🔙 В лобби', async (ctx) => {
+  await ctx.scene.enter('lobby');
 });
