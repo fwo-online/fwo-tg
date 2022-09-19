@@ -180,7 +180,7 @@ export default class GameService {
   startGame(): void {
     console.debug('GC debug:: startGame', 'gameId:', this.info.id);
     // рассылаем статусы хп команды и врагов
-    void this.sendToAll('Игра начинается');
+    this.sendToAll('Игра начинается');
     this.round.initRound();
   }
 
@@ -189,17 +189,17 @@ export default class GameService {
    * @param data строка, отправляемая в общий чат
    *
    */
-  async sendBattleLog(data: string): Promise<void> {
+  sendBattleLog(data: string): void {
     console.debug('GC debug:: SBL', 'gameId:', this.info.id, 'data:', data);
-    await channelHelper.broadcast(data);
+    void channelHelper.broadcast(data);
   }
 
   /**
    * @param data строка, отправляемая в общий чат
    */
-  async sendToAll(data: string): Promise<void> {
+  sendToAll(data: string): void {
     console.debug('GC debug:: sendToAll', this.info.id);
-    await channelHelper.broadcast(data);
+    void channelHelper.broadcast(data);
   }
 
   /**
@@ -225,14 +225,14 @@ export default class GameService {
    * @param id id игрока, который будет выброшен
    * @param reason причина кика
    */
-  async kick(id: string, reason?: KickReason): void {
+  kick(id: string, reason?: KickReason): void {
     const player = this.players[id];
     if (!player) return console.log('GC debug:: kick', id, 'no player');
     void channelHelper.sendRunButton(player);
     if (reason === 'run') {
-      await channelHelper.broadcast(`Игрок *${player.nick}* сбежал из боя`);
+      void channelHelper.broadcast(`Игрок *${player.nick}* сбежал из боя`);
     } else {
-      await channelHelper.broadcast(`Игрок *${player.nick}* был выброшен из игры`);
+      void channelHelper.broadcast(`Игрок *${player.nick}* был выброшен из игры`);
     }
     const char = arena.characters[id];
     char.addGameStat({ runs: 1 });
@@ -285,14 +285,14 @@ export default class GameService {
    * @description Завершение игры
    *
    */
-  async endGame(): Promise<void> {
+  endGame(): void {
     console.log('GC debug:: endGame', this.info.id);
     // Отправляем статистику
-    await this.sendBattleLog(this.endGameReason);
-    await this.sendBattleLog(this.statistic());
+    this.sendBattleLog(this.endGameReason);
+    this.sendBattleLog(this.statistic());
     this.saveGame();
-    setTimeout(async () => {
-      await this.sendToAll('Конец игры, распределяем ресурсы...');
+    setTimeout(() => {
+      this.sendToAll('Конец игры, распределяем ресурсы...');
       this.forAllPlayers(GameService.showExitButton);
       this.forAllPlayers((player: Player) => { arena.characters[player.id].gameId = ''; });
       arena.mm.cancel();
@@ -358,24 +358,24 @@ export default class GameService {
   /**
    * Подвес
    */
-  async initHandlers(): void {
+  initHandlers(): void {
     // Обработка сообщений от Round Module
-    this.round.subscribe(async (data) => {
+    this.round.subscribe((data) => {
       switch (data.state) {
         case RoundStatus.START_ROUND: {
-          void this.sendToAll(`⚡️ Раунд ${data.round} начинается ⚡`);
+          this.sendToAll(`⚡️ Раунд ${data.round} начинается ⚡`);
           this.resetProc();
           this.orders.reset();
           this.forAllPlayers(this.sendStatus);
           break;
         }
         case RoundStatus.END_ROUND: {
-          await this.sendMessages();
+          void this.sendMessages();
           this.sortDead();
           this.handleEndGameFlags();
           this.refreshPlayer();
           if (this.isGameEnd) {
-            await this.endGame();
+            this.endGame();
           } else {
             this.refreshRoundFlags();
             this.round.nextRound();
@@ -383,7 +383,7 @@ export default class GameService {
           break;
         }
         case RoundStatus.ENGINE: {
-          await engine(this);
+          engine(this);
           break;
         }
         case RoundStatus.START_ORDERS: {
@@ -409,7 +409,7 @@ export default class GameService {
     // @todo пока прокидываем напрямую из battlelog
     this.battleLog.on('BattleLog', (data) => {
       console.log('BattleLog:', data);
-      void this.sendBattleLog(data);
+      this.sendBattleLog(data);
     });
   }
 
@@ -511,7 +511,7 @@ export default class GameService {
     });
     this.cleanLongMagics();
     if (dead.length) {
-      void this.sendToAll(`Погибши${
+      this.sendToAll(`Погибши${
         dead.length === 1 ? 'й' : 'е'
       } в этом раунде: ${
         dead.join(', ')
