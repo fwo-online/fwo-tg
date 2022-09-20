@@ -1,9 +1,9 @@
 import type { FilterQuery, UpdateQuery } from 'mongoose';
-import { Char, CharDocument, CharModel } from '@/models/character';
+import { Char, CharModel } from '@/models/character';
 import type { Clan } from '@/models/clan';
 import { Inventory, InventoryModel } from '@/models/inventory';
 
-export async function findCharacter(query: FilterQuery<CharDocument>) {
+export async function findCharacter(query: FilterQuery<Char>) {
   const character = await CharModel
     .findOne({ ...query, deleted: false })
     .orFail(new Error('Персонаж не найден'))
@@ -13,7 +13,7 @@ export async function findCharacter(query: FilterQuery<CharDocument>) {
   return character.toObject();
 }
 
-export async function removeCharacter(tgId: number) {
+export async function removeCharacter(tgId?: number) {
   const character = await CharModel
     .findOneAndUpdate(
       { tgId, deleted: false },
@@ -32,7 +32,7 @@ export async function createCharacter(charObj: Pick<Char, 'nickname' | 'prof' | 
   return findCharacter({ id: character.id });
 }
 
-export async function updateCharacter(id: string, query: UpdateQuery<CharDocument>) {
+export async function updateCharacter(id: string, query: UpdateQuery<Char>) {
   return CharModel
     .findByIdAndUpdate(id, query)
     .orFail(new Error('Персонаж не найден'));

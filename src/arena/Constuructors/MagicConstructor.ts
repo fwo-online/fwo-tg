@@ -40,10 +40,12 @@ export abstract class Magic {
     target: Player;
     game: Game;
   };
+
   status: {
     exp: number;
     effect?: number;
   };
+
   isLong = false;
 
   /**

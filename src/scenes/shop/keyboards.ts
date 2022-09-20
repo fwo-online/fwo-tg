@@ -29,9 +29,9 @@ const getTypeButtons = () => storeKeys.map((type) => [Markup.button.callback(
  * @param prof - профессия персонажа
  */
 const getItems = (wear: string, prof: Profs.Prof) => {
-  const items = _.filter(
+  const items: Item[] = _.filter(
     arena.items,
-    (item) => item.wear === wear && item.race.includes(prof) && !item.onlymake && !item.hide,
+    (item: Item) => item.wear === wear && item.race.includes(prof) && !item.onlymake && !item.hide,
   );
   const buttons = items
     .sort((a, b) => b.price - a.price)
@@ -91,7 +91,7 @@ export const collectionList = (): ExtraEditMessageText => {
 };
 
 export const collectionItem = (key: string): ExtraEditMessageText => {
-  const items = _.filter(arena.items, (item) => item.wcomb.includes(key));
+  const items = _.filter(arena.items, (item: Item) => item.wcomb.includes(key));
   const buttons = items.map(itemToButton);
   return Markup.inlineKeyboard([
     ...buttons,

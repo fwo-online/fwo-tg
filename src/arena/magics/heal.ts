@@ -17,6 +17,7 @@ export class HealMagic extends CommonMagic {
     this.status.effect = floatNumber(Math.min(this.effectVal(), maxHeal));
     target.stats.mode('up', 'hp', this.status.effect);
   }
+
   /**
    * @param initiator
    */
@@ -24,6 +25,7 @@ export class HealMagic extends CommonMagic {
     this.status.exp = Math.round(this.status.effect * 10 * initiator.proc);
     initiator.stats.mode('up', 'exp', this.status.exp);
   }
+
   next(): void {
     const { target, initiator } = this.params;
     const { battleLog } = this.params.game;

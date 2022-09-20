@@ -3,7 +3,7 @@ import {
   createClan, deleteClan, getClanById, getClanByPlayerRequest, getClans, updateClan,
 } from '@/api/clan';
 import arena from '@/arena';
-import type { ClanDocument } from '@/models/clan';
+import type { Clan } from '@/models/clan';
 import CharacterService from './CharacterService';
 import ValidationError from './errors/ValidationError';
 
@@ -61,7 +61,7 @@ export class ClanService {
     return clan;
   }
 
-  private static async updateClan(id: string, query: UpdateQuery<ClanDocument>) {
+  private static async updateClan(id: string, query: UpdateQuery<Clan>) {
     const updated = await updateClan(id, query);
 
     arena.clans.set(updated.id, updated);

@@ -42,11 +42,12 @@ export default class GameService {
   battleLog = new BattleLog();
   history = new HistoryService();
   longActions: Partial<Record<keyof typeof magics, LongItem[]>> = {};
-  info!: GameDocument;
+  info!: Game;
   flags: {
     noDamageRound: number;
     global: GlobalFlags;
   };
+
   /**
    * Конструктор объекта игры
    * @param playerArr массив игроков
@@ -319,7 +320,7 @@ export default class GameService {
     const dbGame = await createGame(this.playerArr.init);
     this.players = await this.playerArr.roundJson();
     this.info = dbGame;
-    this.info.id = this.info._id;
+    this.info.id = this.info._id.toString();
     this.preLoading();
     return true;
   }

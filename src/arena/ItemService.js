@@ -126,7 +126,6 @@ module.exports = {
    * @return {Boolean}
    *
    */
-  // eslint-disable-next-line consistent-return
   harkCheck(nick, itemCode) {
     // функция проверяет проходит ли чар по харкам
     // проверку шмотки или нет

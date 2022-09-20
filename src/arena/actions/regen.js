@@ -26,7 +26,7 @@ class Regen {
    * @param {player} target Объект цели
    * @param {game} game Объект игры (не обязателен)
    */
-  // eslint-disable-next-line class-methods-use-this,  @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line class-methods-use-this
   cast(initiator, _target, _game) {
     if ((initiator.prof === 'l') || (initiator.prof === 'w')) {
       const val = initiator.stats.val('reg_en') * initiator.proc; // размер восстан

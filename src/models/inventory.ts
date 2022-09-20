@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import mongoose, {
-  Schema, Document, Model, DocumentDefinition, Query,
+  Schema, Model, Query, Types,
 } from 'mongoose';
 import arena from '../arena';
 import config from '../arena/config';
 import { Collections, Profs } from '../data';
-import { CharModel, CharDocument } from './character';
+import { CharModel, Char } from './character';
 import {
   ItemModel, ParseAttrItem, Item,
 } from './item';
@@ -20,17 +20,20 @@ import {
 function getDefaultItem(prof: Profs.Prof) {
   return config.defaultItems[prof] || console.log('no prof in getDefaultItem');
 }
-export interface InventoryDocument extends Document<string> {
+export interface Inventory {
+  _id: Types.ObjectId
+  id: string
+
   code: string;
   wear: string;
   putOn: boolean;
   durable: number;
-  owner: string;
+  owner: Char;
 }
 
-export type InventoryModel = Model<InventoryDocument> & typeof InventoryDocument;
+export type InventoryModel = Model<Inventory> & typeof Inventory;
 
-export class InventoryDocument {
+export class Inventory {
   /**
    * fullHarks
    *
@@ -76,7 +79,7 @@ export class InventoryDocument {
   static async getPutOned(
     this: InventoryModel,
     charId: string,
-  ): Promise<InventoryDocument[]> {
+  ): Promise<Inventory[]> {
     const invObj = await this.find({ owner: charId });
     return _.filter(invObj, { putOn: true });
   }
@@ -93,12 +96,13 @@ export class InventoryDocument {
     this: InventoryModel,
     charId: string,
     itemCode: string,
-  ): Promise<InventoryDocument> {
+  ): Promise<Inventory> {
     const item = await this.create({
       owner: charId, code: itemCode, wear: arena.items[itemCode].wear, putOn: false, durable: 10,
     });
     return item;
   }
+
   /**
    * delItem
    * @description Удаление итема из инвентаря чара (итем обязан быть снят)
@@ -110,7 +114,7 @@ export class InventoryDocument {
     this: InventoryModel,
     charId: string,
     itemId: string,
-  ): Promise<InventoryDocument[] | void> {
+  ): Promise<Inventory[] | void> {
     const char = await CharModel.findById(charId);
     _.pull(char?.inventory as unknown as string[], itemId);
     await char?.save();
@@ -129,15 +133,15 @@ export class InventoryDocument {
    */
   static async firstCreate(
     this: InventoryModel,
-    charObj: CharDocument,
-  ): Promise<InventoryDocument | void> {
+    charObj: Char,
+  ): Promise<Inventory | void> {
     const defItemCode = getDefaultItem(charObj.prof);
 
     if (!defItemCode) return;
 
-    const item = await this.addItem(charObj._id, defItemCode);
+    const item = await this.addItem(charObj.id, defItemCode);
     if (item) {
-      await this.putOnItem(charObj._id, item.id);
+      await this.putOnItem(charObj.id, item.id);
       return item;
     }
   }
@@ -182,6 +186,7 @@ export class InventoryDocument {
       putOn: false,
     });
   }
+
   /**
    * Функция возвращает объект ItemObj привязанному к персонажу
    * @param itemId
@@ -191,7 +196,7 @@ export class InventoryDocument {
     this: InventoryModel,
     itemId: string,
     charId: string,
-  ): Promise<InventoryDocument | null> {
+  ): Promise<Inventory | null> {
     return this.findOne({
       owner: charId,
     }, {
@@ -207,7 +212,7 @@ export class InventoryDocument {
     this: InventoryModel,
     itemId: string,
     charId: string,
-  ): Query<unknown, InventoryDocument> {
+  ): Query<unknown, Inventory> {
     return this.remove({
       owner: charId,
       _id: itemId,
@@ -222,17 +227,17 @@ export class InventoryDocument {
   static async getItems(
     this: InventoryModel,
     charId: string,
-  ): Promise<InventoryDocument[]> {
+  ): Promise<Inventory[]> {
     return this.find({ owner: charId });
   }
 
   static getCollection(
     this: InventoryModel,
-    charInventory: InventoryDocument[],
+    charInventory: Inventory[],
   ): Collections.Collection | undefined {
     const items: Item[] = charInventory.map(({ code }) => arena.items[code]);
     const playerCollection = _.groupBy(items, (item) => item.wcomb[0]);
-    const itemsCollection = _.groupBy(arena.items, (item) => item.wcomb[0]);
+    const itemsCollection = _.groupBy(arena.items, (item: Item) => item.wcomb[0]);
 
     const playerCollectionsKeys: string[] = _.uniq(Object.keys(playerCollection));
     const [fullSets, smallSets] = _.partition(playerCollectionsKeys, (key) => key.endsWith('f'));
@@ -268,8 +273,6 @@ export class InventoryDocument {
   }
 }
 
-export type Inventory = DocumentDefinition<InventoryDocument>
-
 /**
  * Inventory
  *
@@ -277,7 +280,7 @@ export type Inventory = DocumentDefinition<InventoryDocument>
  * @module Model/Inventory
  */
 
-const inventory = new Schema<InventoryDocument, InventoryModel>({
+const inventory = new Schema<Inventory, InventoryModel>({
   code: { type: String, required: true },
   wear: { type: String, required: true },
   putOn: { type: Boolean, default: false },
@@ -290,6 +293,6 @@ const inventory = new Schema<InventoryDocument, InventoryModel>({
   },
 });
 
-inventory.loadClass(InventoryDocument);
+inventory.loadClass(Inventory);
 
-export const InventoryModel = mongoose.model<InventoryDocument, InventoryModel>('Inventory', inventory);
+export const InventoryModel = mongoose.model<Inventory, InventoryModel>('Inventory', inventory);

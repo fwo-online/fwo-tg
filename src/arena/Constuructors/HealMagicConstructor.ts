@@ -38,6 +38,7 @@ export abstract class Heal {
     target: Player;
     game: Game;
   };
+
   status = {
     exp: 0,
     val: 0,
@@ -141,6 +142,7 @@ export abstract class Heal {
     }
     return 0;
   }
+
   /**
    * Функция положительного прохождения
    */

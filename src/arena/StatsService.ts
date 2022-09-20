@@ -91,11 +91,9 @@ export default class StatsService {
     }
     switch (type) {
       case 'up':
-        // @ts-expect-error @deprecated
         this.inRound[atr] = floatNumber(oldValue + val);
         break;
       case 'down':
-        // @ts-expect-error @deprecated
         this.inRound[atr] = floatNumber(oldValue - val);
         break;
       case 'set':

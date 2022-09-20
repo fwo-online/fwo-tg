@@ -1,9 +1,10 @@
-import mongoose, {
-  Schema, Document, Model, Types, LeanDocument,
-} from 'mongoose';
-import type { CharDocument } from './character';
+import mongoose, { Schema, Model, Types } from 'mongoose';
+import type { Char } from './character';
 
-export interface ClanDocument extends Document<string> {
+export interface Clan {
+  _id: Types.ObjectId
+  id: string
+
   name: string;
   logo: {
     moderated: boolean;
@@ -12,14 +13,14 @@ export interface ClanDocument extends Document<string> {
   },
   gold: number;
   lvl: number;
-  owner: CharDocument;
-  players: Types.DocumentArray<CharDocument>;
-  requests: Types.DocumentArray<CharDocument>;
+  owner: Char;
+  players: Types.DocumentArray<Char>;
+  requests: Types.DocumentArray<Char>;
 }
 
-type ClanModel = Model<ClanDocument> & typeof ClanDocument
+type ClanModel = Model<Clan> & typeof Clan
 
-export class ClanDocument {
+export class Clan {
   get maxPlayers(): number {
     return this.lvl + 1;
   }
@@ -29,9 +30,7 @@ export class ClanDocument {
   }
 }
 
-export type Clan = LeanDocument<ClanDocument>;
-
-const schema = new Schema<ClanDocument>({
+const schema = new Schema<Clan>({
   name: { type: String, required: true, unique: true },
   logo: {
     moderated: {
@@ -53,6 +52,6 @@ const schema = new Schema<ClanDocument>({
   },
 });
 
-schema.loadClass(ClanDocument);
+schema.loadClass(Clan);
 
-export const ClanModel = mongoose.model<ClanDocument, ClanModel>('Clan', schema);
+export const ClanModel = mongoose.model<Clan, ClanModel>('Clan', schema);

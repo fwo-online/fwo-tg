@@ -112,8 +112,8 @@ export function getDefaultMessage(charId: string, game: Game): BattleReply {
    * Обработка выбранного действия (первый этап)
    */
 export function handleAction(initiator: string, game: Game, action: string): BattleReply {
-  if (action === 'repeat') return this.repeatOrder(charId, game);
-  if (action === 'reset') return this.resetOrder(charId, game);
+  if (action === 'repeat') return repeatOrder(initiator, game);
+  if (action === 'reset') return resetOrder(initiator, game);
 
   const { orderType } = getActions()[action];
   const proc = arena.skills[action] ? arena.skills[action].proc : undefined;

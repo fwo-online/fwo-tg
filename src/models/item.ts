@@ -1,8 +1,6 @@
 import fs from 'fs';
 import _ from 'lodash';
-import mongoose, {
-  Schema, Document, Model, DocumentDefinition,
-} from 'mongoose';
+import mongoose, { Schema, Model, Types } from 'mongoose';
 import arena from '../arena';
 import config, { ParseAttr } from '../arena/config';
 import type { Harks } from '../data';
@@ -23,7 +21,10 @@ export type MinMax = {
   max: number;
 }
 
-export interface ItemDocument extends Document<string> {
+export interface Item {
+  _id: Types.ObjectId
+  id: string
+
   code: string;
   name: string;
   atc: number | null;
@@ -72,13 +73,11 @@ export interface ItemDocument extends Document<string> {
   frost: MinMax | null;
 }
 
-export type Item = DocumentDefinition<ItemDocument>
-
 export type ParseAttrItem = Pick<Item, ParseAttr>
 
-export type ItemModel = Model<ItemDocument> & typeof ItemDocument;
+export type ItemModel = Model<Item> & typeof Item;
 
-export class ItemDocument {
+export class Item {
   static async load(this: ItemModel): Promise<void> {
     const timer1 = Date.now();
     try {
@@ -87,18 +86,18 @@ export class ItemDocument {
         arena.items = _.keyBy(items, 'code');
       } else {
         const shop = fs.readFileSync('shop.json', 'utf8');
-        const createdItems: Promise<ItemDocument>[] = [];
+        const itemsToCreate: Promise<Item>[] = [];
 
-        const parsedShop: Record<string, ItemDocument> = JSON.parse(shop);
+        const parsedShop: Record<string, Item> = JSON.parse(shop);
         console.log('File Loaded: ', Date.now() - timer1, 'ms');
 
         _.forEach(parsedShop, async (o, code) => {
           o.code = code;
-          createdItems.push(ItemModel.create(o));
+          itemsToCreate.push(ItemModel.create(o));
           return true;
         });
 
-        await Promise.all(createdItems);
+        const createdItems = await Promise.all(itemsToCreate);
 
         arena.items = _.keyBy(createdItems, 'code');
       }
@@ -126,7 +125,7 @@ export class ItemDocument {
  * @module Model/Item
  */
 
-const item = new Schema<ItemDocument, ItemModel>({
+const item = new Schema<Item, ItemModel>({
   code: {
     type: String, unique: true, required: true, dominant: true,
   },
@@ -157,9 +156,10 @@ const item = new Schema<ItemDocument, ItemModel>({
   gprice: {
     type: String,
   },
+  // @ts-expect-error cast as string
   wcomb: {
     type: String,
-    get: (comb: string) => comb.split(','),
+    get: (comb) => comb.split(','),
   },
   hark: {
     type: String,
@@ -279,10 +279,9 @@ const item = new Schema<ItemDocument, ItemModel>({
     get: parseAttr,
   },
 }, {
-  typePojoToMixed: false,
   versionKey: false,
 });
 
-item.loadClass(ItemDocument);
+item.loadClass(Item);
 
-export const ItemModel = mongoose.model<ItemDocument, ItemModel>('Item', item);
+export const ItemModel = mongoose.model<Item, ItemModel>('Item', item);

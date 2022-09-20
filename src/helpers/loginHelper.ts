@@ -44,9 +44,13 @@ export async function regChar({
   @func удаления
   @return Boolean
    */
-export async function remove(tgId: number) {
-  const resp = await removeCharacter(tgId);
-  return !!resp;
+export async function remove(tgId?: number) {
+  try {
+    const resp = await removeCharacter(tgId);
+    return resp;
+  } catch {
+    return false;
+  }
 }
 
 export async function getChar(tgId: number) {

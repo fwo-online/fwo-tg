@@ -1,21 +1,20 @@
-import mongoose, {
-  Schema, Document, DocumentDefinition, Model,
-} from 'mongoose';
+import mongoose, { Schema, Model, Types } from 'mongoose';
 
-export interface GameDocument extends Document {
+export interface Game {
+  _id: Types.ObjectId
+  id: string
+
   gameId: number;
   players: string[];
 }
 
-export type GameModel = Model<GameDocument> & typeof GameDocument
+export type GameModel = Model<Game> & typeof Game
 
-export class GameDocument {
+export class Game {
   //
 }
 
-export type Game = DocumentDefinition<GameDocument>
-
-const schema = new Schema<GameDocument, GameModel>({
+const schema = new Schema<Game, GameModel>({
   gameId: {
     type: Number, index: true,
   },
@@ -24,6 +23,6 @@ const schema = new Schema<GameDocument, GameModel>({
   },
 });
 
-schema.loadClass(GameDocument);
+schema.loadClass(Game);
 
-export const GameModel = mongoose.model<GameDocument, GameModel>('Games', schema);
+export const GameModel = mongoose.model<Game, GameModel>('Games', schema);

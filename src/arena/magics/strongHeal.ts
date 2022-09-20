@@ -20,6 +20,7 @@ class StrongHeal extends HealMagic {
       profList: ['p'],
     });
   }
+
   customMessage(args: HealNext) {
     const { initiator, target, effect } = args;
     return `${bold(initiator)} применил ${italic(this.displayName)} на ${bold(target)} излечив его на ${bold(effect.toString())}`;
