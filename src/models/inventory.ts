@@ -99,6 +99,7 @@ export class InventoryDocument {
     });
     return item;
   }
+
   /**
    * delItem
    * @description Удаление итема из инвентаря чара (итем обязан быть снят)
@@ -182,6 +183,7 @@ export class InventoryDocument {
       putOn: false,
     });
   }
+
   /**
    * Функция возвращает объект ItemObj привязанному к персонажу
    * @param itemId

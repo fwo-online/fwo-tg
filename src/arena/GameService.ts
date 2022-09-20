@@ -47,6 +47,7 @@ export default class GameService {
     noDamageRound: number;
     global: GlobalFlags;
   };
+
   /**
    * Конструктор объекта игры
    * @param playerArr массив игроков

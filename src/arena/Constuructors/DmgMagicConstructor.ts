@@ -24,6 +24,7 @@ export abstract class DmgMagic extends Magic {
     exp: 0,
     hit: 0,
   };
+
   /**
    * Создание магии
    */

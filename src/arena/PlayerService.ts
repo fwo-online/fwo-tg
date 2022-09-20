@@ -59,6 +59,7 @@ export default class Player {
     }
     castChance: number;
   };
+
   resists: Partial<Omit<Resists, 'clear'>>;
   skills: { [x: string]: number; };
   magics: { [x: string]: number; };

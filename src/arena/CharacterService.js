@@ -579,6 +579,7 @@ class CharacterService {
     arena.characters[char.id] = char;
     return char;
   }
+
   /**
    * Возвращает объект игры по Id чара
    * @param {String} charId идентификатор чара;

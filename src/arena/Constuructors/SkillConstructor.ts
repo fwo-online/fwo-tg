@@ -38,6 +38,7 @@ export abstract class Skill {
     target: Player;
     game: Game;
   };
+
   /**
    * Создание скила
    */

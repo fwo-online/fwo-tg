@@ -1,7 +1,6 @@
 import RoundEmitter from 'events';
 import config from '@/arena/config';
 
-// eslint-disable-next-line no-shadow
 export enum RoundStatus {
   INIT = 'INIT',
   START_ROUND = 'START_ROUND',

@@ -53,7 +53,6 @@ module.exports = {
    * @return {Object} {круг_магии:[id_магии:{описание}},...]
    */
   list(lvl, prof) {
-    // eslint-disable-next-line array-callback-return, consistent-return
     let magicList = _.filter(arena.magics, (m) => {
       if (m.lvl === 0) return true;
       if (m.profList) return m.profList.indexOf(prof) + 1;
