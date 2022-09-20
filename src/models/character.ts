@@ -1,12 +1,13 @@
-import mongoose, {
-  Schema, Document, Model, DocumentDefinition,
-} from 'mongoose';
+import mongoose, { Schema, Model, Types } from 'mongoose';
 import type { Profs, Harks } from '../data';
-import type { ClanDocument } from './clan';
-import type { InventoryDocument } from './inventory';
+import type { Clan } from './clan';
+import type { Inventory } from './inventory';
 // import type { Hark } from '../data/harks';
 
-export interface CharDocument extends Document {
+export interface Char {
+  _id: Types.ObjectId
+  id: string
+
   tgId: number;
   nickname: string;
   birthday: Date;
@@ -21,16 +22,16 @@ export interface CharDocument extends Document {
   },
   gold: number;
   free: number;
-  weapon?: InventoryDocument;
+  weapon?: Inventory;
   lvl: number;
   sex: 'm' | 'f';
   lastFight: Date | null;
-  inventory?: InventoryDocument[];
+  inventory?: Inventory[];
   psr: number;
   magics?: Record<string, number>
   skills?: Record<string, number>
   bonus: number;
-  clan?: ClanDocument;
+  clan?: Clan;
   penalty: [{
     reason: string;
     date: Date;
@@ -48,15 +49,13 @@ export interface CharDocument extends Document {
   deleted: boolean;
 }
 
-export type CharModel = Model<CharDocument> & typeof CharDocument
+export type CharModel = Model<Char> & typeof Char
 
-export class CharDocument {
+export class Char {
   //
 }
 
-export type Char = DocumentDefinition<CharDocument>
-
-const character = new Schema<CharDocument, CharModel>({
+const character = new Schema<Char, CharModel>({
   tgId: {
     type: Number, required: true,
   },
@@ -121,6 +120,6 @@ const character = new Schema<CharDocument, CharModel>({
   deleted: { type: Boolean, default: false },
 });
 
-character.loadClass(CharDocument);
+character.loadClass(Char);
 
-export const CharModel = mongoose.model<CharDocument, CharModel>('Character', character);
+export const CharModel = mongoose.model<Char, CharModel>('Character', character);

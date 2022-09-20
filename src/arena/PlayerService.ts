@@ -1,5 +1,5 @@
 import type { Prof } from '../data/profs';
-import type { ClanDocument } from '../models/clan';
+import type { Clan } from '../models/clan';
 import type { Inventory } from '../models/inventory';
 import type { MinMax } from '../models/item';
 import type Char from './CharacterService';
@@ -50,7 +50,7 @@ export default class Player {
   tgId: number;
   prof: Prof;
   lvl: number;
-  clan?: ClanDocument;
+  clan?: Clan;
   stats: StatsService;
   flags: FlagsConstructor;
   modifiers: {

@@ -1,8 +1,8 @@
-const { EventEmitter } = require('events');
-const _ = require('lodash');
-const { default: config } = require('./config');
-const QueueConstructor = require('./Constuructors/QueueConstrucror');
-const { default: arena } = require('./index');
+import { EventEmitter } from 'events';
+import _ from 'lodash';
+import config from './config';
+import QueueConstructor from './Constuructors/QueueConstrucror';
+import arena from './index';
 
 /**
  * MatchMaking system
@@ -10,28 +10,18 @@ const { default: arena } = require('./index');
  * @description Класс объекта MM, для сбора игр
  * */
 
-/**
- * @typedef {Object} mmObj
- * @property {string} charId
- * @property {number} psr
- * @property {number} startTime
- */
-
+type MatchMakingItem = {
+  charId: string
+  psr: number
+  startTime: number
+}
 /**
  * Общий класс объекта MatchMaking
  */
 class MatchMaking extends EventEmitter {
-  /**
-   * Пустой конструктор, предполагается что сам объект будет 1н
-   */
-  constructor() {
-    super();
-    /** @type {QueueConstructor[]} */
-    this.allQueue = []; // объект очередей ! < 10
-    /** @type {mmObj[]} */
-    this.mmQueue = [];
-    this.timerId = undefined;
-  }
+  allQueue: QueueConstructor[] = [];
+  mmQueue: MatchMakingItem[] = [];
+  timerId?: NodeJS.Timer;
 
   checkStatus() {
     const [withClans] = _.partition(this.mmQueue, (mmObj) => arena.characters[mmObj.charId].clan);
@@ -68,7 +58,9 @@ class MatchMaking extends EventEmitter {
    * admin only
    */
   stop() {
-    clearInterval(this.timerId);
+    if (this.timerId) {
+      clearInterval(this.timerId);
+    }
   }
 
   /**
@@ -114,4 +106,4 @@ class MatchMaking extends EventEmitter {
   }
 }
 
-module.exports = new MatchMaking();
+export default new MatchMaking();
