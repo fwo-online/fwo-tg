@@ -126,7 +126,7 @@ export default class GameService {
    * @param player - объект игрока
    */
   static showOrderButtons(player: Player): void {
-    channelHelper.sendOrderButtons(player);
+    void channelHelper.sendOrderButtons(player);
   }
 
   /**
@@ -134,7 +134,7 @@ export default class GameService {
    * @param player - объект игрока
    */
   static hideLastMessage(player: Player): void {
-    channelHelper.removeMessages(player);
+    void channelHelper.removeMessages(player);
   }
 
   /**
@@ -142,7 +142,7 @@ export default class GameService {
    * @param player - объект игрока
    */
   static showExitButton(player: Player): void {
-    channelHelper.sendExitButton(player);
+    void channelHelper.sendExitButton(player);
   }
 
   /**
@@ -191,7 +191,7 @@ export default class GameService {
    */
   sendBattleLog(data: string): void {
     console.debug('GC debug:: SBL', 'gameId:', this.info.id, 'data:', data);
-    channelHelper.broadcast(data);
+    void channelHelper.broadcast(data);
   }
 
   /**
@@ -199,7 +199,7 @@ export default class GameService {
    */
   sendToAll(data: string): void {
     console.debug('GC debug:: sendToAll', this.info.id);
-    channelHelper.broadcast(data);
+    void channelHelper.broadcast(data);
   }
 
   /**
@@ -228,11 +228,11 @@ export default class GameService {
   kick(id: string, reason?: KickReason): void {
     const player = this.players[id];
     if (!player) return console.log('GC debug:: kick', id, 'no player');
-    channelHelper.sendRunButton(player);
+    void channelHelper.sendRunButton(player);
     if (reason === 'run') {
-      channelHelper.broadcast(`Игрок *${player.nick}* сбежал из боя`);
+      void channelHelper.broadcast(`Игрок *${player.nick}* сбежал из боя`);
     } else {
-      channelHelper.broadcast(`Игрок *${player.nick}* был выброшен из игры`);
+      void channelHelper.broadcast(`Игрок *${player.nick}* был выброшен из игры`);
     }
     const char = arena.characters[id];
     char.addGameStat({ runs: 1 });
@@ -360,7 +360,7 @@ export default class GameService {
    */
   initHandlers(): void {
     // Обработка сообщений от Round Module
-    this.round.subscribe(async (data) => {
+    this.round.subscribe((data) => {
       switch (data.state) {
         case RoundStatus.START_ROUND: {
           this.sendToAll(`⚡️ Раунд ${data.round} начинается ⚡`);
@@ -370,7 +370,7 @@ export default class GameService {
           break;
         }
         case RoundStatus.END_ROUND: {
-          await this.sendMessages();
+          void this.sendMessages();
           this.sortDead();
           this.handleEndGameFlags();
           this.refreshPlayer();
@@ -383,11 +383,11 @@ export default class GameService {
           break;
         }
         case RoundStatus.ENGINE: {
-          await engine(this);
+          engine(this);
           break;
         }
         case RoundStatus.START_ORDERS: {
-          channelHelper.broadcast('Пришло время делать заказы!');
+          void channelHelper.broadcast('Пришло время делать заказы!');
           this.forAllAlivePlayers(GameService.showOrderButtons);
           break;
         }
@@ -604,7 +604,7 @@ export default class GameService {
     const enemiesWithoutClan = withoutClan.map(getEnemyString);
     const enemiesWithClan = _.map(byClan, (players, clan) => `_${clan}_\n${players.map(getEnemyString).join('\n')}`);
 
-    channelHelper.sendStatus(
+    void channelHelper.sendStatus(
       [`*Раунд ${this.round.count}*
 
 _Союзники:_\`\`\`

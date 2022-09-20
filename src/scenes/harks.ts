@@ -34,7 +34,7 @@ harkScene.enter(async (ctx) => {
       ['🔙 В лобби'],
     ]).resize(),
   );
-  ctx.reply(
+  await ctx.reply(
     `Свободных очков ${free}`,
     Markup.inlineKeyboard([
       ...getInlineKeyboard(ctx.session.character),
@@ -42,9 +42,9 @@ harkScene.enter(async (ctx) => {
   );
 });
 
-harkScene.action(/info(?=_)/, (ctx) => {
+harkScene.action(/info(?=_)/, async (ctx) => {
   const [, hark] = ctx.match.input.split('_') as [string, Harks.Hark];
-  ctx.editMessageText(
+  await ctx.editMessageText(
     Harks.harksData[hark].descr,
     {
       ...Markup.inlineKeyboard([
@@ -61,7 +61,7 @@ harkScene.action(/confirm|reset|back|increase(?=_)/, async (ctx) => {
       const [, hark] = ctx.match.input.split('_');
       ctx.session.character.increaseHark(hark);
     } catch (e) {
-      ctx.answerCbQuery(e.message);
+      await ctx.answerCbQuery(e.message);
     }
   }
   if (ctx.match.input === 'confirm') {
@@ -73,7 +73,7 @@ harkScene.action(/confirm|reset|back|increase(?=_)/, async (ctx) => {
     await ctx.answerCbQuery('Изменения успешно сброшены');
   }
 
-  ctx.editMessageText(
+  await ctx.editMessageText(
     `Свободных очков ${ctx.session.character.free}`,
     Markup.inlineKeyboard([
       ...getInlineKeyboard(ctx.session.character),
@@ -81,7 +81,7 @@ harkScene.action(/confirm|reset|back|increase(?=_)/, async (ctx) => {
   );
 });
 
-harkScene.action('def_harks', (ctx) => {
+harkScene.action('def_harks', async (ctx) => {
   const { def, prof } = ctx.session.character;
   const message = mono([`
 Урон:                     ${def.hit.min} - ${def.hit.max}
@@ -99,7 +99,7 @@ harkScene.action('def_harks', (ctx) => {
   (prof === 'm' || prof === 'p') && `${`Длительность магии:       ${def.lspell}`}`,
   ].filter((val) => val).join('\n'));
 
-  ctx.editMessageText(
+  await ctx.editMessageText(
     message,
     {
       ...Markup.inlineKeyboard([
@@ -110,12 +110,12 @@ harkScene.action('def_harks', (ctx) => {
   );
 });
 
-harkScene.action('exit', (ctx) => {
+harkScene.action('exit', async (ctx) => {
   ctx.session.character.resetHarks();
-  ctx.scene.enter('profile');
+  await ctx.scene.enter('profile');
 });
 
-harkScene.hears('🔙 В лобби', (ctx) => {
+harkScene.hears('🔙 В лобби', async (ctx) => {
   ctx.session.character.resetHarks();
-  ctx.scene.enter('lobby');
+  await ctx.scene.enter('lobby');
 });

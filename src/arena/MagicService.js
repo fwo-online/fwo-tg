@@ -73,7 +73,7 @@ module.exports = {
    * @param {Number} charId идентификатор персонажа
    * @param {Number} lvl круг проучиваемой магии
    */
-  learn(charId, lvl) {
+  async learn(charId, lvl) {
     const character = arena.characters[charId];
     // списываем бонусы
 
@@ -93,7 +93,7 @@ module.exports = {
       throw Error('Не удалось вычить. Удача не на твоей стороне');
     }
     // выбираем магию
-    character.learnMagic(def[r], charMagLvl + 1);
+    await character.learnMagic(def[r], charMagLvl + 1);
     // CharacterService.learnMagic(charId, def[r], charMagLvl + 1);
     return character;
   },

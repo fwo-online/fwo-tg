@@ -32,26 +32,26 @@ lobby.enter(async (ctx) => {
   }
 });
 
-lobby.hears('😎 Профиль', (ctx) => {
-  ctx.scene.enter('profile');
+lobby.hears('😎 Профиль', async (ctx) => {
+  await ctx.scene.enter('profile');
 });
 
-lobby.hears('⚔ В бой', (ctx) => {
-  ctx.scene.enter('battleScene');
+lobby.hears('⚔ В бой', async (ctx) => {
+  await ctx.scene.enter('battleScene');
 });
 
-lobby.hears('🏪 Магазин', (ctx) => {
-  ctx.scene.enter('shopScene');
+lobby.hears('🏪 Магазин', async (ctx) => {
+  await ctx.scene.enter('shopScene');
 });
 
-lobby.hears('☸ Настройки', (ctx) => {
-  ctx.scene.enter('settings');
+lobby.hears('☸ Настройки', async (ctx) => {
+  await ctx.scene.enter('settings');
 });
 
-lobby.hears('🏰 Клан', (ctx) => {
-  ctx.scene.enter('clan');
+lobby.hears('🏰 Клан', async (ctx) => {
+  await ctx.scene.enter('clan');
 });
 
-lobby.hears('❓ Помощь', (ctx) => {
-  ctx.reply('https://telegra.ph/Fight-Wold-Online-Help-11-05');
+lobby.hears('❓ Помощь', async (ctx) => {
+  await ctx.reply('https://telegra.ph/Fight-Wold-Online-Help-11-05');
 });

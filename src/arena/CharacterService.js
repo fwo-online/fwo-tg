@@ -122,7 +122,7 @@ class CharacterService {
       ...charObj.harks,
       free: charObj.free,
     };
-    this.updateHarkFromItems();
+    void this.updateHarkFromItems();
     this.mm = {};
     this.autoreg = false;
     this.modifiers = undefined;
@@ -297,7 +297,7 @@ class CharacterService {
     return 2 ** (this.lvl - 1) * 1000 * lvlRatio;
   }
 
-  async resetExpLimit() {
+  resetExpLimit() {
     const date = new Date();
     if (date > this.charObj.expLimit.expiresAt) {
       date.setUTCHours(24, 0, 0, 0);
@@ -479,7 +479,7 @@ class CharacterService {
     }
 
     this.gold -= item.price;
-    this.addItem(itemCode);
+    await this.addItem(itemCode);
     return this.saveToDb();
   }
 
@@ -490,7 +490,7 @@ class CharacterService {
     const charItem = this.getItem(itemId);
     const item = arena.items[charItem.code];
 
-    this.removeItem(itemId);
+    await this.removeItem(itemId);
     this.gold += item.price / 2;
     const inventory = await this.putOffItemsCantPutOned();
     this.charObj.inventory = inventory;
@@ -597,10 +597,10 @@ class CharacterService {
    * @param {String} magicId идентификатор магии
    * @param {Number} lvl уровень проученной магии
    */
-  learnMagic(magicId, lvl) {
+  async learnMagic(magicId, lvl) {
     this.magics[magicId] = lvl;
     // опасный тест
-    this.saveToDb();
+    await this.saveToDb();
   }
 
   /**
