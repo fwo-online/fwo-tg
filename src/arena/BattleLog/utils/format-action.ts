@@ -1,3 +1,4 @@
+import { isUndefined } from 'lodash';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
 import { weaponTypes } from '@/arena/MiscService';
 
@@ -18,7 +19,9 @@ export function formatAction(msgObj: SuccessArgs): string {
       return `*${msgObj.initiator}* сотворил _${msgObj.action}_ на *${msgObj.target}* нанеся ${msgObj.dmg}`;
     case 'magic':
       // case 'heal':
-      return `*${msgObj.initiator}* использовав _${msgObj.action}_ на *${msgObj.target}* с эффектом ${msgObj.effect}`;
+      return isUndefined(msgObj.effect)
+        ? `*${msgObj.initiator}* использовав _${msgObj.action}_ на *${msgObj.target}*`
+        : `*${msgObj.initiator}* использовав _${msgObj.action}_ на *${msgObj.target}* с эффектом ${msgObj.effect}`;
     default:
       return `*${msgObj.initiator}* использовал _${msgObj.action}_ на *${msgObj.target}*`;
   }

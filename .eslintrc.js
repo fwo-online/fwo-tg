@@ -17,7 +17,6 @@ module.exports = {
   plugins: ['@typescript-eslint', 'import'],
   rules: {
     'no-useless-constructor': 'off',
-    '@typescript-eslint/no-useless-constructor': 'warn',
     'no-restricted-syntax': 0,
     'no-shadow': 0,
     'no-use-before-define': ['error', { functions: false }],
@@ -28,6 +27,7 @@ module.exports = {
     camelcase: 0,
     'lines-between-class-members': ["error", "always", {exceptAfterSingleLine: true}],
     'no-void': ['error', { allowAsStatement: true }],
+    '@typescript-eslint/no-useless-constructor': 'warn',
     '@typescript-eslint/no-var-requires': 0,
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: "^_"}],
     '@typescript-eslint/no-floating-promises': ['error', { ignoreVoid: true }],
