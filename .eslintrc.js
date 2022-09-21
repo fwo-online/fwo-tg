@@ -41,7 +41,7 @@ module.exports = {
     }],
     'import/extensions': ["error", 'never'],
     'import/prefer-default-export': 0,
-    'import/no-extraneous-dependencies': ['error', { devDependencies: ['**/*.test.ts', '**/*.spec.ts', '**/test-utils.ts', '**/cli/*.ts'] }],
+    'import/no-extraneous-dependencies': ['error', { devDependencies: ['**/*.test.ts', '**/*.spec.ts', '**/testUtils.ts', '**/cli/*.ts'] }],
     'import/order': ['error', {
       groups: [
         'builtin',
@@ -66,5 +66,12 @@ module.exports = {
       typescript: {},
     },
   },
+  overrides: [
+    {
+      "files": ["**/*.test.ts"],
+      "plugins": ["jest"],
+      "extends": ["plugin:jest/recommended", "plugin:jest/style"],
+    }
+  ],
   ignorePatterns: ['.eslintrc.js']
 };

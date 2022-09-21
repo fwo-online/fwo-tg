@@ -1,8 +1,10 @@
+import arena from '@/arena';
 import type { Char } from '@/models/character';
 import type { Clan } from '@/models/clan';
-import TestUtils from '@/utils/test-utils';
+import TestUtils from '@/utils/testUtils';
 import { ClanService } from './ClanService';
-import arena from '.';
+
+// npm t src/arena/ClanService/ClanService.test.ts
 
 jest.retryTimes(3);
 
@@ -19,7 +21,7 @@ describe('ClanService', () => {
     const char = await TestUtils.createCharacter();
     const clan = await ClanService.createClan(char.id, 'some name');
 
-    expect(clan.name).toEqual('some name');
+    expect(clan.name).toBe('some name');
     expect(clan.owner.id).toEqual(char.id);
     expect(clan.players).toHaveLength(1);
     expect(clan.players[0].id).toEqual(char.id);
@@ -57,10 +59,10 @@ describe('ClanService', () => {
   it('should add gold to clan', async () => {
     await ClanService.addGold(clan.id, char.id, 100);
 
-    expect(await TestUtils.getClan(clan.id)).toMatchObject({
+    await expect(TestUtils.getClan(clan.id)).resolves.toMatchObject({
       gold: 100,
     });
-    expect(await TestUtils.getCharacter(char.id)).toMatchObject({
+    await expect(TestUtils.getCharacter(char.id)).resolves.toMatchObject({
       gold: 99_900,
     });
   });
@@ -70,8 +72,8 @@ describe('ClanService', () => {
 
     await expect(ClanService.addGold(clan.id, char.id, 100)).rejects.toMatchObject(new Error('Недостаточно золота'));
 
-    expect(await TestUtils.getClans()).toHaveLength(1);
-    expect(await TestUtils.getCharacter(char.id)).toMatchObject({
+    await expect(TestUtils.getClans()).resolves.toHaveLength(1);
+    await expect(TestUtils.getCharacter(char.id)).resolves.toMatchObject({
       gold: 10,
     });
   });
@@ -81,7 +83,7 @@ describe('ClanService', () => {
     const clan = await TestUtils.createClan(char.id, { gold: 100_000 });
     await ClanService.levelUp(clan.id);
 
-    expect(await TestUtils.getClan(clan.id)).toMatchObject({
+    await expect(TestUtils.getClan(clan.id)).resolves.toMatchObject({
       lvl: 2,
       gold: 99_750,
     });
@@ -89,7 +91,7 @@ describe('ClanService', () => {
 
   it('should throw if clan has not enough gold when level up', async () => {
     await expect(ClanService.levelUp(clan.id)).rejects.toMatchObject(new Error('Недостаточно золота'));
-    expect(await TestUtils.getClan(clan.id)).toMatchObject({
+    await expect(TestUtils.getClan(clan.id)).resolves.toMatchObject({
       gold: 0,
     });
   });
@@ -99,7 +101,7 @@ describe('ClanService', () => {
     const clan = await TestUtils.createClan(char.id, { lvl: 4, gold: 100_000 });
 
     await expect(ClanService.levelUp(clan.id)).rejects.toMatchObject(new Error('Клан имеет максимальный уровень'));
-    expect(await TestUtils.getClan(clan.id)).toMatchObject({
+    await expect(TestUtils.getClan(clan.id)).resolves.toMatchObject({
       gold: 100_000,
     });
   });
@@ -109,7 +111,7 @@ describe('ClanService', () => {
 
     const message = await ClanService.handleRequest(clan.id, requester.id);
 
-    expect(message).toEqual('Заявка на вступление отправлена');
+    expect(message).toBe('Заявка на вступление отправлена');
 
     const requestedClan = await TestUtils.getClan(clan.id);
     expect(requestedClan?.requests).toHaveLength(1);
@@ -125,12 +127,12 @@ describe('ClanService', () => {
 
     const message = await ClanService.handleRequest(clan.id, requester.id);
 
-    expect(message).toEqual('Заявка на вступление отменена');
+    expect(message).toBe('Заявка на вступление отменена');
 
     const requestedClan = await TestUtils.getClan(clan.id);
     expect(requestedClan?.requests).toHaveLength(0);
 
-    expect(await TestUtils.getCharacter(requester.id)).toMatchObject({
+    await expect(TestUtils.getCharacter(requester.id)).resolves.toMatchObject({
       penalty: [{
         reason: 'clan_request',
       }],
@@ -175,7 +177,7 @@ describe('ClanService', () => {
 
     await ClanService.acceptRequest(clan.id, player.id);
 
-    expect(await TestUtils.getClan(clan.id)).toMatchObject({
+    await expect(TestUtils.getClan(clan.id)).resolves.toMatchObject({
       requests: [],
       players: [{ id: owner.id }, { id: player.id }],
     });
@@ -194,7 +196,7 @@ describe('ClanService', () => {
 
     await expect(ClanService.acceptRequest(clan.id, player2.id)).rejects.toMatchObject(new Error('Клан уже сформирован'));
 
-    expect(await TestUtils.getClan(clan.id)).toMatchObject({
+    await expect(TestUtils.getClan(clan.id)).resolves.toMatchObject({
       players: [{ id: player1.id }, { id: owner.id }],
       requests: [{ id: player2.id }],
     });
@@ -209,7 +211,7 @@ describe('ClanService', () => {
 
     await ClanService.rejectRequest(clan.id, player.id);
 
-    expect(await TestUtils.getClan(clan.id)).toMatchObject({
+    await expect(TestUtils.getClan(clan.id)).resolves.toMatchObject({
       requests: [],
       players: [{ id: owner.id }],
     });

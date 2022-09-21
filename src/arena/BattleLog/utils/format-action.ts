@@ -9,16 +9,15 @@ export function formatAction(msgObj: SuccessArgs): string {
 
   switch (msgObj.actionType) {
     case 'heal':
-      return `Игрок *${msgObj.target}* был вылечен 🤲 на *${msgObj.effect}*`;
+      return `Игрок *${msgObj.target}* был вылечен 🤲 на *💖${msgObj.effect}*`;
     case 'phys': {
       const { action } = weaponTypes[msgObj.weapon.wtype];
       return `*${msgObj.initiator}* ${action(msgObj.target, msgObj.weapon)} и нанёс *${msgObj.dmg}* урона`;
     }
     case 'dmg-magic':
     case 'dmg-magic-long':
-      return `*${msgObj.initiator}* сотворил _${msgObj.action}_ на *${msgObj.target}* нанеся ${msgObj.dmg}`;
+      return `*${msgObj.initiator}* сотворил _${msgObj.action}_ на *${msgObj.target}* нанеся ${msgObj.dmg} урона`;
     case 'magic':
-      // case 'heal':
       return isUndefined(msgObj.effect)
         ? `*${msgObj.initiator}* использовав _${msgObj.action}_ на *${msgObj.target}*`
         : `*${msgObj.initiator}* использовав _${msgObj.action}_ на *${msgObj.target}* с эффектом ${msgObj.effect}`;

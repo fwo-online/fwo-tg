@@ -10,10 +10,5 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
-  globals: {
-    'ts-jest': {
-      isolatedModules: true,
-    },
-  },
   setupFilesAfterEnv: ['<rootDir>/src/tools/jest.setup.ts'],
 };

@@ -37,7 +37,7 @@ export function formatError(msgObj: FailArgs): string {
       en: '',
     },
     GOD_FAIL: {
-      ru: `Заклинание _${action}_ *${initiator}* провалилось по воле богов `,
+      ru: `Заклинание _${action}_ *${initiator}* провалилось по воле богов`,
       en: '',
     },
     HEAL_FAIL: {

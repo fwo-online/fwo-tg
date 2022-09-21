@@ -10,12 +10,12 @@ export type HealNext = Omit<BaseNext, 'exp'> & {
   actionType: 'heal';
   effect: number;
   expArr: ExpArr;
+  hp: number
 }
 
-export type HealMagicNext = Omit<BaseNext, 'exp'> & {
+export type HealMagicNext = BaseNext & {
   actionType: 'heal-magic';
   effect: number;
-  exp: number;
   hp: number;
 }
 
@@ -144,6 +144,7 @@ export abstract class Heal {
       target: target.nick,
       initiator: initiator.nick,
       effect: this.status.val,
+      hp: target.stats.val('hp'),
     };
     battleLog.success(args);
   }

@@ -27,6 +27,7 @@
   "homepage": "https://github.com/catHD/fwo-tg#readme",
   "dependencies": {
     "dotenv": "^16.0.1",
+    "grammy": "^1.11.1",
     "lodash": "^4.17.21",
     "mongoose": "^6.6.1",
     "telegraf": "^4.8.5",
@@ -34,7 +35,7 @@
     "typescript": "^4.7.4"
   },
   "devDependencies": {
-    "@types/jest": "^27.4.1",
+    "@types/jest": "^29.0.3",
     "@types/lodash": "^4.14.182",
     "@typescript-eslint/eslint-plugin": "^5.30.6",
     "@typescript-eslint/parser": "^5.30.6",
@@ -43,10 +44,11 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-import-resolver-typescript": "^3.2.5",
     "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^27.0.4",
     "execa": "^5.1.1",
-    "jest": "^27.5.1",
+    "jest": "^29.0.3",
     "nodemon": "^2.0.19",
-    "ts-jest": "^27.1.4",
+    "ts-jest": "^29.0.1",
     "tsconfig-paths": "^4.0.0"
   }
 }

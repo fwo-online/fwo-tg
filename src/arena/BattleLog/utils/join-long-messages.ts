@@ -1,8 +1,24 @@
 import { cloneDeep } from 'lodash';
+import type { HealNext } from '@/arena/Constuructors/HealMagicConstructor';
 import type { LongDmgMagicNext } from '@/arena/Constuructors/LongDmgMagicConstructor';
 import type { LongMagicNext } from '@/arena/Constuructors/LongMagicConstructor';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
 import type { Message } from '../BattleLog';
+
+export function joinHealMessages(messages: Message[], newMessage: HealNext): Message[] {
+  const copy = cloneDeep(messages);
+
+  for (const message of copy) {
+    if (isSameMessage(message, newMessage, { ignoreInitiator: true })) {
+      message.expArr.push(...newMessage.expArr);
+      message.effect += newMessage.effect;
+      return copy;
+    }
+  }
+
+  copy.push(newMessage);
+  return copy;
+}
 
 export function joinLongMessages(messages: Message[], newMessage: LongMagicNext): Message[] {
   const copy = cloneDeep(messages);
@@ -10,12 +26,12 @@ export function joinLongMessages(messages: Message[], newMessage: LongMagicNext)
   for (const message of copy) {
     if (isSameMessage(message, newMessage)) {
       message.exp += newMessage.exp;
-      return messages;
+      return copy;
     }
   }
 
-  messages.push(newMessage);
-  return messages;
+  copy.push(newMessage);
+  return copy;
 }
 
 export function joinLongDmgMessages(messages: Message[], newMessage: LongDmgMagicNext): Message[] {
@@ -26,18 +42,26 @@ export function joinLongDmgMessages(messages: Message[], newMessage: LongDmgMagi
       message.exp += newMessage.exp;
       message.dmg += newMessage.dmg;
       message.hp = Math.min(message.hp, newMessage.hp);
-      return messages;
+      return copy;
     }
   }
 
-  messages.push(newMessage);
-  return messages;
+  copy.push(newMessage);
+  return copy;
 }
 
-function isSameMessage<T extends SuccessArgs>(a: Message, b: T): a is T {
+type IsSameMessageOptions = {
+  ignoreTarget?: boolean
+  ignoreInitiator?: boolean
+}
+function isSameMessage<T extends SuccessArgs>(
+  a: Message,
+  b: T,
+  options?: IsSameMessageOptions,
+): a is T {
   return a.action === b.action
     && a.actionType === b.actionType
-    && a.initiator === b.initiator
-    && a.target === b.target
+    && (options?.ignoreInitiator ? true : a.initiator === b.initiator)
+    && (options?.ignoreTarget ? true : a.target === b.target)
     && !('message' in a);
 }

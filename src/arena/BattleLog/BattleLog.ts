@@ -1,5 +1,7 @@
 import type { SuccessArgs, FailArgs } from '@/arena/Constuructors/types';
-import { joinLongDmgMessages, joinLongMessages, formatMessage } from './utils';
+import {
+  joinLongDmgMessages, joinLongMessages, formatMessage, joinHealMessages,
+} from './utils';
 
 export type Message = SuccessArgs | FailArgs
 
@@ -23,6 +25,9 @@ export class BattleLog {
    */
   success(message: SuccessArgs) {
     switch (message.actionType) {
+      case 'heal':
+        this.messages = joinHealMessages(this.messages, message);
+        break;
       case 'magic-long':
         this.messages = joinLongMessages(this.messages, message);
         break;

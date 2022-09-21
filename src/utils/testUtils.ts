@@ -5,6 +5,7 @@ import { ClanService } from '@/arena/ClanService';
 import { profsList, profsData } from '@/data/profs';
 import { Char, CharModel } from '@/models/character';
 import { Clan, ClanModel } from '@/models/clan';
+import { Item, ItemModel } from '@/models/item';
 
 const functions = casual.functions();
 
@@ -47,5 +48,10 @@ export default class TestUtils {
 
   static getClans() {
     return ClanModel.find();
+  }
+
+  static async getWeapon(): Promise<Item> {
+    await ItemModel.load();
+    return ItemModel.findOne({ code: 'a100' }).orFail();
   }
 }
