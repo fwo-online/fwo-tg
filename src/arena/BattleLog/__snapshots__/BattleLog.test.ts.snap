@@ -1,0 +1,84 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BattleLog should format dmg-magic messages 1`] = `
+[
+  "*Player 1* сотворил _Dmg Magic_ на *Player 2* нанеся 10 урона
+\\[ ☣ 💔-10/90 📖25 ]",
+  "Не хватило маны для заклинания _Phys_",
+]
+`;
+
+exports[`BattleLog should format heal messages with rigth order 1`] = `
+[
+  "Игрок *Player 2* был вылечен 🤲 на *💖20*
+\\[ Player 1: 💖10 📖10, Player 3: 💖10 📖10 ]",
+  "*Player 1* пытался сотворить _Heal_, но попытка провалилась (безмолвие)",
+]
+`;
+
+exports[`BattleLog should format heal-magic messages 1`] = `
+[
+  "*Player 1* использовал _Heal Magic_ на *Player 2*
+\\[ ❤️+10/110 📖10 ]",
+  "*Player 1* пытался сотворить _Heal Magic_, но попытка провалилась (безмолвие)",
+]
+`;
+
+exports[`BattleLog should format long dmg magic messages with rigth order 1`] = `
+[
+  "*Player 2* сотворил _Magic 1_ на *Player 1* нанеся 25 урона
+\\[  💔-25/75 📖25 ]",
+  "*Player 1* сотворил _Magic 1_ на *Player 2* нанеся 50 урона
+\\[  💔-50/50 📖50 ]",
+  "*Player 1* сотворил _Magic 2_ на *Player 2* нанеся 25 урона
+\\[  💔-25/25 📖25 ]",
+  "*Player 2* сотворил _Magic 2_ на *Player 1* нанеся 25 урона
+\\[  💔-25/50 📖25 ]",
+]
+`;
+
+exports[`BattleLog should format long magic messages with rigth order 1`] = `
+[
+  "*Player 2* использовал _Magic 1_ на *Player 1*
+\\[ 📖25 ]",
+  "*Player 1* использовал _Magic 1_ на *Player 2*
+\\[ 📖50 ]",
+  "*Player 1* использовал _Magic 2_ на *Player 2*
+\\[ 📖25 ]",
+  "*Player 2* использовал _Magic 2_ на *Player 1*
+\\[ 📖25 ]",
+]
+`;
+
+exports[`BattleLog should format magic messages 1`] = `
+[
+  "*Player 1* использовав _Magic_ на *Player 2*
+\\[ 📖25 ]",
+  "*Player 1* использовав _Magic_ на *Player 2* с эффектом 10
+\\[ 📖25 ]",
+  "Заклинание _Magic_ *Player 1* провалилось по воле богов",
+]
+`;
+
+exports[`BattleLog should format phys messages 1`] = `
+[
+  "*Player 1* рубанул *Player 2* _Эпическим Мечом_ и нанёс *10* урона
+\\[ 💔-10/90 📖25 ]",
+  "*Player 1* атаковал *Player 2* _Эпическим Мечом_, но тот смог защититься \\[]",
+]
+`;
+
+exports[`BattleLog should format skill messages 1`] = `
+[
+  "*Player 1* использовал _Skill_ на *Player 2*
+\\[ 📖25 ]",
+  "*Player 1* пытался использовать умение _Skill_, но у него не вышло",
+]
+`;
+
+exports[`BattleLog should use custom message 1`] = `
+[
+  "custom Initiator|Target|Skill|skill
+\\[ 📖10 ]",
+]
+`;

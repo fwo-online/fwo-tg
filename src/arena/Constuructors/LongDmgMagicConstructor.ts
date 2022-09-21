@@ -23,30 +23,6 @@ export abstract class LongDmgMagic extends DmgMagic {
   buff: LongItem[] = [];
 
   /**
-   * Принимает массив сообщений длительной магии. Возвращает одно сообщение
-   * с объединёнными характеристиками
-   */
-  static sumNextParams(msgObj: LongDmgMagicNext[]): LongDmgMagicNext[] {
-    const messagesByTarget: LongDmgMagicNext[] = [];
-    return msgObj.reduce((sum, curr) => {
-      const index = sum.findIndex((val) => (
-        val.initiator === curr.initiator && val.target === curr.target
-      ));
-      if (index !== -1) {
-        const found = sum[index];
-        sum[index] = {
-          ...found,
-          dmg: floatNumber(found.dmg + curr.dmg),
-          hp: Math.min(found.hp, curr.hp),
-          exp: floatNumber(found.exp + curr.exp),
-        };
-        return sum;
-      }
-      return [...sum, curr];
-    }, messagesByTarget);
-  }
-
-  /**
    * Добавляем в основной каст postRun для записи длительной магии в массив
    * @param initiator  initiator
    * @param target  target
@@ -70,7 +46,7 @@ export abstract class LongDmgMagic extends DmgMagic {
       this.postRun(initiator, target, game);
     } catch (failMsg) {
       const { battleLog } = this.params.game;
-      battleLog.log(failMsg);
+      battleLog.fail(failMsg);
     }
   }
 
@@ -107,7 +83,7 @@ export abstract class LongDmgMagic extends DmgMagic {
         this.checkTargetIsDead(); // проверка трупов в длительных магиях
         this.longNext(initiator, target);
       } catch (e) {
-        game.battleLog.log(e);
+        game.battleLog.fail(e);
       }
     });
     const filteredLongArray = longArray.filter((item) => item.duration !== 0);

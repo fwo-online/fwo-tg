@@ -4,6 +4,7 @@ import type Player from '../arena/PlayerService';
 import { Profs } from '../data';
 import BattleKeyboard from './BattleKeyboard';
 
+const MAX_MESSAGE_LENGTH = 2 ** 12;
 const chatId = process.env.BOT_CHATID || -1001483444452;
 
 const messages: Record<number, number> = {};
@@ -11,6 +12,21 @@ const statusMessages: Record<number, number> = {};
 
 export function setMessage(key: number, data: number): void {
   messages[key] = data;
+}
+
+export async function sendBattleLogMessages(messages: string[]) {
+  let messageToSend = '';
+
+  for await (const message of messages) {
+    const nextMessageToSend = messageToSend.concat('\n\n', message);
+
+    if (messageToSend.length > MAX_MESSAGE_LENGTH) {
+      await broadcast(messageToSend);
+      messageToSend = message;
+    } else {
+      messageToSend = nextMessageToSend;
+    }
+  }
 }
 /**
  * @param data - текст отправляемого сообщения

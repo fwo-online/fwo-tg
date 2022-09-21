@@ -174,7 +174,7 @@ class PhysConstructor {
     const { game } = this.params;
     const weapon = initiator.weapon ? arena.items[initiator.weapon.code] : {};
     if (failMsg) {
-      game.battleLog.log({ ...failMsg, weapon });
+      game.battleLog.fail({ ...failMsg, weapon });
     } else {
       const msg = {
         exp: this.status.exp,

@@ -350,10 +350,9 @@ export default class GameService {
   }
 
   async sendMessages(): Promise<void> {
-    const messages = this.battleLog.getMessages();
-    const promises = messages.map(this.sendBattleLog.bind(this));
-    await Promise.all(promises);
-    this.battleLog.clearMessages();
+    const messages = this.battleLog.format();
+    await channelHelper.sendBattleLogMessages(messages);
+    this.battleLog.reset();
   }
 
   /**
@@ -405,12 +404,6 @@ export default class GameService {
           console.log('InitHandler:', data.state, 'undef event');
         }
       }
-    });
-    // Обработка сообщений от BattleLog Module
-    // @todo пока прокидываем напрямую из battlelog
-    this.battleLog.on('BattleLog', (data) => {
-      console.log('BattleLog:', data);
-      this.sendBattleLog(data);
     });
   }
 

@@ -16,6 +16,8 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'import'],
   rules: {
+    'no-useless-constructor': 'off',
+    'no-restricted-syntax': 0,
     'no-shadow': 0,
     'no-use-before-define': ['error', { functions: false }],
     'no-console': 0,
@@ -25,6 +27,7 @@ module.exports = {
     camelcase: 0,
     'lines-between-class-members': ["error", "always", {exceptAfterSingleLine: true}],
     'no-void': ['error', { allowAsStatement: true }],
+    '@typescript-eslint/no-useless-constructor': 'warn',
     '@typescript-eslint/no-var-requires': 0,
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: "^_"}],
     '@typescript-eslint/no-floating-promises': ['error', { ignoreVoid: true }],
@@ -38,7 +41,7 @@ module.exports = {
     }],
     'import/extensions': ["error", 'never'],
     'import/prefer-default-export': 0,
-    'import/no-extraneous-dependencies': ['error', { devDependencies: ['**/*.test.ts', '**/*.spec.ts', '**/test-utils.ts', '**/cli/*.ts'] }],
+    'import/no-extraneous-dependencies': ['error', { devDependencies: ['**/*.test.ts', '**/*.spec.ts', '**/testUtils.ts', '**/cli/*.ts'] }],
     'import/order': ['error', {
       groups: [
         'builtin',
@@ -63,5 +66,12 @@ module.exports = {
       typescript: {},
     },
   },
+  overrides: [
+    {
+      "files": ["**/*.test.ts"],
+      "plugins": ["jest"],
+      "extends": ["plugin:jest/recommended", "plugin:jest/style"],
+    }
+  ],
   ignorePatterns: ['.eslintrc.js']
 };

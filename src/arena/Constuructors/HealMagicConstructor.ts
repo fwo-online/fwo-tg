@@ -10,12 +10,12 @@ export type HealNext = Omit<BaseNext, 'exp'> & {
   actionType: 'heal';
   effect: number;
   expArr: ExpArr;
+  hp: number
 }
 
-export type HealMagicNext = Omit<BaseNext, 'exp'> & {
+export type HealMagicNext = BaseNext & {
   actionType: 'heal-magic';
   effect: number;
-  exp: number;
   hp: number;
 }
 
@@ -48,23 +48,6 @@ export abstract class Heal {
     Object.assign(this, params);
   }
 
-  static sumNextParams(msgObj: HealNext[]): HealNext[] {
-    const messages = msgObj.reduce((sum, curr) => {
-      const { target } = curr;
-      if (!sum[target]) {
-        sum[target] = curr;
-        return sum;
-      }
-      sum[target] = {
-        ...sum[target],
-        expArr: [...sum[target].expArr, ...curr.expArr],
-        effect: sum[target].effect + curr.effect,
-      };
-      return sum;
-    }, {} as Record<string, HealNext>);
-    return Object.values(messages);
-  }
-
   /**
    * Основная функция выполнения. Из неё дёргаются все зависимости
    * Общий метод каста магии
@@ -88,7 +71,7 @@ export abstract class Heal {
       this.next();
     } catch (e) {
       const { battleLog } = this.params.game;
-      battleLog.log(e);
+      battleLog.fail(e);
     }
   }
 
@@ -161,6 +144,7 @@ export abstract class Heal {
       target: target.nick,
       initiator: initiator.nick,
       effect: this.status.val,
+      hp: target.stats.val('hp'),
     };
     battleLog.success(args);
   }
