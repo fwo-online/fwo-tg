@@ -1,6 +1,6 @@
 import { bold, italic } from '../../utils/formatString';
-import type { SuccessArgs } from '../BattleLog';
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
+import type { SuccessArgs } from '../Constuructors/types';
 
 /**
  * Камнепад

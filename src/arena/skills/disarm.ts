@@ -1,6 +1,6 @@
 import { bold, italic } from '../../utils/formatString';
-import type { SuccessArgs } from '../BattleLog';
 import { Skill } from '../Constuructors/SkillConstructor';
+import type { SuccessArgs } from '../Constuructors/types';
 
 /**
  * Обезаруживание

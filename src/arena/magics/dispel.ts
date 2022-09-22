@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { bold } from '../../utils/formatString';
-import type { SuccessArgs } from '../BattleLog';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 import type { LongItem } from '../Constuructors/LongMagicConstructor';
+import type { SuccessArgs } from '../Constuructors/types';
 
 /**
  * Снятие магии

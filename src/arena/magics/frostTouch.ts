@@ -1,6 +1,6 @@
 import { bold, italic } from '../../utils/formatString';
-import type { SuccessArgs } from '../BattleLog';
 import { LongDmgMagic } from '../Constuructors/LongDmgMagicConstructor';
+import type { SuccessArgs } from '../Constuructors/types';
 
 /**
  * Ледяное прикосновение

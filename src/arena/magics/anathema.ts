@@ -1,7 +1,7 @@
 import { bold, italic } from '../../utils/formatString';
-import type { SuccessArgs } from '../BattleLog';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 import type { LongItem } from '../Constuructors/LongMagicConstructor';
+import type { SuccessArgs } from '../Constuructors/types';
 import arena from '../index';
 
 type LongActionsEntry = [magic: string, item?: LongItem[]]
