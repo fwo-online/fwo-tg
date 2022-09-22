@@ -32,7 +32,7 @@ ${ctx.session.character.lvl === 1 ? `Стоимость изучения маг�
     Markup.inlineKeyboard([
       ...getMagicButtons(ctx.session.character),
       [
-        Markup.button.callback('Учить', ctx.session.character.lvl === 1 ? 'learn_1' : 'select_lvl'),
+        Markup.button.callback('Учить', ctx.session.character.lvl === 1 ? 'learn_1' : 'select_lvl', !ctx.session.character.bonus),
         Markup.button.callback('В профиль', 'back')],
     ]),
   );
@@ -40,10 +40,11 @@ ${ctx.session.character.lvl === 1 ? `Стоимость изучения маг�
 
 /** Ожиадем "learn_${lvl}", где lvl - уровень изучаемой магии */
 magicScene.action(/magics|learn(?=_)/, async (ctx) => {
-  const [, lvl] = ctx.match.input.split('_');
-  if (lvl) {
+  const [, magicLvl] = ctx.match.input.split('_');
+
+  if (magicLvl) {
     try {
-      ctx.session.character = await MagicService.learn(ctx.session.character.id, +lvl);
+      ctx.session.character = await MagicService.learn(ctx.session.character.id, +magicLvl);
       await ctx.answerCbQuery('Теперь ты знаешь на одну магию больше');
     } catch (e) {
       await ctx.answerCbQuery(e.message);
@@ -57,7 +58,7 @@ ${ctx.session.character.lvl === 1 ? `Стоимость изучения маг�
       ...Markup.inlineKeyboard([
         ...getMagicButtons(ctx.session.character),
         [
-          Markup.button.callback('Учить', ctx.session.character.lvl === 1 ? 'learn_1' : 'select_lvl'),
+          Markup.button.callback('Учить', ctx.session.character.lvl === 1 ? 'learn_1' : 'select_lvl', !ctx.session.character.bonus),
           Markup.button.callback('В профиль', 'back'),
         ],
       ]),
@@ -67,13 +68,13 @@ ${ctx.session.character.lvl === 1 ? `Стоимость изучения маг�
 });
 
 magicScene.action('select_lvl', async (ctx) => {
-  const lvl = Math.min(ctx.session.character.lvl, 4);
+  const magicLvl = Math.min(ctx.session.character.lvl, 4, ctx.session.character.bonus);
 
   await ctx.editMessageText(
     `Выбери уровень изучаемой магии. Стоимость изучения равна уровню магии (*${ctx.session.character.bonus}💡*)`,
     {
       ...Markup.inlineKeyboard([
-        getLvlButtons(lvl),
+        getLvlButtons(magicLvl),
         [
           Markup.button.callback('Назад', 'magics'),
         ],
