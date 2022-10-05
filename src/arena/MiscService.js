@@ -1,5 +1,3 @@
-const { default: arena } = require('./index');
-
 /**
  * @description Просто мусорка с кастомными функциями
  * @module Service/Misc
@@ -132,30 +130,6 @@ module.exports = {
     const min = +part[0] || 1;
     const max = +part[1];
     return Math.floor(Math.random() * (max - min + 1) + min);
-  }, /**
-   * Проверка, является ли экшен магией
-   * @param {String} action идентификатор действия
-   *@return {Boolean}
-   */
-  isMagic(action) {
-    return arena.magics[action]._proto_.constructor === 'magic';
   },
-  randInt, /**
-   * генератор уникальных идентификаторов для тим
-   * @return {GUID String}
-   */
-  guid() {
-    /**
-     * random numb gen
-     * @return {string}
-     */
-    function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-    }
-
-    return `${s4() + s4()}-${s4()}-${s4()}-${s4()}-${s4()
-    }${s4()}${s4()}`;
-  },
+  randInt,
 };

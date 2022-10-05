@@ -20,7 +20,7 @@ const isMinMax = (atr: keyof Stats): atr is 'hl' | 'hit' => atr === 'hl' || atr 
  */
 export default class StatsService {
   private inRound!: Stats;
-  public collect = { exp: 0, gold: 0 };
+  public readonly collect = { exp: 0, gold: 0 };
   /**
    * Конструктор класса stats
    * @param defStat объект параметров
@@ -141,7 +141,7 @@ export default class StatsService {
   val<T extends keyof Stats>(atr: T): Stats[T] {
     const a = this.inRound[atr];
     if (typeof a === 'number') {
-      return floatNumber(a) as Stats[T];
+      return floatNumber(a);
     }
     return a;
   }

@@ -16,6 +16,10 @@ export function formatError(msgObj: FailArgs): string {
   const weapon = 'weapon' in msgObj ? msgObj.weapon.case : '';
 
   const TEXT: Record<BreaksMessage | 'default', Record<'en' | 'ru', string>> = {
+    NO_INITIATOR: {
+      ru: `Некто хотел использовать _${action} на игрока *${target}*, но исчез`,
+      en: '',
+    },
     NO_TARGET: {
       ru: `Цель для заклинания _${action} игрока *${initiator}* не была найдена`,
       en: '',

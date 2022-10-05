@@ -1,5 +1,5 @@
 import type Game from '../GameService';
-import type Player from '../PlayerService';
+import type { Player } from '../PlayersService';
 import { CommonMagic } from './CommonMagicConstructor';
 import type { MagicNext } from './MagicConstructor';
 import type { BaseNext, LongCustomMessage } from './types';
@@ -71,8 +71,14 @@ export abstract class LongMagic extends CommonMagic {
       if (game.round.count === item.round) return;
       try {
         item.duration -= 1;
-        const initiator = game.getPlayerById(item.initiator);
-        const target = game.getPlayerById(item.target);
+        const initiator = game.players.getById(item.initiator);
+        const target = game.players.getById(item.target);
+        if (!initiator) {
+          throw this.breaks('NO_INITIATOR');
+        }
+        if (!target) {
+          throw this.breaks('NO_TARGET');
+        }
         this.params = { initiator, target, game };
         this.params.initiator.proc = item.proc;
         this.checkPreAffects(initiator, target, game);

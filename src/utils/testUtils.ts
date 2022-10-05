@@ -38,7 +38,7 @@ export default class TestUtils {
       players,
     });
     const clan = await created.save();
-    await CharModel.updateOne({ id: charId }, { clan: clan.id });
+    await CharModel.updateMany({ _id: { $in: players } }, { clan: clan.id });
     return ClanService.getClanById(clan.id);
   }
 
