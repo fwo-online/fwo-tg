@@ -12,6 +12,7 @@ export type OrderType = 'all' | 'any' | 'enemy' | 'self';
 export type AOEType = 'target' | 'team';
 export type DamageType = 'acid' | 'fire' | 'lighting' | 'frost' | 'physical' | 'clear';
 export type BreaksMessage =
+  'NO_INITIATOR' |
   'NO_TARGET' |
   'NO_MANA' |
   'NO_ENERGY' |

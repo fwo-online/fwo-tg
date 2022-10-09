@@ -1,6 +1,6 @@
 import { floatNumber } from '../../utils/floatNumber';
 import type Game from '../GameService';
-import type { Player } from '../PlayersService';
+import type Player from '../PlayerService';
 import { DmgMagic } from './DmgMagicConstructor';
 import type { LongItem } from './LongMagicConstructor';
 import type { BaseNext, DamageType, LongCustomMessage } from './types';
@@ -71,8 +71,8 @@ export abstract class LongDmgMagic extends DmgMagic {
       if (game.round.count === item.round) return;
       try {
         item.duration -= 1;
-        const initiator = game.players.getById(item.initiator);
-        const target = game.players.getById(item.target);
+        const initiator = game.players[item.initiator];
+        const target = game.players[item.target];
         if (!initiator) {
           throw this.breaks('NO_INITIATOR');
         }

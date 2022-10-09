@@ -23,8 +23,12 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: npm install
         run: npm install
+      - name: types
+        run: npm run types
       - name: eslint
         run: npm run lint
+      - name: test
+        run: npm t
   docker:
     environment: test
     needs: build
