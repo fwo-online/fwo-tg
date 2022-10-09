@@ -27,8 +27,6 @@ jobs:
         run: npm run types
       - name: eslint
         run: npm run lint
-      - name: test
-        run: npm t
   docker:
     environment: test
     needs: build
