@@ -1,5 +1,5 @@
 import type Game from '../GameService';
-import type Player from '../PlayerService';
+import type { Player } from '../PlayersService';
 import { CommonMagic } from './CommonMagicConstructor';
 import type { MagicNext } from './MagicConstructor';
 import type { BaseNext, LongCustomMessage } from './types';

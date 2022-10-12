@@ -477,7 +477,7 @@ export default class GameService {
 
     const { withoutClan, groupByClan } = this.players.partitionAliveByClan;
 
-    let team;
+    let team: Player[];
     if (player.clan) {
       team = groupByClan[player.clan.name];
       delete groupByClan[player.clan.name];

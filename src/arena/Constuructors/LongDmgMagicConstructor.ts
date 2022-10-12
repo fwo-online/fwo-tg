@@ -1,6 +1,6 @@
 import { floatNumber } from '../../utils/floatNumber';
 import type Game from '../GameService';
-import type Player from '../PlayerService';
+import type { Player } from '../PlayersService';
 import { DmgMagic } from './DmgMagicConstructor';
 import type { LongItem } from './LongMagicConstructor';
 import type { BaseNext, DamageType, LongCustomMessage } from './types';
