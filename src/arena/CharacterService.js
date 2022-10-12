@@ -122,7 +122,6 @@ class CharacterService {
       ...charObj.harks,
       free: charObj.free,
     };
-    void this.updateHarkFromItems();
     this.mm = {};
     this.autoreg = false;
     this.modifiers = undefined;
@@ -550,7 +549,7 @@ class CharacterService {
 
   /**
    * Загрузка чара в память
-   * @param {Number} tgId идентификатор пользователя в TG (tgId)
+   * @param {number} tgId идентификатор пользователя в TG (tgId)
    * @return {Promise<Char>}
    */
   static async getCharacter(tgId) {
@@ -560,23 +559,25 @@ class CharacterService {
     }
 
     const char = new CharacterService(charFromDb);
+    await char.updateHarkFromItems();
     arena.characters[char.id] = char;
     return char;
   }
 
   /**
    * Загрузка чара в память
-   * @param {Number} tgId идентификатор пользователя
+   * @param {string} id идентификатор пользователя
    * @return {Promise<Char>}
    */
   static async getCharacterById(id) {
-    const charFromDb = await findCharacter({ id });
+    const charFromDb = await findCharacter({ _id: id });
     if (!charFromDb) {
       return null;
     }
 
     const char = new CharacterService(charFromDb);
-    arena.characters[char.id] = char;
+    await char.updateHarkFromItems();
+    arena.characters[id] = char;
     return char;
   }
 

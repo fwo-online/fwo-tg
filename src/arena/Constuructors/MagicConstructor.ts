@@ -2,7 +2,7 @@ import { floatNumber } from '../../utils/floatNumber';
 import type Game from '../GameService';
 import type * as magics from '../magics';
 import MiscService from '../MiscService';
-import type Player from '../PlayerService';
+import type { Player } from '../PlayersService';
 import type {
   BaseNext, Breaks, BreaksMessage, CustomMessage,
 } from './types';
@@ -210,7 +210,7 @@ export abstract class Magic {
   isBlurredMind(): void {
     const { initiator, game } = this.params;
     if (initiator.flags.isGlitched) {
-      this.params.target = game.playerArr.randomAlive;
+      this.params.target = game.players.randomAlive;
     }
   }
 

@@ -1,6 +1,6 @@
 import { Heal } from '../Constuructors/HealMagicConstructor';
 import type Game from '../GameService';
-import type Player from '../PlayerService';
+import type { Player } from '../PlayersService';
 /**
  * Хил руками
  */

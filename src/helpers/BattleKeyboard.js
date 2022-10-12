@@ -5,7 +5,7 @@ const { Skill } = require('../arena/Constuructors/SkillConstructor');
 
 class BattleKeyboard {
   /**
-   * @param {import ('../arena/PlayerService').default} player
+   * @param {import ('../arena/PlayersService').Player} player
    */
   constructor(player) {
     this.keyboard = [];

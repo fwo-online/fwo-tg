@@ -31,10 +31,14 @@ function runStage(ar: Stages, gameObj: Game) {
       if (ord[x]) {
         const ordObj = ord[x];
         ordObj.forEach((o) => {
-          const initiator = gameObj.players[o.initiator];
-          const target = gameObj.players[o.target];
-          initiator.proc = o.proc / 100;
-          act.cast(initiator, target, gameObj);
+          const initiator = gameObj.players.getById(o.initiator);
+          const target = gameObj.players.getById(o.target);
+          if (initiator && target) {
+            initiator.setProc(o.proc / 100);
+            act.cast(initiator, target, gameObj);
+          } else {
+            console.log('stage fail (no player):', initiator?.id, target?.id);
+          }
         });
       }
       if ('castLong' in act) {

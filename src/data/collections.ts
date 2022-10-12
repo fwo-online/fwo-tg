@@ -1,4 +1,4 @@
-import type { Resists, Chance, Statical } from '../arena/PlayerService';
+import type { Resists, Chance, Statical } from '../arena/PlayersService';
 import type { Harks } from '.';
 
 export interface Collection {

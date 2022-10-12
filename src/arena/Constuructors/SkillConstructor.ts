@@ -1,7 +1,7 @@
 import type { Profs } from '../../data';
 import type Game from '../GameService';
 import MiscService from '../MiscService';
-import type Player from '../PlayerService';
+import type { Player } from '../PlayersService';
 import type {
   CostType, OrderType, AOEType, Breaks, BreaksMessage, CustomMessage, BaseNext,
 } from './types';

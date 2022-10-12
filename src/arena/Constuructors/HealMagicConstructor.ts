@@ -1,7 +1,7 @@
 import { floatNumber } from '../../utils/floatNumber';
 import type Game from '../GameService';
 import MiscService from '../MiscService';
-import type Player from '../PlayerService';
+import type { Player } from '../PlayersService';
 import type {
   BaseNext, Breaks, BreaksMessage, CustomMessage, ExpArr, OrderType,
 } from './types';
