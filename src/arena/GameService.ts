@@ -9,8 +9,7 @@ import { engine } from './engineService';
 import HistoryService, { historyObj } from './HistoryService';
 import type * as magics from './magics';
 import OrderService from './OrderService';
-import PlayersArr from './playerArray';
-import type Player from './PlayerService';
+import PlayersService, { Player } from './PlayersService';
 import { RoundService, RoundStatus } from './RoundService';
 import testGame from './testGame';
 import arena from './index';
@@ -35,8 +34,7 @@ export interface GlobalFlags {
  * Класс для объекта игры
  */
 export default class GameService {
-  playerArr: PlayersArr;
-  players: Record<string, Player> = {};
+  players: PlayersService;
   round = new RoundService();
   orders = new OrderService();
   battleLog = new BattleLog();
@@ -50,10 +48,10 @@ export default class GameService {
 
   /**
    * Конструктор объекта игры
-   * @param playerArr массив игроков
+   * @param players массив игроков
    */
-  constructor(playerArr: string[]) {
-    this.playerArr = new PlayersArr(playerArr);
+  constructor(players: string[]) {
+    this.players = new PlayersService(players);
     this.flags = {
       noDamageRound: 0,
       global: {},
@@ -66,16 +64,16 @@ export default class GameService {
   get isGameEnd(): boolean {
     return (
       this.isTeamWin
-      || this.alivePlayers.length === 0
+      || this.players.alivePlayers.length === 0
       || this.flags.noDamageRound > 2
       || this.round.count > 9
     );
   }
 
   get isTeamWin(): boolean {
-    const [withClan, withoutClan, byClan] = this.partitionAliveByClan;
+    const { withClan, withoutClan, groupByClan } = this.players.partitionAliveByClan;
     if (!withoutClan.length) {
-      return Object.keys(byClan).length === 1;
+      return Object.keys(groupByClan).length === 1;
     }
     return withoutClan.length === 1 && !withClan.length;
   }
@@ -88,62 +86,8 @@ export default class GameService {
     return base;
   }
 
-  /**
-   * Возвращает массив мёртвых игроков
-   */
-  get deadPlayers(): Player[] {
-    return _.filter(this.players, {
-      alive: false,
-    });
-  }
-
-  /**
-   * Возвращает массив живых игроков
-   */
-  get alivePlayers(): Player[] {
-    return _.filter(this.players, {
-      alive: true,
-    });
-  }
-
   get checkRoundDamage(): boolean {
     return !!this.history.getRoundDamage(this.round.count).length;
-  }
-
-  /**
-   * Статик функция возвращающая массив живых игроков в игре
-   * @param gameId идентификатор игры
-   * @return массив живых игроков
-   */
-  static aliveArr(gameId: string): Player[] {
-    const game = arena.games[gameId];
-    return _.filter(game.players, {
-      alive: true,
-    });
-  }
-
-  /**
-   * Отправляет в чат кнопки с заказами
-   * @param player - объект игрока
-   */
-  static showOrderButtons(player: Player): void {
-    void channelHelper.sendOrderButtons(player);
-  }
-
-  /**
-   * Удаляет кнопки заказа в чате
-   * @param player - объект игрока
-   */
-  static hideLastMessage(player: Player): void {
-    void channelHelper.removeMessages(player);
-  }
-
-  /**
-   * Отправляет в чат кнопки с заказами
-   * @param player - объект игрока
-   */
-  static showExitButton(player: Player): void {
-    void channelHelper.sendExitButton(player);
   }
 
   /**
@@ -152,9 +96,9 @@ export default class GameService {
    * @param target
    */
   isPlayersAlly(player: Player, target: Player): boolean {
-    const allies = this.playerArr.getMyTeam(player);
+    const allies = this.players.getMyTeam(player.id);
     if (!allies.length) {
-      allies.push(player);
+      return true;
     }
     return allies.some((ally) => ally.id === target.id);
   }
@@ -163,7 +107,7 @@ export default class GameService {
    * Предзагрузка игры
    */
   preLoading(): void {
-    this.forAllAlivePlayers(GameService.hideLastMessage);
+    this.forAllAlivePlayers(channelHelper.removeMessages);
     this.initHandlers();
     this.startGame();
 
@@ -216,9 +160,11 @@ export default class GameService {
    * @param reason строка, подставляющаяся в флаг isKicked
    */
   preKick(id: string, reason: KickReason): void {
-    const player = this.players[id];
-    if (!player) return console.log('GC debug:: preKick', id, 'no player');
-    player.flags.isKicked = reason;
+    const player = this.players.getById(id);
+    if (!player) {
+      return console.log('GC debug:: preKick', id, 'no player');
+    }
+    player.preKick(reason);
   }
 
   /**
@@ -227,8 +173,11 @@ export default class GameService {
    * @param reason причина кика
    */
   kick(id: string, reason?: KickReason): void {
-    const player = this.players[id];
-    if (!player) return console.log('GC debug:: kick', id, 'no player');
+    const player = this.players.getById(id);
+    if (!player) {
+      console.log('GC debug:: kick', id, 'no player');
+      return;
+    }
     void channelHelper.sendRunButton(player);
     if (reason === 'run') {
       void channelHelper.broadcast(`Игрок *${player.nick}* сбежал из боя`);
@@ -239,7 +188,7 @@ export default class GameService {
     char.addGameStat({ runs: 1 });
     char.saveToDb();
     char.autoreg = false;
-    delete this.players[id];
+    this.players.kick(id);
     this.info.players.splice(this.info.players.indexOf(id), 1);
   }
 
@@ -260,7 +209,7 @@ export default class GameService {
     if (player.flags.isKicked === 'afk' && !this.orders.checkPlayerOrder(player.id)) {
       this.kick(player.id, player.flags.isKicked);
     } else {
-      player.flags.isKicked = this.orders.checkPlayerOrder(player.id) ? undefined : 'afk';
+      player.preKick(this.orders.checkPlayerOrder(player.id) ? undefined : 'afk');
     }
   }
 
@@ -294,7 +243,7 @@ export default class GameService {
     this.saveGame();
     setTimeout(() => {
       this.sendToAll('Конец игры, распределяем ресурсы...');
-      this.forAllPlayers(GameService.showExitButton);
+      this.forAllPlayers(channelHelper.sendExitButton);
       this.forAllPlayers((player: Player) => { arena.characters[player.id].gameId = ''; });
       arena.mm.cancel();
       this.forAllPlayers((player: Player) => {
@@ -317,28 +266,11 @@ export default class GameService {
    * @return Объект созданный в базе
    */
   async createGame(): Promise<boolean> {
-    const dbGame = await createGame(this.playerArr.init);
-    this.players = await this.playerArr.roundJson();
+    const dbGame = await createGame(this.players.init);
     this.info = dbGame;
     this.info.id = this.info._id.toString();
     this.preLoading();
     return true;
-  }
-
-  /**
-   * Возвращает объект персонажа внутри игры [engine]
-   * @param id идентификатор чара
-   * @return PlayerObj
-   */
-  getPlayerById(id: string): Player {
-    return this.players[id];
-  }
-
-  /**
-   * Сбрасываем всем игрокам кол-во доступных процентов на 100
-   */
-  resetProc(): void {
-    _.forEach(this.players, (p) => { p.proc = 100; });
   }
 
   /**
@@ -364,16 +296,15 @@ export default class GameService {
       switch (data.state) {
         case RoundStatus.START_ROUND: {
           this.sendToAll(`⚡️ Раунд ${data.round} начинается ⚡`);
-          this.resetProc();
-          this.orders.reset();
           this.forAllPlayers(this.sendStatus);
           break;
         }
         case RoundStatus.END_ROUND: {
           void this.sendMessages();
           this.sortDead();
+          this.players.reset();
+          this.orders.reset();
           this.handleEndGameFlags();
-          this.refreshPlayer();
           if (this.isGameEnd) {
             this.endGame();
           } else {
@@ -388,13 +319,13 @@ export default class GameService {
         }
         case RoundStatus.START_ORDERS: {
           void channelHelper.broadcast('Пришло время делать заказы!');
-          this.forAllAlivePlayers(GameService.showOrderButtons);
+          this.forAllAlivePlayers(channelHelper.sendOrderButtons);
           break;
         }
         case RoundStatus.END_ORDERS: {
-          this.forAllAlivePlayers(GameService.hideLastMessage);
+          this.forAllAlivePlayers(channelHelper.removeMessages);
           // Debug Game Hack
-          if (this.players['5e05ee58bdf83c6a5ff3f8dd']) {
+          if (process.env.NODE_ENV === 'development') {
             this.orders.ordersList = this.orders.ordersList.concat(testGame.orders);
           }
           this.forAllPlayers(this.checkOrders);
@@ -413,44 +344,28 @@ export default class GameService {
    */
   saveGame(): void {
     try {
-      _.forEach(this.info.players, async (p) => {
-        arena.characters[p].exp += this.players[p].stats.collect.exp;
-        arena.characters[p].expEarnedToday += this.players[p].stats.collect.exp;
-        arena.characters[p].gold += this.players[p].stats.collect.gold;
+      _.forEach(this.info.players, async (id) => {
+        const player = this.players.getById(id);
+        if (!player) {
+          return;
+        }
+        arena.characters[id].exp += player.stats.collect.exp;
+        arena.characters[id].expEarnedToday += player.stats.collect.exp;
+        arena.characters[id].gold += player.stats.collect.gold;
 
-        const kills = Object.values(this.players)
-          .reduce((sum, player) => (player.getKiller() === p ? sum + 1 : sum), 0);
+        const kills = this.players.getKills(id).length;
+        const death = player.alive ? 0 : 1;
 
-        const death = this.players[p].alive ? 0 : 1;
-
-        arena.characters[p].addGameStat({
+        arena.characters[id].addGameStat({
           games: 1,
           death,
           kills,
         });
-        await arena.characters[p].saveToDb();
+        await arena.characters[id].saveToDb();
       });
     } catch (e) {
       console.log('Game:', e);
     }
-  }
-
-  /**
-   * @returns [withClan, withoutClan, groupByClan]
-   */
-  get partitionByClan(): [Player[], Player[], _.Dictionary<Player[]>] {
-    const [withClan, withoutClan] = _.partition(this.playerArr.arr, (p) => p.clan);
-    const groupByClan = _.groupBy(withClan, (p) => p.clan?.name);
-    return [withClan, withoutClan, groupByClan];
-  }
-
-  /**
-   * @returns [withClan, withoutClan, groupByClan]
-   */
-  get partitionAliveByClan(): [Player[], Player[], _.Dictionary<Player[]>] {
-    const [withClan, withoutClan] = _.partition(this.alivePlayers, (p) => p.clan);
-    const groupByClan = _.groupBy(withClan, (p) => p.clan?.name);
-    return [withClan, withoutClan, groupByClan];
   }
 
   /**
@@ -459,16 +374,16 @@ export default class GameService {
    */
   statistic(): string {
     this.giveGoldforKill();
-    const winners = this.alivePlayers;
-    const gold = this.deadPlayers.length ? 5 : 1;
+    const winners = this.players.alivePlayers;
+    const gold = this.players.deadPlayers.length ? 5 : 1;
     winners.forEach((p) => p.stats.addGold(gold));
 
-    const [, withoutClan, byClan] = this.partitionByClan;
+    const { withoutClan, groupByClan } = this.players.partitionByClan;
 
     const getStatusString = (p: Player) => `\t👤 ${p.nick} получает ${p.stats.collect.exp}📖 и ${p.stats.collect.gold}💰`;
 
     const playersWithoutClan = withoutClan.map(getStatusString);
-    const playersWithClan = _.map(byClan, (players, clan) => `${clan}\n${players.map(getStatusString).join('\n')}`);
+    const playersWithClan = _.map(groupByClan, (players, clan) => `${clan}\n${players.map(getStatusString).join('\n')}`);
 
     return [
       '*Статистика игры*```',
@@ -482,10 +397,11 @@ export default class GameService {
   * Функция пробегает всех убитых и раздает золото убийцам
   */
   giveGoldforKill(): void {
-    const deadArray = this.deadPlayers;
-    _.forEach(deadArray, (p) => {
-      const killer = this.getPlayerById(p.getKiller());
-      if (killer && killer.id !== p.id) killer.stats.addGold(5 * p.lvl);
+    this.players.deadPlayers.forEach((p) => {
+      const killer = this.players.getById(p.getKiller());
+      if (killer && killer.id !== p.id) {
+        killer.stats.addGold(5 * p.lvl);
+      }
     });
   }
 
@@ -496,13 +412,7 @@ export default class GameService {
    * чтобы выводило от чего и от кого умер игрок
    */
   sortDead(): void {
-    const dead: string[] = [];
-    _.forEach(this.players, (p) => {
-      if (p.stats.val('hp') <= 0 && p.alive) {
-        dead.push(p.nick);
-        p.alive = false;
-      }
-    });
+    const dead = this.players.sortDead();
     this.cleanLongMagics();
     if (dead.length) {
       this.sendToAll(`Погибши${
@@ -535,21 +445,11 @@ export default class GameService {
     const _this = this;
     _.forEach(this.longActions, (longMagicType, k) => {
       _this.longActions[k] = _.filter(longMagicType, (act) => {
-        const p = _this.getPlayerById(act.target) || {};
-        return p.alive;
+        const p = _this.players.getById(act.target);
+        return p?.alive;
       });
     });
     this.longActions = _this.longActions;
-  }
-
-  /**
-   * Сброс состояния игроков
-   */
-  refreshPlayer(): void {
-    _.forEach(this.players, (p) => {
-      p.stats.refresh();
-      p.flags.refresh();
-    });
   }
 
   /**
@@ -557,7 +457,7 @@ export default class GameService {
    * @param f функция применяющая ко всем игрокам в игре
    */
   forAllPlayers(f: (player: Player) => void): void {
-    _.forEach(this.players, (p) => f.call(this, p));
+    this.players.players.forEach((p) => f.call(this, p));
   }
 
   /**
@@ -565,7 +465,7 @@ export default class GameService {
    * @param f функция применяющая ко всем живым игрокам
    */
   forAllAlivePlayers(f: (player: Player) => void): void {
-    this.alivePlayers.forEach((p) => f.call(this, p));
+    this.players.alivePlayers.forEach((p) => f.call(this, p));
   }
 
   /**
@@ -575,12 +475,12 @@ export default class GameService {
   sendStatus(player: Player): void {
     const getEnemyString = (p: Player) => `\t👤 ${p.nick} (${Profs.profsData[p.prof].icon}${p.lvl}) ❤️${p.getStatus().hp}`;
 
-    const [, withoutClan, byClan] = this.partitionAliveByClan;
+    const { withoutClan, groupByClan } = this.players.partitionAliveByClan;
 
-    let team;
+    let team: Player[];
     if (player.clan) {
-      team = player.clan ? byClan[player.clan.name] : [player];
-      delete byClan[player.clan.name];
+      team = groupByClan[player.clan.name];
+      delete groupByClan[player.clan.name];
     } else {
       team = [player];
       const index = withoutClan.findIndex((p) => p.id === player.id);
@@ -596,7 +496,7 @@ export default class GameService {
     });
 
     const enemiesWithoutClan = withoutClan.map(getEnemyString);
-    const enemiesWithClan = _.map(byClan, (players, clan) => `_${clan}_\n${players.map(getEnemyString).join('\n')}`);
+    const enemiesWithClan = _.map(groupByClan, (players, clan) => `_${clan}_\n${players.map(getEnemyString).join('\n')}`);
 
     void channelHelper.sendStatus(
       [`*Раунд ${this.round.count}*

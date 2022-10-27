@@ -1,5 +1,6 @@
 import { Markup } from 'telegraf';
 import * as channelHelper from '../helpers/channelHelper';
+import OrderError from './errors/OrderError';
 import type Game from './GameService';
 import arena from './index';
 
@@ -30,16 +31,23 @@ function getCurrentOrders(charId: string, game: Game) {
       if (o.target === charId) {
         return `_${getActions()[o.action].displayName}_ (*${o.proc}%*) на *себя*`;
       }
-      return `_${getActions()[o.action].displayName}_ (*${o.proc}%*) на игрока *${game.players[o.target].nick}*`;
+      const target = game.players.getById(o.target);
+      if (!target) {
+        throw new OrderError('Игрок не найден');
+      }
+      return `_${getActions()[o.action].displayName}_ (*${o.proc}%*) на игрока *${target.nick}*`;
     })
     .join('\n');
 }
 
 function getTargetKeyboard(charId: string, game: Game, action: string) {
-  const player = game.players[charId];
+  const player = game.players.getById(charId);
+  if (!player) {
+    throw new OrderError('Игрок не найден');
+  }
   const { orderType } = getActions()[action];
   const proc = arena.skills[action] ? `_${arena.skills[action].proc}` : '';
-  return game.alivePlayers
+  return game.players.alivePlayers
     .filter((target) => (orderType === 'enemy' ? !game.isPlayersAlly(player, target) : true))
     .map(({ nick, id }) => Markup.button.callback(nick, `${action}_${id}${proc}`));
 }
@@ -60,7 +68,10 @@ function getProcentKeyboard(action: string, target: string, proc: number) {
  * @param game
  */
 function orderMessage(charId: string, game: Game): BattleReply {
-  const player = game.players[charId];
+  const player = game.players.getById(charId);
+  if (!player) {
+    throw new OrderError('Игрок не найден');
+  }
   const message = getText.order(player.proc)
     .concat(getCurrentOrders(charId, game));
   const keyboard = channelHelper.getOrderButtons(player);
@@ -91,15 +102,21 @@ type PercentMessageParams = {
  * Сообщение для третьего этапа
  */
 function percentMessage({
-  initiator, game, action, target, isSelfAction = false,
+  initiator: initiatorId, game, action, target: targetId, isSelfAction = false,
 }: PercentMessageParams) {
-  const { proc } = game.players[initiator];
-  const { nick } = game.players[target];
+  const initiator = game.players.getById(initiatorId);
+  if (!initiator) {
+    throw new OrderError('Игрок не найден');
+  }
+  const target = game.players.getById(targetId);
+  if (!target) {
+    throw new OrderError('Игрок не найден');
+  }
   const { displayName } = getActions()[action];
   const backButtonData = isSelfAction ? 'back' : `action_${action}`;
-  const message = getText.proc(displayName, isSelfAction ? '' : nick);
+  const message = getText.proc(displayName, isSelfAction ? '' : target.nick);
   const keyboard = [
-    getProcentKeyboard(action, target, proc),
+    getProcentKeyboard(action, targetId, initiator.proc),
     [Markup.button.callback('🔙 Назад', backButtonData)],
   ];
   return { message, keyboard };

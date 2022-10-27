@@ -4,7 +4,7 @@ const MiscService = require('../MiscService');
 
 /**
  * @typedef {import ('../GameService').default} game
- * @typedef {import ('../PlayerService').default} player
+ * @typedef {import ('../PlayersService').Player} player
  */
 
 /**
@@ -109,7 +109,7 @@ class PhysConstructor {
     const { initiator, game } = this.params;
     if (initiator.flags.isGlitched) {
       // Меняем цель внутри атаки на любого живого в игре
-      this.params.target = game.playerArr.randomAlive;
+      this.params.target = game.players.randomAlive;
     }
     if (initiator.flags.isMad) {
       this.params.target = initiator;

@@ -1,7 +1,7 @@
 import { floatNumber } from '../../utils/floatNumber';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 import type { HealMagicNext } from '../Constuructors/HealMagicConstructor';
-import type Player from '../PlayerService';
+import type { Player } from '../PlayersService';
 
 export class HealMagic extends CommonMagic {
   status = {

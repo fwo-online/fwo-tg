@@ -1,13 +1,13 @@
-import type { Prof } from '../data/profs';
-import type { Clan } from '../models/clan';
-import type { Inventory } from '../models/inventory';
-import type { MinMax } from '../models/item';
-import type Char from './CharacterService';
-import FlagsConstructor from './Constuructors/FlagsConstructor';
-import type { DamageType } from './Constuructors/types';
-import type * as magics from './magics';
-import StatsService, { Stats } from './StatsService';
-import arena from './index';
+import arena from '@/arena';
+import type Char from '@/arena/CharacterService';
+import FlagsConstructor from '@/arena/Constuructors/FlagsConstructor';
+import type { DamageType } from '@/arena/Constuructors/types';
+import type * as magics from '@/arena/magics';
+import StatsService, { Stats } from '@/arena/StatsService';
+import type { Prof } from '@/data/profs';
+import type { Clan } from '@/models/clan';
+import type { Inventory } from '@/models/inventory';
+import type { MinMax } from '@/models/item';
 
 export type Resists = Record<DamageType, number>;
 
@@ -101,8 +101,7 @@ export default class Player {
    * Загрузка чара в память
    * @param charId идентификатор чара
    */
-  static loading(charId: string): Player {
-    // @todo fast hack
+  static load(charId: string) {
     return new Player(arena.characters[charId]);
   }
 
@@ -147,5 +146,23 @@ export default class Player {
   */
   setKiller(player: Player): void {
     this.flags.isDead = player.id;
+  }
+
+  setProc(proc: number) {
+    this.proc = proc;
+  }
+
+  reset() {
+    this.proc = 100;
+    this.stats.refresh();
+    this.flags.refresh();
+  }
+
+  setDead() {
+    this.alive = false;
+  }
+
+  preKick(reason?: 'run' | 'afk') {
+    this.flags.isKicked = reason;
   }
 }

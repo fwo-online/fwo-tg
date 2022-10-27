@@ -1,6 +1,6 @@
 import { Markup } from 'telegraf';
 import arena from '../arena';
-import type Player from '../arena/PlayerService';
+import type { Player } from '../arena/PlayersService';
 import { Profs } from '../data';
 import BattleKeyboard from './BattleKeyboard';
 
