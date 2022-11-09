@@ -32,8 +32,59 @@ ${ctx.session.character.lvl === 1 ? `Стоимость изучения маг�
     Markup.inlineKeyboard([
       ...getMagicButtons(ctx.session.character),
       [
+        Markup.button.callback('Избранные магии', 'favorite'),
+      ],
+      [
         Markup.button.callback('Учить', ctx.session.character.lvl === 1 ? 'learn_1' : 'select_lvl', !ctx.session.character.bonus),
         Markup.button.callback('В профиль', 'back')],
+    ]),
+  );
+});
+
+magicScene.action(/favorite$|favorite_add(?=_)|favorite_remove_\d/, async (ctx) => {
+  const [, action, index, magicName] = ctx.match.input.split('_');
+
+  if (action === 'add') {
+    ctx.session.character.favoriteMagicList[Number(index)] = magicName;
+    await ctx.session.character.saveToDb();
+  }
+
+  if (action === 'remove') {
+    ctx.session.character.favoriteMagicList.splice(Number(index), 1);
+    await ctx.session.character.saveToDb();
+  }
+
+  const favorites = ctx.session.character.favoriteMagicList;
+
+  await ctx.editMessageText(
+    'Выбери список магий, которые будут отображаться в бою',
+    Markup.inlineKeyboard(
+      [
+        ...favorites.map((magic, i) => [
+          Markup.button.callback(arena.magics[magic].displayName || '+', `favorite_select_${i}`),
+          Markup.button.callback('-', `favorite_remove_${i}`),
+        ]),
+        [
+          Markup.button.callback('+', `favorite_select_${favorites.length}`, favorites.length >= 5),
+        ],
+        [Markup.button.callback('Назад', 'magics')],
+      ],
+    ),
+  );
+});
+
+magicScene.action(/favorite_select_\d/, async (ctx) => {
+  const { magics, favoriteMagicList } = ctx.session.character;
+  const [, , index] = ctx.match.input.split('_');
+
+  const favoriteMagicSet = new Set(favoriteMagicList);
+  const aviableMagicList = Object.keys(magics).filter((magic) => !favoriteMagicSet.has(magic));
+
+  await ctx.editMessageText(
+    aviableMagicList.length ? 'Выбери магию' : 'Нет доступных магий для выбора',
+    Markup.inlineKeyboard([
+      ...aviableMagicList.map((magic) => [Markup.button.callback(arena.magics[magic].displayName, `favorite_add_${index}_${magic}`)]),
+      [Markup.button.callback('Назад', 'favorite')],
     ]),
   );
 });

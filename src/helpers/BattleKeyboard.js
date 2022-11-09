@@ -99,8 +99,12 @@ class BattleKeyboard {
   setMagics() {
     if (!/m|p/.test(this.player.prof)) return this;
 
+    const magicsSet = this.player.favoriteMagics
+      ? new Set(this.player.favoriteMagics)
+      : new Set(Object.keys(this.player.magics));
+
     const playerMagics = Object.values(arena.magics)
-      .filter((magic) => this.player.magics[magic.name]);
+      .filter((magic) => magicsSet.has(magic.name) && this.player.magics[magic.name]);
 
     if (this.checkMagicOrder(playerMagics)) {
       this.concat(playerMagics);

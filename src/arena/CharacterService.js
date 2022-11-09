@@ -114,7 +114,7 @@ class CharacterService {
   wasLvlUp = false;
   /**
    * Конструктор игрока
-   * @param {import ('../models/character').CharDocument} charObj объект персонажа из базы
+   * @param {import ('../models/character').Char} charObj объект персонажа из базы
    */
   constructor(charObj) {
     this.charObj = charObj;
@@ -294,6 +294,15 @@ class CharacterService {
   /** Суммарное количество опыта, требуемое для следующего уровня */
   get nextLvlExp() {
     return 2 ** (this.lvl - 1) * 1000 * lvlRatio;
+  }
+
+  get favoriteMagicList() {
+    return this.charObj.favoriteMagicList;
+  }
+
+  /** @type {string[]} */
+  set favoriteMagicList(value) {
+    this.charObj.favoriteMagicList = value;
   }
 
   resetExpLimit() {
@@ -638,6 +647,7 @@ class CharacterService {
         expLimit: this.charObj.expLimit,
         inventory: items,
         statistics: this.charObj.statistics,
+        favoriteMagicList: this.charObj.favoriteMagicList,
       });
     } catch (e) {
       console.error('Fail on CharSave:', e);
