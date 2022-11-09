@@ -99,7 +99,7 @@ class BattleKeyboard {
   setMagics() {
     if (!/m|p/.test(this.player.prof)) return this;
 
-    const magicsSet = this.player.favoriteMagics
+    const magicsSet = this.player.favoriteMagics.length
       ? new Set(this.player.favoriteMagics)
       : new Set(Object.keys(this.player.magics));
 
