@@ -140,10 +140,10 @@ export default class StatsService {
    * Функция возвращающее значение атрибута
    * @param atr str/atk/prt/dex
    */
-  val<T extends keyof Stats>(atr: T) {
+  val<T extends keyof Stats>(atr: T): Stats[T] {
     const a = this.inRound[atr];
     if (typeof a === 'number') {
-      return floatNumber(a);
+      return floatNumber(a) as Stats[T];
     }
     return a;
   }
