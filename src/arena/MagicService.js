@@ -69,7 +69,7 @@ module.exports = {
   },
   /**
    * Пручка магии с шансом
-   * @param {Number} charId идентификатор персонажа
+   * @param {string} charId идентификатор персонажа
    * @param {Number} lvl круг проучиваемой магии
    */
   async learn(charId, lvl) {

@@ -1,4 +1,5 @@
 import { Markup } from 'telegraf';
+import BattleKeyboard from '@/helpers/BattleKeyboard';
 import * as channelHelper from '../helpers/channelHelper';
 import OrderError from './errors/OrderError';
 import type Game from './GameService';
@@ -124,6 +125,21 @@ function percentMessage({
 
 export function getDefaultMessage(charId: string, game: Game): BattleReply {
   return orderMessage(charId, game);
+}
+
+export function getAllMagicsMessage(charId: string, game: Game): BattleReply {
+  const player = game.players.getById(charId);
+  if (!player) {
+    throw new OrderError('Игрок не найден');
+  }
+  const message = 'Список всех магий';
+
+  const keyboard = [
+    ...new BattleKeyboard(player).setMagics(true).render(true),
+    [Markup.button.callback('Назад', 'back')],
+  ];
+
+  return { message, keyboard };
 }
 /**
    * Обработка выбранного действия (первый этап)

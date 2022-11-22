@@ -91,9 +91,11 @@ export default class StatsService {
     }
     switch (type) {
       case 'up':
+        // @ts-expect-error @deplecated
         this.inRound[atr] = floatNumber(oldValue + val);
         break;
       case 'down':
+        // @ts-expect-error @deplecated
         this.inRound[atr] = floatNumber(oldValue - val);
         break;
       case 'set':
@@ -141,7 +143,7 @@ export default class StatsService {
   val<T extends keyof Stats>(atr: T): Stats[T] {
     const a = this.inRound[atr];
     if (typeof a === 'number') {
-      return floatNumber(a);
+      return floatNumber(a) as Stats[T];
     }
     return a;
   }

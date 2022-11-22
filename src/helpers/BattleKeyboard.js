@@ -60,11 +60,12 @@ class BattleKeyboard {
   /**
    * @private
    */
-  setRepeatButton() {
+  setRepeatButton(hidden = false) {
     return [Markup.button.callback(
       '🔁 Повторить',
       'action_repeat',
-      this.player.proc !== 100
+      hidden
+      || this.player.proc !== 100
       || this.game.round.count === 1
       || !this.game.orders.checkPlayerOrderLastRound(this.player.id),
     )];
@@ -73,11 +74,11 @@ class BattleKeyboard {
   /**
    * @private
    */
-  setResetButton() {
+  setResetButton(hidden = false) {
     return [Markup.button.callback(
       '↩️ Очистить заказ',
       'action_reset',
-      this.player.proc === 100,
+      hidden || this.player.proc === 100,
     )];
   }
 
@@ -96,17 +97,44 @@ class BattleKeyboard {
     return this;
   }
 
-  setMagics() {
+  /**
+   * @private
+   * @param {boolean} ignoreFavorites
+   */
+  getPlayerMagics(ignoreFavorites) {
+    if (ignoreFavorites || !this.player.favoriteMagics.length) {
+      return Object.keys(this.player.magics);
+    }
+    return this.player.favoriteMagics;
+  }
+
+  /** @param {boolean} ignoreFavorites */
+  setMagics(ignoreFavorites = false) {
     if (!/m|p/.test(this.player.prof)) return this;
 
+    const magicsSet = new Set(this.getPlayerMagics(ignoreFavorites));
+
     const playerMagics = Object.values(arena.magics)
-      .filter((magic) => this.player.magics[magic.name]);
+      .filter((magic) => magicsSet.has(magic.name) && this.player.magics[magic.name]);
 
     if (this.checkMagicOrder(playerMagics)) {
       this.concat(playerMagics);
     }
 
     return this;
+  }
+
+  /**
+   * @private
+   */
+  setAllMagicsButton(hidden = false) {
+    return [
+      Markup.button.callback(
+        'Все магии',
+        'all_magics',
+        hidden || !/m|p/.test(this.player.prof) || !this.player.favoriteMagics.length,
+      ),
+    ];
   }
 
   setSkills() {
@@ -118,7 +146,7 @@ class BattleKeyboard {
     return this;
   }
 
-  render() {
+  render(hideAdditionalButtons = true) {
     return [...this.keyboard
       .map((action) => {
         const button = (text) => [Markup.button.callback(text, `action_${action.name}`, this.player.proc === 0)];
@@ -131,7 +159,10 @@ class BattleKeyboard {
           return button(`${action.displayName} (💧${action.cost})`);
         }
         return button(`${action.displayName}`);
-      }), this.setRepeatButton(), this.setResetButton()];
+      }),
+    this.setAllMagicsButton(hideAdditionalButtons),
+    this.setRepeatButton(hideAdditionalButtons),
+    this.setResetButton(hideAdditionalButtons)];
   }
 }
 

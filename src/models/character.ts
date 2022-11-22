@@ -47,6 +47,7 @@ export interface Char {
     expiresAt: Date;
   }
   deleted: boolean;
+  favoriteMagicList: string[]
 }
 
 export type CharModel = Model<Char> & typeof Char
@@ -118,6 +119,7 @@ const character = new Schema<Char, CharModel>({
     },
   },
   deleted: { type: Boolean, default: false },
+  favoriteMagicList: [{ type: String }],
 });
 
 character.loadClass(Char);

@@ -63,6 +63,7 @@ export default class Player {
   resists: Partial<Omit<Resists, 'clear'>>;
   skills: { [x: string]: number; };
   magics: { [x: string]: number; };
+  favoriteMagics: string[];
   statical: Partial<Statical>;
   alive: boolean;
   proc: number;
@@ -75,6 +76,7 @@ export default class Player {
     this.prof = params.prof;
     this.lvl = params.lvl;
     this.clan = params.clan;
+    this.favoriteMagics = params.favoriteMagicList;
     this.stats = new StatsService({ ...params.def, ...params.harks });
     this.flags = new FlagsConstructor();
     // @todo закладка для вычисляемых статов

@@ -130,6 +130,19 @@ battleScene.action('back', async (ctx) => {
   );
 });
 
+battleScene.action('all_magics', async (ctx) => {
+  const { currentGame, id } = ctx.session.character;
+  const { message, keyboard } = BattleService.getAllMagicsMessage(id, currentGame);
+
+  await ctx.editMessageText(
+    message,
+    {
+      parse_mode: 'Markdown',
+      ...Markup.inlineKeyboard(keyboard),
+    },
+  );
+});
+
 /**
  * Ожидаем строку 'action_{attack}'
  */
