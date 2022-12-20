@@ -27,6 +27,7 @@ export async function sendBattleLogMessages(messages: string[]) {
       messageToSend = nextMessageToSend;
     }
   }
+  await broadcast(messageToSend);
 }
 /**
  * @param data - текст отправляемого сообщения

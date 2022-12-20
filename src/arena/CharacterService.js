@@ -543,6 +543,7 @@ class CharacterService {
     this.mm.status = newStatus;
   }
 
+  /** @return {import ("./GameService").default;} */
   get currentGame() {
     return arena.games[this.gameId];
   }

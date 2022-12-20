@@ -186,7 +186,7 @@ export default class GameService {
     }
     const char = arena.characters[id];
     char.addGameStat({ runs: 1 });
-    char.saveToDb();
+    void char.saveToDb();
     char.autoreg = false;
     this.players.kick(id);
     this.info.players.splice(this.info.players.indexOf(id), 1);
