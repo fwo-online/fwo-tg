@@ -69,10 +69,10 @@ export default class Orders {
       throw new OrderError('Раунд ещё не начался', order);
       // @todo тут надо выбирать из живых целей
     }
-    if (!Game.players[target]?.alive) {
+    if (!Game.players.getById(target)?.alive) {
       throw new OrderError('Нет цели или цель мертва', order);
     }
-    if (Number(proc) > Game.players[initiator].proc) {
+    if (Number(proc) > Number(Game.players.getById(initiator)?.proc)) {
       throw new OrderError('Нет процентов', order);
       // тут нужен геттер из Player
     }
@@ -90,7 +90,7 @@ export default class Orders {
     // if (action === 'attack') {
     //   a.hand = 'righthand';
     // }
-    Game.players[initiator].proc -= proc;
+    Game.players.getById(initiator)?.setProc(Number(Game.players.getById(initiator)?.proc) - proc);
     console.log('order :::: ', a);
     this.ordersList.push(a);
   }
@@ -180,6 +180,6 @@ export default class Orders {
   resetOrdersForPlayer(charId: string): void {
     this.ordersList = this.ordersList.filter((o) => o.initiator !== charId);
     const Game = arena.characters[charId].currentGame;
-    Game.getPlayerById(charId).proc = 100;
+    Game.players.getById(charId)?.setProc(100);
   }
 }
