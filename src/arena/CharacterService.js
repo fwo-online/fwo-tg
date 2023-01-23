@@ -577,7 +577,7 @@ class CharacterService {
   /**
    * Загрузка чара в память
    * @param {string} id идентификатор пользователя
-   * @return {Promise<Char>}
+   * @return {Promise<CharacterService>}
    */
   static async getCharacterById(id) {
     const charFromDb = await findCharacter({ _id: id });

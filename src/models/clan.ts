@@ -18,7 +18,7 @@ export interface Clan {
   requests: Types.DocumentArray<Char>;
 }
 
-type ClanModel = Model<Clan> & typeof Clan
+export type ClanModel = Model<Clan> & typeof Clan
 
 export class Clan {
   get maxPlayers(): number {
