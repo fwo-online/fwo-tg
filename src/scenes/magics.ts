@@ -109,6 +109,9 @@ ${ctx.session.character.lvl === 1 ? `Стоимость изучения маг�
       ...Markup.inlineKeyboard([
         ...getMagicButtons(ctx.session.character),
         [
+          Markup.button.callback('Избранные магии', 'favorite'),
+        ],
+        [
           Markup.button.callback('Учить', ctx.session.character.lvl === 1 ? 'learn_1' : 'select_lvl', !ctx.session.character.bonus),
           Markup.button.callback('В профиль', 'back'),
         ],
