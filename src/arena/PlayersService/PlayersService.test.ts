@@ -6,12 +6,12 @@ import CharacterService from '../CharacterService';
 import Player from './Player';
 import PlayersService from './PlayersService';
 
-// npm t src/arena/PlayersService/Player.test.ts
+// npm t src/arena/PlayersService/PlayersService.test.ts
 
 jest.retryTimes(3);
 
 describe('PlayerService', () => {
-  let characters: Char[] = [];
+  let characters: CharacterService[] = [];
   let players: PlayersService;
   let clans: Clan[] = [];
 
