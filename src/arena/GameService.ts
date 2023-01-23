@@ -98,7 +98,7 @@ export default class GameService {
   isPlayersAlly(player: Player, target: Player): boolean {
     const allies = this.players.getMyTeam(player.id);
     if (!allies.length) {
-      return true;
+      return player.id === target.id;
     }
     return allies.some((ally) => ally.id === target.id);
   }
