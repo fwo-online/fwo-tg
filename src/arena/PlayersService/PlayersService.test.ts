@@ -1,5 +1,4 @@
 import { times } from 'lodash';
-import type { Char } from '@/models/character';
 import type { Clan } from '@/models/clan';
 import TestUtils from '@/utils/testUtils';
 import CharacterService from '../CharacterService';
