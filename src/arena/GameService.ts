@@ -418,7 +418,7 @@ export default class GameService {
       this.sendToAll(`Погибши${
         dead.length === 1 ? 'й' : 'е'
       } в этом раунде: ${
-        dead.join(', ')
+        dead.map(({ nick }) => nick).join(', ')
       }`);
     }
   }
