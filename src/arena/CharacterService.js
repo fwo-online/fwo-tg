@@ -227,6 +227,7 @@ class CharacterService {
 
   set free(value) {
     this.charObj.free = value;
+    this.tempHarks.free = value;
   }
 
   // Нужно помнить, что this.harks это суммарный объект, с уже полученными от
@@ -552,7 +553,7 @@ class CharacterService {
     this.mm.status = newStatus;
   }
 
-  /** @return {import ("./GameService").default;} */
+  /** @return {import ("./GameService").default} */
   get currentGame() {
     return arena.games[this.gameId];
   }
