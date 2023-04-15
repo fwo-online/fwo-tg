@@ -146,7 +146,7 @@ class BattleKeyboard {
     return this;
   }
 
-  render(hideAdditionalButtons = true) {
+  render(hideAdditionalButtons = false) {
     return [...this.keyboard
       .map((action) => {
         const button = (text) => [Markup.button.callback(text, `action_${action.name}`, this.player.proc === 0)];
