@@ -23,10 +23,12 @@ skillsScene.enter(async (ctx) => {
       ['🔙 В лобби'],
     ]).resize(),
   );
+
+  const charSkillButtons = getSkillButtons(ctx.session.character.skills, ctx.session.character);
   await ctx.reply(
-    'Твои умения',
+    `Твои умения${charSkillButtons.length ? '' : '\nСейчас у тебя не изучено ни одного умения'}`,
     Markup.inlineKeyboard([
-      ...getSkillButtons(ctx.session.character.skills, ctx.session.character),
+      ...charSkillButtons,
       [
         Markup.button.callback(
           'Учить',
