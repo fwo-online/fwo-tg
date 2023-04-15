@@ -14,7 +14,7 @@ export async function getClans(): Promise<Clan[]> {
 
 export async function updateClan(id: string, query: UpdateQuery<Clan>): Promise<Clan> {
   const clan = await ClanModel
-    .findByIdAndUpdate(id, query)
+    .findByIdAndUpdate(id, query, { new: true })
     .orFail(new Error('Клан не найден'))
     .populate<{players: Char[]}>('players')
     .populate<{requests: Char[]}>('requests')

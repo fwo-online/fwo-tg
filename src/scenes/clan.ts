@@ -207,10 +207,10 @@ clanScene.action(/clanlist|request(?=_)/, async (ctx) => {
   const [, id] = ctx.match.input.split('_');
   if (id) {
     try {
-      const message = await ClanService.handleRequest(ctx.session.character.id, id);
+      const message = await ClanService.handleRequest(id, ctx.session.character.id);
       await ctx.answerCbQuery(message);
     } catch (e) {
-      await ctx.answerCbQuery(e.message);
+      return ctx.answerCbQuery(e.message);
     }
   }
 
@@ -225,7 +225,7 @@ clanScene.action(/clanlist|request(?=_)/, async (ctx) => {
       `info_${clan.id}`,
     ),
     Markup.button.callback(
-      `${requestedClan._id === clan._id ? 'Отменить' : 'Вступить'}`,
+      `${requestedClan?.id === clan.id ? 'Отменить' : 'Вступить'}`,
       `request_${clan.id}`,
     ),
   ]);
