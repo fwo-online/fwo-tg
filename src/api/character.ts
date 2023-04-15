@@ -34,6 +34,6 @@ export async function createCharacter(charObj: Pick<Char, 'nickname' | 'prof' | 
 
 export async function updateCharacter(id: string, query: UpdateQuery<Char>) {
   return CharModel
-    .findByIdAndUpdate(id, query)
+    .findByIdAndUpdate(id, query, { new: true })
     .orFail(new Error('Персонаж не найден'));
 }

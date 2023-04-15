@@ -634,7 +634,7 @@ class CharacterService {
     try {
       console.log('Saving char :: id', this.id);
       const {
-        gold, exp, magics, bonus, items, skills, lvl, clan, free,
+        gold, exp, magics, bonus, items, skills, lvl, clan, free, harks,
       } = this;
       return await updateCharacter(this.id, {
         gold,
@@ -644,6 +644,7 @@ class CharacterService {
         skills,
         lvl,
         clan,
+        harks,
         penalty: this.charObj.penalty,
         free,
         expLimit: this.charObj.expLimit,
