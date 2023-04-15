@@ -477,7 +477,7 @@ class CharacterService {
     this.charObj.free = free;
 
     // @todo сюда нужно будет предусмотреть проверки на корректность сохраняемых данных
-    return this.saveToDb();
+    return this.save({ harks, free });
   }
 
   async buyItem(itemCode) {
@@ -628,13 +628,27 @@ class CharacterService {
 
   /**
    * Сохраняет состояние чара в базу
+   * @param {import('mongoose').UpdateQuery<import ('@/models/character').Char>} [query]
+   */
+  async save(query) {
+    console.log('Saving char :: id', this.id);
+    try {
+      return await updateCharacter(this.id, query);
+    } catch (e) {
+      console.error('Fail on CharSave:', e);
+    }
+  }
+
+  /**
+   * Сохраняет состояние чара в базу
    * @todo важная функция которая сохраняет параметры чара в базу
+   * @deprecated
    */
   async saveToDb() {
     try {
       console.log('Saving char :: id', this.id);
       const {
-        gold, exp, magics, bonus, items, skills, lvl, clan, free,
+        gold, exp, magics, bonus, items, skills, lvl, clan, free, harks,
       } = this;
       return await updateCharacter(this.id, {
         gold,
@@ -644,6 +658,7 @@ class CharacterService {
         skills,
         lvl,
         clan,
+        harks,
         penalty: this.charObj.penalty,
         free,
         expLimit: this.charObj.expLimit,
