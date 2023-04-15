@@ -622,7 +622,7 @@ class CharacterService {
    * @param {number} lvl уровень проученного умения
    */
   async learnSkill(skillId, lvl) {
-    this.skills[skillId] = lvl;
+    this.charObj.skills[skillId] = lvl;
     await this.saveToDb();
   }
 

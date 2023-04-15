@@ -10,7 +10,7 @@ export async function findCharacter(query: FilterQuery<Char>) {
     .populate<{inventory: Inventory}>('inventory')
     .populate<{clan: Clan}>('clan');
 
-  return character.toObject();
+  return character.toObject({ minimize: false });
 }
 
 export async function removeCharacter(tgId?: number) {
