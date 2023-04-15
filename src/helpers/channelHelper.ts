@@ -83,7 +83,7 @@ export function getOrderButtons(player: Player): ReturnType<BattleKeyboard['rend
     .setActions()
     .setMagics()
     .setSkills()
-    .render();
+    .render(false);
 }
 
 /**
