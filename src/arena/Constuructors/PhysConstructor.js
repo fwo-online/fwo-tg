@@ -245,7 +245,7 @@ class PhysConstructor {
     const pdef = target.stats.val('pdef'); // общий показатель защиты цели
     /** @type {import('./types').ExpArr} */
     const expArr = target.flags.isProtected.map((flag) => {
-      const defender = game.getPlayerById(flag.initiator);
+      const defender = game.players.getById(flag.initiator);
       if (defender.id === initiator.id || !game.isPlayersAlly(defender, target)) {
         return { name: defender.nick, exp: 0 };
       }
