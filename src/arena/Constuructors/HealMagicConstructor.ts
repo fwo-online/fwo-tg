@@ -119,7 +119,7 @@ export abstract class Heal {
   getExp(initiator: Player, target: Player, game: Game): number {
     if (game.isPlayersAlly(initiator, target)) {
       const healEffect = this.status.val;
-      const exp = Math.round(healEffect * 8);
+      const exp = Math.round(healEffect * 10);
       initiator.stats.up('exp', exp);
       return exp;
     }
