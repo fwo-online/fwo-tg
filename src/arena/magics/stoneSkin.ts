@@ -34,7 +34,8 @@ class StoneSkin extends CommonMagic {
   // eslint-disable-next-line class-methods-use-this
   customMessage(args: MagicNext) {
     const { initiator, target, effect } = args;
-    return `${bold(initiator)} превращяет кожу ${bold(target)} в камень усиливая защиту на ${bold(effect.toString())}`;
+    let effectStr = effect?.toString() || ''
+    return `${bold(initiator)} превращяет кожу ${bold(target)} в камень усиливая защиту на ${bold(effectStr)}`;
   }
 }
 
