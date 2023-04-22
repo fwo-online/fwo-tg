@@ -1,4 +1,6 @@
+import { bold } from '../../utils/formatString';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
+import type { MagicNext } from '../Constuructors/MagicConstructor';
 
 /**
  * Благословение
@@ -29,6 +31,13 @@ class Blessing extends CommonMagic {
     const { target } = this.params;
     target.stats.mode('up', 'patk', this.effectVal());
     target.stats.mode('up', 'pdef', this.effectVal());
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  customMessage(args: MagicNext) {
+    const { initiator, target, effect } = args;
+    let effectStr = effect?.toString() || ''
+    return `${bold(initiator)} благославляет ${bold(target)} на ${bold(effectStr)}pt`;
   }
 }
 

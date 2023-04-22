@@ -1,4 +1,6 @@
+import { bold } from '../../utils/formatString';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
+import type { MagicNext } from '../Constuructors/MagicConstructor';
 
 /**
  * Магическая защита
@@ -26,6 +28,12 @@ class MagicDefense extends CommonMagic {
   run() {
     const { target } = this.params;
     target.stats.mode('up', 'mgp', this.effectVal());
+  }
+  // eslint-disable-next-line class-methods-use-this
+  customMessage(args: MagicNext) {
+    const { initiator, target, effect } = args;
+    let effectStr = effect?.toString() || ''
+    return `${bold(initiator)} увеличивает магическую защиту ${bold(target)} на ${bold(effectStr)}pt`;
   }
 }
 
