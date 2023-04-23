@@ -123,6 +123,7 @@ export abstract class Magic {
     const { initiator } = this.params;
     const initiatorMagicLvl = initiator.magics[this.name];
     const x = MiscService.dice(this.effect[initiatorMagicLvl - 1]) * initiator.proc;
+    this.status.effect = floatNumber(x);
     return floatNumber(x);
   }
 
