@@ -25,11 +25,11 @@ export function formatError(msgObj: FailArgs): string {
       en: '',
     },
     NO_MANA: {
-      ru: `Не хватило маны для заклинания _${action}_`,
+      ru: `*${initiator}* пытался использовать _${action}_ на *${target}, но не хватило маны`,
       en: '',
     },
     NO_ENERGY: {
-      ru: `Не хватило энергии для умения _${action}_`,
+      ru: `*${initiator}* пытался применить  _${action}_, но не хватило энергии`,
       en: '',
     },
     SILENCED: {
