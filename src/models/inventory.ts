@@ -213,7 +213,7 @@ export class Inventory {
     itemId: string,
     charId: string,
   ): Query<unknown, Inventory> {
-    return this.remove({
+    return this.deleteOne({
       owner: charId,
       _id: itemId,
     });
