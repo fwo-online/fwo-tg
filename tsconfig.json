@@ -69,7 +69,6 @@
 
     /* Advanced Options */
     "forceConsistentCasingInFileNames": true,  /* Disallow inconsistently-cased references to the same file. */
-    "importsNotUsedAsValues": "error",
     "skipLibCheck": true
   },
   "ts-node": {
@@ -78,6 +77,8 @@
     "transpileOnly": true,
 
     "files": true,
+    
+    "require": ["tsconfig-paths/register"],
 
     "compilerOptions": {
       // compilerOptions specified here will override those declared below,
