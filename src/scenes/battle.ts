@@ -190,7 +190,6 @@ battleScene.action(/^([^_]+)_([^_]+)_(\d{1,2}|100)$/, async (ctx) => {
       message,
       keyboard,
     } = BattleService.handlePercent(id, currentGame, action, target, Number(proc));
-    // console.log()
     await ctx.editMessageText(
       message,
 

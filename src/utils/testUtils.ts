@@ -2,7 +2,7 @@ import casual from 'casual';
 import type { AnyKeys } from 'mongoose';
 import CharacterService from '@/arena/CharacterService';
 import { ClanService } from '@/arena/ClanService';
-import { profsList, profsData } from '@/data/profs';
+import { profsList, profsData, Prof } from '@/data/profs';
 import { Char, CharModel } from '@/models/character';
 import { Clan, ClanModel } from '@/models/clan';
 import { Item, ItemModel } from '@/models/item';
@@ -11,12 +11,12 @@ const functions = casual.functions();
 
 export default class TestUtils {
   static async createCharacter(params?: Partial<Char>) {
-    const prof = casual.random_element([...profsList]);
+    const prof: Prof = casual.random_element([...profsList]);
     const char = await CharModel.create({
       tgId: casual.integer(1_000_000, 9_999_999),
       nickname: functions.word(),
       sex: casual.random_element(['m', 'f']),
-      prof: casual.random_element(prof),
+      prof,
       harks: profsData[prof].hark,
       magics: profsData[prof].mag,
       ...params,

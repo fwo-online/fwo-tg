@@ -35,7 +35,6 @@ inventoryScene.action('inventoryBack', async (ctx) => {
 });
 
 inventoryScene.action(/itemInfo(?=_)/, async (ctx) => {
-  console.log('1');
   const [, itemId] = ctx.match.input.split('_');
   const item = ctx.session.character.getItem(itemId);
   if (!item) return;
@@ -107,7 +106,6 @@ inventoryScene.action(/sellConfirm(?=_)/, async (ctx) => {
   const item = ctx.session.character.getItem(itemId);
   if (!item) return;
 
-  console.log(item);
   const { name, price } = arena.items[item.code];
 
   await ctx.editMessageText(
