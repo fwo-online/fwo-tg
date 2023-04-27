@@ -39,8 +39,8 @@ export async function getClanById(id: string): Promise<Clan> {
   return clan.toObject();
 }
 
-export async function deleteClan(id: string, owner: string): Promise<void> {
-  await ClanModel.deleteOne({ id, owner }).orFail(new Error('Клан не найден'));
+export async function deleteClan(_id: string, owner: string): Promise<void> {
+  await ClanModel.deleteOne({ _id, owner }).orFail(new Error('Клан не найден'));
 }
 
 export async function createClan(owner: string, name: string): Promise<Clan> {
