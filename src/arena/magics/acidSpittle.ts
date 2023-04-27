@@ -12,7 +12,7 @@ class AcidSpittle extends DmgMagic {
       cost: 10,
       baseExp: 12,
       costType: 'mp',
-      lvl: 1,
+      lvl: 3,
       orderType: 'enemy',
       aoeType: 'target',
       magType: 'bad',
