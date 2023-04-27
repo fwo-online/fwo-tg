@@ -30,7 +30,7 @@ class PhysConstructor {
     this.desc = atkAct.desc;
     this.lvl = atkAct.lvl;
     this.orderType = atkAct.orderType;
-    this.status = {};
+    this.status = { hit: 0, exp: 0 };
   }
 
   /**
@@ -44,7 +44,7 @@ class PhysConstructor {
     this.params = {
       initiator, target, game,
     };
-    this.status = {};
+    this.status = { hit: 0, exp: 0 };
     try {
       this.fitsCheck();
       this.checkPreAffects();
@@ -155,8 +155,8 @@ class PhysConstructor {
   /**
    * Запуск работы actions
    */
+  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-empty-function
   run() {
-    return this;
   }
 
   /**
