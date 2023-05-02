@@ -3,7 +3,7 @@ import {
   Telegraf, session, Context, Scenes,
 } from 'telegraf';
 import arena from './arena';
-import actions from './arena/actions';
+import * as actions from './arena/actions';
 import type Char from './arena/CharacterService';
 import * as magics from './arena/magics';
 import MM from './arena/MatchMakingService';

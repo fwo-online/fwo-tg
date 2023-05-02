@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import actions from './actions';
+import * as actions from './actions';
 import config from './config';
 import type Game from './GameService';
 import * as magics from './magics';

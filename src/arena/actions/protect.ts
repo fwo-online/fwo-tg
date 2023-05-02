@@ -1,13 +1,17 @@
+import type { OrderType } from '../Constuructors/types';
+import type Game from '../GameService';
+import type { Player } from '../PlayersService';
+
 /**
  * Класс защиты
  */
 
-/**
- * @typedef {import ('../GameService').default} game
- * @typedef {import ('../PlayersService').Player} player
- */
-
 class Protect {
+  name: string;
+  displayName: string;
+  desc: string;
+  lvl: number;
+  orderType: OrderType;
   /**
    * Изменяем протект цели, создаем custom run
    */
@@ -26,13 +30,13 @@ class Protect {
    * @param {game} [game] Объект игры
    */
   // eslint-disable-next-line class-methods-use-this
-  cast(initiator, target, _game) {
+  cast(initiator: Player, target: Player, _game: Game) {
     const tect = initiator.stats.val('pdef') * initiator.proc;
-    target.stats.mode('up', 'pdef', tect);
+    target.stats.up('pdef', tect);
     target.flags.isProtected.push({
       initiator: initiator.id, val: tect,
     });
   }
 }
 
-module.exports = new Protect();
+export default new Protect();

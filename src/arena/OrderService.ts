@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import actions from './actions';
+import * as actions from './actions';
 import OrderError from './errors/OrderError';
 import { RoundStatus } from './RoundService';
 import arena from './index';
