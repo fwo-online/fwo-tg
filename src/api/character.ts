@@ -5,7 +5,7 @@ import { Inventory, InventoryModel } from '@/models/inventory';
 
 export async function findCharacter(query: FilterQuery<Char>) {
   const character = await CharModel
-    .findOne({ ...query, deleted: false })
+    .findOne({ ...query, deleted: false }, null, { session: global.session })
     .orFail(new Error('Персонаж не найден'))
     .populate<{inventory: Inventory}>('inventory')
     .populate<{clan: Clan}>('clan');
@@ -18,6 +18,7 @@ export async function removeCharacter(tgId?: number) {
     .findOneAndUpdate(
       { tgId, deleted: false },
       { deleted: true },
+      { session: global.session },
     )
     .orFail(new Error('Персонаж не найден'));
 
@@ -25,7 +26,7 @@ export async function removeCharacter(tgId?: number) {
 }
 
 export async function createCharacter(charObj: Pick<Char, 'nickname' | 'prof' | 'sex' | 'tgId' | 'harks' | 'magics'>) {
-  const character = await CharModel.create(charObj);
+  const [character] = await CharModel.create([charObj], { session: global.session });
   const item = await InventoryModel.firstCreate(character);
   await updateCharacter(character.id, { inventory: [item] });
 
@@ -34,6 +35,6 @@ export async function createCharacter(charObj: Pick<Char, 'nickname' | 'prof' | 
 
 export async function updateCharacter(id: string, query: UpdateQuery<Char>) {
   return CharModel
-    .findByIdAndUpdate(id, query, { new: true })
+    .findByIdAndUpdate(id, query, { new: true, session: global.session })
     .orFail(new Error('Персонаж не найден'));
 }

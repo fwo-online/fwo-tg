@@ -11,6 +11,8 @@ export async function connect(onConnect?: () => void): Promise<void> {
       retryWrites: true,
       w: 'majority',
       authSource: 'admin',
+      replicaSet: "dbrs",
+      directConnection: true,
     };
 
     switch (process.env.NODE_ENV) {

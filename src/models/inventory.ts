@@ -115,7 +115,7 @@ export class Inventory {
     charId: string,
     itemId: string,
   ): Promise<Inventory[] | void> {
-    const char = await CharModel.findById(charId);
+    const char = await CharModel.findById(charId, null, { session: global.session });
     _.pull(char?.inventory as unknown as string[], itemId);
     await char?.save();
     await this.findByIdAndDelete(itemId);
