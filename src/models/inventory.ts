@@ -80,7 +80,7 @@ export class Inventory {
     this: InventoryModel,
     charId: string,
   ): Promise<Inventory[]> {
-    const invObj = await this.find({ owner: charId });
+    const invObj = await this.find({ owner: charId }, null, { session: global.session });
     return _.filter(invObj, { putOn: true });
   }
 
@@ -97,9 +97,9 @@ export class Inventory {
     charId: string,
     itemCode: string,
   ): Promise<Inventory> {
-    const item = await this.create({
+    const [item] = await this.create([{
       owner: charId, code: itemCode, wear: arena.items[itemCode].wear, putOn: false, durable: 10,
-    });
+    }], { session: global.session });
     return item;
   }
 
@@ -117,8 +117,8 @@ export class Inventory {
   ): Promise<Inventory[] | void> {
     const char = await CharModel.findById(charId, null, { session: global.session });
     _.pull(char?.inventory as unknown as string[], itemId);
-    await char?.save();
-    await this.findByIdAndDelete(itemId);
+    await char?.save({ session: global.session });
+    await this.findByIdAndDelete(itemId, { session: global.session });
     return char?.inventory;
   }
 
@@ -164,7 +164,7 @@ export class Inventory {
       _id: itemId,
     }, {
       putOn: true,
-    });
+    }, { session: global.session });
   }
 
   /**
@@ -184,7 +184,7 @@ export class Inventory {
       _id: itemId,
     }, {
       putOn: false,
-    });
+    }, { session: global.session });
   }
 
   /**
@@ -201,7 +201,7 @@ export class Inventory {
       owner: charId,
     }, {
       _id: itemId,
-    });
+    }, { session: global.session });
   }
 
   /**
@@ -216,7 +216,7 @@ export class Inventory {
     return this.deleteOne({
       owner: charId,
       _id: itemId,
-    });
+    }, { session: global.session });
   }
 
   /**
@@ -228,7 +228,7 @@ export class Inventory {
     this: InventoryModel,
     charId: string,
   ): Promise<Inventory[]> {
-    return this.find({ owner: charId });
+    return this.find({ owner: charId }, null, { session: global.session });
   }
 
   static getCollection(

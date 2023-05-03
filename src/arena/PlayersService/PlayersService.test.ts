@@ -14,7 +14,7 @@ describe('PlayerService', () => {
   let players: PlayersService;
   let clans: Clan[] = [];
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const chars = await Promise.all(times(9, () => TestUtils.createCharacter()));
     const charIds = chars.map(({ id }) => id);
 
@@ -25,6 +25,9 @@ describe('PlayerService', () => {
     ]);
 
     characters = await Promise.all(charIds.map((CharacterService.getCharacterById)));
+  });
+
+  beforeEach(() => {
     players = new PlayersService(characters.map(({ id }) => id));
   });
 

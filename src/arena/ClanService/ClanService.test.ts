@@ -12,7 +12,7 @@ describe('ClanService', () => {
   let char: Char;
   let clan: Clan;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     char = await TestUtils.createCharacter({ gold: 100_000 });
     clan = await TestUtils.createClan(char.id);
   });

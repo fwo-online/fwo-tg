@@ -86,18 +86,16 @@ export class Item {
         arena.items = _.keyBy(items, 'code');
       } else {
         const shop = fs.readFileSync('shop.json', 'utf8');
-        const itemsToCreate: Promise<Item>[] = [];
 
         const parsedShop: Record<string, Item> = JSON.parse(shop);
         console.log('File Loaded: ', Date.now() - timer1, 'ms');
 
         _.forEach(parsedShop, async (o, code) => {
           o.code = code;
-          itemsToCreate.push(ItemModel.create(o));
           return true;
         });
 
-        const createdItems = await Promise.all(itemsToCreate);
+        const createdItems = await ItemModel.create(Object.values(parsedShop));
 
         arena.items = _.keyBy(createdItems, 'code');
       }
