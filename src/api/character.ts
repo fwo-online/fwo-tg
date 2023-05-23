@@ -29,7 +29,7 @@ export async function createCharacter(charObj: Pick<Char, 'nickname' | 'prof' | 
   const item = await InventoryModel.firstCreate(character);
   await updateCharacter(character.id, { inventory: [item] });
 
-  return findCharacter({ id: character.id });
+  return findCharacter({ _id: character.id });
 }
 
 export async function updateCharacter(id: string, query: UpdateQuery<Char>) {
