@@ -17,11 +17,11 @@ export function formatError(msgObj: FailArgs): string {
 
   const TEXT: Record<BreaksMessage | 'default', Record<'en' | 'ru', string>> = {
     NO_INITIATOR: {
-      ru: `Некто хотел использовать _${action} на игрока *${target}*, но исчез`,
+      ru: `Некто хотел использовать _${action}_ на игрока *${target}*, но исчез`,
       en: '',
     },
     NO_TARGET: {
-      ru: `Цель для заклинания _${action} игрока *${initiator}* не была найдена`,
+      ru: `Цель для заклинания _${action}_ игрока *${initiator}* не была найдена`,
       en: '',
     },
     NO_MANA: {

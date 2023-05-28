@@ -71,8 +71,8 @@ export abstract class LongDmgMagic extends DmgMagic {
       if (game.round.count === item.round) return;
       try {
         item.duration -= 1;
-        const initiator = game.players[item.initiator];
-        const target = game.players[item.target];
+        const initiator = game.players.getById(item.initiator);
+        const target = game.players.getById(item.target);
         if (!initiator) {
           throw this.breaks('NO_INITIATOR');
         }
