@@ -25,9 +25,9 @@ export const profsData: Record<Prof, ProfItem> = {
   },
   l: {
     hark: {
-      str: 3, dex: 8, int: 10, wis: 3, con: 6,
+      str: 3, dex: 10, int: 8, wis: 3, con: 6,
     },
-    descr: 'ахуенный',
+    descr: 'резкий',
     name: 'Лучник',
     icon: '🏹',
   },
