@@ -32,5 +32,8 @@ export default class FlagsConstructor {
     this.isDodging = 0;
     this.isMad = false;
     this.isParalysed = false;
+    this.isParry = 0;
+    this.isDisarmed = false;
+    this.isShielded = 0;
   }
 }
