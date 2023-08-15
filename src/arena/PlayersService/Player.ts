@@ -61,8 +61,8 @@ export default class Player {
   };
 
   resists: Partial<Omit<Resists, 'clear'>>;
-  skills: { [x: string]: number; };
-  magics: { [x: string]: number; };
+  skills: Record<string, number>;
+  magics: Record<string, number>;
   favoriteMagics: string[];
   statical: Partial<Statical>;
   alive: boolean;
@@ -166,5 +166,13 @@ export default class Player {
 
   preKick(reason?: 'run' | 'afk') {
     this.flags.isKicked = reason;
+  }
+
+  getMagicLevel(magic: string) {
+    return this.magics[magic] ?? 0;
+  }
+
+  getSkillLevel(skill: string) {
+    return this.skills[skill] ?? 0;
   }
 }

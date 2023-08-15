@@ -33,6 +33,7 @@ export type ExpArr = {
   name: string,
   exp: number,
   val?: number
+  hp?: number;
 }[];
 
 export type CustomMessageFn = (args: SuccessArgs) => string;
@@ -51,6 +52,7 @@ export type BaseNext = {
   initiator: string;
   target: string;
   msg?: CustomMessageFn;
+  expArr?: ExpArr;
 }
 
 export type PhysNext = BaseNext & {

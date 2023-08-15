@@ -77,10 +77,11 @@ export abstract class Magic {
       this.isBlurredMind(); // проверка не запудрило
       this.checkChance();
       this.run(initiator, target, game); // вызов кастомного обработчика
-      this.getExp(initiator);
+      this.getExp(this.params);
       this.checkTargetIsDead();
       this.next();
     } catch (failMsg) {
+      console.log(failMsg);
       const bl = this.params.game.battleLog;
       // @fixme прокидываем ошибку выше для длительных кастов
       if (this.isLong) throw (failMsg);
@@ -110,7 +111,7 @@ export abstract class Magic {
    * Если кастеру хватило mp/en продолжаем,если нет, то возвращаем false
    * @param initiator Объект кастера
    */
-  getExp(initiator: Player): void {
+  getExp({ initiator } = this.params): void {
     this.status.exp = Math.round(this.baseExp * initiator.proc);
     initiator.stats.mode('up', 'exp', this.baseExp);
   }
@@ -119,8 +120,7 @@ export abstract class Magic {
    * Функция расчитывай размер эффект от магии по стандартным дайсам
    * @return dice число эффекта
    */
-  effectVal(): number {
-    const { initiator } = this.params;
+  effectVal({ initiator } = this.params): number {
     const initiatorMagicLvl = initiator.magics[this.name];
     const x = MiscService.dice(this.effect[initiatorMagicLvl - 1]) * initiator.proc;
     this.status.effect = floatNumber(x);
@@ -236,8 +236,7 @@ export abstract class Magic {
    * @todo после того как был нанесен урон любым dmg action, следует производить
    * общую проверку
    */
-  checkTargetIsDead(): void {
-    const { initiator, target } = this.params;
+  checkTargetIsDead({ initiator, target } = this.params): void {
     const hpNow = target.stats.val('hp');
     if (hpNow <= 0 && !target.getKiller()) {
       target.setKiller(initiator);

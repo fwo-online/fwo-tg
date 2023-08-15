@@ -1,0 +1,88 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PlayerService should hit 3 targets 1`] = `
+[
+  8,
+  5.71,
+  5.92,
+  6.15,
+  8,
+  8,
+  8,
+  8,
+  8,
+  8,
+  8,
+]
+`;
+
+exports[`PlayerService should hit 3 targets 2`] = `86`;
+
+exports[`PlayerService should hit 3 targets 3`] = `
+[
+  "*reiciendis* сотворил _Цепь молний_ на *consequatur* нанеся 2.29 урона
+\\[ consequatur ⚡ 💔-2.29/5.71 📖30
+
+numquam ⚡  💔-2.08/5.92 📖29
+ut ⚡  💔-1.85/6.15 📖27 ]",
+]
+`;
+
+exports[`PlayerService should hit 4 targets 1`] = `
+[
+  8,
+  4.7,
+  4.99,
+  5.32,
+  5.67,
+  8,
+  8,
+  8,
+  8,
+  8,
+  8,
+]
+`;
+
+exports[`PlayerService should hit 4 targets 2`] = `138`;
+
+exports[`PlayerService should hit 4 targets 3`] = `
+[
+  "*sequi* сотворил _Цепь молний_ на *perferendis* нанеся 3.3 урона
+\\[ perferendis ⚡ 💔-3.3/4.7 📖38
+
+facilis ⚡  💔-3.01/4.99 📖36
+voluptatum ⚡  💔-2.68/5.32 📖33
+reprehenderit ⚡  💔-2.33/5.67 📖31 ]",
+]
+`;
+
+exports[`PlayerService should hit 5 targets 1`] = `
+[
+  8,
+  3.64,
+  4.06,
+  4.5,
+  4.97,
+  5.37,
+  8,
+  8,
+  8,
+  8,
+  8,
+]
+`;
+
+exports[`PlayerService should hit 5 targets 2`] = `200`;
+
+exports[`PlayerService should hit 5 targets 3`] = `
+[
+  "*voluptatem* сотворил _Цепь молний_ на *aut* нанеся 4.36 урона
+\\[ aut ⚡ 💔-4.36/3.64 📖47
+
+consequuntur ⚡  💔-3.94/4.06 📖44
+maiores ⚡  💔-3.5/4.5 📖40
+sit ⚡  💔-3.03/4.97 📖36
+neque ⚡  💔-2.63/5.37 📖33 ]",
+]
+`;
