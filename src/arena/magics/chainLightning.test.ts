@@ -3,13 +3,12 @@ import CharacterService from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import chainLightning from './chainLightning';
-// import Player from '@/arena/Player';
 
 // npm t src/arena/magics/chainLightning.test.ts
 
 jest.retryTimes(3);
 
-describe('PlayerService', () => {
+describe('chainLightning', () => {
   let game: GameService;
 
   beforeEach(async () => {

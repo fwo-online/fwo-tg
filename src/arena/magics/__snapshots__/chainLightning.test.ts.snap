@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`PlayerService should hit 3 targets 1`] = `
+exports[`chainLightning should hit 3 targets 1`] = `
 [
   8,
   5.71,
   5.92,
-  6.15,
+  6.17,
   8,
   8,
   8,
@@ -16,23 +16,23 @@ exports[`PlayerService should hit 3 targets 1`] = `
 ]
 `;
 
-exports[`PlayerService should hit 3 targets 2`] = `86`;
+exports[`chainLightning should hit 3 targets 2`] = `86`;
 
-exports[`PlayerService should hit 3 targets 3`] = `
+exports[`chainLightning should hit 3 targets 3`] = `
 [
-  "*reiciendis* сотворил _Цепь молний_ на *consequatur* нанеся 2.29 урона
-\\[ consequatur ⚡ 💔-2.29/5.71 📖30
+  "*voluptatem* сотворил _Цепь молний_ на *ea* нанеся 2.29 урона
+\\[ ea ⚡ 💔-2.29/5.71 📖30
 
-numquam ⚡  💔-2.08/5.92 📖29
-ut ⚡  💔-1.85/6.15 📖27 ]",
+aperiam ⚡  💔-2.08/5.92 📖29
+maxime ⚡  💔-1.83/6.17 📖27 ]",
 ]
 `;
 
-exports[`PlayerService should hit 4 targets 1`] = `
+exports[`chainLightning should hit 4 targets 1`] = `
 [
   8,
-  4.7,
-  4.99,
+  4.69,
+  5.03,
   5.32,
   5.67,
   8,
@@ -44,27 +44,27 @@ exports[`PlayerService should hit 4 targets 1`] = `
 ]
 `;
 
-exports[`PlayerService should hit 4 targets 2`] = `138`;
+exports[`chainLightning should hit 4 targets 2`] = `138`;
 
-exports[`PlayerService should hit 4 targets 3`] = `
+exports[`chainLightning should hit 4 targets 3`] = `
 [
-  "*sequi* сотворил _Цепь молний_ на *perferendis* нанеся 3.3 урона
-\\[ perferendis ⚡ 💔-3.3/4.7 📖38
+  "*inventore* сотворил _Цепь молний_ на *a* нанеся 3.31 урона
+\\[ a ⚡ 💔-3.31/4.69 📖38
 
-facilis ⚡  💔-3.01/4.99 📖36
-voluptatum ⚡  💔-2.68/5.32 📖33
-reprehenderit ⚡  💔-2.33/5.67 📖31 ]",
+saepe ⚡  💔-2.97/5.03 📖36
+dolor ⚡  💔-2.68/5.32 📖33
+quibusdam ⚡  💔-2.33/5.67 📖31 ]",
 ]
 `;
 
-exports[`PlayerService should hit 5 targets 1`] = `
+exports[`chainLightning should hit 5 targets 1`] = `
 [
   8,
-  3.64,
-  4.06,
-  4.5,
-  4.97,
-  5.37,
+  3.67,
+  4.08,
+  4.54,
+  4.95,
+  5.4,
   8,
   8,
   8,
@@ -73,16 +73,16 @@ exports[`PlayerService should hit 5 targets 1`] = `
 ]
 `;
 
-exports[`PlayerService should hit 5 targets 2`] = `200`;
+exports[`chainLightning should hit 5 targets 2`] = `199`;
 
-exports[`PlayerService should hit 5 targets 3`] = `
+exports[`chainLightning should hit 5 targets 3`] = `
 [
-  "*voluptatem* сотворил _Цепь молний_ на *aut* нанеся 4.36 урона
-\\[ aut ⚡ 💔-4.36/3.64 📖47
+  "*cumque* сотворил _Цепь молний_ на *suscipit* нанеся 4.33 урона
+\\[ suscipit ⚡ 💔-4.33/3.67 📖47
 
-consequuntur ⚡  💔-3.94/4.06 📖44
-maiores ⚡  💔-3.5/4.5 📖40
-sit ⚡  💔-3.03/4.97 📖36
-neque ⚡  💔-2.63/5.37 📖33 ]",
+blanditiis ⚡  💔-3.92/4.08 📖43
+odio ⚡  💔-3.46/4.54 📖40
+repellendus ⚡  💔-3.05/4.95 📖36
+occaecati ⚡  💔-2.6/5.4 📖33 ]",
 ]
 `;

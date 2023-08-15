@@ -81,7 +81,6 @@ export abstract class Magic {
       this.checkTargetIsDead();
       this.next();
     } catch (failMsg) {
-      console.log(failMsg);
       const bl = this.params.game.battleLog;
       // @fixme прокидываем ошибку выше для длительных кастов
       if (this.isLong) throw (failMsg);
