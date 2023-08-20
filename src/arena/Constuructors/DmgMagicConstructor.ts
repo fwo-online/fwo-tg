@@ -69,12 +69,12 @@ export abstract class DmgMagic extends Magic {
   getExp({ initiator, target, game } = this.params): void {
     if (game.isPlayersAlly(initiator, target) && !initiator.flags.isGlitched) {
       this.status.exp = 0;
+    } else {
+      const dmgExp = Math.round(this.status.hit * 8) + this.baseExp;
+      this.status.exp = dmgExp;
+
+      initiator.stats.up('exp', dmgExp);
     }
-
-    const dmgExp = Math.round(this.status.hit * 8) + this.baseExp;
-    this.status.exp = dmgExp;
-
-    initiator.stats.up('exp', dmgExp);
   }
 
   /**
