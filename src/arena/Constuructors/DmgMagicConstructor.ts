@@ -1,7 +1,7 @@
 import { floatNumber } from '../../utils/floatNumber';
 import MiscService from '../MiscService';
 import { Magic, MagicArgs } from './MagicConstructor';
-import type { BaseNext, DamageType } from './types';
+import type { BaseNext, DamageType, ExpArr } from './types';
 
 export type DmgMagicNext = BaseNext & {
   actionType: 'dmg-magic'
@@ -20,10 +20,15 @@ export interface DmgMagic extends DmgMagicArgs, Magic {
  * Общий конструктор не длительных магий
  */
 export abstract class DmgMagic extends Magic {
-  status = {
-    exp: 0,
-    hit: 0,
-  };
+  status: {
+    exp: number;
+    expArr: ExpArr;
+    hit: number;
+  } = {
+      exp: 0,
+      hit: 0,
+      expArr: [],
+    };
 
   /**
    * Создание магии
@@ -36,7 +41,7 @@ export abstract class DmgMagic extends Magic {
   /**
    * Возвращает шанс прохождения магии
    */
-  effectVal({ initiator, target } = this.params, saveResults = true): number {
+  effectVal({ initiator, target } = this.params): number {
     const initiatorMagicLvl = initiator.magics[this.name];
     let eff = MiscService.dice(this.effect[initiatorMagicLvl - 1]) * initiator.proc;
     if (this.dmgType !== 'clear') {
@@ -48,7 +53,9 @@ export abstract class DmgMagic extends Magic {
         eff *= resist;
       }
     }
-    if (saveResults) {
+    if (this.isAoe) {
+      this.status.hit += eff;
+    } else {
       this.status.hit = eff;
     }
     return eff;
@@ -59,22 +66,15 @@ export abstract class DmgMagic extends Magic {
    * кол-во единиц за использование магии
    * Если кастеру хватило mp/en продолжаем,если нет, то возвращаем false
    */
-  getExp({ initiator, target, game } = this.params, saveResults = true): number {
+  getExp({ initiator, target, game } = this.params): void {
     if (game.isPlayersAlly(initiator, target) && !initiator.flags.isGlitched) {
-      const dmgExp = 0;
-      if (saveResults) {
-        this.status.exp = dmgExp;
-      }
-      return dmgExp;
+      this.status.exp = 0;
     }
 
     const dmgExp = Math.round(this.status.hit * 8) + this.baseExp;
-    if (saveResults) {
-      this.status.exp = dmgExp;
-    }
-    initiator.stats.mode('up', 'exp', dmgExp);
-    console.log(dmgExp);
-    return dmgExp;
+    this.status.exp = dmgExp;
+
+    initiator.stats.up('exp', dmgExp);
   }
 
   /**
@@ -95,5 +95,11 @@ export abstract class DmgMagic extends Magic {
 
     game.addHistoryDamage(args);
     game.battleLog.success(args);
+
+    this.status = {
+      exp: 0,
+      expArr: [],
+      hit: 0,
+    };
   }
 }

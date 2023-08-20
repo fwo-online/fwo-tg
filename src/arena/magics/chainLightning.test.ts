@@ -1,3 +1,4 @@
+import casual from 'casual';
 import { times } from 'lodash';
 import CharacterService from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
@@ -6,10 +7,12 @@ import chainLightning from './chainLightning';
 
 // npm t src/arena/magics/chainLightning.test.ts
 
-jest.retryTimes(3);
-
 describe('chainLightning', () => {
   let game: GameService;
+
+  beforeAll(() => {
+    casual.seed(1);
+  });
 
   beforeEach(async () => {
     const initiator = await TestUtils.createCharacter({ prof: 'm', magics: { chainLightning: 3 } });
@@ -26,7 +29,7 @@ describe('chainLightning', () => {
   });
 
   beforeEach(() => {
-    jest.spyOn(global.Math, 'random').mockReturnValue(0.123456789);
+    jest.spyOn(global.Math, 'random').mockReturnValue(0.15);
   });
 
   afterEach(() => {

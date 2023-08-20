@@ -9,12 +9,11 @@ export function formatExp(args: SuccessArgs): string {
     case 'dmg-magic-long': {
       const damageType = icons.damageType[args.dmgType];
       if (args.expArr) {
-        return expBrackets([
-          `${args.target} ${damageType} 💔-${args.dmg}/${args.hp} 📖${args.exp}`,
-          `${args.expArr.map(({
-            name, val, hp, exp,
-          }) => `\n${name} ${damageType}  💔-${val}/${hp} 📖${exp}`).join('')}`,
-        ].join('\n'));
+        return [
+          args.expArr.map(({
+            name, val, hp,
+          }) => `\n${name} ${damageType}  💔-${val}/${hp}`).join(''),
+          expBrackets(`📖${args.exp}`)].map((val) => `\n${val}`).join('');
       }
       return expBrackets(`${damageType} 💔-${args.dmg}/${args.hp} 📖${args.exp}`);
     }

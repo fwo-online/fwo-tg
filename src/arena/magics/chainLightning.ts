@@ -1,7 +1,8 @@
 import { floatNumber } from '@/utils/floatNumber';
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
-import { MagicNext } from '../Constuructors/MagicConstructor';
-import { ExpArr } from '../Constuructors/types';
+import type { ExpArr } from '../Constuructors/types';
+import type GameService from '../GameService';
+import type { Player } from '../PlayersService';
 /**
  * Цепь молний
  * Основное описание магии общее требовани есть в конструкторе
@@ -39,69 +40,36 @@ class ChainLightning extends DmgMagic {
     });
   }
 
+  getTargets() {
+    const { initiator, target, game } = this.params;
+    const magicLevel = initiator.getMagicLevel(this.name);
+    const maxTargets = ChainLightning.maxTargets[magicLevel - 1];
+
+    return game.players.getMyTeam(target.id)
+      .filter(({ id }) => id !== target.id)
+      .slice(0, maxTargets - 1);
+  }
+
   /**
    * Основная функция запуска магии
    */
-  run(): void {
-    const { initiator, target, game } = this.params;
-    const hit = this.effectVal();
+  run(initiator: Player, target: Player, game: GameService, index = 0): void {
+    const multiplier = 1 - index * 0.1; // -10% каждой следующей цели
+    const effectVal = this.effectVal({ initiator, target, game });
+    const hit = floatNumber(effectVal * multiplier);
+
     target.stats.down('hp', hit);
 
-    const magicLevel = initiator.getMagicLevel(this.name);
-
-    const maxTargets = ChainLightning.maxTargets[magicLevel - 1];
-
-    const targets = game.players.getMyTeam(target.id)
-      .filter(({ id }) => id !== target.id)
-      .slice(0, maxTargets - 1);
-
-    targets.forEach((target, index) => {
-      const multiplier = 1 - (index + 1) * 0.1; // -10% каждой следующей цели
-      const hit = floatNumber(this.effectVal({ initiator, target, game }, false) * multiplier);
-
-      target.stats.down('hp', hit);
-
-      this.status.hit = hit;
-      const exp = this.getExp({ initiator, target, game }, false);
-
-      this.status.expArr.push({
-        name: target.nick,
-        exp,
-        val: hit,
-        hp: target.stats.val('hp'),
-      });
-    });
-
-    this.status.hit = hit;
-  }
-
-  checkTargetIsDead({ initiator, game } = this.params): void {
-    this.status.expArr.forEach(({ name }) => {
-      const target = game.players.getById(name);
-
-      if (!target) {
-        return;
-      }
-
-      super.checkTargetIsDead({ initiator, target, game });
+    this.status.expArr.push({
+      id: target.id,
+      name: target.nick,
+      val: hit,
+      hp: target.stats.val('hp'),
     });
   }
 
-  override getNextArgs(): MagicNext & { expArr: ExpArr } {
-    return {
-      ...super.getNextArgs(),
-      expArr: this.status.expArr,
-    };
-  }
-
-  next(): void {
-    super.next();
-
-    this.status = {
-      exp: 0,
-      hit: 0,
-      expArr: [],
-    };
+  runAoe(initiator: Player, target: Player, game: GameService, index: number) {
+    this.run(initiator, target, game, index);
   }
 }
 

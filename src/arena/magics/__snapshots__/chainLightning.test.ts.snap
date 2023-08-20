@@ -3,9 +3,9 @@
 exports[`chainLightning should hit 3 targets 1`] = `
 [
   8,
-  5.71,
-  5.92,
-  6.17,
+  5.63,
+  5.64,
+  5.89,
   8,
   8,
   8,
@@ -16,25 +16,27 @@ exports[`chainLightning should hit 3 targets 1`] = `
 ]
 `;
 
-exports[`chainLightning should hit 3 targets 2`] = `86`;
+exports[`chainLightning should hit 3 targets 2`] = `69`;
 
 exports[`chainLightning should hit 3 targets 3`] = `
 [
-  "*voluptatem* сотворил _Цепь молний_ на *ea* нанеся 2.29 урона
-\\[ ea ⚡ 💔-2.29/5.71 📖30
+  "*architecto* сотворил _Цепь молний_ нанеся 7.07 урона
 
-aperiam ⚡  💔-2.08/5.92 📖29
-maxime ⚡  💔-1.83/6.17 📖27 ]",
+aspernatur ⚡  💔-2.37/5.63
+quia ⚡  💔-2.36/5.64
+dicta ⚡  💔-2.11/5.89
+
+\\[ 📖69 ]",
 ]
 `;
 
 exports[`chainLightning should hit 4 targets 1`] = `
 [
   8,
-  4.69,
-  5.03,
-  5.32,
-  5.67,
+  4.64,
+  4.64,
+  4.94,
+  5.31,
   8,
   8,
   8,
@@ -44,27 +46,29 @@ exports[`chainLightning should hit 4 targets 1`] = `
 ]
 `;
 
-exports[`chainLightning should hit 4 targets 2`] = `138`;
+exports[`chainLightning should hit 4 targets 2`] = `120`;
 
 exports[`chainLightning should hit 4 targets 3`] = `
 [
-  "*inventore* сотворил _Цепь молний_ на *a* нанеся 3.31 урона
-\\[ a ⚡ 💔-3.31/4.69 📖38
+  "*explicabo* сотворил _Цепь молний_ нанеся 13.48 урона
 
-saepe ⚡  💔-2.97/5.03 📖36
-dolor ⚡  💔-2.68/5.32 📖33
-quibusdam ⚡  💔-2.33/5.67 📖31 ]",
+et ⚡  💔-3.36/4.64
+eum ⚡  💔-3.36/4.64
+veritatis ⚡  💔-3.06/4.94
+deserunt ⚡  💔-2.69/5.31
+
+\\[ 📖120 ]",
 ]
 `;
 
 exports[`chainLightning should hit 5 targets 1`] = `
 [
   8,
-  3.67,
-  4.08,
-  4.54,
-  4.95,
-  5.4,
+  3.59,
+  3.59,
+  4.01,
+  4.5,
+  4.91,
   8,
   8,
   8,
@@ -73,16 +77,18 @@ exports[`chainLightning should hit 5 targets 1`] = `
 ]
 `;
 
-exports[`chainLightning should hit 5 targets 2`] = `199`;
+exports[`chainLightning should hit 5 targets 2`] = `188`;
 
 exports[`chainLightning should hit 5 targets 3`] = `
 [
-  "*cumque* сотворил _Цепь молний_ на *suscipit* нанеся 4.33 урона
-\\[ suscipit ⚡ 💔-4.33/3.67 📖47
+  "*asperiores* сотворил _Цепь молний_ нанеся 22.05 урона
 
-blanditiis ⚡  💔-3.92/4.08 📖43
-odio ⚡  💔-3.46/4.54 📖40
-repellendus ⚡  💔-3.05/4.95 📖36
-occaecati ⚡  💔-2.6/5.4 📖33 ]",
+magni ⚡  💔-4.41/3.59
+labore ⚡  💔-4.41/3.59
+iure ⚡  💔-3.99/4.01
+recusandae ⚡  💔-3.5/4.5
+ipsam ⚡  💔-3.09/4.91
+
+\\[ 📖188 ]",
 ]
 `;
