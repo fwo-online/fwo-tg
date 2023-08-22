@@ -11,7 +11,7 @@ const functions = casual.functions();
 
 export default class TestUtils {
   static async createCharacter(params?: Partial<Char>) {
-    const prof: Prof = casual.random_element([...profsList]);
+    const prof: Prof = params?.prof ?? casual.random_element([...profsList]);
     const char = await CharModel.create({
       tgId: casual.integer(1_000_000, 9_999_999),
       nickname: functions.word(),

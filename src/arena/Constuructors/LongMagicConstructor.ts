@@ -45,7 +45,7 @@ export abstract class LongMagic extends CommonMagic {
       this.checkChance();
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.checkTargetIsDead();
-      this.getExp(initiator);
+      this.getExp();
       this.next();
       this.postRun(initiator, target, game);
     } catch (failMsg) {
@@ -85,7 +85,7 @@ export abstract class LongMagic extends CommonMagic {
         this.isBlurredMind(); // проверка не запудрило
         this.checkChance();
         this.runLong(initiator, target, game); // вызов кастомного обработчика
-        this.getExp(initiator);
+        this.getExp({ initiator, target, game });
         this.checkTargetIsDead(); // проверка трупов в длительных магиях
         this.longNext(initiator, target);
       } catch (e) {

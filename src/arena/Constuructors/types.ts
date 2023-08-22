@@ -1,5 +1,7 @@
 /* eslint-disable no-use-before-define */
 import type { Item } from '../../models/item';
+import type GameService from '../GameService';
+import type { Player } from '../PlayersService';
 import type { DmgMagicNext } from './DmgMagicConstructor';
 import type { HealMagicNext, HealNext } from './HealMagicConstructor';
 import type { LongDmgMagicNext } from './LongDmgMagicConstructor';
@@ -30,9 +32,11 @@ export type BreaksMessage =
   'PARALYSED';
 
 export type ExpArr = {
-  name: string,
-  exp: number,
-  val?: number
+  name: string;
+  id: string;
+  exp?: number;
+  val?: number;
+  hp?: number;
 }[];
 
 export type CustomMessageFn = (args: SuccessArgs) => string;
@@ -45,12 +49,18 @@ export interface LongCustomMessage extends CustomMessage {
   longCustomMessage?(args: SuccessArgs): string;
 }
 
+export interface AoeMagic {
+  runAoe?(initiator: Player, target: Player, game: GameService, index: number): void;
+  getTargets?(): Player[];
+}
+
 export type BaseNext = {
   action: string;
   exp: number;
   initiator: string;
   target: string;
   msg?: CustomMessageFn;
+  expArr?: ExpArr;
 }
 
 export type PhysNext = BaseNext & {

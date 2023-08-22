@@ -1,7 +1,6 @@
 import { floatNumber } from '../../utils/floatNumber';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 import type { HealMagicNext } from '../Constuructors/HealMagicConstructor';
-import type { Player } from '../PlayersService';
 
 export class HealMagic extends CommonMagic {
   status = {
@@ -21,7 +20,7 @@ export class HealMagic extends CommonMagic {
   /**
    * @param initiator
    */
-  getExp(initiator: Player): void {
+  getExp({ initiator } = this.params): void {
     this.status.exp = Math.round(this.status.effect * 10 * initiator.proc);
     initiator.stats.mode('up', 'exp', this.status.exp);
   }

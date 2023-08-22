@@ -4,7 +4,8 @@ import type * as magics from '../magics';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import type {
-  BaseNext, Breaks, BreaksMessage, CustomMessage,
+  AoeMagic,
+  BaseNext, Breaks, BreaksMessage, CustomMessage, ExpArr,
 } from './types';
 
 export type MagicNext = BaseNext & {
@@ -31,7 +32,7 @@ export interface MagicArgs {
 /**
  * Конструктор магии
  */
-export interface Magic extends MagicArgs, CustomMessage {
+export interface Magic extends MagicArgs, AoeMagic, CustomMessage {
 }
 
 export abstract class Magic {
@@ -43,8 +44,13 @@ export abstract class Magic {
 
   status: {
     exp: number;
+    expArr?: ExpArr;
     effect?: number;
-  };
+  } = {
+      exp: 0,
+      expArr: [],
+      effect: 0,
+    };
 
   isLong = false;
 
@@ -57,6 +63,10 @@ export abstract class Magic {
     this.status = {
       exp: 0,
     };
+  }
+
+  get isAoe() {
+    return this.aoeType === 'targetAoe' || this.aoeType === 'team';
   }
 
   // Дальше идут общие методы для всех магий
@@ -77,8 +87,17 @@ export abstract class Magic {
       this.isBlurredMind(); // проверка не запудрило
       this.checkChance();
       this.run(initiator, target, game); // вызов кастомного обработчика
-      this.getExp(initiator);
+      if (this.isAoe) {
+        this.getTargets?.()
+          .forEach((target, index) => this.runAoe?.(initiator, target, game, index));
+      }
+      this.getExp(this.params);
       this.checkTargetIsDead();
+      if (this.isAoe) {
+        this.getTargets?.()
+          .forEach((target) => this.checkTargetIsDead({ initiator, target, game }));
+      }
+
       this.next();
     } catch (failMsg) {
       const bl = this.params.game.battleLog;
@@ -110,17 +129,21 @@ export abstract class Magic {
    * Если кастеру хватило mp/en продолжаем,если нет, то возвращаем false
    * @param initiator Объект кастера
    */
-  getExp(initiator: Player): void {
-    this.status.exp = Math.round(this.baseExp * initiator.proc);
-    initiator.stats.mode('up', 'exp', this.baseExp);
+  getExp({ initiator } = this.params): void {
+    const exp = Math.round(this.baseExp * initiator.proc);
+    if (this.isAoe) {
+      this.status.exp += exp;
+    } else {
+      this.status.exp = exp;
+    }
+    initiator.stats.up('exp', this.baseExp);
   }
 
   /**
    * Функция расчитывай размер эффект от магии по стандартным дайсам
    * @return dice число эффекта
    */
-  effectVal(): number {
-    const { initiator } = this.params;
+  effectVal({ initiator } = this.params): number {
     const initiatorMagicLvl = initiator.magics[this.name];
     const x = MiscService.dice(this.effect[initiatorMagicLvl - 1]) * initiator.proc;
     this.status.effect = floatNumber(x);
@@ -236,8 +259,7 @@ export abstract class Magic {
    * @todo после того как был нанесен урон любым dmg action, следует производить
    * общую проверку
    */
-  checkTargetIsDead(): void {
-    const { initiator, target } = this.params;
+  checkTargetIsDead({ initiator, target } = this.params): void {
     const hpNow = target.stats.val('hp');
     if (hpNow <= 0 && !target.getKiller()) {
       target.setKiller(initiator);
@@ -262,6 +284,7 @@ export abstract class Magic {
     const { target, initiator } = this.params;
     return {
       exp: this.status.exp,
+      expArr: this.status.expArr,
       action: this.displayName,
       actionType: 'magic',
       target: target.nick,
@@ -278,5 +301,10 @@ export abstract class Magic {
   next(): void {
     const { battleLog } = this.params.game;
     battleLog.success(this.getNextArgs());
+    this.status = {
+      exp: 0,
+      expArr: [],
+      effect: 0,
+    };
   }
 }

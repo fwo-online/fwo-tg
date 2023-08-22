@@ -133,6 +133,7 @@ export abstract class Heal {
     const { target, initiator } = this.params;
     const { battleLog } = this.params.game;
     const exp: ExpArr[number] = {
+      id: initiator.id,
       name: initiator.nick,
       exp: this.status.exp,
       val: this.status.val,

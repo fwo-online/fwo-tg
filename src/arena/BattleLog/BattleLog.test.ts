@@ -137,7 +137,9 @@ describe('BattleLog', () => {
       action: 'Heal',
       initiator: 'Player 1',
       target: 'Player 2',
-      expArr: [{ name: 'Player 1', exp: 10, val: 10 }],
+      expArr: [{
+        id: '1', name: 'Player 1', exp: 10, val: 10,
+      }],
       hp: 110,
       effect: 10,
     });
@@ -147,7 +149,9 @@ describe('BattleLog', () => {
       action: 'Heal',
       initiator: 'Player 3',
       target: 'Player 2',
-      expArr: [{ name: 'Player 3', exp: 10, val: 10 }],
+      expArr: [{
+        id: '3', name: 'Player 3', exp: 10, val: 10,
+      }],
       hp: 120,
       effect: 10,
     });

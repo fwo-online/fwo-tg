@@ -1,0 +1,94 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`chainLightning should hit 3 targets 1`] = `
+[
+  8,
+  5.63,
+  5.64,
+  5.89,
+  8,
+  8,
+  8,
+  8,
+  8,
+  8,
+  8,
+]
+`;
+
+exports[`chainLightning should hit 3 targets 2`] = `69`;
+
+exports[`chainLightning should hit 3 targets 3`] = `
+[
+  "*architecto* сотворил _Цепь молний_ нанеся 7.07 урона
+
+aspernatur ⚡  💔-2.37/5.63
+quia ⚡  💔-2.36/5.64
+dicta ⚡  💔-2.11/5.89
+
+\\[ 📖69 ]",
+]
+`;
+
+exports[`chainLightning should hit 4 targets 1`] = `
+[
+  8,
+  4.64,
+  4.64,
+  4.94,
+  5.31,
+  8,
+  8,
+  8,
+  8,
+  8,
+  8,
+]
+`;
+
+exports[`chainLightning should hit 4 targets 2`] = `120`;
+
+exports[`chainLightning should hit 4 targets 3`] = `
+[
+  "*explicabo* сотворил _Цепь молний_ нанеся 13.48 урона
+
+et ⚡  💔-3.36/4.64
+eum ⚡  💔-3.36/4.64
+veritatis ⚡  💔-3.06/4.94
+deserunt ⚡  💔-2.69/5.31
+
+\\[ 📖120 ]",
+]
+`;
+
+exports[`chainLightning should hit 5 targets 1`] = `
+[
+  8,
+  3.59,
+  3.59,
+  4.01,
+  4.5,
+  4.91,
+  8,
+  8,
+  8,
+  8,
+  8,
+]
+`;
+
+exports[`chainLightning should hit 5 targets 2`] = `188`;
+
+exports[`chainLightning should hit 5 targets 3`] = `
+[
+  "*asperiores* сотворил _Цепь молний_ нанеся 22.05 урона
+
+magni ⚡  💔-4.41/3.59
+labore ⚡  💔-4.41/3.59
+iure ⚡  💔-3.99/4.01
+recusandae ⚡  💔-3.5/4.5
+ipsam ⚡  💔-3.09/4.91
+
+\\[ 📖188 ]",
+]
+`;
