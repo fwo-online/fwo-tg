@@ -13,7 +13,7 @@ export function formatExp(args: SuccessArgs): string {
           args.expArr.map(({
             name, val, hp,
           }) => `\n${name} ${damageType}  💔-${val}/${hp}`).join(''),
-          expBrackets(`📖${args.exp}`)].map((val) => `\n${val}`).join('');
+          expBrackets(`📖${args.exp}`)].join('');
       }
       return expBrackets(`${damageType} 💔-${args.dmg}/${args.hp} 📖${args.exp}`);
     }

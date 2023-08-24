@@ -71,6 +71,12 @@ class ChainLightning extends DmgMagic {
   runAoe(initiator: Player, target: Player, game: GameService, index: number) {
     this.run(initiator, target, game, index);
   }
+
+  next(): void {
+    super.next();
+
+    this.status.expArr = [];
+  }
 }
 
 export default new ChainLightning();
