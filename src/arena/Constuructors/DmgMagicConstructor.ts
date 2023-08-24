@@ -22,12 +22,11 @@ export interface DmgMagic extends DmgMagicArgs, Magic {
 export abstract class DmgMagic extends Magic {
   status: {
     exp: number;
-    expArr: ExpArr;
+    expArr?: ExpArr;
     hit: number;
   } = {
       exp: 0,
       hit: 0,
-      expArr: [],
     };
 
   /**
@@ -98,7 +97,6 @@ export abstract class DmgMagic extends Magic {
 
     this.status = {
       exp: 0,
-      expArr: [],
       hit: 0,
     };
   }

@@ -48,7 +48,6 @@ export abstract class Magic {
     effect?: number;
   } = {
       exp: 0,
-      expArr: [],
       effect: 0,
     };
 
@@ -301,9 +300,9 @@ export abstract class Magic {
   next(): void {
     const { battleLog } = this.params.game;
     battleLog.success(this.getNextArgs());
+
     this.status = {
       exp: 0,
-      expArr: [],
       effect: 0,
     };
   }
