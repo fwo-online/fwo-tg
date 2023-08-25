@@ -45,7 +45,7 @@ class ChainLightning extends DmgMagic {
     const magicLevel = initiator.getMagicLevel(this.name);
     const maxTargets = ChainLightning.maxTargets[magicLevel - 1];
 
-    return game.players.getMyTeam(target.id)
+    return game.players.getPlayersByClan(target.clan?.id)
       .filter(({ id }) => id !== target.id)
       .slice(0, maxTargets - 1);
   }
@@ -53,8 +53,8 @@ class ChainLightning extends DmgMagic {
   /**
    * Основная функция запуска магии
    */
-  run(initiator: Player, target: Player, game: GameService, index = 0): void {
-    const multiplier = 1 - index * 0.1; // -10% каждой следующей цели
+  run(initiator: Player, target: Player, game: GameService, index = -1): void {
+    const multiplier = 1 - (index + 1) * 0.1; // -10% каждой следующей цели
     const effectVal = this.effectVal({ initiator, target, game });
     const hit = floatNumber(effectVal * multiplier);
 

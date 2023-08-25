@@ -43,6 +43,13 @@ export default class PlayersService {
     return this.players.filter((p) => p.clan?.id === player.clan?.id);
   }
 
+  getPlayersByClan(clanId: string | undefined): readonly Player[] {
+    if (!clanId) {
+      return this.players.filter((player) => !player.clan);
+    }
+    return this.players.filter((player) => player.clan?.id === clanId);
+  }
+
   /**
   * Функция возвращает рандомного игрока из массива живых
   * @return

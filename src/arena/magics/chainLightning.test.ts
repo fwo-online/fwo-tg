@@ -20,7 +20,7 @@ describe('chainLightning', () => {
     const charIds = chars.map(({ id }) => id);
 
     await TestUtils.createClan(charIds[1], {
-      players: charIds,
+      players: charIds.slice(0, 6),
     });
 
     await Promise.all(charIds.map(CharacterService.getCharacterById));
@@ -66,6 +66,19 @@ describe('chainLightning', () => {
     game.players.players[0].proc = 1;
 
     chainLightning.cast(game.players.players[0], game.players.players[1], game);
+
+    expect(
+      game.players.players.map((player) => player.stats.val('hp')),
+    ).toMatchSnapshot();
+    expect(game.players.players[0].stats.val('exp')).toMatchSnapshot();
+    expect(game.battleLog.format()).toMatchSnapshot();
+  });
+
+  it('should hit 3 targets without clan', () => {
+    game.players.players[0].magics = { chainLightning: 1 };
+    game.players.players[0].proc = 1;
+
+    chainLightning.cast(game.players.players[0], game.players.players[8], game);
 
     expect(
       game.players.players.map((player) => player.stats.val('hp')),
