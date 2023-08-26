@@ -4,8 +4,8 @@ exports[`chainLightning should hit 3 targets 1`] = `
 [
   8,
   5.63,
-  5.64,
-  5.89,
+  5.88,
+  6.13,
   8,
   8,
   8,
@@ -22,9 +22,37 @@ exports[`chainLightning should hit 3 targets 3`] = `
 [
   "*architecto* сотворил _Цепь молний_ нанеся 7.07 урона
 aspernatur ⚡  💔-2.37/5.63
-quia ⚡  💔-2.36/5.64
-dicta ⚡  💔-2.11/5.89
+quia ⚡  💔-2.12/5.88
+dicta ⚡  💔-1.87/6.13
 \\[ 📖69 ]",
+]
+`;
+
+exports[`chainLightning should hit 3 targets without clan 1`] = `
+[
+  5.89,
+  8,
+  8,
+  8,
+  8,
+  8,
+  8,
+  6.13,
+  5.66,
+  8,
+  8,
+]
+`;
+
+exports[`chainLightning should hit 3 targets without clan 2`] = `68`;
+
+exports[`chainLightning should hit 3 targets without clan 3`] = `
+[
+  "*qui* сотворил _Цепь молний_ нанеся 7.02 урона
+ex ⚡  💔-2.34/5.66
+qui ⚡  💔-2.11/5.89
+est ⚡  💔-1.87/6.13
+\\[ 📖68 ]",
 ]
 `;
 
@@ -32,9 +60,9 @@ exports[`chainLightning should hit 4 targets 1`] = `
 [
   8,
   4.64,
-  4.64,
-  4.94,
-  5.31,
+  4.97,
+  5.28,
+  5.65,
   8,
   8,
   8,
@@ -50,9 +78,9 @@ exports[`chainLightning should hit 4 targets 3`] = `
 [
   "*explicabo* сотворил _Цепь молний_ нанеся 13.48 урона
 et ⚡  💔-3.36/4.64
-eum ⚡  💔-3.36/4.64
-veritatis ⚡  💔-3.06/4.94
-deserunt ⚡  💔-2.69/5.31
+eum ⚡  💔-3.03/4.97
+veritatis ⚡  💔-2.72/5.28
+deserunt ⚡  💔-2.35/5.65
 \\[ 📖120 ]",
 ]
 `;
@@ -61,10 +89,10 @@ exports[`chainLightning should hit 5 targets 1`] = `
 [
   8,
   3.59,
-  3.59,
-  4.01,
-  4.5,
-  4.91,
+  4.03,
+  4.45,
+  4.93,
+  5.35,
   8,
   8,
   8,
@@ -79,10 +107,10 @@ exports[`chainLightning should hit 5 targets 3`] = `
 [
   "*asperiores* сотворил _Цепь молний_ нанеся 22.05 урона
 magni ⚡  💔-4.41/3.59
-labore ⚡  💔-4.41/3.59
-iure ⚡  💔-3.99/4.01
-recusandae ⚡  💔-3.5/4.5
-ipsam ⚡  💔-3.09/4.91
+labore ⚡  💔-3.97/4.03
+iure ⚡  💔-3.55/4.45
+recusandae ⚡  💔-3.07/4.93
+ipsam ⚡  💔-2.65/5.35
 \\[ 📖188 ]",
 ]
 `;
