@@ -296,7 +296,7 @@ export default class GameService {
       switch (data.state) {
         case RoundStatus.START_ROUND: {
           this.sendToAll(`⚡️ Раунд ${data.round} начинается ⚡`);
-          this.forAllPlayers(this.sendStatus);
+          this.forAllAlivePlayers(this.sendStatus);
           break;
         }
         case RoundStatus.END_ROUND: {
