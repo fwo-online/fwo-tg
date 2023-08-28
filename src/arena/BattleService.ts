@@ -46,17 +46,25 @@ function getTargetKeyboard(charId: string, game: Game, action: string) {
   if (!player) {
     throw new OrderError('Игрок не найден');
   }
+  const orders = game.orders.getPlayerOrders(charId);
   const { orderType } = getActions()[action];
   const proc = arena.skills[action] ? `_${arena.skills[action].proc}` : '';
+
   return game.players.alivePlayers
-    .filter((target) => (orderType === 'enemy' ? !game.isPlayersAlly(player, target) : true))
+    .filter((target) => {
+      if (orderType === 'enemy') {
+        return !game.isPlayersAlly(player, target);
+      }
+
+      return !orders.some((order) => target.id === order.target && action === order.action);
+    })
     .map(({ nick, id }) => Markup.button.callback(nick, `${action}_${id}${proc}`));
 }
 
 /**
  * Возвращает кнопки с процентом заказа
  */
-function getProcentKeyboard(action: string, target: string, proc: number) {
+function getPercentKeyboard(action: string, target: string, proc: number) {
   return Array
     .from(new Set([5, 10, 25, 50, 75, proc]))
     .filter((key) => key <= proc)
@@ -117,7 +125,7 @@ function percentMessage({
   const backButtonData = isSelfAction ? 'back' : `action_${action}`;
   const message = getText.proc(displayName, isSelfAction ? '' : target.nick);
   const keyboard = [
-    getProcentKeyboard(action, targetId, initiator.proc),
+    getPercentKeyboard(action, targetId, initiator.proc),
     [Markup.button.callback('🔙 Назад', backButtonData)],
   ];
   return { message, keyboard };
