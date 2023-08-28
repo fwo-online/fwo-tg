@@ -56,7 +56,7 @@ function getTargetKeyboard(charId: string, game: Game, action: string) {
         return !game.isPlayersAlly(player, target);
       }
 
-      return !orders.some((order) => target.id === order.target);
+      return !orders.some((order) => target.id === order.target && action === order.action);
     })
     .map(({ nick, id }) => Markup.button.callback(nick, `${action}_${id}${proc}`));
 }
