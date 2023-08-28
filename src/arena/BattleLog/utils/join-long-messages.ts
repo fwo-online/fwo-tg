@@ -3,6 +3,7 @@ import type { HealNext } from '@/arena/Constuructors/HealMagicConstructor';
 import type { LongDmgMagicNext } from '@/arena/Constuructors/LongDmgMagicConstructor';
 import type { LongMagicNext } from '@/arena/Constuructors/LongMagicConstructor';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
+import { floatNumber } from '@/utils/floatNumber';
 import type { Message } from '../BattleLog';
 
 export function joinHealMessages(messages: Message[], newMessage: HealNext): Message[] {
@@ -11,7 +12,7 @@ export function joinHealMessages(messages: Message[], newMessage: HealNext): Mes
   for (const message of copy) {
     if (isSameMessage(message, newMessage, { ignoreInitiator: true })) {
       message.expArr.push(...newMessage.expArr);
-      message.effect += newMessage.effect;
+      message.effect = floatNumber(message.effect + newMessage.effect);
       return copy;
     }
   }
@@ -25,7 +26,7 @@ export function joinLongMessages(messages: Message[], newMessage: LongMagicNext)
 
   for (const message of copy) {
     if (isSameMessage(message, newMessage)) {
-      message.exp += newMessage.exp;
+      message.exp = floatNumber(message.exp + newMessage.exp);
       return copy;
     }
   }
@@ -39,8 +40,8 @@ export function joinLongDmgMessages(messages: Message[], newMessage: LongDmgMagi
 
   for (const message of copy) {
     if (isSameMessage(message, newMessage)) {
-      message.exp += newMessage.exp;
-      message.dmg += newMessage.dmg;
+      message.exp = floatNumber(message.exp + newMessage.exp);
+      message.dmg = floatNumber(message.dmg + newMessage.dmg);
       message.hp = Math.min(message.hp, newMessage.hp);
       return copy;
     }
