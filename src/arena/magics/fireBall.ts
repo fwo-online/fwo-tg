@@ -1,3 +1,4 @@
+import { times } from 'lodash';
 import { AoeDmgMagic } from '../Constuructors/AoeDmgMagicConstructor';
 import { type ExpArr } from '../Constuructors/types';
 import type GameService from '../GameService';
@@ -44,7 +45,7 @@ class FireBall extends AoeDmgMagic {
       return [target];
     }
 
-    const targets = game.players.getPlayersByClan(target.clan.id)
+    const targets = game.players.getPlayersByClan(target.clan?.id)
       .filter(({ alive }) => alive)
       .filter(({ id }) => id !== target.id);
 
@@ -59,29 +60,25 @@ class FireBall extends AoeDmgMagic {
     const effect = this.effectVal({ initiator, target, game });
     target.stats.down('hp', effect);
 
-    this.runAoe(initiator, target, game);
+    const targets = this.getTargets();
+
+    times(this.bounces).forEach((value) => {
+      const target = targets[value % targets.length];
+      this.runAoe(initiator, target, game);
+    });
   }
 
   runAoe(initiator: Player, target: Player, game: GameService) {
-    const targets = this.getTargets();
+    const effect = this.aoeEffectVal({ initiator, target, game });
 
-    let { bounces } = this;
+    target.stats.down('hp', effect);
 
-    while (bounces) {
-      const target = targets[bounces % targets.length];
-      const effect = this.aoeEffectVal({ initiator, target, game });
-
-      target.stats.down('hp', effect);
-
-      this.status.expArr.push({
-        id: target.id,
-        name: target.nick,
-        val: effect,
-        hp: target.stats.val('hp'),
-      });
-
-      bounces--;
-    }
+    this.status.expArr.push({
+      id: target.id,
+      name: target.nick,
+      val: effect,
+      hp: target.stats.val('hp'),
+    });
   }
 
   aoeEffectVal({ initiator, target, game } = this.params): number {

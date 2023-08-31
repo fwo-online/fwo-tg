@@ -35,8 +35,8 @@ exports[`fireBall should hit 6 targets 1`] = `
 [
   8,
   -0.72,
-  4.53,
-  2.78,
+  1.06,
+  5.39,
   4.56,
   4.53,
   5.42,
@@ -47,17 +47,17 @@ exports[`fireBall should hit 6 targets 1`] = `
 ]
 `;
 
-exports[`fireBall should hit 6 targets 2`] = `227`;
+exports[`fireBall should hit 6 targets 2`] = `234`;
 
 exports[`fireBall should hit 6 targets 3`] = `
 [
   "*asperiores* сотворил _Огненный шар_ на *magni* нанеся 8.72 урона
 \\[ magni 🔥 💔-8.72/-0.72 📖80
-iure 🔥  💔-2.61/5.39 📖21
 labore 🔥  💔-3.47/4.53 📖28
-dignissimos 🔥  💔-2.58/5.42 📖21
-ipsam 🔥  💔-3.47/4.53 📖28
+iure 🔥  💔-2.61/5.39 📖21
 recusandae 🔥  💔-3.44/4.56 📖28
-iure 🔥  💔-2.61/2.78 📖21 ]",
+ipsam 🔥  💔-3.47/4.53 📖28
+dignissimos 🔥  💔-2.58/5.42 📖21
+labore 🔥  💔-3.47/1.06 📖28 ]",
 ]
 `;
