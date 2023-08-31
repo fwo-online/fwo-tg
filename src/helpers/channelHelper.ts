@@ -47,13 +47,17 @@ export async function broadcast(data: string, id: number | string = chatId): Pro
  * @param id - id чата
  */
 export async function updateStatus(data: string, id: number): Promise<void> {
-  await arena.bot.telegram.editMessageText(
-    id,
-    statusMessages[id],
-    '',
-    data,
-    { parse_mode: 'Markdown' },
-  );
+  try {
+    await arena.bot.telegram.editMessageText(
+      id,
+      statusMessages[id],
+      '',
+      data,
+      { parse_mode: 'Markdown' },
+    );
+  } catch (e) {
+    console.log(`error: update status: ${e.message} for ${id}`);
+  }
 }
 
 /**
