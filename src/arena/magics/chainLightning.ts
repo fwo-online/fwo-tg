@@ -1,6 +1,5 @@
 import { floatNumber } from '@/utils/floatNumber';
 import { AoeDmgMagic } from '../Constuructors/AoeDmgMagicConstructor';
-import type { ExpArr } from '../Constuructors/types';
 import type GameService from '../GameService';
 import type { Player } from '../PlayersService';
 /**
@@ -9,17 +8,7 @@ import type { Player } from '../PlayersService';
  */
 
 class ChainLightning extends AoeDmgMagic {
-  static maxTargets = [3, 4, 5];
-
-  override status: {
-    exp: number;
-    expArr: ExpArr;
-    hit: number;
-  } = {
-      exp: 0,
-      hit: 0,
-      expArr: [],
-    };
+  maxTargets = [3, 4, 5];
 
   constructor() {
     super({
@@ -43,7 +32,7 @@ class ChainLightning extends AoeDmgMagic {
   getTargets() {
     const { initiator, target, game } = this.params;
     const magicLevel = initiator.getMagicLevel(this.name);
-    const maxTargets = ChainLightning.maxTargets[magicLevel - 1];
+    const maxTargets = this.maxTargets[magicLevel - 1];
 
     return game.players.getPlayersByClan(target.clan?.id)
       .filter(({ alive }) => alive)

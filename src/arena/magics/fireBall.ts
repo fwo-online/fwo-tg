@@ -1,21 +1,10 @@
 import { times } from 'lodash';
 import { AoeDmgMagic } from '../Constuructors/AoeDmgMagicConstructor';
-import { type ExpArr } from '../Constuructors/types';
 import type GameService from '../GameService';
 import { dice } from '../MiscService';
 import { type Player } from '../PlayersService';
 
 class FireBall extends AoeDmgMagic {
-  override status: {
-    exp: number;
-    expArr: ExpArr;
-    hit: number;
-  } = {
-      exp: 0,
-      hit: 0,
-      expArr: [],
-    };
-
   bounces = 6;
   aoeEffect = '1d3+2';
 
