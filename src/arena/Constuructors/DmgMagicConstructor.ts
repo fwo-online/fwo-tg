@@ -1,5 +1,6 @@
 import { floatNumber } from '../../utils/floatNumber';
-import MiscService from '../MiscService';
+// import MiscService from '../MiscService';
+import type { Player } from '../PlayersService';
 import { Magic, MagicArgs } from './MagicConstructor';
 import type { BaseNext, DamageType, ExpArr } from './types';
 
@@ -40,24 +41,39 @@ export abstract class DmgMagic extends Magic {
   /**
    * Возвращает шанс прохождения магии
    */
-  effectVal({ initiator, target } = this.params): number {
-    const initiatorMagicLvl = initiator.magics[this.name];
-    let eff = MiscService.dice(this.effect[initiatorMagicLvl - 1]) * initiator.proc;
+  effectVal({ initiator, target, game } = this.params): number {
+    const effect = this.getEffectVal({ initiator, target, game });
+    const modifiedEffect = this.modifyEffect(effect, { initiator, target, game });
+
+    this.status.hit = modifiedEffect;
+
+    return modifiedEffect;
+  }
+
+  modifyEffect(effect: number, { initiator, target } = this.params): number {
     if (this.dmgType !== 'clear') {
-      // правим урон от mgp цели и mga кастера
-      eff = eff * (1 + 0.004 * initiator.stats.val('mga'))
-          * (1 - 0.002 * target.stats.val('mgp'));
-      const resist = target.resists[this.dmgType];
-      if (resist) {
-        eff *= resist;
-      }
+      effect = this.applyCasterModifiers(effect, initiator);
+      effect = this.applyTargetModifiers(effect, target);
+      effect = this.applyResists(effect, target);
     }
-    if (this.isAoe) {
-      this.status.hit += eff;
-    } else {
-      this.status.hit = eff;
+
+    return floatNumber(effect);
+  }
+
+  applyCasterModifiers(effect: number, initiator: Player): number {
+    return effect * (1 + 0.004 * initiator.stats.val('mga'));
+  }
+
+  applyTargetModifiers(effect: number, target: Player): number {
+    return effect * (1 - 0.002 * target.stats.val('mgp'));
+  }
+
+  applyResists(effect: number, target: Player): number {
+    const resist = target.resists[this.dmgType];
+    if (resist) {
+      return effect * resist;
     }
-    return eff;
+    return effect;
   }
 
   /**
@@ -69,11 +85,15 @@ export abstract class DmgMagic extends Magic {
     if (game.isPlayersAlly(initiator, target) && !initiator.flags.isGlitched) {
       this.status.exp = 0;
     } else {
-      const dmgExp = Math.round(this.status.hit * 8) + this.baseExp;
+      const dmgExp = this.calculateExp(this.status.hit, this.baseExp);
       this.status.exp = dmgExp;
 
       initiator.stats.up('exp', dmgExp);
     }
+  }
+
+  calculateExp(hit: number, baseExp = 0) {
+    return Math.round(hit * 8) + baseExp;
   }
 
   /**

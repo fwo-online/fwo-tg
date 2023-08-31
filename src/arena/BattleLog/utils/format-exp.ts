@@ -8,14 +8,16 @@ export function formatExp(args: SuccessArgs): string {
     case 'dmg-magic':
     case 'dmg-magic-long': {
       const damageType = icons.damageType[args.dmgType];
-      if (args.expArr) {
-        return [
-          args.expArr.map(({
-            name, val, hp,
-          }) => `\n${name} ${damageType}  💔-${val}/${hp}`).join(''),
-          expBrackets(`📖${args.exp}`)].join('');
-      }
       return expBrackets(`${damageType} 💔-${args.dmg}/${args.hp} 📖${args.exp}`);
+    }
+    case 'aoe-dmg-magic': {
+      const damageType = icons.damageType[args.dmgType];
+      return expBrackets([
+        `${args.target} ${damageType} 💔-${args.dmg}/${args.hp} 📖${args.exp}`,
+        ...args.expArr.map(({
+          name, val, hp, exp,
+        }) => `${name} ${damageType}  💔-${val}/${hp} 📖${exp}`),
+      ].join('\n'));
     }
     case 'heal-magic': {
       return expBrackets(`❤️+${args.effect}/${args.hp} 📖${args.exp}`);
