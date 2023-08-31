@@ -17,7 +17,7 @@ describe('fireBall', () => {
 
   beforeEach(async () => {
     const harks = { ...profsData.m.hark, wis: 20 };
-    const initiator = await TestUtils.createCharacter({ prof: 'm', magics: { chainLightning: 3 }, harks });
+    const initiator = await TestUtils.createCharacter({ prof: 'm', magics: { fireBall: 2 }, harks });
     const chars = await Promise.all(times(10, () => TestUtils.createCharacter()));
     const charIds = chars.map(({ id }) => id);
 
@@ -42,7 +42,6 @@ describe('fireBall', () => {
   });
 
   it('should hit 6 targets', () => {
-    game.players.players[0].magics = { fireBall: 2 };
     game.players.players[0].proc = 1;
 
     fireBall.cast(game.players.players[0], game.players.players[1], game);
@@ -55,7 +54,6 @@ describe('fireBall', () => {
   });
 
   it('should hit 1 target', () => {
-    game.players.players[0].magics = { fireBall: 2 };
     game.players.players[0].proc = 1;
 
     fireBall.cast(game.players.players[0], game.players.players[8], game);
