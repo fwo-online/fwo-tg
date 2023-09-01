@@ -21,7 +21,7 @@ class FireBall extends AoeDmgMagic {
       aoeType: 'team',
       magType: 'bad',
       chance: [95, 95, 95],
-      effect: ['1d3+7', '1d3+7', '1d3+7'],
+      effect: ['1d3+5', '1d3+6', '1d3+7'],
       dmgType: 'fire',
       profList: ['m'],
     });

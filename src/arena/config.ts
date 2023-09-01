@@ -122,7 +122,7 @@ export default {
     'attack',
     //
     [
-      'fireball',
+      'fireBall',
       'ice_lance',
       'magicArrow',
       'poisonBreath',

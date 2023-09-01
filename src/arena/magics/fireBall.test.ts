@@ -17,7 +17,7 @@ describe('fireBall', () => {
 
   beforeEach(async () => {
     const harks = { ...profsData.m.hark, wis: 20 };
-    const initiator = await TestUtils.createCharacter({ prof: 'm', magics: { fireBall: 2 }, harks });
+    const initiator = await TestUtils.createCharacter({ prof: 'm', magics: { fireBall: 3 }, harks });
     const chars = await Promise.all(times(10, () => TestUtils.createCharacter()));
     const charIds = chars.map(({ id }) => id);
 
