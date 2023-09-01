@@ -10,24 +10,24 @@ exports[`fireBall should hit 1 target 1`] = `
   8,
   8,
   8,
-  -21.63,
+  -14.37,
   8,
   8,
 ]
 `;
 
-exports[`fireBall should hit 1 target 2`] = `248`;
+exports[`fireBall should hit 1 target 2`] = `188`;
 
 exports[`fireBall should hit 1 target 3`] = `
 [
   "*explicabo* сотворил _Огненный шар_ на *aperiam* нанеся 8.75 урона
-\\[ aperiam 🔥 💔-8.75/-21.63 📖80
-aperiam 🔥  💔-3.48/-4.23 📖28
-aperiam 🔥  💔-3.48/-7.71 📖28
-aperiam 🔥  💔-3.48/-11.19 📖28
-aperiam 🔥  💔-3.48/-14.67 📖28
-aperiam 🔥  💔-3.48/-18.15 📖28
-aperiam 🔥  💔-3.48/-21.63 📖28 ]",
+\\[ aperiam 🔥 💔-8.75/-14.37 📖80
+aperiam 🔥  💔-2.27/-3.02 📖18
+aperiam 🔥  💔-2.27/-5.29 📖18
+aperiam 🔥  💔-2.27/-7.56 📖18
+aperiam 🔥  💔-2.27/-9.83 📖18
+aperiam 🔥  💔-2.27/-12.1 📖18
+aperiam 🔥  💔-2.27/-14.37 📖18 ]",
 ]
 `;
 
@@ -35,11 +35,11 @@ exports[`fireBall should hit 6 targets 1`] = `
 [
   8,
   -0.72,
-  1.06,
-  5.39,
-  4.56,
-  4.53,
-  5.42,
+  3.48,
+  6.3,
+  5.76,
+  5.74,
+  6.32,
   8,
   8,
   8,
@@ -47,17 +47,17 @@ exports[`fireBall should hit 6 targets 1`] = `
 ]
 `;
 
-exports[`fireBall should hit 6 targets 2`] = `234`;
+exports[`fireBall should hit 6 targets 2`] = `179`;
 
 exports[`fireBall should hit 6 targets 3`] = `
 [
   "*asperiores* сотворил _Огненный шар_ на *magni* нанеся 8.72 урона
 \\[ magni 🔥 💔-8.72/-0.72 📖80
-labore 🔥  💔-3.47/4.53 📖28
-iure 🔥  💔-2.61/5.39 📖21
-recusandae 🔥  💔-3.44/4.56 📖28
-ipsam 🔥  💔-3.47/4.53 📖28
-dignissimos 🔥  💔-2.58/5.42 📖21
-labore 🔥  💔-3.47/1.06 📖28 ]",
+labore 🔥  💔-2.26/5.74 📖18
+iure 🔥  💔-1.7/6.3 📖14
+recusandae 🔥  💔-2.24/5.76 📖18
+ipsam 🔥  💔-2.26/5.74 📖18
+dignissimos 🔥  💔-1.68/6.32 📖13
+labore 🔥  💔-2.26/3.48 📖18 ]",
 ]
 `;

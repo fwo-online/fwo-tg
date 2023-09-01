@@ -6,13 +6,13 @@ import { type Player } from '../PlayersService';
 
 class FireBall extends AoeDmgMagic {
   bounces = 6;
-  aoeEffect = '1d3+2';
+  aoeEffect = '1d2+1';
 
   constructor() {
     super({
       name: 'fireBall',
       displayName: 'Огненный шар',
-      desc: '',
+      desc: 'Огненный шар',
       cost: 24,
       baseExp: 10,
       costType: 'mp',
@@ -20,7 +20,7 @@ class FireBall extends AoeDmgMagic {
       orderType: 'enemy',
       aoeType: 'team',
       magType: 'bad',
-      chance: [100, 100, 100],
+      chance: [95, 95, 95],
       effect: ['1d3+7', '1d3+7', '1d3+7'],
       dmgType: 'fire',
       profList: ['m'],
