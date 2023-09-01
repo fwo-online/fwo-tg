@@ -4,8 +4,7 @@ import type * as magics from '../magics';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import type {
-  AoeMagic,
-  BaseNext, Breaks, BreaksMessage, CustomMessage, ExpArr,
+  BaseNext, Breaks, BreaksMessage, CustomMessage,
 } from './types';
 
 export type MagicNext = BaseNext & {
@@ -32,7 +31,7 @@ export interface MagicArgs {
 /**
  * Конструктор магии
  */
-export interface Magic extends MagicArgs, AoeMagic, CustomMessage {
+export interface Magic extends MagicArgs, CustomMessage {
 }
 
 export abstract class Magic {
@@ -44,12 +43,8 @@ export abstract class Magic {
 
   status: {
     exp: number;
-    expArr?: ExpArr;
     effect?: number;
-  } = {
-      exp: 0,
-      effect: 0,
-    };
+  };
 
   isLong = false;
 
@@ -59,13 +54,7 @@ export abstract class Magic {
    */
   constructor(magObj: MagicArgs) {
     Object.assign(this, magObj);
-    this.status = {
-      exp: 0,
-    };
-  }
-
-  get isAoe() {
-    return this.aoeType === 'targetAoe' || this.aoeType === 'team';
+    this.resetStatus();
   }
 
   // Дальше идут общие методы для всех магий
@@ -86,16 +75,8 @@ export abstract class Magic {
       this.isBlurredMind(); // проверка не запудрило
       this.checkChance();
       this.run(initiator, target, game); // вызов кастомного обработчика
-      if (this.isAoe) {
-        this.getTargets?.()
-          .forEach((target, index) => this.runAoe?.(initiator, target, game, index));
-      }
       this.getExp(this.params);
       this.checkTargetIsDead();
-      if (this.isAoe) {
-        this.getTargets?.()
-          .forEach((target) => this.checkTargetIsDead({ initiator, target, game }));
-      }
 
       this.next();
     } catch (failMsg) {
@@ -103,6 +84,8 @@ export abstract class Magic {
       // @fixme прокидываем ошибку выше для длительных кастов
       if (this.isLong) throw (failMsg);
       bl.fail(failMsg);
+    } finally {
+      this.resetStatus();
     }
   }
 
@@ -130,23 +113,24 @@ export abstract class Magic {
    */
   getExp({ initiator } = this.params): void {
     const exp = Math.round(this.baseExp * initiator.proc);
-    if (this.isAoe) {
-      this.status.exp += exp;
-    } else {
-      this.status.exp = exp;
-    }
+
+    this.status.exp = exp;
     initiator.stats.up('exp', this.baseExp);
   }
 
   /**
-   * Функция расчитывай размер эффект от магии по стандартным дайсам
+   * Функция рассчитывает размер эффект от магии по стандартным дайсам
    * @return dice число эффекта
    */
-  effectVal({ initiator } = this.params): number {
+  effectVal({ initiator, target, game } = this.params): number {
+    const effect = this.getEffectVal({ initiator, target, game });
+    this.status.effect = floatNumber(effect);
+    return floatNumber(effect);
+  }
+
+  getEffectVal({ initiator } = this.params): number {
     const initiatorMagicLvl = initiator.magics[this.name];
-    const x = MiscService.dice(this.effect[initiatorMagicLvl - 1]) * initiator.proc;
-    this.status.effect = floatNumber(x);
-    return floatNumber(x);
+    return MiscService.dice(this.effect[initiatorMagicLvl - 1]) * initiator.proc;
   }
 
   /**
@@ -283,13 +267,19 @@ export abstract class Magic {
     const { target, initiator } = this.params;
     return {
       exp: this.status.exp,
-      expArr: this.status.expArr,
       action: this.displayName,
       actionType: 'magic',
       target: target.nick,
       initiator: initiator.nick,
       effect: this.status.effect,
       msg: this.customMessage?.bind(this),
+    };
+  }
+
+  resetStatus() {
+    this.status = {
+      exp: 0,
+      effect: 0,
     };
   }
 
@@ -300,10 +290,5 @@ export abstract class Magic {
   next(): void {
     const { battleLog } = this.params.game;
     battleLog.success(this.getNextArgs());
-
-    this.status = {
-      exp: 0,
-      effect: 0,
-    };
   }
 }

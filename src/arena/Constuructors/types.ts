@@ -2,6 +2,7 @@
 import type { Item } from '../../models/item';
 import type GameService from '../GameService';
 import type { Player } from '../PlayersService';
+import type { AoeDmgMagicNext } from './AoeDmgMagicConstructor';
 import type { DmgMagicNext } from './DmgMagicConstructor';
 import type { HealMagicNext, HealNext } from './HealMagicConstructor';
 import type { LongDmgMagicNext } from './LongDmgMagicConstructor';
@@ -60,7 +61,6 @@ export type BaseNext = {
   initiator: string;
   target: string;
   msg?: CustomMessageFn;
-  expArr?: ExpArr;
 }
 
 export type PhysNext = BaseNext & {
@@ -82,6 +82,7 @@ export type SuccessArgs =
   MagicNext |
   DmgMagicNext |
   LongDmgMagicNext |
+  AoeDmgMagicNext |
   LongMagicNext |
   SkillNext |
   PhysNext |

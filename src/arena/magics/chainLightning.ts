@@ -1,6 +1,5 @@
 import { floatNumber } from '@/utils/floatNumber';
-import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
-import type { ExpArr } from '../Constuructors/types';
+import { AoeDmgMagic } from '../Constuructors/AoeDmgMagicConstructor';
 import type GameService from '../GameService';
 import type { Player } from '../PlayersService';
 /**
@@ -8,18 +7,8 @@ import type { Player } from '../PlayersService';
  * Основное описание магии общее требовани есть в конструкторе
  */
 
-class ChainLightning extends DmgMagic {
-  static maxTargets = [3, 4, 5];
-
-  override status: {
-    exp: number;
-    expArr: ExpArr;
-    hit: number;
-  } = {
-      exp: 0,
-      hit: 0,
-      expArr: [],
-    };
+class ChainLightning extends AoeDmgMagic {
+  maxTargets = [3, 4, 5];
 
   constructor() {
     super({
@@ -43,9 +32,10 @@ class ChainLightning extends DmgMagic {
   getTargets() {
     const { initiator, target, game } = this.params;
     const magicLevel = initiator.getMagicLevel(this.name);
-    const maxTargets = ChainLightning.maxTargets[magicLevel - 1];
+    const maxTargets = this.maxTargets[magicLevel - 1];
 
     return game.players.getPlayersByClan(target.clan?.id)
+      .filter(({ alive }) => alive)
       .filter(({ id }) => id !== target.id)
       .slice(0, maxTargets - 1);
   }
@@ -53,7 +43,17 @@ class ChainLightning extends DmgMagic {
   /**
    * Основная функция запуска магии
    */
-  run(initiator: Player, target: Player, game: GameService, index = -1): void {
+  run(initiator: Player, target: Player, game: GameService): void {
+    const effectVal = this.effectVal({ initiator, target, game });
+    target.stats.down('hp', effectVal);
+
+    const targets = this.getTargets();
+    targets.forEach((target, index) => {
+      this.runAoe(initiator, target, game, index);
+    });
+  }
+
+  runAoe(initiator: Player, target: Player, game: GameService, index: number) {
     const multiplier = 1 - (index + 1) * 0.1; // -10% каждой следующей цели
     const effectVal = this.effectVal({ initiator, target, game });
     const hit = floatNumber(effectVal * multiplier);
@@ -68,14 +68,9 @@ class ChainLightning extends DmgMagic {
     });
   }
 
-  runAoe(initiator: Player, target: Player, game: GameService, index: number) {
-    this.run(initiator, target, game, index);
-  }
-
-  next(): void {
-    super.next();
-
-    this.status.expArr = [];
+  aoeEffectVal({ initiator, target, game } = this.params): number {
+    const effect = this.getEffectVal({ initiator, target, game });
+    return this.modifyEffect(effect, { initiator, target, game });
   }
 }
 

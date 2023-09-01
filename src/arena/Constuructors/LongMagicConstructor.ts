@@ -51,6 +51,8 @@ export abstract class LongMagic extends CommonMagic {
     } catch (failMsg) {
       const { battleLog } = this.params.game;
       battleLog.fail(failMsg);
+    } finally {
+      this.resetStatus();
     }
   }
 

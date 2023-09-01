@@ -16,15 +16,14 @@ exports[`chainLightning should hit 3 targets 1`] = `
 ]
 `;
 
-exports[`chainLightning should hit 3 targets 2`] = `69`;
+exports[`chainLightning should hit 3 targets 2`] = `63`;
 
 exports[`chainLightning should hit 3 targets 3`] = `
 [
-  "*architecto* сотворил _Цепь молний_ нанеся 7.07 урона
-aspernatur ⚡  💔-2.37/5.63
-quia ⚡  💔-2.12/5.88
-dicta ⚡  💔-1.87/6.13
-\\[ 📖69 ]",
+  "*architecto* сотворил _Цепь молний_ на *aspernatur* нанеся 2.34 урона
+\\[ aspernatur ⚡ 💔-2.34/5.63 📖31
+quia ⚡  💔-2.12/5.88 📖17
+dicta ⚡  💔-1.87/6.13 📖15 ]",
 ]
 `;
 
@@ -44,15 +43,14 @@ exports[`chainLightning should hit 3 targets without clan 1`] = `
 ]
 `;
 
-exports[`chainLightning should hit 3 targets without clan 2`] = `68`;
+exports[`chainLightning should hit 3 targets without clan 2`] = `63`;
 
 exports[`chainLightning should hit 3 targets without clan 3`] = `
 [
-  "*qui* сотворил _Цепь молний_ нанеся 7.02 урона
-ex ⚡  💔-2.34/5.66
-qui ⚡  💔-2.11/5.89
-est ⚡  💔-1.87/6.13
-\\[ 📖68 ]",
+  "*qui* сотворил _Цепь молний_ на *ex* нанеся 2.34 урона
+\\[ ex ⚡ 💔-2.34/5.66 📖31
+qui ⚡  💔-2.11/5.89 📖17
+est ⚡  💔-1.87/6.13 📖15 ]",
 ]
 `;
 
@@ -60,7 +58,7 @@ exports[`chainLightning should hit 4 targets 1`] = `
 [
   8,
   4.64,
-  4.97,
+  4.98,
   5.28,
   5.65,
   8,
@@ -72,16 +70,15 @@ exports[`chainLightning should hit 4 targets 1`] = `
 ]
 `;
 
-exports[`chainLightning should hit 4 targets 2`] = `120`;
+exports[`chainLightning should hit 4 targets 2`] = `104`;
 
 exports[`chainLightning should hit 4 targets 3`] = `
 [
-  "*explicabo* сотворил _Цепь молний_ нанеся 13.48 урона
-et ⚡  💔-3.36/4.64
-eum ⚡  💔-3.03/4.97
-veritatis ⚡  💔-2.72/5.28
-deserunt ⚡  💔-2.35/5.65
-\\[ 📖120 ]",
+  "*explicabo* сотворил _Цепь молний_ на *et* нанеся 3.36 урона
+\\[ et ⚡ 💔-3.36/4.64 📖39
+eum ⚡  💔-3.02/4.98 📖24
+veritatis ⚡  💔-2.72/5.28 📖22
+deserunt ⚡  💔-2.35/5.65 📖19 ]",
 ]
 `;
 
@@ -90,7 +87,7 @@ exports[`chainLightning should hit 5 targets 1`] = `
   8,
   3.59,
   4.03,
-  4.45,
+  4.46,
   4.93,
   5.35,
   8,
@@ -101,16 +98,15 @@ exports[`chainLightning should hit 5 targets 1`] = `
 ]
 `;
 
-exports[`chainLightning should hit 5 targets 2`] = `188`;
+exports[`chainLightning should hit 5 targets 2`] = `153`;
 
 exports[`chainLightning should hit 5 targets 3`] = `
 [
-  "*asperiores* сотворил _Цепь молний_ нанеся 22.05 урона
-magni ⚡  💔-4.41/3.59
-labore ⚡  💔-3.97/4.03
-iure ⚡  💔-3.55/4.45
-recusandae ⚡  💔-3.07/4.93
-ipsam ⚡  💔-2.65/5.35
-\\[ 📖188 ]",
+  "*asperiores* сотворил _Цепь молний_ на *magni* нанеся 4.41 урона
+\\[ magni ⚡ 💔-4.41/3.59 📖47
+labore ⚡  💔-3.97/4.03 📖32
+iure ⚡  💔-3.54/4.46 📖28
+recusandae ⚡  💔-3.07/4.93 📖25
+ipsam ⚡  💔-2.65/5.35 📖21 ]",
 ]
 `;

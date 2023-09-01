@@ -23,3 +23,4 @@ export { default as smallAura } from './smallAura';
 export { default as stoneSkin } from './stoneSkin';
 export { default as strongHeal } from './strongHeal';
 export { default as anathema } from './anathema';
+export { default as fireBall } from './fireBall';
