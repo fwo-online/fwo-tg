@@ -47,6 +47,8 @@ export abstract class LongDmgMagic extends DmgMagic {
     } catch (failMsg) {
       const { battleLog } = this.params.game;
       battleLog.fail(failMsg);
+    } finally {
+      this.resetStatus();
     }
   }
 

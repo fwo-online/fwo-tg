@@ -44,10 +44,7 @@ export abstract class Magic {
   status: {
     exp: number;
     effect?: number;
-  } = {
-      exp: 0,
-      effect: 0,
-    };
+  };
 
   isLong = false;
 
@@ -57,9 +54,7 @@ export abstract class Magic {
    */
   constructor(magObj: MagicArgs) {
     Object.assign(this, magObj);
-    this.status = {
-      exp: 0,
-    };
+    this.resetStatus();
   }
 
   // Дальше идут общие методы для всех магий
@@ -89,6 +84,8 @@ export abstract class Magic {
       // @fixme прокидываем ошибку выше для длительных кастов
       if (this.isLong) throw (failMsg);
       bl.fail(failMsg);
+    } finally {
+      this.resetStatus();
     }
   }
 
@@ -279,6 +276,13 @@ export abstract class Magic {
     };
   }
 
+  resetStatus() {
+    this.status = {
+      exp: 0,
+      effect: 0,
+    };
+  }
+
   /**
    * Магия прошла удачно
    * @todo тут нужен вывод требуемых параметров
@@ -286,10 +290,5 @@ export abstract class Magic {
   next(): void {
     const { battleLog } = this.params.game;
     battleLog.success(this.getNextArgs());
-
-    this.status = {
-      exp: 0,
-      effect: 0,
-    };
   }
 }

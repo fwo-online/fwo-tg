@@ -1,7 +1,7 @@
 import { floatNumber } from '../../utils/floatNumber';
 import type { Player } from '../PlayersService';
 import { Magic, MagicArgs } from './MagicConstructor';
-import type { BaseNext, DamageType, ExpArr } from './types';
+import type { BaseNext, DamageType } from './types';
 
 export type DmgMagicNext = BaseNext & {
   actionType: 'dmg-magic'
@@ -22,12 +22,8 @@ export interface DmgMagic extends DmgMagicArgs, Magic {
 export abstract class DmgMagic extends Magic {
   status: {
     exp: number;
-    expArr?: ExpArr;
     hit: number;
-  } = {
-      exp: 0,
-      hit: 0,
-    };
+  };
 
   /**
    * Создание магии
@@ -95,6 +91,13 @@ export abstract class DmgMagic extends Magic {
     return Math.round(hit * 8) + baseExp;
   }
 
+  resetStatus(): void {
+    this.status = {
+      exp: 0,
+      hit: 0,
+    };
+  }
+
   /**
    * Магия прошла удачно
    * @param initiator объект персонажаы
@@ -113,10 +116,5 @@ export abstract class DmgMagic extends Magic {
 
     game.addHistoryDamage(args);
     game.battleLog.success(args);
-
-    this.status = {
-      exp: 0,
-      hit: 0,
-    };
   }
 }

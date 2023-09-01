@@ -15,11 +15,7 @@ export abstract class AoeDmgMagic extends DmgMagic {
     exp: number;
     expArr: ExpArr;
     hit: number;
-  } = {
-      exp: 0,
-      hit: 0,
-      expArr: [],
-    };
+  };
 
   getExp({ initiator, target, game } = this.params): void {
     super.getExp({ initiator, target, game });
@@ -50,6 +46,14 @@ export abstract class AoeDmgMagic extends DmgMagic {
     });
   }
 
+  resetStatus(): void {
+    this.status = {
+      exp: 0,
+      hit: 0,
+      expArr: [],
+    };
+  }
+
   /**
    * Магия прошла удачно
    * @param initiator объект персонажаы
@@ -69,11 +73,5 @@ export abstract class AoeDmgMagic extends DmgMagic {
 
     game.addHistoryDamage(args);
     game.battleLog.success(args);
-
-    this.status = {
-      exp: 0,
-      hit: 0,
-      expArr: [],
-    };
   }
 }
