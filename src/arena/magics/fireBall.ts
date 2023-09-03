@@ -5,8 +5,8 @@ import { dice } from '../MiscService';
 import { type Player } from '../PlayersService';
 
 class FireBall extends AoeDmgMagic {
-  bounces = 6;
-  aoeEffect = '1d2+1';
+  bounces = 4;
+  aoeEffect = '1d2';
 
   constructor() {
     super({
