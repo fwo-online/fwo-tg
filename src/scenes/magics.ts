@@ -122,7 +122,7 @@ ${ctx.session.character.lvl === 1 ? `Стоимость изучения маг�
 });
 
 magicScene.action('select_lvl', async (ctx) => {
-  const magicLvl = Math.min(ctx.session.character.lvl, 4, ctx.session.character.bonus);
+  const magicLvl = Math.min(ctx.session.character.lvl, 5, ctx.session.character.bonus);
 
   await ctx.editMessageText(
     `Выбери уровень изучаемой магии. Стоимость изучения равна уровню магии (*${ctx.session.character.bonus}💡*)`,
