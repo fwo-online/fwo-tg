@@ -124,13 +124,24 @@ export abstract class Magic {
    */
   effectVal({ initiator, target, game } = this.params): number {
     const effect = this.getEffectVal({ initiator, target, game });
-    this.status.effect = floatNumber(effect);
-    return floatNumber(effect);
+    const modifiedEffect = this.modifyEffect(effect, { initiator, target, game });
+    this.status.effect = modifiedEffect;
+    return modifiedEffect;
   }
 
   getEffectVal({ initiator } = this.params): number {
-    const initiatorMagicLvl = initiator.magics[this.name];
+    const initiatorMagicLvl = initiator.getMagicLevel(this.name);
     return MiscService.dice(this.effect[initiatorMagicLvl - 1]) * initiator.proc;
+  }
+
+  modifyEffect(effect: number, { initiator } = this.params) {
+    effect = this.applyCasterModifiers(effect, initiator);
+
+    return floatNumber(effect);
+  }
+
+  applyCasterModifiers(effect: number, initiator: Player): number {
+    return effect * (1 + 0.01 * initiator.stats.val('mga'));
   }
 
   /**
