@@ -1,4 +1,5 @@
 import { times } from 'lodash';
+import arena from '@/arena';
 import type { Clan } from '@/models/clan';
 import TestUtils from '@/utils/testUtils';
 import CharacterService from '../CharacterService';
@@ -18,13 +19,15 @@ describe('PlayerService', () => {
     const chars = await Promise.all(times(9, () => TestUtils.createCharacter()));
     const charIds = chars.map(({ id }) => id);
 
+    arena.characters = {};
+
     clans = await Promise.all([
       await TestUtils.createClan(charIds[0], { players: [charIds[1], charIds[2]] }),
       await TestUtils.createClan(charIds[3], { players: [charIds[4]] }),
       await TestUtils.createClan(charIds[5]),
     ]);
 
-    characters = await Promise.all(charIds.map((CharacterService.getCharacterById)));
+    characters = await Promise.all(charIds.map((id) => CharacterService.getCharacterById(id)));
     players = new PlayersService(characters.map(({ id }) => id));
   });
 

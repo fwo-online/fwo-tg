@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { Scenes, Markup } from 'telegraf';
+import CharacterService from '@/arena/CharacterService';
 import { broadcast } from '@/helpers/channelHelper';
 import arena from '../arena';
 import { ClanService } from '../arena/ClanService';
@@ -65,7 +66,7 @@ clanScene.action(/^(lvlup|back|remove|leave)$/, async (ctx) => {
       await ctx.answerCbQuery('Клан был удалён');
     }
     if (ctx.match.input === 'leave') {
-      await ClanService.leaveClan(char.clan.id, char.tgId);
+      await ClanService.leaveClan(char.clan.id, char.id);
     }
   } catch (e) {
     await ctx.answerCbQuery(e.message);
@@ -160,27 +161,31 @@ ${list.join('\n')}`,
 
 clanScene.action(/requests_list|(accept|reject)(?=_)/, async (ctx) => {
   const [action, charId] = ctx.match.input.split('_') as [string, string];
-  const clan = await ClanService.getClanById(ctx.session.character.clan.id);
   try {
     if (action === 'accept') {
-      await ClanService.acceptRequest(clan.id, charId);
+      const requester = await CharacterService.getCharacterById(charId);
+      await ClanService.acceptRequest(ctx.session.character.clan.id, charId);
+
       await broadcast(
-        `Твоя заявка на вступление в клан *${clan.name}* была одобрена`,
-        ctx.session.character.tgId,
+        `Твоя заявка на вступление в клан *${ctx.session.character.clan.name}* была одобрена`,
+        requester.tgId,
       );
     }
     if (action === 'reject') {
-      await ClanService.rejectRequest(clan.id, charId);
+      const requester = await CharacterService.getCharacterById(charId);
+      await ClanService.rejectRequest(ctx.session.character.clan.id, charId);
 
       await broadcast(
-        `Твоя заявка на вступление в клан *${clan.name}* была отклонена`,
-        ctx.session.character.tgId,
+        `Твоя заявка на вступление в клан *${ctx.session.character.clan.name}* была отклонена`,
+        requester.tgId,
       );
     }
+    await ctx.answerCbQuery();
   } catch (e) {
     await ctx.answerCbQuery(e.message);
   }
 
+  const clan = await ClanService.getClanById(ctx.session.character.clan.id);
   const isAdmin = clan.owner.tgId === ctx.session.character.tgId;
 
   const list = clan.requests.map((player) => {
