@@ -581,6 +581,11 @@ class CharacterService {
    * @return {Promise<CharacterService>}
    */
   static async getCharacterById(id) {
+    const cachedChar = arena.characters[id];
+    if (cachedChar) {
+      return cachedChar;
+    }
+
     const charFromDb = await findCharacter({ _id: id });
     if (!charFromDb) {
       return null;

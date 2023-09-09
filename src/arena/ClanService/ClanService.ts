@@ -193,15 +193,14 @@ export class ClanService {
     if (!clan.hasEmptySlot) {
       throw new Error('Клан уже сформирован');
     }
-    const char: CharacterService = arena.characters[charId];
+    const char = await CharacterService.getCharacterById(charId);
 
     await this.updateClan(clan.id, {
       $push: { players: charId },
       $pull: { requests: { $in: [charId] } },
     });
 
-    /** @todo не сохраняется клан у игрока */
-    arena.characters[char.id] = await char.joinClan(clan);
+    await char.joinClan(clan);
   }
 
   /**
