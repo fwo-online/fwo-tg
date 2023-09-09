@@ -56,12 +56,14 @@ harkScene.action(/info(?=_)/, async (ctx) => {
 });
 
 harkScene.action(/confirm|reset|back|increase(?=_)/, async (ctx) => {
+  let x = false;
   if (ctx.match.input.includes('increase_')) {
     try {
       const [, hark] = ctx.match.input.split('_');
       ctx.session.character.increaseHark(hark);
     } catch (e) {
       await ctx.answerCbQuery(e.message);
+      x = true;
     }
   }
   if (ctx.match.input === 'confirm') {
@@ -72,7 +74,7 @@ harkScene.action(/confirm|reset|back|increase(?=_)/, async (ctx) => {
     ctx.session.character.resetHarks();
     await ctx.answerCbQuery('Изменения успешно сброшены');
   }
-
+  if (x) return;
   await ctx.editMessageText(
     `Свободных очков ${ctx.session.character.free}`,
     Markup.inlineKeyboard([
