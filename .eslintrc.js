@@ -16,6 +16,7 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'import'],
   rules: {
+    'arrow-body-style': 'off',
     'class-methods-use-this': 'off',
     'no-plusplus': 'off',
     'no-useless-constructor': 'off',

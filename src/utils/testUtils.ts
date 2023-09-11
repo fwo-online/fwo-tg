@@ -2,15 +2,19 @@ import casual from 'casual';
 import type { AnyKeys } from 'mongoose';
 import CharacterService from '@/arena/CharacterService';
 import { ClanService } from '@/arena/ClanService';
-import { profsList, profsData, Prof } from '@/data/profs';
-import { Char, CharModel } from '@/models/character';
-import { Clan, ClanModel } from '@/models/clan';
-import { Item, ItemModel } from '@/models/item';
+import type { HistoryItem } from '@/arena/HistoryService';
+import { profsList, profsData, type Prof } from '@/data/profs';
+import { type Char, CharModel } from '@/models/character';
+import { type Clan, ClanModel } from '@/models/clan';
+import { InventoryModel } from '@/models/inventory';
+import { type Item, ItemModel } from '@/models/item';
 
 const functions = casual.functions();
 
 export default class TestUtils {
-  static async createCharacter(params?: Partial<Char>) {
+  static async createCharacter(params?: Partial<Char>, {
+    withWeapon = false,
+  } = {}) {
     const prof: Prof = params?.prof ?? casual.random_element([...profsList]);
     const char = await CharModel.create({
       tgId: casual.integer(1_000_000, 9_999_999),
@@ -21,6 +25,20 @@ export default class TestUtils {
       magics: profsData[prof].mag,
       ...params,
     });
+
+    if (withWeapon) {
+      const weapon = await this.getWeapon();
+
+      char.inventory = await InventoryModel.create([{
+        wear: weapon.wear,
+        code: weapon.code,
+        owner: char.id,
+        putOn: true,
+      }]);
+
+      await char.save();
+    }
+
     await CharacterService.getCharacter(char.tgId);
     return char;
   }
@@ -53,5 +71,11 @@ export default class TestUtils {
   static async getWeapon(): Promise<Item> {
     await ItemModel.load();
     return ItemModel.findOne({ code: 'a100' }).orFail();
+  }
+
+  static normalizeRoundHistory(history: HistoryItem[]) {
+    return history.map(({ weapon, ...item }) => ({
+      ...item,
+    }));
   }
 }
