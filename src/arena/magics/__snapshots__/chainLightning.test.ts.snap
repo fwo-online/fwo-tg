@@ -2,10 +2,10 @@
 
 exports[`chainLightning should hit 3 targets 1`] = `
 [
-  8,
+  5.89,
   5.63,
-  5.88,
-  6.13,
+  6.1,
+  8,
   8,
   8,
   8,
@@ -20,24 +20,48 @@ exports[`chainLightning should hit 3 targets 2`] = `63`;
 
 exports[`chainLightning should hit 3 targets 3`] = `
 [
-  "*architecto* сотворил _Цепь молний_ на *aspernatur* нанеся 2.34 урона
-\\[ aspernatur ⚡ 💔-2.34/5.63 📖31
-quia ⚡  💔-2.12/5.88 📖17
-dicta ⚡  💔-1.87/6.13 📖15 ]",
+  {
+    "action": "Цепь молний",
+    "actionType": "aoe-dmg-magic",
+    "dmg": 2.37,
+    "dmgType": "lighting",
+    "effect": undefined,
+    "exp": 31,
+    "expArr": [
+      {
+        "exp": 17,
+        "hp": 5.89,
+        "id": "2bea7421-d53a-4131-b215-51c23ea98de9",
+        "name": "sed",
+        "val": 2.11,
+      },
+      {
+        "exp": 15,
+        "hp": 6.1,
+        "id": "551bb8cb-f2ea-4063-a9cf-7fe83e0ae647",
+        "name": "culpa",
+        "val": 1.9,
+      },
+    ],
+    "hp": 5.63,
+    "initiator": "sed",
+    "msg": undefined,
+    "target": "quod",
+  },
 ]
 `;
 
 exports[`chainLightning should hit 3 targets without clan 1`] = `
 [
   5.89,
-  8,
-  8,
-  8,
-  8,
-  8,
-  8,
   6.13,
-  5.66,
+  8,
+  8,
+  8,
+  8,
+  8,
+  8,
+  5.63,
   8,
   8,
 ]
@@ -47,20 +71,44 @@ exports[`chainLightning should hit 3 targets without clan 2`] = `63`;
 
 exports[`chainLightning should hit 3 targets without clan 3`] = `
 [
-  "*qui* сотворил _Цепь молний_ на *ex* нанеся 2.34 урона
-\\[ ex ⚡ 💔-2.34/5.66 📖31
-qui ⚡  💔-2.11/5.89 📖17
-est ⚡  💔-1.87/6.13 📖15 ]",
+  {
+    "action": "Цепь молний",
+    "actionType": "aoe-dmg-magic",
+    "dmg": 2.34,
+    "dmgType": "lighting",
+    "effect": undefined,
+    "exp": 31,
+    "expArr": [
+      {
+        "exp": 17,
+        "hp": 5.89,
+        "id": "2d0ef768-4c94-427f-a50f-8363cd53ed98",
+        "name": "id",
+        "val": 2.11,
+      },
+      {
+        "exp": 15,
+        "hp": 6.13,
+        "id": "33c99000-70a6-4e90-bfc6-5f192d396a54",
+        "name": "molestiae",
+        "val": 1.87,
+      },
+    ],
+    "hp": 5.63,
+    "initiator": "id",
+    "msg": undefined,
+    "target": "magni",
+  },
 ]
 `;
 
 exports[`chainLightning should hit 4 targets 1`] = `
 [
-  8,
-  4.64,
   4.98,
-  5.28,
+  4.64,
+  5.31,
   5.65,
+  8,
   8,
   8,
   8,
@@ -74,22 +122,52 @@ exports[`chainLightning should hit 4 targets 2`] = `104`;
 
 exports[`chainLightning should hit 4 targets 3`] = `
 [
-  "*explicabo* сотворил _Цепь молний_ на *et* нанеся 3.36 урона
-\\[ et ⚡ 💔-3.36/4.64 📖39
-eum ⚡  💔-3.02/4.98 📖24
-veritatis ⚡  💔-2.72/5.28 📖22
-deserunt ⚡  💔-2.35/5.65 📖19 ]",
+  {
+    "action": "Цепь молний",
+    "actionType": "aoe-dmg-magic",
+    "dmg": 3.36,
+    "dmgType": "lighting",
+    "effect": undefined,
+    "exp": 39,
+    "expArr": [
+      {
+        "exp": 24,
+        "hp": 4.98,
+        "id": "14edb8f1-372b-4e3b-913c-9c3e0b812060",
+        "name": "ex",
+        "val": 3.02,
+      },
+      {
+        "exp": 22,
+        "hp": 5.31,
+        "id": "00831d48-28fd-4413-9199-e6850dc43bc9",
+        "name": "et",
+        "val": 2.69,
+      },
+      {
+        "exp": 19,
+        "hp": 5.65,
+        "id": "76dcb686-3502-41e0-b1c3-8b08a0214f59",
+        "name": "repellendus",
+        "val": 2.35,
+      },
+    ],
+    "hp": 4.64,
+    "initiator": "ex",
+    "msg": undefined,
+    "target": "aut",
+  },
 ]
 `;
 
 exports[`chainLightning should hit 5 targets 1`] = `
 [
-  8,
+  4.06,
   3.59,
-  4.03,
-  4.46,
-  4.93,
-  5.35,
+  4.47,
+  4.9,
+  5.37,
+  8,
   8,
   8,
   8,
@@ -102,11 +180,47 @@ exports[`chainLightning should hit 5 targets 2`] = `153`;
 
 exports[`chainLightning should hit 5 targets 3`] = `
 [
-  "*asperiores* сотворил _Цепь молний_ на *magni* нанеся 4.41 урона
-\\[ magni ⚡ 💔-4.41/3.59 📖47
-labore ⚡  💔-3.97/4.03 📖32
-iure ⚡  💔-3.54/4.46 📖28
-recusandae ⚡  💔-3.07/4.93 📖25
-ipsam ⚡  💔-2.65/5.35 📖21 ]",
+  {
+    "action": "Цепь молний",
+    "actionType": "aoe-dmg-magic",
+    "dmg": 4.38,
+    "dmgType": "lighting",
+    "effect": undefined,
+    "exp": 47,
+    "expArr": [
+      {
+        "exp": 32,
+        "hp": 4.06,
+        "id": "41b8eded-0d04-420e-a196-bf683b452acd",
+        "name": "asperiores",
+        "val": 3.94,
+      },
+      {
+        "exp": 28,
+        "hp": 4.47,
+        "id": "700c9fab-547c-4311-97e1-5e412801ae3e",
+        "name": "labore",
+        "val": 3.53,
+      },
+      {
+        "exp": 25,
+        "hp": 4.9,
+        "id": "54790999-3f94-4b31-a6fb-6680c80a28cf",
+        "name": "iure",
+        "val": 3.1,
+      },
+      {
+        "exp": 21,
+        "hp": 5.37,
+        "id": "19ee8272-fc66-482a-b559-dab2eb9ac55c",
+        "name": "recusandae",
+        "val": 2.63,
+      },
+    ],
+    "hp": 3.59,
+    "initiator": "asperiores",
+    "msg": undefined,
+    "target": "magni",
+  },
 ]
 `;

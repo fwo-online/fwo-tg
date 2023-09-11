@@ -74,8 +74,19 @@ export default class TestUtils {
   }
 
   static normalizeRoundHistory(history: HistoryItem[]) {
-    return history.map(({ weapon, ...item }) => ({
-      ...item,
-    }));
+    return history.map((item) => {
+      if ('weapon' in item) {
+        // @ts-expect-error todo
+        item.weapon = { code: item.weapon.code };
+      }
+      if ('expArr' in item) {
+        item.expArr = item.expArr.map((item) => ({
+          ...item,
+          id: casual.uuid,
+        }));
+      }
+
+      return item;
+    });
   }
 }

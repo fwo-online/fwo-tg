@@ -45,7 +45,7 @@ describe('chainLightning', () => {
       game.players.players.map((player) => player.stats.val('hp')),
     ).toMatchSnapshot();
     expect(game.players.players[0].stats.val('exp')).toMatchSnapshot();
-    expect(game.battleLog.format()).toMatchSnapshot();
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
 
   it('should hit 4 targets', () => {
@@ -58,7 +58,7 @@ describe('chainLightning', () => {
       game.players.players.map((player) => player.stats.val('hp')),
     ).toMatchSnapshot();
     expect(game.players.players[0].stats.val('exp')).toMatchSnapshot();
-    expect(game.battleLog.format()).toMatchSnapshot();
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
 
   it('should hit 3 targets', () => {
@@ -71,7 +71,7 @@ describe('chainLightning', () => {
       game.players.players.map((player) => player.stats.val('hp')),
     ).toMatchSnapshot();
     expect(game.players.players[0].stats.val('exp')).toMatchSnapshot();
-    expect(game.battleLog.format()).toMatchSnapshot();
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
 
   it('should hit 3 targets without clan', () => {
@@ -84,6 +84,6 @@ describe('chainLightning', () => {
       game.players.players.map((player) => player.stats.val('hp')),
     ).toMatchSnapshot();
     expect(game.players.players[0].stats.val('exp')).toMatchSnapshot();
-    expect(game.battleLog.format()).toMatchSnapshot();
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
 });

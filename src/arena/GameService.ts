@@ -3,13 +3,13 @@ import { createGame } from '@/api/game';
 import { Profs } from '../data';
 import * as channelHelper from '../helpers/channelHelper';
 import type { Game } from '../models/game';
-import { BattleLog } from './BattleLog';
 import type { LongItem } from './Constuructors/LongMagicConstructor';
 import { engine } from './engineService';
-import HistoryService, { historyObj } from './HistoryService';
+import { HistoryService, type HistoryItem } from './HistoryService';
+import { LogService } from './LogService';
 import type * as magics from './magics';
 import OrderService from './OrderService';
-import PlayersService, { Player } from './PlayersService';
+import PlayersService, { type Player } from './PlayersService';
 import { RoundService, RoundStatus } from './RoundService';
 import testGame from './testGame';
 import arena from './index';
@@ -37,7 +37,7 @@ export default class GameService {
   players: PlayersService;
   round = new RoundService();
   orders = new OrderService();
-  battleLog = new BattleLog();
+  logger = new LogService();
   history = new HistoryService();
   longActions: Partial<Record<keyof typeof magics, LongItem[]>> = {};
   info!: Game;
@@ -87,7 +87,7 @@ export default class GameService {
   }
 
   get checkRoundDamage(): boolean {
-    return !!this.history.getRoundDamage(this.round.count).length;
+    return !!this.history.hasDamageForRound(this.round.count);
   }
 
   /**
@@ -224,11 +224,12 @@ export default class GameService {
     }
   }
 
-  addHistoryDamage(dmgObj: Omit<historyObj, 'round'>): void {
-    this.history.addDamage({
-      ...dmgObj,
-      round: this.round.count,
-    });
+  recordOrderResult(item: HistoryItem) {
+    this.history.addHistoryForRound(item, this.round.count);
+  }
+
+  getRoundResults() {
+    return this.history.getHistoryForRound(this.round.count);
   }
 
   /**
@@ -281,10 +282,9 @@ export default class GameService {
     this.flags.global = {};
   }
 
-  async sendMessages(): Promise<void> {
-    const messages = this.battleLog.format();
-    await channelHelper.sendBattleLogMessages(messages);
-    this.battleLog.reset();
+  async sendMessages(messages: HistoryItem[]): Promise<void> {
+    console.log(messages);
+    await this.logger.sendBattleLog(messages);
   }
 
   /**
@@ -300,7 +300,7 @@ export default class GameService {
           break;
         }
         case RoundStatus.END_ROUND: {
-          void this.sendMessages();
+          void this.sendMessages(this.getRoundResults());
           this.sortDead();
           this.players.reset();
           this.orders.reset();

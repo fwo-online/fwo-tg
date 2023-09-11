@@ -50,7 +50,7 @@ describe('fireBall', () => {
       game.players.players.map((player) => player.stats.val('hp')),
     ).toMatchSnapshot();
     expect(game.players.players[0].stats.val('exp')).toMatchSnapshot();
-    expect(game.battleLog.format()).toMatchSnapshot();
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
 
   it('should hit 1 target', () => {
@@ -62,6 +62,6 @@ describe('fireBall', () => {
       game.players.players.map((player) => player.stats.val('hp')),
     ).toMatchSnapshot();
     expect(game.players.players[0].stats.val('exp')).toMatchSnapshot();
-    expect(game.battleLog.format()).toMatchSnapshot();
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
 });

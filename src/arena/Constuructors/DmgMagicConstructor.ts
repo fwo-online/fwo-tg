@@ -114,7 +114,6 @@ export abstract class DmgMagic extends Magic {
       dmgType: this.dmgType,
     };
 
-    game.addHistoryDamage(args);
-    game.battleLog.success(args);
+    game.recordOrderResult(args);
   }
 }

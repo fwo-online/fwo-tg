@@ -1,68 +1,68 @@
-import { BattleLog } from '@/arena/BattleLog';
+import { LogService } from '@/arena/LogService';
 import TestUtils from '@/utils/testUtils';
 
 // npm t src/arena/BattleLog/BattleLog.test.ts
 
 describe('BattleLog', () => {
-  const battlelog = new BattleLog();
+  let messages: string[] = [];
+  const writer = (data: string[]) => {
+    messages = data;
+  };
+
+  const logService = new LogService(writer);
 
   afterEach(() => {
-    battlelog.reset();
+    messages = [];
   });
 
   it('should format magic messages', async () => {
-    battlelog.success({
+    await logService.sendBattleLog([{
       actionType: 'magic',
       action: 'Magic',
       initiator: 'Player 1',
       target: 'Player 2',
       exp: 25,
-    });
-
-    battlelog.success({
+    }, {
       actionType: 'magic',
       action: 'Magic',
       initiator: 'Player 1',
       target: 'Player 2',
       exp: 25,
       effect: 10,
-    });
-
-    battlelog.fail({
+    },
+    {
       actionType: 'magic',
       action: 'Magic',
       initiator: 'Player 1',
       target: 'Player 2',
       message: 'GOD_FAIL',
-    });
+    }]);
 
-    expect(battlelog.format()).toMatchSnapshot();
+    expect(messages).toMatchSnapshot();
   });
 
   it('should format skill messages', async () => {
-    battlelog.success({
+    await logService.sendBattleLog([{
       actionType: 'skill',
       action: 'Skill',
       initiator: 'Player 1',
       target: 'Player 2',
       exp: 25,
-    });
-
-    battlelog.fail({
+    }, {
       actionType: 'skill',
       action: 'Skill',
       initiator: 'Player 1',
       target: 'Player 2',
       message: 'SKILL_FAIL',
-    });
+    }]);
 
-    expect(battlelog.format()).toMatchSnapshot();
+    expect(messages).toMatchSnapshot();
   });
 
   it('should format phys messages', async () => {
     const weapon = await TestUtils.getWeapon();
 
-    battlelog.success({
+    await logService.sendBattleLog([{
       actionType: 'phys',
       action: 'Phys',
       initiator: 'Player 1',
@@ -72,22 +72,20 @@ describe('BattleLog', () => {
       exp: 25,
       dmg: 10,
       hp: 90,
-    });
-
-    battlelog.fail({
+    }, {
       actionType: 'phys',
       action: 'Phys',
       initiator: 'Player 1',
       target: 'Player 2',
       weapon,
       message: 'DEF',
-    });
+    }]);
 
-    expect(battlelog.format()).toMatchSnapshot();
+    expect(messages).toMatchSnapshot();
   });
 
   it('should format dmg-magic messages', async () => {
-    battlelog.success({
+    await logService.sendBattleLog([{
       actionType: 'dmg-magic',
       action: 'Dmg Magic',
       initiator: 'Player 1',
@@ -96,21 +94,20 @@ describe('BattleLog', () => {
       exp: 25,
       dmg: 10,
       hp: 90,
-    });
-
-    battlelog.fail({
+    },
+    {
       actionType: 'dmg-magic',
       action: 'Phys',
       initiator: 'Player 1',
       target: 'Player 2',
       message: 'NO_MANA',
-    });
+    }]);
 
-    expect(battlelog.format()).toMatchSnapshot();
+    expect(messages).toMatchSnapshot();
   });
 
   it('should format heal-magic messages', async () => {
-    battlelog.success({
+    await logService.sendBattleLog([{
       actionType: 'heal-magic',
       action: 'Heal Magic',
       initiator: 'Player 1',
@@ -118,21 +115,19 @@ describe('BattleLog', () => {
       exp: 10,
       hp: 110,
       effect: 10,
-    });
-
-    battlelog.fail({
+    }, {
       actionType: 'heal-magic',
       action: 'Heal Magic',
       initiator: 'Player 1',
       target: 'Player 2',
       message: 'SILENCED',
-    });
+    }]);
 
-    expect(battlelog.format()).toMatchSnapshot();
+    expect(messages).toMatchSnapshot();
   });
 
   it('should format heal messages with rigth order', async () => {
-    battlelog.success({
+    await logService.sendBattleLog([{
       actionType: 'heal',
       action: 'Heal',
       initiator: 'Player 1',
@@ -142,9 +137,7 @@ describe('BattleLog', () => {
       }],
       hp: 110,
       effect: 10,
-    });
-
-    battlelog.success({
+    }, {
       actionType: 'heal',
       action: 'Heal',
       initiator: 'Player 3',
@@ -154,65 +147,55 @@ describe('BattleLog', () => {
       }],
       hp: 120,
       effect: 10,
-    });
-
-    battlelog.fail({
+    }, {
       actionType: 'heal',
       action: 'Heal',
       initiator: 'Player 1',
       target: 'Player 2',
       message: 'SILENCED',
-    });
+    }]);
 
-    expect(battlelog.format()).toMatchSnapshot();
+    expect(messages).toMatchSnapshot();
   });
 
   it('should format long magic messages with rigth order', async () => {
-    battlelog.success({
+    await logService.sendBattleLog([{
       actionType: 'magic-long',
       action: 'Magic 1',
       initiator: 'Player 2',
       target: 'Player 1',
       exp: 25,
-    });
-
-    battlelog.success({
+    }, {
       actionType: 'magic-long',
       action: 'Magic 1',
       initiator: 'Player 1',
       target: 'Player 2',
       exp: 25,
-    });
-
-    battlelog.success({
+    }, {
       actionType: 'magic-long',
       action: 'Magic 1',
       initiator: 'Player 1',
       target: 'Player 2',
       exp: 25,
-    });
-
-    battlelog.success({
+    }, {
       actionType: 'magic-long',
       action: 'Magic 2',
       initiator: 'Player 1',
       target: 'Player 2',
       exp: 25,
-    });
-
-    battlelog.success({
+    }, {
       actionType: 'magic-long',
       action: 'Magic 2',
       initiator: 'Player 2',
       target: 'Player 1',
       exp: 25,
-    });
+    }]);
 
-    expect(battlelog.format()).toMatchSnapshot();
+    expect(messages).toMatchSnapshot();
   });
 
   it('should format long dmg magic messages with rigth order', async () => {
-    battlelog.success({
+    await logService.sendBattleLog([{
       actionType: 'dmg-magic-long',
       action: 'Magic 1',
       initiator: 'Player 2',
@@ -221,9 +204,7 @@ describe('BattleLog', () => {
       exp: 25,
       dmg: 25,
       hp: 75,
-    });
-
-    battlelog.success({
+    }, {
       actionType: 'dmg-magic-long',
       action: 'Magic 1',
       initiator: 'Player 1',
@@ -232,9 +213,7 @@ describe('BattleLog', () => {
       exp: 25,
       dmg: 25,
       hp: 75,
-    });
-
-    battlelog.success({
+    }, {
       actionType: 'dmg-magic-long',
       action: 'Magic 1',
       initiator: 'Player 1',
@@ -243,9 +222,7 @@ describe('BattleLog', () => {
       exp: 25,
       dmg: 25,
       hp: 50,
-    });
-
-    battlelog.success({
+    }, {
       actionType: 'dmg-magic-long',
       action: 'Magic 2',
       initiator: 'Player 1',
@@ -254,9 +231,7 @@ describe('BattleLog', () => {
       exp: 25,
       dmg: 25,
       hp: 25,
-    });
-
-    battlelog.success({
+    }, {
       actionType: 'dmg-magic-long',
       action: 'Magic 2',
       initiator: 'Player 2',
@@ -265,21 +240,21 @@ describe('BattleLog', () => {
       exp: 25,
       dmg: 25,
       hp: 50,
-    });
+    }]);
 
-    expect(battlelog.format()).toMatchSnapshot();
+    expect(messages).toMatchSnapshot();
   });
 
   it('should use custom message', async () => {
-    battlelog.success({
+    await logService.sendBattleLog([{
       actionType: 'skill',
       action: 'Skill',
       exp: 10,
       initiator: 'Initiator',
       target: 'Target',
       msg: (args) => `custom ${args.initiator}|${args.target}|${args.action}|${args.actionType}`,
-    });
+    }]);
 
-    expect(battlelog.format()).toMatchSnapshot();
+    expect(messages).toMatchSnapshot();
   });
 });
