@@ -62,6 +62,7 @@ harkScene.action(/confirm|reset|back|increase(?=_)/, async (ctx) => {
       ctx.session.character.increaseHark(hark);
     } catch (e) {
       await ctx.answerCbQuery(e.message);
+      return;
     }
   }
   if (ctx.match.input === 'confirm') {
