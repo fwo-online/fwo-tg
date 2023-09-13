@@ -56,11 +56,11 @@ export abstract class DmgMagic extends Magic {
   }
 
   applyCasterModifiers(effect: number, initiator: Player): number {
-    return effect * (1 + 0.004 * initiator.stats.val('mga'));
+    return effect * (1 + 0.04 * initiator.stats.val('mga'));
   }
 
   applyTargetModifiers(effect: number, target: Player): number {
-    return effect * (1 - 0.002 * target.stats.val('mgp'));
+    return effect * (1 - 0.02 * target.stats.val('mgp'));
   }
 
   applyResists(effect: number, target: Player): number {
