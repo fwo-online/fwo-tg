@@ -3,8 +3,9 @@ import type { HealNext } from '@/arena/Constuructors/HealMagicConstructor';
 import type { LongDmgMagicNext } from '@/arena/Constuructors/LongDmgMagicConstructor';
 import type { LongMagicNext } from '@/arena/Constuructors/LongMagicConstructor';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
+import { isSuccessResult } from '@/arena/Constuructors/utils';
 import { floatNumber } from '@/utils/floatNumber';
-import type { Message } from '../BattleLog';
+import type { Message } from '../LogService';
 
 export function joinHealMessages(messages: Message[], newMessage: HealNext): Message[] {
   const copy = cloneDeep(messages);
@@ -64,5 +65,5 @@ function isSameMessage<T extends SuccessArgs>(
     && a.actionType === b.actionType
     && (options?.ignoreInitiator ? true : a.initiator === b.initiator)
     && (options?.ignoreTarget ? true : a.target === b.target)
-    && !('message' in a);
+    && isSuccessResult(a);
 }

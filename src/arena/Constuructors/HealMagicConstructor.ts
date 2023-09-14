@@ -70,8 +70,7 @@ export abstract class Heal {
       // this.backToLife();
       this.next();
     } catch (e) {
-      const { battleLog } = this.params.game;
-      battleLog.fail(e);
+      game.recordOrderResult(e);
     }
   }
 
@@ -130,8 +129,7 @@ export abstract class Heal {
    * Функция положительного прохождения
    */
   next(): void {
-    const { target, initiator } = this.params;
-    const { battleLog } = this.params.game;
+    const { target, initiator, game } = this.params;
     const exp: ExpArr[number] = {
       id: initiator.id,
       name: initiator.nick,
@@ -147,6 +145,6 @@ export abstract class Heal {
       effect: this.status.val,
       hp: target.stats.val('hp'),
     };
-    battleLog.success(args);
+    game.recordOrderResult(args);
   }
 }

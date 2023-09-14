@@ -45,8 +45,7 @@ export abstract class LongDmgMagic extends DmgMagic {
       this.next();
       this.postRun(initiator, target, game);
     } catch (failMsg) {
-      const { battleLog } = this.params.game;
-      battleLog.fail(failMsg);
+      game.recordOrderResult(failMsg);
     } finally {
       this.resetStatus();
     }
@@ -91,7 +90,7 @@ export abstract class LongDmgMagic extends DmgMagic {
         this.checkTargetIsDead(); // проверка трупов в длительных магиях
         this.longNext(initiator, target);
       } catch (e) {
-        game.battleLog.fail(e);
+        game.recordOrderResult(e);
       }
     });
     const filteredLongArray = longArray.filter((item) => item.duration !== 0);
@@ -139,7 +138,7 @@ export abstract class LongDmgMagic extends DmgMagic {
       dmgType: this.dmgType,
       msg: this.longCustomMessage?.bind(this),
     };
-    game.addHistoryDamage(dmgObj);
-    game.battleLog.success(dmgObj);
+
+    game.recordOrderResult(dmgObj);
   }
 }

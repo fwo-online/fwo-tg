@@ -80,10 +80,9 @@ export abstract class Magic {
 
       this.next();
     } catch (failMsg) {
-      const bl = this.params.game.battleLog;
       // @fixme прокидываем ошибку выше для длительных кастов
       if (this.isLong) throw (failMsg);
-      bl.fail(failMsg);
+      game.recordOrderResult(failMsg);
     } finally {
       this.resetStatus();
     }
@@ -299,7 +298,7 @@ export abstract class Magic {
    * @todo тут нужен вывод требуемых параметров
    */
   next(): void {
-    const { battleLog } = this.params.game;
-    battleLog.success(this.getNextArgs());
+    const { game } = this.params;
+    game.recordOrderResult(this.getNextArgs());
   }
 }

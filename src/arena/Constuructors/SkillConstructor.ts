@@ -68,7 +68,7 @@ export abstract class Skill {
       this.next();
       this.getExp(initiator);
     } catch (failMsg) {
-      game.battleLog.fail(failMsg);
+      game.recordOrderResult(failMsg);
     }
   }
 
@@ -111,15 +111,17 @@ export abstract class Skill {
    * Успешное прохождение скила и отправка записи в BattleLog
    */
   next(): void {
+    const { initiator, target, game } = this.params;
     const args: SkillNext = {
       exp: this.baseExp,
       action: this.displayName,
       actionType: 'skill',
-      target: this.params.target.nick,
-      initiator: this.params.initiator.nick,
+      target: target.nick,
+      initiator: initiator.nick,
       msg: this.customMessage?.bind(this),
     };
-    this.params.game.battleLog.success(args);
+
+    game.recordOrderResult(args);
   }
 
   /**

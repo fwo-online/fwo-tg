@@ -71,7 +71,6 @@ export abstract class AoeDmgMagic extends DmgMagic {
       dmgType: this.dmgType,
     };
 
-    game.addHistoryDamage(args);
-    game.battleLog.success(args);
+    game.recordOrderResult(args);
   }
 }

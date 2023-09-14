@@ -26,8 +26,7 @@ export class HealMagic extends CommonMagic {
   }
 
   next(): void {
-    const { target, initiator } = this.params;
-    const { battleLog } = this.params.game;
+    const { target, initiator, game } = this.params;
     const args: HealMagicNext = {
       exp: this.status.exp,
       action: this.displayName,
@@ -38,6 +37,7 @@ export class HealMagic extends CommonMagic {
       effect: this.status.effect,
       msg: this.customMessage?.bind(this),
     };
-    battleLog.success(args);
+
+    game.recordOrderResult(args);
   }
 }

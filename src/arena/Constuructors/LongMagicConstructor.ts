@@ -49,8 +49,7 @@ export abstract class LongMagic extends CommonMagic {
       this.next();
       this.postRun(initiator, target, game);
     } catch (failMsg) {
-      const { battleLog } = this.params.game;
-      battleLog.fail(failMsg);
+      game.recordOrderResult(failMsg);
     } finally {
       this.resetStatus();
     }
@@ -91,7 +90,7 @@ export abstract class LongMagic extends CommonMagic {
         this.checkTargetIsDead(); // проверка трупов в длительных магиях
         this.longNext(initiator, target);
       } catch (e) {
-        game.battleLog.fail(e);
+        game.recordOrderResult(e);
       }
     });
     const filteredLongArray = longArray.filter((item) => item.duration !== 0);
@@ -121,16 +120,16 @@ export abstract class LongMagic extends CommonMagic {
   }
 
   next(): void {
-    const { battleLog } = this.params.game;
+    const { initiator, target, game } = this.params;
     const args: MagicNext = {
       exp: this.status.exp,
       action: this.displayName,
       actionType: 'magic',
-      target: this.params.target.nick,
-      initiator: this.params.initiator.nick,
+      target: target.nick,
+      initiator: initiator.nick,
       msg: this.customMessage?.bind(this),
     };
-    battleLog.success(args);
+    game.recordOrderResult(args);
   }
 
   /**
@@ -139,7 +138,7 @@ export abstract class LongMagic extends CommonMagic {
    * @param target
    */
   longNext(initiator: Player, target: Player): void {
-    const { battleLog } = this.params.game;
+    const { game } = this.params;
     const args: LongMagicNext = {
       exp: this.status.exp,
       action: this.displayName,
@@ -148,7 +147,7 @@ export abstract class LongMagic extends CommonMagic {
       initiator: initiator.nick,
       msg: this.longCustomMessage?.bind(this),
     };
-    battleLog.success(args);
+    game.recordOrderResult(args);
   }
 }
 

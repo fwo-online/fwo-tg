@@ -129,7 +129,7 @@ export default {
       'frostTouch', 'acidSpittle', 'chainLightning', 'fireRain',
       'wild_lighting',
       'rockfall',
-      'physical_sadness'],
+      'physicalSadness'],
     'magic_sadness',
     [
       'lightHeal',

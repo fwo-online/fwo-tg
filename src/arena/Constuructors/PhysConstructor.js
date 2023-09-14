@@ -170,11 +170,10 @@ class PhysConstructor {
    * Функция агрегации данных после выполннения действия
    */
   next(failMsg) {
-    const { initiator, target } = this.params;
-    const { game } = this.params;
+    const { initiator, target, game } = this.params;
     const weapon = initiator.weapon ? arena.items[initiator.weapon.code] : {};
     if (failMsg) {
-      game.battleLog.fail({ ...failMsg, weapon });
+      game.recordOrderResult({ ...failMsg, weapon });
     } else {
       const msg = {
         exp: this.status.exp,
@@ -187,8 +186,7 @@ class PhysConstructor {
         weapon,
         dmgType: 'physical',
       };
-      game.addHistoryDamage(msg);
-      game.battleLog.success(msg);
+      game.recordOrderResult(msg);
     }
   }
 

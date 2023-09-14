@@ -1,4 +1,7 @@
 import type { SuccessArgs, FailArgs } from '@/arena/Constuructors/types';
+import { isSuccessResult } from '@/arena/Constuructors/utils';
+import type { HistoryItem } from '@/arena/HistoryService';
+import { sendBattleLogMessages } from '@/helpers/channelHelper';
 import {
   joinLongDmgMessages, joinLongMessages, formatMessage, joinHealMessages,
 } from './utils';
@@ -6,24 +9,46 @@ import {
 export type Message = SuccessArgs | FailArgs
 
 type Formatter = (message: Message) => string;
+type Writer = (data: string | string[]) => void | Promise<void>
 
 /**
  * Класс вывода данных в battlelog
  * @todo WIP класс в стадии формирования
  * @see https://trello.com/c/qxnIM1Yq/17
  */
-export class BattleLog {
+export class LogService {
   private messages: Message[] = [];
 
   constructor(
+    private writer: Writer = sendBattleLogMessages,
     private formatter: Formatter = formatMessage,
   ) {}
+
+  async sendBattleLog(history: HistoryItem[]) {
+    history.forEach((item) => {
+      if (isSuccessResult(item)) {
+        this.success(item);
+      } else {
+        this.fail(item);
+      }
+    });
+
+    try {
+      const x = this.format();
+      console.log(x);
+      await this.writer(x);
+    } catch (e) {
+      console.log('sendBattleLog: ', e);
+    } finally {
+      this.reset();
+    }
+  }
 
   /**
    * Удачный проход action
    * @param message сообщение
    */
-  success(message: SuccessArgs) {
+  private success(message: SuccessArgs) {
     switch (message.actionType) {
       case 'heal':
         this.messages = joinHealMessages(this.messages, message);
@@ -44,15 +69,15 @@ export class BattleLog {
    * Неудачный проход action
    * @param message сообщение
    */
-  fail(message: FailArgs): void {
+  private fail(message: FailArgs): void {
     this.messages.push(message);
   }
 
-  format() {
+  private format() {
     return this.messages.map(this.formatter, this);
   }
 
-  reset() {
+  private reset() {
     this.messages = [];
   }
 }
