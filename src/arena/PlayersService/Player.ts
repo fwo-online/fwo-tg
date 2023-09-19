@@ -150,6 +150,10 @@ export default class Player {
     this.flags.isDead = player.id;
   }
 
+  resetKiller(): void {
+    this.flags.isDead = '';
+  }
+
   setProc(proc: number) {
     this.proc = proc;
   }
