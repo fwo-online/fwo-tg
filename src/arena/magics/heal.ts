@@ -25,6 +25,13 @@ export class HealMagic extends CommonMagic {
     initiator.stats.mode('up', 'exp', this.status.exp);
   }
 
+  checkTargetIsDead({ target } = this.params) {
+    const hpNow = target.stats.val('hp');
+    if (hpNow > 0 && target.getKiller()) {
+      target.resetKiller();
+    }
+  }
+
   next(): void {
     const { target, initiator, game } = this.params;
     const args: HealMagicNext = {

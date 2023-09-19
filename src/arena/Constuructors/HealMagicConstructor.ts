@@ -125,6 +125,13 @@ export abstract class Heal {
     return 0;
   }
 
+  checkTargetIsDead({ target } = this.params) {
+    const hpNow = target.stats.val('hp');
+    if (hpNow > 0 && target.getKiller()) {
+      target.resetKiller();
+    }
+  }
+
   /**
    * Функция положительного прохождения
    */
