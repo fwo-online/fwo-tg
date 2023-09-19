@@ -7,7 +7,8 @@
     "start": "NODE_ENV=production ts-node src/fwo.ts",
     "dev": "ts-node src/cli/dev.ts",
     "test": "ts-node src/cli/test.ts -i",
-    "reset-harks": "ts-node src/cli/resetHarks.ts",
+    "reset:harks": "ts-node src/cli/resetHarks.ts",
+    "reset:inventory": "ts-node src/cli/resetInventory.ts",
     "lint": "eslint --fix src/ --ext .js,.ts",
     "types": "tsc --noEmit"
   },
