@@ -10,12 +10,7 @@ lobby.enter(async (ctx) => {
     nickname, prof, lvl, exp, nextLvlExp,
   } = ctx.session.character;
 
-  try {
-    await ctx.sendSticker(MARKET_STICKER_ID);
-  } catch (e) {
-    console.error(e);
-  }
-
+  await ctx.sendSticker(MARKET_STICKER_ID);
   await ctx.replyWithMarkdown(
     `*Лобби*
 Так-так, значит ты *${nickname}* ${Profs.profsData[prof].icon}${lvl} (📖${exp}/${nextLvlExp})`,
