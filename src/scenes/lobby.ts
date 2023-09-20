@@ -1,4 +1,5 @@
 import { Scenes, Markup } from 'telegraf';
+import { MARKET_STICKER_ID } from '@/assets/stickers';
 import { Profs } from '../data';
 import type { BotContext } from '../fwo';
 
@@ -9,12 +10,7 @@ lobby.enter(async (ctx) => {
     nickname, prof, lvl, exp, nextLvlExp,
   } = ctx.session.character;
 
-  try {
-    await ctx.replyWithPhoto({ source: './src/assets/market.jpg' });
-  } catch (e) {
-    console.error(e);
-  }
-
+  await ctx.sendSticker(MARKET_STICKER_ID);
   await ctx.replyWithMarkdown(
     `*Лобби*
 Так-так, значит ты *${nickname}* ${Profs.profsData[prof].icon}${lvl} (📖${exp}/${nextLvlExp})`,

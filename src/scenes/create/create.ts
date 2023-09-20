@@ -1,4 +1,5 @@
 import { Scenes } from 'telegraf';
+import { GREET_STICKER_ID } from '@/assets/stickers';
 import type { Prof } from '../../data/profs';
 import type { BotContext } from '../../fwo';
 import * as loginHelper from '../../helpers/loginHelper';
@@ -38,6 +39,7 @@ export const create = new Scenes.BaseScene<CreateBotContext>('create');
 
 create.enter(async (ctx) => {
   ctx.session.hearNick = false;
+  await ctx.sendSticker(GREET_STICKER_ID);
   await ctx.reply(
     messages.enter,
     keyboards.create,
