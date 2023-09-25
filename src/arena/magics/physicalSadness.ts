@@ -26,7 +26,7 @@ class PhysicalSadness extends DmgMagic {
       chance: [95, 95, 95],
       effect: ['1d1', '1d2', '1d1+1'],
       dmgType: 'physical',
-      profList: ['m'],
+      profList: ['p'],
     });
   }
 
@@ -42,7 +42,7 @@ class PhysicalSadness extends DmgMagic {
     const effect = this.effectVal();
 
     const totalHit = physicalDamageResults.reduce((sum, result) => sum + result.dmg, 0);
-    const hit = effect * (totalHit / physicalDamageResults.length);
+    const hit = effect + (totalHit / physicalDamageResults.length + 1);
 
     this.status.hit = hit;
 
