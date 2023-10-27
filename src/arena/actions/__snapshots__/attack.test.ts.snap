@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`attack should dodge 1`] = `
+[
+  8,
+  8,
+]
+`;
+
+exports[`attack should dodge 2`] = `0`;
+
+exports[`attack should dodge 3`] = `
+[
+  {
+    "action": "🐍 Увертка",
+    "actionType": "skill",
+    "exp": 50,
+    "initiator": "magni",
+    "msg": [Function],
+    "target": "asperiores",
+  },
+  {
+    "action": "attack",
+    "actionType": "phys",
+    "initiator": "asperiores",
+    "message": "DODGED",
+    "target": "magni",
+    "weapon": {
+      "code": "a100",
+    },
+  },
+]
+`;
+
+exports[`attack should not dodge 1`] = `
+[
+  8,
+  -2.3,
+]
+`;
+
+exports[`attack should not dodge 2`] = `82`;
+
+exports[`attack should not dodge 3`] = `
+[
+  {
+    "action": "🐍 Увертка",
+    "actionType": "skill",
+    "initiator": "amet",
+    "message": "SKILL_FAIL",
+    "target": "ratione",
+  },
+  {
+    "action": "attack",
+    "actionType": "phys",
+    "dmg": 10.3,
+    "dmgType": "physical",
+    "exp": 82,
+    "hp": -2.3,
+    "initiator": "ratione",
+    "target": "amet",
+    "weapon": {
+      "code": "a100",
+    },
+  },
+]
+`;

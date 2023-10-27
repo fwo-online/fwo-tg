@@ -3,7 +3,7 @@ import type Game from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import type {
-  CostType, OrderType, AOEType, Breaks, BreaksMessage, CustomMessage, BaseNext,
+  CostType, OrderType, AOEType, BreaksMessage, CustomMessage, BaseNext, Breaks,
 } from './types';
 
 export type SkillNext = BaseNext & {
@@ -65,8 +65,6 @@ export abstract class Skill {
       this.getCost();
       this.checkChance();
       this.run();
-      this.next();
-      this.getExp(initiator);
     } catch (failMsg) {
       game.recordOrderResult(failMsg);
     }
@@ -108,10 +106,16 @@ export abstract class Skill {
   }
 
   /**
+   * Рассчитываем полученный exp
+   */
+  getExp(initiator: Player): void {
+    initiator.stats.up('exp', this.baseExp);
+  }
+
+  /**
    * Успешное прохождение скила и отправка записи в BattleLog
    */
-  next(): void {
-    const { initiator, target, game } = this.params;
+  next({ initiator, target, game } = this.params): void {
     const args: SkillNext = {
       exp: this.baseExp,
       action: this.displayName,
@@ -124,23 +128,21 @@ export abstract class Skill {
     game.recordOrderResult(args);
   }
 
-  /**
-   * Расчитываем полученный exp
-   */
-  getExp(initiator: Player): void {
-    initiator.stats.mode('up', 'exp', this.baseExp);
+  success({ initiator, target, game } = this.params) {
+    this.getExp(initiator);
+    this.next({ initiator, target, game });
   }
 
   /**
    * Обработка провала магии
    */
-  breaks(e: BreaksMessage): Breaks {
+  breaks(message: BreaksMessage, { initiator, target } = this.params): Breaks {
     return {
       action: this.displayName,
-      initiator: this.params.initiator.nick,
-      target: this.params.target.nick,
+      initiator: initiator.nick,
+      target: target.nick,
       actionType: 'skill',
-      message: e,
+      message,
     };
   }
 }

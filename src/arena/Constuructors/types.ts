@@ -100,3 +100,9 @@ export interface Breaks {
 }
 
 export type FailArgs = Breaks | PhysBreak;
+
+export type Params = {
+  initiator: Player;
+  target: Player;
+  game: GameService;
+}

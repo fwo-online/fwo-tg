@@ -1,6 +1,7 @@
 const { floatNumber } = require('../../utils/floatNumber');
 const { default: arena } = require('../index');
 const MiscService = require('../MiscService');
+const { dodge } = require('../skills');
 
 /**
  * @typedef {import ('../GameService').default} game
@@ -23,14 +24,20 @@ class PhysConstructor {
    * @property {String} desc
    * @property {Number} lvl
    * @property {String} orderType
+   *
+   * @param {import('./PreAffect').PreAffect[]} preAffects
    */
-  constructor(atkAct) {
+  constructor(atkAct, preAffects = [dodge]) {
     this.name = atkAct.name;
     this.displayName = atkAct.displayName;
     this.desc = atkAct.desc;
     this.lvl = atkAct.lvl;
     this.orderType = atkAct.orderType;
     this.status = { hit: 0, exp: 0 };
+    /**
+   * @type {import('./PreAffect').PreAffect[]}
+   * */
+    this.preAffects = preAffects;
   }
 
   /**
@@ -63,34 +70,13 @@ class PhysConstructor {
    * Проверка флагов влияющих на физический урон
    */
   checkPreAffects() {
-    const { initiator, target, game } = this.params;
-    const iDex = initiator.stats.val('dex');
-    // Глобальная проверка не весит ли затмение на арене
-    if (game.flags.global.isEclipsed) throw this.breaks('ECLIPSE');
-    const weapon = arena.items[initiator.weapon.code];
-    const hasDodgeableItems = MiscService.weaponTypes[weapon.wtype].dodge;
-    // Проверяем увёртку
-    if (target.flags.isDodging && hasDodgeableItems) {
-      /** @todo  возможно следует состряпать static функцию tryDodge внутри скила
-      * уворота которая будет выполнять весь расчет а возвращать только bool
-      * значение. Сейчас эти проверки сильно раздувают PhysConstructor
-      */
-      //  проверяем имеет ли цель достаточно dex для того что бы уклониться
-
-      const at = floatNumber(Math.round(target.flags.isDodging / iDex));
-      console.log('Dodging: ', at);
-      const r = MiscService.rndm('1d100');
-      const c = Math.round(Math.sqrt(at) + (10 * at) + 5);
-      console.log('left:', c, ' right:', r, ' result:', c > r);
-      if (c > r) throw this.breaks('DODGED');
-    }
-    if (target.flags.isParry) {
-      if (+(target.flags.isParry - iDex) > 0) {
-        throw this.breaks('PARRYED');
-      } else {
-        target.flags.isParry -= +iDex;
+    this.preAffects.forEach((preAffect) => {
+      try {
+        preAffect.check(this.params);
+      } catch (e) {
+        throw this.breaks(e.message);
       }
-    }
+    });
   }
 
   /**
