@@ -12,10 +12,6 @@ export const isSuccessDamageResult = (result: SuccessArgs | FailArgs) => {
   return false;
 };
 
-export const isFailResult = (result: SuccessArgs | FailArgs): result is FailArgs => {
-  return 'message' in result;
-};
-
 export const handleCastError = (error: unknown, onActionError: (error: Breaks) => void) => {
   if (error instanceof Error) {
     console.error(error);

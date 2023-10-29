@@ -40,6 +40,10 @@ export abstract class Skill {
     game: Game;
   };
 
+  status = {
+    exp: 0,
+  };
+
   /**
    * Создание скила
    */
@@ -66,6 +70,7 @@ export abstract class Skill {
       this.getCost();
       this.checkChance();
       this.run();
+      this.success();
     } catch (error) {
       handleCastError(error, (error) => {
         this.fail(error.message);
@@ -112,36 +117,43 @@ export abstract class Skill {
    * Рассчитываем полученный exp
    */
   getExp(initiator: Player): void {
-    initiator.stats.up('exp', this.baseExp);
-  }
-
-  getFailResult(message: BreaksMessage, { initiator, target } = this.params): Breaks {
-    return {
-      action: this.displayName,
-      initiator: initiator.nick,
-      target: target.nick,
-      actionType: 'skill',
-      message,
-    };
+    this.status.exp = this.baseExp;
+    initiator.stats.up('exp', this.status.exp);
   }
 
   getSuccessResult({ initiator, target } = this.params): SkillNext {
-    return {
-      exp: this.baseExp,
+    const result: SkillNext = {
+      exp: this.status.exp,
       action: this.displayName,
       actionType: 'skill',
       target: target.nick,
       initiator: initiator.nick,
       msg: this.customMessage?.bind(this),
     };
+
+    this.reset();
+
+    return result;
+  }
+
+  getFailResult(message: BreaksMessage, { initiator, target } = this.params): Breaks {
+    const result: Breaks = {
+      action: this.displayName,
+      initiator: initiator.nick,
+      target: target.nick,
+      actionType: 'skill',
+      message,
+    };
+
+    this.reset();
+
+    return result;
   }
 
   /**
    * Успешное прохождение скила и отправка записи в BattleLog
    */
   success({ initiator, target, game } = this.params): void {
-    this.getExp(initiator);
-
     const result = this.getSuccessResult({ initiator, target, game });
 
     game.recordOrderResult(result);
@@ -154,5 +166,9 @@ export abstract class Skill {
     const result = this.getFailResult(message, { initiator, target, game });
 
     game.recordOrderResult(result);
+  }
+
+  reset() {
+    this.status.exp = 0;
   }
 }

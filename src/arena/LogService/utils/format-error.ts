@@ -1,5 +1,5 @@
 import type { BreaksMessage, FailArgs } from '@/arena/Constuructors/types';
-
+import { formatCause } from './format-cause';
 /**
  * msg
  * @todo WIP, функция должна будет принимать как значения урона т.п так и
@@ -9,11 +9,20 @@ import type { BreaksMessage, FailArgs } from '@/arena/Constuructors/types';
  */
 export function formatError(msgObj: FailArgs): string {
   const {
-    action, message, target, initiator,
+    action, actionType, message, target, initiator, cause,
   } = msgObj;
 
   const expString = 'expArr' in msgObj ? msgObj.expArr.map(({ name, exp }) => `${name}: 📖${exp}`).join(', ') : '';
   const weapon = 'weapon' in msgObj ? msgObj.weapon.case : '';
+
+  if (cause) {
+    switch (actionType) {
+      case 'phys':
+        return `*${initiator} пытался атаковать ${target}, но у него не получилось\n${formatCause(cause)}`;
+      default:
+        return `*${initiator} пытался использовать _${action}_ ${target}, но у него не получилось\n${formatCause(cause)}`;
+    }
+  }
 
   const TEXT: Record<BreaksMessage | 'default', Record<'en' | 'ru', string>> = {
     NO_INITIATOR: {

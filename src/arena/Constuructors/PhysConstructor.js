@@ -2,7 +2,7 @@ const { floatNumber } = require('../../utils/floatNumber');
 const { default: arena } = require('../index');
 const MiscService = require('../MiscService');
 const { dodge, parry, disarm } = require('../skills');
-const { isFailResult } = require('./utils');
+const { isSuccessResult } = require('./utils');
 
 /**
  * @typedef {import ('../GameService').default} game
@@ -74,13 +74,13 @@ class PhysConstructor { /**
    * Проверка флагов влияющих на физический урон
    */
   checkPreAffects() {
-    if (this.game.flags.global.isEclipsed) throw this.breaks('ECLIPSE');
+    if (this.params.game.flags.global.isEclipsed) throw this.breaks('ECLIPSE');
 
     this.preAffects.forEach((preAffect) => {
       const result = preAffect.check(this.params);
 
-      if (result && isFailResult(result)) {
-        throw this.breaks(result.message);
+      if (result && isSuccessResult(result)) {
+        throw this.breaks(result.message, result);
       }
     });
   }
@@ -195,12 +195,14 @@ class PhysConstructor { /**
   }
 
   /**
-   * @param {String} msg строка остановки атаки (причина)
+   * @param {string} message строка остановки атаки (причина)
+   * @param {import('./types').SuccessArgs} cause строка остановки атаки (причина)
    */
-  breaks(msg) {
+  breaks(message, cause) {
     return {
       actionType: 'phys',
-      message: msg,
+      message,
+      cause,
       action: this.name,
       initiator: this.params.initiator.nick,
       target: this.params.target.nick,

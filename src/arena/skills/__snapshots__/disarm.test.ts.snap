@@ -3,18 +3,26 @@
 exports[`disarm target should be disarmed if initiator has more dex 1`] = `
 [
   {
-    "action": "🥊 Обезаруживание",
+    "action": "🥊 Обезоруживание",
     "actionType": "skill",
     "exp": 20,
     "initiator": "alias",
-    "msg": [Function],
+    "msg": undefined,
     "target": "asperiores",
   },
   {
     "action": "attack",
     "actionType": "phys",
+    "cause": {
+      "action": "🥊 Обезоруживание",
+      "actionType": "skill",
+      "exp": 0,
+      "initiator": "alias",
+      "msg": undefined,
+      "target": "asperiores",
+    },
     "initiator": "asperiores",
-    "message": "DISARM",
+    "message": undefined,
     "target": "alias",
     "weapon": {
       "code": "a100",
@@ -26,7 +34,7 @@ exports[`disarm target should be disarmed if initiator has more dex 1`] = `
 exports[`disarm target should not be disarmed if initiator has less dex 1`] = `
 [
   {
-    "action": "🥊 Обезаруживание",
+    "action": "🥊 Обезоруживание",
     "actionType": "skill",
     "initiator": "explicabo",
     "message": "SKILL_FAIL",

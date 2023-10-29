@@ -35,7 +35,7 @@ describe('parry', () => {
     game.players.players[0].proc = 1;
     game.players.players[1].stats.set('dex', 9999);
 
-    parry.cast(game.players.players[1], game.players.players[0], game);
+    parry.cast(game.players.players[1], game.players.players[1], game);
     attack.cast(game.players.players[0], game.players.players[1], game);
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
@@ -45,7 +45,7 @@ describe('parry', () => {
     game.players.players[0].proc = 1;
     game.players.players[0].stats.set('dex', 9999);
 
-    parry.cast(game.players.players[1], game.players.players[0], game);
+    parry.cast(game.players.players[1], game.players.players[1], game);
     attack.cast(game.players.players[0], game.players.players[1], game);
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();

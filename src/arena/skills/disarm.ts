@@ -1,7 +1,5 @@
-import { bold, italic } from '../../utils/formatString';
 import { PreAffect } from '../Constuructors/PreAffect';
 import { Skill } from '../Constuructors/SkillConstructor';
-import type { SuccessArgs } from '../Constuructors/types';
 
 /**
  * Обезаруживание
@@ -10,8 +8,8 @@ class Disarm extends Skill implements PreAffect {
   constructor() {
     super({
       name: 'disarm',
-      displayName: '🥊 Обезаруживание',
-      desc: 'Обезаруживает противника, не давая ему совершить атаку оружием',
+      displayName: '🥊 Обезоруживание',
+      desc: 'Обезоруживает противника, не давая ему совершить атаку оружием',
       cost: [12, 13, 14, 15, 16, 17],
       proc: 10,
       baseExp: 20,
@@ -35,20 +33,16 @@ class Disarm extends Skill implements PreAffect {
     if (iDex >= tDex) {
       target.flags.isDisarmed = true;
 
-      this.success(this.params);
+      this.getExp(target);
     } else {
-      this.fail('SKILL_FAIL', this.params);
+      throw this.getFailResult('SKILL_FAIL');
     }
   }
 
   check({ initiator, target, game } = this.params) {
     if (initiator.flags.isDisarmed) {
-      return this.getFailResult('DISARM', { initiator, target, game });
+      return this.getSuccessResult({ initiator: target, target: initiator, game });
     }
-  }
-
-  customMessage(args: SuccessArgs) {
-    return `${bold(args.initiator)} использовал ${italic(this.displayName)} `;
   }
 }
 

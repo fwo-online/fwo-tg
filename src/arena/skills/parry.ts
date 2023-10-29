@@ -1,7 +1,7 @@
-import { bold, italic } from '../../utils/formatString';
+import { bold, italic } from '@/utils/formatString';
 import { PreAffect } from '../Constuructors/PreAffect';
 import { Skill } from '../Constuructors/SkillConstructor';
-import type { SuccessArgs } from '../Constuructors/types';
+import { SuccessArgs } from '../Constuructors/types';
 
 /**
  * Парирование
@@ -38,13 +38,12 @@ class Parry extends Skill implements PreAffect {
 
     if (target.flags.isParry) {
       if ((target.flags.isParry - initiatorDex) > 0) {
-        this.success({ initiator: target, target: initiator, game });
+        this.getExp(target);
 
-        return this.getFailResult('PARRYED', { initiator, target, game });
+        return this.getSuccessResult({ initiator: target, target: initiator, game });
       }
 
       target.flags.isParry -= +initiatorDex;
-      this.fail('SKILL_FAIL', { initiator, target, game });
     }
   }
 

@@ -1,9 +1,9 @@
 import { floatNumber } from '@/utils/floatNumber';
+import { bold, italic } from '@/utils/formatString';
 import arena from '..';
-import { bold, italic } from '../../utils/formatString';
 import type { PreAffect } from '../Constuructors/PreAffect';
 import { Skill } from '../Constuructors/SkillConstructor';
-import type { SuccessArgs } from '../Constuructors/types';
+import { SuccessArgs } from '../Constuructors/types';
 import MiscService from '../MiscService';
 
 /**
@@ -37,7 +37,7 @@ class Dodge extends Skill implements PreAffect {
   check({ initiator, target, game } = this.params) {
     const iDex = initiator.stats.val('dex');
     if (!initiator.weapon) {
-      return this.getFailResult('NO_WEAPON', { initiator, target, game });
+      return;
     }
     const weapon = arena.items[initiator.weapon.code];
     const isDodgeableWeapon = MiscService.weaponTypes[weapon.wtype].dodge;
@@ -49,12 +49,10 @@ class Dodge extends Skill implements PreAffect {
       const c = Math.round(Math.sqrt(at) + (10 * at) + 5);
       console.log('left:', c, ' right:', r, ' result:', c > r);
       if (c > r) {
-        this.success({ initiator: target, target: initiator, game });
+        this.getExp(target);
 
-        return this.getFailResult('DODGED', { initiator, target, game });
+        return this.getSuccessResult({ initiator: target, target: initiator, game });
       }
-
-      this.fail('SKILL_FAIL', { initiator, target, game });
     }
   }
 

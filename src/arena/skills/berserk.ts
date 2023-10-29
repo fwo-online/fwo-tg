@@ -1,5 +1,6 @@
-import { bold, italic } from '../../utils/formatString';
-import { Skill, SkillNext } from '../Constuructors/SkillConstructor';
+import { bold, italic } from '@/utils/formatString';
+import { Skill } from '../Constuructors/SkillConstructor';
+import { SuccessArgs } from '../Constuructors/types';
 
 /**
  * Берсерк
@@ -32,10 +33,10 @@ class Berserk extends Skill {
     initiator.stats.mul('patk', (1 / effect));
     initiator.stats.mul('mgp', (1 / effect));
 
-    this.success(this.params);
+    this.getExp(this.params.initiator);
   }
 
-  customMessage(args: SkillNext) {
+  customMessage(args: SuccessArgs) {
     return `${bold(args.initiator)} использовал ${italic(this.displayName)}`;
   }
 }
