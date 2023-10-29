@@ -80,7 +80,6 @@ class PhysConstructor { /**
       const result = preAffect.check(this.params);
 
       if (result && isFailResult(result)) {
-        console.log(result.message);
         throw this.breaks(result.message);
       }
     });
