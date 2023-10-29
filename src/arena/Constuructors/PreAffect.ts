@@ -1,5 +1,5 @@
-import { Params } from './types';
+import { Breaks, Params } from './types';
 
 export interface PreAffect {
-  check(params: Params): never | void
+  check(params: Params): Breaks | void
 }

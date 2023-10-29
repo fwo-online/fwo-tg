@@ -31,6 +31,8 @@ class Berserk extends Skill {
     initiator.stats.mul('hit', effect);
     initiator.stats.mul('patk', (1 / effect));
     initiator.stats.mul('mgp', (1 / effect));
+
+    this.success(this.params);
   }
 
   customMessage(args: SkillNext) {

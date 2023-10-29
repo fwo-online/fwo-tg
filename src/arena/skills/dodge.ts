@@ -37,7 +37,7 @@ class Dodge extends Skill implements PreAffect {
   check({ initiator, target, game } = this.params) {
     const iDex = initiator.stats.val('dex');
     if (!initiator.weapon) {
-      return this.breaks('NO_WEAPON');
+      return this.getFailResult('NO_WEAPON', { initiator, target, game });
     }
     const weapon = arena.items[initiator.weapon.code];
     const isDodgeableWeapon = MiscService.weaponTypes[weapon.wtype].dodge;
@@ -51,9 +51,10 @@ class Dodge extends Skill implements PreAffect {
       if (c > r) {
         this.success({ initiator: target, target: initiator, game });
 
-        throw this.breaks('DODGED');
+        return this.getFailResult('DODGED', { initiator, target, game });
       }
-      game.recordOrderResult(this.breaks('SKILL_FAIL', { initiator: target, target: initiator, game }));
+
+      this.fail('SKILL_FAIL', { initiator, target, game });
     }
   }
 

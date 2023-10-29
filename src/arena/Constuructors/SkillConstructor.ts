@@ -3,8 +3,9 @@ import type Game from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import type {
-  CostType, OrderType, AOEType, BreaksMessage, CustomMessage, BaseNext, Breaks,
+  CostType, OrderType, AOEType, CustomMessage, BaseNext, Breaks, BreaksMessage,
 } from './types';
+import { handleCastError } from './utils';
 
 export type SkillNext = BaseNext & {
   actionType: 'skill';
@@ -65,8 +66,10 @@ export abstract class Skill {
       this.getCost();
       this.checkChance();
       this.run();
-    } catch (failMsg) {
-      game.recordOrderResult(failMsg);
+    } catch (error) {
+      handleCastError(error, (error) => {
+        this.fail(error.message);
+      });
     }
   }
 
@@ -81,7 +84,7 @@ export abstract class Skill {
     if (remainingEnergy >= 0) {
       initiator.stats.set(this.costType, remainingEnergy);
     } else {
-      throw this.breaks('NO_ENERGY');
+      throw this.getFailResult('NO_ENERGY');
     }
   }
 
@@ -91,7 +94,7 @@ export abstract class Skill {
   checkChance(): void {
     if (MiscService.rndm('1d100') > this.getChance()) {
       // скил сфейлился
-      throw this.breaks('SKILL_FAIL');
+      throw this.getFailResult('SKILL_FAIL');
     }
   }
 
@@ -112,31 +115,7 @@ export abstract class Skill {
     initiator.stats.up('exp', this.baseExp);
   }
 
-  /**
-   * Успешное прохождение скила и отправка записи в BattleLog
-   */
-  next({ initiator, target, game } = this.params): void {
-    const args: SkillNext = {
-      exp: this.baseExp,
-      action: this.displayName,
-      actionType: 'skill',
-      target: target.nick,
-      initiator: initiator.nick,
-      msg: this.customMessage?.bind(this),
-    };
-
-    game.recordOrderResult(args);
-  }
-
-  success({ initiator, target, game } = this.params) {
-    this.getExp(initiator);
-    this.next({ initiator, target, game });
-  }
-
-  /**
-   * Обработка провала магии
-   */
-  breaks(message: BreaksMessage, { initiator, target } = this.params): Breaks {
+  getFailResult(message: BreaksMessage, { initiator, target } = this.params): Breaks {
     return {
       action: this.displayName,
       initiator: initiator.nick,
@@ -144,5 +123,36 @@ export abstract class Skill {
       actionType: 'skill',
       message,
     };
+  }
+
+  getSuccessResult({ initiator, target } = this.params): SkillNext {
+    return {
+      exp: this.baseExp,
+      action: this.displayName,
+      actionType: 'skill',
+      target: target.nick,
+      initiator: initiator.nick,
+      msg: this.customMessage?.bind(this),
+    };
+  }
+
+  /**
+   * Успешное прохождение скила и отправка записи в BattleLog
+   */
+  success({ initiator, target, game } = this.params): void {
+    this.getExp(initiator);
+
+    const result = this.getSuccessResult({ initiator, target, game });
+
+    game.recordOrderResult(result);
+  }
+
+  /**
+   * Обработка провала магии
+   */
+  fail(message: BreaksMessage, { initiator, target, game } = this.params): void {
+    const result = this.getFailResult(message, { initiator, target, game });
+
+    game.recordOrderResult(result);
   }
 }

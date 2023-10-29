@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`dodge target should dodge attack if has more dex 1`] = `
+[
+  8,
+  8,
+]
+`;
+
+exports[`dodge target should dodge attack if has more dex 2`] = `0`;
+
+exports[`dodge target should dodge attack if has more dex 3`] = `
+[
+  {
+    "action": "🐍 Увертка",
+    "actionType": "skill",
+    "exp": 50,
+    "initiator": "alias",
+    "msg": [Function],
+    "target": "asperiores",
+  },
+  {
+    "action": "attack",
+    "actionType": "phys",
+    "initiator": "asperiores",
+    "message": "DODGED",
+    "target": "alias",
+    "weapon": {
+      "code": "a100",
+    },
+  },
+]
+`;
+
+exports[`dodge target should not dodge attack if has more dex 1`] = `
+[
+  8,
+  -3,
+]
+`;
+
+exports[`dodge target should not dodge attack if has more dex 2`] = `88`;
+
+exports[`dodge target should not dodge attack if has more dex 3`] = `
+[
+  {
+    "action": "🐍 Увертка",
+    "actionType": "skill",
+    "initiator": "repellat",
+    "message": "SKILL_FAIL",
+    "target": "explicabo",
+  },
+  {
+    "action": "attack",
+    "actionType": "phys",
+    "dmg": 11,
+    "dmgType": "physical",
+    "exp": 88,
+    "hp": -3,
+    "initiator": "repellat",
+    "target": "explicabo",
+    "weapon": {
+      "code": "a100",
+    },
+  },
+]
+`;

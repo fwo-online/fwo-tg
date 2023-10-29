@@ -1,11 +1,12 @@
 import { bold, italic } from '../../utils/formatString';
+import { PreAffect } from '../Constuructors/PreAffect';
 import { Skill } from '../Constuructors/SkillConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
 
 /**
  * Парирование
  */
-class Parry extends Skill {
+class Parry extends Skill implements PreAffect {
   constructor() {
     super({
       name: 'parry',
@@ -30,6 +31,21 @@ class Parry extends Skill {
     const effect = this.effect[initiatorSkillLvl - 1] || 1;
     // изменяем
     initiator.flags.isParry = initiator.stats.val('dex') * effect;
+  }
+
+  check({ initiator, target, game } = this.params) {
+    const initiatorDex = initiator.stats.val('dex');
+
+    if (target.flags.isParry) {
+      if ((target.flags.isParry - initiatorDex) > 0) {
+        this.success({ initiator: target, target: initiator, game });
+
+        return this.getFailResult('PARRYED', { initiator, target, game });
+      }
+
+      target.flags.isParry -= +initiatorDex;
+      this.fail('SKILL_FAIL', { initiator, target, game });
+    }
   }
 
   customMessage(args: SuccessArgs) {

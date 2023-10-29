@@ -1,7 +1,8 @@
 const { floatNumber } = require('../../utils/floatNumber');
 const { default: arena } = require('../index');
 const MiscService = require('../MiscService');
-const { dodge } = require('../skills');
+const { dodge, parry, disarm } = require('../skills');
+const { isFailResult } = require('./utils');
 
 /**
  * @typedef {import ('../GameService').default} game
@@ -14,7 +15,10 @@ const { dodge } = require('../skills');
  * @todo Сейчас при отсутствие защиты на цели, не учитывается статик протект(
  * ???) Т.е если цель не защищается атака по ней на 95% удачна
  * */
-class PhysConstructor {
+class PhysConstructor { /**
+  * @type {import('./PreAffect').PreAffect[]}
+  * */
+  preAffects;
   /**
    * Конструктор атаки
    * @param {atkAct} atkAct имя actions
@@ -27,7 +31,7 @@ class PhysConstructor {
    *
    * @param {import('./PreAffect').PreAffect[]} preAffects
    */
-  constructor(atkAct, preAffects = [dodge]) {
+  constructor(atkAct, preAffects = [dodge, parry, disarm]) {
     this.name = atkAct.name;
     this.displayName = atkAct.displayName;
     this.desc = atkAct.desc;
@@ -70,11 +74,14 @@ class PhysConstructor {
    * Проверка флагов влияющих на физический урон
    */
   checkPreAffects() {
+    if (this.game.flags.global.isEclipsed) throw this.breaks('ECLIPSE');
+
     this.preAffects.forEach((preAffect) => {
-      try {
-        preAffect.check(this.params);
-      } catch (e) {
-        throw this.breaks(e.message);
+      const result = preAffect.check(this.params);
+
+      if (result && isFailResult(result)) {
+        console.log(result.message);
+        throw this.breaks(result.message);
       }
     });
   }
@@ -85,7 +92,6 @@ class PhysConstructor {
   fitsCheck() {
     const { initiator } = this.params;
     if (!initiator.weapon) throw this.breaks('NO_WEAPON');
-    if (initiator.flags.isDisarmed) throw this.breaks('DISARM');
   }
 
   /**

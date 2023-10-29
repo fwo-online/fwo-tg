@@ -1,11 +1,12 @@
 import { bold, italic } from '../../utils/formatString';
+import { PreAffect } from '../Constuructors/PreAffect';
 import { Skill } from '../Constuructors/SkillConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
 
 /**
  * Обезаруживание
  */
-class Disarm extends Skill {
+class Disarm extends Skill implements PreAffect {
   constructor() {
     super({
       name: 'disarm',
@@ -33,6 +34,16 @@ class Disarm extends Skill {
     const tDex = target.stats.val('dex');
     if (iDex >= tDex) {
       target.flags.isDisarmed = true;
+
+      this.success(this.params);
+    } else {
+      this.fail('SKILL_FAIL', this.params);
+    }
+  }
+
+  check({ initiator, target, game } = this.params) {
+    if (initiator.flags.isDisarmed) {
+      return this.getFailResult('DISARM', { initiator, target, game });
     }
   }
 
