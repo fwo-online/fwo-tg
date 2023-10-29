@@ -1,4 +1,3 @@
-import ActionError from '@/arena/errors/ActionError';
 import type { Breaks, FailArgs, SuccessArgs } from '../types';
 
 export const isSuccessResult = (result: SuccessArgs | FailArgs): result is SuccessArgs => {
