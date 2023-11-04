@@ -1,6 +1,8 @@
 const { floatNumber } = require('../../utils/floatNumber');
 const { default: arena } = require('../index');
 const MiscService = require('../MiscService');
+const { dodge, parry, disarm } = require('../skills');
+const { isSuccessResult } = require('./utils');
 
 /**
  * @typedef {import ('../GameService').default} game
@@ -13,7 +15,10 @@ const MiscService = require('../MiscService');
  * @todo Сейчас при отсутствие защиты на цели, не учитывается статик протект(
  * ???) Т.е если цель не защищается атака по ней на 95% удачна
  * */
-class PhysConstructor {
+class PhysConstructor { /**
+  * @type {import('./PreAffect').PreAffect[]}
+  * */
+  preAffects;
   /**
    * Конструктор атаки
    * @param {atkAct} atkAct имя actions
@@ -23,14 +28,20 @@ class PhysConstructor {
    * @property {String} desc
    * @property {Number} lvl
    * @property {String} orderType
+   *
+   * @param {import('./PreAffect').PreAffect[]} preAffects
    */
-  constructor(atkAct) {
+  constructor(atkAct, preAffects = [dodge, parry, disarm]) {
     this.name = atkAct.name;
     this.displayName = atkAct.displayName;
     this.desc = atkAct.desc;
     this.lvl = atkAct.lvl;
     this.orderType = atkAct.orderType;
     this.status = { hit: 0, exp: 0 };
+    /**
+   * @type {import('./PreAffect').PreAffect[]}
+   * */
+    this.preAffects = preAffects;
   }
 
   /**
@@ -63,34 +74,15 @@ class PhysConstructor {
    * Проверка флагов влияющих на физический урон
    */
   checkPreAffects() {
-    const { initiator, target, game } = this.params;
-    const iDex = initiator.stats.val('dex');
-    // Глобальная проверка не весит ли затмение на арене
-    if (game.flags.global.isEclipsed) throw this.breaks('ECLIPSE');
-    const weapon = arena.items[initiator.weapon.code];
-    const hasDodgeableItems = MiscService.weaponTypes[weapon.wtype].dodge;
-    // Проверяем увёртку
-    if (target.flags.isDodging && hasDodgeableItems) {
-      /** @todo  возможно следует состряпать static функцию tryDodge внутри скила
-      * уворота которая будет выполнять весь расчет а возвращать только bool
-      * значение. Сейчас эти проверки сильно раздувают PhysConstructor
-      */
-      //  проверяем имеет ли цель достаточно dex для того что бы уклониться
+    if (this.params.game.flags.global.isEclipsed) throw this.breaks('ECLIPSE');
 
-      const at = floatNumber(Math.round(target.flags.isDodging / iDex));
-      console.log('Dodging: ', at);
-      const r = MiscService.rndm('1d100');
-      const c = Math.round(Math.sqrt(at) + (10 * at) + 5);
-      console.log('left:', c, ' right:', r, ' result:', c > r);
-      if (c > r) throw this.breaks('DODGED');
-    }
-    if (target.flags.isParry) {
-      if (+(target.flags.isParry - iDex) > 0) {
-        throw this.breaks('PARRYED');
-      } else {
-        target.flags.isParry -= +iDex;
+    this.preAffects.forEach((preAffect) => {
+      const result = preAffect.check(this.params);
+
+      if (result && isSuccessResult(result)) {
+        throw this.breaks(result.message, result);
       }
-    }
+    });
   }
 
   /**
@@ -99,7 +91,6 @@ class PhysConstructor {
   fitsCheck() {
     const { initiator } = this.params;
     if (!initiator.weapon) throw this.breaks('NO_WEAPON');
-    if (initiator.flags.isDisarmed) throw this.breaks('DISARM');
   }
 
   /**
@@ -204,12 +195,14 @@ class PhysConstructor {
   }
 
   /**
-   * @param {String} msg строка остановки атаки (причина)
+   * @param {string} message строка остановки атаки (причина)
+   * @param {import('./types').SuccessArgs} cause строка остановки атаки (причина)
    */
-  breaks(msg) {
+  breaks(message, cause) {
     return {
       actionType: 'phys',
-      message: msg,
+      message,
+      cause,
       action: this.name,
       initiator: this.params.initiator.nick,
       target: this.params.target.nick,

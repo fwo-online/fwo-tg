@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`disarm target should be disarmed if initiator has more dex 1`] = `
+[
+  {
+    "action": "🥊 Обезоруживание",
+    "actionType": "skill",
+    "exp": 20,
+    "initiator": "alias",
+    "msg": undefined,
+    "target": "asperiores",
+  },
+  {
+    "action": "attack",
+    "actionType": "phys",
+    "cause": {
+      "action": "🥊 Обезоруживание",
+      "actionType": "skill",
+      "exp": 0,
+      "initiator": "alias",
+      "msg": undefined,
+      "target": "asperiores",
+    },
+    "initiator": "asperiores",
+    "message": undefined,
+    "target": "alias",
+    "weapon": {
+      "code": "a100",
+    },
+  },
+]
+`;
+
+exports[`disarm target should not be disarmed if initiator has less dex 1`] = `
+[
+  {
+    "action": "🥊 Обезоруживание",
+    "actionType": "skill",
+    "initiator": "explicabo",
+    "message": "SKILL_FAIL",
+    "target": "repellat",
+  },
+  {
+    "action": "attack",
+    "actionType": "phys",
+    "dmg": 11,
+    "dmgType": "physical",
+    "exp": 88,
+    "hp": -3,
+    "initiator": "repellat",
+    "target": "explicabo",
+    "weapon": {
+      "code": "a100",
+    },
+  },
+]
+`;

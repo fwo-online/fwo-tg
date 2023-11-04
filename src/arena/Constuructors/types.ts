@@ -73,6 +73,7 @@ export type PhysNext = BaseNext & {
 
 export type PhysBreak = Omit<BaseNext, 'exp'> & {
   actionType: 'phys';
+  cause?: SuccessArgs;
   message: BreaksMessage;
   weapon: Item;
   expArr: ExpArr;
@@ -94,6 +95,7 @@ export type ActionType = SuccessArgs['actionType'];
 export interface Breaks {
   actionType: ActionType;
   message: BreaksMessage;
+  cause?: SuccessArgs;
   action: string;
   initiator: string;
   target: string;
