@@ -12,47 +12,38 @@
 const WEAPON_TYPES = {
   s: {
     name: 'колющее',
-    dodge: true,
     action: (target, weapon) => `вонзил _${weapon.name}_ в *${target}*`,
   },
   c: {
     name: 'режущее',
-    dodge: true,
     action: (target, weapon) => `пустил кровь *${target}* с помощью _${weapon.name}_`,
   },
   h: {
     name: 'рубящее',
-    dodge: true,
     action: (target, weapon) => `рубанул *${target}* _${weapon.case}_`,
   },
   g: {
     name: 'лечащее',
-    dodge: false,
     action: (target, weapon) => `вонзил _${weapon.name}_ в *${target}*`,
   },
   l: {
     name: 'метательное',
-    dodge: true,
     action: (target, weapon) => `швырнул в *${target}* _${weapon.case}_`,
   },
   m: {
     name: 'дальнобойное',
-    dodge: false,
     action: (target, weapon) => `стрельнул в *${target}* _${weapon.case}_`,
   },
   f: {
     name: 'зажигательное',
-    dodge: false,
     action: (target, weapon) => `обжег *${target}* с помощью _${weapon.case}_`,
   },
   d: {
     name: 'оглушающее',
-    dodge: true,
     action: (target, weapon) => `дал по башке *${target}* _${weapon.case}_`,
   },
   r: {
     name: 'спецоружие',
-    dodge: false,
     action: (target, weapon) => `атаковал *${target}* _${weapon.case}_`,
   },
 };
