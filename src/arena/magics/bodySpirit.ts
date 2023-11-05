@@ -1,6 +1,7 @@
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 
 const damageToManaMultiplier = 0.5;
+const minimumTargetHeath = 0.5;
 
 class Blessing extends DmgMagic {
   constructor() {
@@ -18,14 +19,19 @@ class Blessing extends DmgMagic {
       dmgType: 'physical',
       chance: [92, 94, 95],
       effect: ['1d4', '1d5+2', '1d6+3'],
-      profList: ['m'],
+      profList: ['p'],
     });
   }
 
   run() {
     const { initiator, target } = this.params;
 
-    const effectVal = this.effectVal();
+    const targetHp = target.stats.val('hp');
+    const maxDamage = Math.max(targetHp - minimumTargetHeath, 0);
+
+    const effectVal = Math.min(this.effectVal(), maxDamage);
+    this.status.hit = effectVal;
+
     target.stats.down('hp', effectVal);
     initiator.stats.up('mp', effectVal * damageToManaMultiplier);
   }

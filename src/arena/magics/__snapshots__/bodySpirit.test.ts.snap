@@ -25,3 +25,29 @@ exports[`bodySpirit should hit target and get mp 3`] = `
   },
 ]
 `;
+
+exports[`bodySpirit should not kill target 1`] = `
+[
+  8,
+  0.1,
+]
+`;
+
+exports[`bodySpirit should not kill target 2`] = `0`;
+
+exports[`bodySpirit should not kill target 3`] = `
+[
+  {
+    "action": "Дух тела",
+    "actionType": "dmg-magic",
+    "dmg": 0,
+    "dmgType": "physical",
+    "effect": undefined,
+    "exp": 8,
+    "hp": 0.1,
+    "initiator": "asperiores",
+    "msg": undefined,
+    "target": "magni",
+  },
+]
+`;

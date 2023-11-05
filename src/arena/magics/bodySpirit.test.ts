@@ -41,4 +41,32 @@ describe('bodySpirit', () => {
     expect(game.players.players[0].stats.val('mp')).toMatchSnapshot();
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
+
+  it('should not kill target', () => {
+    game.players.players[0].proc = 1;
+    game.players.players[0].stats.set('mp', bodySpirit.cost);
+    game.players.players[1].stats.set('hp', 0.1);
+
+    bodySpirit.cast(game.players.players[0], game.players.players[1], game);
+
+    expect(
+      game.players.players.map((player) => player.stats.val('hp')),
+    ).toMatchSnapshot();
+    expect(game.players.players[0].stats.val('mp')).toMatchSnapshot();
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
+  });
+
+  it('should take 0 damage if target hp less than 0.5', () => {
+    game.players.players[0].proc = 1;
+    game.players.players[0].stats.set('mp', bodySpirit.cost);
+    game.players.players[1].stats.set('hp', 0.1);
+
+    bodySpirit.cast(game.players.players[0], game.players.players[1], game);
+
+    expect(
+      game.players.players.map((player) => player.stats.val('hp')),
+    ).toMatchSnapshot();
+    expect(game.players.players[0].stats.val('mp')).toMatchSnapshot();
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
+  });
 });
