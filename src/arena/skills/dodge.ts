@@ -1,10 +1,16 @@
-import { floatNumber } from '@/utils/floatNumber';
 import { bold, italic } from '@/utils/formatString';
-import arena from '..';
 import type { PreAffect } from '../Constuructors/PreAffect';
 import { Skill } from '../Constuructors/SkillConstructor';
 import { SuccessArgs } from '../Constuructors/types';
 import MiscService from '../MiscService';
+
+const dodgeableWeaponTypes = [
+  's', // колющее
+  'c', // режущее
+  'h', // рубящее
+  'l', // метательное
+  'd', // оглушающее
+];
 
 /**
  * Увертка
@@ -35,20 +41,14 @@ class Dodge extends Skill implements PreAffect {
   }
 
   check({ initiator, target, game } = this.params) {
-    const iDex = initiator.stats.val('dex');
-    if (!initiator.weapon) {
-      return;
-    }
-    const weapon = arena.items[initiator.weapon.code];
-    const isDodgeableWeapon = MiscService.weaponTypes[weapon.wtype].dodge;
+    const isDodgeable = initiator.weapon.isOfType(dodgeableWeaponTypes);
 
-    if (target.flags.isDodging && isDodgeableWeapon) {
-      const at = floatNumber(Math.round(target.flags.isDodging / iDex));
-      console.log('Dodging: ', at);
-      const r = MiscService.rndm('1d100');
-      const c = Math.round(Math.sqrt(at) + (10 * at) + 5);
-      console.log('left:', c, ' right:', r, ' result:', c > r);
-      if (c > r) {
+    if (target.flags.isDodging && isDodgeable) {
+      const initiatorDex = initiator.stats.val('dex');
+      const dodgeFactor = Math.round(target.flags.isDodging / initiatorDex);
+      const chance = Math.round(Math.sqrt(dodgeFactor) + (10 * dodgeFactor) + 5);
+
+      if (chance > MiscService.rndm('1d100')) {
         this.getExp(target);
 
         return this.getSuccessResult({ initiator: target, target: initiator, game });

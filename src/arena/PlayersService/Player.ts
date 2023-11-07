@@ -6,8 +6,8 @@ import type * as magics from '@/arena/magics';
 import StatsService, { Stats } from '@/arena/StatsService';
 import type { Prof } from '@/data/profs';
 import type { Clan } from '@/models/clan';
-import type { Inventory } from '@/models/inventory';
 import type { MinMax } from '@/models/item';
+import { PlayerWeapon } from './PlayerWeapon';
 
 export type Resists = Record<DamageType, number>;
 
@@ -67,7 +67,7 @@ export default class Player {
   statical: Partial<Statical>;
   alive: boolean;
   proc: number;
-  weapon?: Inventory;
+  weapon: PlayerWeapon;
 
   constructor(params: Char) {
     this.nick = params.nickname;
@@ -96,7 +96,7 @@ export default class Player {
     this.statical = params.statical || {}; // статически реген
     this.alive = true;
     this.proc = 100;
-    this.weapon = params.getPutonedWeapon();
+    this.weapon = new PlayerWeapon(params.getPutonedWeapon());
   }
 
   /**

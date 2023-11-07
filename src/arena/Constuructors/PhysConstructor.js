@@ -1,5 +1,4 @@
 const { floatNumber } = require('../../utils/floatNumber');
-const { default: arena } = require('../index');
 const MiscService = require('../MiscService');
 const { dodge, parry, disarm } = require('../skills');
 const { isSuccessResult } = require('./utils');
@@ -90,7 +89,9 @@ class PhysConstructor { /**
    */
   fitsCheck() {
     const { initiator } = this.params;
-    if (!initiator.weapon) throw this.breaks('NO_WEAPON');
+    if (!initiator.weapon.hasWeapon()) {
+      throw this.breaks('NO_WEAPON');
+    }
   }
 
   /**
@@ -162,7 +163,7 @@ class PhysConstructor { /**
    */
   next(failMsg) {
     const { initiator, target, game } = this.params;
-    const weapon = initiator.weapon ? arena.items[initiator.weapon.code] : {};
+    const weapon = initiator.weapon.item;
     if (failMsg) {
       game.recordOrderResult({ ...failMsg, weapon });
     } else {

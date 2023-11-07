@@ -3,6 +3,12 @@ import { PreAffect } from '../Constuructors/PreAffect';
 import { Skill } from '../Constuructors/SkillConstructor';
 import { SuccessArgs } from '../Constuructors/types';
 
+const parryableWeaponTypes = [
+  's', // колющее
+  'c', // режущее
+  'h', // рубящее
+];
+
 /**
  * Парирование
  */
@@ -27,23 +33,25 @@ class Parry extends Skill implements PreAffect {
 
   run() {
     const { initiator } = this.params;
-    const initiatorSkillLvl = initiator.skills[this.name];
+    const initiatorSkillLvl = initiator.getSkillLevel(this.name);
     const effect = this.effect[initiatorSkillLvl - 1] || 1;
     // изменяем
     initiator.flags.isParry = initiator.stats.val('dex') * effect;
   }
 
   check({ initiator, target, game } = this.params) {
-    const initiatorDex = initiator.stats.val('dex');
+    const isParryable = initiator.weapon.isOfType(parryableWeaponTypes);
 
-    if (target.flags.isParry) {
+    if (target.flags.isParry && isParryable) {
+      const initiatorDex = initiator.stats.val('dex');
+
       if ((target.flags.isParry - initiatorDex) > 0) {
         this.getExp(target);
 
         return this.getSuccessResult({ initiator: target, target: initiator, game });
       }
 
-      target.flags.isParry -= +initiatorDex;
+      target.flags.isParry -= initiatorDex;
     }
   }
 
