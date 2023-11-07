@@ -91,7 +91,7 @@ export default {
       'entangle'], // ???
     [
       'blight',
-      'body_spirit'], // ????????
+      'bodySpirit'],
     'mirror_reflection',
     [
       'smallAura',
