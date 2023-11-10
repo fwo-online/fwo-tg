@@ -4,7 +4,7 @@ import { isSuccessDamageResult } from '../Constuructors/utils';
 
 const isPhysicalDamage = (result): result is PhysNext => {
   if (isSuccessDamageResult(result)) {
-    return result.actionType === 'phys';
+    return result.dmgType === 'physical';
   }
 
   return false;
