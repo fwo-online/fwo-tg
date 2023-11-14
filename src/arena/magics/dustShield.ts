@@ -27,15 +27,7 @@ class DustShield extends LongMagic {
   }
 
   run(initiator: Player, target: Player, game: GameService): void {
-    const effect = this.effectVal({ initiator, target, game });
-
-    const results = game.getLastRoundResults();
-    const physicalDamageResults = results
-      .filter(isPhysicalDamageResult)
-      .filter(findByTarget(target.nick));
-
-    const damageTaken = physicalDamageResults.reduce((sum, { dmg }) => sum + dmg, 0);
-    const protect = effect + damageTaken / physicalDamageResults.length;
+    const protect = this.calculateProtect(initiator, target, game);
 
     target.stats.up('pdef', _.clamp(protect, minProtect, maxProtect));
   }
@@ -46,6 +38,22 @@ class DustShield extends LongMagic {
 
   calculateExp(effect: number, baseExp = 0): number {
     return Math.round(baseExp * effect);
+  }
+
+  calculateProtect(initiator: Player, target: Player, game: GameService) {
+    const effect = this.effectVal({ initiator, target, game });
+
+    const results = game.getLastRoundResults();
+    const physicalDamageResults = results
+      .filter(isPhysicalDamageResult)
+      .filter(findByTarget(target.nick));
+
+    const damageTaken = physicalDamageResults.reduce((sum, { dmg }) => sum + dmg, 0);
+    if (damageTaken) {
+      return effect + (damageTaken / physicalDamageResults.length) || 0;
+    }
+
+    return effect;
   }
 }
 
