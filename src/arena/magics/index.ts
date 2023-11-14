@@ -27,3 +27,4 @@ export { default as fireBall } from './fireBall';
 export { default as physicalSadness } from './physicalSadness';
 export { default as bodySpirit } from './bodySpirit';
 export { default as blight } from './blight';
+export { default as dustShield } from './dustShield';
