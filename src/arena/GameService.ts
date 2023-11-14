@@ -228,6 +228,10 @@ export default class GameService {
     this.history.addHistoryForRound(item, this.round.count);
   }
 
+  getLastRoundResults() {
+    return this.history.getHistoryForRound(this.round.count - 1);
+  }
+
   getRoundResults() {
     return this.history.getHistoryForRound(this.round.count);
   }

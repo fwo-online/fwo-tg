@@ -96,7 +96,7 @@ export default {
     [
       'smallAura',
       'magicArmor', 'strongAura',
-      'dust_shield', 'mediumAura',
+      'dustShield', 'mediumAura',
       'stoneSkin',
       'magic_wall'], // ???
     'cats_claw',

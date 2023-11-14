@@ -111,10 +111,14 @@ export abstract class Magic {
    * @param initiator Объект кастера
    */
   getExp({ initiator } = this.params): void {
-    const exp = Math.round(this.baseExp * initiator.proc);
+    const exp = this.calculateExp(this.status.effect || 0, this.baseExp);
 
     this.status.exp = exp;
-    initiator.stats.up('exp', this.baseExp);
+    initiator.stats.up('exp', exp);
+  }
+
+  calculateExp(effect: number, baseExp = 0) {
+    return Math.round(baseExp * this.params.initiator.proc);
   }
 
   /**
