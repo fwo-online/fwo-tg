@@ -12,6 +12,7 @@ import * as middlewares from './middlewares';
 import { connect } from './models';
 import { ItemModel } from './models/item';
 import { stage } from './scenes/stage';
+import { registerAffects } from './utils/registerAffects';
 
 interface BotSession extends Scenes.SceneSession {
   character: Char;
@@ -33,6 +34,8 @@ arena.mm = MM;
 arena.magics = magics;
 arena.skills = skills;
 arena.actions = actions;
+
+registerAffects();
 
 bot.use(session());
 bot.use(stage.middleware());
