@@ -21,7 +21,7 @@ class DustShield extends LongMagic {
       aoeType: 'target',
       magType: 'good',
       chance: [100, 100, 100],
-      profList: ['p'],
+      profList: ['m'],
       effect: ['1d3', '1d5', '1d7'],
     });
   }
