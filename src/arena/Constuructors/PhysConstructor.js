@@ -1,6 +1,5 @@
 const { floatNumber } = require('../../utils/floatNumber');
 const MiscService = require('../MiscService');
-const { dodge, parry, disarm } = require('../skills');
 const { isSuccessResult } = require('./utils');
 
 /**
@@ -30,7 +29,7 @@ class PhysConstructor { /**
    *
    * @param {import('./PreAffect').PreAffect[]} preAffects
    */
-  constructor(atkAct, preAffects = [dodge, parry, disarm]) {
+  constructor(atkAct) {
     this.name = atkAct.name;
     this.displayName = atkAct.displayName;
     this.desc = atkAct.desc;
@@ -40,7 +39,7 @@ class PhysConstructor { /**
     /**
    * @type {import('./PreAffect').PreAffect[]}
    * */
-    this.preAffects = preAffects;
+    this.preAffects = [];
   }
 
   /**
@@ -57,10 +56,11 @@ class PhysConstructor { /**
     this.status = { hit: 0, exp: 0 };
     try {
       this.fitsCheck();
+      this.calculateHit();
       this.checkPreAffects();
       this.isBlurredMind();
-      this.protectCheck();
-      // тут должен идти просчет дефа
+      this.applyHit();
+
       this.checkPostEffect();
       this.checkTargetIsDead();
       this.next();
@@ -76,7 +76,7 @@ class PhysConstructor { /**
     if (this.params.game.flags.global.isEclipsed) throw this.breaks('ECLIPSE');
 
     this.preAffects.forEach((preAffect) => {
-      const result = preAffect.check(this.params);
+      const result = preAffect.check(this.params, { value: this.status.hit });
 
       if (result && isSuccessResult(result)) {
         throw this.breaks(result.message, result);
@@ -116,32 +116,24 @@ class PhysConstructor { /**
    * Если проверка провалена, выставляем флаг isHited, означающий что
    * атака прошла
    */
-  protectCheck() {
-    const { initiator, target } = this.params;
-    const atc = initiator.stats.val('patk') * initiator.proc;
-    const prt = target.flags.isProtected.length > 0 ? target.stats.val('pdef') : 0.1;
-    const at = floatNumber(Math.round(atc / prt));
-    console.log('at', at);
-    const r = MiscService.rndm('1d100');
-    // const c = Math.round(Math.sqrt(at) + (10 * at) + 5);
-    // new formula for phys attack chance
-    const c = 20 * at + 50;
-    const result = c > r;
-    console.log('left', c, 'right', r, 'result', result);
+  calculateHit() {
+    const { initiator } = this.params;
+
     const initiatorHitParam = initiator.stats.val('hit');
     const hitval = MiscService.randInt(
       initiatorHitParam.min,
       initiatorHitParam.max,
     );
     this.status.hit = floatNumber(hitval * initiator.proc);
-    if (result) {
-      this.params.target.flags.isHited = {
-        initiator: initiator.nick, val: this.status.hit,
-      };
-      this.run();
-    } else {
-      throw this.protectorsGetExp();
-    }
+  }
+
+  applyHit() {
+    const { initiator } = this.params;
+
+    this.params.target.flags.isHited = {
+      initiator: initiator.nick, val: this.status.hit,
+    };
+    this.run();
   }
 
   /**
@@ -223,31 +215,6 @@ class PhysConstructor { /**
       this.status.exp = Math.round(exp);
       initiator.stats.mode('up', 'exp', this.status.exp);
     }
-  }
-
-  /**
-   * Функция выдающая exp для каждого протектора в зависимости от его защиты
-   * @todo тут скорее всего бага, которая будет давать по 5 раз всем защищающим.
-   * Экспу за протект нужно выдавать в отдельном action'е который будет идти
-   * за протектом
-   */
-  protectorsGetExp() {
-    if (!this.params) return;
-    const { initiator, target, game } = this.params;
-    const pdef = target.stats.val('pdef'); // общий показатель защиты цели
-    /** @type {import('./types').ExpArr} */
-    const expArr = target.flags.isProtected.map((flag) => {
-      const defender = game.players.getById(flag.initiator);
-      if (defender.id === initiator.id || !game.isPlayersAlly(defender, target)) {
-        return { name: defender.nick, exp: 0 };
-      }
-      const protect = Math.floor(flag.val * 100) / pdef;
-      const exp = Math.round(this.status.hit * 0.8 * protect);
-      defender.stats.up('exp', exp);
-      return { name: defender.nick, exp };
-    });
-
-    return { ...this.breaks('DEF'), expArr };
   }
 }
 

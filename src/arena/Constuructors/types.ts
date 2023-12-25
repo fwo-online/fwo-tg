@@ -1,5 +1,6 @@
 /* eslint-disable no-use-before-define */
 import type { Item } from '../../models/item';
+import type { ProtectNext } from '../actions/protect';
 import type GameService from '../GameService';
 import type { Player } from '../PlayersService';
 import type { AoeDmgMagicNext } from './AoeDmgMagicConstructor';
@@ -88,7 +89,8 @@ export type SuccessArgs =
   SkillNext |
   PhysNext |
   HealMagicNext |
-  HealNext;
+  HealNext |
+  ProtectNext;
 
 export type ActionType = SuccessArgs['actionType'];
 
