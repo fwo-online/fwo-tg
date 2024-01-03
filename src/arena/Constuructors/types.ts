@@ -68,7 +68,7 @@ export type PhysNext = BaseNext & {
   actionType: 'phys';
   dmg: number;
   hp: number;
-  weapon: Item;
+  weapon: Item | undefined;
   dmgType: DamageType,
 }
 
@@ -76,7 +76,7 @@ export type PhysBreak = Omit<BaseNext, 'exp'> & {
   actionType: 'phys';
   cause?: SuccessArgs;
   message: BreaksMessage;
-  weapon: Item;
+  weapon: Item | undefined;
   expArr: ExpArr;
 }
 

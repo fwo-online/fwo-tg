@@ -1,6 +1,13 @@
-const { floatNumber } = require('../../utils/floatNumber');
-const MiscService = require('../MiscService');
-const { isSuccessResult } = require('./utils');
+import { floatNumber } from '../../utils/floatNumber';
+import type GameService from '../GameService';
+import MiscService from '../MiscService';
+import type { Player } from '../PlayersService';
+import type { PreAffect } from './PreAffect';
+import {
+  BreaksMessage, OrderType, PhysBreak, PhysNext, SuccessArgs,
+} from './types';
+
+import { isSuccessResult } from './utils';
 
 /**
  * @typedef {import ('../GameService').default} game
@@ -13,22 +20,16 @@ const { isSuccessResult } = require('./utils');
  * @todo Сейчас при отсутствие защиты на цели, не учитывается статик протект(
  * ???) Т.е если цель не защищается атака по ней на 95% удачна
  * */
-class PhysConstructor { /**
-  * @type {import('./PreAffect').PreAffect[]}
-  * */
-  preAffects;
-  /**
-   * Конструктор атаки
-   * @param {atkAct} atkAct имя actions
-   * @typedef {Object} atkAct
-   * @property {String} name
-   * @property {string} displayName
-   * @property {String} desc
-   * @property {Number} lvl
-   * @property {String} orderType
-   *
-   * @param {import('./PreAffect').PreAffect[]} preAffects
-   */
+export default class PhysConstructor {
+  preAffects: PreAffect[] = [];
+  params!: { initiator: Player, target: Player, game: GameService };
+  status = { hit: 0, exp: 0 };
+  name: string;
+  displayName: string;
+  desc: string;
+  lvl: number;
+  orderType: OrderType;
+
   constructor(atkAct) {
     this.name = atkAct.name;
     this.displayName = atkAct.displayName;
@@ -36,10 +37,6 @@ class PhysConstructor { /**
     this.lvl = atkAct.lvl;
     this.orderType = atkAct.orderType;
     this.status = { hit: 0, exp: 0 };
-    /**
-   * @type {import('./PreAffect').PreAffect[]}
-   * */
-    this.preAffects = [];
   }
 
   /**
@@ -49,7 +46,7 @@ class PhysConstructor { /**
    * @param {player} target Объект цели
    * @param {game} game Объект игры (не обязателен)
    */
-  cast(initiator, target, game) {
+  cast(initiator: Player, target: Player, game: GameService) {
     this.params = {
       initiator, target, game,
     };
@@ -153,13 +150,13 @@ class PhysConstructor { /**
   /**
    * Функция агрегации данных после выполннения действия
    */
-  next(failMsg) {
+  next(failMsg?: PhysBreak) {
     const { initiator, target, game } = this.params;
     const weapon = initiator.weapon.item;
     if (failMsg) {
       game.recordOrderResult({ ...failMsg, weapon });
     } else {
-      const msg = {
+      const msg: PhysNext = {
         exp: this.status.exp,
         action: this.name,
         actionType: 'phys',
@@ -187,11 +184,7 @@ class PhysConstructor { /**
     }
   }
 
-  /**
-   * @param {string} message строка остановки атаки (причина)
-   * @param {import('./types').SuccessArgs} cause строка остановки атаки (причина)
-   */
-  breaks(message, cause) {
+  breaks(message: BreaksMessage, cause?: SuccessArgs) {
     return {
       actionType: 'phys',
       message,
@@ -217,5 +210,3 @@ class PhysConstructor { /**
     }
   }
 }
-
-module.exports = PhysConstructor;
