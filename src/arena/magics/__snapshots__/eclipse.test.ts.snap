@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`eclipse initiator should be blinded by eclipse 1`] = `
+"*asperiores* использовал _Затмение_ на *asperiores* с эффектом 0
+\\[ 📖80 ]
+*alias* пытался атаковать *asperiores*, но у него не получилось
+_Затмение_ *asperiores*"
+`;

@@ -12,6 +12,7 @@ describe('dodge', () => {
 
   beforeAll(() => {
     casual.seed(1);
+    attack.registerPreAffects([dodge]);
   });
 
   beforeEach(async () => {

@@ -1,10 +1,12 @@
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
+import type { PreAffect } from '../Constuructors/interfaces/PreAffect';
+import CastError from '../errors/CastError';
 
 /**
  * Затмение
  * Основное описание магии общее требовани есть в конструкторе
  */
-class Eclipse extends CommonMagic {
+class Eclipse extends CommonMagic implements PreAffect {
   constructor() {
     super({
       name: 'eclipse',
@@ -27,6 +29,12 @@ class Eclipse extends CommonMagic {
     const { game } = this.params;
     // выставляем глобальный флаг затмения
     game.flags.global.isEclipsed = true;
+  }
+
+  preAffect({ initiator, target, game } = this.params) {
+    if (game.flags.global.isEclipsed) {
+      throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
+    }
   }
 }
 

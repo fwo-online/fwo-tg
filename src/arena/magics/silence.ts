@@ -1,10 +1,12 @@
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
+import type { PreAffect } from '../Constuructors/interfaces/PreAffect';
+import CastError from '../errors/CastError';
 
 /**
  * Безмолвие
  * Основное описание магии общее требовани есть в конструкторе
  */
-class Silence extends CommonMagic {
+class Silence extends CommonMagic implements PreAffect {
   constructor() {
     super({
       name: 'silence',
@@ -29,6 +31,14 @@ class Silence extends CommonMagic {
       initiator: initiator.nick,
       val: 0,
     });
+  }
+
+  preAffect({ initiator, target, game } = this.params): void {
+    const { isSilenced } = initiator.flags;
+    if (isSilenced.some((e) => e.initiator !== this.name)) {
+      // если кастер находится под безмолвием/бунтом богов
+      throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
+    }
   }
 }
 

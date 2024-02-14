@@ -30,7 +30,7 @@ class Blight extends LongDmgMagic {
     const effectVal = this.effectVal();
     const hit = hp * (effectVal / 100);
 
-    this.status.hit = hit;
+    this.status.effect = hit;
     target.stats.down('hp', hit);
   }
 
@@ -40,7 +40,7 @@ class Blight extends LongDmgMagic {
     const effectVal = this.effectVal();
     const hit = hp * (effectVal / 100);
 
-    this.status.hit = hit;
+    this.status.effect = hit;
     target.stats.down('hp', hit);
   }
 }

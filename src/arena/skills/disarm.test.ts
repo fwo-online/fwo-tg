@@ -12,6 +12,7 @@ describe('disarm', () => {
 
   beforeAll(() => {
     casual.seed(1);
+    attack.registerPreAffects([disarm]);
   });
 
   beforeEach(async () => {

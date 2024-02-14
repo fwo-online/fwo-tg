@@ -30,7 +30,7 @@ class Blessing extends DmgMagic {
     const maxDamage = Math.max(targetHp - minimumTargetHeath, 0);
 
     const effectVal = Math.min(this.effectVal(), maxDamage);
-    this.status.hit = effectVal;
+    this.status.effect = effectVal;
 
     target.stats.down('hp', effectVal);
     initiator.stats.up('mp', effectVal * damageToManaMultiplier);

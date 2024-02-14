@@ -1,11 +1,14 @@
 import { floatNumber } from '../../utils/floatNumber';
+import CastError from '../errors/CastError';
 import type Game from '../GameService';
 import type * as magics from '../magics';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
+import { AffectableAction } from './AffectableAction';
 import type {
-  BaseNext, Breaks, BreaksMessage, CustomMessage,
+  BaseNext, BreaksMessage, CustomMessage, FailArgs, SuccessArgs,
 } from './types';
+import { handleCastError } from './utils';
 
 export type MagicNext = BaseNext & {
   actionType: 'magic';
@@ -19,7 +22,7 @@ export interface MagicArgs {
   cost: number;
   costType: 'mp' | 'en';
   lvl: number;
-  orderType: 'all' | 'any' | 'enemy' | 'self';
+  orderType: 'all' | 'any' | 'enemy' | 'self' | 'team';
   aoeType: 'target' | 'team' | 'targetAoe';
   baseExp: number;
   effect: string[];
@@ -34,17 +37,8 @@ export interface MagicArgs {
 export interface Magic extends MagicArgs, CustomMessage {
 }
 
-export abstract class Magic {
-  params!: {
-    initiator: Player;
-    target: Player;
-    game: Game;
-  };
-
-  status: {
-    exp: number;
-    effect?: number;
-  };
+export abstract class Magic extends AffectableAction {
+  name: keyof typeof magics;
 
   isLong = false;
 
@@ -53,8 +47,10 @@ export abstract class Magic {
    * @param magObj Объект создаваемой магии
    */
   constructor(magObj: MagicArgs) {
+    super();
+
     Object.assign(this, magObj);
-    this.resetStatus();
+    this.reset();
   }
 
   // Дальше идут общие методы для всех магий
@@ -71,7 +67,7 @@ export abstract class Magic {
     };
     try {
       this.getCost(initiator);
-      this.checkPreAffects(initiator, target, game);
+      this.checkPreAffects();
       this.isBlurredMind(); // проверка не запудрило
       this.checkChance();
       this.run(initiator, target, game); // вызов кастомного обработчика
@@ -79,12 +75,14 @@ export abstract class Magic {
       this.checkTargetIsDead();
 
       this.next();
-    } catch (failMsg) {
+    } catch (e) {
       // @fixme прокидываем ошибку выше для длительных кастов
-      if (this.isLong) throw (failMsg);
-      game.recordOrderResult(failMsg);
+      if (this.isLong) throw (e);
+      handleCastError(e, (reason) => {
+        game.recordOrderResult(this.getFailResult(reason));
+      });
     } finally {
-      this.resetStatus();
+      this.reset();
     }
   }
 
@@ -100,7 +98,7 @@ export abstract class Magic {
     if (costValue >= 0) {
       initiator.stats.set(this.costType, costValue);
     } else {
-      throw this.breaks('NO_MANA');
+      throw new CastError('NO_MANA');
     }
   }
 
@@ -157,7 +155,7 @@ export abstract class Magic {
       // Магия прошла, проверяем что скажут боги
       if (this.godCheck()) {
         // Боги фейлят шанс
-        throw this.breaks('GOD_FAIL');
+        throw new CastError('GOD_FAIL');
       } else {
         // Магия прошла
         return true;
@@ -169,7 +167,7 @@ export abstract class Magic {
         return true;
       }
       // Магия остается фейловой
-      throw this.breaks('CHANCE_FAIL');
+      throw new CastError('CHANCE_FAIL');
     }
   }
 
@@ -218,13 +216,6 @@ export abstract class Magic {
   }
 
   /**
-   * @param initiator объект персонажа
-   * @param target объект персонажа
-   * @param game Объект игры для доступа ко всему
-   */
-  abstract run(initiator: Player, target: Player, game: Game): void
-
-  /**
    * Проверка на запудривание мозгов
    * @todo нужно вынести этот метод в orders или к Players Obj
    */
@@ -232,22 +223,6 @@ export abstract class Magic {
     const { initiator, game } = this.params;
     if (initiator.flags.isGlitched) {
       this.params.target = game.players.randomAlive;
-    }
-  }
-
-  /**
-   * Проверка на запудривание мозгов
-   * @param initiator объект персонажа
-   * @param _target объект цели магии
-   * @param _game Объект игры для доступа ко всему
-   * @todo нужно вынести этот метод в orders
-   */
-  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  checkPreAffects(initiator: Player, _target: Player, _game: Game): void {
-    const { isSilenced } = initiator.flags;
-    if (isSilenced.some((e) => e.initiator !== this.name)) {
-      // если кастер находится под безмолвием/бунтом богов
-      throw this.breaks('SILENCED');
     }
   }
 
@@ -263,23 +238,8 @@ export abstract class Magic {
     }
   }
 
-  /**
-   * @param msg строка остановки магии (причина)
-   * @return объект остановки магии
-   */
-  breaks(msg: BreaksMessage): Breaks {
-    return {
-      actionType: 'magic',
-      message: msg,
-      action: this.displayName,
-      initiator: this.params.initiator.nick,
-      target: this.params.target.nick,
-    };
-  }
-
-  protected getNextArgs(): MagicNext {
-    const { target, initiator } = this.params;
-    return {
+  getSuccessResult({ initiator, target } = this.params): SuccessArgs {
+    const result: MagicNext = {
       exp: this.status.exp,
       action: this.displayName,
       actionType: 'magic',
@@ -288,21 +248,40 @@ export abstract class Magic {
       effect: this.status.effect,
       msg: this.customMessage?.bind(this),
     };
+
+    this.reset();
+
+    return result;
   }
 
-  resetStatus() {
+  getFailResult(
+    reason: BreaksMessage | SuccessArgs | SuccessArgs[],
+    params = this.params,
+  ): FailArgs {
+    const result: FailArgs = {
+      actionType: 'phys',
+      reason,
+      action: this.displayName,
+      initiator: params.initiator.nick,
+      target: params.target.nick,
+      weapon: params.initiator.weapon.item,
+    };
+
+    this.reset();
+
+    return result;
+  }
+
+  reset() {
     this.status = {
       exp: 0,
       effect: 0,
     };
   }
 
-  /**
-   * Магия прошла удачно
-   * @todo тут нужен вывод требуемых параметров
-   */
-  next(): void {
-    const { game } = this.params;
-    game.recordOrderResult(this.getNextArgs());
+  next({ initiator, target, game } = this.params): void {
+    const result = this.getSuccessResult({ initiator, target, game });
+
+    game.recordOrderResult(result);
   }
 }

@@ -20,8 +20,8 @@ export function formatAction(msgObj: SuccessArgs): string {
       return `*${msgObj.initiator}* сотворил _${msgObj.action}_ на *${msgObj.target}* нанеся ${msgObj.dmg} урона`;
     case 'magic':
       return isUndefined(msgObj.effect)
-        ? `*${msgObj.initiator}* использовав _${msgObj.action}_ на *${msgObj.target}*`
-        : `*${msgObj.initiator}* использовав _${msgObj.action}_ на *${msgObj.target}* с эффектом ${msgObj.effect}`;
+        ? `*${msgObj.initiator}* использовал _${msgObj.action}_ на *${msgObj.target}*`
+        : `*${msgObj.initiator}* использовал _${msgObj.action}_ на *${msgObj.target}* с эффектом ${msgObj.effect}`;
     default:
       return `*${msgObj.initiator}* использовал _${msgObj.action}_ на *${msgObj.target}*`;
   }

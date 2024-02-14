@@ -1,8 +1,10 @@
+import type { PreAffect } from '../Constuructors/interfaces/PreAffect';
 import PhysConstructor from '../Constuructors/PhysConstructor';
+import CastError from '../errors/CastError';
 /**
  * Физическая атака
  */
-class Attack extends PhysConstructor {
+class Attack extends PhysConstructor implements PreAffect {
   constructor() {
     super({
       name: 'attack',
@@ -20,11 +22,19 @@ class Attack extends PhysConstructor {
     if (!this.params) {
       return;
     }
+    const { initiator, target } = this.params;
 
-    const { target } = this.params;
-    target.stats.down('hp', this.status.hit);
-    // getExp вынесен сюда, для возможности "сбросить" атаку, если она была заблокирована protect
-    this.getExp();
+    target.flags.isHited = {
+      initiator: initiator.nick, val: this.status.effect,
+    };
+
+    target.stats.down('hp', this.status.effect);
+  }
+
+  preAffect({ initiator, target, game } = this.params): void {
+    if (target.flags.isHited) {
+      throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
+    }
   }
 }
 export default new Attack();

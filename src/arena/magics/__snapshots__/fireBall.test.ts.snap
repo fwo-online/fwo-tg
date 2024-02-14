@@ -10,59 +10,21 @@ exports[`fireBall should hit 1 target 1`] = `
   8,
   8,
   8,
-  -5.44,
+  -5.59,
   8,
   8,
 ]
 `;
 
-exports[`fireBall should hit 1 target 2`] = `119`;
+exports[`fireBall should hit 1 target 2`] = `120`;
 
 exports[`fireBall should hit 1 target 3`] = `
-[
-  {
-    "action": "Огненный шар",
-    "actionType": "aoe-dmg-magic",
-    "dmg": 8.64,
-    "dmgType": "fire",
-    "effect": undefined,
-    "exp": 79,
-    "expArr": [
-      {
-        "exp": 10,
-        "hp": -1.84,
-        "id": "14edb8f1-372b-4e3b-913c-9c3e0b812060",
-        "name": "culpa",
-        "val": 1.2,
-      },
-      {
-        "exp": 10,
-        "hp": -3.04,
-        "id": "00831d48-28fd-4413-9199-e6850dc43bc9",
-        "name": "culpa",
-        "val": 1.2,
-      },
-      {
-        "exp": 10,
-        "hp": -4.24,
-        "id": "76dcb686-3502-41e0-b1c3-8b08a0214f59",
-        "name": "culpa",
-        "val": 1.2,
-      },
-      {
-        "exp": 10,
-        "hp": -5.44,
-        "id": "53142b23-e95f-40db-8473-8fde2c0a107d",
-        "name": "culpa",
-        "val": 1.2,
-      },
-    ],
-    "hp": -5.44,
-    "initiator": "ex",
-    "msg": undefined,
-    "target": "culpa",
-  },
-]
+"*explicabo* сотворил _Огненный шар_ на *aperiam* нанеся 8.75 урона
+\\[ aperiam 🔥 💔-8.75/-5.59 📖80
+aperiam 🔥 💔-1.21/-1.96 📖10
+aperiam 🔥 💔-1.21/-3.17 📖10
+aperiam 🔥 💔-1.21/-4.38 📖10
+aperiam 🔥 💔-1.21/-5.59 📖10 ]"
 `;
 
 exports[`fireBall should hit 6 targets 1`] = `
@@ -84,48 +46,10 @@ exports[`fireBall should hit 6 targets 1`] = `
 exports[`fireBall should hit 6 targets 2`] = `120`;
 
 exports[`fireBall should hit 6 targets 3`] = `
-[
-  {
-    "action": "Огненный шар",
-    "actionType": "aoe-dmg-magic",
-    "dmg": 8.72,
-    "dmgType": "fire",
-    "effect": undefined,
-    "exp": 80,
-    "expArr": [
-      {
-        "exp": 10,
-        "hp": -1.93,
-        "id": "41b8eded-0d04-420e-a196-bf683b452acd",
-        "name": "magni",
-        "val": 1.21,
-      },
-      {
-        "exp": 10,
-        "hp": -3.14,
-        "id": "700c9fab-547c-4311-97e1-5e412801ae3e",
-        "name": "magni",
-        "val": 1.21,
-      },
-      {
-        "exp": 10,
-        "hp": -4.35,
-        "id": "54790999-3f94-4b31-a6fb-6680c80a28cf",
-        "name": "magni",
-        "val": 1.21,
-      },
-      {
-        "exp": 10,
-        "hp": -5.56,
-        "id": "19ee8272-fc66-482a-b559-dab2eb9ac55c",
-        "name": "magni",
-        "val": 1.21,
-      },
-    ],
-    "hp": -5.56,
-    "initiator": "asperiores",
-    "msg": undefined,
-    "target": "magni",
-  },
-]
+"*asperiores* сотворил _Огненный шар_ на *magni* нанеся 8.72 урона
+\\[ magni 🔥 💔-8.72/-5.56 📖80
+magni 🔥 💔-1.21/-1.93 📖10
+magni 🔥 💔-1.21/-3.14 📖10
+magni 🔥 💔-1.21/-4.35 📖10
+magni 🔥 💔-1.21/-5.56 📖10 ]"
 `;

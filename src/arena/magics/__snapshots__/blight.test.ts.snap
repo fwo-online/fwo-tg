@@ -1,20 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`blight should hit percentage damage 1`] = `5.95`;
+exports[`blight should hit percentage damage 1`] = `6.54`;
 
 exports[`blight should hit percentage damage 2`] = `
-[
-  {
-    "action": "Истощение",
-    "actionType": "dmg-magic",
-    "dmg": 2.05,
-    "dmgType": "physical",
-    "effect": undefined,
-    "exp": 24,
-    "hp": 5.95,
-    "initiator": "asperiores",
-    "msg": undefined,
-    "target": "magni",
-  },
-]
+"*asperiores* сотворил _Истощение_ на *magni* нанеся 1.46 урона
+\\[ 👊 💔-1.46/6.54 📖20 ]"
 `;

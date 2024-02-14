@@ -1,29 +1,30 @@
+import type { Item } from '@/models/item';
 import { floatNumber } from '../../utils/floatNumber';
+import CastError from '../errors/CastError';
 import type GameService from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
-import type { PreAffect } from './PreAffect';
-import {
-  BreaksMessage, OrderType, PhysBreak, PhysNext, SuccessArgs,
+import { AffectableAction } from './AffectableAction';
+import type {
+  BaseNext, BreaksMessage, DamageType, FailArgs, OrderType, SuccessArgs,
 } from './types';
 
-import { isSuccessResult } from './utils';
+import { handleCastError } from './utils';
 
-/**
- * @typedef {import ('../GameService').default} game
- * @typedef {import ('../PlayersService').Player} player
- */
-
+export type PhysNext = BaseNext & {
+  actionType: 'phys';
+  dmg: number;
+  hp: number;
+  weapon: Item | undefined;
+  dmgType: DamageType,
+}
 /**
  * Конструктор физической атаки
  * (возможно физ скилы)
  * @todo Сейчас при отсутствие защиты на цели, не учитывается статик протект(
  * ???) Т.е если цель не защищается атака по ней на 95% удачна
  * */
-export default class PhysConstructor {
-  preAffects: PreAffect[] = [];
-  params!: { initiator: Player, target: Player, game: GameService };
-  status = { hit: 0, exp: 0 };
+export default abstract class PhysConstructor extends AffectableAction {
   name: string;
   displayName: string;
   desc: string;
@@ -31,54 +32,46 @@ export default class PhysConstructor {
   orderType: OrderType;
 
   constructor(atkAct) {
+    super();
+
     this.name = atkAct.name;
     this.displayName = atkAct.displayName;
     this.desc = atkAct.desc;
     this.lvl = atkAct.lvl;
     this.orderType = atkAct.orderType;
-    this.status = { hit: 0, exp: 0 };
+    this.status = { effect: 0, exp: 0 };
   }
 
   /**
    * Основная функция выполнения. Из неё дёргаются все зависимости
    * Общий метод для скилов физической атаки
-   * @param {player} initiator Объект кастера
-   * @param {player} target Объект цели
-   * @param {game} game Объект игры (не обязателен)
+   * @param initiator Объект кастера
+   * @param target Объект цели
+   * @param game Объект игры
    */
   cast(initiator: Player, target: Player, game: GameService) {
     this.params = {
       initiator, target, game,
     };
-    this.status = { hit: 0, exp: 0 };
+    this.reset();
+
     try {
       this.fitsCheck();
       this.calculateHit();
       this.checkPreAffects();
       this.isBlurredMind();
-      this.applyHit();
 
-      this.checkPostEffect();
+      this.run(initiator, target, game);
+      this.getExp();
+
+      this.checkPostAffects();
       this.checkTargetIsDead();
       this.next();
     } catch (e) {
-      this.next(e);
+      handleCastError(e, (reason) => {
+        game.recordOrderResult(this.getFailResult(reason));
+      });
     }
-  }
-
-  /**
-   * Проверка флагов влияющих на физический урон
-   */
-  checkPreAffects() {
-    if (this.params.game.flags.global.isEclipsed) throw this.breaks('ECLIPSE');
-
-    this.preAffects.forEach((preAffect) => {
-      const result = preAffect.check(this.params, { value: this.status.hit });
-
-      if (result && isSuccessResult(result)) {
-        throw this.breaks(result.message, result);
-      }
-    });
   }
 
   /**
@@ -87,7 +80,7 @@ export default class PhysConstructor {
   fitsCheck() {
     const { initiator } = this.params;
     if (!initiator.weapon.hasWeapon()) {
-      throw this.breaks('NO_WEAPON');
+      throw new CastError('NO_WEAPON');
     }
   }
 
@@ -102,9 +95,6 @@ export default class PhysConstructor {
     }
     if (initiator.flags.isMad) {
       this.params.target = initiator;
-    }
-    if (initiator.flags.isParalysed) {
-      throw this.breaks('PARALYSED');
     }
   }
 
@@ -121,54 +111,57 @@ export default class PhysConstructor {
       initiatorHitParam.min,
       initiatorHitParam.max,
     );
-    this.status.hit = floatNumber(hitval * initiator.proc);
-  }
-
-  applyHit() {
-    const { initiator } = this.params;
-
-    this.params.target.flags.isHited = {
-      initiator: initiator.nick, val: this.status.hit,
-    };
-    this.run();
+    this.status.effect = floatNumber(hitval * initiator.proc);
   }
 
   /**
-   * Запуск работы actions
+   * Рассчитываем полученный exp
    */
-  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-empty-function
-  run() {
-  }
-
-  /**
-   * Проверка postEffector от Fits
-   */
-  checkPostEffect() {
-    return this;
-  }
-
-  /**
-   * Функция агрегации данных после выполннения действия
-   */
-  next(failMsg?: PhysBreak) {
-    const { initiator, target, game } = this.params;
-    const weapon = initiator.weapon.item;
-    if (failMsg) {
-      game.recordOrderResult({ ...failMsg, weapon });
+  getExp({ initiator, target, game } = this.params) {
+    if (game.isPlayersAlly(initiator, target) && !initiator.flags.isGlitched) {
+      this.status.exp = 0;
     } else {
-      const msg: PhysNext = {
-        exp: this.status.exp,
-        action: this.name,
-        actionType: 'phys',
-        target: target.nick,
-        dmg: floatNumber(this.status.hit),
-        hp: target.stats.val('hp'),
-        initiator: initiator.nick,
-        weapon,
-        dmgType: 'physical',
-      };
-      game.recordOrderResult(msg);
+      const exp = this.status.effect * 8;
+      this.status.exp = Math.round(exp);
+      initiator.stats.up('exp', this.status.exp);
     }
+  }
+
+  getSuccessResult({ initiator, target } = this.params): SuccessArgs {
+    const result: PhysNext = {
+      exp: this.status.exp,
+      action: this.displayName,
+      actionType: 'phys',
+      target: target.nick,
+      dmg: floatNumber(this.status.effect),
+      hp: target.stats.val('hp'),
+      initiator: initiator.nick,
+      weapon: initiator.weapon.item,
+      dmgType: 'physical',
+      affects: this.getAffects(),
+    };
+
+    this.reset();
+
+    return result;
+  }
+
+  getFailResult(
+    reason: BreaksMessage | SuccessArgs | SuccessArgs[],
+    params = this.params,
+  ): FailArgs {
+    const result: FailArgs = {
+      actionType: 'phys',
+      reason,
+      action: this.displayName,
+      initiator: params.initiator.nick,
+      target: params.target.nick,
+      weapon: params.initiator.weapon.item,
+    };
+
+    this.reset();
+
+    return result;
   }
 
   /**
@@ -184,29 +177,9 @@ export default class PhysConstructor {
     }
   }
 
-  breaks(message: BreaksMessage, cause?: SuccessArgs) {
-    return {
-      actionType: 'phys',
-      message,
-      cause,
-      action: this.name,
-      initiator: this.params.initiator.nick,
-      target: this.params.target.nick,
-    };
-  }
+  next({ initiator, target, game } = this.params): void {
+    const result = this.getSuccessResult({ initiator, target, game });
 
-  /**
-   * Расчитываем полученный exp
-   */
-  getExp() {
-    const { initiator, target, game } = this.params;
-
-    if (game.isPlayersAlly(initiator, target) && !initiator.flags.isGlitched) {
-      this.status.exp = 0;
-    } else {
-      const exp = this.status.hit * 8;
-      this.status.exp = Math.round(exp);
-      initiator.stats.mode('up', 'exp', this.status.exp);
-    }
+    game.recordOrderResult(result);
   }
 }

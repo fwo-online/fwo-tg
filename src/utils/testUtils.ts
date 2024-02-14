@@ -3,6 +3,7 @@ import type { AnyKeys } from 'mongoose';
 import CharacterService from '@/arena/CharacterService';
 import { ClanService } from '@/arena/ClanService';
 import type { HistoryItem } from '@/arena/HistoryService';
+import { formatMessage } from '@/arena/LogService/utils';
 import { profsList, profsData, type Prof } from '@/data/profs';
 import { type Char, CharModel } from '@/models/character';
 import { type Clan, ClanModel } from '@/models/clan';
@@ -75,18 +76,7 @@ export default class TestUtils {
 
   static normalizeRoundHistory(history: HistoryItem[]) {
     return history.map((item) => {
-      if ('weapon' in item) {
-        // @ts-expect-error todo
-        item.weapon = { code: item.weapon.code };
-      }
-      if ('expArr' in item) {
-        item.expArr = item.expArr.map((item) => ({
-          ...item,
-          id: casual.uuid,
-        }));
-      }
-
-      return item;
-    });
+      return formatMessage(item);
+    }).join('\n');
   }
 }

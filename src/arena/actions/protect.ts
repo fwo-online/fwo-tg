@@ -1,9 +1,12 @@
-import { PreAffect } from '@/arena/Constuructors/PreAffect';
-import type { BaseNext, ExpArr, OrderType } from '@/arena/Constuructors/types';
+import type {
+  BaseNext, ExpArr, OrderType, SuccessArgs,
+} from '@/arena/Constuructors/types';
 import type Game from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
 import type { Player } from '@/arena/PlayersService';
 import { floatNumber } from '@/utils/floatNumber';
+import type { PreAffect } from '../Constuructors/interfaces/PreAffect';
+import CastError from '../errors/CastError';
 
 export type ProtectNext = Omit<BaseNext, 'exp'> & {
   actionType: 'protect'
@@ -35,7 +38,7 @@ class Protect implements PreAffect {
     });
   }
 
-  check(...[params, status]: Parameters<PreAffect['check']>): ReturnType<PreAffect['check']> {
+  preAffect(...[params, status]: Parameters<PreAffect['preAffect']>): SuccessArgs | void {
     const { initiator, target, game } = params;
     const attackValue = initiator.stats.val('patk') * initiator.proc;
     const protectValue = target.flags.isProtected.length > 0 ? target.stats.val('pdef') : 0.1;
@@ -48,7 +51,7 @@ class Protect implements PreAffect {
     console.log('chance', chance, 'random', randomValue, 'result', result);
 
     if (!result) {
-      return this.getSuccessResult({ initiator, target, game }, status.value);
+      throw new CastError(this.getSuccessResult({ initiator, target, game }, status.effect));
     }
   }
 

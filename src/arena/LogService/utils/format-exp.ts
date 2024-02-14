@@ -1,7 +1,7 @@
 import type { SuccessArgs } from '@/arena/Constuructors/types';
 import * as icons from '@/utils/icons';
 
-const expBrackets = (str: string) => `\n\\[ ${str} ]`;
+const expBrackets = (str: string) => `\\[ ${str} ]`;
 
 export function formatExp(args: SuccessArgs): string {
   switch (args.actionType) {
@@ -16,7 +16,7 @@ export function formatExp(args: SuccessArgs): string {
         `${args.target} ${damageType} 💔-${args.dmg}/${args.hp} 📖${args.exp}`,
         ...args.expArr.map(({
           name, val, hp, exp,
-        }) => `${name} ${damageType}  💔-${val}/${hp} 📖${exp}`),
+        }) => `${name} ${damageType} 💔-${val}/${hp} 📖${exp}`),
       ].join('\n'));
     }
     case 'heal-magic': {
