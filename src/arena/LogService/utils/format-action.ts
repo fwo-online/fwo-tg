@@ -1,5 +1,5 @@
 import type { SuccessArgs } from '@/arena/Constuructors/types';
-import { weaponTypes } from '@/arena/MiscService';
+import { getWeaponAction } from '@/arena/MiscService';
 
 export function formatAction(msgObj: SuccessArgs): string {
   if (msgObj.msg) {
@@ -10,8 +10,7 @@ export function formatAction(msgObj: SuccessArgs): string {
     case 'heal':
       return `Игрок *${msgObj.target}* был вылечен 🤲 на *💖${msgObj.effect}*`;
     case 'phys': {
-      const { action } = weaponTypes[msgObj.weapon.wtype];
-      return `*${msgObj.initiator}* ${action(msgObj.target, msgObj.weapon)} и нанёс *${msgObj.dmg}* урона`;
+      return `*${msgObj.initiator}* ${getWeaponAction(msgObj.target, msgObj.weapon)} и нанёс *${msgObj.dmg}* урона`;
     }
     case 'dmg-magic':
     case 'dmg-magic-long':

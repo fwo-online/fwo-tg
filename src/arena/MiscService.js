@@ -95,6 +95,9 @@ function randInt(min, max) {
 module.exports = {
   weaponTypes: WEAPON_TYPES,
   stores: STORES,
+  getWeaponAction(target, weapon) {
+    return WEAPON_TYPES[weapon.wtype].action(target, weapon);
+  },
   /**
    * Функция рандома по формату 1d100+10;
    * @param {String} diceStr параметры рандома в формате 1d100
