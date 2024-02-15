@@ -1,13 +1,14 @@
-import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
+import { AoeDmgMagic } from '../Constuructors/AoeDmgMagicConstructor';
+import type GameService from '../GameService';
+import type { Player } from '../PlayersService';
 
 /**
  * Огненный дождь
  * Основное описание магии общее требовани есть в конструкторе
  */
-class FireRain extends DmgMagic {
+class FireRain extends AoeDmgMagic {
   constructor() {
     super({
-      // @ts-expect-error не используется
       name: 'fireRain',
       displayName: 'Огненный дождь',
       desc: 'Обрушивает на команду противника огненный дождь',
@@ -25,13 +26,44 @@ class FireRain extends DmgMagic {
     });
   }
 
+  getTargets(): Player[] {
+    const { target, game } = this.params;
+
+    if (!target.clan) {
+      return [];
+    }
+
+    const targets = game.players.getPlayersByClan(target.clan?.id)
+      .filter(({ alive }) => alive)
+      .filter(({ id }) => id !== target.id);
+
+    return targets;
+  }
+
   /**
    * Основная функция запуска магии
-   * @todo
    */
-  run(): void {
-    // @ts-expect-error @todo
-    return this;
+  run(initiator: Player, target: Player, game: GameService): void {
+    const effect = this.effectVal();
+    target.stats.down('hp', effect);
+
+    const targets = this.getTargets();
+
+    targets.forEach((target) => {
+      this.runAoe(initiator, target, game);
+    });
+  }
+
+  runAoe(initiator: Player, target: Player, game: GameService) {
+    const effect = this.effectVal({ initiator, target, game });
+    target.stats.down('hp', effect);
+
+    this.status.expArr.push({
+      id: target.id,
+      name: target.nick,
+      val: effect,
+      hp: target.stats.val('hp'),
+    });
   }
 }
 

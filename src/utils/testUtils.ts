@@ -3,12 +3,13 @@ import type { AnyKeys } from 'mongoose';
 import CharacterService from '@/arena/CharacterService';
 import { ClanService } from '@/arena/ClanService';
 import type { HistoryItem } from '@/arena/HistoryService';
-import { formatMessage } from '@/arena/LogService/utils';
 import { profsList, profsData, type Prof } from '@/data/profs';
 import { type Char, CharModel } from '@/models/character';
 import { type Clan, ClanModel } from '@/models/clan';
 import { InventoryModel } from '@/models/inventory';
 import { type Item, ItemModel } from '@/models/item';
+import { formatMessage } from '@/arena/LogService/utils';
+import arena from '@/arena';
 
 const functions = casual.functions();
 
@@ -46,6 +47,10 @@ export default class TestUtils {
 
   static getCharacter(id: string) {
     return CharModel.findById(id);
+  }
+
+  static resetCharacterCache() {
+    arena.characters = {};
   }
 
   static async createClan(charId: string, params?: AnyKeys<Clan>) {

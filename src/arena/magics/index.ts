@@ -8,6 +8,7 @@ export { default as dispel } from './dispel';
 export { default as eclipse } from './eclipse';
 export { default as entangle } from './entangle';
 export { default as frostTouch } from './frostTouch';
+export { default as fireRain } from './fireRain';
 export { default as glitch } from './glitch';
 export { default as lightHeal } from './lightHeal';
 export { default as madness } from './madness';
