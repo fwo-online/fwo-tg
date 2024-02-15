@@ -5,9 +5,8 @@ import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import { AffectableAction } from './AffectableAction';
 import type {
-  CostType, OrderType, AOEType, CustomMessage, BaseNext, BreaksMessage, FailArgs, SuccessArgs,
+  CostType, OrderType, AOEType, CustomMessage, BaseNext, ActionType,
 } from './types';
-import { handleCastError } from './utils';
 
 export type SkillNext = BaseNext & {
   actionType: 'skill';
@@ -36,6 +35,7 @@ export interface Skill extends SkillArgs, CustomMessage {
 }
 
 export abstract class Skill extends AffectableAction {
+  actionType: ActionType = 'skill';
   /**
    * Создание скила
    */
@@ -62,9 +62,7 @@ export abstract class Skill extends AffectableAction {
       this.run(initiator, target, game);
       this.next();
     } catch (e) {
-      handleCastError(e, (reason) => {
-        game.recordOrderResult(this.getFailResult(reason));
-      });
+      this.handleCastError(e);
     }
   }
 
@@ -119,24 +117,6 @@ export abstract class Skill extends AffectableAction {
       target: target.nick,
       initiator: initiator.nick,
       msg: this.customMessage?.bind(this),
-    };
-
-    this.reset();
-
-    return result;
-  }
-
-  getFailResult(
-    reason: BreaksMessage | SuccessArgs | SuccessArgs[],
-    params = this.params,
-  ): FailArgs {
-    const result: FailArgs = {
-      actionType: 'phys',
-      reason,
-      action: this.displayName,
-      initiator: params.initiator.nick,
-      target: params.target.nick,
-      weapon: params.initiator.weapon.item,
     };
 
     this.reset();

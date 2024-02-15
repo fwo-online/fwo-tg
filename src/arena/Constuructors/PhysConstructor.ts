@@ -6,10 +6,9 @@ import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import { AffectableAction } from './AffectableAction';
 import type {
-  BaseNext, BreaksMessage, DamageType, FailArgs, OrderType, SuccessArgs,
+  ActionType,
+  BaseNext, DamageType, OrderType, SuccessArgs,
 } from './types';
-
-import { handleCastError } from './utils';
 
 export type PhysNext = BaseNext & {
   actionType: 'phys';
@@ -30,6 +29,7 @@ export default abstract class PhysConstructor extends AffectableAction {
   desc: string;
   lvl: number;
   orderType: OrderType;
+  actionType: ActionType = 'phys';
 
   constructor(atkAct) {
     super();
@@ -68,9 +68,7 @@ export default abstract class PhysConstructor extends AffectableAction {
       this.checkTargetIsDead();
       this.next();
     } catch (e) {
-      handleCastError(e, (reason) => {
-        game.recordOrderResult(this.getFailResult(reason));
-      });
+      this.handleCastError(e);
     }
   }
 
@@ -139,24 +137,6 @@ export default abstract class PhysConstructor extends AffectableAction {
       weapon: initiator.weapon.item,
       dmgType: 'physical',
       affects: this.getAffects(),
-    };
-
-    this.reset();
-
-    return result;
-  }
-
-  getFailResult(
-    reason: BreaksMessage | SuccessArgs | SuccessArgs[],
-    params = this.params,
-  ): FailArgs {
-    const result: FailArgs = {
-      actionType: 'phys',
-      reason,
-      action: this.displayName,
-      initiator: params.initiator.nick,
-      target: params.target.nick,
-      weapon: params.initiator.weapon.item,
     };
 
     this.reset();

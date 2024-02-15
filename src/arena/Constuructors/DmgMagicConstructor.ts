@@ -2,7 +2,9 @@ import { floatNumber } from '../../utils/floatNumber';
 import type { Player } from '../PlayersService';
 import type { MagicArgs } from './MagicConstructor';
 import { Magic } from './MagicConstructor';
-import type { BaseNext, DamageType, SuccessArgs } from './types';
+import type {
+  ActionType, BaseNext, DamageType, SuccessArgs,
+} from './types';
 
 export type DmgMagicNext = BaseNext & {
   actionType: 'dmg-magic'
@@ -21,6 +23,7 @@ export interface DmgMagic extends DmgMagicArgs, Magic {
  * Общий конструктор не длительных магий
  */
 export abstract class DmgMagic extends Magic {
+  actionType: ActionType = 'dmg-magic';
   /**
    * Создание магии
    */

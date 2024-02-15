@@ -31,14 +31,3 @@ export const findByTarget = (target: string) => {
     return result.target === target;
   };
 };
-
-export const handleCastError = (
-  error: unknown,
-  onActionError: (error: BreaksMessage | SuccessArgs) => void,
-) => {
-  if (error instanceof CastError) {
-    onActionError(error.reason);
-  } else {
-    console.error(error);
-  }
-};

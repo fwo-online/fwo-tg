@@ -4,7 +4,9 @@ import type Game from '../GameService';
 import type { Player } from '../PlayersService';
 import { DmgMagic } from './DmgMagicConstructor';
 import type { LongItem } from './LongMagicConstructor';
-import type { BaseNext, DamageType, LongCustomMessage } from './types';
+import type {
+  ActionType, BaseNext, DamageType, LongCustomMessage,
+} from './types';
 
 export type LongDmgMagicNext = BaseNext & {
   exp: number;
@@ -20,6 +22,7 @@ export interface LongDmgMagic extends DmgMagic, LongCustomMessage {
  * Общий конструктор не длительных магий
  */
 export abstract class LongDmgMagic extends DmgMagic {
+  actionType: ActionType = 'dmg-magic-long';
   isLong = true;
   buff: LongItem[] = [];
 

@@ -3,8 +3,7 @@ import type Game from '../GameService';
 import type { Player } from '../PlayersService';
 import { CommonMagic } from './CommonMagicConstructor';
 import type { MagicNext } from './MagicConstructor';
-import type { BaseNext, LongCustomMessage } from './types';
-import { handleCastError } from './utils';
+import type { ActionType, BaseNext, LongCustomMessage } from './types';
 
 export type LongItem = {
   initiator: string;
@@ -25,6 +24,7 @@ export interface LongMagic extends CommonMagic, LongCustomMessage {
  * Общий конструктор не длительных магий
  */
 export abstract class LongMagic extends CommonMagic {
+  actionType: ActionType = 'magic-long';
   isLong = true;
   buff: LongItem[] = [];
 
@@ -51,9 +51,7 @@ export abstract class LongMagic extends CommonMagic {
       this.next();
       this.postRun(initiator, target, game);
     } catch (e) {
-      handleCastError(e, (reason) => {
-        game.recordOrderResult(this.getFailResult(reason));
-      });
+      this.handleCastError(e);
     } finally {
       this.reset();
     }

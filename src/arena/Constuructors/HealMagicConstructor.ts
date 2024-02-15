@@ -4,9 +4,9 @@ import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import { AffectableAction } from './AffectableAction';
 import type {
+  ActionType,
   BaseNext, BreaksMessage, CustomMessage, ExpArr, FailArgs, OrderType, SuccessArgs,
 } from './types';
-import { handleCastError } from './utils';
 
 export type HealNext = Omit<BaseNext, 'exp'> & {
   actionType: 'heal';
@@ -35,6 +35,8 @@ export interface Heal extends HealArgs, CustomMessage {
  * Heal Class
  */
 export abstract class Heal extends AffectableAction {
+  actionType: ActionType = 'heal';
+
   constructor(params: HealArgs) {
     super();
     Object.assign(this, params);
@@ -63,9 +65,7 @@ export abstract class Heal extends AffectableAction {
       // this.backToLife();
       this.next();
     } catch (e) {
-      handleCastError(e, (reason) => {
-        game.recordOrderResult(this.breaks(reason));
-      });
+      this.handleCastError(e);
     }
   }
 

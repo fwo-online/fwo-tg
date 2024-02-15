@@ -13,7 +13,7 @@ import type { PhysNext } from './PhysConstructor';
 import type { SkillNext } from './SkillConstructor';
 
 export type CostType = 'en' | 'mp';
-export type OrderType = 'all' | 'any' | 'enemy' | 'self';
+export type OrderType = 'all' | 'any' | 'enemy' | 'self' | 'team';
 export type AOEType = 'target' | 'team';
 export type DamageType = 'acid' | 'fire' | 'lighting' | 'frost' | 'physical' | 'clear';
 export type BreaksMessage =

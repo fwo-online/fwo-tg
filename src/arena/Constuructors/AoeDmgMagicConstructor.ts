@@ -1,6 +1,7 @@
 import { floatNumber } from '../../utils/floatNumber';
 import { DmgMagic } from './DmgMagicConstructor';
 import type {
+  ActionType,
   BaseNext, DamageType, ExpArr, SuccessArgs,
 } from './types';
 
@@ -13,6 +14,8 @@ export type AoeDmgMagicNext = BaseNext & {
 }
 
 export abstract class AoeDmgMagic extends DmgMagic {
+  actionType: ActionType = 'aoe-dmg-magic';
+
   status: {
     exp: number;
     expArr: ExpArr;
