@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`fireRain should hit clan targets 1`] = `
+[
+  8,
+  2.59,
+  2.59,
+  3.93,
+  2.63,
+  2.59,
+  3.97,
+  8,
+  8,
+  8,
+  8,
+]
+`;
+
+exports[`fireRain should hit clan targets 2`] = `234`;
+
+exports[`fireRain should hit clan targets 3`] = `
+"*asperiores* сотворил _Огненный дождь_ на *magni* нанеся 4.03 урона
+\\[ magni 🔥 💔-4.03/2.59 📖40
+labore 🔥 💔-5.41/2.59 📖43
+iure 🔥 💔-4.07/3.93 📖33
+recusandae 🔥 💔-5.37/2.63 📖43
+ipsam 🔥 💔-5.41/2.59 📖43
+dignissimos 🔥 💔-4.03/3.97 📖32 ]"
+`;
+
+exports[`fireRain should hit single target if target has no clan 1`] = `
+[
+  8,
+  8,
+  8,
+  8,
+  8,
+  8,
+  8,
+  8,
+  2.57,
+  8,
+  8,
+]
+`;
+
+exports[`fireRain should hit single target if target has no clan 2`] = `51`;
+
+exports[`fireRain should hit single target if target has no clan 3`] = `
+"*explicabo* сотворил _Огненный дождь_ на *aperiam* нанеся 5.43 урона
+\\[ aperiam 🔥 💔-5.43/2.57 📖51 ]"
+`;

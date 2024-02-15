@@ -4,11 +4,11 @@ import CharacterService from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
 import { profsData } from '@/data/profs';
 import TestUtils from '@/utils/testUtils';
-import fireBall from './fireBall';
+import fireRain from './fireRain';
 
-// npm t src/arena/magics/fireBall.test.ts
+// npm t src/arena/magics/fireRain.test.ts
 
-describe('fireBall', () => {
+describe('fireRain', () => {
   let game: GameService;
 
   beforeAll(() => {
@@ -17,13 +17,14 @@ describe('fireBall', () => {
 
   beforeEach(async () => {
     const harks = { ...profsData.m.hark, wis: 20 };
-    const initiator = await TestUtils.createCharacter({ prof: 'm', magics: { fireBall: 3 }, harks });
+    const initiator = await TestUtils.createCharacter({ prof: 'm', magics: { fireRain: 3 }, harks });
     const chars = await Promise.all(times(10, () => TestUtils.createCharacter()));
     const charIds = chars.map(({ id }) => id);
 
     await TestUtils.createClan(charIds[1], {
       players: charIds.slice(0, 6),
     });
+
     TestUtils.resetCharacterCache();
     await Promise.all([initiator.id, ...charIds].map(CharacterService.getCharacterById));
 
@@ -41,10 +42,10 @@ describe('fireBall', () => {
     jest.spyOn(global.Math, 'random').mockRestore();
   });
 
-  it('should hit 6 targets', () => {
+  it('should hit clan targets', () => {
     game.players.players[0].proc = 1;
 
-    fireBall.cast(game.players.players[0], game.players.players[1], game);
+    fireRain.cast(game.players.players[0], game.players.players[1], game);
 
     expect(
       game.players.players.map((player) => player.stats.val('hp')),
@@ -53,10 +54,10 @@ describe('fireBall', () => {
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
 
-  it('should hit 1 target', () => {
+  it('should hit single target if target has no clan', () => {
     game.players.players[0].proc = 1;
 
-    fireBall.cast(game.players.players[0], game.players.players[8], game);
+    fireRain.cast(game.players.players[0], game.players.players[8], game);
 
     expect(
       game.players.players.map((player) => player.stats.val('hp')),

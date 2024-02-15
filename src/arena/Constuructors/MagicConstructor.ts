@@ -94,7 +94,7 @@ export abstract class Magic extends AffectableAction {
    */
   getCost(initiator: Player): void {
     const costValue = +initiator.stats.val(this.costType) - this.cost;
-    console.log(initiator, 'MP:', costValue);
+    console.log(initiator.id, 'MP:', costValue);
     if (costValue >= 0) {
       initiator.stats.set(this.costType, costValue);
     } else {
