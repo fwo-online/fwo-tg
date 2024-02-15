@@ -8,6 +8,7 @@ const registerAttackAffects = () => {
     arena.skills.disarm,
     arena.magics.paralysis,
     arena.magics.eclipse,
+    arena.magics.sleep,
   ]);
 
   arena.actions.attack.registerPostAffects([
@@ -23,12 +24,31 @@ const registerMagicAffects = () => {
   });
 };
 
+const registerSkillAffects = () => {
+  Object.values(arena.skills).forEach((magic) => {
+    magic.registerPreAffects([
+      arena.magics.sleep,
+    ]);
+  });
+};
+
 const registerHealAffects = () => {
-  arena.actions.handsHeal.registerPreAffects([arena.actions.attack]);
+  arena.actions.handsHeal.registerPreAffects([
+    arena.actions.attack,
+    arena.magics.sleep,
+  ]);
+};
+
+const registerProtectAffects = () => {
+  arena.actions.protect.registerPreAffects([
+    arena.magics.sleep,
+  ]);
 };
 
 export const registerAffects = () => {
   registerAttackAffects();
   registerMagicAffects();
   registerHealAffects();
+  registerProtectAffects();
+  registerSkillAffects();
 };

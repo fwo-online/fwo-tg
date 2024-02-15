@@ -1,11 +1,13 @@
 import type {
-  BaseNext, ExpArr, OrderType, SuccessArgs,
+  BaseNext, ExpArr, OrderType, SuccessArgs, FailArgs,
 } from '@/arena/Constuructors/types';
 import type Game from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
 import type { Player } from '@/arena/PlayersService';
 import { floatNumber } from '@/utils/floatNumber';
+import { AffectableAction } from '../Constuructors/AffectableAction';
 import type { PreAffect } from '../Constuructors/interfaces/PreAffect';
+import { handleCastError } from '../Constuructors/utils';
 import CastError from '../errors/CastError';
 
 export type ProtectNext = Omit<BaseNext, 'exp'> & {
@@ -16,7 +18,7 @@ export type ProtectNext = Omit<BaseNext, 'exp'> & {
 /**
  * Класс защиты
  */
-class Protect implements PreAffect {
+class Protect extends AffectableAction implements PreAffect {
   name = 'protect';
   displayName = 'Защита';
   desc = 'Защита от физических атак';
@@ -29,9 +31,20 @@ class Protect implements PreAffect {
    * @param target Объект цели
    * @param [game] Объект игры
    */
-  cast(initiator: Player, target: Player, _game: Game) {
-    const protectValue = initiator.stats.val('pdef') * initiator.proc;
+  cast(initiator: Player, target: Player, game: Game) {
+    this.params = { initiator, target, game };
+    try {
+      this.checkPreAffects();
+      this.run(initiator, target, game);
+    } catch (e) {
+      handleCastError(e, (reason) => {
+        game.recordOrderResult(this.getFailResult(reason));
+      });
+    }
+  }
 
+  run(initiator: Player, target: Player, _game: Game) {
+    const protectValue = initiator.stats.val('pdef') * initiator.proc;
     target.stats.up('pdef', protectValue);
     target.flags.isProtected.push({
       initiator: initiator.id, val: protectValue,
@@ -53,6 +66,18 @@ class Protect implements PreAffect {
     if (!result) {
       throw new CastError(this.getSuccessResult({ initiator, target, game }, status.effect));
     }
+  }
+
+  getFailResult(reason): FailArgs {
+    const { target, initiator } = this.params;
+    return {
+      reason,
+      target: target.nick,
+      initiator: initiator.nick,
+      actionType: 'protect',
+      action: this.displayName,
+      weapon: initiator.weapon.item,
+    };
   }
 
   /**
