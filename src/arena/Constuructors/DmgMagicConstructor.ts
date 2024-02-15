@@ -1,7 +1,8 @@
 import { floatNumber } from '../../utils/floatNumber';
 import type { Player } from '../PlayersService';
-import { Magic, MagicArgs } from './MagicConstructor';
-import type { BaseNext, DamageType } from './types';
+import type { MagicArgs } from './MagicConstructor';
+import { Magic } from './MagicConstructor';
+import type { BaseNext, DamageType, SuccessArgs } from './types';
 
 export type DmgMagicNext = BaseNext & {
   actionType: 'dmg-magic'
@@ -20,11 +21,6 @@ export interface DmgMagic extends DmgMagicArgs, Magic {
  * Общий конструктор не длительных магий
  */
 export abstract class DmgMagic extends Magic {
-  status: {
-    exp: number;
-    hit: number;
-  };
-
   /**
    * Создание магии
    */
@@ -40,7 +36,7 @@ export abstract class DmgMagic extends Magic {
     const effect = this.getEffectVal({ initiator, target, game });
     const modifiedEffect = this.modifyEffect(effect, { initiator, target, game });
 
-    this.status.hit = modifiedEffect;
+    this.status.effect = modifiedEffect;
 
     return modifiedEffect;
   }
@@ -76,11 +72,11 @@ export abstract class DmgMagic extends Magic {
    * кол-во единиц за использование магии
    * Если кастеру хватило mp/en продолжаем,если нет, то возвращаем false
    */
-  getExp({ initiator, target, game } = this.params): void {
-    if (game.isPlayersAlly(initiator, target) && !initiator.flags.isGlitched) {
+  getExp({ initiator, target } = this.params): void {
+    if (initiator.isAlly(target) && !initiator.flags.isGlitched) {
       this.status.exp = 0;
     } else {
-      const dmgExp = this.calculateExp(this.status.hit, this.baseExp);
+      const dmgExp = this.calculateExp(this.status.effect, this.baseExp);
       this.status.exp = dmgExp;
 
       initiator.stats.up('exp', dmgExp);
@@ -91,29 +87,28 @@ export abstract class DmgMagic extends Magic {
     return Math.round(hit * 8) + baseExp;
   }
 
-  resetStatus(): void {
+  reset(): void {
     this.status = {
       exp: 0,
-      hit: 0,
+      effect: 0,
     };
   }
 
-  /**
-   * Магия прошла удачно
-   * @param initiator объект персонажаы
-   * @param target объект цели магии
-   * @todo тут нужен вывод требуемых параметров
-   */
-  next(): void {
-    const { game, target } = this.params;
-    const args: DmgMagicNext = {
-      ...this.getNextArgs(),
+  getSuccessResult({ initiator, target } = this.params): SuccessArgs {
+    const result: DmgMagicNext = {
+      exp: this.status.exp,
+      action: this.displayName,
       actionType: 'dmg-magic',
-      dmg: floatNumber(this.status.hit),
+      target: target.nick,
+      initiator: initiator.nick,
+      msg: this.customMessage?.bind(this),
+      dmg: floatNumber(this.status.effect),
       hp: target.stats.val('hp'),
       dmgType: this.dmgType,
     };
 
-    game.recordOrderResult(args);
+    this.reset();
+
+    return result;
   }
 }

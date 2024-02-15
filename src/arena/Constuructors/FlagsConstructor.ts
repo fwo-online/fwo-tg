@@ -19,6 +19,7 @@ export default class FlagsConstructor {
   isShielded = 0;
   isParalysed = false;
   isDisarmed = false;
+  isLightShielded: Flag[] = [];
 
   /**
    * Обнуление флагов
@@ -35,5 +36,6 @@ export default class FlagsConstructor {
     this.isParry = 0;
     this.isDisarmed = false;
     this.isShielded = 0;
+    this.isLightShielded = [];
   }
 }

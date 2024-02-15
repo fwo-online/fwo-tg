@@ -1,7 +1,8 @@
 import { bold, italic } from '@/utils/formatString';
-import type { PreAffect } from '../Constuructors/PreAffect';
+import type { PreAffect } from '../Constuructors/interfaces/PreAffect';
 import { Skill } from '../Constuructors/SkillConstructor';
-import { SuccessArgs } from '../Constuructors/types';
+import type { SuccessArgs } from '../Constuructors/types';
+import CastError from '../errors/CastError';
 import MiscService from '../MiscService';
 
 const dodgeableWeaponTypes = [
@@ -40,7 +41,7 @@ class Dodge extends Skill implements PreAffect {
     initiator.flags.isDodging = this.effect[initiatorSkillLvl - 1] * initiator.stats.val('dex');
   }
 
-  check({ initiator, target, game } = this.params) {
+  preAffect({ initiator, target, game } = this.params) {
     const isDodgeable = initiator.weapon.isOfType(dodgeableWeaponTypes);
 
     if (target.flags.isDodging && isDodgeable) {
@@ -51,7 +52,7 @@ class Dodge extends Skill implements PreAffect {
       if (chance > MiscService.rndm('1d100')) {
         this.getExp(target);
 
-        return this.getSuccessResult({ initiator: target, target: initiator, game });
+        throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
       }
     }
   }

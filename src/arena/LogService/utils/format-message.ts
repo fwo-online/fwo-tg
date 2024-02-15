@@ -4,9 +4,17 @@ import { formatAction } from './format-action';
 import { formatError } from './format-error';
 import { formatExp } from './format-exp';
 
-export function formatMessage(msgObj: SuccessArgs | FailArgs) {
+export function formatMessage(msgObj: SuccessArgs | FailArgs, depth = 0): string {
+  const indent = '\t'.repeat(depth);
+
   if (isSuccessResult(msgObj)) {
-    return `${formatAction(msgObj)}${formatExp(msgObj)}`;
+    if (!msgObj.affects?.length) {
+      return `${indent}${formatAction(msgObj)}\n${indent}${formatExp(msgObj)}`;
+    }
+
+    const affects = msgObj.affects.map((msgObj) => formatMessage(msgObj, depth + 1));
+
+    return `${indent}${formatAction(msgObj)}\n${indent}${formatExp(msgObj)}\n${affects.join('\n')}`;
   }
 
   return formatError(msgObj);

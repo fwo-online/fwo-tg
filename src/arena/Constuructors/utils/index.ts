@@ -1,12 +1,13 @@
+import CastError from '@/arena/errors/CastError';
 import type {
-  Breaks, FailArgs, SuccessArgs,
+  BreaksMessage, FailArgs, SuccessArgs,
 } from '../types';
 
 type Result = SuccessArgs | FailArgs;
 type SuccessDamageResult<T = Result> = T extends { dmg: number } ? T : never;
 
 export const isSuccessResult = (result: Result): result is SuccessArgs => {
-  return !('message' in result);
+  return !('reason' in result);
 };
 
 export const isSuccessDamageResult = (result: Result): result is SuccessDamageResult => {
@@ -18,7 +19,6 @@ export const isSuccessDamageResult = (result: Result): result is SuccessDamageRe
 };
 
 export const isPhysicalDamageResult = (result: Result): result is SuccessDamageResult => {
-  console.log(result);
   if (isSuccessDamageResult(result)) {
     return result.dmgType === 'physical';
   }
@@ -32,10 +32,13 @@ export const findByTarget = (target: string) => {
   };
 };
 
-export const handleCastError = (error: unknown, onActionError: (error: Breaks) => void) => {
-  if (error instanceof Error) {
-    console.error(error);
+export const handleCastError = (
+  error: unknown,
+  onActionError: (error: BreaksMessage | SuccessArgs) => void,
+) => {
+  if (error instanceof CastError) {
+    onActionError(error.reason);
   } else {
-    onActionError(error as Breaks);
+    console.error(error);
   }
 };

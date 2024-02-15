@@ -1,58 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`parry target should not parry attack if target has more dex 1`] = `
-[
-  {
-    "action": "🤺 Парирование",
-    "actionType": "skill",
-    "exp": 0,
-    "initiator": "explicabo",
-    "msg": [Function],
-    "target": "explicabo",
-  },
-  {
-    "action": "attack",
-    "actionType": "phys",
-    "dmg": 11,
-    "dmgType": "physical",
-    "exp": 88,
-    "hp": -3,
-    "initiator": "repellat",
-    "target": "explicabo",
-    "weapon": {
-      "code": "a100",
-    },
-  },
-]
+"*explicabo* использовал _🤺 Парирование_
+
+*repellat* рубанул *explicabo* _Эпическим Мечом_ и нанёс *11* урона
+\\[ 💔-11/-3 📖88 ]"
 `;
 
 exports[`parry target should parry attack if initiator has more dex 1`] = `
-[
-  {
-    "action": "🤺 Парирование",
-    "actionType": "skill",
-    "exp": 0,
-    "initiator": "alias",
-    "msg": [Function],
-    "target": "alias",
-  },
-  {
-    "action": "attack",
-    "actionType": "phys",
-    "cause": {
-      "action": "🤺 Парирование",
-      "actionType": "skill",
-      "exp": 8,
-      "initiator": "alias",
-      "msg": [Function],
-      "target": "asperiores",
-    },
-    "initiator": "asperiores",
-    "message": undefined,
-    "target": "alias",
-    "weapon": {
-      "code": "a100",
-    },
-  },
-]
+"*alias* использовал _🤺 Парирование_
+
+*asperiores* пытался атаковать *alias*, но у него не получилось
+_🤺 Парирование_ *alias*: 📖8"
 `;

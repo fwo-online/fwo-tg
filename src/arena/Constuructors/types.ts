@@ -9,6 +9,7 @@ import type { HealMagicNext, HealNext } from './HealMagicConstructor';
 import type { LongDmgMagicNext } from './LongDmgMagicConstructor';
 import type { LongMagicNext } from './LongMagicConstructor';
 import type { MagicNext } from './MagicConstructor';
+import type { PhysNext } from './PhysConstructor';
 import type { SkillNext } from './SkillConstructor';
 
 export type CostType = 'en' | 'mp';
@@ -20,18 +21,11 @@ export type BreaksMessage =
   'NO_TARGET' |
   'NO_MANA' |
   'NO_ENERGY' |
-  'SILENCED' |
   'CHANCE_FAIL' |
   'GOD_FAIL' |
   'HEAL_FAIL' |
   'SKILL_FAIL' |
-  'DEF' |
-  'DODGED' |
-  'ECLIPSE' |
-  'NO_WEAPON' |
-  'PARRYED' |
-  'DISARM' |
-  'PARALYSED';
+  'NO_WEAPON';
 
 export type ExpArr = {
   name: string;
@@ -61,23 +55,8 @@ export type BaseNext = {
   exp: number;
   initiator: string;
   target: string;
+  affects?: SuccessArgs[];
   msg?: CustomMessageFn;
-}
-
-export type PhysNext = BaseNext & {
-  actionType: 'phys';
-  dmg: number;
-  hp: number;
-  weapon: Item;
-  dmgType: DamageType,
-}
-
-export type PhysBreak = Omit<BaseNext, 'exp'> & {
-  actionType: 'phys';
-  cause?: SuccessArgs;
-  message: BreaksMessage;
-  weapon: Item;
-  expArr: ExpArr;
 }
 
 export type SuccessArgs =
@@ -94,13 +73,11 @@ export type SuccessArgs =
 
 export type ActionType = SuccessArgs['actionType'];
 
-export interface Breaks {
+export interface FailArgs {
   actionType: ActionType;
-  message: BreaksMessage;
-  cause?: SuccessArgs;
+  reason: BreaksMessage | SuccessArgs | SuccessArgs[];
   action: string;
   initiator: string;
   target: string;
+  weapon: Item | undefined;
 }
-
-export type FailArgs = Breaks | PhysBreak;

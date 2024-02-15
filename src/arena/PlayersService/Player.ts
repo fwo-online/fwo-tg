@@ -179,4 +179,12 @@ export default class Player {
   getSkillLevel(skill: string) {
     return this.skills[skill] ?? 0;
   }
+
+  isAlly(player: Player) {
+    if (!this.clan || !player.clan) {
+      return false;
+    }
+
+    return this.clan.id === player.clan.id;
+  }
 }

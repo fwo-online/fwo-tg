@@ -1,4 +1,5 @@
 import { floatNumber } from '../../utils/floatNumber';
+import CastError from '../errors/CastError';
 import type Game from '../GameService';
 import type { Player } from '../PlayersService';
 import { DmgMagic } from './DmgMagicConstructor';
@@ -36,7 +37,7 @@ export abstract class LongDmgMagic extends DmgMagic {
       game.longActions[this.name] ??= [];
       this.buff = game.longActions[this.name] ?? [];
       this.getCost(initiator);
-      this.checkPreAffects(initiator, target, game);
+      this.checkPreAffects({ initiator, target, game });
       this.isBlurredMind(); // проверка не запудрило
       this.checkChance();
       this.run(initiator, target, game); // вызов кастомного обработчика
@@ -47,7 +48,7 @@ export abstract class LongDmgMagic extends DmgMagic {
     } catch (failMsg) {
       game.recordOrderResult(failMsg);
     } finally {
-      this.resetStatus();
+      this.reset();
     }
   }
 
@@ -75,14 +76,14 @@ export abstract class LongDmgMagic extends DmgMagic {
         const initiator = game.players.getById(item.initiator);
         const target = game.players.getById(item.target);
         if (!initiator) {
-          throw this.breaks('NO_INITIATOR');
+          throw new CastError('NO_INITIATOR');
         }
         if (!target) {
-          throw this.breaks('NO_TARGET');
+          throw new CastError('NO_TARGET');
         }
         this.params = { initiator, target, game };
         this.params.initiator.proc = item.proc;
-        this.checkPreAffects(initiator, target, game);
+        this.checkPreAffects({ initiator, target, game });
         this.isBlurredMind(); // проверка не запудрило
         this.checkChance();
         this.runLong(initiator, target, game); // вызов кастомного обработчика
@@ -129,7 +130,7 @@ export abstract class LongDmgMagic extends DmgMagic {
     const { game } = this.params;
     const dmgObj: LongDmgMagicNext = {
       exp: this.status.exp,
-      dmg: floatNumber(this.status.hit),
+      dmg: floatNumber(this.status.effect),
       action: this.displayName,
       actionType: 'dmg-magic-long',
       target: target.nick,

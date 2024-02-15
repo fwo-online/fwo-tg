@@ -10,20 +10,8 @@ exports[`bodySpirit should hit target and get mp 1`] = `
 exports[`bodySpirit should hit target and get mp 2`] = `2.44`;
 
 exports[`bodySpirit should hit target and get mp 3`] = `
-[
-  {
-    "action": "Дух тела",
-    "actionType": "dmg-magic",
-    "dmg": 4.88,
-    "dmgType": "physical",
-    "effect": undefined,
-    "exp": 47,
-    "hp": 3.12,
-    "initiator": "asperiores",
-    "msg": undefined,
-    "target": "magni",
-  },
-]
+"*asperiores* сотворил _Дух тела_ на *magni* нанеся 4.88 урона
+\\[ 👊 💔-4.88/3.12 📖47 ]"
 `;
 
 exports[`bodySpirit should not kill target 1`] = `
@@ -36,18 +24,20 @@ exports[`bodySpirit should not kill target 1`] = `
 exports[`bodySpirit should not kill target 2`] = `0`;
 
 exports[`bodySpirit should not kill target 3`] = `
+"*asperiores* сотворил _Дух тела_ на *magni* нанеся 0 урона
+\\[ 👊 💔-0/0.1 📖8 ]"
+`;
+
+exports[`bodySpirit should take 0 damage if target hp less than 0.5 1`] = `
 [
-  {
-    "action": "Дух тела",
-    "actionType": "dmg-magic",
-    "dmg": 0,
-    "dmgType": "physical",
-    "effect": undefined,
-    "exp": 8,
-    "hp": 0.1,
-    "initiator": "asperiores",
-    "msg": undefined,
-    "target": "magni",
-  },
+  8,
+  0.1,
 ]
+`;
+
+exports[`bodySpirit should take 0 damage if target hp less than 0.5 2`] = `0`;
+
+exports[`bodySpirit should take 0 damage if target hp less than 0.5 3`] = `
+"*asperiores* сотворил _Дух тела_ на *magni* нанеся 0 урона
+\\[ 👊 💔-0/0.1 📖8 ]"
 `;

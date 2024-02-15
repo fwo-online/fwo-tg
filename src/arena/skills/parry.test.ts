@@ -11,6 +11,7 @@ describe('parry', () => {
   let game: GameService;
 
   beforeAll(() => {
+    attack.registerPreAffects([parry]);
     casual.seed(1);
   });
 

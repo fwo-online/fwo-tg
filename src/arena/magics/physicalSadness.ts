@@ -1,14 +1,5 @@
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
-import type { PhysNext } from '../Constuructors/types';
-import { isSuccessDamageResult } from '../Constuructors/utils';
-
-const isPhysicalDamage = (result): result is PhysNext => {
-  if (isSuccessDamageResult(result)) {
-    return result.dmgType === 'physical';
-  }
-
-  return false;
-};
+import { isPhysicalDamageResult } from '../Constuructors/utils';
 
 class PhysicalSadness extends DmgMagic {
   constructor() {
@@ -33,7 +24,7 @@ class PhysicalSadness extends DmgMagic {
   run(): void {
     const { target, game } = this.params;
     const results = game.getRoundResults();
-    const physicalDamageResults = results.filter(isPhysicalDamage);
+    const physicalDamageResults = results.filter(isPhysicalDamageResult);
 
     if (!physicalDamageResults.length) {
       return;
@@ -44,7 +35,7 @@ class PhysicalSadness extends DmgMagic {
     const totalHit = physicalDamageResults.reduce((sum, result) => sum + result.dmg, 0);
     const hit = effect + (totalHit / physicalDamageResults.length + 1);
 
-    this.status.hit = hit;
+    this.status.effect = hit;
 
     target.stats.down('hp', hit);
   }

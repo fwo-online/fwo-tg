@@ -18,15 +18,11 @@ class HandsHeal extends Heal {
   }
 
   run(initiator: Player, target: Player, _game: Game): void {
-    if (target.flags.isHited) {
-      throw this.breaks('HEAL_FAIL');
-    } else {
-      this.status.val = this.effectVal();
-      target.stats.up('hp', this.status.val);
-      target.flags.isHealed.push({
-        initiator: initiator.id, val: this.status.val,
-      });
-    }
+    this.status.effect = this.effectVal();
+    target.stats.up('hp', this.status.effect);
+    target.flags.isHealed.push({
+      initiator: initiator.id, val: this.status.effect,
+    });
   }
 }
 

@@ -2,9 +2,11 @@ import { floatNumber } from '../../utils/floatNumber';
 import type Game from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
+import { AffectableAction } from './AffectableAction';
 import type {
-  BaseNext, Breaks, BreaksMessage, CustomMessage, ExpArr, OrderType,
+  BaseNext, BreaksMessage, CustomMessage, ExpArr, FailArgs, OrderType, SuccessArgs,
 } from './types';
+import { handleCastError } from './utils';
 
 export type HealNext = Omit<BaseNext, 'exp'> & {
   actionType: 'heal';
@@ -32,19 +34,9 @@ export interface Heal extends HealArgs, CustomMessage {
 /**
  * Heal Class
  */
-export abstract class Heal {
-  params!: {
-    initiator: Player;
-    target: Player;
-    game: Game;
-  };
-
-  status = {
-    exp: 0,
-    val: 0,
-  };
-
+export abstract class Heal extends AffectableAction {
   constructor(params: HealArgs) {
+    super();
     Object.assign(this, params);
   }
 
@@ -62,6 +54,7 @@ export abstract class Heal {
     };
 
     try {
+      this.checkPreAffects();
       this.run(initiator, target, game);
       // Получение экспы за хил следует вынести в отдельный action следующий
       // за самим хилом, дабы выдать exp всем хиллерам после формирования
@@ -70,11 +63,11 @@ export abstract class Heal {
       // this.backToLife();
       this.next();
     } catch (e) {
-      game.recordOrderResult(e);
+      handleCastError(e, (reason) => {
+        game.recordOrderResult(this.breaks(reason));
+      });
     }
   }
-
-  abstract run(initiator: Player, target: Player, game: Game): void;
 
   /**
    * Функция выполняет проверку, является ли хил "воскресившим", т.е если
@@ -86,14 +79,15 @@ export abstract class Heal {
   /**
    * @param obj
    */
-  breaks(message: BreaksMessage): Breaks {
+  breaks(reason: BreaksMessage | SuccessArgs | SuccessArgs[]): FailArgs {
     const { target, initiator } = this.params;
     return {
-      message,
+      reason,
       target: target.nick,
       initiator: initiator.nick,
       actionType: 'heal',
       action: this.displayName,
+      weapon: initiator.weapon.item,
     };
   }
 
@@ -117,7 +111,7 @@ export abstract class Heal {
 
   getExp(initiator: Player, target: Player, game: Game): number {
     if (game.isPlayersAlly(initiator, target)) {
-      const healEffect = this.status.val;
+      const healEffect = this.status.effect;
       const exp = Math.round(healEffect * 10);
       initiator.stats.up('exp', exp);
       return exp;
@@ -141,7 +135,7 @@ export abstract class Heal {
       id: initiator.id,
       name: initiator.nick,
       exp: this.status.exp,
-      val: this.status.val,
+      val: this.status.effect,
     };
     const args: HealNext = {
       expArr: [exp],
@@ -149,7 +143,7 @@ export abstract class Heal {
       actionType: 'heal',
       target: target.nick,
       initiator: initiator.nick,
-      effect: this.status.val,
+      effect: this.status.effect,
       hp: target.stats.val('hp'),
     };
     game.recordOrderResult(args);

@@ -1,57 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`disarm target should be disarmed if initiator has more dex 1`] = `
-[
-  {
-    "action": "🥊 Обезоруживание",
-    "actionType": "skill",
-    "exp": 20,
-    "initiator": "alias",
-    "msg": undefined,
-    "target": "asperiores",
-  },
-  {
-    "action": "attack",
-    "actionType": "phys",
-    "cause": {
-      "action": "🥊 Обезоруживание",
-      "actionType": "skill",
-      "exp": 0,
-      "initiator": "alias",
-      "msg": undefined,
-      "target": "asperiores",
-    },
-    "initiator": "asperiores",
-    "message": undefined,
-    "target": "alias",
-    "weapon": {
-      "code": "a100",
-    },
-  },
-]
+"*alias* использовал _🥊 Обезоруживание_ на *asperiores*
+\\[ 📖20 ]
+*asperiores* пытался атаковать *alias*, но у него не получилось
+_🥊 Обезоруживание_ *alias*: 📖0"
 `;
 
 exports[`disarm target should not be disarmed if initiator has less dex 1`] = `
-[
-  {
-    "action": "🥊 Обезоруживание",
-    "actionType": "skill",
-    "initiator": "explicabo",
-    "message": "SKILL_FAIL",
-    "target": "repellat",
-  },
-  {
-    "action": "attack",
-    "actionType": "phys",
-    "dmg": 11,
-    "dmgType": "physical",
-    "exp": 88,
-    "hp": -3,
-    "initiator": "repellat",
-    "target": "explicabo",
-    "weapon": {
-      "code": "a100",
-    },
-  },
-]
+"*explicabo* пытался использовать умение _🥊 Обезоруживание_, но у него не вышло
+*repellat* рубанул *explicabo* _Эпическим Мечом_ и нанёс *11* урона
+\\[ 💔-11/-3 📖88 ]"
 `;

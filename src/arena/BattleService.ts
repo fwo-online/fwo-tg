@@ -55,6 +55,9 @@ function getTargetKeyboard(charId: string, game: Game, action: string) {
       if (orderType === 'enemy') {
         return !game.isPlayersAlly(player, target);
       }
+      if (orderType === 'team') {
+        return game.isPlayersAlly(player, target);
+      }
 
       return !orders.some((order) => target.id === order.target && action === order.action);
     })

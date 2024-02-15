@@ -30,6 +30,7 @@ module.exports = {
     camelcase: 0,
     'lines-between-class-members': ["error", "always", {exceptAfterSingleLine: true}],
     'no-void': ['error', { allowAsStatement: true }],
+    '@typescript-eslint/consistent-type-imports': 'error',
     '@typescript-eslint/no-useless-constructor': 'warn',
     '@typescript-eslint/no-var-requires': 0,
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: "^_"}],

@@ -4,7 +4,7 @@ exports[`chainLightning should hit 3 targets 1`] = `
 [
   5.89,
   5.63,
-  6.1,
+  6.11,
   8,
   8,
   8,
@@ -19,36 +19,10 @@ exports[`chainLightning should hit 3 targets 1`] = `
 exports[`chainLightning should hit 3 targets 2`] = `63`;
 
 exports[`chainLightning should hit 3 targets 3`] = `
-[
-  {
-    "action": "Цепь молний",
-    "actionType": "aoe-dmg-magic",
-    "dmg": 2.37,
-    "dmgType": "lighting",
-    "effect": undefined,
-    "exp": 31,
-    "expArr": [
-      {
-        "exp": 17,
-        "hp": 5.89,
-        "id": "2bea7421-d53a-4131-b215-51c23ea98de9",
-        "name": "sed",
-        "val": 2.11,
-      },
-      {
-        "exp": 15,
-        "hp": 6.1,
-        "id": "551bb8cb-f2ea-4063-a9cf-7fe83e0ae647",
-        "name": "culpa",
-        "val": 1.9,
-      },
-    ],
-    "hp": 5.63,
-    "initiator": "sed",
-    "msg": undefined,
-    "target": "quod",
-  },
-]
+"*architecto* сотворил _Цепь молний_ на *aspernatur* нанеся 2.36 урона
+\\[ aspernatur ⚡ 💔-2.36/5.63 📖31
+architecto ⚡ 💔-2.11/5.89 📖17
+quia ⚡ 💔-1.89/6.11 📖15 ]"
 `;
 
 exports[`chainLightning should hit 3 targets without clan 1`] = `
@@ -61,7 +35,7 @@ exports[`chainLightning should hit 3 targets without clan 1`] = `
   8,
   8,
   8,
-  5.63,
+  5.66,
   8,
   8,
 ]
@@ -70,36 +44,10 @@ exports[`chainLightning should hit 3 targets without clan 1`] = `
 exports[`chainLightning should hit 3 targets without clan 2`] = `63`;
 
 exports[`chainLightning should hit 3 targets without clan 3`] = `
-[
-  {
-    "action": "Цепь молний",
-    "actionType": "aoe-dmg-magic",
-    "dmg": 2.34,
-    "dmgType": "lighting",
-    "effect": undefined,
-    "exp": 31,
-    "expArr": [
-      {
-        "exp": 17,
-        "hp": 5.89,
-        "id": "2d0ef768-4c94-427f-a50f-8363cd53ed98",
-        "name": "id",
-        "val": 2.11,
-      },
-      {
-        "exp": 15,
-        "hp": 6.13,
-        "id": "33c99000-70a6-4e90-bfc6-5f192d396a54",
-        "name": "molestiae",
-        "val": 1.87,
-      },
-    ],
-    "hp": 5.63,
-    "initiator": "id",
-    "msg": undefined,
-    "target": "magni",
-  },
-]
+"*qui* сотворил _Цепь молний_ на *ex* нанеся 2.34 урона
+\\[ ex ⚡ 💔-2.34/5.66 📖31
+qui ⚡ 💔-2.11/5.89 📖17
+doloremque ⚡ 💔-1.87/6.13 📖15 ]"
 `;
 
 exports[`chainLightning should hit 4 targets 1`] = `
@@ -107,7 +55,7 @@ exports[`chainLightning should hit 4 targets 1`] = `
   4.98,
   4.64,
   5.31,
-  5.65,
+  5.62,
   8,
   8,
   8,
@@ -121,43 +69,11 @@ exports[`chainLightning should hit 4 targets 1`] = `
 exports[`chainLightning should hit 4 targets 2`] = `104`;
 
 exports[`chainLightning should hit 4 targets 3`] = `
-[
-  {
-    "action": "Цепь молний",
-    "actionType": "aoe-dmg-magic",
-    "dmg": 3.36,
-    "dmgType": "lighting",
-    "effect": undefined,
-    "exp": 39,
-    "expArr": [
-      {
-        "exp": 24,
-        "hp": 4.98,
-        "id": "14edb8f1-372b-4e3b-913c-9c3e0b812060",
-        "name": "ex",
-        "val": 3.02,
-      },
-      {
-        "exp": 22,
-        "hp": 5.31,
-        "id": "00831d48-28fd-4413-9199-e6850dc43bc9",
-        "name": "et",
-        "val": 2.69,
-      },
-      {
-        "exp": 19,
-        "hp": 5.65,
-        "id": "76dcb686-3502-41e0-b1c3-8b08a0214f59",
-        "name": "repellendus",
-        "val": 2.35,
-      },
-    ],
-    "hp": 4.64,
-    "initiator": "ex",
-    "msg": undefined,
-    "target": "aut",
-  },
-]
+"*explicabo* сотворил _Цепь молний_ на *et* нанеся 3.4 урона
+\\[ et ⚡ 💔-3.4/4.64 📖39
+explicabo ⚡ 💔-3.02/4.98 📖24
+eum ⚡ 💔-2.69/5.31 📖22
+veritatis ⚡ 💔-2.38/5.62 📖19 ]"
 `;
 
 exports[`chainLightning should hit 5 targets 1`] = `
@@ -179,48 +95,10 @@ exports[`chainLightning should hit 5 targets 1`] = `
 exports[`chainLightning should hit 5 targets 2`] = `153`;
 
 exports[`chainLightning should hit 5 targets 3`] = `
-[
-  {
-    "action": "Цепь молний",
-    "actionType": "aoe-dmg-magic",
-    "dmg": 4.38,
-    "dmgType": "lighting",
-    "effect": undefined,
-    "exp": 47,
-    "expArr": [
-      {
-        "exp": 32,
-        "hp": 4.06,
-        "id": "41b8eded-0d04-420e-a196-bf683b452acd",
-        "name": "asperiores",
-        "val": 3.94,
-      },
-      {
-        "exp": 28,
-        "hp": 4.47,
-        "id": "700c9fab-547c-4311-97e1-5e412801ae3e",
-        "name": "labore",
-        "val": 3.53,
-      },
-      {
-        "exp": 25,
-        "hp": 4.9,
-        "id": "54790999-3f94-4b31-a6fb-6680c80a28cf",
-        "name": "iure",
-        "val": 3.1,
-      },
-      {
-        "exp": 21,
-        "hp": 5.37,
-        "id": "19ee8272-fc66-482a-b559-dab2eb9ac55c",
-        "name": "recusandae",
-        "val": 2.63,
-      },
-    ],
-    "hp": 3.59,
-    "initiator": "asperiores",
-    "msg": undefined,
-    "target": "magni",
-  },
-]
+"*asperiores* сотворил _Цепь молний_ на *magni* нанеся 4.38 урона
+\\[ magni ⚡ 💔-4.38/3.59 📖47
+asperiores ⚡ 💔-3.94/4.06 📖32
+labore ⚡ 💔-3.53/4.47 📖28
+iure ⚡ 💔-3.1/4.9 📖25
+recusandae ⚡ 💔-2.63/5.37 📖21 ]"
 `;

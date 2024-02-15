@@ -1,6 +1,8 @@
 import { floatNumber } from '../../utils/floatNumber';
 import { DmgMagic } from './DmgMagicConstructor';
-import type { BaseNext, DamageType, ExpArr } from './types';
+import type {
+  BaseNext, DamageType, ExpArr, SuccessArgs,
+} from './types';
 
 export type AoeDmgMagicNext = BaseNext & {
   actionType: 'aoe-dmg-magic'
@@ -14,7 +16,7 @@ export abstract class AoeDmgMagic extends DmgMagic {
   status: {
     exp: number;
     expArr: ExpArr;
-    hit: number;
+    effect: number;
   };
 
   getExp({ initiator, target, game } = this.params): void {
@@ -46,31 +48,31 @@ export abstract class AoeDmgMagic extends DmgMagic {
     });
   }
 
-  resetStatus(): void {
+  reset(): void {
+    super.reset();
+
     this.status = {
       exp: 0,
-      hit: 0,
+      effect: 0,
       expArr: [],
     };
   }
 
-  /**
-   * Магия прошла удачно
-   * @param initiator объект персонажаы
-   * @param target объект цели магии
-   * @todo тут нужен вывод требуемых параметров
-   */
-  next(): void {
-    const { game, target } = this.params;
-    const args: AoeDmgMagicNext = {
-      ...this.getNextArgs(),
+  getSuccessResult({ initiator, target } = this.params): SuccessArgs {
+    const result: AoeDmgMagicNext = {
+      exp: this.status.exp,
+      action: this.displayName,
+      target: target.nick,
+      initiator: initiator.nick,
       actionType: 'aoe-dmg-magic',
       expArr: this.status.expArr,
-      dmg: floatNumber(this.status.hit),
+      dmg: floatNumber(this.status.effect),
       hp: target.stats.val('hp'),
       dmgType: this.dmgType,
     };
 
-    game.recordOrderResult(args);
+    this.reset();
+
+    return result;
   }
 }

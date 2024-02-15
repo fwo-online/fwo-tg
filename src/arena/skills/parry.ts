@@ -1,7 +1,8 @@
 import { bold, italic } from '@/utils/formatString';
-import { PreAffect } from '../Constuructors/PreAffect';
+import type { PreAffect } from '../Constuructors/interfaces/PreAffect';
 import { Skill } from '../Constuructors/SkillConstructor';
-import { SuccessArgs } from '../Constuructors/types';
+import type { SuccessArgs } from '../Constuructors/types';
+import CastError from '../errors/CastError';
 
 const parryableWeaponTypes = [
   's', // колющее
@@ -39,7 +40,7 @@ class Parry extends Skill implements PreAffect {
     initiator.flags.isParry = initiator.stats.val('dex') * effect;
   }
 
-  check({ initiator, target, game } = this.params) {
+  preAffect({ initiator, target, game } = this.params) {
     const isParryable = initiator.weapon.isOfType(parryableWeaponTypes);
 
     if (target.flags.isParry && isParryable) {
@@ -48,7 +49,7 @@ class Parry extends Skill implements PreAffect {
       if ((target.flags.isParry - initiatorDex) > 0) {
         this.getExp(target);
 
-        return this.getSuccessResult({ initiator: target, target: initiator, game });
+        throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
       }
 
       target.flags.isParry -= initiatorDex;
