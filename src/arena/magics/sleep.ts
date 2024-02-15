@@ -3,7 +3,7 @@ import { LongMagic } from '../Constuructors/LongMagicConstructor';
 import CastError from '../errors/CastError';
 
 /**
- * Паралич
+ * Сон
  * Основное описание магии общее требовани есть в конструкторе
  */
 class Sleep extends LongMagic implements PreAffect {
