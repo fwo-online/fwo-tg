@@ -3,7 +3,7 @@ import CastError from '../errors/CastError';
 import type Game from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
-import { BaseAction } from './BaseAction';
+import { AffectableAction } from './AffectableAction';
 import type {
   CostType, OrderType, AOEType, CustomMessage, BaseNext, BreaksMessage, FailArgs, SuccessArgs,
 } from './types';
@@ -35,7 +35,7 @@ interface SkillArgs {
 export interface Skill extends SkillArgs, CustomMessage {
 }
 
-export abstract class Skill extends BaseAction {
+export abstract class Skill extends AffectableAction {
   /**
    * Создание скила
    */
@@ -57,6 +57,7 @@ export abstract class Skill extends BaseAction {
     };
     try {
       this.getCost();
+      this.checkPreAffects();
       this.checkChance();
       this.run(initiator, target, game);
       this.next();

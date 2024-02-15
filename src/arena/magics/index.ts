@@ -29,3 +29,4 @@ export { default as bodySpirit } from './bodySpirit';
 export { default as blight } from './blight';
 export { default as dustShield } from './dustShield';
 export { default as lightShield } from './lightShield';
+export { default as sleep } from './sleep';
