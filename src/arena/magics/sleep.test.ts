@@ -6,7 +6,6 @@ import { handsHeal, protect } from '../actions';
 import attack from '../actions/attack';
 import { berserk } from '../skills';
 import sleep from './sleep';
-import poisonBreath from './poisonBreath';
 
 // npm t src/arena/magics/sleep.test.ts
 
