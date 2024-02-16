@@ -1,12 +1,9 @@
 import { floatNumber } from '../../utils/floatNumber';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
-import type { HealMagicNext } from '../Constuructors/HealMagicConstructor';
+import type { ActionType } from '../Constuructors/types';
 
 export class HealMagic extends CommonMagic {
-  status = {
-    exp: 0,
-    effect: 0,
-  };
+  actionType: ActionType = 'heal-magic';
 
   run(): void {
     const { target } = this.params;
@@ -30,21 +27,5 @@ export class HealMagic extends CommonMagic {
     if (hpNow > 0 && target.getKiller()) {
       target.resetKiller();
     }
-  }
-
-  next(): void {
-    const { target, initiator, game } = this.params;
-    const args: HealMagicNext = {
-      exp: this.status.exp,
-      action: this.displayName,
-      actionType: 'heal-magic',
-      target: target.nick,
-      hp: target.stats.val('hp'),
-      initiator: initiator.nick,
-      effect: this.status.effect,
-      msg: this.customMessage?.bind(this),
-    };
-
-    game.recordOrderResult(args);
   }
 }

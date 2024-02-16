@@ -4,5 +4,5 @@ exports[`blight should hit percentage damage 1`] = `6.54`;
 
 exports[`blight should hit percentage damage 2`] = `
 "*asperiores* сотворил _Истощение_ на *magni* нанеся 1.46 урона
-\\[ 👊 💔-1.46/6.54 📖20 ]"
+\\[ magni 👊 💔-1.46/6.54 📖20 ]"
 `;

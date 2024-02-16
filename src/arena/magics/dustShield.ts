@@ -48,7 +48,7 @@ class DustShield extends LongMagic {
       .filter(isPhysicalDamageResult)
       .filter(findByTarget(target.nick));
 
-    const damageTaken = physicalDamageResults.reduce((sum, { dmg }) => sum + dmg, 0);
+    const damageTaken = physicalDamageResults.reduce((sum, { effect }) => sum + effect, 0);
     if (damageTaken) {
       return effect + (damageTaken / physicalDamageResults.length) || 0;
     }

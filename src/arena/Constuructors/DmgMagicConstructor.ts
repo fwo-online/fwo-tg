@@ -3,15 +3,8 @@ import type { Player } from '../PlayersService';
 import type { MagicArgs } from './MagicConstructor';
 import { Magic } from './MagicConstructor';
 import type {
-  ActionType, BaseNext, DamageType, SuccessArgs,
+  ActionType, DamageType,
 } from './types';
-
-export type DmgMagicNext = BaseNext & {
-  actionType: 'dmg-magic'
-  dmg: number;
-  hp: number;
-  dmgType: DamageType;
-}
 
 export interface DmgMagicArgs extends MagicArgs {
   dmgType: DamageType;
@@ -30,6 +23,7 @@ export abstract class DmgMagic extends Magic {
   constructor({ dmgType, ...magObj }: DmgMagicArgs) {
     super(magObj);
     this.dmgType = dmgType;
+    this.effectType = dmgType;
   }
 
   /**
@@ -88,30 +82,5 @@ export abstract class DmgMagic extends Magic {
 
   calculateExp(hit: number, baseExp = 0) {
     return Math.round(hit * 8) + baseExp;
-  }
-
-  reset(): void {
-    this.status = {
-      exp: 0,
-      effect: 0,
-    };
-  }
-
-  getSuccessResult({ initiator, target } = this.params): SuccessArgs {
-    const result: DmgMagicNext = {
-      exp: this.status.exp,
-      action: this.displayName,
-      actionType: 'dmg-magic',
-      target: target.nick,
-      initiator: initiator.nick,
-      msg: this.customMessage?.bind(this),
-      dmg: floatNumber(this.status.effect),
-      hp: target.stats.val('hp'),
-      dmgType: this.dmgType,
-    };
-
-    this.reset();
-
-    return result;
   }
 }

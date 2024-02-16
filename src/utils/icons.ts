@@ -8,3 +8,7 @@ export const damageType: Record<DamageType, string> = {
   physical: '👊',
   clear: '',
 };
+
+export const getDamageTypeIcon = (type?: DamageType) => {
+  return type ? damageType[type] : '';
+};

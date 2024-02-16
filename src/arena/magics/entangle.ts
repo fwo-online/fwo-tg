@@ -1,6 +1,6 @@
 import { bold } from '../../utils/formatString';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
-import type { MagicNext } from '../Constuructors/MagicConstructor';
+import type { SuccessArgs } from '../Constuructors/types';
 
 /**
  * Опутывание
@@ -29,10 +29,11 @@ class Entangle extends CommonMagic {
     const { target } = this.params;
     target.stats.mode('down', 'pdef', this.effectVal());
   }
+
   // eslint-disable-next-line class-methods-use-this
-  customMessage(args: MagicNext) {
+  customMessage(args: SuccessArgs) {
     const { initiator, target, effect } = args;
-    let effectStr = effect?.toString() || ''
+    const effectStr = effect?.toString() || '';
     return `${bold(initiator)} опутывает ${bold(target)} снижая защиту на ${bold(effectStr)}pt`;
   }
 }

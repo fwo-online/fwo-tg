@@ -6,14 +6,8 @@ import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import { AffectableAction } from './AffectableAction';
 import type {
-  ActionType,
-  BaseNext, CustomMessage, OrderType, SuccessArgs,
+  ActionType, CustomMessage, OrderType,
 } from './types';
-
-export type MagicNext = BaseNext & {
-  actionType: 'magic';
-  effect?: number;
-}
 
 export interface MagicArgs {
   name: keyof typeof magics;
@@ -237,34 +231,5 @@ export abstract class Magic extends AffectableAction {
     if (hpNow <= 0 && !target.getKiller()) {
       target.setKiller(initiator);
     }
-  }
-
-  getSuccessResult({ initiator, target } = this.params): SuccessArgs {
-    const result: MagicNext = {
-      exp: this.status.exp,
-      action: this.displayName,
-      actionType: 'magic',
-      target: target.nick,
-      initiator: initiator.nick,
-      effect: this.status.effect,
-      msg: this.customMessage?.bind(this),
-    };
-
-    this.reset();
-
-    return result;
-  }
-
-  reset() {
-    this.status = {
-      exp: 0,
-      effect: 0,
-    };
-  }
-
-  next({ initiator, target, game } = this.params): void {
-    const result = this.getSuccessResult({ initiator, target, game });
-
-    game.recordOrderResult(result);
   }
 }

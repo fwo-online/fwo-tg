@@ -2,8 +2,9 @@ import CastError from '../errors/CastError';
 import type Game from '../GameService';
 import type { Player } from '../PlayersService';
 import { CommonMagic } from './CommonMagicConstructor';
-import type { MagicNext } from './MagicConstructor';
-import type { ActionType, BaseNext, LongCustomMessage } from './types';
+import type {
+  ActionType, LongCustomMessage, SuccessArgs,
+} from './types';
 
 export type LongItem = {
   initiator: string;
@@ -11,10 +12,6 @@ export type LongItem = {
   duration: number;
   proc: number;
   round: number;
-}
-
-export type LongMagicNext = BaseNext & {
-  actionType: 'magic-long';
 }
 
 export interface LongMagic extends CommonMagic, LongCustomMessage {
@@ -90,9 +87,9 @@ export abstract class LongMagic extends CommonMagic {
         this.runLong(initiator, target, game); // вызов кастомного обработчика
         this.getExp({ initiator, target, game });
         this.checkTargetIsDead(); // проверка трупов в длительных магиях
-        this.longNext(initiator, target);
+        this.longNext({ initiator, target, game });
       } catch (e) {
-        game.recordOrderResult(e);
+        this.handleCastError(e);
       }
     });
     const filteredLongArray = longArray.filter((item) => item.duration !== 0);
@@ -121,35 +118,18 @@ export abstract class LongMagic extends CommonMagic {
     });
   }
 
-  next(): void {
-    const { initiator, target, game } = this.params;
-    const args: MagicNext = {
-      exp: this.status.exp,
-      action: this.displayName,
-      actionType: 'magic',
-      target: target.nick,
-      initiator: initiator.nick,
-      msg: this.customMessage?.bind(this),
-    };
-    game.recordOrderResult(args);
-  }
-
   /**
    * Вызов логгера для длительных магий
    * @param initiator
    * @param target
    */
-  longNext(initiator: Player, target: Player): void {
-    const { game } = this.params;
-    const args: LongMagicNext = {
-      exp: this.status.exp,
-      action: this.displayName,
+  longNext({ initiator, target, game } = this.params): void {
+    const result: SuccessArgs = {
+      ...super.getSuccessResult({ initiator, target, game }),
       actionType: 'magic-long',
-      target: target.nick,
-      initiator: initiator.nick,
-      msg: this.longCustomMessage?.bind(this),
     };
-    game.recordOrderResult(args);
+
+    game.recordOrderResult(result);
   }
 }
 

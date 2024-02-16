@@ -1,6 +1,6 @@
 import { bold } from '../../utils/formatString';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
-import type { MagicNext } from '../Constuructors/MagicConstructor';
+import type { SuccessArgs } from '../Constuructors/types';
 
 /**
  * Каменная кожа
@@ -32,9 +32,9 @@ class StoneSkin extends CommonMagic {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  customMessage(args: MagicNext) {
+  customMessage(args: SuccessArgs) {
     const { initiator, target, effect } = args;
-    let effectStr = effect?.toString() || ''
+    const effectStr = effect?.toString() || '';
     return `${bold(initiator)} превращяет кожу ${bold(target)} в камень усиливая защиту на ${bold(effectStr)}`;
   }
 }

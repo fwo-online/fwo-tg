@@ -32,7 +32,7 @@ class PhysicalSadness extends DmgMagic {
 
     const effect = this.effectVal();
 
-    const totalHit = physicalDamageResults.reduce((sum, result) => sum + result.dmg, 0);
+    const totalHit = physicalDamageResults.reduce((sum, result) => sum + result.effect, 0);
     const hit = effect + (totalHit / physicalDamageResults.length + 1);
 
     this.status.effect = hit;

@@ -5,12 +5,8 @@ import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import { AffectableAction } from './AffectableAction';
 import type {
-  CostType, OrderType, AOEType, CustomMessage, BaseNext, ActionType,
+  CostType, OrderType, AOEType, CustomMessage, ActionType,
 } from './types';
-
-export type SkillNext = BaseNext & {
-  actionType: 'skill';
-}
 
 interface SkillArgs {
   name: string;
@@ -55,6 +51,7 @@ export abstract class Skill extends AffectableAction {
     this.params = {
       initiator, target, game,
     };
+    this.reset();
     try {
       this.getCost();
       this.checkPreAffects();
@@ -63,6 +60,8 @@ export abstract class Skill extends AffectableAction {
       this.next();
     } catch (e) {
       this.handleCastError(e);
+    } finally {
+      this.reset();
     }
   }
 
@@ -107,30 +106,5 @@ export abstract class Skill extends AffectableAction {
   getExp(initiator: Player): void {
     this.status.exp = this.baseExp;
     initiator.stats.up('exp', this.status.exp);
-  }
-
-  getSuccessResult({ initiator, target } = this.params): SkillNext {
-    const result: SkillNext = {
-      exp: this.status.exp,
-      action: this.displayName,
-      actionType: 'skill',
-      target: target.nick,
-      initiator: initiator.nick,
-      msg: this.customMessage?.bind(this),
-    };
-
-    this.reset();
-
-    return result;
-  }
-
-  reset() {
-    this.status.exp = 0;
-  }
-
-  next({ initiator, target, game } = this.params): void {
-    const result = this.getSuccessResult({ initiator, target, game });
-
-    game.recordOrderResult(result);
   }
 }

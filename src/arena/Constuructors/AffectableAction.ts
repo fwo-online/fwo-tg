@@ -39,6 +39,13 @@ export abstract class AffectableAction extends BaseAction {
     return this.affects;
   }
 
+  getSuccessResult(params = this.params): SuccessArgs {
+    return {
+      ...super.getSuccessResult(params),
+      affects: this.affects,
+    };
+  }
+
   reset() {
     super.reset();
 

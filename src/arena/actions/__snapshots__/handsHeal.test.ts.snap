@@ -2,7 +2,7 @@
 
 exports[`protect should be stopped by attack 1`] = `
 "*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *11.7* урона
-\\[ 💔-11.7/-3.7 📖94 ]
+\\[ corporis 👊 💔-11.7/-3.7 📖94 ]
 *corporis* пытался использовать _Лечение руками_ на *corporis*, но у него не получилось
 _Атака_ *corporis*"
 `;
