@@ -145,7 +145,6 @@ export abstract class Magic extends AffectableAction {
    * @return
    */
   checkChance(): true | void {
-    console.log(MiscService.rndm('1d100'), this.getChance());
     // Если шанс > random = true
     if (MiscService.rndm('1d100') <= this.getChance()) {
       // Магия прошла, проверяем что скажут боги
