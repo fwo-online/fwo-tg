@@ -74,7 +74,7 @@ export class LogService {
   }
 
   private format() {
-    return this.messages.map(this.formatter, this);
+    return this.messages.map((message) => this.formatter(message));
   }
 
   private reset() {

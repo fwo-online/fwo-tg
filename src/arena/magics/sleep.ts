@@ -36,7 +36,7 @@ class Sleep extends LongMagic implements PreAffect {
   }
 
   preAffect({ initiator, target, game } = this.params) {
-    if (target.flags.isSleeping) {
+    if (initiator.flags.isSleeping) {
       throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
     }
   }

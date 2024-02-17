@@ -31,7 +31,7 @@ describe('paralysis', () => {
   });
 
   beforeEach(() => {
-    jest.spyOn(global.Math, 'random').mockReturnValue(0.1);
+    jest.spyOn(global.Math, 'random').mockReturnValue(0.05);
   });
 
   afterEach(() => {
@@ -42,9 +42,9 @@ describe('paralysis', () => {
     game.players.players[0].proc = 1;
     game.players.players[0].stats.set('maxMp', 99);
     game.players.players[0].stats.set('mp', 99);
-    game.players.players[1].proc = 1;
+    game.players.players[1].proc = 0.25;
 
-    sleep.cast(game.players.players[0], game.players.players[0], game);
+    sleep.cast(game.players.players[0], game.players.players[1], game);
 
     attack.cast(game.players.players[1], game.players.players[0], game);
     protect.cast(game.players.players[1], game.players.players[0], game);
