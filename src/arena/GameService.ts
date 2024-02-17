@@ -130,16 +130,6 @@ export default class GameService {
   }
 
   /**
-   * @description Отправляем event BattleLog все подключенным к игре
-   * @param data строка, отправляемая в общий чат
-   *
-   */
-  sendBattleLog(data: string): void {
-    console.debug('GC debug:: SBL', 'gameId:', this.info.id, 'data:', data);
-    void channelHelper.broadcast(data);
-  }
-
-  /**
    * @param data строка, отправляемая в общий чат
    */
   sendToAll(data: string): void {
@@ -243,8 +233,8 @@ export default class GameService {
   endGame(): void {
     console.log('GC debug:: endGame', this.info.id);
     // Отправляем статистику
-    this.sendBattleLog(this.endGameReason);
-    this.sendBattleLog(this.statistic());
+    this.sendToAll(this.endGameReason);
+    this.sendToAll(this.statistic());
     this.saveGame();
     setTimeout(() => {
       this.sendToAll('Конец игры, распределяем ресурсы...');
@@ -287,7 +277,6 @@ export default class GameService {
   }
 
   async sendMessages(messages: HistoryItem[]): Promise<void> {
-    console.log(messages);
     await this.logger.sendBattleLog(messages);
   }
 
