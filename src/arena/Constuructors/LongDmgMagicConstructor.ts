@@ -1,18 +1,11 @@
-import { floatNumber } from '../../utils/floatNumber';
 import CastError from '../errors/CastError';
 import type Game from '../GameService';
 import type { Player } from '../PlayersService';
 import { DmgMagic } from './DmgMagicConstructor';
 import type { LongItem } from './LongMagicConstructor';
-import type { BaseNext, DamageType, LongCustomMessage } from './types';
-
-export type LongDmgMagicNext = BaseNext & {
-  exp: number;
-  dmg: number;
-  actionType: 'dmg-magic-long';
-  hp: number;
-  dmgType: DamageType;
-}
+import type {
+  ActionType, LongCustomMessage, SuccessArgs,
+} from './types';
 
 export interface LongDmgMagic extends DmgMagic, LongCustomMessage {
 }
@@ -20,6 +13,7 @@ export interface LongDmgMagic extends DmgMagic, LongCustomMessage {
  * Общий конструктор не длительных магий
  */
 export abstract class LongDmgMagic extends DmgMagic {
+  actionType: ActionType = 'dmg-magic-long';
   isLong = true;
   buff: LongItem[] = [];
 
@@ -46,7 +40,7 @@ export abstract class LongDmgMagic extends DmgMagic {
       this.next();
       this.postRun(initiator, target, game);
     } catch (failMsg) {
-      game.recordOrderResult(failMsg);
+      this.handleCastError(failMsg);
     } finally {
       this.reset();
     }
@@ -89,9 +83,9 @@ export abstract class LongDmgMagic extends DmgMagic {
         this.runLong(initiator, target, game); // вызов кастомного обработчика
         this.getExp();
         this.checkTargetIsDead(); // проверка трупов в длительных магиях
-        this.longNext(initiator, target);
+        this.longNext({ initiator, target, game });
       } catch (e) {
-        game.recordOrderResult(e);
+        this.handleCastError(e);
       }
     });
     const filteredLongArray = longArray.filter((item) => item.duration !== 0);
@@ -121,25 +115,13 @@ export abstract class LongDmgMagic extends DmgMagic {
 
   /**
    * Функция формирующая специальный формат вывода для длительной магии
-   * @param initiator
-   * @param target
-   * @todo в старой арене формат длительной атакующей магии был :
-   *
    */
-  longNext(initiator: Player, target: Player): void {
-    const { game } = this.params;
-    const dmgObj: LongDmgMagicNext = {
-      exp: this.status.exp,
-      dmg: floatNumber(this.status.effect),
-      action: this.displayName,
+  longNext({ initiator, target, game } = this.params): void {
+    const result: SuccessArgs = {
+      ...super.getSuccessResult({ initiator, target, game }),
       actionType: 'dmg-magic-long',
-      target: target.nick,
-      initiator: initiator.nick,
-      hp: target.stats.val('hp'),
-      dmgType: this.dmgType,
-      msg: this.longCustomMessage?.bind(this),
     };
 
-    game.recordOrderResult(dmgObj);
+    game.recordOrderResult(result);
   }
 }

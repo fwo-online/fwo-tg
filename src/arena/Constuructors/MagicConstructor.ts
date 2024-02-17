@@ -6,14 +6,8 @@ import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import { AffectableAction } from './AffectableAction';
 import type {
-  BaseNext, BreaksMessage, CustomMessage, FailArgs, SuccessArgs,
+  ActionType, CustomMessage, OrderType,
 } from './types';
-import { handleCastError } from './utils';
-
-export type MagicNext = BaseNext & {
-  actionType: 'magic';
-  effect?: number;
-}
 
 export interface MagicArgs {
   name: keyof typeof magics;
@@ -22,7 +16,7 @@ export interface MagicArgs {
   cost: number;
   costType: 'mp' | 'en';
   lvl: number;
-  orderType: 'all' | 'any' | 'enemy' | 'self' | 'team';
+  orderType: OrderType;
   aoeType: 'target' | 'team' | 'targetAoe';
   baseExp: number;
   effect: string[];
@@ -39,6 +33,8 @@ export interface Magic extends MagicArgs, CustomMessage {
 
 export abstract class Magic extends AffectableAction {
   name: keyof typeof magics;
+
+  actionType: ActionType = 'magic';
 
   isLong = false;
 
@@ -78,9 +74,8 @@ export abstract class Magic extends AffectableAction {
     } catch (e) {
       // @fixme прокидываем ошибку выше для длительных кастов
       if (this.isLong) throw (e);
-      handleCastError(e, (reason) => {
-        game.recordOrderResult(this.getFailResult(reason));
-      });
+
+      this.handleCastError(e);
     } finally {
       this.reset();
     }
@@ -236,52 +231,5 @@ export abstract class Magic extends AffectableAction {
     if (hpNow <= 0 && !target.getKiller()) {
       target.setKiller(initiator);
     }
-  }
-
-  getSuccessResult({ initiator, target } = this.params): SuccessArgs {
-    const result: MagicNext = {
-      exp: this.status.exp,
-      action: this.displayName,
-      actionType: 'magic',
-      target: target.nick,
-      initiator: initiator.nick,
-      effect: this.status.effect,
-      msg: this.customMessage?.bind(this),
-    };
-
-    this.reset();
-
-    return result;
-  }
-
-  getFailResult(
-    reason: BreaksMessage | SuccessArgs | SuccessArgs[],
-    params = this.params,
-  ): FailArgs {
-    const result: FailArgs = {
-      actionType: 'phys',
-      reason,
-      action: this.displayName,
-      initiator: params.initiator.nick,
-      target: params.target.nick,
-      weapon: params.initiator.weapon.item,
-    };
-
-    this.reset();
-
-    return result;
-  }
-
-  reset() {
-    this.status = {
-      exp: 0,
-      effect: 0,
-    };
-  }
-
-  next({ initiator, target, game } = this.params): void {
-    const result = this.getSuccessResult({ initiator, target, game });
-
-    game.recordOrderResult(result);
   }
 }

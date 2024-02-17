@@ -1,6 +1,5 @@
 import type { PostAffect } from '../Constuructors/interfaces/PostAffect';
 import { LongDmgMagic } from '../Constuructors/LongDmgMagicConstructor';
-import type { MagicNext } from '../Constuructors/MagicConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
 /**
  * Магический доспех
@@ -48,19 +47,11 @@ class LightShield extends LongDmgMagic implements PostAffect {
     });
   }
 
-  getSuccessResult({ initiator, target } = this.params): SuccessArgs {
-    const result: MagicNext = {
-      exp: this.status.exp,
-      action: this.displayName,
+  getSuccessResult({ initiator, target, game } = this.params): SuccessArgs {
+    return {
+      ...super.getSuccessResult({ initiator, target, game }),
       actionType: 'magic',
-      target: target.nick,
-      initiator: initiator.nick,
-      msg: this.customMessage?.bind(this),
     };
-
-    this.reset();
-
-    return result;
   }
 }
 

@@ -1,13 +1,10 @@
 import { cloneDeep } from 'lodash';
-import type { HealNext } from '@/arena/Constuructors/HealMagicConstructor';
-import type { LongDmgMagicNext } from '@/arena/Constuructors/LongDmgMagicConstructor';
-import type { LongMagicNext } from '@/arena/Constuructors/LongMagicConstructor';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
 import { isSuccessResult } from '@/arena/Constuructors/utils';
 import { floatNumber } from '@/utils/floatNumber';
 import type { Message } from '../LogService';
 
-export function joinHealMessages(messages: Message[], newMessage: HealNext): Message[] {
+export function joinHealMessages(messages: Message[], newMessage: SuccessArgs): Message[] {
   const copy = cloneDeep(messages);
 
   for (const message of copy) {
@@ -22,7 +19,7 @@ export function joinHealMessages(messages: Message[], newMessage: HealNext): Mes
   return copy;
 }
 
-export function joinLongMessages(messages: Message[], newMessage: LongMagicNext): Message[] {
+export function joinLongMessages(messages: Message[], newMessage: SuccessArgs): Message[] {
   const copy = cloneDeep(messages);
 
   for (const message of copy) {
@@ -36,13 +33,13 @@ export function joinLongMessages(messages: Message[], newMessage: LongMagicNext)
   return copy;
 }
 
-export function joinLongDmgMessages(messages: Message[], newMessage: LongDmgMagicNext): Message[] {
+export function joinLongDmgMessages(messages: Message[], newMessage: SuccessArgs): Message[] {
   const copy = cloneDeep(messages);
 
   for (const message of copy) {
     if (isSameMessage(message, newMessage)) {
       message.exp = floatNumber(message.exp + newMessage.exp);
-      message.dmg = floatNumber(message.dmg + newMessage.dmg);
+      message.effect = floatNumber(message.effect + newMessage.effect);
       message.hp = Math.min(message.hp, newMessage.hp);
       return copy;
     }

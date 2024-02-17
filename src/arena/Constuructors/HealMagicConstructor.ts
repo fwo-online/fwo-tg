@@ -4,22 +4,8 @@ import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import { AffectableAction } from './AffectableAction';
 import type {
-  BaseNext, BreaksMessage, CustomMessage, ExpArr, FailArgs, OrderType, SuccessArgs,
+  ActionType, CustomMessage, OrderType,
 } from './types';
-import { handleCastError } from './utils';
-
-export type HealNext = Omit<BaseNext, 'exp'> & {
-  actionType: 'heal';
-  effect: number;
-  expArr: ExpArr;
-  hp: number
-}
-
-export type HealMagicNext = BaseNext & {
-  actionType: 'heal-magic';
-  effect: number;
-  hp: number;
-}
 
 export interface HealArgs {
   name: string;
@@ -35,6 +21,8 @@ export interface Heal extends HealArgs, CustomMessage {
  * Heal Class
  */
 export abstract class Heal extends AffectableAction {
+  actionType: ActionType = 'heal';
+
   constructor(params: HealArgs) {
     super();
     Object.assign(this, params);
@@ -59,13 +47,11 @@ export abstract class Heal extends AffectableAction {
       // Получение экспы за хил следует вынести в отдельный action следующий
       // за самим хилом, дабы выдать exp всем хиллерам после формирования
       // общего массива хила
-      this.status.exp = this.getExp(initiator, target, game);
+      this.getExp(initiator, target, game);
       // this.backToLife();
       this.next();
     } catch (e) {
-      handleCastError(e, (reason) => {
-        game.recordOrderResult(this.breaks(reason));
-      });
+      this.handleCastError(e);
     }
   }
 
@@ -75,21 +61,6 @@ export abstract class Heal extends AffectableAction {
    * Значит накидываем хилеру 1 голды :)
    */
   // backToLife() {}
-
-  /**
-   * @param obj
-   */
-  breaks(reason: BreaksMessage | SuccessArgs | SuccessArgs[]): FailArgs {
-    const { target, initiator } = this.params;
-    return {
-      reason,
-      target: target.nick,
-      initiator: initiator.nick,
-      actionType: 'heal',
-      action: this.displayName,
-      weapon: initiator.weapon.item,
-    };
-  }
 
   /**
    * Функция вычисления размера хила
@@ -109,14 +80,22 @@ export abstract class Heal extends AffectableAction {
     return floatNumber(healEffect);
   }
 
-  getExp(initiator: Player, target: Player, game: Game): number {
+  getExp(initiator: Player, target: Player, game: Game): void {
     if (game.isPlayersAlly(initiator, target)) {
       const healEffect = this.status.effect;
       const exp = Math.round(healEffect * 10);
       initiator.stats.up('exp', exp);
-      return exp;
+      this.status.exp = exp;
+    } else {
+      this.status.exp = 0;
     }
-    return 0;
+
+    this.status.expArr = [{
+      id: initiator.id,
+      name: initiator.nick,
+      exp: this.status.exp,
+      val: this.status.effect,
+    }];
   }
 
   checkTargetIsDead({ target } = this.params) {
@@ -124,28 +103,5 @@ export abstract class Heal extends AffectableAction {
     if (hpNow > 0 && target.getKiller()) {
       target.resetKiller();
     }
-  }
-
-  /**
-   * Функция положительного прохождения
-   */
-  next(): void {
-    const { target, initiator, game } = this.params;
-    const exp: ExpArr[number] = {
-      id: initiator.id,
-      name: initiator.nick,
-      exp: this.status.exp,
-      val: this.status.effect,
-    };
-    const args: HealNext = {
-      expArr: [exp],
-      action: this.displayName,
-      actionType: 'heal',
-      target: target.nick,
-      initiator: initiator.nick,
-      effect: this.status.effect,
-      hp: target.stats.val('hp'),
-    };
-    game.recordOrderResult(args);
   }
 }

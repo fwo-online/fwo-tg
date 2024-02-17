@@ -1,6 +1,6 @@
 import { bold } from '../../utils/formatString';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
-import type { MagicNext } from '../Constuructors/MagicConstructor';
+import type { SuccessArgs } from '../Constuructors/types';
 /**
  * Магический доспех
  * Основное описание магии общее требовани есть в конструкторе
@@ -28,10 +28,11 @@ class MagicArmor extends CommonMagic {
     const { target } = this.params;
     target.stats.mode('up', 'pdef', this.effectVal());
   }
+
   // eslint-disable-next-line class-methods-use-this
-  customMessage(args: MagicNext) {
+  customMessage(args: SuccessArgs) {
     const { initiator, target, effect } = args;
-    let effectStr = effect?.toString() || ''
+    const effectStr = effect?.toString() || '';
     return `${bold(initiator)} поднимает защиту ${bold(target)} на ${bold(effectStr)}pt`;
   }
 }

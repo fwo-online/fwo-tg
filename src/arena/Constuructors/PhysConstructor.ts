@@ -1,23 +1,13 @@
-import type { Item } from '@/models/item';
-import { floatNumber } from '../../utils/floatNumber';
+import { floatNumber } from '@/utils/floatNumber';
 import CastError from '../errors/CastError';
 import type GameService from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import { AffectableAction } from './AffectableAction';
 import type {
-  BaseNext, BreaksMessage, DamageType, FailArgs, OrderType, SuccessArgs,
+  ActionType, DamageType, OrderType,
 } from './types';
 
-import { handleCastError } from './utils';
-
-export type PhysNext = BaseNext & {
-  actionType: 'phys';
-  dmg: number;
-  hp: number;
-  weapon: Item | undefined;
-  dmgType: DamageType,
-}
 /**
  * Конструктор физической атаки
  * (возможно физ скилы)
@@ -30,6 +20,8 @@ export default abstract class PhysConstructor extends AffectableAction {
   desc: string;
   lvl: number;
   orderType: OrderType;
+  actionType: ActionType = 'phys';
+  effectType?: DamageType | undefined = 'physical';
 
   constructor(atkAct) {
     super();
@@ -39,7 +31,6 @@ export default abstract class PhysConstructor extends AffectableAction {
     this.desc = atkAct.desc;
     this.lvl = atkAct.lvl;
     this.orderType = atkAct.orderType;
-    this.status = { effect: 0, exp: 0 };
   }
 
   /**
@@ -68,9 +59,7 @@ export default abstract class PhysConstructor extends AffectableAction {
       this.checkTargetIsDead();
       this.next();
     } catch (e) {
-      handleCastError(e, (reason) => {
-        game.recordOrderResult(this.getFailResult(reason));
-      });
+      this.handleCastError(e);
     }
   }
 
@@ -127,43 +116,6 @@ export default abstract class PhysConstructor extends AffectableAction {
     }
   }
 
-  getSuccessResult({ initiator, target } = this.params): SuccessArgs {
-    const result: PhysNext = {
-      exp: this.status.exp,
-      action: this.displayName,
-      actionType: 'phys',
-      target: target.nick,
-      dmg: floatNumber(this.status.effect),
-      hp: target.stats.val('hp'),
-      initiator: initiator.nick,
-      weapon: initiator.weapon.item,
-      dmgType: 'physical',
-      affects: this.getAffects(),
-    };
-
-    this.reset();
-
-    return result;
-  }
-
-  getFailResult(
-    reason: BreaksMessage | SuccessArgs | SuccessArgs[],
-    params = this.params,
-  ): FailArgs {
-    const result: FailArgs = {
-      actionType: 'phys',
-      reason,
-      action: this.displayName,
-      initiator: params.initiator.nick,
-      target: params.target.nick,
-      weapon: params.initiator.weapon.item,
-    };
-
-    this.reset();
-
-    return result;
-  }
-
   /**
    * Проверка убита ли цель
    * @todo после того как был нанесен урон любым dmg action, следует производить
@@ -175,11 +127,5 @@ export default abstract class PhysConstructor extends AffectableAction {
     if (hpNow <= 0 && !target.getKiller()) {
       target.setKiller(initiator);
     }
-  }
-
-  next({ initiator, target, game } = this.params): void {
-    const result = this.getSuccessResult({ initiator, target, game });
-
-    game.recordOrderResult(result);
   }
 }

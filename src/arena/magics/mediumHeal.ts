@@ -1,5 +1,5 @@
 import { bold, italic } from '../../utils/formatString';
-import type { HealNext } from '../Constuructors/HealMagicConstructor';
+import type { SuccessArgs } from '../Constuructors/types';
 import { HealMagic } from './heal';
 
 class MediumHeal extends HealMagic {
@@ -21,7 +21,7 @@ class MediumHeal extends HealMagic {
     });
   }
 
-  customMessage(args: HealNext) {
+  customMessage(args: SuccessArgs) {
     const { initiator, target, effect } = args;
     return `${bold(initiator)} применил ${italic(this.displayName)} на ${bold(target)} излечив его на ${bold(`${effect}`)}`;
   }

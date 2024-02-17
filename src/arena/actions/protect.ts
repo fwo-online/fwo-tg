@@ -1,5 +1,5 @@
 import type {
-  BaseNext, ExpArr, OrderType, SuccessArgs, FailArgs,
+  ExpArr, OrderType, SuccessArgs, ActionType,
 } from '@/arena/Constuructors/types';
 import type Game from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
@@ -7,13 +7,7 @@ import type { Player } from '@/arena/PlayersService';
 import { floatNumber } from '@/utils/floatNumber';
 import { AffectableAction } from '../Constuructors/AffectableAction';
 import type { PreAffect } from '../Constuructors/interfaces/PreAffect';
-import { handleCastError } from '../Constuructors/utils';
 import CastError from '../errors/CastError';
-
-export type ProtectNext = Omit<BaseNext, 'exp'> & {
-  actionType: 'protect'
-  expArr: ExpArr;
-}
 
 /**
  * Класс защиты
@@ -24,6 +18,7 @@ class Protect extends AffectableAction implements PreAffect {
   desc = 'Защита от физических атак';
   lvl = 0;
   orderType: OrderType = 'all';
+  actionType: ActionType = 'protect';
 
   /**
    * Каст протекта
@@ -37,9 +32,7 @@ class Protect extends AffectableAction implements PreAffect {
       this.checkPreAffects();
       this.run(initiator, target, game);
     } catch (e) {
-      handleCastError(e, (reason) => {
-        game.recordOrderResult(this.getFailResult(reason));
-      });
+      this.handleCastError(e);
     }
   }
 
@@ -64,32 +57,16 @@ class Protect extends AffectableAction implements PreAffect {
     console.log('chance', chance, 'random', randomValue, 'result', result);
 
     if (!result) {
-      throw new CastError(this.getSuccessResult({ initiator, target, game }, status.effect));
+      this.getExp({ initiator, target, game }, status.effect);
+
+      throw new CastError(this.getSuccessResult({ initiator, target, game }));
     }
   }
 
-  getFailResult(reason): FailArgs {
-    const { target, initiator } = this.params;
-    return {
-      reason,
-      target: target.nick,
-      initiator: initiator.nick,
-      actionType: 'protect',
-      action: this.displayName,
-      weapon: initiator.weapon.item,
-    };
-  }
-
-  /**
-   * Функция выдающая exp для каждого протектора в зависимости от его защиты
-   * @todo тут скорее всего бага, которая будет давать по 5 раз всем защищающим.
-   * Экспу за протект нужно выдавать в отдельном action'е который будет идти
-   * за протектом
-   */
-  getSuccessResult(
+  getExp(
     params: { initiator: Player; target: Player; game: Game; },
     expMultiplier: number,
-  ): ProtectNext {
+  ) {
     const { initiator, target, game } = params;
     const pdef = target.stats.val('pdef'); // общий показатель защиты цели
 
@@ -115,13 +92,7 @@ class Protect extends AffectableAction implements PreAffect {
       };
     });
 
-    return {
-      expArr,
-      action: this.displayName,
-      actionType: 'protect',
-      target: target.nick,
-      initiator: initiator.nick,
-    };
+    this.status.expArr = expArr;
   }
 }
 

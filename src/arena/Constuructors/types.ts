@@ -1,19 +1,10 @@
 /* eslint-disable no-use-before-define */
 import type { Item } from '../../models/item';
-import type { ProtectNext } from '../actions/protect';
 import type GameService from '../GameService';
 import type { Player } from '../PlayersService';
-import type { AoeDmgMagicNext } from './AoeDmgMagicConstructor';
-import type { DmgMagicNext } from './DmgMagicConstructor';
-import type { HealMagicNext, HealNext } from './HealMagicConstructor';
-import type { LongDmgMagicNext } from './LongDmgMagicConstructor';
-import type { LongMagicNext } from './LongMagicConstructor';
-import type { MagicNext } from './MagicConstructor';
-import type { PhysNext } from './PhysConstructor';
-import type { SkillNext } from './SkillConstructor';
 
 export type CostType = 'en' | 'mp';
-export type OrderType = 'all' | 'any' | 'enemy' | 'self';
+export type OrderType = 'all' | 'any' | 'enemy' | 'self' | 'team';
 export type AOEType = 'target' | 'team';
 export type DamageType = 'acid' | 'fire' | 'lighting' | 'frost' | 'physical' | 'clear';
 export type BreaksMessage =
@@ -50,28 +41,23 @@ export interface AoeMagic {
   getTargets?(): Player[];
 }
 
-export type BaseNext = {
+export type SuccessArgs = {
+  actionType: ActionType;
   action: string;
   exp: number;
   initiator: string;
   target: string;
+  effect: number;
+  hp: number;
+  expArr: ExpArr;
+  weapon: Item | undefined
+  effectType?: DamageType;
+  orderType: OrderType;
   affects?: SuccessArgs[];
   msg?: CustomMessageFn;
 }
 
-export type SuccessArgs =
-  MagicNext |
-  DmgMagicNext |
-  LongDmgMagicNext |
-  AoeDmgMagicNext |
-  LongMagicNext |
-  SkillNext |
-  PhysNext |
-  HealMagicNext |
-  HealNext |
-  ProtectNext;
-
-export type ActionType = SuccessArgs['actionType'];
+export type ActionType = 'magic' | 'dmg-magic' | 'dmg-magic-long' | 'aoe-dmg-magic' | 'magic-long' | 'skill' | 'phys' | 'heal-magic' | 'heal' | 'protect';
 
 export interface FailArgs {
   actionType: ActionType;

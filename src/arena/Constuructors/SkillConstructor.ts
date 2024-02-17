@@ -5,13 +5,8 @@ import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import { AffectableAction } from './AffectableAction';
 import type {
-  CostType, OrderType, AOEType, CustomMessage, BaseNext, BreaksMessage, FailArgs, SuccessArgs,
+  CostType, OrderType, AOEType, CustomMessage, ActionType,
 } from './types';
-import { handleCastError } from './utils';
-
-export type SkillNext = BaseNext & {
-  actionType: 'skill';
-}
 
 interface SkillArgs {
   name: string;
@@ -36,6 +31,7 @@ export interface Skill extends SkillArgs, CustomMessage {
 }
 
 export abstract class Skill extends AffectableAction {
+  actionType: ActionType = 'skill';
   /**
    * Создание скила
    */
@@ -55,6 +51,7 @@ export abstract class Skill extends AffectableAction {
     this.params = {
       initiator, target, game,
     };
+    this.reset();
     try {
       this.getCost();
       this.checkPreAffects();
@@ -62,9 +59,9 @@ export abstract class Skill extends AffectableAction {
       this.run(initiator, target, game);
       this.next();
     } catch (e) {
-      handleCastError(e, (reason) => {
-        game.recordOrderResult(this.getFailResult(reason));
-      });
+      this.handleCastError(e);
+    } finally {
+      this.reset();
     }
   }
 
@@ -109,48 +106,5 @@ export abstract class Skill extends AffectableAction {
   getExp(initiator: Player): void {
     this.status.exp = this.baseExp;
     initiator.stats.up('exp', this.status.exp);
-  }
-
-  getSuccessResult({ initiator, target } = this.params): SkillNext {
-    const result: SkillNext = {
-      exp: this.status.exp,
-      action: this.displayName,
-      actionType: 'skill',
-      target: target.nick,
-      initiator: initiator.nick,
-      msg: this.customMessage?.bind(this),
-    };
-
-    this.reset();
-
-    return result;
-  }
-
-  getFailResult(
-    reason: BreaksMessage | SuccessArgs | SuccessArgs[],
-    params = this.params,
-  ): FailArgs {
-    const result: FailArgs = {
-      actionType: 'phys',
-      reason,
-      action: this.displayName,
-      initiator: params.initiator.nick,
-      target: params.target.nick,
-      weapon: params.initiator.weapon.item,
-    };
-
-    this.reset();
-
-    return result;
-  }
-
-  reset() {
-    this.status.exp = 0;
-  }
-
-  next({ initiator, target, game } = this.params): void {
-    const result = this.getSuccessResult({ initiator, target, game });
-
-    game.recordOrderResult(result);
   }
 }
