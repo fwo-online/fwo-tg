@@ -10,7 +10,7 @@ class LightShield extends LongDmgMagic implements PostAffect {
     super({
       name: 'lightShield',
       displayName: 'Световой щит',
-      desc: 'Создает магический доспех на маге',
+      desc: 'Возвращает часть физического урона в виде чистого, атакующему цель под действием щита',
       cost: 3,
       baseExp: 6,
       costType: 'mp',

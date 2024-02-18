@@ -32,6 +32,32 @@ describe('protect', () => {
     jest.spyOn(global.Math, 'random').mockRestore();
   });
 
+  it('should heal', () => {
+    game.players.players[0].proc = 1;
+    game.players.players[0].stats.set('hp', 1);
+
+    handsHeal.cast(game.players.players[0], game.players.players[0], game);
+
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
+  });
+
+  it('should not heal more than max hp', () => {
+    game.players.players[0].proc = 1;
+
+    handsHeal.cast(game.players.players[0], game.players.players[0], game);
+
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
+  });
+
+  it('should not get exp if players are not allies', () => {
+    game.players.players[1].proc = 1;
+    game.players.players[0].stats.set('hp', 1);
+
+    handsHeal.cast(game.players.players[1], game.players.players[0], game);
+
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
+  });
+
   it('should be stopped by attack', () => {
     game.players.players[0].proc = 1;
     game.players.players[1].proc = 1;

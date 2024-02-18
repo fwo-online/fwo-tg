@@ -81,7 +81,7 @@ export default {
     'plague',
     'pray',
     'sleep', // ?!?!?!?!!? why there?
-    'light_shield',
+    'lightShield',
     'sphere',
     'mana_burn',
     // 8ppa
