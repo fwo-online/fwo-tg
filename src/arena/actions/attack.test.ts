@@ -5,9 +5,9 @@ import TestUtils from '@/utils/testUtils';
 import attack from './attack';
 import handsHeal from './handsHeal';
 
-// npm t src/arena/actions/handsHeal.test.ts
+// npm t src/arena/actions/attack.test.ts
 
-describe('handsHeal', () => {
+describe('attack', () => {
   let game: GameService;
   let initiator: Char;
   let target: Char;
@@ -25,45 +25,39 @@ describe('handsHeal', () => {
   });
 
   beforeEach(() => {
-    jest.spyOn(global.Math, 'random').mockReturnValue(0.3);
+    jest.spyOn(global.Math, 'random').mockReturnValue(0.25);
   });
 
   afterEach(() => {
     jest.spyOn(global.Math, 'random').mockRestore();
   });
 
-  it('should heal', () => {
-    game.players.players[0].proc = 1;
-    game.players.players[0].stats.set('hp', 1);
-
-    handsHeal.cast(game.players.players[0], game.players.players[0], game);
-
-    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
-  });
-
-  it('should not heal more than max hp', () => {
+  it('should miss if target has a lot of pdef', () => {
     game.players.players[0].proc = 1;
 
-    handsHeal.cast(game.players.players[0], game.players.players[0], game);
-
-    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
-  });
-
-  it('should not get exp if players are not allies', () => {
-    game.players.players[1].proc = 1;
-    game.players.players[0].stats.set('hp', 1);
-
-    handsHeal.cast(game.players.players[1], game.players.players[0], game);
-
-    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
-  });
-
-  it('should be stopped by attack', () => {
-    game.players.players[0].proc = 1;
-    game.players.players[1].proc = 1;
-
+    game.players.players[1].stats.set('pdef', 1);
     attack.cast(game.players.players[0], game.players.players[1], game);
-    handsHeal.cast(game.players.players[1], game.players.players[1], game);
+
+    game.players.players[1].stats.set('pdef', 50);
+    attack.cast(game.players.players[0], game.players.players[1], game);
+
+    game.players.players[0].stats.set('patk', 100);
+    attack.cast(game.players.players[0], game.players.players[1], game);
+
+    game.players.players[1].stats.set('pdef', 100);
+    attack.cast(game.players.players[0], game.players.players[1], game);
+
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
+  });
+
+  it('should reduce damage by target resists', () => {
+    game.players.players[0].proc = 1;
+
+    game.players.players[1].resists.physical = 0;
+    attack.cast(game.players.players[0], game.players.players[1], game);
+
+    game.players.players[1].resists.physical = 0.5;
+    attack.cast(game.players.players[0], game.players.players[1], game);
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });

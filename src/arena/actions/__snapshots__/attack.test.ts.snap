@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`attack should miss if target has a lot of pdef 1`] = `
+"*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *11.2* урона
+\\[ corporis 👊 💔-11.2/-3.2 📖90 ]
+*quisquam* пытался _атаковать_ *corporis*, но промахнулся
+*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *11.2* урона
+\\[ corporis 👊 💔-11.2/-14.4 📖90 ]
+*quisquam* пытался _атаковать_ *corporis*, но промахнулся"
+`;
+
+exports[`attack should reduce damage by target resists 1`] = `
+"*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *11.2* урона
+\\[ corporis 👊 💔-11.2/-3.2 📖90 ]
+*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *5.6* урона
+\\[ corporis 👊 💔-5.6/-8.8 📖45 ]"
+`;

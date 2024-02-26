@@ -46,6 +46,10 @@ export function formatError(msgObj: FailArgs): string {
         ru: `*${initiator}* пытался использовать умение _${action}_, но у него не вышло`,
         en: '',
       },
+      PHYS_FAIL: {
+        ru: `*${initiator}* пытался _атаковать_ *${target}*, но промахнулся`,
+        en: '',
+      },
       NO_WEAPON: {
         ru: `*${initiator}* пытался атаковать *${target}*, но у него не оказалось оружия в руках`,
         en: '',
