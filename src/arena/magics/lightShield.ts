@@ -65,7 +65,12 @@ class LightShieldBuff extends LongMagic implements PostAffect {
   }
 }
 
-const lightShield = new LightShield({ ...params, dmgType: 'clear' });
+const lightShield = new LightShield({
+  ...params,
+  baseExp: 8,
+  dmgType: 'clear',
+});
+
 const lightShieldBuff = new LightShieldBuff(params);
 
 export default lightShieldBuff;
