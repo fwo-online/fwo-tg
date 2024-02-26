@@ -24,7 +24,7 @@ const params = {
   aoeType: 'target',
   magType: 'good',
   chance: ['1d80', '1d90', '1d100'],
-  effect: ['1d1', '3d3', '5d5'],
+  effect: ['1d1+10', '1d1+20', '1d1+30'],
   profList: ['m'],
 } satisfies MagicArgs;
 
