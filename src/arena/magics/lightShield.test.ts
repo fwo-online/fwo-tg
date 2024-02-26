@@ -26,7 +26,7 @@ describe('lightShield', () => {
   });
 
   beforeEach(() => {
-    jest.spyOn(global.Math, 'random').mockReturnValue(0.15);
+    jest.spyOn(global.Math, 'random').mockReturnValue(0.01);
   });
 
   afterEach(() => {
@@ -38,6 +38,8 @@ describe('lightShield', () => {
     game.players.players[1].proc = 1;
 
     lightShield.cast(game.players.players[0], game.players.players[0], game);
+    game.players.players[0].proc = 0.5;
+
     lightShield.cast(game.players.players[0], game.players.players[0], game);
     attack.cast(game.players.players[1], game.players.players[0], game);
 

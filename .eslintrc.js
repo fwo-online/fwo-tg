@@ -27,6 +27,7 @@ module.exports = {
     'no-param-reassign': 0,
     'no-underscore-dangle': 0,
     'consistent-return': 0,
+    'no-use-before-define': 0,
     camelcase: 0,
     'lines-between-class-members': ["error", "always", {exceptAfterSingleLine: true}],
     'no-void': ['error', { allowAsStatement: true }],
