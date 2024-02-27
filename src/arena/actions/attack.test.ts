@@ -25,7 +25,7 @@ describe('attack', () => {
   });
 
   beforeEach(() => {
-    jest.spyOn(global.Math, 'random').mockReturnValue(0.25);
+    jest.spyOn(global.Math, 'random').mockReturnValue(0.5);
   });
 
   afterEach(() => {

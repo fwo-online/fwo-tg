@@ -99,7 +99,7 @@ export default abstract class PhysConstructor extends AffectableAction {
     const attack = initiator.stats.val('patk');
     const protect = target.stats.val('pdef') || 1;
 
-    const ratio = attack / protect;
+    const ratio = attack / protect / 0.25;
 
     return Math.sqrt(ratio) + (10 * ratio) + 5;
   }
