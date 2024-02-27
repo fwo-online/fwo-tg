@@ -39,8 +39,9 @@ export abstract class DmgMagic extends Magic {
   }
 
   modifyEffect(effect: number, { initiator, target } = this.params): number {
+    effect = this.applyCasterModifiers(effect, initiator);
+
     if (this.dmgType !== 'clear') {
-      effect = this.applyCasterModifiers(effect, initiator);
       effect = this.applyTargetModifiers(effect, target);
       effect = this.applyResists(effect, target);
     }

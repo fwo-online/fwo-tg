@@ -1,58 +1,85 @@
-import type { PostAffect } from '../Constuructors/interfaces/PostAffect';
-import { LongDmgMagic } from '../Constuructors/LongDmgMagicConstructor';
-import type { SuccessArgs } from '../Constuructors/types';
+/* eslint-disable @typescript-eslint/no-use-before-define, max-classes-per-file */
+import { DmgMagic } from '@/arena/Constuructors/DmgMagicConstructor';
+import type { PostAffect } from '@/arena/Constuructors/interfaces/PostAffect';
+import { LongMagic } from '@/arena/Constuructors/LongMagicConstructor';
+import type { MagicArgs } from '@/arena/Constuructors/MagicConstructor';
+import type { SuccessArgs } from '@/arena/Constuructors/types';
+import type GameService from '@/arena/GameService';
+import type { Player } from '@/arena/PlayersService';
+
 /**
  * Магический доспех
  * Основное описание магии общее требование есть в конструкторе
  */
-class LightShield extends LongDmgMagic implements PostAffect {
-  constructor() {
-    super({
-      name: 'lightShield',
-      displayName: 'Световой щит',
-      desc: 'Возвращает часть физического урона в виде чистого, атакующему цель под действием щита',
-      cost: 3,
-      baseExp: 6,
-      costType: 'mp',
-      lvl: 1,
-      orderType: 'team',
-      aoeType: 'target',
-      magType: 'good',
-      chance: [100, 100, 100],
-      effect: ['1d1', '3d3', '5d5'],
-      profList: ['m'],
-      dmgType: 'clear',
-    });
+
+const params = {
+  name: 'lightShield',
+  displayName: 'Световой щит',
+  desc: 'Возвращает часть физического урона в виде чистого, атакующему цель под действием щита',
+  cost: 3,
+  baseExp: 6,
+  costType: 'mp',
+  lvl: 1,
+  orderType: 'team',
+  aoeType: 'target',
+  magType: 'good',
+  chance: ['1d80', '1d90', '1d100'],
+  effect: ['1d1+10', '1d1+20', '1d1+30'],
+  profList: ['m'],
+} satisfies MagicArgs;
+
+class LightShield extends DmgMagic {
+  cast(initiator: Player, target: Player, game: GameService): void {
+    this.params = { initiator, target, game };
+    this.run();
+    this.getExp();
+    this.checkTargetIsDead();
   }
 
   run() {
+    const { target } = this.params;
+    target.stats.down('hp', this.effectVal());
+  }
+}
+
+class LightShieldBuff extends LongMagic implements PostAffect {
+  run() {
     const { target, initiator } = this.params;
-    target.flags.isLightShielded.push({ initiator: initiator.nick, val: initiator.proc });
+    target.flags.isLightShielded.push({ initiator: initiator.id, val: initiator.proc });
   }
 
   runLong(): void {
     const { target, initiator } = this.params;
-    target.flags.isLightShielded.push({ initiator: initiator.nick, val: initiator.proc });
+    target.flags.isLightShielded.push({ initiator: initiator.id, val: initiator.proc });
   }
 
   postAffect(
     { initiator, target, game } = this.params,
+    { effect } = { effect: 0 },
   ): void | SuccessArgs | SuccessArgs[] {
-    return target.flags.isLightShielded.map(() => {
-      const effect = this.effectVal({ initiator: target, target: initiator, game });
+    const results: SuccessArgs[] = [];
 
-      initiator.stats.down('hp', effect);
+    target.flags.isLightShielded.forEach((flag) => {
+      const shielder = game.players.getById(flag.initiator);
+      if (!shielder) {
+        return;
+      }
 
-      return super.getSuccessResult({ initiator: target, target: initiator, game });
+      shielder.setProc(effect * flag.val * 0.01);
+      lightShield.cast(shielder, initiator, game);
+      results.push(lightShield.getSuccessResult({ initiator: shielder, target: initiator, game }));
     });
-  }
 
-  getSuccessResult({ initiator, target, game } = this.params): SuccessArgs {
-    return {
-      ...super.getSuccessResult({ initiator, target, game }),
-      actionType: 'magic',
-    };
+    return results;
   }
 }
 
-export default new LightShield();
+const lightShield = new LightShield({
+  ...params,
+  baseExp: 8,
+  dmgType: 'clear',
+});
+
+const lightShieldBuff = new LightShieldBuff(params);
+
+export default lightShieldBuff;
