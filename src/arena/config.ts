@@ -98,7 +98,7 @@ export default {
       'magicArmor', 'strongAura',
       'dustShield', 'mediumAura',
       'stoneSkin',
-      'magic_wall'], // ???
+      'magicWall'], // ???
     'cats_claw',
     'vampiric_aura',
     'glitch',

@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`magicWall target should be behind wall 1`] = `147.01`;
+
+exports[`magicWall target should be behind wall 2`] = `
+"*asperiores* использовал _Магическая стена_ на *alias* с эффектом 140.21
+\\[ 📖14 ]
+*alias* пытался атаковать *asperiores*, но у него не получилось
+_Магическая стена_ *asperiores*"
+`;
