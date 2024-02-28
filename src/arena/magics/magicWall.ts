@@ -3,7 +3,7 @@ import CastError from '@/arena/errors/CastError';
 import { LongMagic } from '../Constuructors/LongMagicConstructor';
 
 /**
- * Паралич
+ * Магическая стена
  * Основное описание магии общее требовани есть в конструкторе
  */
 class MagicWall extends LongMagic implements PreAffect {
