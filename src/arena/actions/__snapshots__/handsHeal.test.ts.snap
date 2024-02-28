@@ -1,23 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`protect should be stopped by attack 1`] = `
-"*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *11.7* урона
-\\[ corporis 👊 💔-11.7/-3.7 📖94 ]
+exports[`handsHeal should be stopped by attack 1`] = `
+"*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *11.3* урона
+\\[ corporis 👊 💔-11.3/-3.3 📖90 ]
 *corporis* пытался использовать _Лечение руками_ на *corporis*, но у него не получилось
 _Атака_ *corporis*"
 `;
 
-exports[`protect should heal 1`] = `
-"Игрок *quisquam* был вылечен 🤲 на *💖5.45*
-\\[ quisquam: 💖5.45/6.45 📖55 ]"
+exports[`handsHeal should heal 1`] = `
+"Игрок *quisquam* был вылечен 🤲 на *💖3.39*
+\\[ quisquam: 💖3.39/4.39 📖34 ]"
 `;
 
-exports[`protect should not get exp if players are not allies 1`] = `
-"Игрок *quisquam* был вылечен 🤲 на *💖1.2*
-\\[ corporis: 💖1.2/2.2 📖0 ]"
+exports[`handsHeal should not get exp if players are not allies 1`] = `
+"Игрок *quisquam* был вылечен 🤲 на *💖1.04*
+\\[ corporis: 💖1.04/2.04 📖0 ]"
 `;
 
-exports[`protect should not heal more than max hp 1`] = `
+exports[`handsHeal should not heal more than max hp 1`] = `
 "Игрок *quisquam* был вылечен 🤲 на *💖0*
 \\[ quisquam: 💖0/8 📖0 ]"
 `;

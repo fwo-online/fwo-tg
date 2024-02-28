@@ -21,7 +21,7 @@ export default abstract class PhysConstructor extends AffectableAction {
   lvl: number;
   orderType: OrderType;
   actionType: ActionType = 'phys';
-  effectType?: DamageType | undefined = 'physical';
+  effectType: DamageType = 'physical';
 
   constructor(atkAct) {
     super();
@@ -51,6 +51,7 @@ export default abstract class PhysConstructor extends AffectableAction {
       this.calculateHit();
       this.checkPreAffects();
       this.isBlurredMind();
+      this.checkChance();
 
       this.run(initiator, target, game);
       this.getExp();
@@ -87,20 +88,43 @@ export default abstract class PhysConstructor extends AffectableAction {
     }
   }
 
+  checkChance() {
+    if (MiscService.rndm('1d100') > this.getChance()) {
+      throw new CastError('PHYS_FAIL');
+    }
+  }
+
+  getChance() {
+    const { initiator, target } = this.params;
+    const attack = initiator.stats.val('patk');
+    const protect = target.stats.val('pdef') || 1;
+
+    const ratio = attack / protect / 0.25;
+
+    return Math.sqrt(ratio) + (10 * ratio) + 5;
+  }
+
   /**
    * Проверка прохождения защиты цели
    * Если проверка провалена, выставляем флаг isHited, означающий что
    * атака прошла
    */
   calculateHit() {
-    const { initiator } = this.params;
+    const { initiator, target } = this.params;
 
-    const initiatorHitParam = initiator.stats.val('hit');
-    const hitval = MiscService.randInt(
-      initiatorHitParam.min,
-      initiatorHitParam.max,
-    );
-    this.status.effect = floatNumber(hitval * initiator.proc);
+    const { min, max } = initiator.stats.val('hit');
+    const hit = MiscService.randInt(min, max);
+
+    const effect = this.applyResists(hit, target);
+    this.status.effect = floatNumber(effect * initiator.proc);
+  }
+
+  applyResists(effect: number, target: Player): number {
+    const resist = target.resists[this.effectType];
+    if (resist) {
+      return effect * resist;
+    }
+    return effect;
   }
 
   /**

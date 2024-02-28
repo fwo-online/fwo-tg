@@ -16,6 +16,7 @@ export type BreaksMessage =
   'GOD_FAIL' |
   'HEAL_FAIL' |
   'SKILL_FAIL' |
+  'PHYS_FAIL' |
   'NO_WEAPON';
 
 export type ExpArr = {
