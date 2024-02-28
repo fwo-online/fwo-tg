@@ -1,13 +1,12 @@
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 
 /**
- * Затмение
+ * Вторая жизнь
  * Основное описание магии общее требовани есть в конструкторе
  */
 class SecondLife extends CommonMagic {
   constructor() {
     super({
-      // @ts-expect-error не используется
       name: 'secondLife',
       displayName: 'Вторая жизнь',
       desc: 'Воскрешает цель',
@@ -15,7 +14,7 @@ class SecondLife extends CommonMagic {
       baseExp: 8,
       costType: 'mp',
       lvl: 3,
-      orderType: 'all',
+      orderType: 'team',
       aoeType: 'target',
       magType: 'good',
       chance: [
@@ -27,11 +26,19 @@ class SecondLife extends CommonMagic {
     });
   }
 
-  // eslint-disable-next-line class-methods-use-this
+  calculateExp(effect: number, baseExp = 0) {
+    return Math.round(effect * baseExp * this.params.initiator.proc);
+  }
+
   run() {
-    // if hp < 0 , wasHP = |hp|
-    // set hp 0.05
-    // set exp wasHP * baseExp
+    const { target } = this.params;
+    const hp = target.stats.val('hp');
+
+    if (hp < 0) {
+      target.stats.set('hp', 0.05);
+      target.resetKiller();
+      this.status.effect = Math.abs(hp);
+    }
   }
 }
 
