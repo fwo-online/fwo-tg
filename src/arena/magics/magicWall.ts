@@ -45,6 +45,7 @@ class MagicWall extends LongMagic implements PreAffect {
     if (initiator.flags.isBehindWall) {
       const wallCaster = game.players.getById(initiator.flags.isBehindWall.initiator);
       if (wallCaster) {
+        // eslint-disable-next-line max-len
         throw new CastError(this.getSuccessResult({ initiator: wallCaster, target: initiator, game }));
       }
     }
