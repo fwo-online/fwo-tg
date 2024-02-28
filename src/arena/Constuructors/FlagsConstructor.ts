@@ -21,6 +21,7 @@ export default class FlagsConstructor {
   isDisarmed = false;
   isSleeping = false;
   isLightShielded: Flag[] = [];
+  isBehindWall?: Flag;
 
   /**
    * Обнуление флагов
@@ -39,5 +40,6 @@ export default class FlagsConstructor {
     this.isDisarmed = false;
     this.isShielded = 0;
     this.isLightShielded = [];
+    this.isBehindWall = undefined;
   }
 }

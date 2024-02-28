@@ -9,6 +9,7 @@ const registerAttackAffects = () => {
     arena.magics.paralysis,
     arena.magics.eclipse,
     arena.magics.sleep,
+    arena.magics.magicWall,
   ]);
 
   arena.actions.attack.registerPostAffects([

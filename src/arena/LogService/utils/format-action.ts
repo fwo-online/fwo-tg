@@ -17,6 +17,7 @@ export function formatAction(msgObj: SuccessArgs): string {
     case 'aoe-dmg-magic':
       return `*${msgObj.initiator}* сотворил _${msgObj.action}_ на *${msgObj.target}* нанеся ${msgObj.effect} урона`;
     case 'magic':
+    case 'magic-long':
       return !msgObj.effect
         ? `*${msgObj.initiator}* использовал _${msgObj.action}_ на *${msgObj.target}*`
         : `*${msgObj.initiator}* использовал _${msgObj.action}_ на *${msgObj.target}* с эффектом ${msgObj.effect}`;

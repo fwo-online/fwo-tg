@@ -4,7 +4,7 @@ import type GameService from '../GameService';
 import type { Player } from '../PlayersService';
 
 export type CostType = 'en' | 'mp';
-export type OrderType = 'all' | 'any' | 'enemy' | 'self' | 'team';
+export type OrderType = 'all' | 'any' | 'enemy' | 'self' | 'team' | 'teamExceptSelf';
 export type AOEType = 'target' | 'team';
 export type DamageType = 'acid' | 'fire' | 'lighting' | 'frost' | 'physical' | 'clear';
 export type BreaksMessage =
