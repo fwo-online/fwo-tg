@@ -34,7 +34,7 @@ class SecondLife extends CommonMagic {
     const { target } = this.params;
     const hp = target.stats.val('hp');
 
-    if (hp < 0) {
+    if (hp <= 0) {
       target.stats.set('hp', 0.05);
       target.resetKiller();
       this.status.effect = Math.abs(hp);
