@@ -1,10 +1,8 @@
 import { bold, italic } from '../../utils/formatString';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
-import type { LongItem } from '../Constuructors/LongMagicConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
-import arena from '../index';
+import arena from '@/arena';
 
-type LongActionsEntry = [magic: string, item?: LongItem[]]
 /**
  * Экзорцизм
  * Основное описание магии общее требовани есть в конструкторе
@@ -23,25 +21,21 @@ class Anathema extends CommonMagic {
       aoeType: 'target',
       magType: 'bad',
       chance: ['1d60', '1d70', '1d85'],
-      profList: ['m'],
+      profList: ['p'],
       effect: [],
     });
   }
 
   run() {
-    // Очищаем все "bad" магии в которых target является target данной магии
     const { game, target } = this.params;
-    const { longActions } = game;
-    const entries = Object.entries(longActions) as LongActionsEntry[];
-    entries.reduce((sum, [key, items]) => {
-      if (!items) return sum;
+    const entries = Object.entries(game.longActions);
+
+    entries.forEach(([key, items]) => {
       const magic = arena.magics[key];
       if (magic.magType === 'good') {
-        const newItem = items.filter((item) => item.target !== target.id);
-        sum[key] = newItem;
+        game.longActions[key] = items.filter((item) => item.target !== target.id);
       }
-      return sum;
-    }, {} as typeof longActions);
+    });
   }
 
   customMessage(args: SuccessArgs) {
