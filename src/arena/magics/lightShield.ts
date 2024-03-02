@@ -19,7 +19,7 @@ const params = {
   cost: 3,
   baseExp: 6,
   costType: 'mp',
-  lvl: 1,
+  lvl: 4,
   orderType: 'team',
   aoeType: 'target',
   magType: 'good',
