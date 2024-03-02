@@ -34,9 +34,7 @@ export class LogService {
     });
 
     try {
-      const x = this.format();
-      console.log(x);
-      await this.writer(x);
+      await this.writer(this.format());
     } catch (e) {
       console.log('sendBattleLog: ', e);
     } finally {

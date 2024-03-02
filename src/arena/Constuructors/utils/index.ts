@@ -23,7 +23,7 @@ export const isPhysicalDamageResult = (result: Result): result is SuccessArgs =>
 };
 
 export const findByTarget = (target: string) => {
-  return (result: Result) => {
+  return (result: { target: string }) => {
     return result.target === target;
   };
 };

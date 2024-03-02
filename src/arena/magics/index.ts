@@ -33,3 +33,4 @@ export { default as lightShield } from './lightShield';
 export { default as secondLife } from './secondLife';
 export { default as sleep } from './sleep';
 export { default as magicWall } from './magicWall';
+export { default as exorcism } from './exorcism';

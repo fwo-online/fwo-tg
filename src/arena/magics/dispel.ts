@@ -1,7 +1,5 @@
-import _ from 'lodash';
-import { bold } from '../../utils/formatString';
+import { bold, italic } from '../../utils/formatString';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
-import type { LongItem } from '../Constuructors/LongMagicConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
 
 /**
@@ -9,8 +7,6 @@ import type { SuccessArgs } from '../Constuructors/types';
  * Основное описание магии общее требовани есть в конструкторе
  */
 class Dispel extends CommonMagic {
-  dispelled!: Record<string, LongItem[]>; // закладка для customMessage
-
   constructor() {
     super({
       name: 'dispel',
@@ -30,23 +26,17 @@ class Dispel extends CommonMagic {
   }
 
   run() {
-    const { target, game } = this.params;
+    const { game, target } = this.params;
     const entries = Object.entries(game.longActions);
-    entries.forEach(([name, items]) => {
-      const [dispelled, rest] = _.partition(items, (item) => item.target === target.id);
-      this.dispelled[name] = dispelled;
-      game.longActions[name] = rest;
-    });
-  }
 
-  next() {
-    super.next();
-    this.dispelled = {};
+    entries.forEach(([key, items]) => {
+      game.longActions[key] = items.filter((item) => item.target !== target.id);
+    });
   }
 
   customMessage(args: SuccessArgs) {
     const { initiator, target } = args;
-    return `${bold(initiator)} снимает все длительные магии с ${target}, используя заклинание ${this.displayName}`;
+    return `${bold(initiator)} снимает все длительные магии с ${bold(target)}, используя заклинание ${italic(this.displayName)}`;
   }
 }
 

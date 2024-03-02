@@ -10,7 +10,6 @@ import arena from '../index';
 class Exorcism extends CommonMagic {
   constructor() {
     super({
-      // @ts-expect-error не используется
       name: 'exorcism',
       displayName: 'Экзорцизм',
       desc: 'Экзорцизм снимает все отрицательные эффекты с цели',
@@ -22,20 +21,20 @@ class Exorcism extends CommonMagic {
       aoeType: 'target',
       magType: 'good',
       chance: ['1d60', '1d70', '1d80'],
-      profList: ['m'],
+      profList: ['p'],
       effect: [],
     });
   }
 
   run() {
-    // Очищаем все "bad" магии в которых target является target данной магии
     const { game, target } = this.params;
-    const { ordersList } = game.orders;
-    game.orders.ordersList = ordersList.filter((order) => {
-      if (order.target === target.id) {
-        return arena.magics[order.action]?.magType !== 'bad';
+    const entries = Object.entries(game.longActions);
+
+    entries.forEach(([key, items]) => {
+      const magic = arena.magics[key];
+      if (magic.magType === 'bad') {
+        game.longActions[key] = items.filter((item) => item.target !== target.id);
       }
-      return true;
     });
   }
 
