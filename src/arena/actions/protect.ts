@@ -49,10 +49,9 @@ class Protect extends AffectableAction implements PreAffect {
     const attackValue = initiator.stats.val('patk') * initiator.proc;
     const protectValue = target.flags.isProtected.length > 0 ? target.stats.val('pdef') : 0.1;
     const ratio = floatNumber(Math.round(attackValue / protectValue));
-    console.log('at', ratio);
 
     const randomValue = MiscService.rndm('1d100');
-    const chance = 20 * ratio + 50;
+    const chance = Math.round(Math.sqrt(ratio) + (10 * ratio) + 5);
     const result = chance > randomValue;
     console.log('chance', chance, 'random', randomValue, 'result', result);
 
@@ -82,7 +81,7 @@ class Protect extends AffectableAction implements PreAffect {
       }
 
       const protect = Math.floor(flag.val * 100) / pdef;
-      const exp = Math.round(expMultiplier * 0.8 * protect);
+      const exp = Math.round(expMultiplier * 0.08 * protect);
       defender.stats.up('exp', exp);
 
       return {
