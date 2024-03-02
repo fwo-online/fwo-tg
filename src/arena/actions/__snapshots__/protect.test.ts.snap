@@ -2,7 +2,7 @@
 
 exports[`protect should not get exp if protect enemy 1`] = `
 "*corporis* пытался атаковать *quisquam*, но у него не получилось
-_Защита_ *quisquam*: 📖43,*corporis*: 📖0"
+_Защита_ *quisquam*: 📖33,*corporis*: 📖0"
 `;
 
 exports[`protect should protect player 1`] = `
