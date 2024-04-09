@@ -181,6 +181,10 @@ export default class Player {
   }
 
   isAlly(player: Player) {
+    if (player.id === this.id) {
+      return true;
+    }
+
     if (!this.clan || !player.clan) {
       return false;
     }

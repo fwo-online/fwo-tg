@@ -1,12 +1,27 @@
-import type { PreAffect } from '@/arena/Constuructors/interfaces/PreAffect';
+/* eslint-disable @typescript-eslint/no-use-before-define, max-classes-per-file */
 import CastError from '@/arena/errors/CastError';
 import { LongMagic } from '../Constuructors/LongMagicConstructor';
+import { ProtectConstructor } from '../Constuructors/ProtectConstructor';
+import type { OrderType } from '../Constuructors/types';
 
 /**
  * Магическая стена
  * Основное описание магии общее требовани есть в конструкторе
  */
-class MagicWall extends LongMagic implements PreAffect {
+
+class MagicWall extends ProtectConstructor {
+  name = 'magicWall';
+  displayName = 'Магическая стена';
+  orderType: OrderType = 'teamExceptSelf';
+
+  getTargetProtectors({ target } = this.params) {
+    return target.flags.isBehindWall;
+  }
+}
+
+const magicWall = new MagicWall();
+
+class MagicWallBuff extends LongMagic {
   constructor() {
     super({
       name: 'magicWall',
@@ -25,31 +40,34 @@ class MagicWall extends LongMagic implements PreAffect {
     });
   }
 
-  calculateExp(effect: number, baseExp = 0) {
-    return Math.round(effect * baseExp * this.params.initiator.proc);
-  }
-
   run() {
     const { target, initiator } = this.params;
     target.stats.up('pdef', this.effectVal());
-    target.flags.isBehindWall = { initiator: initiator.id, val: this.status.effect };
+    target.flags.isBehindWall.push({ initiator: initiator.id, val: this.status.effect });
   }
 
   runLong() {
     const { target, initiator } = this.params;
     target.stats.up('pdef', this.effectVal());
-    target.flags.isBehindWall = { initiator: initiator.id, val: this.status.effect };
+    target.flags.isBehindWall.push({ initiator: initiator.id, val: this.status.effect });
   }
 
-  preAffect({ initiator, game } = this.params) {
-    if (initiator.flags.isBehindWall) {
-      const wallCaster = game.players.getById(initiator.flags.isBehindWall.initiator);
-      if (wallCaster) {
-        // eslint-disable-next-line max-len
-        throw new CastError(this.getSuccessResult({ initiator: wallCaster, target: initiator, game }));
-      }
+  preAffect({ initiator, target, game } = this.params, { effect } = { effect: 0 }) {
+    if (initiator.flags.isBehindWall.length) {
+      initiator.flags.isBehindWall.forEach((flag) => {
+        const wallCaster = game.players.getById(flag.initiator);
+        if (wallCaster) {
+          // eslint-disable-next-line max-len
+          throw new CastError(this.getSuccessResult({ initiator: wallCaster, target: initiator, game }));
+        }
+      });
+    }
+
+    if (target.flags.isBehindWall) {
+      magicWall.preAffect({ initiator, target, game }, { effect });
+      magicWall.reset();
     }
   }
 }
 
-export default new MagicWall();
+export default new MagicWallBuff();
