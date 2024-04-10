@@ -17,6 +17,10 @@ class MagicWall extends ProtectConstructor {
   getTargetProtectors({ target } = this.params) {
     return target.flags.isBehindWall;
   }
+
+  run(): void {
+    // do nothing
+  }
 }
 
 const magicWall = new MagicWall();
