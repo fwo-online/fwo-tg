@@ -53,6 +53,7 @@ describe('magicWall', () => {
 
     magicWall.cast(game.players.players[0], game.players.players[0], game);
     attack.cast(game.players.players[1], game.players.players[0], game);
+    attack.cast(game.players.players[1], game.players.players[0], game);
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });

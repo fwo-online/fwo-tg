@@ -68,8 +68,8 @@ class MagicWallBuff extends LongMagic {
     }
 
     if (target.flags.isBehindWall) {
-      magicWall.preAffect({ initiator, target, game }, { effect });
       magicWall.reset();
+      magicWall.preAffect({ initiator, target, game }, { effect });
     }
   }
 }
