@@ -51,7 +51,7 @@ export default abstract class PhysConstructor extends AffectableAction {
       this.calculateHit();
       this.checkPreAffects();
       this.isBlurredMind();
-      this.checkChance();
+      // this.checkChance(); FIXME
 
       this.run(initiator, target, game);
       this.getExp();

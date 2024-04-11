@@ -44,4 +44,16 @@ describe('magicWall', () => {
     expect(game.players.players[1].stats.val('pdef')).toMatchSnapshot();
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
+
+  it('should protect player', () => {
+    game.players.players[0].proc = 1;
+    game.players.players[0].stats.set('mp', magicWall.cost);
+    game.players.players[0].stats.set('pdef', 100);
+    game.players.players[1].proc = 1;
+
+    magicWall.cast(game.players.players[0], game.players.players[0], game);
+    attack.cast(game.players.players[1], game.players.players[0], game);
+
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
+  });
 });
