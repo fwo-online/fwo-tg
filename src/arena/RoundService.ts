@@ -48,6 +48,10 @@ export class RoundService {
     this.emitter.on(ROUND_SERVICE_EVENT, listener);
   }
 
+  unsubscribe() {
+    this.emitter.removeAllListeners();
+  }
+
   /**
    * Иницилизируем начало раунда
    */

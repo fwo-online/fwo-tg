@@ -47,7 +47,7 @@ export abstract class Heal extends AffectableAction {
       // Получение экспы за хил следует вынести в отдельный action следующий
       // за самим хилом, дабы выдать exp всем хиллерам после формирования
       // общего массива хила
-      this.getExp(initiator, target, game);
+      this.getExp(initiator, target);
       // this.backToLife();
       this.next();
     } catch (e) {
@@ -80,8 +80,8 @@ export abstract class Heal extends AffectableAction {
     return floatNumber(healEffect);
   }
 
-  getExp(initiator: Player, target: Player, game: Game): void {
-    if (game.isPlayersAlly(initiator, target)) {
+  getExp(initiator: Player, target: Player): void {
+    if (initiator.isAlly(target)) {
       const healEffect = this.status.effect;
       const exp = Math.round(healEffect * 10);
       initiator.stats.up('exp', exp);

@@ -180,9 +180,9 @@ export default class Player {
     return this.skills[skill] ?? 0;
   }
 
-  isAlly(player: Player) {
+  isAlly(player: Player, includeSelf = true) {
     if (player.id === this.id) {
-      return true;
+      return includeSelf;
     }
 
     if (!this.clan || !player.clan) {

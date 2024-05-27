@@ -91,19 +91,6 @@ export default class GameService {
   }
 
   /**
-   * Проверяет являются ли игроки союзниками
-   * @param player
-   * @param target
-   */
-  isPlayersAlly(player: Player, target: Player): boolean {
-    const allies = this.players.getMyTeam(player.id);
-    if (!allies.length) {
-      return player.id === target.id;
-    }
-    return allies.some((ally) => ally.id === target.id);
-  }
-
-  /**
    * Предзагрузка игры
    */
   preLoading(): void {
@@ -299,6 +286,7 @@ export default class GameService {
           this.orders.reset();
           this.handleEndGameFlags();
           if (this.isGameEnd) {
+            this.round.unsubscribe();
             this.endGame();
           } else {
             this.refreshRoundFlags();
