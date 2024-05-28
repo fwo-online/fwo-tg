@@ -1,14 +1,10 @@
-import _ from 'lodash';
-import mongoose, {
-  Schema, Model, Query, Types,
-} from 'mongoose';
-import arena from '../arena';
-import config from '../arena/config';
-import { Collections, Profs } from '../data';
-import { CharModel, Char } from './character';
-import {
-  ItemModel, ParseAttrItem, Item,
-} from './item';
+import _ from "lodash";
+import mongoose, { Schema, Model, Query, Types } from "mongoose";
+import arena from "../arena";
+import config from "../arena/config";
+import { Collections, Profs } from "../data";
+import { CharModel, Char } from "./character";
+import { Item } from "./item";
 
 /**
  * getDefaultItem
@@ -34,44 +30,6 @@ export interface Inventory {
 export type InventoryModel = Model<Inventory> & typeof Inventory;
 
 export class Inventory {
-  /**
-   * fullHarks
-   *
-   * @desc Возвращает  суммарный объект всех суммирующихся характеристик от
-   * одетых вещей внутри инвентаря чара
-   * @param charId Идентификатор чара чей inventory нужно пропарсить
-   * @todo нужна фунция которая выбирает коды всех одеты вещей в инвентаре
-   * а затем суммирует все полученные данны в единый объект.
-   */
-  static async fullHarks(
-    this: InventoryModel,
-    charId: string,
-  ): Promise<ParseAttrItem> {
-    // берем из базы все надетые вещи
-    const allItems = await this.getPutOned(charId);
-    // Складываем все характеристики от вещей в одоин общий объект
-    return _.reduce(allItems, (ob, i) => {
-      // берем характеристики вещи
-      const f = ItemModel.getHarks(i.code);
-      // делаем слияние общего объекта и объекта вещи
-      return _.assignInWith(ob, f, (objValue, srcValue) => {
-        // Если в общем обтекте в этом ключе НЕ пустое значине
-        if (!_.isEmpty(objValue) || _.isNumber(objValue)) {
-          // и если этот ключ объекта является Объектом
-          if (_.isObject(objValue)) {
-            // то складываем два этих объекта
-            _.assignInWith(objValue, srcValue, (o, s) => +o + +s);
-            return objValue;
-          }
-          // если ключ не является Объектом, складываем значения
-          return +objValue + +srcValue;
-        }
-        // Если в общем объекте пустое значение, то берем значение вещи
-        return srcValue;
-      });
-    }, {} as ParseAttrItem);
-  }
-
   /**
    * Возвращает массив одетых вещей в инвентаре
    * @param charId
