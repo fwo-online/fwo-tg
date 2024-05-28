@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _ from 'lodash';
 
 const sum = (a, b) => {
   if (_.isObject(b)) {

@@ -4,9 +4,7 @@ import type GameService from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import { AffectableAction } from './AffectableAction';
-import type {
-  ActionType, DamageType, OrderType,
-} from './types';
+import type { ActionType, DamageType, OrderType } from './types';
 
 /**
  * Конструктор физической атаки
@@ -41,9 +39,7 @@ export default abstract class PhysConstructor extends AffectableAction {
    * @param game Объект игры
    */
   cast(initiator: Player, target: Player, game: GameService) {
-    this.params = {
-      initiator, target, game,
-    };
+    this.params = { initiator, target, game };
     this.reset();
 
     try {
@@ -130,7 +126,7 @@ export default abstract class PhysConstructor extends AffectableAction {
   /**
    * Рассчитываем полученный exp
    */
-  getExp({ initiator, target, game } = this.params) {
+  getExp({ initiator, target } = this.params) {
     if (initiator.isAlly(target) && !initiator.flags.isGlitched) {
       this.status.exp = 0;
     } else {

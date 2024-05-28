@@ -1,13 +1,13 @@
-import _ from "lodash";
-import { findCharacter, updateCharacter } from "@/api/character";
-import { floatNumber } from "@/utils/floatNumber";
-import config from "@/arena/config";
-import arena from "@/arena";
-import { Char } from "@/models/character";
-import { HarksLvl } from "@/data/harks";
-import { UpdateQuery } from "mongoose";
-import InventoryService from "@/arena/InventoryService";
-import { assignWithSum } from "@/utils/assignWithSum";
+import _ from 'lodash';
+import type { UpdateQuery } from 'mongoose';
+import { findCharacter, updateCharacter } from '@/api/character';
+import arena from '@/arena';
+import config from '@/arena/config';
+import InventoryService from '@/arena/InventoryService';
+import type { HarksLvl } from '@/data/harks';
+import type { Char } from '@/models/character';
+import { assignWithSum } from '@/utils/assignWithSum';
+import { floatNumber } from '@/utils/floatNumber';
 
 /**
  * Конструктор персонажа
@@ -22,17 +22,15 @@ import { assignWithSum } from "@/utils/assignWithSum";
  */
 function getDynHarks(charObj: CharacterService) {
   const { harks } = charObj.inventory;
-  const patk =
-    charObj.prof === "l"
-      ? floatNumber(harks.dex + harks.int * 0.5)
-      : floatNumber(harks.dex + harks.str * 0.4);
+  const patk = charObj.prof === 'l'
+    ? floatNumber(harks.dex + harks.int * 0.5)
+    : floatNumber(harks.dex + harks.str * 0.4);
   const pdef = floatNumber(harks.con * 0.6 + harks.dex * 0.4);
   const maxHp = floatNumber(6 + harks.con / 3);
   const maxMp = floatNumber(harks.wis * 1.5);
-  const maxEn =
-    charObj.prof === "l"
-      ? harks.dex + harks.int * 0.5 + harks.con * 0.25
-      : harks.dex + harks.str * 0.5 + harks.con * 0.25;
+  const maxEn = charObj.prof === 'l'
+    ? harks.dex + harks.int * 0.5 + harks.con * 0.25
+    : harks.dex + harks.str * 0.5 + harks.con * 0.25;
 
   const mga = floatNumber(harks.wis * 0.6 + harks.int * 0.4);
   const mgp = floatNumber(harks.wis * 0.6 + harks.int * 0.4);
@@ -52,7 +50,7 @@ function getDynHarks(charObj: CharacterService) {
    */
   function calcHit() {
     let dmgFromHarks = 0;
-    if (charObj.prof === "l") {
+    if (charObj.prof === 'l') {
       dmgFromHarks = (harks.int - 2) / 10;
     } else {
       dmgFromHarks = (harks.str - 3) / 10;
@@ -69,11 +67,10 @@ function getDynHarks(charObj: CharacterService) {
   }
 
   const hit = calcHit();
-  const maxTarget = charObj.prof === "l" ? Math.round(charObj.lvl + 3 / 2) : 1;
-  const lspell =
-    charObj.prof === "m" || charObj.prof === "p"
-      ? Math.round((harks.int - 4) / 3)
-      : 0;
+  const maxTarget = charObj.prof === 'l' ? Math.round(charObj.lvl + 3 / 2) : 1;
+  const lspell = charObj.prof === 'm' || charObj.prof === 'p'
+    ? Math.round((harks.int - 4) / 3)
+    : 0;
   return {
     patk,
     pdef,
@@ -141,11 +138,11 @@ class CharacterService {
         assignWithSum(dynHarks[i], h);
       } else {
         if (!_.isUndefined(dynHarks[i])) dynHarks[i] += Number(h);
-        if (i === "atc") dynHarks.patk += Number(h);
-        if (i === "prt") dynHarks.pdef += Number(h);
-        if (i === "add_hp") dynHarks.maxHp += Number(h);
-        if (i === "add_mp") dynHarks.maxMp += Number(h);
-        if (i === "add_en") dynHarks.maxEn += Number(h);
+        if (i === 'atc') dynHarks.patk += Number(h);
+        if (i === 'prt') dynHarks.pdef += Number(h);
+        if (i === 'add_hp') dynHarks.maxHp += Number(h);
+        if (i === 'add_mp') dynHarks.maxMp += Number(h);
+        if (i === 'add_en') dynHarks.maxEn += Number(h);
         if (!dynHarks[i]) dynHarks[i] = h;
       }
     });
@@ -177,7 +174,7 @@ class CharacterService {
     this.resetExpLimit();
     this.bonus += Math.round(value / 100) - Math.round(this.charObj.exp / 100);
     this.charObj.exp = value;
-    this.addLvl();
+    void this.addLvl();
   }
 
   set expEarnedToday(value) {
@@ -342,12 +339,12 @@ class CharacterService {
   // В функциях прокачки харок следует использоваться this.charObj.harks
   getIncreaseHarkCount(hark) {
     const count = this.tempHarks[hark] - this.charObj.harks[hark];
-    return count || "";
+    return count || '';
   }
 
   increaseHark(harkName) {
     if (this.tempHarks.free < 1) {
-      throw Error("Недостаточно очков");
+      throw Error('Недостаточно очков');
     }
 
     this.tempHarks[harkName] += 1;
@@ -410,7 +407,7 @@ class CharacterService {
 
   async leaveClan() {
     this.charObj.clan = undefined;
-    await this.updatePenalty("clan_leave", 5 * 24 * 60);
+    await this.updatePenalty('clan_leave', 5 * 24 * 60);
   }
 
   /**
@@ -418,7 +415,7 @@ class CharacterService {
    * @return gameId идентификатор игры
    */
   get gameId() {
-    return this.mm.status || "";
+    return this.mm.status || '';
   }
 
   /**
@@ -473,7 +470,7 @@ class CharacterService {
     if (arena.games[gameId]) {
       return arena.games[gameId];
     }
-    throw Error("gameId_error");
+    throw Error('gameId_error');
   }
 
   /**
@@ -502,11 +499,11 @@ class CharacterService {
    * @param {import('mongoose').UpdateQuery<import ('@/models/character').Char>} [query]
    */
   async save(query: UpdateQuery<Char>) {
-    console.log("Saving char :: id", this.id);
+    console.log('Saving char :: id', this.id);
     try {
       return await updateCharacter(this.id, query);
     } catch (e) {
-      console.error("Fail on CharSave:", e);
+      console.error('Fail on CharSave:', e);
     }
   }
 
@@ -517,8 +514,10 @@ class CharacterService {
    */
   async saveToDb() {
     try {
-      console.log("Saving char :: id", this.id);
-      const { gold, exp, magics, bonus, skills, lvl, clan, free } = this;
+      console.log('Saving char :: id', this.id);
+      const {
+        gold, exp, magics, bonus, skills, lvl, clan, free,
+      } = this;
       return await updateCharacter(this.id, {
         gold,
         exp,
@@ -534,7 +533,7 @@ class CharacterService {
         favoriteMagicList: this.charObj.favoriteMagicList,
       });
     } catch (e) {
-      console.error("Fail on CharSave:", e);
+      console.error('Fail on CharSave:', e);
     }
   }
 }

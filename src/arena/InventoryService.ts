@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _ from 'lodash';
 import {
   getCollection,
   getItems,
@@ -6,13 +6,14 @@ import {
   removeItem,
   putOnItem,
   putOffItem,
-} from "@/api/inventory";
-import arena from "@/arena";
-import { Char } from "@/models/character";
-import { Item, ItemModel, ParseAttrItem } from "@/models/item";
-import { Inventory } from "@/models/inventory";
-import { assignWithSum } from "@/utils/assignWithSum";
-import ValidationError from "./errors/ValidationError";
+} from '@/api/inventory';
+import arena from '@/arena';
+import ValidationError from '@/arena/errors/ValidationError';
+import type { Char } from '@/models/character';
+import type { Inventory } from '@/models/inventory';
+import type { Item, ParseAttrItem } from '@/models/item';
+import { ItemModel } from '@/models/item';
+import { assignWithSum } from '@/utils/assignWithSum';
 
 class InventoryService {
   harksFromItems: Partial<ParseAttrItem>;
@@ -21,7 +22,10 @@ class InventoryService {
     this.updateHarkFromItems();
   }
 
-  // Нужно помнить, что this.harks это суммарный объект, с уже полученными от вещей характеристиками.
+  /**
+   * Нужно помнить, что this.harks это суммарный объект,
+   * с уже полученными от вещей характеристиками
+   * */
   get harks() {
     const charHarks = { ...this.char.harks };
     const plusHarks = this.plushark;
@@ -66,15 +70,14 @@ class InventoryService {
 
   getEquippedWeapon() {
     return this.getEquippedItems().find(
-      (item) => /^ab?$/.test(item.wear) && item.putOn
+      (item) => /^ab?$/.test(item.wear) && item.putOn,
     );
   }
 
   canEquip(itemToEquip: Item) {
     return !this.getEquippedItems().some(
-      (item) =>
-        item.wear.includes(itemToEquip.wear) ||
-        itemToEquip.wear.includes(item.wear)
+      (item) => item.wear.includes(itemToEquip.wear)
+        || itemToEquip.wear.includes(item.wear),
     );
   }
 
@@ -91,17 +94,17 @@ class InventoryService {
   async equipItem(itemId: string) {
     const charItem = this.getItem(itemId);
     if (!charItem) {
-      throw new ValidationError("Этого предмета больше не существует");
+      throw new ValidationError('Этого предмета больше не существует');
     }
 
     const item = arena.items[charItem.code];
 
     if (!this.hasRequiredHarks(item)) {
-      throw new ValidationError("Недостаточно характеристик");
+      throw new ValidationError('Недостаточно характеристик');
     }
 
     if (!this.canEquip(item)) {
-      throw new ValidationError("На этом месте уже надет другой предмет");
+      throw new ValidationError('На этом месте уже надет другой предмет');
     }
 
     await putOnItem({ charId: this.char.id, itemId });
@@ -121,12 +124,10 @@ class InventoryService {
     await this.updateHarkFromItems();
 
     const items = this.getEquippedItems().filter(
-      (i) => !this.hasRequiredHarks(arena.items[i.code])
+      (i) => !this.hasRequiredHarks(arena.items[i.code]),
     );
     if (items.length) {
-      const putOffItems = items.map((i) =>
-        putOffItem({ charId: this.char.id, itemId: i.id })
-      );
+      const putOffItems = items.map((i) => putOffItem({ charId: this.char.id, itemId: i.id }));
       await Promise.all(putOffItems);
       await this.unEquipNonEquippableItems();
     }
@@ -135,16 +136,17 @@ class InventoryService {
   hasRequiredHarks(item: Item) {
     if (item.hark) {
       return Object.entries(item.hark).every(
-        ([hark, val]) => val <= this.char.harks[hark]
+        ([hark, val]) => val <= this.char.harks[hark],
       );
     }
     return true;
   }
 
   /**
-   * Функция пересчитывает все характеристики которые были получены от надетых вещей в инвентаре персонажа
+   * Функция пересчитывает все характеристики,
+   * которые были получены от надетых вещей в инвентаре персонажа
    */
-  async updateHarkFromItems() {
+  updateHarkFromItems() {
     const harksFromItems = this.getEquippedItems().reduce((sum, { code }) => {
       // берем характеристики вещи
       const attributes = ItemModel.getHarks(code);
