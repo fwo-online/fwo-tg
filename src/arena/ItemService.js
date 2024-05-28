@@ -61,7 +61,7 @@ const attrNames = {
 
 const getRequiredHark = (char, value, hark) => {
   const name = attrNames.hark[hark];
-  const pointToPutOn = char.harks[hark] - value;
+  const pointToPutOn = char.inventory.harks[hark] - value;
   const canPutOn = pointToPutOn >= 0;
   return `\t\t${canPutOn ? '✅' : '❗️'} ${name}: ${value} ${canPutOn ? '' : `(${pointToPutOn})`}`;
 };
@@ -144,7 +144,7 @@ module.exports = {
 
   /**
    *
-   * @param {import('./CharacterService')} char
+   * @param {import('./CharacterService').default} char
    * @param {import('../models/item').Item} item
    */
   itemDescription(char, item) {
