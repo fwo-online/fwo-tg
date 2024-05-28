@@ -87,7 +87,6 @@ export default class Player {
         },
       },
       castChance: 0,
-      ...params.modifiers,
     }; // Объект
     // модификаторов
     this.resists = params.resists || {}; // Объект резистов
@@ -96,7 +95,7 @@ export default class Player {
     this.statical = params.statical || {}; // статически реген
     this.alive = true;
     this.proc = 100;
-    this.weapon = new PlayerWeapon(params.getPutonedWeapon());
+    this.weapon = new PlayerWeapon(params.inventory.getEquippedWeapon());
   }
 
   /**

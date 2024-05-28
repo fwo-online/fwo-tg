@@ -82,9 +82,12 @@ create.on('text', async (ctx) => {
       nickname,
       sex: 'm',
     });
-    ctx.session.character = await loginHelper.getChar(ctx.from?.id);
-    await ctx.scene.enter('lobby');
-    ctx.session.hearNick = false;
+    const char = await loginHelper.getChar(ctx.from?.id);
+    if (char) {
+      ctx.session.character = char;
+      await ctx.scene.enter("lobby");
+      ctx.session.hearNick = false;
+    }
   } catch (e) {
     await ctx.reply(e.message);
   }

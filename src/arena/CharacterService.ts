@@ -439,9 +439,6 @@ class CharacterService {
    */
   static async getCharacter(tgId: number) {
     const charFromDb = await findCharacter({ tgId });
-    if (!charFromDb) {
-      return null;
-    }
 
     const char = new CharacterService(charFromDb);
     arena.characters[char.id] = char;
@@ -459,9 +456,6 @@ class CharacterService {
     }
 
     const charFromDb = await findCharacter({ _id: id });
-    if (!charFromDb) {
-      return null;
-    }
 
     const char = new CharacterService(charFromDb);
     arena.characters[id] = char;

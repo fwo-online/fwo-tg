@@ -80,7 +80,9 @@ export class ClanService {
       if (char) {
         return char.leaveClan();
       }
-      return CharacterService.getCharacterById(player.id).then((char) => char.leaveClan());
+      return CharacterService.getCharacterById(player.id).then((char) =>
+        char?.leaveClan()
+      );
     });
 
     await Promise.all(promises);
@@ -200,7 +202,7 @@ export class ClanService {
       $pull: { requests: { $in: [charId] } },
     });
 
-    await char.joinClan(clan);
+    await char?.joinClan(clan);
   }
 
   /**
@@ -230,6 +232,6 @@ export class ClanService {
       $pull: { players: { $in: [charId] } },
     });
     const char = await CharacterService.getCharacterById(charId);
-    await char.leaveClan();
+    await char?.leaveClan();
   }
 }

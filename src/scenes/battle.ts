@@ -79,7 +79,10 @@ battleScene.action('search', async (ctx) => {
     id, mm, nickname, lvl, prof, clan,
   } = ctx.session.character;
   if (!checkCancelFindCount(ctx.session.character)) {
-    const remainingTime = ((penaltyTime - (Date.now() - mm.time)) / 1000).toFixed();
+    const remainingTime = (
+      (penaltyTime - (Date.now() - Number(mm.time))) /
+      1000
+    ).toFixed();
     await ctx.editMessageText(
       `Слишком много жмёшь кнопку, жди ${remainingTime} секунд до следующей попытки`,
       Markup.inlineKeyboard([
@@ -224,7 +227,7 @@ if (process.env.NODE_ENV === 'development') {
   battleScene.command('debug', async (ctx) => {
     // test players: tgId: 123456789
     const char = await loginHelper.getChar(123456789);
-    const searchObject = { charId: char.id, psr: 1000, startTime: Date.now() };
+    const searchObject = { charId: char?.id, psr: 1000, startTime: Date.now() };
     arena.mm.push(searchObject);
     await ctx.reply('ok');
   });

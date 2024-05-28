@@ -23,14 +23,17 @@ class InventoryService {
 
   // Нужно помнить, что this.harks это суммарный объект, с уже полученными от вещей характеристиками.
   get harks() {
-    const harks = { ...this.char.harks };
-    if (!_.isEmpty(this.plushark)) {
-      assignWithSum(harks, this.plushark);
+    const charHarks = { ...this.char.harks };
+    const plusHarks = this.plushark;
+    const collectionHarks = this.collection?.harks;
+
+    if (!_.isEmpty(plusHarks)) {
+      assignWithSum(charHarks, plusHarks);
     }
-    if (!_.isUndefined(this.collection?.harks)) {
-      assignWithSum(harks, this.collection.harks);
+    if (!_.isUndefined(collectionHarks)) {
+      assignWithSum(charHarks, collectionHarks);
     }
-    return harks;
+    return charHarks;
   }
 
   get plushark() {
