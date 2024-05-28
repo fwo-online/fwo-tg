@@ -1,109 +1,104 @@
-import { Scenes, Markup } from 'telegraf';
-import arena from '../arena';
-import ItemService from '../arena/ItemService';
-import type { BotContext } from '../fwo';
-import { InventoryModel } from '../models/inventory';
+import { Scenes, Markup } from "telegraf";
+import arena from "../arena";
+import ItemService from "../arena/ItemService";
+import type { BotContext } from "../fwo";
+import { Inventory, InventoryModel } from "@/models/inventory";
 
-export const inventoryScene = new Scenes.BaseScene<BotContext>('inventory');
+export const inventoryScene = new Scenes.BaseScene<BotContext>("inventory");
 
-const getInventoryItems = (items) => items.map((item) => [Markup.button.callback(
-  `${item.putOn ? '✔️' : ''} ${InventoryModel.getItemName(item.code)}`,
-  `itemInfo_${item._id}`,
-)]);
+const getInventoryItems = (items: Inventory[]) =>
+  items.map((item) => [
+    Markup.button.callback(
+      `${item.putOn ? "✔️" : ""} ${InventoryModel.getItemName(item.code)}`,
+      `itemInfo_${item._id}`
+    ),
+  ]);
 
 inventoryScene.enter(async (ctx) => {
-  const { items } = ctx.session.character;
+  const { inventory } = ctx.session.character.inventory;
   await ctx.replyWithMarkdown(
-    '*Инвентарь*',
-    Markup.keyboard([
-      ['🔙 В лобби'],
-    ]).resize(),
+    "*Инвентарь*",
+    Markup.keyboard([["🔙 В лобби"]]).resize()
   );
   await ctx.reply(
-    'Список вещей',
-    Markup.inlineKeyboard(getInventoryItems(items)),
+    "Список вещей",
+    Markup.inlineKeyboard(getInventoryItems(inventory))
   );
 });
 
-inventoryScene.action('inventoryBack', async (ctx) => {
-  const { items } = ctx.session.character;
+inventoryScene.action("inventoryBack", async (ctx) => {
+  const { inventory } = ctx.session.character.inventory;
 
   await ctx.editMessageText(
-    'Список вещей',
-    Markup.inlineKeyboard(getInventoryItems(items)),
+    "Список вещей",
+    Markup.inlineKeyboard(getInventoryItems(inventory))
   );
 });
 
 inventoryScene.action(/itemInfo(?=_)/, async (ctx) => {
-  const [, itemId] = ctx.match.input.split('_');
-  const item = ctx.session.character.getItem(itemId);
+  const [, itemId] = ctx.match.input.split("_");
+  const item = ctx.session.character.inventory.getItem(itemId);
   if (!item) return;
 
   const itemDescription = ItemService.itemDescription(
     ctx.session.character,
-    arena.items[item.code],
+    arena.items[item.code]
   );
   const itemAction = item.putOn
-    ? Markup.button.callback(
-      'Снять',
-      `putOff_${itemId}`,
-    ) : Markup.button.callback(
-      'Надеть',
-      `putOn_${itemId}`,
-    );
+    ? Markup.button.callback("Снять", `putOff_${itemId}`)
+    : Markup.button.callback("Надеть", `putOn_${itemId}`);
 
-  await ctx.editMessageText(
-    `${itemDescription}`,
-    {
-      ...Markup.inlineKeyboard([
-        [
-          itemAction,
-          Markup.button.callback('Продать', `sellConfirm_${itemId}`),
-          Markup.button.callback('Назад', 'back'),
-        ],
-      ]),
-      parse_mode: 'Markdown',
-    },
-  );
+  await ctx.editMessageText(`${itemDescription}`, {
+    ...Markup.inlineKeyboard([
+      [
+        itemAction,
+        Markup.button.callback("Продать", `sellConfirm_${itemId}`),
+        Markup.button.callback("Назад", "back"),
+      ],
+    ]),
+    parse_mode: "Markdown",
+  });
 });
 
 inventoryScene.action(/putOff(?=_)/, async (ctx) => {
-  const [, itemId] = ctx.match.input.split('_');
-  await ctx.session.character.putOffItem(itemId);
+  const [, itemId] = ctx.match.input.split("_");
+  await ctx.session.character.inventory.unEquipItem(itemId);
+  await ctx.answerCbQuery("Предмет успешно снят!");
 
-  await ctx.editMessageText(
-    'Предмет успешно снят!',
+  await ctx.editMessageReplyMarkup(
     Markup.inlineKeyboard([
-      Markup.button.callback('Назад', 'inventoryBack'),
-    ]),
+      [
+        Markup.button.callback("Надеть", `putOn_${itemId}`),
+        Markup.button.callback("Продать", `sellConfirm_${itemId}`),
+        Markup.button.callback("Назад", "back"),
+      ],
+    ]).reply_markup
   );
 });
 
 inventoryScene.action(/putOn(?=_)/, async (ctx) => {
-  const [, itemId] = ctx.match.input.split('_');
+  const [, itemId] = ctx.match.input.split("_");
 
-  const result = await ctx.session.character.putOnItem(itemId);
-
-  if (result) {
-    await ctx.editMessageText(
-      'Предмет успешно надет!',
+  try {
+    await ctx.session.character.inventory.equipItem(itemId);
+    await ctx.answerCbQuery("Предмет успешно надет!");
+    await ctx.editMessageReplyMarkup(
       Markup.inlineKeyboard([
-        Markup.button.callback('Назад', 'inventoryBack'),
-      ]),
+        [
+          Markup.button.callback("Снять", `putOff_${itemId}`),
+          Markup.button.callback("Продать", `sellConfirm_${itemId}`),
+          Markup.button.callback("Назад", "back"),
+        ],
+      ]).reply_markup
     );
-  } else {
-    await ctx.editMessageText(
-      'Недостаточно характеристик либо на этом место уже надет предмет',
-      Markup.inlineKeyboard([
-        Markup.button.callback('Назад', 'inventoryBack'),
-      ]),
-    );
+  } catch (e) {
+    await ctx.answerCbQuery(e.message);
   }
 });
 
 inventoryScene.action(/sellConfirm(?=_)/, async (ctx) => {
-  const [, itemId] = ctx.match.input.split('_');
-  const item = ctx.session.character.getItem(itemId);
+  const [, itemId] = ctx.match.input.split("_");
+  const item = ctx.session.character.inventory.getItem(itemId);
   if (!item) return;
 
   const { name, price } = arena.items[item.code];
@@ -113,33 +108,31 @@ inventoryScene.action(/sellConfirm(?=_)/, async (ctx) => {
     {
       ...Markup.inlineKeyboard([
         [
-          Markup.button.callback('Да', `sell_${itemId}`),
-          Markup.button.callback('Нет', `itemInfo_${itemId}`),
+          Markup.button.callback("Да", `sell_${itemId}`),
+          Markup.button.callback("Нет", `itemInfo_${itemId}`),
         ],
       ]),
-      parse_mode: 'Markdown',
-    },
+      parse_mode: "Markdown",
+    }
   );
 });
 
 inventoryScene.action(/sell(?=_)/, async (ctx) => {
-  const [, itemId] = ctx.match.input.split('_');
+  const [, itemId] = ctx.match.input.split("_");
 
   await ctx.session.character.sellItem(itemId);
 
   await ctx.editMessageText(
-    'Предмет успешно продан!',
-    Markup.inlineKeyboard([
-      Markup.button.callback('Назад', 'inventoryBack'),
-    ]),
+    "Предмет успешно продан!",
+    Markup.inlineKeyboard([Markup.button.callback("Назад", "inventoryBack")])
   );
 });
 
-inventoryScene.action('back', async (ctx) => {
+inventoryScene.action("back", async (ctx) => {
   await ctx.scene.reenter();
 });
 
-inventoryScene.hears('🔙 В лобби', async (ctx) => {
+inventoryScene.hears("🔙 В лобби", async (ctx) => {
   await ctx.scene.leave();
-  await ctx.scene.enter('lobby');
+  await ctx.scene.enter("lobby");
 });

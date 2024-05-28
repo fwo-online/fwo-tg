@@ -53,13 +53,13 @@ function getTargetKeyboard(charId: string, game: Game, action: string) {
   return game.players.alivePlayers
     .filter((target) => {
       if (orderType === 'enemy') {
-        return !game.isPlayersAlly(player, target);
+        return !player.isAlly(target);
       }
       if (orderType === 'team') {
-        return game.isPlayersAlly(player, target);
+        return player.isAlly(target);
       }
       if (orderType === 'teamExceptSelf') {
-        return game.isPlayersAlly(player, target) && player.id !== target.id;
+        return player.isAlly(target, false);
       }
 
       return !orders.some((order) => target.id === order.target && action === order.action);
