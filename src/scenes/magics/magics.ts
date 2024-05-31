@@ -31,8 +31,6 @@ const getMagicLvlButtons = (character: CharacterService) => {
 };
 
 magicScene.enter(async (ctx) => {
-  ctx.session.character.exp = 99999;
-  await ctx.session.character.saveToDb();
   await ctx.replyWithMarkdown(
     '*Магии*',
     Markup.keyboard([
