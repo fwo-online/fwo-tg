@@ -19,7 +19,6 @@ export default class MagicService {
 
   /**
    * Изучение магии с шансом
-   * @param charId идентификатор персонажа
    * @param lvl круг проучиваемой магии
    */
   static async learnMagic(character: CharacterService, lvl: number) {
@@ -49,7 +48,6 @@ export default class MagicService {
 
   /**
    * Возвращает доступные магии на данном круге для изучения
-   * @param character идентификатор персонажа
    * @param lvl круг проучиваемой магии
    */
   static getMagicsToLearn(character: CharacterService, lvl: number): Magic[] {
