@@ -5,8 +5,8 @@ export const damageType: Record<DamageType, string> = {
   fire: '🔥',
   frost: '❄️',
   lighting: '⚡',
-  physical: '👊',
-  clear: '',
+  physical: '💥',
+  clear: '⬜ ',
 };
 
 export const getDamageTypeIcon = (type?: DamageType) => {
