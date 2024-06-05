@@ -475,10 +475,10 @@ class CharacterService {
 
   /**
    * Функция получения новой магии
-   * @param {String} magicId идентификатор магии
-   * @param {Number} lvl уровень проученной магии
+   * @param magicId идентификатор магии
+   * @param lvl уровень проученной магии
    */
-  async learnMagic(magicId, lvl) {
+  async learnMagic(magicId: string, lvl: number) {
     this.magics[magicId] = lvl;
     // опасный тест
     await this.saveToDb();

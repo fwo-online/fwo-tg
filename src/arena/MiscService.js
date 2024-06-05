@@ -86,10 +86,19 @@ const STORES = {
  * @param {Number} max
  * @return {Number} Рандомное floatNumber значение
  */
-function randInt(min, max) {
+function randFloat(min, max) {
   const tempMax = +max;
   const tempMin = +min;
   return (Math.random() * (tempMax - tempMin) + tempMin);
+}
+/**
+ * Рандомное целое значние между min - max
+ * @param {Number} min
+ * @param {Number} max
+ * @return {Number} Рандомное floatNumber значение
+ */
+function randInt(min, max) {
+  return Math.floor(Math.random() * (+max - +min) + +min);
 }
 
 module.exports = {
@@ -108,10 +117,10 @@ module.exports = {
     const sec = diceStr.split('+');
     if (sec.length === 2) {
       const parts = sec[0].split('d');
-      result = randInt(parts[0], parts[1]) + Number(sec[1]);
+      result = randFloat(parts[0], parts[1]) + Number(sec[1]);
     } else {
       const parts = diceStr.split('d');
-      result = randInt(parts[0], parts[1]);
+      result = randFloat(parts[0], parts[1]);
     }
     return result;
   }, /**
@@ -125,5 +134,6 @@ module.exports = {
     const max = +part[1];
     return Math.floor(Math.random() * (max - min + 1) + min);
   },
+  randFloat,
   randInt,
 };
