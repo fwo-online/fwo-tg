@@ -4,7 +4,7 @@ exports[`parry target should not parry attack if target has more dex 1`] = `
 "*explicabo* использовал _🤺 Парирование_
 
 *repellat* рубанул *explicabo* _Эпическим Мечом_ и нанёс *11* урона
-\\[ explicabo 👊 💔-11/-3 📖88 ]"
+\\[ explicabo 💥 💔-11/-3 📖88 ]"
 `;
 
 exports[`parry target should parry attack if initiator has more dex 1`] = `

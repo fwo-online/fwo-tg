@@ -2,7 +2,7 @@
 
 exports[`attack should reduce damage by target resists 1`] = `
 "*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *11.7* урона
-\\[ corporis 👊 💔-11.7/-3.7 📖94 ]
+\\[ corporis 💥 💔-11.7/-3.7 📖94 ]
 *quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *5.85* урона
-\\[ corporis 👊 💔-5.85/-9.55 📖47 ]"
+\\[ corporis 💥 💔-5.85/-9.55 📖47 ]"
 `;
