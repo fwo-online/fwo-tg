@@ -92,7 +92,7 @@ export default abstract class PhysConstructor extends AffectableAction {
 
   getChance() {
     const { initiator, target } = this.params;
-    const attack = initiator.stats.val('patk') + initiator.stats.val('atk') * initiator.proc;
+    const attack = initiator.stats.val('atk') * initiator.proc;
     const protect = target.stats.val('pdef');
 
     const ratio = attack / protect;

@@ -134,8 +134,8 @@ export default class StatsService {
       mp: oldData.mp ?? this.defStat.maxMp,
       en: oldData.en ?? this.defStat.maxEn,
       exp: 0, // кол-во Exp на начало раунда
-      def: 0, // кол-во дефа на начало
-      atk: 0,
+      def: this.defStat.pdef, // кол-во дефа на начало
+      atk: this.defStat.patk,
       dex: oldData.dex ?? this.defStat.dex, // кол-во ловкости на начало
     };
   }

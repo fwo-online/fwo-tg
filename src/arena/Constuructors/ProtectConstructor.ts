@@ -40,8 +40,8 @@ export abstract class ProtectConstructor extends AffectableAction implements Pre
   }[]
 
   getProtectChance({ initiator, target } = this.params) {
-    const attack = (initiator.stats.val('atk') + initiator.stats.val('patk')) * initiator.proc;
-    const protect = target.stats.val('def') + target.stats.val('pdef');
+    const attack = initiator.stats.val('atk') * initiator.proc;
+    const protect = target.stats.val('def');
     const ratio = floatNumber(Math.round(attack / protect));
 
     return Math.round((1 - Math.exp(-0.33 * ratio)) * 100);
@@ -51,7 +51,7 @@ export abstract class ProtectConstructor extends AffectableAction implements Pre
     { initiator, target, game } = this.params,
     hit = 1,
   ) {
-    const def = target.stats.val('def') + target.stats.val('pdef'); // общий показатель защиты цели
+    const def = target.stats.val('def'); // общий показатель защиты цели
 
     const defenderFlags = this.getTargetProtectors({ initiator, target, game });
 
