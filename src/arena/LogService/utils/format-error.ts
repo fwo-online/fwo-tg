@@ -47,7 +47,7 @@ export function formatError(msgObj: FailArgs): string {
         en: '',
       },
       PHYS_FAIL: {
-        ru: `*${initiator}* пытался _атаковать_ *${target}*, но промахнулся`,
+        ru: `*${initiator}* пытался _атаковать_ *${target}*, но не пробил`,
         en: '',
       },
       NO_WEAPON: {

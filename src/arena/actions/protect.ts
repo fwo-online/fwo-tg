@@ -17,7 +17,7 @@ class Protect extends ProtectConstructor implements PreAffect {
 
   run(initiator: Player, target: Player, _game: Game) {
     const protectValue = initiator.stats.val('pdef') * initiator.proc;
-    target.stats.up('pdef', protectValue);
+    target.stats.up('def', protectValue);
     target.flags.isProtected.push({
       initiator: initiator.id, val: protectValue,
     });

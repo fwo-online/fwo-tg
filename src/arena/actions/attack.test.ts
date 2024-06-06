@@ -32,23 +32,29 @@ describe('attack', () => {
     jest.spyOn(global.Math, 'random').mockRestore();
   });
 
-  // it('should miss if target has a lot of pdef', () => {
-  //   game.players.players[0].proc = 1;
+  it('should passively block if target has a lot of pdef', () => {
+    game.players.players[0].stats.set('patk', 0);
+    game.players.players[1].stats.set('pdef', 50);
+    game.players.players[0].proc = 1;
 
-  //   game.players.players[1].stats.set('pdef', 1);
-  //   attack.cast(game.players.players[0], game.players.players[1], game);
+    game.players.players[0].stats.set('atk', 10);
+    attack.cast(game.players.players[0], game.players.players[1], game);
+    expect(attack.getChance()).toBe(33);
 
-  //   game.players.players[1].stats.set('pdef', 50);
-  //   attack.cast(game.players.players[0], game.players.players[1], game);
+    game.players.players[0].stats.set('atk', 25);
+    attack.cast(game.players.players[0], game.players.players[1], game);
+    expect(attack.getChance()).toBe(63);
 
-  //   game.players.players[0].stats.set('patk', 100);
-  //   attack.cast(game.players.players[0], game.players.players[1], game);
+    game.players.players[0].stats.set('atk', 50);
+    attack.cast(game.players.players[0], game.players.players[1], game);
+    expect(attack.getChance()).toBe(86);
 
-  //   game.players.players[1].stats.set('pdef', 100);
-  //   attack.cast(game.players.players[0], game.players.players[1], game);
+    game.players.players[0].stats.set('atk', 100);
+    attack.cast(game.players.players[0], game.players.players[1], game);
+    expect(attack.getChance()).toBe(98);
 
-  //   expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
-  // });
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
+  });
 
   it('should reduce damage by target resists', () => {
     game.players.players[0].proc = 1;
