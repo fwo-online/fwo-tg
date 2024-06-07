@@ -2,7 +2,7 @@
 
 exports[`handsHeal should be stopped by attack 1`] = `
 "*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *11.3* урона
-\\[ corporis 👊 💔-11.3/-3.3 📖90 ]
+\\[ corporis 💥 💔-11.3/-3.3 📖90 ]
 *corporis* пытался использовать _Лечение руками_ на *corporis*, но у него не получилось
 _Атака_ *corporis*"
 `;

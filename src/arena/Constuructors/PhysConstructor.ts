@@ -47,7 +47,7 @@ export default abstract class PhysConstructor extends AffectableAction {
       this.calculateHit();
       this.checkPreAffects();
       this.isBlurredMind();
-      // this.checkChance(); FIXME
+      this.checkChance();
 
       this.run(initiator, target, game);
       this.getExp();
@@ -92,12 +92,12 @@ export default abstract class PhysConstructor extends AffectableAction {
 
   getChance() {
     const { initiator, target } = this.params;
-    const attack = initiator.stats.val('patk');
-    const protect = target.stats.val('pdef') || 1;
+    const attack = initiator.stats.val('atk') * initiator.proc;
+    const protect = target.stats.val('pdef');
 
-    const ratio = attack / protect / 0.25;
+    const ratio = attack / protect;
 
-    return Math.sqrt(ratio) + (10 * ratio) + 5;
+    return Math.round((1 - Math.exp(-2 * ratio)) * 100);
   }
 
   /**

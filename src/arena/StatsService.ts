@@ -11,6 +11,7 @@ export type Stats = StatsServiceArgs & {
   en: number;
   exp: number;
   def: number;
+  atk: number;
 };
 
 const isMinMax = (atr: keyof Stats): atr is 'hl' | 'hit' => atr === 'hl' || atr === 'hit';
@@ -25,7 +26,9 @@ export default class StatsService {
    * Конструктор класса stats
    * @param defStat объект параметров
    */
-  constructor(private defStat: StatsServiceArgs) {
+  constructor(
+    private defStat: StatsServiceArgs,
+  ) {
     this.refresh();
   }
 
@@ -121,7 +124,7 @@ export default class StatsService {
   refresh(): void {
     const oldData = _.cloneDeep(this.inRound ?? {}); // ссылаемся на внешний объект
     if (oldData.exp) {
-      this.collect.exp += +oldData.exp;
+      this.collect.exp += oldData.exp;
     }
 
     // выставляем ману и хп на начало раунда
@@ -131,7 +134,8 @@ export default class StatsService {
       mp: oldData.mp ?? this.defStat.maxMp,
       en: oldData.en ?? this.defStat.maxEn,
       exp: 0, // кол-во Exp на начало раунда
-      def: 0, // кол-во дефа на начало
+      def: this.defStat.pdef, // кол-во дефа на начало
+      atk: this.defStat.patk,
       dex: oldData.dex ?? this.defStat.dex, // кол-во ловкости на начало
     };
   }
@@ -143,7 +147,7 @@ export default class StatsService {
   val<T extends keyof Stats>(atr: T): Stats[T] {
     const a = this.inRound[atr];
     if (typeof a === 'number') {
-      return floatNumber(a) as Stats[T];
+      return <Stats[T]>floatNumber(a);
     }
     return a;
   }

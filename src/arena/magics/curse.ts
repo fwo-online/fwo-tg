@@ -25,14 +25,14 @@ class Curse extends LongMagic {
 
   run() {
     const { target } = this.params;
-    target.stats.mode('down', 'patk', this.effectVal());
-    target.stats.mode('down', 'pdef', this.effectVal());
+    target.stats.mode('down', 'atk', this.effectVal());
+    target.stats.mode('down', 'def', this.effectVal());
   }
 
   runLong() {
     const { target } = this.params;
-    target.stats.mode('down', 'patk', this.effectVal());
-    target.stats.mode('down', 'pdef', this.effectVal());
+    target.stats.mode('down', 'atk', this.effectVal());
+    target.stats.mode('down', 'def', this.effectVal());
   }
 }
 

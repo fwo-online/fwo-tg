@@ -7,11 +7,11 @@ import { LongMagic } from '../Constuructors/LongMagicConstructor';
 export class Aura extends LongMagic {
   run(): void {
     const { target } = this.params;
-    target.stats.mode('up', 'pdef', this.effectVal());
+    target.stats.mode('up', 'def', this.effectVal());
   }
 
   runLong(): void {
     const { target } = this.params;
-    target.stats.mode('up', 'pdef', this.effectVal());
+    target.stats.mode('up', 'def', this.effectVal());
   }
 }
