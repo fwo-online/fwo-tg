@@ -25,6 +25,8 @@ export function formatExp(args: SuccessArgs): string {
       return expBrackets(args.expArr.map(({ name, exp }) => `${name}: 📖${exp}`).join(', '));
     case 'skill':
       return args.exp ? expBrackets(`📖${args.exp}`) : '';
+    case 'passive':
+      return '';
     default:
       return expBrackets(`📖${args.exp}`);
   }

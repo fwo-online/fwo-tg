@@ -1,5 +1,6 @@
 import type { BreaksMessage, FailArgs } from '@/arena/Constuructors/types';
 import { formatCause } from './format-cause';
+import { normalizeToArray } from '@/utils/array';
 /**
  * msg
  * @todo WIP, функция должна будет принимать как значения урона т.п так и
@@ -71,7 +72,7 @@ export function formatError(msgObj: FailArgs): string {
     return text.ru;
   }
 
-  const normalizedReason = Array.isArray(reason) ? reason : [reason];
+  const normalizedReason = normalizeToArray(reason);
   const formattedReason = normalizedReason.map(formatCause).join('\n');
 
   switch (actionType) {

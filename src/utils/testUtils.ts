@@ -76,7 +76,7 @@ export default class TestUtils {
 
   static async getWeapon(): Promise<Item> {
     await ItemModel.load();
-    return ItemModel.findOne({ code: 'a100' }).orFail();
+    return ItemModel.findOne({ code: 'a60' }).orFail();
   }
 
   static normalizeRoundHistory(history: HistoryItem[]) {

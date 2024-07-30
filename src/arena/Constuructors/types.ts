@@ -17,6 +17,7 @@ export type BreaksMessage =
   'HEAL_FAIL' |
   'SKILL_FAIL' |
   'PHYS_FAIL' |
+  'PASSIVE_FAIL' |
   'NO_WEAPON';
 
 export type ExpArr = {
@@ -58,7 +59,7 @@ export type SuccessArgs = {
   msg?: CustomMessageFn;
 }
 
-export type ActionType = 'magic' | 'dmg-magic' | 'dmg-magic-long' | 'aoe-dmg-magic' | 'magic-long' | 'skill' | 'phys' | 'heal-magic' | 'heal' | 'protect';
+export type ActionType = 'magic' | 'dmg-magic' | 'dmg-magic-long' | 'aoe-dmg-magic' | 'magic-long' | 'skill' | 'phys' | 'heal-magic' | 'heal' | 'protect' | 'passive';
 
 export interface FailArgs {
   actionType: ActionType;

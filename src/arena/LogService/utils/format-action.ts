@@ -25,6 +25,8 @@ export function formatAction(msgObj: SuccessArgs): string {
       return msgObj.orderType === 'self'
         ? `*${msgObj.initiator}* использовал _${msgObj.action}_`
         : `*${msgObj.initiator}* использовал _${msgObj.action}_ на *${msgObj.target}*`;
+    case 'passive':
+      return `_${msgObj.action}_`;
     default:
       return `*${msgObj.initiator}* использовал _${msgObj.action}_ на *${msgObj.target}*`;
   }
