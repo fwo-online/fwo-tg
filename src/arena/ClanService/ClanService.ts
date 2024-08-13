@@ -80,9 +80,7 @@ export class ClanService {
       if (char) {
         return char.leaveClan();
       }
-      return CharacterService.getCharacterById(player.id).then((char) =>
-        char?.leaveClan()
-      );
+      return CharacterService.getCharacterById(player.id).then((char) => char?.leaveClan());
     });
 
     await Promise.all(promises);

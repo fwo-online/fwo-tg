@@ -1,6 +1,7 @@
-import * as http from 'http';
+import * as http from 'node:http';
+import type { Context, Scenes } from 'telegraf';
 import {
-  Telegraf, session, Context, Scenes,
+  Telegraf, session,
 } from 'telegraf';
 import arena from './arena';
 import * as actions from './arena/actions';
@@ -11,6 +12,7 @@ import * as skills from './arena/skills';
 import * as middlewares from './middlewares';
 import { connect } from './models';
 import { ItemModel } from './models/item';
+import { ItemSetModel } from './models/item-set';
 import { stage } from './scenes/stage';
 import { registerAffects } from './utils/registerAffects';
 
@@ -27,6 +29,7 @@ export const bot = new Telegraf<BotContext>(process.env.BOT_TOKEN ?? '');
 void connect(async () => {
   console.log('db online');
   await ItemModel.load();
+  await ItemSetModel.load();
   await bot.launch();
 });
 

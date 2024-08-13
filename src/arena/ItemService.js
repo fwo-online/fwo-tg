@@ -121,28 +121,6 @@ const getAdditionalHarks = (item) => {
 module.exports = {
   attrNames,
   /**
-   * @param {String} nick
-   * @param {Number} itemCode ID итема
-   * @return {Boolean}
-   *
-   */
-  harkCheck(nick, itemCode) {
-    // функция проверяет проходит ли чар по харкам
-    // проверку шмотки или нет
-    const char = arena.players[nick];
-    const item = arena.shop[itemCode];
-    if ((char) && (item)) {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const i in char.hrks) {
-        if (char.hrks[i] < item.hark[i]) {
-          return false;
-        }
-      }
-      return true;
-    }
-  },
-
-  /**
    *
    * @param {import('./CharacterService').default} char
    * @param {import('../models/item').Item} item
@@ -168,7 +146,7 @@ module.exports = {
 
       item.weight && `\nВес: ${item.weight} кг`,
     ]
-      .filter((currentItem) => currentItem)
+      .filter(Boolean)
       .join('\n');
   },
 };

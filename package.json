@@ -28,9 +28,13 @@
   },
   "homepage": "https://github.com/catHD/fwo-tg#readme",
   "dependencies": {
+    "@grammyjs/ratelimiter": "^1.2.0",
+    "convert-csv-to-json": "^2.48.0",
     "dotenv": "^16.0.1",
+    "grammy": "^1.28.0",
     "lodash": "^4.17.21",
-    "mongoose": "^7.5.0",
+    "mongoose": "^8.5.2",
+    "qs": "^6.13.0",
     "telegraf": "^4.12.2",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"

@@ -7,7 +7,7 @@ export async function findCharacter(query: FilterQuery<Char>) {
   const character = await CharModel
     .findOne({ ...query, deleted: false })
     .orFail(new Error('Персонаж не найден'))
-    .populate<{inventory: Inventory}>('inventory')
+    .populate<{inventory: Inventory[]}>('inventory')
     .populate<{clan: Clan}>('clan');
 
   return character.toObject({ minimize: false });

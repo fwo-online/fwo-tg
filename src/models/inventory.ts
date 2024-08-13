@@ -1,10 +1,11 @@
-import _ from "lodash";
-import mongoose, { Schema, Model, Query, Types } from "mongoose";
-import arena from "../arena";
-import config from "../arena/config";
-import { Collections, Profs } from "../data";
-import { CharModel, Char } from "./character";
-import { Item } from "./item";
+import _ from 'lodash';
+import type { Model, Query, Types } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
+import arena from '../arena';
+import config from '../arena/config';
+import type { Profs } from '../data';
+import type { Char } from './character';
+import { CharModel } from './character';
 
 /**
  * getDefaultItem
@@ -73,11 +74,13 @@ export class Inventory {
     charId: string,
     itemId: string,
   ): Promise<Inventory[] | void> {
-    const char = await CharModel.findById(charId);
-    _.pull(char?.inventory as unknown as string[], itemId);
-    await char?.save();
+    await CharModel.findByIdAndUpdate(
+      charId,
+      { $pull: { inventory: { $in: [itemId] } } },
+      { new: true },
+    );
     await this.findByIdAndDelete(itemId);
-    return char?.inventory;
+    return this.getItems(charId);
   }
 
   /**
@@ -187,35 +190,6 @@ export class Inventory {
     charId: string,
   ): Promise<Inventory[]> {
     return this.find({ owner: charId });
-  }
-
-  static getCollection(
-    this: InventoryModel,
-    charInventory: Inventory[],
-  ): Collections.Collection | undefined {
-    const items: Item[] = charInventory.map(({ code }) => arena.items[code]);
-    const playerCollection = _.groupBy(items, (item) => item.wcomb[0]);
-    const itemsCollection = _.groupBy(arena.items, (item: Item) => item.wcomb[0]);
-
-    const playerCollectionsKeys: string[] = _.uniq(Object.keys(playerCollection));
-    const [fullSets, smallSets] = _.partition(playerCollectionsKeys, (key) => key.endsWith('f'));
-
-    const findCollection = (key: string): boolean => {
-      if (itemsCollection[key]) {
-        return playerCollection[key].length === itemsCollection[key].length;
-      }
-      return false;
-    };
-
-    const foundSmallCollection = smallSets.find(findCollection);
-    if (foundSmallCollection) {
-      const foundFullCollection = fullSets.find(findCollection);
-      if (foundFullCollection) {
-        return Collections.collectionsData[foundFullCollection];
-      }
-      return Collections.collectionsData[foundSmallCollection];
-    }
-    return undefined;
   }
 
   /**
