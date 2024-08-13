@@ -1,20 +1,10 @@
-import fs from 'node:fs';
 import _ from 'lodash';
-import mongoose, { Schema, type Model, type Types } from 'mongoose';
-import arena from '../arena';
-import config, { type ParseAttr } from '../arena/config';
-import type { Harks } from '../data';
-
-const parseAttr = (p: string) => {
-  try {
-    if (p !== '') {
-      return JSON.parse(p);
-    }
-    return null;
-  } catch {
-    return null;
-  }
-};
+import type { Model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
+import arena from '@/arena';
+import type { ParseAttr } from '@/arena/config';
+import config from '@/arena/config';
+import type { Harks } from '@/data';
 
 export type MinMax = {
   min: number;
@@ -22,13 +12,10 @@ export type MinMax = {
 }
 
 export interface Item {
-  _id: Types.ObjectId
-  id: string
-
   code: string;
   name: string;
-  atc: number | null;
-  prt: number | null;
+  patk: number | null;
+  pdef: number | null;
   price: number;
   wear: string;
   race: string;
@@ -36,41 +23,21 @@ export interface Item {
   gskill: string;
   gprice: string;
   wcomb: string[];
-  hark: Harks.HarksLvl | null;
-  plushark: Harks.HarksLvl | null;
+  hark: Partial<Harks.HarksLvl> | null;
+  plushark: Partial<Harks.HarksLvl> | null;
   mga: number | null;
   mgp: number | null;
   hl: MinMax | null;
-  r_fire: number | null;
-  r_acid: number | null;
-  r_lighting: number | null;
-  r_frost: number | null;
-  r_physical: number | null;
-  chance: number | null;
-  descr: string;
   add_hp: number | null;
   add_mp: number | null;
   add_en: number | null;
-  onlymake: boolean;
-  subclass: boolean;
   reg_hp: number | null;
   reg_en: number | null;
   reg_mp: number | null;
   hp_drain: MinMax | null;
   mp_drain: MinMax | null;
   en_drain: MinMax | null;
-  type: string;
   hit: MinMax | null;
-  edinahp: number | null;
-  eff: MinMax | null;
-  hide: boolean;
-  wtype: string;
-  '2handed': boolean;
-  case: string;
-  fire: MinMax | null;
-  acid: MinMax | null;
-  lighting: MinMax | null;
-  frost: MinMax | null;
 }
 
 export type ParseAttrItem = Pick<Item, ParseAttr>
@@ -85,20 +52,10 @@ export class Item {
       if (Object.entries(items).length) {
         arena.items = _.keyBy(items, 'code');
       } else {
-        const shop = fs.readFileSync('shop.json', 'utf8');
-        const itemsToCreate: Promise<Item>[] = [];
-
-        const parsedShop: Record<string, Item> = JSON.parse(shop);
+        const shop = await import('@/items.json') satisfies Omit<Item, '_id' | 'id'>[];
         console.log('File Loaded: ', Date.now() - timer1, 'ms');
 
-        _.forEach(parsedShop, async (o, code) => {
-          o.code = code;
-          itemsToCreate.push(ItemModel.create(o));
-          return true;
-        });
-
-        const createdItems = await Promise.all(itemsToCreate);
-
+        const createdItems = await ItemModel.create(shop);
         arena.items = _.keyBy(createdItems, 'code');
       }
     } catch (e) {
@@ -132,10 +89,10 @@ const item = new Schema<Item, ItemModel>({
   name: {
     type: String,
   },
-  atc: {
+  patk: {
     type: Number,
   },
-  prt: {
+  pdef: {
     type: Number,
   },
   price: {
@@ -156,18 +113,14 @@ const item = new Schema<Item, ItemModel>({
   gprice: {
     type: String,
   },
-  // @ts-expect-error cast as string
   wcomb: {
-    type: String,
-    get: (comb) => comb.split(','),
+    type: [String],
   },
   hark: {
-    type: String,
-    get: parseAttr,
+    type: Object,
   },
   plushark: {
-    type: String,
-    get: parseAttr,
+    type: Object,
   },
   mga: {
     type: Number,
@@ -176,29 +129,7 @@ const item = new Schema<Item, ItemModel>({
     type: Number,
   },
   hl: {
-    type: Number,
-    get: (hl: null | number) => ({ min: 0, max: hl ?? 0 }),
-  },
-  r_fire: {
-    type: Number,
-  },
-  r_acid: {
-    type: Number,
-  },
-  r_lighting: {
-    type: Number,
-  },
-  r_frost: {
-    type: Number,
-  },
-  r_physical: {
-    type: Number,
-  },
-  chance: {
-    type: Number,
-  },
-  descr: {
-    type: String,
+    type: Object,
   },
   add_hp: {
     type: Number,
@@ -208,12 +139,6 @@ const item = new Schema<Item, ItemModel>({
   },
   add_en: {
     type: Number,
-  },
-  onlymake: {
-    type: Boolean,
-  },
-  subclass: {
-    type: Boolean,
   },
   reg_hp: {
     type: Number,
@@ -225,58 +150,16 @@ const item = new Schema<Item, ItemModel>({
     type: Number,
   },
   hp_drain: {
-    type: String,
-    get: parseAttr,
+    type: Object,
   },
   mp_drain: {
-    type: String,
-    get: parseAttr,
+    type: Object,
   },
   en_drain: {
-    type: String,
-    get: parseAttr,
-  },
-  type: {
-    type: String,
+    type: Object,
   },
   hit: {
-    type: String,
-    get: parseAttr,
-  },
-  edinahp: {
-    type: Number,
-  },
-  eff: {
-    type: String,
-    get: parseAttr,
-  },
-  hide: {
-    type: Boolean,
-  },
-  wtype: {
-    type: String,
-  },
-  '2handed': {
-    type: Boolean,
-  },
-  case: {
-    type: String,
-  },
-  fire: {
-    type: String,
-    get: parseAttr,
-  },
-  acid: {
-    type: String,
-    get: parseAttr,
-  },
-  lighting: {
-    type: String,
-    get: parseAttr,
-  },
-  frost: {
-    type: String,
-    get: parseAttr,
+    type: Object,
   },
 }, {
   versionKey: false,

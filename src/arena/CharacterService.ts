@@ -244,22 +244,6 @@ class CharacterService {
     return this.charObj.clan;
   }
 
-  get collection() {
-    return this.inventory.collection;
-  }
-
-  get resists() {
-    return this.collection?.resists;
-  }
-
-  get chance() {
-    return this.collection?.chance;
-  }
-
-  get statical() {
-    return this.collection?.statical;
-  }
-
   /** Суммарное количество опыта, требуемое для следующего уровня */
   get nextLvlExp() {
     return 2 ** (this.lvl - 1) * 1000 * config.lvlRatio;

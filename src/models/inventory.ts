@@ -2,9 +2,8 @@ import _ from "lodash";
 import mongoose, { Schema, type Model, type Query, type Types } from "mongoose";
 import arena from "../arena";
 import config from "../arena/config";
-import { Collections, type Profs } from "../data";
+import type { Profs } from "../data";
 import { CharModel, type Char } from "./character";
-import type { Item } from "./item";
 
 /**
  * getDefaultItem
@@ -73,11 +72,13 @@ export class InventoryDocument {
     charId: string,
     itemId: string,
   ): Promise<InventoryDocument[] | undefined> {
-    const char = await CharModel.findById(charId);
-    _.pull(char?.inventory as unknown as string[], itemId);
-    await char?.save();
+    await CharModel.findByIdAndUpdate(
+      charId,
+      { $pull: { inventory: { $in: [itemId] } } },
+      { new: true },
+    );
     await this.findByIdAndDelete(itemId);
-    return char?.inventory;
+    return this.getItems(charId);
   }
 
   /**
@@ -187,35 +188,6 @@ export class InventoryDocument {
     charId: string,
   ): Promise<InventoryDocument[]> {
     return this.find({ owner: charId });
-  }
-
-  static getCollection(
-    this: InventoryModel,
-    charInventory: InventoryDocument[],
-  ): Collections.Collection | undefined {
-    const items: Item[] = charInventory.map(({ code }) => arena.items[code]);
-    const playerCollection = _.groupBy(items, (item) => item.wcomb[0]);
-    const itemsCollection = _.groupBy(arena.items, (item: Item) => item.wcomb[0]);
-
-    const playerCollectionsKeys: string[] = _.uniq(Object.keys(playerCollection));
-    const [fullSets, smallSets] = _.partition(playerCollectionsKeys, (key) => key.endsWith('f'));
-
-    const findCollection = (key: string): boolean => {
-      if (itemsCollection[key]) {
-        return playerCollection[key].length === itemsCollection[key].length;
-      }
-      return false;
-    };
-
-    const foundSmallCollection = smallSets.find(findCollection);
-    if (foundSmallCollection) {
-      const foundFullCollection = fullSets.find(findCollection);
-      if (foundFullCollection) {
-        return Collections.collectionsData[foundFullCollection];
-      }
-      return Collections.collectionsData[foundSmallCollection];
-    }
-    return undefined;
   }
 
   /**

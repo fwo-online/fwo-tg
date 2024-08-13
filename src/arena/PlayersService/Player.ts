@@ -84,16 +84,17 @@ export default class Player {
     this.modifiers = {
       magics: {
         chance: {
-          ...params.chance,
+          fail: {},
+          cast: {},
         },
       },
       castChance: 0,
     }; // Объект
     // модификаторов
-    this.resists = params.resists || {}; // Объект резистов
+    this.resists = {}; // Объект резистов
     this.skills = params.skills || {}; // Обькт доступных скилов
     this.magics = params.magics || {}; // объект изученых магий
-    this.statical = params.statical || {}; // статически реген
+    this.statical = {}; // статически реген
     this.alive = true;
     this.proc = 100;
     this.weapon = new PlayerWeapon(params.inventory.getEquippedWeapon());

@@ -6,17 +6,12 @@
  */
 
 const parseAttr = [
-  'atc',
-  'prt',
+  'patk',
+  'pdef',
   'plushark',
   'mga',
   'mgp',
   'hl',
-  'r_fire',
-  'r_acid',
-  'r_lighting',
-  'r_frost',
-  'r_physical',
   'add_hp',
   'add_mp',
   'add_en',
@@ -24,10 +19,6 @@ const parseAttr = [
   'mp_drain',
   'en_drain',
   'hit',
-  'fire',
-  'acid',
-  'lighting',
-  'frost',
   'weight',
 ] as const;
 

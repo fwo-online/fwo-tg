@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import {
-  getCollection,
   getItems,
   addItem,
   removeItem,
@@ -15,6 +14,7 @@ import type { Item, ParseAttrItem } from '@/models/item';
 import { ItemModel } from '@/models/item';
 import type { Inventory } from '@/schemas/inventory';
 import { assignWithSum } from '@/utils/assignWithSum';
+import ItemService from './ItemService';
 
 class InventoryService {
   harksFromItems!: Partial<ParseAttrItem>;
@@ -23,14 +23,18 @@ class InventoryService {
     this.updateHarkFromItems();
   }
 
+  static getItemsByInventory(inventory: InventoryDocument[]): Item[] {
+    return inventory.map(({ code }) => arena.items[code]);
+  }
+
   /**
    * Нужно помнить, что this.harks это суммарный объект,
    * с уже полученными от вещей характеристиками
    * */
   get harks() {
-    const charHarks = { ...this.char.harks };
+    const charHarks = structuredClone(this.char.harks);
     const plusHarks = this.plushark;
-    const collectionHarks = this.collection?.harks;
+    const collectionHarks = this.collection.reduce(assignWithSum);
 
     if (!_.isEmpty(plusHarks)) {
       assignWithSum(charHarks, plusHarks);
@@ -46,19 +50,8 @@ class InventoryService {
   }
 
   get collection() {
-    return getCollection(this.getEquippedItems());
-  }
-
-  get resists() {
-    return this.collection?.resists;
-  }
-
-  get chance() {
-    return this.collection?.chance;
-  }
-
-  get statical() {
-    return this.collection?.statical;
+    const items = InventoryService.getItemsByInventory(this.getEquippedItems());
+    return ItemService.getItemSets(items);
   }
 
   getItem(itemId) {
@@ -173,10 +166,6 @@ class InventoryService {
       this.harksFromItems = { hit: { min: 0, max: 0 } };
     } else {
       this.harksFromItems = harksFromItems;
-    }
-
-    if (this.statical) {
-      assignWithSum(this.harksFromItems, this.statical);
     }
   }
 
