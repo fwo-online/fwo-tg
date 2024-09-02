@@ -17,12 +17,11 @@ export type BreaksMessage =
   'HEAL_FAIL' |
   'SKILL_FAIL' |
   'PHYS_FAIL' |
-  'PASSIVE_FAIL' |
   'NO_WEAPON';
 
 export type ExpArr = {
-  name: string;
-  id: string;
+  initiator: Player;
+  target: Player;
   exp?: number;
   val?: number;
   hp?: number;
@@ -47,8 +46,8 @@ export type SuccessArgs = {
   actionType: ActionType;
   action: string;
   exp: number;
-  initiator: string;
-  target: string;
+  initiator: Player;
+  target: Player;
   effect: number;
   hp: number;
   expArr: ExpArr;
@@ -59,13 +58,13 @@ export type SuccessArgs = {
   msg?: CustomMessageFn;
 }
 
-export type ActionType = 'magic' | 'dmg-magic' | 'dmg-magic-long' | 'aoe-dmg-magic' | 'magic-long' | 'skill' | 'phys' | 'heal-magic' | 'heal' | 'protect' | 'passive';
+export type ActionType = 'magic' | 'dmg-magic' | 'dmg-magic-long' | 'aoe-dmg-magic' | 'magic-long' | 'skill' | 'phys' | 'heal-magic' | 'heal' | 'protect' | 'dodge' | 'passive';
 
 export interface FailArgs {
   actionType: ActionType;
   reason: BreaksMessage | SuccessArgs | SuccessArgs[];
   action: string;
-  initiator: string;
-  target: string;
+  initiator: Player;
+  target: Player;
   weapon: Item | undefined;
 }

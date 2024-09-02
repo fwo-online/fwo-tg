@@ -36,7 +36,7 @@ class DustShield extends LongMagic {
     this.run(initiator, target, game);
   }
 
-  calculateExp(effect: number, baseExp = 0): number {
+  getEffectExp(effect: number, baseExp = 0): number {
     return Math.round(baseExp * effect);
   }
 

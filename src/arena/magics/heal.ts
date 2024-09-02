@@ -17,9 +17,8 @@ export class HealMagic extends CommonMagic {
   /**
    * @param initiator
    */
-  getExp({ initiator } = this.params): void {
+  calculateExp({ initiator } = this.params): void {
     this.status.exp = Math.round(this.status.effect * 10 * initiator.proc);
-    initiator.stats.mode('up', 'exp', this.status.exp);
   }
 
   checkTargetIsDead({ target } = this.params) {

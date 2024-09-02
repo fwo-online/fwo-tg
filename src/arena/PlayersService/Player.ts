@@ -3,7 +3,8 @@ import type Char from '@/arena/CharacterService';
 import FlagsConstructor from '@/arena/Constuructors/FlagsConstructor';
 import type { DamageType } from '@/arena/Constuructors/types';
 import type * as magics from '@/arena/magics';
-import StatsService, { Stats } from '@/arena/StatsService';
+import type { Stats } from '@/arena/StatsService';
+import StatsService from '@/arena/StatsService';
 import type { Prof } from '@/data/profs';
 import type { Clan } from '@/models/clan';
 import type { MinMax } from '@/models/item';
@@ -60,7 +61,7 @@ export default class Player {
     castChance: number;
   };
 
-  resists: Partial<Omit<Resists, 'clear'>>;
+  resists: Partial<Resists>;
   skills: Record<string, number>;
   magics: Record<string, number>;
   favoriteMagics: string[];

@@ -63,8 +63,8 @@ class FireBall extends AoeDmgMagic {
     target.stats.down('hp', effect);
 
     this.status.expArr.push({
-      id: target.id,
-      name: target.nick,
+      initiator,
+      target,
       val: effect,
       hp: target.stats.val('hp'),
     });

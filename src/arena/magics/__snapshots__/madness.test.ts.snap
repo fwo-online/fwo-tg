@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`madness should change target 1`] = `
+"*asperiores* использовал _Безумие_ на *alias*
+\\[ 📖80 ]
+*alias* рубанул *alias* _Эпическим Мечом_ и нанёс *10.8* урона
+\\[ alias 💥 💔-10.8/-2.8 📖0 ]
+
+_Безумие_ *alias*"
+`;

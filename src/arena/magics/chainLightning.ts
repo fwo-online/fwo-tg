@@ -61,8 +61,8 @@ class ChainLightning extends AoeDmgMagic {
     target.stats.down('hp', hit);
 
     this.status.expArr.push({
-      id: target.id,
-      name: target.nick,
+      initiator,
+      target,
       val: hit,
       hp: target.stats.val('hp'),
     });

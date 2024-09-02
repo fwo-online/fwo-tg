@@ -1,10 +1,11 @@
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
+import type { Affect } from '../Constuructors/interfaces/Affect';
 
 /**
  * Глюки
  * Основное описание магии общее требовани есть в конструкторе
  */
-class Glitch extends CommonMagic {
+class Glitch extends CommonMagic implements Affect {
   constructor() {
     super({
       name: 'glitch',
@@ -27,6 +28,12 @@ class Glitch extends CommonMagic {
     const { target } = this.params;
     target.flags.isGlitched = true;
   }
+
+  preAffect: Affect['preAffect'] = ({ params }) => {
+    if (params.initiator.flags.isGlitched) {
+      params.target = params.game.players.randomAlive;
+    }
+  };
 }
 
 export default new Glitch();

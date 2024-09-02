@@ -11,7 +11,7 @@ import type { Affect } from './interfaces/Affect';
 /**
  * Класс защиты
  */
-export abstract class ProtectConstructor extends AffectableAction {
+export abstract class ProtectConstructor extends AffectableAction implements Affect {
   actionType: ActionType = 'protect';
 
   /**
@@ -21,7 +21,7 @@ export abstract class ProtectConstructor extends AffectableAction {
    * @param game Объект игры
    */
   cast(initiator: Player, target: Player, game: Game) {
-    this.params = { initiator, target, game };
+    this.createContext(initiator, target, game);
     try {
       this.checkPreAffects();
       this.run(initiator, target, game);
@@ -47,11 +47,7 @@ export abstract class ProtectConstructor extends AffectableAction {
     return Math.round((1 - Math.exp(-0.33 * ratio)) * 100);
   }
 
-  calculateExp(protect: number, hit: number) {
-    return Math.round(hit * 0.4 * protect);
-  }
-
-  getExp(
+  calculateExp(
     { initiator, target, game } = this.params,
     hit = 1,
   ) {
@@ -66,18 +62,19 @@ export abstract class ProtectConstructor extends AffectableAction {
       }
 
       const protect = Math.floor(flag.val * 100) / def;
-      const exp = defender.isAlly(target) ? this.calculateExp(hit, protect) : 0;
-      defender.stats.up('exp', exp);
+      const exp = defender.isAlly(target) ? Math.round(hit * 0.4 * protect) : 0;
 
       this.status.expArr.push({
-        id: defender.id,
-        name: defender.nick,
+        initiator: defender,
+        target,
         exp,
       });
     });
   }
 
-  preAffect: Affect['preAffect'] = (params, status) => {
+  preAffect: Affect['preAffect'] = ({ params, status }) => {
+    this.reset();
+
     const { initiator, target, game } = params;
     const protectors = this.getTargetProtectors(params);
     if (!protectors.length) {
@@ -87,7 +84,7 @@ export abstract class ProtectConstructor extends AffectableAction {
     const chance = this.getProtectChance(params);
 
     if (chance < MiscService.rndm('1d100')) {
-      this.getExp({ initiator, target, game }, status.effect);
+      this.calculateExp({ initiator, target, game }, status.effect);
 
       throw new CastError(this.getSuccessResult({ initiator, target, game }));
     }

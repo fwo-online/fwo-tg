@@ -39,18 +39,15 @@ export default abstract class PhysConstructor extends AffectableAction {
    * @param game Объект игры
    */
   cast(initiator: Player, target: Player, game: GameService) {
-    this.params = { initiator, target, game };
-    this.reset();
+    this.createContext(initiator, target, game);
 
     try {
       this.fitsCheck();
       this.calculateHit();
       this.checkPreAffects();
-      this.isBlurredMind();
-      this.checkChance();
 
       this.run(initiator, target, game);
-      this.getExp();
+      this.calculateExp();
 
       this.checkPostAffects();
       this.checkTargetIsDead();
@@ -68,36 +65,6 @@ export default abstract class PhysConstructor extends AffectableAction {
     if (!initiator.weapon.hasWeapon()) {
       throw new CastError('NO_WEAPON');
     }
-  }
-
-  /**
-   * Проверка флагов влияющих на выбор цели
-   */
-  isBlurredMind() {
-    const { initiator, game } = this.params;
-    if (initiator.flags.isGlitched) {
-      // Меняем цель внутри атаки на любого живого в игре
-      this.params.target = game.players.randomAlive;
-    }
-    if (initiator.flags.isMad) {
-      this.params.target = initiator;
-    }
-  }
-
-  checkChance() {
-    if (MiscService.rndm('1d100') > this.getChance()) {
-      throw new CastError('PHYS_FAIL');
-    }
-  }
-
-  getChance() {
-    const { initiator, target } = this.params;
-    const attack = initiator.stats.val('atk') * initiator.proc;
-    const protect = target.stats.val('pdef');
-
-    const ratio = attack / protect;
-
-    return Math.round((1 - Math.exp(-2 * ratio)) * 100);
   }
 
   /**
@@ -126,13 +93,11 @@ export default abstract class PhysConstructor extends AffectableAction {
   /**
    * Рассчитываем полученный exp
    */
-  getExp({ initiator, target } = this.params) {
+  calculateExp({ initiator, target } = this.params) {
     if (initiator.isAlly(target) && !initiator.flags.isGlitched) {
       this.status.exp = 0;
     } else {
-      const exp = this.status.effect * 8;
-      this.status.exp = Math.round(exp);
-      initiator.stats.up('exp', this.status.exp);
+      this.status.exp = Math.round(this.status.effect * 8);
     }
   }
 

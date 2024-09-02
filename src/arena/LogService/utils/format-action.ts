@@ -8,26 +8,27 @@ export function formatAction(msgObj: SuccessArgs): string {
 
   switch (msgObj.actionType) {
     case 'heal':
-      return `Игрок *${msgObj.target}* был вылечен 🤲 на *💖${msgObj.effect}*`;
+      return `Игрок *${msgObj.target.nick}* был вылечен 🤲 на *💖${msgObj.effect}*`;
     case 'phys': {
-      return `*${msgObj.initiator}* ${getWeaponAction(msgObj.target, msgObj.weapon)} и нанёс *${msgObj.effect}* урона`;
+      return `*${msgObj.initiator.nick}* ${getWeaponAction(msgObj.target, msgObj.weapon)} и нанёс *${msgObj.effect}* урона`;
     }
     case 'dmg-magic':
     case 'dmg-magic-long':
     case 'aoe-dmg-magic':
-      return `*${msgObj.initiator}* сотворил _${msgObj.action}_ на *${msgObj.target}* нанеся ${msgObj.effect} урона`;
+      return `*${msgObj.initiator.nick}* сотворил _${msgObj.action}_ на *${msgObj.target.nick}* нанеся ${msgObj.effect} урона`;
     case 'magic':
     case 'magic-long':
       return !msgObj.effect
-        ? `*${msgObj.initiator}* использовал _${msgObj.action}_ на *${msgObj.target}*`
-        : `*${msgObj.initiator}* использовал _${msgObj.action}_ на *${msgObj.target}* с эффектом ${msgObj.effect}`;
+        ? `*${msgObj.initiator.nick}* использовал _${msgObj.action}_ на *${msgObj.target.nick}*`
+        : `*${msgObj.initiator.nick}* использовал _${msgObj.action}_ на *${msgObj.target.nick}* с эффектом ${msgObj.effect}`;
     case 'skill':
+    case 'dodge':
       return msgObj.orderType === 'self'
-        ? `*${msgObj.initiator}* использовал _${msgObj.action}_`
-        : `*${msgObj.initiator}* использовал _${msgObj.action}_ на *${msgObj.target}*`;
+        ? `*${msgObj.initiator.nick}* использовал _${msgObj.action}_`
+        : `*${msgObj.initiator.nick}* использовал _${msgObj.action}_ на *${msgObj.target.nick}*`;
     case 'passive':
       return `_${msgObj.action}_`;
     default:
-      return `*${msgObj.initiator}* использовал _${msgObj.action}_ на *${msgObj.target}*`;
+      return `*${msgObj.initiator.nick}* использовал _${msgObj.action}_ на *${msgObj.target.nick}*`;
   }
 }

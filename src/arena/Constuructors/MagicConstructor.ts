@@ -58,16 +58,14 @@ export abstract class Magic extends AffectableAction {
    * @param game Объект игры
    */
   cast(initiator: Player, target: Player, game: Game): void {
-    this.params = {
-      initiator, target, game,
-    };
+    this.createContext(initiator, target, game);
+
     try {
       this.getCost(initiator);
       this.checkPreAffects();
-      this.isBlurredMind(); // проверка не запудрило
       this.checkChance();
       this.run(initiator, target, game); // вызов кастомного обработчика
-      this.getExp(this.params);
+      this.calculateExp();
       this.checkTargetIsDead();
 
       this.next();
@@ -102,14 +100,11 @@ export abstract class Magic extends AffectableAction {
    * Если кастеру хватило mp/en продолжаем,если нет, то возвращаем false
    * @param initiator Объект кастера
    */
-  getExp({ initiator } = this.params): void {
-    const exp = this.calculateExp(this.status.effect || 0, this.baseExp);
-
-    this.status.exp = exp;
-    initiator.stats.up('exp', exp);
+  calculateExp(): void {
+    this.status.exp = this.getEffectExp(this.status.effect || 0, this.baseExp);
   }
 
-  calculateExp(effect: number, baseExp = 0) {
+  getEffectExp(effect: number, baseExp = 0) {
     return Math.round(baseExp * this.params.initiator.proc);
   }
 
@@ -206,17 +201,6 @@ export abstract class Magic extends AffectableAction {
   // eslint-disable-next-line class-methods-use-this
   godCheck(): boolean {
     return MiscService.rndm('1d100') <= 5;
-  }
-
-  /**
-   * Проверка на запудривание мозгов
-   * @todo нужно вынести этот метод в orders или к Players Obj
-   */
-  isBlurredMind(): void {
-    const { initiator, game } = this.params;
-    if (initiator.flags.isGlitched) {
-      this.params.target = game.players.randomAlive;
-    }
   }
 
   /**

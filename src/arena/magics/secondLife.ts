@@ -26,7 +26,7 @@ class SecondLife extends CommonMagic {
     });
   }
 
-  calculateExp(effect: number, baseExp = 0) {
+  getEffectExp(effect: number, baseExp = 0) {
     return Math.round(effect * baseExp * this.params.initiator.proc);
   }
 

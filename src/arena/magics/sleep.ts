@@ -1,4 +1,4 @@
-import type { PreAffect } from '../Constuructors/interfaces/PreAffect';
+import type { Affect } from '../Constuructors/interfaces/Affect';
 import { LongMagic } from '../Constuructors/LongMagicConstructor';
 import CastError from '../errors/CastError';
 
@@ -6,7 +6,7 @@ import CastError from '../errors/CastError';
  * Сон
  * Основное описание магии общее требовани есть в конструкторе
  */
-class Sleep extends LongMagic implements PreAffect {
+class Sleep extends LongMagic implements Affect {
   constructor() {
     super({
       name: 'sleep',
@@ -35,11 +35,11 @@ class Sleep extends LongMagic implements PreAffect {
     target.flags.isSleeping = true;
   }
 
-  preAffect({ initiator, target, game } = this.params) {
+  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }) => {
     if (initiator.flags.isSleeping) {
       throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
     }
-  }
+  };
 }
 
 export default new Sleep();

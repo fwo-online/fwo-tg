@@ -1,10 +1,10 @@
-import type { PreAffect } from '../Constuructors/interfaces/PreAffect';
+import type { Affect } from '../Constuructors/interfaces/Affect';
 import PhysConstructor from '../Constuructors/PhysConstructor';
 import CastError from '../errors/CastError';
 /**
  * Физическая атака
  */
-class Attack extends PhysConstructor implements PreAffect {
+class Attack extends PhysConstructor implements Affect {
   constructor() {
     super({
       name: 'attack',
@@ -31,10 +31,10 @@ class Attack extends PhysConstructor implements PreAffect {
     target.stats.down('hp', this.status.effect);
   }
 
-  preAffect({ initiator, target, game } = this.params): void {
+  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }) => {
     if (target.flags.isHited) {
       throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
     }
-  }
+  };
 }
 export default new Attack();

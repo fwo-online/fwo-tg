@@ -1,15 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`attack should passively block if target has a lot of pdef 1`] = `
-"*quisquam* пытался _атаковать_ *corporis*, но не пробил
-*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *11.7* урона
-\\[ corporis 💥 💔-11.7/-3.7 📖94 ]
-*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *11.7* урона
-\\[ corporis 💥 💔-11.7/-15.4 📖94 ]
-*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *11.7* урона
-\\[ corporis 💥 💔-11.7/-27.1 📖94 ]"
-`;
-
 exports[`attack should reduce damage by target resists 1`] = `
 "*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *11.7* урона
 \\[ corporis 💥 💔-11.7/-3.7 📖94 ]

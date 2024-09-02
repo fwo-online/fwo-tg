@@ -21,34 +21,34 @@ export abstract class AffectableAction extends BaseAction {
     this.affectHandlers = affectHandlers;
   }
 
-  checkPreAffects(params = this.params, status = this.status) {
-    this.preAffects.forEach((preAffect) => {
-      this.handleAffect(preAffect.preAffect, params, status);
+  checkPreAffects() {
+    this.preAffects.forEach((affect) => {
+      this.handleAffect(affect.preAffect);
     });
   }
 
-  checkPostAffects(params = this.params, status = this.status) {
-    this.postAffects.forEach((postAffect) => {
-      this.handleAffect(postAffect.postAffect, params, status);
+  checkPostAffects() {
+    this.postAffects.forEach((affect) => {
+      this.handleAffect(affect.postAffect);
     });
   }
 
-  private handleAffect(affectMethod?: AffectFn, params = this.params, status = this.status) {
+  private handleAffect(affectMethod?: AffectFn) {
     try {
-      this.addAffects(affectMethod?.(params, status));
+      this.addAffects(affectMethod?.(this.context));
     } catch (e) {
-      const handlerResult = this.checkAffectHandlers(this.params, e.reason);
+      const handlerResult = this.checkAffectHandlers(e.reason);
       if (!handlerResult) {
         throw e;
       }
     }
   }
 
-  checkAffectHandlers(params = this.params, result: SuccessArgs | SuccessArgs[] = []) {
+  checkAffectHandlers(result: SuccessArgs | SuccessArgs[] = []) {
     const [normalizedResult] = normalizeToArray(result);
 
     for (const affectHandler of this.affectHandlers) {
-      const handlerResult = affectHandler.affectHandler?.(params, normalizedResult);
+      const handlerResult = affectHandler.affectHandler?.(this.context, normalizedResult);
 
       if (handlerResult) {
         this.addAffects(handlerResult);

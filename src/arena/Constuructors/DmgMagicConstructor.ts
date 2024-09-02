@@ -70,18 +70,16 @@ export abstract class DmgMagic extends Magic {
    * кол-во единиц за использование магии
    * Если кастеру хватило mp/en продолжаем,если нет, то возвращаем false
    */
-  getExp({ initiator, target } = this.params): void {
+  calculateExp({ initiator, target } = this.params): void {
     if (initiator.isAlly(target) && !initiator.flags.isGlitched) {
       this.status.exp = 0;
     } else {
-      const dmgExp = this.calculateExp(this.status.effect, this.baseExp);
+      const dmgExp = this.getEffectExp(this.status.effect, this.baseExp);
       this.status.exp = dmgExp;
-
-      initiator.stats.up('exp', dmgExp);
     }
   }
 
-  calculateExp(hit: number, baseExp = 0) {
-    return Math.round(hit * 8) + baseExp;
+  getEffectExp(effect: number, baseExp = 0) {
+    return Math.round(effect * 8) + baseExp;
   }
 }

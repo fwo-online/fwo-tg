@@ -31,16 +31,9 @@ export abstract class PassiveSkillConstructor extends AffectableAction {
   }
 
   cast(initiator: Player, target: Player, game: GameService) {
-    try {
-      this.params = { initiator, target, game };
-      if (this.checkChance()) {
-        this.run(initiator, target, game);
-      }
-    } catch (e) {
-      this.handleCastError(e);
-    } finally {
-      this.reset();
-    }
+    this.createContext(initiator, target, game);
+    this.run(initiator, target, game);
+    this.reset();
   }
 
   isActive() {

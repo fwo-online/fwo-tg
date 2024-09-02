@@ -1,13 +1,12 @@
 import type { OrderType, ActionType } from '@/arena/Constuructors/types';
 import type Game from '@/arena/GameService';
 import type { Player } from '@/arena/PlayersService';
-import type { PreAffect } from '../Constuructors/interfaces/PreAffect';
 import { ProtectConstructor } from '../Constuructors/ProtectConstructor';
 
 /**
  * Класс защиты
  */
-class Protect extends ProtectConstructor implements PreAffect {
+class Protect extends ProtectConstructor {
   name = 'protect';
   displayName = 'Защита';
   desc = 'Защита от физических атак';

@@ -10,20 +10,21 @@ export function formatExp(args: SuccessArgs): string {
     case 'dmg-magic-long':
     case 'aoe-dmg-magic': {
       return expBrackets([
-        `${args.target} ${getDamageTypeIcon(args.effectType)} 💔-${args.effect}/${args.hp} 📖${args.exp}`,
+        `${args.target.nick} ${getDamageTypeIcon(args.effectType)} 💔-${args.effect}/${args.hp} 📖${args.exp}`,
         ...args.expArr.map(({
-          name, val, hp, exp,
-        }) => `${name} ${getDamageTypeIcon(args.effectType)} 💔-${val}/${hp} 📖${exp}`),
+          target, val, hp, exp,
+        }) => `${target.nick} ${getDamageTypeIcon(args.effectType)} 💔-${val}/${hp} 📖${exp}`),
       ].join('\n'));
     }
     case 'heal-magic': {
       return expBrackets(`❤️+${args.effect}/${args.hp} 📖${args.exp}`);
     }
     case 'heal':
-      return expBrackets(args.expArr.map(({ name, exp, val }) => `${name}: 💖${val}/${args.hp} 📖${exp}`).join(', '));
+      return expBrackets(args.expArr.map(({ initiator, exp, val }) => `${initiator.nick}: 💖${val}/${args.hp} 📖${exp}`).join(', '));
     case 'protect':
-      return expBrackets(args.expArr.map(({ name, exp }) => `${name}: 📖${exp}`).join(', '));
+      return expBrackets(args.expArr.map(({ initiator, exp }) => `${initiator.nick}: 📖${exp}`).join(', '));
     case 'skill':
+    case 'dodge':
       return args.exp ? expBrackets(`📖${args.exp}`) : '';
     case 'passive':
       return '';

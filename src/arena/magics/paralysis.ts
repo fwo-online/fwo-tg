@@ -1,12 +1,12 @@
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
-import { PreAffect } from '../Constuructors/interfaces/PreAffect';
+import type { Affect } from '../Constuructors/interfaces/Affect';
 import CastError from '../errors/CastError';
 
 /**
  * Паралич
  * Основное описание магии общее требовани есть в конструкторе
  */
-class Paralysis extends CommonMagic implements PreAffect {
+class Paralysis extends CommonMagic implements Affect {
   constructor() {
     super({
       name: 'paralysis',
@@ -30,11 +30,11 @@ class Paralysis extends CommonMagic implements PreAffect {
     target.flags.isParalysed = true;
   }
 
-  preAffect({ initiator, target, game } = this.params) {
+  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }) => {
     if (target.flags.isParalysed) {
       throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
     }
-  }
+  };
 }
 
 export default new Paralysis();

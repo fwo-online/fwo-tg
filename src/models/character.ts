@@ -92,7 +92,6 @@ const character = new Schema<Char, CharModel>({
   magics: { type: Object, default: {} },
   bonus: { type: Number, default: 0 },
   skills: { type: Object, default: {} },
-  mastery: { type: String },
   clan: { type: Schema.Types.ObjectId, ref: 'Clan' },
   penalty: [{
     type: new Schema({

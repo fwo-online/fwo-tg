@@ -1,9 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`protect should protect player 1`] = `
-"*corporis* вонзил _Стилет_ в *quisquam* и нанёс *8* урона
-\\[ quisquam 💥 💔-8/0 📖64 ]
-
-	_Навык владения оружием_
-	"
-`;

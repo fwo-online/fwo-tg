@@ -36,7 +36,7 @@ class Dispel extends CommonMagic {
 
   customMessage(args: SuccessArgs) {
     const { initiator, target } = args;
-    return `${bold(initiator)} снимает все длительные магии с ${bold(target)}, используя заклинание ${italic(this.displayName)}`;
+    return `${bold(initiator.nick)} снимает все длительные магии с ${bold(target.nick)}, используя заклинание ${italic(this.displayName)}`;
   }
 }
 
