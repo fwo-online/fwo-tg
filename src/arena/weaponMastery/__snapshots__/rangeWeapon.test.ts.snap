@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`rangeWeapon should hit through dodge 1`] = `
+"*corporis* использовал _🐍 Увертка_
+
+*quisquam* пытался атаковать *corporis*, но у него не получилось
+_🐍 Увертка_ *corporis*: 📖50
+*quisquam* швырнул в *corporis* _Дротиком_ и нанёс *5.7* урона
+\\[ corporis 💥 💔-5.7/2.3 📖46 ]
+
+_Навык владения метательным оружием_ *quisquam*"
+`;

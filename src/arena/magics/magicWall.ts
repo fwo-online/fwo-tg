@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define, max-classes-per-file */
 import CastError from '@/arena/errors/CastError';
+import type { Affect } from '../Constuructors/interfaces/Affect';
 import { LongMagic } from '../Constuructors/LongMagicConstructor';
 import { ProtectConstructor } from '../Constuructors/ProtectConstructor';
 import type { OrderType } from '../Constuructors/types';
@@ -56,7 +57,9 @@ class MagicWallBuff extends LongMagic {
     target.flags.isBehindWall.push({ initiator: initiator.id, val: this.status.effect });
   }
 
-  preAffect({ initiator, target, game } = this.params, { effect } = { effect: 0 }) {
+  preAffect: Affect['preAffect'] = (context) => {
+    const { initiator, target, game } = context.params;
+
     if (initiator.flags.isBehindWall.length) {
       initiator.flags.isBehindWall.forEach((flag) => {
         const wallCaster = game.players.getById(flag.initiator);
@@ -69,9 +72,9 @@ class MagicWallBuff extends LongMagic {
 
     if (target.flags.isBehindWall) {
       magicWall.reset();
-      magicWall.preAffect({ initiator, target, game }, { effect });
+      magicWall.preAffect?.(context);
     }
-  }
+  };
 }
 
 export default new MagicWallBuff();

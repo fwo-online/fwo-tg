@@ -24,19 +24,16 @@ export abstract class LongDmgMagic extends DmgMagic {
    * @param game  Game
    */
   cast(initiator: Player, target: Player, game: Game): void {
-    this.params = {
-      initiator, target, game,
-    };
+    this.createContext(initiator, target, game);
     try {
       game.longActions[this.name] ??= [];
       this.buff = game.longActions[this.name] ?? [];
       this.getCost(initiator);
-      this.checkPreAffects({ initiator, target, game });
-      this.isBlurredMind(); // проверка не запудрило
+      this.checkPreAffects();
       this.checkChance();
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.checkTargetIsDead();
-      this.getExp();
+      this.calculateExp();
       this.next();
       this.postRun(initiator, target, game);
     } catch (failMsg) {
@@ -75,13 +72,12 @@ export abstract class LongDmgMagic extends DmgMagic {
         if (!target) {
           throw new CastError('NO_TARGET');
         }
-        this.params = { initiator, target, game };
+        this.createContext(initiator, target, game);
         this.params.initiator.proc = item.proc;
-        this.checkPreAffects({ initiator, target, game });
-        this.isBlurredMind(); // проверка не запудрило
+        this.checkPreAffects();
         this.checkChance();
         this.runLong(initiator, target, game); // вызов кастомного обработчика
-        this.getExp();
+        this.calculateExp();
         this.checkTargetIsDead(); // проверка трупов в длительных магиях
         this.longNext({ initiator, target, game });
       } catch (e) {

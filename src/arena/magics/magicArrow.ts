@@ -38,7 +38,7 @@ class MagicArrow extends DmgMagic {
 
   customMessage(args: SuccessArgs): string {
     const { initiator, target } = args;
-    return `${bold(initiator)} выстреливает ${italic(this.case)} в ${bold(target)}`;
+    return `${bold(initiator.nick)} выстреливает ${italic(this.case)} в ${bold(target.nick)}`;
   }
 }
 

@@ -36,7 +36,7 @@ class Rockfall extends DmgMagic {
 
   customMessage(args: SuccessArgs) {
     const { initiator, target } = args;
-    return `${bold(initiator)} обрушивает ${italic(this.displayName)} на ${bold(target)}`;
+    return `${bold(initiator.nick)} обрушивает ${italic(this.displayName)} на ${bold(target.nick)}`;
   }
 }
 

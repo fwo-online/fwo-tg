@@ -1,7 +1,7 @@
 import { bold, italic } from '@/utils/formatString';
-import type { PreAffect } from '../Constuructors/interfaces/PreAffect';
+import type { Affect } from '../Constuructors/interfaces/Affect';
 import { Skill } from '../Constuructors/SkillConstructor';
-import type { SuccessArgs } from '../Constuructors/types';
+import type { ActionType, SuccessArgs } from '../Constuructors/types';
 import CastError from '../errors/CastError';
 import MiscService from '../MiscService';
 
@@ -16,7 +16,9 @@ const dodgeableWeaponTypes = [
 /**
  * Увертка
  */
-class Dodge extends Skill implements PreAffect {
+class Dodge extends Skill implements Affect {
+  actionType: ActionType = 'dodge';
+
   constructor() {
     super({
       name: 'dodge',
@@ -41,7 +43,7 @@ class Dodge extends Skill implements PreAffect {
     initiator.flags.isDodging = this.effect[initiatorSkillLvl - 1] * initiator.stats.val('dex');
   }
 
-  preAffect({ initiator, target, game } = this.params) {
+  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }) => {
     const isDodgeable = initiator.weapon.isOfType(dodgeableWeaponTypes);
 
     if (target.flags.isDodging && isDodgeable) {
@@ -50,15 +52,15 @@ class Dodge extends Skill implements PreAffect {
       const chance = Math.round(Math.sqrt(dodgeFactor) + (10 * dodgeFactor) + 5);
 
       if (chance > MiscService.rndm('1d100')) {
-        this.getExp(target);
+        this.calculateExp();
 
         throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
       }
     }
-  }
+  };
 
   customMessage(args: SuccessArgs) {
-    return `${bold(args.initiator)} использовал ${italic(this.displayName)}`;
+    return `${bold(args.initiator.nick)} использовал ${italic(this.displayName)}`;
   }
 }
 

@@ -2,6 +2,8 @@ import arena from '@/arena';
 
 const registerAttackAffects = () => {
   arena.actions.attack.registerPreAffects([
+    arena.magics.glitch,
+    arena.magics.madness,
     arena.actions.protect,
     arena.skills.dodge,
     arena.skills.parry,
@@ -21,6 +23,7 @@ const registerMagicAffects = () => {
   Object.values(arena.magics).forEach((magic) => {
     magic.registerPreAffects([
       arena.magics.silence,
+      arena.magics.glitch,
     ]);
   });
 };

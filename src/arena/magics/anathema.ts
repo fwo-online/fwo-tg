@@ -40,7 +40,7 @@ class Anathema extends CommonMagic {
 
   customMessage(args: SuccessArgs) {
     const { initiator, target } = args;
-    return `${bold(initiator)} снимает все положительные эффекты с ${bold(target)}, используя ${italic(this.displayName)}`;
+    return `${bold(initiator.nick)} снимает все положительные эффекты с ${bold(target.nick)}, используя ${italic(this.displayName)}`;
   }
 }
 

@@ -48,11 +48,8 @@ export abstract class Skill extends AffectableAction {
    * @param game Game объект игры
    */
   cast(initiator: Player, target: Player, game: Game): void {
-    this.params = {
-      initiator, target, game,
-    };
-    this.reset();
     try {
+      this.createContext(initiator, target, game);
       this.getCost();
       this.checkPreAffects();
       this.checkChance();
@@ -103,8 +100,7 @@ export abstract class Skill extends AffectableAction {
   /**
    * Рассчитываем полученный exp
    */
-  getExp(initiator: Player): void {
+  calculateExp(): void {
     this.status.exp = this.baseExp;
-    initiator.stats.up('exp', this.status.exp);
   }
 }

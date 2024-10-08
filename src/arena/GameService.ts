@@ -183,10 +183,10 @@ export default class GameService {
       return;
     }
 
-    if (player.flags.isKicked === 'afk' && !this.orders.checkPlayerOrder(player.id)) {
+    if (player.flags.isKicked === 'afk' && !this.orders.checkPlayerOrderLastRound(player.id)) {
       this.kick(player.id, player.flags.isKicked);
     } else {
-      player.preKick(this.orders.checkPlayerOrder(player.id) ? undefined : 'afk');
+      player.preKick(this.orders.checkPlayerOrderLastRound(player.id) ? undefined : 'afk');
     }
   }
 
@@ -275,6 +275,7 @@ export default class GameService {
     this.round.subscribe((data) => {
       switch (data.state) {
         case RoundStatus.START_ROUND: {
+          this.forAllPlayers(this.checkOrders);
           this.sendToAll(`⚡️ Раунд ${data.round} начинается ⚡`);
           this.forAllAlivePlayers(this.sendStatus);
           break;
@@ -309,7 +310,6 @@ export default class GameService {
           if (process.env.NODE_ENV === 'development') {
             this.orders.ordersList = this.orders.ordersList.concat(testGame.orders);
           }
-          this.forAllPlayers(this.checkOrders);
           break;
         }
         default: {

@@ -40,12 +40,12 @@ class FrostTouch extends LongDmgMagic {
 
   customMessage(args: SuccessArgs): string {
     const { initiator, target } = args;
-    return `${bold(initiator)} поражает ${bold(target)} ${italic(this.case)}`;
+    return `${bold(initiator.nick)} поражает ${bold(target.nick)} ${italic(this.case)}`;
   }
 
   longCustomMessage(args: SuccessArgs): string {
     const { initiator, target } = args;
-    return `${italic(this.displayName)} (${bold(initiator)}) отнимает жизни у игрока ${bold(target)}`;
+    return `${italic(this.displayName)} (${bold(initiator.nick)}) отнимает жизни у игрока ${bold(target.nick)}`;
   }
 }
 

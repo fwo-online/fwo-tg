@@ -1,42 +1,73 @@
+import { normalizeToArray } from '@/utils/array';
 import { BaseAction } from './BaseAction';
-import type { PostAffect } from './interfaces/PostAffect';
-import type { PreAffect } from './interfaces/PreAffect';
+import type { Affect, AffectFn } from './interfaces/Affect';
 import type { SuccessArgs } from './types';
 
 export abstract class AffectableAction extends BaseAction {
-  private preAffects: PreAffect[] = [];
-  private postAffects: PostAffect[] = [];
+  private preAffects: Affect[] = [];
+  private postAffects: Affect[] = [];
+  private affectHandlers: Affect[] = [];
   private affects: SuccessArgs[] = [];
 
-  registerPreAffects(preAffects: PreAffect[]) {
+  registerPreAffects(preAffects: Affect[]) {
     this.preAffects = preAffects;
   }
 
-  registerPostAffects(postAffects: PostAffect[]) {
+  registerPostAffects(postAffects: Affect[]) {
     this.postAffects = postAffects;
   }
 
-  checkPreAffects(params = this.params, status = this.status) {
-    this.preAffects.forEach((preAffect) => {
-      preAffect.preAffect(params, status);
+  registerAffectHandlers(affectHandlers: Affect[]) {
+    this.affectHandlers = affectHandlers;
+  }
+
+  checkPreAffects() {
+    this.preAffects.forEach((affect) => {
+      this.handleAffect(affect.preAffect);
     });
   }
 
-  checkPostAffects(params = this.params, status = this.status) {
-    this.postAffects.forEach((preAffect) => {
-      const result = preAffect.postAffect(params, status);
-      if (!result) {
-        return;
+  checkPostAffects() {
+    this.postAffects.forEach((affect) => {
+      this.handleAffect(affect.postAffect);
+    });
+  }
+
+  private handleAffect(affectMethod?: AffectFn) {
+    try {
+      this.addAffects(affectMethod?.(this.context));
+    } catch (e) {
+      const handlerResult = this.checkAffectHandlers(e.reason);
+      if (!handlerResult) {
+        throw e;
       }
-
-      const normalizedResult = Array.isArray(result) ? result : [result];
-
-      this.affects.push(...normalizedResult);
-    });
+    }
   }
 
-  getAffects() {
-    return this.affects;
+  checkAffectHandlers(result: SuccessArgs | SuccessArgs[] = []) {
+    const [normalizedResult] = normalizeToArray(result);
+
+    for (const affectHandler of this.affectHandlers) {
+      const handlerResult = affectHandler.affectHandler?.(this.context, normalizedResult);
+
+      if (handlerResult) {
+        this.addAffects(handlerResult);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private addAffects(affects: void | SuccessArgs | SuccessArgs[]) {
+    if (!affects) {
+      return;
+    }
+
+    if (Array.isArray(affects)) {
+      this.affects.push(...affects);
+    } else {
+      this.affects.push(affects);
+    }
   }
 
   getSuccessResult(params = this.params): SuccessArgs {
@@ -48,7 +79,6 @@ export abstract class AffectableAction extends BaseAction {
 
   reset() {
     super.reset();
-
     this.affects = [];
   }
 }

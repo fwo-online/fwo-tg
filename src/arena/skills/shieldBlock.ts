@@ -39,7 +39,7 @@ class ShieldBlock extends Skill {
   }
 
   customMessage(args: SuccessArgs) {
-    return `${bold(args.initiator)} использовал ${italic(this.displayName)}`;
+    return `${bold(args.initiator.nick)} использовал ${italic(this.displayName)}`;
   }
 }
 

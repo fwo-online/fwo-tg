@@ -37,9 +37,7 @@ export abstract class Heal extends AffectableAction {
    * @param game Объект игры (не обязателен)
    */
   cast(initiator: Player, target: Player, game: Game): void {
-    this.params = {
-      initiator, target, game,
-    };
+    this.createContext(initiator, target, game);
 
     try {
       this.checkPreAffects();
@@ -47,7 +45,7 @@ export abstract class Heal extends AffectableAction {
       // Получение экспы за хил следует вынести в отдельный action следующий
       // за самим хилом, дабы выдать exp всем хиллерам после формирования
       // общего массива хила
-      this.getExp(initiator, target);
+      this.calculateExp(initiator, target);
       // this.backToLife();
       this.next();
     } catch (e) {
@@ -80,19 +78,18 @@ export abstract class Heal extends AffectableAction {
     return floatNumber(healEffect);
   }
 
-  getExp(initiator: Player, target: Player): void {
+  calculateExp(initiator: Player, target: Player): void {
     if (initiator.isAlly(target)) {
       const healEffect = this.status.effect;
-      const exp = Math.round(healEffect * 10);
-      initiator.stats.up('exp', exp);
-      this.status.exp = exp;
+
+      this.status.exp = Math.round(healEffect * 10);
     } else {
       this.status.exp = 0;
     }
 
     this.status.expArr = [{
-      id: initiator.id,
-      name: initiator.nick,
+      initiator,
+      target,
       exp: this.status.exp,
       val: this.status.effect,
     }];

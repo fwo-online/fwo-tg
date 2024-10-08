@@ -1,10 +1,11 @@
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
+import type { Affect } from '../Constuructors/interfaces/Affect';
 
 /**
  * Безумие
  * Основное описание магии общее требовани есть в конструкторе
  */
-class Madness extends CommonMagic {
+class Madness extends CommonMagic implements Affect {
   constructor() {
     super({
       name: 'madness',
@@ -27,6 +28,13 @@ class Madness extends CommonMagic {
     const { target } = this.params;
     target.flags.isMad = true;
   }
+
+  preAffect: Affect['preAffect'] = ({ params }) => {
+    if (params.initiator.flags.isMad) {
+      params.target = params.initiator;
+      return this.getSuccessResult(params);
+    }
+  };
 }
 
 export default new Madness();

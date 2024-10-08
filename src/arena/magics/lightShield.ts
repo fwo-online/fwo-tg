@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-use-before-define, max-classes-per-file */
 import { DmgMagic } from '@/arena/Constuructors/DmgMagicConstructor';
-import type { PostAffect } from '@/arena/Constuructors/interfaces/PostAffect';
 import { LongMagic } from '@/arena/Constuructors/LongMagicConstructor';
 import type { MagicArgs } from '@/arena/Constuructors/MagicConstructor';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
 import type GameService from '@/arena/GameService';
 import type { Player } from '@/arena/PlayersService';
+import type { Affect } from '../Constuructors/interfaces/Affect';
 
 /**
  * Магический доспех
@@ -30,9 +30,9 @@ const params = {
 
 class LightShield extends DmgMagic {
   cast(initiator: Player, target: Player, game: GameService): void {
-    this.params = { initiator, target, game };
+    this.createContext(initiator, target, game);
     this.run();
-    this.getExp();
+    this.calculateExp();
     this.checkTargetIsDead();
   }
 
@@ -42,7 +42,7 @@ class LightShield extends DmgMagic {
   }
 }
 
-class LightShieldBuff extends LongMagic implements PostAffect {
+class LightShieldBuff extends LongMagic implements Affect {
   run() {
     const { target, initiator } = this.params;
     target.flags.isLightShielded.push({ initiator: initiator.id, val: initiator.proc });
@@ -53,10 +53,7 @@ class LightShieldBuff extends LongMagic implements PostAffect {
     target.flags.isLightShielded.push({ initiator: initiator.id, val: initiator.proc });
   }
 
-  postAffect(
-    { initiator, target, game } = this.params,
-    { effect } = { effect: 0 },
-  ): void | SuccessArgs | SuccessArgs[] {
+  postAffect: Affect['postAffect'] = ({ params: { initiator, target, game }, status: { effect } }) => {
     const results: SuccessArgs[] = [];
 
     target.flags.isLightShielded.forEach((flag) => {
@@ -71,7 +68,7 @@ class LightShieldBuff extends LongMagic implements PostAffect {
     });
 
     return results;
-  }
+  };
 }
 
 const lightShield = new LightShield({

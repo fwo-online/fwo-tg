@@ -23,7 +23,7 @@ class StrongHeal extends HealMagic {
 
   customMessage(args: SuccessArgs) {
     const { initiator, target, effect } = args;
-    return `${bold(initiator)} применил ${italic(this.displayName)} на ${bold(target)} излечив его на ${bold(effect.toString())}`;
+    return `${bold(initiator.nick)} применил ${italic(this.displayName)} на ${bold(target.nick)} излечив его на ${bold(effect.toString())}`;
   }
 }
 export default new StrongHeal();

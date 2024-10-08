@@ -1,12 +1,12 @@
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
-import type { PreAffect } from '../Constuructors/interfaces/PreAffect';
+import type { Affect } from '../Constuructors/interfaces/Affect';
 import CastError from '../errors/CastError';
 
 /**
  * Затмение
  * Основное описание магии общее требовани есть в конструкторе
  */
-class Eclipse extends CommonMagic implements PreAffect {
+class Eclipse extends CommonMagic implements Affect {
   constructor() {
     super({
       name: 'eclipse',
@@ -31,11 +31,11 @@ class Eclipse extends CommonMagic implements PreAffect {
     game.flags.global.isEclipsed = true;
   }
 
-  preAffect({ initiator, target, game } = this.params) {
+  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }) => {
     if (game.flags.global.isEclipsed) {
       throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
     }
-  }
+  };
 }
 
 export default new Eclipse();

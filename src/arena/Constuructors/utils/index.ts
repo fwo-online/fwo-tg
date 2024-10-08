@@ -1,3 +1,4 @@
+import { Player } from '@/arena/PlayersService';
 import type { FailArgs, SuccessArgs } from '../types';
 
 type Result = SuccessArgs | FailArgs;
@@ -23,7 +24,7 @@ export const isPhysicalDamageResult = (result: Result): result is SuccessArgs =>
 };
 
 export const findByTarget = (target: string) => {
-  return (result: { target: string }) => {
-    return result.target === target;
+  return (result: { target: Player }) => {
+    return result.target.nick === target;
   };
 };

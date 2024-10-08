@@ -33,7 +33,7 @@ class MagicArmor extends CommonMagic {
   customMessage(args: SuccessArgs) {
     const { initiator, target, effect } = args;
     const effectStr = effect?.toString() || '';
-    return `${bold(initiator)} поднимает защиту ${bold(target)} на ${bold(effectStr)}pt`;
+    return `${bold(initiator.nick)} поднимает защиту ${bold(target.nick)} на ${bold(effectStr)}pt`;
   }
 }
 

@@ -34,7 +34,7 @@ class Entangle extends CommonMagic {
   customMessage(args: SuccessArgs) {
     const { initiator, target, effect } = args;
     const effectStr = effect?.toString() || '';
-    return `${bold(initiator)} опутывает ${bold(target)} снижая защиту на ${bold(effectStr)}pt`;
+    return `${bold(initiator.nick)} опутывает ${bold(target.nick)} снижая защиту на ${bold(effectStr)}pt`;
   }
 }
 

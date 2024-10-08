@@ -4,17 +4,14 @@ import type { ActionType } from './types';
 export abstract class AoeDmgMagic extends DmgMagic {
   actionType: ActionType = 'aoe-dmg-magic';
 
-  getExp({ initiator, target, game } = this.params): void {
-    super.getExp({ initiator, target, game });
-    this.getAoeExp({ initiator, target, game });
+  calculateExp({ initiator, target, game } = this.params): void {
+    super.calculateExp({ initiator, target, game });
+    this.calculateAoeExp();
   }
 
-  getAoeExp({ initiator } = this.params) {
+  calculateAoeExp() {
     this.status.expArr.forEach((item) => {
-      const exp = this.calculateExp(item.val ?? 0);
-
-      item.exp = exp;
-      initiator.stats.up('exp', exp);
+      item.exp = this.getEffectExp(item.val ?? 0);
     });
   }
 
@@ -24,11 +21,7 @@ export abstract class AoeDmgMagic extends DmgMagic {
   }
 
   checkAoeTargetIsDead({ initiator, game } = this.params): void {
-    this.status.expArr.forEach(({ id }) => {
-      const target = game.players.getById(id);
-      if (!target) {
-        return;
-      }
+    this.status.expArr.forEach(({ target }) => {
       super.checkTargetIsDead({ initiator, target, game });
     });
   }

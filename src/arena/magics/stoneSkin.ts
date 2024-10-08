@@ -35,7 +35,7 @@ class StoneSkin extends CommonMagic {
   customMessage(args: SuccessArgs) {
     const { initiator, target, effect } = args;
     const effectStr = effect?.toString() || '';
-    return `${bold(initiator)} превращяет кожу ${bold(target)} в камень усиливая защиту на ${bold(effectStr)}`;
+    return `${bold(initiator.nick)} превращяет кожу ${bold(target.nick)} в камень усиливая защиту на ${bold(effectStr)}`;
   }
 }
 

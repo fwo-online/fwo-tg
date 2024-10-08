@@ -1,11 +1,11 @@
-import type { PreAffect } from '../Constuructors/interfaces/PreAffect';
+import type { Affect } from '../Constuructors/interfaces/Affect';
 import { Skill } from '../Constuructors/SkillConstructor';
 import CastError from '../errors/CastError';
 
 /**
  * Обезоруживание
  */
-class Disarm extends Skill implements PreAffect {
+class Disarm extends Skill implements Affect {
   constructor() {
     super({
       name: 'disarm',
@@ -34,17 +34,17 @@ class Disarm extends Skill implements PreAffect {
     if (iDex >= tDex) {
       target.flags.isDisarmed = true;
 
-      this.getExp(target);
+      this.calculateExp();
     } else {
       throw new CastError('SKILL_FAIL');
     }
   }
 
-  preAffect({ initiator, target, game } = this.params) {
+  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }) => {
     if (initiator.flags.isDisarmed) {
       throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
     }
-  }
+  };
 }
 
 export default new Disarm();

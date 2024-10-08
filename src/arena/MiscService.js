@@ -12,39 +12,39 @@
 const WEAPON_TYPES = {
   s: {
     name: 'колющее',
-    action: (target, weapon) => `вонзил _${weapon.name}_ в *${target}*`,
+    action: (target, weapon) => `вонзил _${weapon.name}_ в *${target.nick}*`,
   },
   c: {
     name: 'режущее',
-    action: (target, weapon) => `пустил кровь *${target}* с помощью _${weapon.name}_`,
+    action: (target, weapon) => `пустил кровь *${target.nick}* с помощью _${weapon.name}_`,
   },
   h: {
     name: 'рубящее',
-    action: (target, weapon) => `рубанул *${target}* _${weapon.case}_`,
+    action: (target, weapon) => `рубанул *${target.nick}* _${weapon.case}_`,
   },
   g: {
     name: 'лечащее',
-    action: (target, weapon) => `вонзил _${weapon.name}_ в *${target}*`,
+    action: (target, weapon) => `вонзил _${weapon.name}_ в *${target.nick}*`,
   },
   l: {
     name: 'метательное',
-    action: (target, weapon) => `швырнул в *${target}* _${weapon.case}_`,
+    action: (target, weapon) => `швырнул в *${target.nick}* _${weapon.case}_`,
   },
   m: {
     name: 'дальнобойное',
-    action: (target, weapon) => `стрельнул в *${target}* _${weapon.case}_`,
+    action: (target, weapon) => `стрельнул в *${target.nick}* _${weapon.case}_`,
   },
   f: {
     name: 'зажигательное',
-    action: (target, weapon) => `обжег *${target}* с помощью _${weapon.case}_`,
+    action: (target, weapon) => `обжег *${target.nick}* с помощью _${weapon.case}_`,
   },
   d: {
     name: 'оглушающее',
-    action: (target, weapon) => `дал по башке *${target}* _${weapon.case}_`,
+    action: (target, weapon) => `дал по башке *${target.nick}* _${weapon.case}_`,
   },
   r: {
     name: 'спецоружие',
-    action: (target, weapon) => `атаковал *${target}* _${weapon.case}_`,
+    action: (target, weapon) => `атаковал *${target.nick}* _${weapon.case}_`,
   },
 };
 /**

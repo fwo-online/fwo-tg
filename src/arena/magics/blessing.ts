@@ -37,7 +37,7 @@ class Blessing extends CommonMagic {
   customMessage(args: SuccessArgs) {
     const { initiator, target, effect } = args;
     const effectStr = effect?.toString() || '';
-    return `${bold(initiator)} благославляет ${bold(target)} на ${bold(effectStr)}pt`;
+    return `${bold(initiator.nick)} благославляет ${bold(target.nick)} на ${bold(effectStr)}pt`;
   }
 }
 

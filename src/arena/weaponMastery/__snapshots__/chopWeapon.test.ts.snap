@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`chopWeapon should increase damage with chance 1`] = `
+"*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *10.82* урона
+\\[ corporis 💥 💔-10.82/-2.82 📖87 ]
+*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *11.1* урона
+\\[ corporis 💥 💔-11.1/-13.92 📖89 ]
+
+_Навык владения рубящим оружием_ *quisquam*"
+`;

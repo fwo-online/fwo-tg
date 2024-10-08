@@ -1,5 +1,5 @@
 import { bold, italic } from '@/utils/formatString';
-import type { PreAffect } from '../Constuructors/interfaces/PreAffect';
+import type { Affect } from '../Constuructors/interfaces/Affect';
 import { Skill } from '../Constuructors/SkillConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
 import CastError from '../errors/CastError';
@@ -13,7 +13,7 @@ const parryableWeaponTypes = [
 /**
  * Парирование
  */
-class Parry extends Skill implements PreAffect {
+class Parry extends Skill implements Affect {
   constructor() {
     super({
       name: 'parry',
@@ -40,24 +40,24 @@ class Parry extends Skill implements PreAffect {
     initiator.flags.isParry = initiator.stats.val('dex') * effect;
   }
 
-  preAffect({ initiator, target, game } = this.params) {
+  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }) => {
     const isParryable = initiator.weapon.isOfType(parryableWeaponTypes);
 
     if (target.flags.isParry && isParryable) {
       const initiatorDex = initiator.stats.val('dex');
 
       if ((target.flags.isParry - initiatorDex) > 0) {
-        this.getExp(target);
+        this.calculateExp();
 
         throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
       }
 
       target.flags.isParry -= initiatorDex;
     }
-  }
+  };
 
   customMessage(args: SuccessArgs) {
-    return `${bold(args.initiator)} использовал ${italic(this.displayName)}`;
+    return `${bold(args.initiator.nick)} использовал ${italic(this.displayName)}`;
   }
 }
 
