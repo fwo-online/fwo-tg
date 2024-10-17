@@ -48,7 +48,7 @@ export interface Statical {
 export default class Player {
   nick: string;
   id: string;
-  tgId: number;
+  owner: string;
   prof: Prof;
   lvl: number;
   clan?: Clan;
@@ -73,7 +73,7 @@ export default class Player {
   constructor(params: Char) {
     this.nick = params.nickname;
     this.id = params.id;
-    this.tgId = params.tgId;
+    this.owner = params.owner;
     this.prof = params.prof;
     this.lvl = params.lvl;
     this.clan = params.clan;

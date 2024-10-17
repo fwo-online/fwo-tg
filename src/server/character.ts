@@ -1,38 +1,40 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
+import { characterMiddleware } from './middlewares/characterMiddleware';
+import { userMiddleware } from './middlewares/userMiddleware';
 import { createCharacter } from '@/api/character';
 import { profsData } from '@/data/profs';
 import { characterAttributesSchema, createCharacterSchema } from '@/schemas/character';
-import { characterMiddleware } from './middlewares/characterMiddleware';
-import { userMiddleware } from './middlewares/userMiddleware';
 
 export const character = new Hono()
-  .get('/foo', (c) => {
-    return c.notFound();
-  })
   .use(userMiddleware)
   .post('/', zValidator('json', createCharacterSchema), async (c) => {
     const createCharacterDto = await c.req.valid('json');
     const user = c.get('user');
-    const character = await createCharacter({
-      tgId: user?.id,
+    await createCharacter({
+      owner: user?.id.toString(),
       nickname: createCharacterDto.name,
       prof: createCharacterDto.class,
       harks: profsData[createCharacterDto.class].hark,
       magics: profsData[createCharacterDto.class].mag,
       sex: 'm',
     });
+    // return c.redirect('/');
 
-    return c.json(character);
+    return c.json({}, 200);
   })
   .use(characterMiddleware)
   .get('/', async (c) => {
-    return c.json(c.get('character'));
+    const character = c.get('character');
+
+    return c.json(character.toObject(), 200);
   })
   .patch('/attributes', zValidator('json', characterAttributesSchema), async (c) => {
     const character = c.get('character');
     const harks = c.req.valid('json');
-    // fixme
+    // fixme validate harks and bonus
     await character.submitIncreaseHarks({ ...harks, free: 0 });
-    await character.saveToDb();
+    await character.save({ harks, bonus: 0 });
+
+    return c.json(character.toObject(), 200);
   });

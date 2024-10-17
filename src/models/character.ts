@@ -8,7 +8,7 @@ export interface Char {
   _id: Types.ObjectId
   id: string
 
-  tgId: number;
+  owner: string;
   nickname: string;
   birthday: Date;
   prof: Profs.Prof;
@@ -57,8 +57,8 @@ export class Char {
 }
 
 const character = new Schema<Char, CharModel>({
-  tgId: {
-    type: Number, required: true,
+  owner: {
+    type: String, required: true,
   },
   nickname: {
     type: String, required: true,

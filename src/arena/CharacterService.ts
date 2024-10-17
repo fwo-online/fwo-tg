@@ -8,6 +8,7 @@ import type { HarksLvl } from '@/data/harks';
 import type { Char } from '@/models/character';
 import { assignWithSum } from '@/utils/assignWithSum';
 import { floatNumber } from '@/utils/floatNumber';
+import { Character, CharacterClass } from '@/schemas/character';
 
 /**
  * Конструктор персонажа
@@ -150,8 +151,8 @@ class CharacterService {
     return dynHarks;
   }
 
-  get tgId() {
-    return this.charObj.tgId;
+  get owner() {
+    return this.charObj.owner;
   }
 
   get nickname() {
@@ -400,7 +401,7 @@ class CharacterService {
   async joinClan(clan) {
     this.charObj.clan = clan;
     await this.saveToDb();
-    const char = await CharacterService.getCharacter(this.tgId);
+    const char = await CharacterService.getCharacter(this.owner);
     return char;
   }
 
@@ -431,10 +432,10 @@ class CharacterService {
 
   /**
    * Загрузка чара в память
-   * @param {number} tgId идентификатор пользователя в TG (tgId)
+   * @param {string} owner идентификатор пользователя в TG (tgId)
    */
-  static async getCharacter(tgId: number) {
-    const charFromDb = await findCharacter({ tgId });
+  static async getCharacter(owner: string) {
+    const charFromDb = await findCharacter({ owner });
 
     const char = new CharacterService(charFromDb);
     arena.characters[char.id] = char;
@@ -534,6 +535,21 @@ class CharacterService {
     } catch (e) {
       console.error('Fail on CharSave:', e);
     }
+  }
+
+  toObject(): Character {
+    return {
+      name: this.nickname,
+      class: this.prof as CharacterClass,
+      attributes: this.harks,
+      magics: this.magics,
+      skills: this.skills,
+      clan: this.clan,
+      inventory: this.inventory.toObject(),
+      bonus: this.charObj.bonus,
+      gold: this.gold,
+      lvl: this.lvl,
+    };
   }
 }
 

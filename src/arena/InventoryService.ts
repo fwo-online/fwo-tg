@@ -10,15 +10,16 @@ import {
 import arena from '@/arena';
 import ValidationError from '@/arena/errors/ValidationError';
 import type { Char } from '@/models/character';
-import type { Inventory } from '@/models/inventory';
+import type { InventoryDocument } from '@/models/inventory';
 import type { Item, ParseAttrItem } from '@/models/item';
 import { ItemModel } from '@/models/item';
 import { assignWithSum } from '@/utils/assignWithSum';
+import { Inventory } from '@/schemas/inventory';
 
 class InventoryService {
   harksFromItems: Partial<ParseAttrItem>;
 
-  constructor(private char: Char, public inventory: Inventory[]) {
+  constructor(private char: Char, public inventory: InventoryDocument[]) {
     this.updateHarkFromItems();
   }
 
@@ -177,6 +178,14 @@ class InventoryService {
     if (this.statical) {
       assignWithSum(this.harksFromItems, this.statical);
     }
+  }
+
+  toObject() {
+    return this.inventory.map<Inventory>((item) => ({
+      code: item.code,
+      equipped: item.putOn,
+      wear: item.wear,
+    }));
   }
 }
 

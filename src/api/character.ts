@@ -13,10 +13,10 @@ export async function findCharacter(query: FilterQuery<Char>) {
   return character.toObject({ minimize: false });
 }
 
-export async function removeCharacter(tgId?: number) {
+export async function removeCharacter(owner?: number) {
   const character = await CharModel
     .findOneAndUpdate(
-      { tgId, deleted: false },
+      { owner, deleted: false },
       { deleted: true },
     )
     .orFail(new Error('Персонаж не найден'));
@@ -24,7 +24,7 @@ export async function removeCharacter(tgId?: number) {
   return character.deleted;
 }
 
-export async function createCharacter(charObj: Pick<Char, 'nickname' | 'prof' | 'sex' | 'tgId' | 'harks' | 'magics'>) {
+export async function createCharacter(charObj: Pick<Char, 'nickname' | 'prof' | 'sex' | 'owner' | 'harks' | 'magics'>) {
   const character = await CharModel.create(charObj);
   const item = await InventoryModel.firstCreate(character);
   await updateCharacter(character.id, { inventory: [item] });

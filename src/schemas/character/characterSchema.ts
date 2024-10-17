@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { characterAttributesSchema } from './characterAttributesSchema';
 import { characterClassSchema } from './characterClassSchema';
+import { inventorySchema } from '@/schemas/inventory';
 
 export const characterSchema = z.object({
   name: z.string().min(3),
@@ -10,6 +11,9 @@ export const characterSchema = z.object({
   lvl: z.number().positive().int(),
   class: characterClassSchema,
   attributes: characterAttributesSchema,
+  inventory: z.array(inventorySchema),
+  magics: z.record(z.number()),
+  skills: z.record(z.number()),
 });
 
 export type Character = z.infer<typeof characterSchema>
