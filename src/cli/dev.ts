@@ -1,14 +1,14 @@
-import execa from 'execa';
+import { $ } from 'bun';
 
 async function test() {
   try {
-    const { stdout, stderr } = process;
-    await execa('docker-compose', ['up', '-d', '--build', 'test_db'], { stdout, stderr });
+    await $`docker-compose up -d --build test_db`;
 
-    await execa('nodemon', { stdout, stderr });
+    await $`bun --watch ./src/fwo.ts`.env({ NODE_ENV: 'development' });
 
     process.exit(0);
   } catch (e) {
+    console.log(e);
     process.exit(1);
   }
 }

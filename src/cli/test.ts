@@ -1,15 +1,14 @@
-import execa from 'execa';
+import { $ } from 'bun';
 
 async function test() {
   try {
-    const { stdout, stderr } = process;
-    await execa('docker-compose', ['up', '-d', '--build', 'test_db'], { stdout, stderr });
+    await $`docker-compose up -d --build test_db`;
 
-    await execa('jest', process.argv.slice(2), { stdout, stderr });
+    await $`bun test --preload src/test.setup.ts`;
 
-    await execa('docker-compose', ['stop', 'test_db'], { stdout, stderr });
+    await $`docker-compose stop test_db`;
     process.exit(0);
-  } catch (e) {
+  } catch {
     process.exit(1);
   }
 }

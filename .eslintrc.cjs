@@ -71,12 +71,5 @@ module.exports = {
       typescript: {},
     },
   },
-  overrides: [
-    {
-      "files": ["**/*.test.ts"],
-      "plugins": ["jest"],
-      "extends": ["plugin:jest/recommended", "plugin:jest/style"],
-    }
-  ],
-  ignorePatterns: ['.eslintrc.js']
+  ignorePatterns: ['.eslintrc.cjs']
 };

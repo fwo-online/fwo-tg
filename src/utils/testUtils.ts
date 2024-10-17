@@ -45,8 +45,9 @@ export default class TestUtils {
     return char;
   }
 
-  static getCharacter(id: string) {
-    return CharModel.findById(id);
+  static async getCharacter(id: string) {
+    const charatcter = await CharModel.findById(id);
+    return charatcter?.toObject();
   }
 
   static resetCharacterCache() {
@@ -66,12 +67,14 @@ export default class TestUtils {
     return ClanService.getClanById(clan.id);
   }
 
-  static getClan(id: string) {
-    return ClanModel.findById(id).populate('owner').populate('players').populate('requests');
+  static async getClan(id: string) {
+    const clan = await ClanModel.findById(id).populate('owner').populate('players').populate('requests');
+    return clan?.toObject();
   }
 
-  static getClans() {
-    return ClanModel.find();
+  static async getClans() {
+    const clans = await ClanModel.find();
+    return clans.map((clan) => clan.toObject());
   }
 
   static async getWeapon(mayBeCode: true | string): Promise<Item> {
