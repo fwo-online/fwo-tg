@@ -1,10 +1,12 @@
+import {
+  describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
+} from 'bun:test';
 import casual from 'casual';
 import GameService from '@/arena/GameService';
 import { type Char } from '@/models/character';
 import TestUtils from '@/utils/testUtils';
 import attack from './attack';
 import protect from './protect';
-
 // npm t src/arena/actions/protect.test.ts
 
 describe('protect', () => {
@@ -25,11 +27,11 @@ describe('protect', () => {
   });
 
   beforeEach(() => {
-    jest.spyOn(global.Math, 'random').mockReturnValue(0.5);
+    spyOn(global.Math, 'random').mockReturnValue(0.5);
   });
 
   afterEach(() => {
-    jest.spyOn(global.Math, 'random').mockRestore();
+    spyOn(global.Math, 'random').mockRestore();
   });
 
   it('should protect player', () => {

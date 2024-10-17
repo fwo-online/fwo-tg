@@ -1,3 +1,6 @@
+import {
+  describe, beforeEach, it, expect,
+} from 'bun:test';
 import { times } from 'lodash';
 import arena from '@/arena';
 import type { Clan } from '@/models/clan';
@@ -7,8 +10,6 @@ import Player from './Player';
 import PlayersService from './PlayersService';
 
 // npm t src/arena/PlayersService/PlayersService.test.ts
-
-jest.retryTimes(3);
 
 describe('PlayerService', () => {
   let characters: CharacterService[] = [];

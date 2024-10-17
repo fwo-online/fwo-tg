@@ -1,3 +1,6 @@
+import {
+  describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
+} from 'bun:test';
 import casual from 'casual';
 import { times } from 'lodash';
 import CharacterService from '@/arena/CharacterService';
@@ -35,11 +38,11 @@ describe('fireRain', () => {
   });
 
   beforeEach(() => {
-    jest.spyOn(global.Math, 'random').mockReturnValue(0.15);
+    spyOn(global.Math, 'random').mockReturnValue(0.15);
   });
 
   afterEach(() => {
-    jest.spyOn(global.Math, 'random').mockRestore();
+    spyOn(global.Math, 'random').mockRestore();
   });
 
   it('should hit clan targets', () => {
