@@ -358,8 +358,7 @@ class CharacterService {
     };
   }
 
-  async submitIncreaseHarks() {
-    const { free, ...harks } = this.tempHarks;
+  async submitIncreaseHarks({ free, ...harks } = this.tempHarks) {
     this.charObj.harks = harks;
     this.charObj.free = free;
 
