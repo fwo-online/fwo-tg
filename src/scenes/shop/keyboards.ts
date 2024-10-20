@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { Markup } from 'telegraf';
-import type { ExtraEditMessageText } from 'telegraf/typings/telegram-types';
+import type { Convenience } from 'telegraf/types';
 import arena from '../../arena';
 import type Char from '../../arena/CharacterService';
 import { stores } from '../../arena/MiscService';
@@ -43,16 +43,18 @@ const getItems = (wear: string, prof: Profs.Prof) => {
   return buttons;
 };
 
-export const enter = (): ExtraEditMessageText => Markup.inlineKeyboard([
+export const enter = (): Convenience.ExtraEditMessageText => Markup.inlineKeyboard([
   ...getTypeButtons(),
   [Markup.button.callback('Коллекции', 'collectionList')],
 ]);
 
-export const itemType = (type: string, char: Char): ExtraEditMessageText => Markup.inlineKeyboard(
+export const itemType = (
+  type: string, char: Char,
+): Convenience.ExtraEditMessageText => Markup.inlineKeyboard(
   getItems(type, char.prof),
 );
 
-export const itemInfo = (code: string): ExtraEditMessageText => ({
+export const itemInfo = (code: string):Convenience.ExtraEditMessageText => ({
   ...Markup.inlineKeyboard([
     [
       Markup.button.callback(
@@ -68,7 +70,7 @@ export const itemInfo = (code: string): ExtraEditMessageText => ({
   parse_mode: 'Markdown',
 });
 
-export const buy = (code: string): ExtraEditMessageText => Markup.inlineKeyboard([
+export const buy = (code: string): Convenience.ExtraEditMessageText => Markup.inlineKeyboard([
   [Markup.button.callback(
     'В инвентарь',
     'inventory',
@@ -79,7 +81,7 @@ export const buy = (code: string): ExtraEditMessageText => Markup.inlineKeyboard
   )],
 ]);
 
-export const collectionList = (): ExtraEditMessageText => {
+export const collectionList = (): Convenience.ExtraEditMessageText => {
   const keys = Object.keys(Collections.collectionsData);
   const buttons = keys.map((key) => [
     Markup.button.callback(Collections.collectionsData[key].name, `collection_${key}`),
@@ -90,7 +92,7 @@ export const collectionList = (): ExtraEditMessageText => {
   );
 };
 
-export const collectionItem = (key: string): ExtraEditMessageText => {
+export const collectionItem = (key: string): Convenience.ExtraEditMessageText => {
   const items = _.filter(arena.items, (item: Item) => item.wcomb.includes(key));
   const buttons = items.map(itemToButton);
   return Markup.inlineKeyboard([

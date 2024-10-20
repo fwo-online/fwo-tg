@@ -1,10 +1,10 @@
 import arena from '@/arena';
-import { Inventory } from '@/models/inventory';
+import type { InventoryDocument } from '@/models/inventory';
 
 export class PlayerWeapon {
-  protected inventory?: Inventory;
+  protected inventory?: InventoryDocument;
 
-  constructor(inventory?: Inventory) {
+  constructor(inventory?: InventoryDocument) {
     this.inventory = inventory;
   }
 

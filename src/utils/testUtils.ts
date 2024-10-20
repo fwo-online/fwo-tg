@@ -41,7 +41,7 @@ export default class TestUtils {
       await char.save();
     }
 
-    await CharacterService.getCharacter(char.tgId);
+    await CharacterService.getCharacter(char.owner);
     return char;
   }
 

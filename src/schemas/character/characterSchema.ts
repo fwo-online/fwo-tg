@@ -14,6 +14,7 @@ export const characterSchema = z.object({
   inventory: z.array(inventorySchema),
   magics: z.record(z.number()),
   skills: z.record(z.number()),
+  clan: z.any(),
 });
 
 export type Character = z.infer<typeof characterSchema>

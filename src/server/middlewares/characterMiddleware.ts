@@ -15,7 +15,7 @@ export const characterMiddleware = createMiddleware<{
       throw new HTTPException(401);
     }
     try {
-      const character = await CharacterService.getCharacter(user.id);
+      const character = await CharacterService.getCharacter(user.id.toString());
       c.set('character', character);
     } catch {
       throw new HTTPException(401);

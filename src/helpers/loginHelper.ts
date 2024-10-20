@@ -34,7 +34,7 @@ export async function regChar({
   return createCharacter({
     prof,
     sex,
-    tgId,
+    owner: tgId.toString(),
     nickname,
     harks: profsData[prof].hark,
     magics: profsData[prof].mag,
@@ -55,7 +55,7 @@ export async function remove(tgId?: number) {
 
 export async function getChar(tgId: number) {
   try {
-    return await CharacterService.getCharacter(tgId);
+    return await CharacterService.getCharacter(tgId.toString());
   } catch (e) {
     if (e.message !== 'Персонаж не найден') {
       console.log(e);

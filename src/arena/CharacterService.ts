@@ -539,6 +539,7 @@ class CharacterService {
 
   toObject(): Character {
     return {
+      owner: this.owner,
       name: this.nickname,
       class: this.prof as CharacterClass,
       attributes: this.harks,

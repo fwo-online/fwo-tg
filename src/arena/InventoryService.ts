@@ -13,11 +13,11 @@ import type { Char } from '@/models/character';
 import type { InventoryDocument } from '@/models/inventory';
 import type { Item, ParseAttrItem } from '@/models/item';
 import { ItemModel } from '@/models/item';
+import type { Inventory } from '@/schemas/inventory';
 import { assignWithSum } from '@/utils/assignWithSum';
-import { Inventory } from '@/schemas/inventory';
 
 class InventoryService {
-  harksFromItems: Partial<ParseAttrItem>;
+  harksFromItems!: Partial<ParseAttrItem>;
 
   constructor(private char: Char, public inventory: InventoryDocument[]) {
     this.updateHarkFromItems();

@@ -14,8 +14,8 @@ export interface Clan {
   gold: number;
   lvl: number;
   owner: Char;
-  players: Types.DocumentArray<Char>;
-  requests: Types.DocumentArray<Char>;
+  players: Char[];
+  requests: Char[];
 }
 
 export type ClanModel = Model<Clan> & typeof Clan
