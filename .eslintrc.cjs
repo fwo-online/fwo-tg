@@ -37,6 +37,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: "^_"}],
     '@typescript-eslint/no-floating-promises': ['error', { ignoreVoid: true }],
     '@typescript-eslint/no-use-before-define': ['error', { functions: false }],
+    '@typescript-eslint/no-unsafe-declaration-merging': 0,
     '@typescript-eslint/ban-ts-comment': ['error', {
       'ts-expect-error': 'allow-with-description',
       'ts-ignore': true,
