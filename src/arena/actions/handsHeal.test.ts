@@ -1,3 +1,6 @@
+import {
+  describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
+} from 'bun:test';
 import casual from 'casual';
 import GameService from '@/arena/GameService';
 import { type Char } from '@/models/character';
@@ -25,11 +28,11 @@ describe('handsHeal', () => {
   });
 
   beforeEach(() => {
-    jest.spyOn(global.Math, 'random').mockReturnValue(0.3);
+    spyOn(global.Math, 'random').mockReturnValue(0.3);
   });
 
   afterEach(() => {
-    jest.spyOn(global.Math, 'random').mockRestore();
+    spyOn(global.Math, 'random').mockRestore();
   });
 
   it('should heal', () => {

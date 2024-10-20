@@ -5,7 +5,6 @@
 /**
  * @typedef {Object} weaponType
  * @property {string} name
- * @property {Boolean} dodge
  * @property {function} action
  */
 /** @type {Object.<string, weaponType>} */

@@ -1,10 +1,12 @@
+import {
+  describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
+} from 'bun:test';
 import casual from 'casual';
 import CharacterService from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import attack from '../actions/attack';
 import eclipse from './eclipse';
-
 // npm t src/arena/magics/eclipse.test.ts
 
 describe('eclipse', () => {
@@ -26,11 +28,11 @@ describe('eclipse', () => {
   });
 
   beforeEach(() => {
-    jest.spyOn(global.Math, 'random').mockReturnValue(0.1);
+    spyOn(global.Math, 'random').mockReturnValue(0.1);
   });
 
   afterEach(() => {
-    jest.spyOn(global.Math, 'random').mockRestore();
+    spyOn(global.Math, 'random').mockRestore();
   });
 
   it('initiator should be blinded by eclipse', async () => {

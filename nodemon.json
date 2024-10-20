@@ -1,9 +1,0 @@
-{
-  "watch": ["src"],
-  "ext": "*",
-  "ignore": ["src/**/*.test.ts", "src/**/*.test.js"],
-  "exec": "ts-node -r dotenv/config ./src/fwo.ts dotenv_config_path=.tg-token",
-  "env": {
-    "NODE_ENV": "development"
-  }
-}

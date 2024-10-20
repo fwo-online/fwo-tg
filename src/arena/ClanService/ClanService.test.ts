@@ -1,12 +1,12 @@
+import {
+  describe, beforeEach, it, expect,
+} from 'bun:test';
 import arena from '@/arena';
 import type { Char } from '@/models/character';
 import type { Clan } from '@/models/clan';
 import TestUtils from '@/utils/testUtils';
 import { ClanService } from './ClanService';
-
 // npm t src/arena/ClanService/ClanService.test.ts
-
-jest.retryTimes(3);
 
 describe('ClanService', () => {
   let char: Char;

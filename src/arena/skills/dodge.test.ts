@@ -1,3 +1,8 @@
+import {
+  describe, beforeEach, it, expect, beforeAll,
+  spyOn,
+  afterEach,
+} from 'bun:test';
 import casual from 'casual';
 import CharacterService from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
@@ -25,11 +30,11 @@ describe('dodge', () => {
   });
 
   beforeEach(() => {
-    jest.spyOn(global.Math, 'random').mockReturnValue(0.15);
+    spyOn(global.Math, 'random').mockReturnValue(0.15);
   });
 
   afterEach(() => {
-    jest.spyOn(global.Math, 'random').mockRestore();
+    spyOn(global.Math, 'random').mockRestore();
   });
 
   it('target should dodge attack if has initiator more dex', async () => {

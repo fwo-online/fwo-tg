@@ -1,3 +1,6 @@
+import {
+  describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
+} from 'bun:test';
 import casual from 'casual';
 import { protect } from '@/arena/actions';
 import attack from '@/arena/actions/attack';
@@ -35,11 +38,11 @@ describe('cutWeapon', () => {
   });
 
   beforeEach(() => {
-    jest.spyOn(global.Math, 'random').mockReturnValue(0.25);
+    spyOn(global.Math, 'random').mockReturnValue(0.25);
   });
 
   afterEach(() => {
-    jest.spyOn(global.Math, 'random').mockRestore();
+    spyOn(global.Math, 'random').mockRestore();
   });
 
   it('should hit through protect', () => {
@@ -49,10 +52,10 @@ describe('cutWeapon', () => {
 
     protect.cast(game.players.players[1], game.players.players[1], game);
 
-    jest.spyOn(global.Math, 'random').mockReturnValue(0.05);
+    spyOn(global.Math, 'random').mockReturnValue(0.05);
     attack.cast(game.players.players[0], game.players.players[1], game);
 
-    jest.spyOn(global.Math, 'random').mockReturnValue(0.04);
+    spyOn(global.Math, 'random').mockReturnValue(0.04);
     attack.cast(game.players.players[0], game.players.players[1], game);
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();

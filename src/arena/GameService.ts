@@ -490,7 +490,7 @@ _Враги:_\`\`\``,
       enemiesWithClan.length && enemiesWithClan.join('\n\n'),
       enemiesWithoutClan.length && `${enemiesWithoutClan.join('\n')}`,
       '```'].filter((x) => x).join('\n\n'),
-      player.tgId,
+      player.owner,
     );
   }
 }

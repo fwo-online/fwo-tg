@@ -32,7 +32,7 @@ export interface Magic extends MagicArgs, CustomMessage {
 }
 
 export abstract class Magic extends AffectableAction {
-  name: keyof typeof magics;
+  declare name: keyof typeof magics;
 
   actionType: ActionType = 'magic';
 

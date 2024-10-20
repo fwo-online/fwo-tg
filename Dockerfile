@@ -1,9 +1,9 @@
-FROM node:16-slim
+FROM oven/bun:1
 
 # Create app directory
 
 WORKDIR /fwo
 COPY . ./
-RUN npm install
+RUN bun install
 
-CMD ["npm", "run", "start"]
+CMD ["bun", "run", "start:server"]

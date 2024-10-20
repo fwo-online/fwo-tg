@@ -1,6 +1,7 @@
 import type { UpdateQuery } from 'mongoose';
 import type { Char } from '@/models/character';
-import { Clan, ClanModel } from '@/models/clan';
+import type { Clan } from '@/models/clan';
+import { ClanModel } from '@/models/clan';
 
 export async function getClans(): Promise<Clan[]> {
   const clans = await ClanModel

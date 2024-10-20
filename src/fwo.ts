@@ -1,6 +1,7 @@
 import * as http from 'http';
+import type { Context, Scenes } from 'telegraf';
 import {
-  Telegraf, session, Context, Scenes,
+  Telegraf, session,
 } from 'telegraf';
 import arena from './arena';
 import * as actions from './arena/actions';
@@ -12,6 +13,7 @@ import * as middlewares from './middlewares';
 import { connect } from './models';
 import { ItemModel } from './models/item';
 import { stage } from './scenes/stage';
+import { server } from '@/server';
 import { registerAffects } from './utils/registerAffects';
 
 interface BotSession extends Scenes.SceneSession {
@@ -22,11 +24,12 @@ export interface BotContext extends Context {
   scene: Scenes.SceneContextScene<BotContext>
 }
 
-export const bot = new Telegraf<BotContext>(process.env.BOT_TOKEN ?? '');
+export const bot = new Telegraf<BotContext>(process.env.BOT_TOKEN ?? '', { telegram: { testEnv: process.env.NODE_ENV === 'development' } });
 // DB connection
 void connect(async () => {
   console.log('db online');
   await ItemModel.load();
+
   await bot.launch();
 });
 
@@ -57,13 +60,4 @@ bot.command('inventory', (ctx) => ctx.scene.enter('inventory'));
 // bot.startWebhook('/test', null, 3000);
 arena.bot = bot;
 
-// Heroku health check hack
-// Create a local server to receive data from
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify({
-    data: 'Hello FightWorld!',
-  }));
-});
-const PORT = process.env.PORT || 8080;
-server.listen(PORT);
+export default server;

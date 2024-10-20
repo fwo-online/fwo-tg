@@ -46,7 +46,7 @@ export async function broadcast(data: string, id: number | string = chatId): Pro
  * @param data - текст отправляемого сообщения
  * @param id - id чата
  */
-export async function updateStatus(data: string, id: number): Promise<void> {
+export async function updateStatus(data: string, id: number | string): Promise<void> {
   try {
     await arena.bot.telegram.editMessageText(
       id,
@@ -65,7 +65,7 @@ export async function updateStatus(data: string, id: number): Promise<void> {
  * @param data - текст отправляемого сообщения
  * @param id - id чата
  */
-export async function sendStatus(data: string, id: number): Promise<void> {
+export async function sendStatus(data: string, id: number | string): Promise<void> {
   try {
     if (!statusMessages[id]) {
       const message = await arena.bot.telegram.sendMessage(id, data, { parse_mode: 'Markdown' });
@@ -97,7 +97,7 @@ export function getOrderButtons(player: Player): ReturnType<BattleKeyboard['rend
 export async function sendOrderButtons(player: Player): Promise<void> {
   try {
     const message = await arena.bot.telegram.sendMessage(
-      player.tgId,
+      player.owner,
       'Выбери действие',
       Markup.inlineKeyboard(getOrderButtons(player)),
     );
@@ -114,8 +114,8 @@ export async function sendOrderButtons(player: Player): Promise<void> {
 export async function removeMessages(player: Player): Promise<void> {
   try {
     await arena.bot.telegram.deleteMessage(
-      player.tgId,
-      messages[player.tgId],
+      player.owner,
+      messages[player.owner],
     );
   } catch (e) {
     console.log(`error: removeMessages: ${e.message} for ${player.id}`);
@@ -129,10 +129,10 @@ export async function removeMessages(player: Player): Promise<void> {
 export async function removeStatusMessages(player: Player): Promise<void> {
   try {
     await arena.bot.telegram.deleteMessage(
-      player.tgId,
-      statusMessages[player.tgId],
+      player.owner,
+      statusMessages[player.owner],
     );
-    delete statusMessages[player.tgId];
+    delete statusMessages[player.owner];
   } catch (e) {
     console.log(`error: removeStatusMessages: ${e.message} for ${player.id}`);
   }
@@ -160,7 +160,7 @@ export async function sendExitButton(player: Player): Promise<void> {
     }
 
     const message = await arena.bot.telegram.sendMessage(
-      player.tgId,
+      player.owner,
       `Награда за бой:
   📖 ${expMessage} (${character.exp}/${character.nextLvlExp})
   💰 ${gold} (${character.gold})
@@ -191,7 +191,7 @@ export async function sendRunButton(player: Player): Promise<void> {
     await removeStatusMessages(player);
 
     await arena.bot.telegram.sendMessage(
-      player.tgId,
+      player.owner,
       'Ты бежал из боя',
       Markup.inlineKeyboard([Markup.button.callback('Выход в лобби', 'exit')]),
     );

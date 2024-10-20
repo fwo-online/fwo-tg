@@ -1,14 +1,14 @@
 import mongoose, { Schema, Model, Types } from 'mongoose';
 import type { Profs, Harks } from '../data';
 import type { Clan } from './clan';
-import type { Inventory } from './inventory';
+import type { InventoryDocument } from './inventory';
 // import type { Hark } from '../data/harks';
 
 export interface Char {
   _id: Types.ObjectId
   id: string
 
-  tgId: number;
+  owner: string;
   nickname: string;
   birthday: Date;
   prof: Profs.Prof;
@@ -22,11 +22,11 @@ export interface Char {
   },
   gold: number;
   free: number;
-  weapon?: Inventory;
+  weapon?: InventoryDocument;
   lvl: number;
   sex: 'm' | 'f';
   lastFight: Date | null;
-  inventory?: Inventory[];
+  inventory?: InventoryDocument[];
   psr: number;
   magics?: Record<string, number>
   skills?: Record<string, number>
@@ -57,8 +57,8 @@ export class Char {
 }
 
 const character = new Schema<Char, CharModel>({
-  tgId: {
-    type: Number, required: true,
+  owner: {
+    type: String, required: true,
   },
   nickname: {
     type: String, required: true,

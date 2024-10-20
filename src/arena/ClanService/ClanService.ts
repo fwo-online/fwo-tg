@@ -147,7 +147,7 @@ export class ClanService {
       throw new Error(`Вступить в новый клан ты сможешь через ${remainingTime(penaltyForLeave)} мин.`);
     }
 
-    if (clan.requests.some((p) => p.tgId === char.tgId)) {
+    if (clan.requests.some((p) => p.owner === char.owner)) {
       await this.removeRequest(clan.id, char.id);
       return 'Заявка на вступление отменена';
     }

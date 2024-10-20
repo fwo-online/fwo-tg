@@ -1,3 +1,6 @@
+import {
+  describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
+} from 'bun:test';
 import casual from 'casual';
 import attack from '@/arena/actions/attack';
 import GameService from '@/arena/GameService';
@@ -33,11 +36,11 @@ describe('thrustWeapon', () => {
   });
 
   beforeEach(() => {
-    jest.spyOn(global.Math, 'random').mockReturnValue(0.25);
+    spyOn(global.Math, 'random').mockReturnValue(0.25);
   });
 
   afterEach(() => {
-    jest.spyOn(global.Math, 'random').mockRestore();
+    spyOn(global.Math, 'random').mockRestore();
   });
 
   it('should hit through dodge', () => {

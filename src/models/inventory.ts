@@ -16,7 +16,7 @@ import { Item } from "./item";
 function getDefaultItem(prof: Profs.Prof) {
   return config.defaultItems[prof] || console.log('no prof in getDefaultItem');
 }
-export interface Inventory {
+export interface InventoryDocument {
   _id: Types.ObjectId
   id: string
 
@@ -27,9 +27,9 @@ export interface Inventory {
   owner: Char;
 }
 
-export type InventoryModel = Model<Inventory> & typeof Inventory;
+export type InventoryModel = Model<InventoryDocument> & typeof InventoryDocument;
 
-export class Inventory {
+export class InventoryDocument {
   /**
    * Возвращает массив одетых вещей в инвентаре
    * @param charId
@@ -37,7 +37,7 @@ export class Inventory {
   static async getPutOned(
     this: InventoryModel,
     charId: string,
-  ): Promise<Inventory[]> {
+  ): Promise<InventoryDocument[]> {
     const invObj = await this.find({ owner: charId });
     return _.filter(invObj, { putOn: true });
   }
@@ -54,7 +54,7 @@ export class Inventory {
     this: InventoryModel,
     charId: string,
     itemCode: string,
-  ): Promise<Inventory> {
+  ): Promise<InventoryDocument> {
     const item = await this.create({
       owner: charId, code: itemCode, wear: arena.items[itemCode].wear, putOn: false, durable: 10,
     });
@@ -72,7 +72,7 @@ export class Inventory {
     this: InventoryModel,
     charId: string,
     itemId: string,
-  ): Promise<Inventory[] | void> {
+  ): Promise<InventoryDocument[] | void> {
     const char = await CharModel.findById(charId);
     _.pull(char?.inventory as unknown as string[], itemId);
     await char?.save();
@@ -92,7 +92,7 @@ export class Inventory {
   static async firstCreate(
     this: InventoryModel,
     charObj: Char,
-  ): Promise<Inventory | void> {
+  ): Promise<InventoryDocument | void> {
     const defItemCode = getDefaultItem(charObj.prof);
 
     if (!defItemCode) return;
@@ -154,7 +154,7 @@ export class Inventory {
     this: InventoryModel,
     itemId: string,
     charId: string,
-  ): Promise<Inventory | null> {
+  ): Promise<InventoryDocument | null> {
     return this.findOne({
       owner: charId,
     }, {
@@ -170,7 +170,7 @@ export class Inventory {
     this: InventoryModel,
     itemId: string,
     charId: string,
-  ): Query<unknown, Inventory> {
+  ): Query<unknown, InventoryDocument> {
     return this.deleteOne({
       owner: charId,
       _id: itemId,
@@ -185,13 +185,13 @@ export class Inventory {
   static async getItems(
     this: InventoryModel,
     charId: string,
-  ): Promise<Inventory[]> {
+  ): Promise<InventoryDocument[]> {
     return this.find({ owner: charId });
   }
 
   static getCollection(
     this: InventoryModel,
-    charInventory: Inventory[],
+    charInventory: InventoryDocument[],
   ): Collections.Collection | undefined {
     const items: Item[] = charInventory.map(({ code }) => arena.items[code]);
     const playerCollection = _.groupBy(items, (item) => item.wcomb[0]);
@@ -238,7 +238,7 @@ export class Inventory {
  * @module Model/Inventory
  */
 
-const inventory = new Schema<Inventory, InventoryModel>({
+const inventory = new Schema<InventoryDocument, InventoryModel>({
   code: { type: String, required: true },
   wear: { type: String, required: true },
   putOn: { type: Boolean, default: false },
@@ -251,6 +251,6 @@ const inventory = new Schema<Inventory, InventoryModel>({
   },
 });
 
-inventory.loadClass(Inventory);
+inventory.loadClass(InventoryDocument);
 
-export const InventoryModel = mongoose.model<Inventory, InventoryModel>('Inventory', inventory);
+export const InventoryModel = mongoose.model<InventoryDocument, InventoryModel>('Inventory', inventory);
