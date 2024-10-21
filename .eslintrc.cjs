@@ -12,7 +12,7 @@ module.exports = {
   ],
   parserOptions: {
     parser: '@typescript-eslint/parser',
-    project: ['./tsconfig.json']
+    projectService: true
   },
   plugins: ['@typescript-eslint', 'import'],
   rules: {
@@ -66,11 +66,25 @@ module.exports = {
   },
   settings: {
     'import/parsers': {
-      '@typescript-eslint/parser': ['.ts', '.js'],
+      '@typescript-eslint/parser': ['.ts', '.js', '.tsx'],
     },
     'import/resolver': {
-      typescript: {},
+      typescript: {
+        project: ['tsconfig.json', 'src/app/tsconfig.json']
+      },
     },
   },
+  overrides: [
+    {
+      "files": ["app/*"],
+      plugins: ["react"]
+    },
+    {
+      "files": ["vite.config.ts"],
+      "rules": {
+        "import/no-extraneous-dependencies": 0
+      },
+    }
+  ],
   ignorePatterns: ['.eslintrc.cjs']
 };

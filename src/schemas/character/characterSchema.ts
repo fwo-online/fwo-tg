@@ -1,7 +1,7 @@
 import { z } from 'zod';
+import { inventorySchema } from '@/schemas/inventory';
 import { characterAttributesSchema } from './characterAttributesSchema';
 import { characterClassSchema } from './characterClassSchema';
-import { inventorySchema } from '@/schemas/inventory';
 
 export const characterSchema = z.object({
   name: z.string().min(3),
@@ -9,6 +9,7 @@ export const characterSchema = z.object({
   gold: z.number().positive().int(),
   bonus: z.number().positive().int(),
   lvl: z.number().positive().int(),
+  exp: z.number().int(),
   class: characterClassSchema,
   attributes: characterAttributesSchema,
   inventory: z.array(inventorySchema),

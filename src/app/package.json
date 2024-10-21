@@ -1,13 +1,12 @@
 {
-  "name": "@fwo/core",
+  "name": "@fwo/app",
   "version": "0.3.1",
   "description": "FightWorld Telegram",
   "main": "index.js",
   "type": "module",
-  "workspaces": ["src/app"],
+  "workspaces": ["src/*"],
   "scripts": {
-    "start": "NODE_ENV=production bun src/fwo.ts",
-    "dev": "bun src/cli/dev.ts",
+    "dev": "bunx --bun vite",
     "test": "bun src/cli/test.ts -i",
     "reset-harks": "bun src/cli/resetHarks.ts",
     "lint": "eslint --fix src/ --ext .js,.ts",
@@ -30,24 +29,34 @@
   },
   "homepage": "https://github.com/catHD/fwo-tg#readme",
   "dependencies": {
-    "@hono/zod-validator": "^0.4.1",
-    "hono": "^4.6.5",
+    "@telegram-apps/init-data-node": "^1.1.1",
+    "@telegram-apps/react-router-integration": "^1.0.1",
+    "@telegram-apps/sdk-react": "^2.0.8",
+    "@telegram-apps/telegram-ui": "^2.1.8",
+    "@tonconnect/ui-react": "^2.0.9",
     "lodash": "^4.17.21",
-    "mongoose": "^8.7.1",
-    "telegraf": "^4.16.3",
+    "react": "^19.0.0-rc-b8ae38f8-20241018",
+    "react-dom": "^19.0.0-rc-b8ae38f8-20241018",
+    "react-router-dom": "^6.27.0",
     "typescript": "^5.6.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/bun": "^1.1.11",
     "@types/lodash": "^4.17.10",
-    "@types/node": "^22.7.6",
+    "@types/react": "npm:types-react@rc",
+    "@types/react-dom": "npm:types-react-dom@rc",
     "@typescript-eslint/eslint-plugin": "^8.9.0",
     "@typescript-eslint/parser": "^8.9.0",
-    "casual": "^1.6.2",
+    "@vitejs/plugin-react-swc": "^3.7.1",
     "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-import-resolver-typescript": "^3.6.3",
-    "eslint-plugin-import": "^2.31.0"
+    "eslint-plugin-import": "^2.31.0",
+    "vite": "^5.4.9",
+    "vite-tsconfig-paths": "^5.0.1"
+  },
+  "overrides": {
+    "@types/react": "npm:types-react@rc",
+    "@types/react-dom": "npm:types-react-dom@rc"
   }
 }
