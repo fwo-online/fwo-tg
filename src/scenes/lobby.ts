@@ -7,13 +7,14 @@ export const lobby = new Scenes.BaseScene<BotContext>('lobby');
 
 lobby.enter(async (ctx) => {
   const {
-    nickname, prof, lvl, exp, nextLvlExp,
+    nickname, prof, lvl, exp, nextLvlExp, gold, bonus,
   } = ctx.session.character;
 
   await ctx.sendSticker(MARKET_STICKER_ID);
   await ctx.replyWithMarkdown(
     `*Лобби*
-Так-так, значит ты *${nickname}* ${Profs.profsData[prof].icon}${lvl} (📖${exp}/${nextLvlExp})`,
+Так-так, значит ты *${nickname}* ${Profs.profsData[prof].icon}${lvl}
+Exp: (📖${exp}/${nextLvlExp}) Gold: 💰 ${gold} Bonus: ${bonus}`,
     Markup.keyboard([
       ['⚔ В бой'],
       ['🏰 Клан'],
