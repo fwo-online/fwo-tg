@@ -46,7 +46,7 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr.io/cathd/${{ secrets.IMAGE_NAME }}:latest
+            ghcr.io/cathd/${{ secrets.IMAGE_NAME }}:dev
   build-prod-container:
     environment: prod
     needs: build
