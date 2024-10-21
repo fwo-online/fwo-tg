@@ -6,9 +6,9 @@ import config from '@/arena/config';
 import InventoryService from '@/arena/InventoryService';
 import type { HarksLvl } from '@/data/harks';
 import type { Char } from '@/models/character';
+import type { Character, CharacterClass } from '@/schemas/character';
 import { assignWithSum } from '@/utils/assignWithSum';
 import { floatNumber } from '@/utils/floatNumber';
-import type { Character, CharacterClass } from '@/schemas/character';
 
 /**
  * Конструктор персонажа
@@ -550,6 +550,7 @@ class CharacterService {
       bonus: this.charObj.bonus,
       gold: this.gold,
       lvl: this.lvl,
+      exp: this.exp,
     };
   }
 }

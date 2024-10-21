@@ -1,9 +1,10 @@
 {
-  "name": "fwo-tg",
+  "name": "@fwo/core",
   "version": "0.3.1",
   "description": "FightWorld Telegram",
   "main": "index.js",
   "type": "module",
+  "workspaces": ["src/app"],
   "scripts": {
     "start": "NODE_ENV=production bun src/fwo.ts",
     "dev": "bun src/cli/dev.ts",
@@ -31,20 +32,20 @@
   "homepage": "https://github.com/catHD/fwo-tg#readme",
   "dependencies": {
     "@hono/zod-validator": "^0.4.1",
-    "@telegram-apps/init-data-node": "^1.1.1",
-    "@types/bun": "^1.1.11",
-    "@types/node": "^22.7.5",
-    "bun": "^1.1.30",
     "hono": "^4.6.5",
     "lodash": "^4.17.21",
     "mongoose": "^8.7.1",
+    "react": "^19.0.0-rc-1631855f-20241023",
+    "react-dom": "^19.0.0-rc-1631855f-20241023",
     "telegraf": "^4.16.3",
     "typescript": "^5.6.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@types/bun": "^1.1.11",
     "@types/lodash": "^4.17.10",
+    "@types/node": "^22.7.6",
     "casual": "^1.6.2"
   }
 }
