@@ -6,8 +6,8 @@ import config from '@/arena/config';
 import { InventoryService } from '@/arena/InventoryService';
 import type { HarksLvl } from '@/data/harks';
 import type { Char } from '@/models/character';
-import { assignWithSum } from '@/utils/assignWithSum';
 import type { Character, CharacterClass } from '@/schemas/character';
+import { assignWithSum } from '@/utils/assignWithSum';
 import { calculateDynamicAttributes } from './utils/calculate-dynamic-attributes';
 
 /**
@@ -442,6 +442,7 @@ export class CharacterService {
       bonus: this.charObj.bonus,
       gold: this.gold,
       lvl: this.lvl,
+      exp: this.exp,
     };
   }
 }
