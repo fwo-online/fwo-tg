@@ -31,7 +31,7 @@ class Eclipse extends CommonMagic implements Affect {
     game.flags.global.isEclipsed = true;
   }
 
-  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }) => {
+  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }): undefined => {
     if (game.flags.global.isEclipsed) {
       throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
     }

@@ -8,7 +8,7 @@ import type { HarksLvl } from '@/data/harks';
 import type { Char } from '@/models/character';
 import { assignWithSum } from '@/utils/assignWithSum';
 import { floatNumber } from '@/utils/floatNumber';
-import { Character, CharacterClass } from '@/schemas/character';
+import type { Character, CharacterClass } from '@/schemas/character';
 
 /**
  * Конструктор персонажа

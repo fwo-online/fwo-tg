@@ -1,7 +1,7 @@
 import type { BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
 
-type AffectResult = SuccessArgs | SuccessArgs[] | void;
+type AffectResult = SuccessArgs | SuccessArgs[] | undefined;
 
 export type AffectFn = (context: BaseActionContext) => AffectResult
 

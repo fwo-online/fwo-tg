@@ -2,7 +2,7 @@ import { times } from 'lodash';
 import { AoeDmgMagic } from '../Constuructors/AoeDmgMagicConstructor';
 import type GameService from '../GameService';
 import { dice } from '../MiscService';
-import { type Player } from '../PlayersService';
+import type { Player } from '../PlayersService';
 
 class FireBall extends AoeDmgMagic {
   bounces = 4;

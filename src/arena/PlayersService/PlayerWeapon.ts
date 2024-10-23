@@ -10,7 +10,7 @@ export class PlayerWeapon {
 
   get item() {
     if (!this.inventory) {
-      return;
+      return undefined;
     }
 
     return arena.items[this.inventory.code];

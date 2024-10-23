@@ -1,6 +1,6 @@
 import { Scenes, Markup } from 'telegraf';
 import ValidationError from '../arena/errors/ValidationError';
-import SkillService, { SkillsNames } from '../arena/SkillService';
+import SkillService, { type SkillsNames } from '../arena/SkillService';
 import type { BotContext } from '../fwo';
 
 export const skillsScene = new Scenes.BaseScene<BotContext>('skills');

@@ -40,7 +40,7 @@ class Disarm extends Skill implements Affect {
     }
   }
 
-  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }) => {
+  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }): undefined => {
     if (initiator.flags.isDisarmed) {
       throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
     }

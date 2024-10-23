@@ -1,4 +1,4 @@
-import { InventoryDocument, InventoryModel } from "@/models/inventory";
+import { type InventoryDocument, InventoryModel } from "@/models/inventory";
 
 function dbErr(e) {
   throw new Error(`Fail in inventory: ${e}`);

@@ -33,7 +33,7 @@ export default class StatsService {
   }
 
   private setDefaultVal(atr: keyof Stats) {
-    if (typeof this.inRound[atr] === undefined && !isMinMax(atr)) {
+    if (typeof this.inRound[atr] === 'undefined' && !isMinMax(atr)) {
       console.error('mode atr error', atr);
       this.inRound[atr] = 0;
     }

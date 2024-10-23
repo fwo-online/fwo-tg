@@ -1,10 +1,10 @@
 import _ from "lodash";
-import mongoose, { Schema, Model, Query, Types } from "mongoose";
+import mongoose, { Schema, type Model, type Query, type Types } from "mongoose";
 import arena from "../arena";
 import config from "../arena/config";
-import { Collections, Profs } from "../data";
-import { CharModel, Char } from "./character";
-import { Item } from "./item";
+import { Collections, type Profs } from "../data";
+import { CharModel, type Char } from "./character";
+import type { Item } from "./item";
 
 /**
  * getDefaultItem
@@ -72,7 +72,7 @@ export class InventoryDocument {
     this: InventoryModel,
     charId: string,
     itemId: string,
-  ): Promise<InventoryDocument[] | void> {
+  ): Promise<InventoryDocument[] | undefined> {
     const char = await CharModel.findById(charId);
     _.pull(char?.inventory as unknown as string[], itemId);
     await char?.save();
@@ -92,7 +92,7 @@ export class InventoryDocument {
   static async firstCreate(
     this: InventoryModel,
     charObj: Char,
-  ): Promise<InventoryDocument | void> {
+  ): Promise<InventoryDocument | undefined> {
     const defItemCode = getDefaultItem(charObj.prof);
 
     if (!defItemCode) return;

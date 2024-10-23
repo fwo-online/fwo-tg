@@ -7,12 +7,12 @@ const main = async () => {
   await connect();
 
   await CharModel.bulkWrite(
-    times(10).map((lvl) => profsList.map((prof) => ({
+    times(10).flatMap((lvl) => profsList.map((prof) => ({
       updateMany: {
         filter: { lvl, prof },
         update: { $set: { free: lvl * 10, harks: profsData[prof].hark } },
       },
-    }))).flat(),
+    }))),
   );
 
   process.exit(0);

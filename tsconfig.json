@@ -77,6 +77,8 @@
 
     /* Advanced Options */
     // "forceConsistentCasingInFileNames": true,  /* Disallow inconsistently-cased references to the same file. */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   },
   "include": ["src"],
 }

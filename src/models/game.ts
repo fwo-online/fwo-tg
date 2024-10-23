@@ -1,4 +1,4 @@
-import mongoose, { Schema, Model, Types } from 'mongoose';
+import mongoose, { Schema, type Model, type Types } from 'mongoose';
 
 export interface Game {
   _id: Types.ObjectId

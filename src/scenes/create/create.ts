@@ -21,18 +21,20 @@ async function validNickname(nickname: string) {
   const trimNickname = nickname.trim();
   if (trimNickname.length > 16) {
     throw new Error('Слишком длинный. Попробуй короче');
-  } else if (trimNickname.length < 3) {
+  }
+  if (trimNickname.length < 3) {
     throw new Error('Напрягись, ещё пару символов!');
-  } else if (/[^a-zA-Zа-яА-ЯёЁ0-9-]/.test(trimNickname)) {
+  }
+  if (/[^a-zA-Zа-яА-ЯёЁ0-9-]/.test(trimNickname)) {
     throw new Error('Можно использовать только буквы, числа и "-"');
   }
 
   const resp = await loginHelper.checkNick(trimNickname);
   if (resp) {
     throw new Error('Кто-то придумал это до тебя!');
-  } else {
-    return trimNickname;
   }
+
+  return trimNickname;
 }
 
 export const create = new Scenes.BaseScene<CreateBotContext>('create');

@@ -43,7 +43,7 @@ class Dodge extends Skill implements Affect {
     initiator.flags.isDodging = this.effect[initiatorSkillLvl - 1] * initiator.stats.val('dex');
   }
 
-  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }) => {
+  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }): undefined => {
     const isDodgeable = initiator.weapon.isOfType(dodgeableWeaponTypes);
 
     if (target.flags.isDodging && isDodgeable) {

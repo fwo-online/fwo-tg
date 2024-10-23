@@ -1,4 +1,4 @@
-import RoundEmitter from 'events';
+import RoundEmitter from 'node:events';
 import config from '@/arena/config';
 
 export enum RoundStatus {

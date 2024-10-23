@@ -58,7 +58,7 @@ function runStage(ar: Stages, gameObj: Game) {
 /**
  * @param gameObj Объект игры
 */
-export function engine(gameObj: Game): Game | void {
+export function engine(gameObj: Game): Game | undefined {
   try {
     return runStage(STAGES, gameObj);
   } catch (e) {

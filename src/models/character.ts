@@ -1,4 +1,4 @@
-import mongoose, { Schema, Model, Types } from 'mongoose';
+import mongoose, { Schema, type Model, type Types } from 'mongoose';
 import type { Profs, Harks } from '../data';
 import type { Clan } from './clan';
 import type { InventoryDocument } from './inventory';

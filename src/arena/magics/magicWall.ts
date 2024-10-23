@@ -57,7 +57,7 @@ class MagicWallBuff extends LongMagic {
     target.flags.isBehindWall.push({ initiator: initiator.id, val: this.status.effect });
   }
 
-  preAffect: Affect['preAffect'] = (context) => {
+  preAffect: Affect['preAffect'] = (context): undefined => {
     const { initiator, target, game } = context.params;
 
     if (initiator.flags.isBehindWall.length) {
