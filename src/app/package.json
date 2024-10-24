@@ -34,8 +34,8 @@
     "@telegram-apps/telegram-ui": "^2.1.8",
     "@tonconnect/ui-react": "^2.0.9",
     "lodash": "^4.17.21",
-    "react": "^19.0.0-rc-b8ae38f8-20241018",
-    "react-dom": "^19.0.0-rc-b8ae38f8-20241018",
+    "react": "^19.0.0-rc-1631855f-20241023",
+    "react-dom": "^19.0.0-rc-1631855f-20241023",
     "react-router-dom": "^6.27.0",
     "typescript": "^5.6.3",
     "zod": "^3.23.8"
