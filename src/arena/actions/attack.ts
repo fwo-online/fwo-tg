@@ -31,7 +31,7 @@ class Attack extends PhysConstructor implements Affect {
     target.stats.down('hp', this.status.effect);
   }
 
-  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }) => {
+  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }): undefined => {
     if (target.flags.isHited) {
       throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
     }

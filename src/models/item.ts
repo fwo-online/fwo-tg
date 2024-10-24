@@ -1,8 +1,8 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import _ from 'lodash';
-import mongoose, { Schema, Model, Types } from 'mongoose';
+import mongoose, { Schema, type Model, type Types } from 'mongoose';
 import arena from '../arena';
-import config, { ParseAttr } from '../arena/config';
+import config, { type ParseAttr } from '../arena/config';
 import type { Harks } from '../data';
 
 const parseAttr = (p: string) => {

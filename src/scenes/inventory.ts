@@ -2,7 +2,7 @@ import { Scenes, Markup } from "telegraf";
 import arena from "../arena";
 import ItemService from "../arena/ItemService";
 import type { BotContext } from "../fwo";
-import { InventoryDocument, InventoryModel } from "@/models/inventory";
+import { type InventoryDocument, InventoryModel } from "@/models/inventory";
 
 export const inventoryScene = new Scenes.BaseScene<BotContext>("inventory");
 

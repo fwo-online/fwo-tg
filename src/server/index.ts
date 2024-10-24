@@ -1,6 +1,4 @@
 import { Hono } from 'hono';
-import { hc } from 'hono/client';
-import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { character } from './character';
 import { inventory } from './inventory';

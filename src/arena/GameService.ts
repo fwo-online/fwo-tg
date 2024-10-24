@@ -139,7 +139,8 @@ export default class GameService {
   preKick(id: string, reason: KickReason): void {
     const player = this.players.getById(id);
     if (!player) {
-      return console.log('GC debug:: preKick', id, 'no player');
+      console.log('GC debug:: preKick', id, 'no player');
+      return;
     }
     player.preKick(reason);
   }
@@ -408,29 +409,13 @@ export default class GameService {
   * Очистка массива длительных магий от умерших
   */
   cleanLongMagics(): void {
-    /**
-    * Очищаем массив длительных магий для мертвецов
-{
-    frostTouch: [
-    {
-      initiator: '5ea330784e5f0354f04edcec',
-      target: '5e05ee58bdf83c6a5ff3f8dd',
-      duration: 0,
-      round: 1,
-      proc: 1
-    }
-  ]
-}
-    */
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const _this = this;
     _.forEach(this.longActions, (longMagicType, k) => {
-      _this.longActions[k] = _.filter(longMagicType, (act) => {
-        const p = _this.players.getById(act.target);
+      this.longActions[k] = _.filter(longMagicType, (act) => {
+        const p = this.players.getById(act.target);
         return p?.alive;
       });
     });
-    this.longActions = _this.longActions;
+    this.longActions = this.longActions;
   }
 
   /**

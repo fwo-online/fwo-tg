@@ -1,4 +1,4 @@
-import { Player } from '@/arena/PlayersService';
+import type { Player } from '@/arena/PlayersService';
 import type { FailArgs, SuccessArgs } from '../types';
 
 type Result = SuccessArgs | FailArgs;

@@ -58,7 +58,7 @@ export abstract class AffectableAction extends BaseAction {
     return false;
   }
 
-  private addAffects(affects: void | SuccessArgs | SuccessArgs[]) {
+  private addAffects(affects: undefined | SuccessArgs | SuccessArgs[]) {
     if (!affects) {
       return;
     }

@@ -29,7 +29,7 @@ class Glitch extends CommonMagic implements Affect {
     target.flags.isGlitched = true;
   }
 
-  preAffect: Affect['preAffect'] = ({ params }) => {
+  preAffect: Affect['preAffect'] = ({ params }): undefined => {
     if (params.initiator.flags.isGlitched) {
       params.target = params.game.players.randomAlive;
     }

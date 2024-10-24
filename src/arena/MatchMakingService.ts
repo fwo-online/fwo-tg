@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 import _ from 'lodash';
 import config from './config';
 import QueueConstructor from './Constuructors/QueueConstrucror';

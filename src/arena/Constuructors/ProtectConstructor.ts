@@ -72,7 +72,7 @@ export abstract class ProtectConstructor extends AffectableAction implements Aff
     });
   }
 
-  preAffect: Affect['preAffect'] = ({ params, status }) => {
+  preAffect: Affect['preAffect'] = ({ params, status }): undefined => {
     this.reset();
 
     const { initiator, target, game } = params;

@@ -4,7 +4,7 @@ import type { Convenience } from 'telegraf/types';
 import arena from '../../arena';
 import type Char from '../../arena/CharacterService';
 import { stores } from '../../arena/MiscService';
-import { Collections, Profs } from '../../data';
+import { Collections, type Profs } from '../../data';
 import type { Item } from '../../models/item';
 
 const storeKeys = Object.keys(stores);

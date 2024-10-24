@@ -28,7 +28,7 @@ class StaticProtect extends PassiveSkillConstructor implements Affect {
     return Math.round((1 - Math.exp(-2 * ratio)) * 100);
   }
 
-  preAffect: Affect['preAffect'] = (context) => {
+  preAffect: Affect['preAffect'] = (context): undefined => {
     this.applyContext(context);
 
     const { initiator, target, game } = context.params;

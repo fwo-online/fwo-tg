@@ -40,7 +40,7 @@ class Parry extends Skill implements Affect {
     initiator.flags.isParry = initiator.stats.val('dex') * effect;
   }
 
-  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }) => {
+  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }): undefined => {
     const isParryable = initiator.weapon.isOfType(parryableWeaponTypes);
 
     if (target.flags.isParry && isParryable) {

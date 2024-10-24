@@ -2,3 +2,4 @@
 node_modules/
 .tg-token
 .env
+.DS_Store

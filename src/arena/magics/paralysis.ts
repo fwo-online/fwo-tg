@@ -30,7 +30,7 @@ class Paralysis extends CommonMagic implements Affect {
     target.flags.isParalysed = true;
   }
 
-  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }) => {
+  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }): undefined => {
     if (target.flags.isParalysed) {
       throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
     }

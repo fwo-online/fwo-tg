@@ -1,4 +1,3 @@
-import * as http from 'http';
 import type { Context, Scenes } from 'telegraf';
 import {
   Telegraf, session,

@@ -6,8 +6,8 @@
  */
 
 const Monster = (data) => {
-  this.name = data && data.name ? data.name : this.generateName();
-  this.class = data && data.class ? data.class : this.generateClass();
+  this.name = data?.name ? data.name : this.generateName();
+  this.class = data?.class ? data.class : this.generateClass();
 };
 
 Monster.prototype = {

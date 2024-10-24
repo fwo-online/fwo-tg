@@ -12,9 +12,11 @@ async function valid(name: string) {
   const trimName = name.trim();
   if (trimName.length > 16) {
     throw new Error('Слишком длинное название. Попробуй короче');
-  } else if (trimName.length < 3) {
+  }
+  if (trimName.length < 3) {
     throw new Error('Напрягись, ещё пару символов!');
-  } else if (trimName.charAt(0) === '/') {
+  }
+  if (trimName.charAt(0) === '/') {
     throw new Error('Запрещено начинать клан с "/" ');
   }
 

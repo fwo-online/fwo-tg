@@ -104,7 +104,7 @@ export abstract class Magic extends AffectableAction {
     this.status.exp = this.getEffectExp(this.status.effect || 0, this.baseExp);
   }
 
-  getEffectExp(effect: number, baseExp = 0) {
+  getEffectExp(_effect: number, baseExp = 0) {
     return Math.round(baseExp * this.params.initiator.proc);
   }
 
@@ -138,26 +138,24 @@ export abstract class Magic extends AffectableAction {
    * Проверка прошла ли магия
    * @return
    */
-  checkChance(): true | void {
+  checkChance(): true | undefined {
     // Если шанс > random = true
     if (MiscService.rndm('1d100') <= this.getChance()) {
       // Магия прошла, проверяем что скажут боги
       if (this.godCheck()) {
         // Боги фейлят шанс
         throw new CastError('GOD_FAIL');
-      } else {
-        // Магия прошла
-        return true;
       }
-    } else {
-      // Магия провалилась, проверяем что скажут боги
-      if (this.godCheck()) {
-        // Боги помогают
-        return true;
-      }
-      // Магия остается фейловой
-      throw new CastError('CHANCE_FAIL');
+      // Магия прошла
+      return true;
     }
+    // Магия провалилась, проверяем что скажут боги
+    if (this.godCheck()) {
+      // Боги помогают
+      return true;
+    }
+    // Магия остается фейловой
+    throw new CastError('CHANCE_FAIL');
   }
 
   /**

@@ -1,4 +1,4 @@
-import mongoose, { ConnectOptions } from 'mongoose';
+import mongoose, { type ConnectOptions } from 'mongoose';
 
 // MONGO - полный mongo uri:
 // "mongodb://user:password@db:27017/fwo?retryWrites=true&w=majority&authSource=admin
