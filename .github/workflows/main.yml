@@ -10,7 +10,7 @@ on:
       - main
       - master
 jobs:
-  build:
+  buildAndLint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -22,9 +22,9 @@ jobs:
         run: bun run types
       - name: eslint
         run: bun run lint
-  docker:
+  testContainer:
     environment: test
-    needs: build
+    needs: buildAndLint
     if: github.ref != 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
@@ -47,9 +47,9 @@ jobs:
           push: true
           tags: |
             ghcr.io/cathd/${{ secrets.IMAGE_NAME }}:latest
-  build-prod-container:
+  prodContainer:
     environment: prod
-    needs: build
+    needs: buildAndLint
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
