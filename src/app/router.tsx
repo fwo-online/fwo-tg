@@ -4,6 +4,7 @@ import { withBackButton } from './hocs/withBackButton';
 import { CharacterAttributesPage } from './pages/CharacterAttributesPage/CharacterAttributesPage';
 import { CharacterPage } from './pages/CharacterPage/CharacterPage';
 import { CreateCharacterPage } from './pages/CreateCharacterPage/CreateCharacterPage';
+import { CharacterMagics } from './pages/CharacterMagics/CharacterMagics';
 
 export const router = createHashRouter([
   {
@@ -22,6 +23,10 @@ export const router = createHashRouter([
         path: 'attributes',
         Component: withBackButton(CharacterAttributesPage),
       },
+      {
+        path: 'magics',
+        Component: withBackButton(CharacterMagics)
+      }
     ],
   },
   {

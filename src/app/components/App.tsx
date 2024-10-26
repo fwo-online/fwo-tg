@@ -18,9 +18,7 @@ export function App() {
     >
       <Suspense fallback={<Placeholder description='Ищем вашего персонажа...'/>}>
         <CharacterProvider characterPromise={loadCharacter()} >
-          <RouterProvider router={router}>
-
-          </RouterProvider>
+          <RouterProvider router={router} />
         </CharacterProvider>
       </Suspense>
     </AppRoot>

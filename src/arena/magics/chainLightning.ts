@@ -2,32 +2,14 @@ import { floatNumber } from '@/utils/floatNumber';
 import { AoeDmgMagic } from '../Constuructors/AoeDmgMagicConstructor';
 import type GameService from '../GameService';
 import type { Player } from '../PlayersService';
+import { Magics } from '@/data';
+
 /**
  * Цепь молний
  * Основное описание магии общее требовани есть в конструкторе
  */
-
 class ChainLightning extends AoeDmgMagic {
   maxTargets = [3, 4, 5];
-
-  constructor() {
-    super({
-      name: 'chainLightning',
-      displayName: 'Цепь молний',
-      desc: 'Цепная молния повреждает выбранную цель молнией и еще одну случайно.',
-      cost: 8,
-      baseExp: 12,
-      costType: 'mp',
-      lvl: 3,
-      orderType: 'any',
-      aoeType: 'targetAoe',
-      magType: 'bad',
-      chance: [92, 94, 95],
-      effect: ['1d3+1', '1d3+2', '1d3+3'],
-      dmgType: 'lighting',
-      profList: ['m'],
-    });
-  }
 
   getTargets() {
     const { initiator, target, game } = this.params;
@@ -74,4 +56,4 @@ class ChainLightning extends AoeDmgMagic {
   }
 }
 
-export default new ChainLightning();
+export const chainLightning = new ChainLightning(Magics.baseParams.chainLightning);

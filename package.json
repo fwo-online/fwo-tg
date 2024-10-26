@@ -4,7 +4,9 @@
   "description": "FightWorld Telegram",
   "main": "index.js",
   "type": "module",
-  "workspaces": ["src/app"],
+  "workspaces": [
+    "src/app"
+  ],
   "scripts": {
     "start": "NODE_ENV=production bun src/fwo.ts",
     "dev": "bun src/cli/dev.ts",

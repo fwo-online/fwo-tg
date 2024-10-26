@@ -22,6 +22,7 @@ export const CharacterPage: FC = () => {
         <Cell subhead='Опыт'>{character.exp}</Cell>
       </Section>
       <ButtonCell> <Link to="/character/attributes">Просмотр характеристик</Link></ButtonCell>
+      <ButtonCell> <Link to="/character/magics"> Магии (wip) </Link></ButtonCell>
       <ButtonCell>Инвентарь (wip)</ButtonCell>
      
     </List>
