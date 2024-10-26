@@ -221,9 +221,11 @@ export default class GameService {
   endGame(): void {
     console.log('GC debug:: endGame', this.info.id);
     // Отправляем статистику
+    setTimeout(() => {
     this.sendToAll(this.endGameReason);
     this.sendToAll(this.statistic());
     this.saveGame();
+    },5000)
     setTimeout(() => {
       this.sendToAll('Конец игры, распределяем ресурсы...');
       this.forAllPlayers(channelHelper.sendExitButton);
