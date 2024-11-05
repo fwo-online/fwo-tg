@@ -5,24 +5,6 @@
  *
  */
 
-const parseAttr = [
-  'patk',
-  'pdef',
-  'plushark',
-  'mga',
-  'mgp',
-  'hl',
-  'add_hp',
-  'add_mp',
-  'add_en',
-  'hp_drain',
-  'mp_drain',
-  'en_drain',
-  'hit',
-  'weight',
-] as const;
-
-export type ParseAttr = typeof parseAttr[number];
 
 export default {
   Name: 'Arena-Beta',
@@ -132,5 +114,4 @@ export default {
     'spirit_unity', 'secondLife'], /**
    * Суммируемые атрибуты для вещей
    */
-  parseAttr,
 };

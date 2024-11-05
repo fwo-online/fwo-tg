@@ -11,7 +11,6 @@ import * as skills from './arena/skills';
 import * as middlewares from './middlewares';
 import { connect } from './models';
 import { ItemModel } from './models/item';
-import { ItemSetModel } from './models/item-set';
 import { stage } from './scenes/stage';
 import { server } from '@/server';
 import { registerAffects } from './utils/registerAffects';
@@ -30,7 +29,6 @@ void connect(async () => {
   console.log('db online');
   await ItemModel.load();
 
-  await ItemSetModel.load();
   await bot.launch();
 });
 

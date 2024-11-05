@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import type { Item } from '../../models/item';
+import type { Item } from '@/schemas/item';
 import type GameService from '../GameService';
 import type { Player } from '../PlayersService';
 

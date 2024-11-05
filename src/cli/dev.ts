@@ -1,6 +1,6 @@
 import { $ } from 'bun';
 
-async function test() {
+async function dev() {
   try {
     await $`docker-compose up -d --build test_db`;
 
@@ -13,4 +13,4 @@ async function test() {
   }
 }
 
-void test();
+void dev();

@@ -9,6 +9,7 @@ import type { Char } from '@/models/character';
 import { assignWithSum } from '@/utils/assignWithSum';
 import { floatNumber } from '@/utils/floatNumber';
 import type { Character, CharacterClass } from '@/schemas/character';
+import type { ItemAttributes } from '@/schemas/item/itemAttributesSchema';
 
 /**
  * Конструктор персонажа
@@ -21,7 +22,7 @@ import type { Character, CharacterClass } from '@/schemas/character';
  * @param charObj инстанс Char
  * @todo проверить что функция используется при загрузке игрока в игру
  */
-function getDynHarks(charObj: CharacterService) {
+function getDynHarks(charObj: CharacterService): ItemAttributes {
   const { harks } = charObj.inventory;
   const patk = charObj.prof === 'l'
     ? floatNumber(harks.dex + harks.int * 0.5)
@@ -73,16 +74,21 @@ function getDynHarks(charObj: CharacterService) {
     ? Math.round((harks.int - 4) / 3)
     : 0;
   return {
-    patk,
-    pdef,
-    maxHp,
-    maxMp,
-    maxEn,
-    mga,
-    mgp,
-    hl,
-    reg_mp,
-    reg_en,
+    phys: {
+      attack: patk,
+      defence: pdef,
+    },
+    magic: {
+      attack: mga,
+      defence: mgp
+    },
+    base: {
+      mp: maxMp,
+      hp: maxHp,
+      en: maxEn,
+    },
+    attributes: harks,
+    heal: hl,
     hit,
     maxTarget,
     lspell,
@@ -128,26 +134,7 @@ class CharacterService {
   // Суммарный объект характеристик + вещей.
   get def() {
     const dynHarks = getDynHarks(this);
-    /**
-     * Проблематика на подумать:
-     * характеристики внутри чара имеют имена patk/pdef и т.д, а объект который
-     * был получен после возвращения updateHarkFromItems, имеет ключи типа:
-     * atk/prt (models/item). Это не позволяет прозрачно проводить сложение.
-     */
-    _.forEach(this.inventory.harksFromItems, (h, i) => {
-      if (_.isObject(h)) {
-        assignWithSum(dynHarks[i], h);
-      } else {
-        if (!_.isUndefined(dynHarks[i])) dynHarks[i] += Number(h);
-        if (i === 'atc') dynHarks.patk += Number(h);
-        if (i === 'prt') dynHarks.pdef += Number(h);
-        if (i === 'add_hp') dynHarks.maxHp += Number(h);
-        if (i === 'add_mp') dynHarks.maxMp += Number(h);
-        if (i === 'add_en') dynHarks.maxEn += Number(h);
-        if (!dynHarks[i]) dynHarks[i] = h;
-      }
-    });
-    // console.log('dyn', dynHarks);
+    assignWithSum(dynHarks, this.inventory.harksFromItems);
     return dynHarks;
   }
 
@@ -225,7 +212,7 @@ class CharacterService {
   }
 
   get plushark() {
-    return this.inventory.harksFromItems.plushark;
+    return this.inventory.harksFromItems.attributes;
   }
 
   get skills() {

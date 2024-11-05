@@ -4,8 +4,8 @@ import type { Convenience } from 'telegraf/types';
 import arena from '../../arena';
 import type Char from '../../arena/CharacterService';
 import { stores } from '../../arena/MiscService';
-import { Collections, type Profs } from '../../data';
-import type { Item } from '../../models/item';
+import type { Profs } from '../../data';
+import type { Item } from '@/schemas/item';
 
 const storeKeys = Object.keys(stores);
 
@@ -81,22 +81,3 @@ export const buy = (code: string): Convenience.ExtraEditMessageText => Markup.in
   )],
 ]);
 
-export const collectionList = (): Convenience.ExtraEditMessageText => {
-  const keys = Object.keys(Collections.collectionsData);
-  const buttons = keys.map((key) => [
-    Markup.button.callback(Collections.collectionsData[key].name, `collection_${key}`),
-  ]);
-
-  return Markup.inlineKeyboard(
-    buttons,
-  );
-};
-
-export const collectionItem = (key: string): Convenience.ExtraEditMessageText => {
-  const items = _.filter(arena.items, (item: Item) => item.wcomb.includes(key));
-  const buttons = items.map(itemToButton);
-  return Markup.inlineKeyboard([
-    ...buttons,
-    [Markup.button.callback('Назад', 'collectionList')],
-  ]);
-};

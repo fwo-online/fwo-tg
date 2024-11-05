@@ -9,7 +9,8 @@ import { profsList, profsData, type Prof } from '@/data/profs';
 import { type Char, CharModel } from '@/models/character';
 import { type Clan, ClanModel } from '@/models/clan';
 import { InventoryModel } from '@/models/inventory';
-import { type Item, ItemModel } from '@/models/item';
+import { ItemModel } from '@/models/item';
+import type { Item } from '@/schemas/item';
 
 const functions = casual.functions();
 

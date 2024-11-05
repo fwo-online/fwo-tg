@@ -7,7 +7,6 @@ import type { Stats } from '@/arena/StatsService';
 import StatsService from '@/arena/StatsService';
 import type { Prof } from '@/data/profs';
 import type { Clan } from '@/models/clan';
-import type { MinMax } from '@/models/item';
 import { PlayerWeapon } from './PlayerWeapon';
 
 export type Resists = Record<DamageType, number>;
@@ -17,22 +16,6 @@ export interface Chance {
   cast?: Partial<Record<keyof typeof magics, number>>
 }
 
-export interface Statical {
-  atc: number;
-  prt: number;
-  add_hp: number;
-  add_mp: number;
-  add_en: number;
-  mga: number;
-  mgp: number;
-  hl: MinMax;
-  reg_mp: number;
-  reg_en: number;
-  hit: MinMax;
-  maxTarget: number;
-  lspell: number;
-  weight: number;
-}
 /**
  * PlayerService
  * @description Объект игрока внутри боя ! Это не Character!
@@ -65,7 +48,6 @@ export default class Player {
   skills: Record<string, number>;
   magics: Record<string, number>;
   favoriteMagics: string[];
-  statical: Partial<Statical>;
   alive: boolean;
   proc: number;
   weapon: PlayerWeapon;
@@ -94,7 +76,6 @@ export default class Player {
     this.resists = {}; // Объект резистов
     this.skills = params.skills || {}; // Обькт доступных скилов
     this.magics = params.magics || {}; // объект изученых магий
-    this.statical = {}; // статически реген
     this.alive = true;
     this.proc = 100;
     this.weapon = new PlayerWeapon(params.inventory.getEquippedWeapon());
