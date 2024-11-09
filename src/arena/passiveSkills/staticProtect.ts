@@ -21,7 +21,7 @@ class StaticProtect extends PassiveSkillConstructor implements Affect {
   getChance() {
     const { initiator, target } = this.params;
     const attack = initiator.stats.val('phys.attack') * initiator.proc;
-    const protect = target.stats.val('phys.defence');
+    const protect = target.stats.val('static.defence');
 
     const ratio = attack / protect;
 

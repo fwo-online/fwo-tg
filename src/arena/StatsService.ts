@@ -1,6 +1,7 @@
 import { get } from 'lodash';
 import { floatNumber } from '../utils/floatNumber';
 import type { CharacterDynamicAttributes } from '@/schemas/character';
+import { PhysAttributes } from '@/schemas/shared/physAttributes';
 
 type CombineAll<T> = T extends {[name in keyof T]: infer Type} ? Type : never
 
@@ -22,7 +23,7 @@ export type Stats = CharacterDynamicAttributes & {
   en: number;
   exp: number;
   // Базовая aka static защита, до применения способностей
-  defence: number;
+  static: PhysAttributes;
 };
 
 type StatsPath = PathsOf<Stats>
@@ -103,7 +104,7 @@ export default class StatsService {
       mp: oldData.mp ?? this.defStat.base.mp,
       en: oldData.en ?? this.defStat.base.en,
       exp: 0, // кол-во Exp на начало раунда
-      defence: this.defStat.phys.defence, // кол-во дефа на начало
+      static: structuredClone(this.defStat.phys),
     };
   }
 
