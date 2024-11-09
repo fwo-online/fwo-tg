@@ -48,7 +48,7 @@ describe('stunWeapon', () => {
   it('should hit through protect', () => {
     game.players.players[0].proc = 1;
     game.players.players[1].proc = 1;
-    game.players.players[1].stats.set('def', 100);
+    game.players.players[1].stats.set('phys.defence', 100);
 
     protect.cast(game.players.players[1], game.players.players[1], game);
 

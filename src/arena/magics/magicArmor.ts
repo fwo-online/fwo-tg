@@ -26,7 +26,7 @@ class MagicArmor extends CommonMagic {
 
   run() {
     const { target } = this.params;
-    target.stats.mode('up', 'def', this.effectVal());
+    target.stats.mode('up', 'phys.defence', this.effectVal());
   }
 
   // eslint-disable-next-line class-methods-use-this

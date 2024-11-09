@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { floatNumber } from '../utils/floatNumber';
-import type { ItemAttributes } from '@/schemas/item/itemAttributesSchema';
+import type { CharacterDynamicAttributes } from '@/schemas/character';
 
 type CombineAll<T> = T extends {[name in keyof T]: infer Type} ? Type : never
 
@@ -16,32 +16,30 @@ type SubPathsOf<key extends keyof T, T, IncludeIntermediate extends boolean> = (
 
 export type PathsOf<T, IncludeIntermediate extends boolean = false> = CombineAll<PropertyNameMap<T,IncludeIntermediate>>
 
-type StatsServiceArgs = ItemAttributes;
-
-export type Stats = StatsServiceArgs & {
+export type Stats = CharacterDynamicAttributes & {
   hp: number;
   mp: number;
   en: number;
   exp: number;
-  // Базовая защита, до применения способностей
+  // Базовая aka static защита, до применения способностей
   defence: number;
 };
 
 type StatsPath = PathsOf<Stats>
+type StatsPathPartial = PathsOf<Stats, true>;
 
 /**
  * Класс для хранения stats
  */
 export default class StatsService {
   private inRound!: Stats;
-  test: ItemAttributes
   public readonly collect = { exp: 0, gold: 0 };
   /**
    * Конструктор класса stats
    * @param defStat объект параметров
    */
   constructor(
-    private defStat: StatsServiceArgs,
+    private defStat: CharacterDynamicAttributes,
   ) {
     this.refresh();
   }
@@ -69,20 +67,18 @@ export default class StatsService {
    * @param atr изменяемый атрибут atk/hark.str/def
    * @param val значение на которое будет изменено
    * изменение может происходить только внутри inRound
-   * @deprecated
+   * @deprecated use up/down/set methods instead
    */
   mode(type: 'up' | 'down' | 'set', atr: StatsPath, val: number): void {
-    const oldValue = this.inRound[atr];
-    
     switch (type) {
       case 'up':
-        this.inRound[atr] = floatNumber(oldValue + val);
+        this.up(atr, val)
         break;
       case 'down':
-        this.inRound[atr] = floatNumber(oldValue - val);
+        this.down(atr, val)
         break;
       case 'set':
-        this.inRound[atr] = floatNumber(val);
+        this.set(atr, val)
         break;
       default:
         console.error('Stats mode type error', type);
@@ -108,7 +104,6 @@ export default class StatsService {
       en: oldData.en ?? this.defStat.base.en,
       exp: 0, // кол-во Exp на начало раунда
       defence: this.defStat.phys.defence, // кол-во дефа на начало
-      dex: oldData.attributes.dex ?? this.defStat.attributes.dex, // кол-во ловкости на начало
     };
   }
 
@@ -116,7 +111,7 @@ export default class StatsService {
    * Функция возвращающее значение атрибута
    * @param atr str/atk/prt/dex
    */
-  val<T extends PathsOf<Stats, true>>(atr: T) {
+  val<T extends StatsPathPartial>(atr: T) {
     return get(this.inRound, atr);
   }
 

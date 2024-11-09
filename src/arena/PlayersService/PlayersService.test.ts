@@ -5,7 +5,7 @@ import { times } from 'lodash';
 import arena from '@/arena';
 import type { Clan } from '@/models/clan';
 import TestUtils from '@/utils/testUtils';
-import CharacterService from '../CharacterService';
+import { CharacterService } from '../CharacterService';
 import Player from './Player';
 import PlayersService from './PlayersService';
 

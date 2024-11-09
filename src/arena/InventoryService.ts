@@ -1,11 +1,5 @@
 import _ from 'lodash';
-import {
-  getItems,
-  addItem,
-  removeItem,
-  putOnItem,
-  putOffItem,
-} from '@/api/inventory';
+import { getItems, addItem, removeItem, putOnItem, putOffItem } from '@/api/inventory';
 import arena from '@/arena';
 import ValidationError from '@/arena/errors/ValidationError';
 import type { Char } from '@/models/character';
@@ -15,10 +9,13 @@ import { assignWithSum } from '@/utils/assignWithSum';
 import { itemAttributesSchema, type ItemAttributes } from '@/schemas/item/itemAttributesSchema';
 import type { Item } from '@/schemas/item';
 
-class InventoryService {
+export class InventoryService {
   harksFromItems: ItemAttributes;
 
-  constructor(private char: Char, public inventory: InventoryDocument[]) {
+  constructor(
+    private char: Char,
+    public inventory: InventoryDocument[],
+  ) {
     this.harksFromItems = this.updateHarkFromItems();
   }
 
@@ -26,20 +23,7 @@ class InventoryService {
     return inventory.map(({ code }) => arena.items[code]);
   }
 
-  /**
-   * Нужно помнить, что this.harks это суммарный объект,
-   * с уже полученными от вещей характеристиками
-   * */
-  get harks() {
-    const charHarks = structuredClone(this.char.harks);
-    const plusHarks = this.plushark;
-
-    assignWithSum(charHarks, plusHarks);
-
-    return charHarks;
-  }
-
-  get plushark() {
+  get attributes() {
     return this.harksFromItems.attributes;
   }
 
@@ -52,15 +36,12 @@ class InventoryService {
   }
 
   getEquippedWeapon() {
-    return this.getEquippedItems().find(
-      (item) => /^ab?$/.test(item.wear) && item.putOn,
-    );
+    return this.getEquippedItems().find((item) => /^ab?$/.test(item.wear) && item.putOn);
   }
 
   canEquip(itemToEquip: Item) {
     return !this.getEquippedItems().some(
-      (item) => item.wear.includes(itemToEquip.wear)
-        || itemToEquip.wear.includes(item.wear),
+      (item) => item.wear.includes(itemToEquip.wear) || itemToEquip.wear.includes(item.wear),
     );
   }
 
@@ -117,7 +98,7 @@ class InventoryService {
   }
 
   hasRequiredAttributes(item: Item) {
-    return _.some(item.requiredAttributes, (value, attr) => value > this.char.harks[attr])
+    return _.some(item.requiredAttributes, (value, attr) => value > this.char.harks[attr]);
   }
 
   /**
@@ -125,9 +106,9 @@ class InventoryService {
    * которые были получены от надетых вещей в инвентаре персонажа
    */
   updateHarkFromItems() {
-    const items = InventoryService.getItemsByInventory(this.getEquippedItems())
+    const items = InventoryService.getItemsByInventory(this.getEquippedItems());
     const itemAttriributes = itemAttributesSchema.array().parse(items);
-    const harksFromItems = itemAttriributes.reduce(assignWithSum);
+    const harksFromItems = itemAttriributes.reduce(assignWithSum, itemAttributesSchema.parse({}));
 
     this.harksFromItems = harksFromItems;
     return harksFromItems;
@@ -136,10 +117,8 @@ class InventoryService {
   toObject() {
     return this.inventory.map<Inventory>((item) => ({
       code: item.code,
-      equipped: item.putOn,
+      putOn: item.putOn,
       wear: item.wear,
     }));
   }
 }
-
-export default InventoryService;

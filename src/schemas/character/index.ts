@@ -1,10 +1,8 @@
+import type { ItemAttributes } from '../item/itemAttributesSchema';
 import type { CharacterAttributes } from './characterAttributesSchema';
 import { CharacterClass } from './characterClassSchema';
 
-export const characterAttributesByClass: Record<
-  CharacterClass,
-  CharacterAttributes
-> = {
+export const characterAttributesByClass: Record<CharacterClass, CharacterAttributes> = {
   [CharacterClass.Warrior]: {
     str: 10,
     dex: 8,
@@ -35,8 +33,12 @@ export const characterAttributesByClass: Record<
   },
 };
 
+export type CharacterDynamicAttributes = Omit<ItemAttributes, 'requiredAttributes'> & {
+  maxTarget: number;
+  spellLength: number;
+};
+
 export * from './characterAttributesSchema';
 export * from './characterClassSchema';
 export * from './characterSchema';
 export * from './createCharacterSchema';
-// export * from "./character-dynamic-attributes"

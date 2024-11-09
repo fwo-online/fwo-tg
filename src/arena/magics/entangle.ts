@@ -27,7 +27,7 @@ class Entangle extends CommonMagic {
 
   run() {
     const { target } = this.params;
-    target.stats.mode('down', 'def', this.effectVal());
+    target.stats.mode('down', 'phys.defence', this.effectVal());
   }
 
   // eslint-disable-next-line class-methods-use-this

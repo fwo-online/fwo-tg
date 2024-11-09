@@ -1,4 +1,4 @@
-import type Char from './CharacterService';
+import type { CharacterService } from './CharacterService';
 import ValidationError from './errors/ValidationError';
 import * as skills from './skills';
 
@@ -7,7 +7,7 @@ export type SkillsNames = keyof typeof skills;
 export default class SkillService {
   static skills = skills;
 
-  static async learn(char: Char, skillId: SkillsNames): Promise<Char> {
+  static async learn(char: CharacterService, skillId: SkillsNames): Promise<CharacterService> {
     const skill = SkillService.skills[skillId];
     const charSkillLvl = char.skills[skillId] ?? 0;
     const skillLvl = skill.profList[char.prof] ?? 0;
@@ -25,7 +25,7 @@ export default class SkillService {
     return char;
   }
 
-  static skillDescription(skillId: SkillsNames, char: Char): string {
+  static skillDescription(skillId: SkillsNames, char: CharacterService): string {
     const {
       displayName, desc, profList, bonusCost,
     } = SkillService.skills[skillId];

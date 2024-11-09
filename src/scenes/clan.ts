@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { Scenes, Markup } from 'telegraf';
-import CharacterService from '@/arena/CharacterService';
+import { CharacterService } from '@/arena/CharacterService';
 import { broadcast } from '@/helpers/channelHelper';
 import arena from '../arena';
 import { ClanService } from '../arena/ClanService';

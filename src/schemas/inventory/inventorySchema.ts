@@ -6,4 +6,4 @@ export const inventorySchema = z.object({
   wear: z.string(),
 });
 
-export type Inventory = z.infer<typeof inventorySchema>
+export type Inventory = z.infer<typeof inventorySchema>;

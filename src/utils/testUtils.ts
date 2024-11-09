@@ -1,7 +1,7 @@
 import casual from 'casual';
 import type { AnyKeys } from 'mongoose';
 import arena from '@/arena';
-import CharacterService from '@/arena/CharacterService';
+import { CharacterService } from '@/arena/CharacterService';
 import { ClanService } from '@/arena/ClanService';
 import type { HistoryItem } from '@/arena/HistoryService';
 import { formatMessage } from '@/arena/LogService/utils';
@@ -20,7 +20,7 @@ export default class TestUtils {
   }: { withWeapon?: boolean | string } = {}) {
     const prof: Prof = params?.prof ?? casual.random_element([...profsList]);
     const char = await CharModel.create({
-      tgId: casual.integer(1_000_000, 9_999_999),
+      owner: casual.integer(1_000_000, 9_999_999).toString(),
       nickname: functions.word(),
       sex: casual.random_element(['m', 'f']),
       prof,

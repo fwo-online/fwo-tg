@@ -8,4 +8,4 @@ export const characterAttributesSchema = z.object({
   con: z.number().int().default(0),
 });
 
-export type CharacterAttributes = z.infer<typeof characterAttributesSchema>
+export type CharacterAttributes = z.infer<typeof characterAttributesSchema>;

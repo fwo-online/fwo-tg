@@ -102,8 +102,8 @@ export abstract class LongDmgMagic extends DmgMagic {
     game.longActions[this.name]?.push({
       initiator: this.params.initiator.id || initiator.id,
       target: this.params.target.id || target.id,
-      duration: this.params.initiator.stats.val('lspell')
-          || initiator.stats.val('lspell'),
+      duration: this.params.initiator.stats.val('spellLength')
+          || initiator.stats.val('spellLength'),
       round: this.params.game.round.count || game.round.count,
       proc: this.params.initiator.proc || initiator.proc,
     });

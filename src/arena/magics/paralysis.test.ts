@@ -2,7 +2,7 @@ import {
   describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
 } from 'bun:test';
 import casual from 'casual';
-import CharacterService from '@/arena/CharacterService';
+import { CharacterService } from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import attack from '../actions/attack';
@@ -38,7 +38,7 @@ describe('paralysis', () => {
 
   it('initiator should be blinded by eclipse', async () => {
     game.players.players[0].proc = 1;
-    game.players.players[0].stats.set('maxMp', 99);
+    game.players.players[0].stats.set('base.mp', 99);
     game.players.players[0].stats.set('mp', 99);
     game.players.players[1].proc = 1;
 

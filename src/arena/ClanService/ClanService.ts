@@ -3,7 +3,7 @@ import {
   createClan, deleteClan, getClanById, getClanByPlayerRequest, getClans, updateClan,
 } from '@/api/clan';
 import arena from '@/arena';
-import CharacterService from '@/arena/CharacterService';
+import { CharacterService } from '@/arena/CharacterService';
 import ValidationError from '@/arena/errors/ValidationError';
 import type { Clan } from '@/models/clan';
 

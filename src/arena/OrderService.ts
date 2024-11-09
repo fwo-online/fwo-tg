@@ -119,7 +119,7 @@ export default class Orders {
    * @desc проверка достижения максимального кол-ва целей при атаке
    */
   isMaxTargets({ initiator, action }: Order): boolean {
-    return this.getNumberOfOrder(initiator, action) >= arena.characters[initiator].def.maxTarget;
+    return this.getNumberOfOrder(initiator, action) >= arena.characters[initiator].dynamicAttributes.maxTarget;
   }
 
   /**

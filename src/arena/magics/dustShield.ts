@@ -29,7 +29,7 @@ class DustShield extends LongMagic {
   run(initiator: Player, target: Player, game: GameService): void {
     const protect = this.calculateProtect(initiator, target, game);
 
-    target.stats.up('def', _.clamp(protect, minProtect, maxProtect));
+    target.stats.up('phys.defence', _.clamp(protect, minProtect, maxProtect));
   }
 
   runLong(initiator: Player, target: Player, game: GameService): void {

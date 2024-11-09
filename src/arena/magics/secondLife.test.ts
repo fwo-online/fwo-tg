@@ -2,7 +2,7 @@ import {
   describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
 } from 'bun:test';
 import casual from 'casual';
-import CharacterService from '@/arena/CharacterService';
+import { CharacterService } from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import secondLife from './secondLife';

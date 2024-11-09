@@ -17,4 +17,4 @@ export const characterSchema = z.object({
   clan: z.any(),
 });
 
-export type Character = z.infer<typeof characterSchema>
+export type Character = z.infer<typeof characterSchema>;

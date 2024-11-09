@@ -47,13 +47,13 @@ class MagicWallBuff extends LongMagic {
 
   run() {
     const { target, initiator } = this.params;
-    target.stats.up('def', this.effectVal());
+    target.stats.up('phys.defence', this.effectVal());
     target.flags.isBehindWall.push({ initiator: initiator.id, val: this.status.effect });
   }
 
   runLong() {
     const { target, initiator } = this.params;
-    target.stats.up('def', this.effectVal());
+    target.stats.up('phys.defence', this.effectVal());
     target.flags.isBehindWall.push({ initiator: initiator.id, val: this.status.effect });
   }
 

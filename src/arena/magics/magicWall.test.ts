@@ -2,7 +2,7 @@ import {
   describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
 } from 'bun:test';
 import casual from 'casual';
-import CharacterService from '@/arena/CharacterService';
+import { CharacterService } from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import attack from '../actions/attack';
@@ -44,14 +44,14 @@ describe('magicWall', () => {
     magicWall.cast(game.players.players[0], game.players.players[1], game);
     attack.cast(game.players.players[1], game.players.players[0], game);
 
-    expect(game.players.players[1].stats.val('def')).toMatchSnapshot();
+    expect(game.players.players[1].stats.val('phys.defence')).toMatchSnapshot();
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
 
   it('should protect player', () => {
     game.players.players[0].proc = 1;
     game.players.players[0].stats.set('mp', magicWall.cost);
-    game.players.players[0].stats.set('def', 100);
+    game.players.players[0].stats.set('phys.defence', 100);
     game.players.players[1].proc = 1;
 
     magicWall.cast(game.players.players[0], game.players.players[0], game);

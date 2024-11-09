@@ -40,8 +40,8 @@ export abstract class ProtectConstructor extends AffectableAction implements Aff
   }[]
 
   getProtectChance({ initiator, target } = this.params) {
-    const attack = initiator.stats.val('atk') * initiator.proc;
-    const protect = target.stats.val('def');
+    const attack = initiator.stats.val('phys.attack') * initiator.proc;
+    const protect = target.stats.val('phys.defence');
     const ratio = floatNumber(Math.round(attack / protect));
 
     return Math.round((1 - Math.exp(-0.33 * ratio)) * 100);
@@ -51,7 +51,7 @@ export abstract class ProtectConstructor extends AffectableAction implements Aff
     { initiator, target, game } = this.params,
     hit = 1,
   ) {
-    const def = target.stats.val('def'); // общий показатель защиты цели
+    const defence = target.stats.val('phys.defence'); // общий показатель защиты цели
 
     const defenderFlags = this.getTargetProtectors({ initiator, target, game });
 
@@ -61,7 +61,7 @@ export abstract class ProtectConstructor extends AffectableAction implements Aff
         return;
       }
 
-      const protect = Math.floor(flag.val * 100) / def;
+      const protect = Math.floor(flag.val * 100) / defence;
       const exp = defender.isAlly(target) ? Math.round(hit * 0.4 * protect) : 0;
 
       this.status.expArr.push({

@@ -40,14 +40,14 @@ class Dodge extends Skill implements Affect {
   run() {
     const { initiator } = this.params;
     const initiatorSkillLvl = initiator.skills[this.name];
-    initiator.flags.isDodging = this.effect[initiatorSkillLvl - 1] * initiator.stats.val('dex');
+    initiator.flags.isDodging = this.effect[initiatorSkillLvl - 1] * initiator.stats.val('attributes.dex');
   }
 
   preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }): undefined => {
     const isDodgeable = initiator.weapon.isOfType(dodgeableWeaponTypes);
 
     if (target.flags.isDodging && isDodgeable) {
-      const initiatorDex = initiator.stats.val('dex');
+      const initiatorDex = initiator.stats.val('attributes.dex');
       const dodgeFactor = Math.round(target.flags.isDodging / initiatorDex);
       const chance = Math.round(Math.sqrt(dodgeFactor) + (10 * dodgeFactor) + 5);
 

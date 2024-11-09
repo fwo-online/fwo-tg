@@ -29,8 +29,8 @@ class Disarm extends Skill implements Affect {
     const initiatorMagicLvl = initiator.skills[this.name];
     const effect = this.effect[initiatorMagicLvl - 1] || 1;
     // изменяем
-    const iDex = initiator.stats.val('dex') * effect;
-    const tDex = target.stats.val('dex');
+    const iDex = initiator.stats.val('attributes.dex') * effect;
+    const tDex = target.stats.val('attributes.dex');
     if (iDex >= tDex) {
       target.flags.isDisarmed = true;
 

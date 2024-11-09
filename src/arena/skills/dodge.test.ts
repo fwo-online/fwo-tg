@@ -4,7 +4,7 @@ import {
   afterEach,
 } from 'bun:test';
 import casual from 'casual';
-import CharacterService from '@/arena/CharacterService';
+import { CharacterService } from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import attack from '../actions/attack';
@@ -39,7 +39,7 @@ describe('dodge', () => {
 
   it('target should dodge attack if has initiator more dex', async () => {
     game.players.players[0].proc = 1;
-    game.players.players[1].stats.set('dex', 9999);
+    game.players.players[1].stats.set('attributes.dex', 9999);
 
     dodge.cast(game.players.players[1], game.players.players[1], game);
     attack.cast(game.players.players[0], game.players.players[1], game);
@@ -49,7 +49,7 @@ describe('dodge', () => {
 
   it('target should not dodge attack if target has more dex', async () => {
     game.players.players[0].proc = 1;
-    game.players.players[0].stats.set('dex', 9999);
+    game.players.players[0].stats.set('attributes.dex', 9999);
 
     dodge.cast(game.players.players[1], game.players.players[1], game);
     attack.cast(game.players.players[0], game.players.players[1], game);

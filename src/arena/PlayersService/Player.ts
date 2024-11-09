@@ -1,5 +1,5 @@
 import arena from '@/arena';
-import type Char from '@/arena/CharacterService';
+import type { CharacterService } from '@/arena/CharacterService';
 import FlagsConstructor from '@/arena/Constuructors/FlagsConstructor';
 import type { DamageType } from '@/arena/Constuructors/types';
 import type * as magics from '@/arena/magics';
@@ -52,7 +52,7 @@ export default class Player {
   proc: number;
   weapon: PlayerWeapon;
 
-  constructor(params: Char) {
+  constructor(params: CharacterService) {
     this.nick = params.nickname;
     this.id = params.id;
     this.owner = params.owner;
@@ -60,7 +60,7 @@ export default class Player {
     this.lvl = params.lvl;
     this.clan = params.clan;
     this.favoriteMagics = params.favoriteMagicList;
-    this.stats = new StatsService({ ...params.def, ...params.harks });
+    this.stats = new StatsService(params.dynamicAttributes);
     this.flags = new FlagsConstructor();
     // @todo закладка для вычисляемых статов
     this.modifiers = {
