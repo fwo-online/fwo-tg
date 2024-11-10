@@ -22,7 +22,6 @@ export type Stats = CharacterDynamicAttributes & {
   mp: number;
   en: number;
   exp: number;
-  // Базовая aka static защита, до применения способностей
   static: PhysAttributes;
 };
 
