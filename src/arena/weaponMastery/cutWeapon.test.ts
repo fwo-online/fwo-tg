@@ -25,7 +25,7 @@ describe('cutWeapon', () => {
       skills: {
         cutWeapon: 1,
       },
-    }, { withWeapon: 'a103' });
+    }, { withWeapon: 'epicAx' });
     target = await TestUtils.createCharacter({
       skills: {
         dodge: 1,

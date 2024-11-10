@@ -1,11 +1,12 @@
 import { z } from 'zod';
 import { characterClassSchema } from '../character';
 import { itemAttributesSchema } from './itemAttributesSchema';
+import { itemInfoSchema } from './itemInfoSchema';
 
 export const itemSchema = z
   .object({
     code: z.string(),
-    name: z.string(),
+    info: itemInfoSchema,
     price: z.number(),
     type: z.string().optional(),
     wear: z.string(),

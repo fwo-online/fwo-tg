@@ -1,7 +1,7 @@
 import IncreaseEffectSkill from './constructors/increaseEffectSkill';
 
 class ChopWeapon extends IncreaseEffectSkill {
-  weaponTypes = ['h'];
+  weaponTypes = ['chop'];
 
   constructor() {
     super({

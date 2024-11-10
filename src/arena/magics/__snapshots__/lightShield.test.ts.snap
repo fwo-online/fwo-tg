@@ -1,16 +1,16 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`lightShield initiator should be hit by light shield 1`] = `
 "*asperiores* использовал _Световой щит_ на *magni*
 \\[ 📖6 ]
 *asperiores* использовал _Световой щит_ на *magni*
 \\[ 📖3 ]
-*ratione* рубанул *magni* _Эпическим Мечом_ и нанёс *10.72* урона
-\\[ magni 💥 💔-10.72/-2.72 📖86 ]
+*ratione* рубанул *magni* _Эпическим Мечом_ и нанёс *4.71* урона
+\\[ magni 💥 💔-4.71/3.29 📖38 ]
 
-$*asperiores* сотворил _Световой щит_ на *ratione* нанеся 2.33 урона
-\\[ ratione ✨ 💔-2.33/5.67 📖27 ]
+$*asperiores* сотворил _Световой щит_ на *ratione* нанеся 1.03 урона
+\\[ ratione ✨ 💔-1.03/6.97 📖16 ]
 
-$*asperiores* сотворил _Световой щит_ на *ratione* нанеся 1.17 урона
-\\[ ratione ✨ 💔-1.17/4.5 📖17 ]"
+$*asperiores* сотворил _Световой щит_ на *ratione* нанеся 0.51 урона
+\\[ ratione ✨ 💔-0.51/6.46 📖12 ]"
 `;

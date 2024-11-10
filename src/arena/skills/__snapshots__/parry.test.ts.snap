@@ -1,10 +1,10 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`parry target should not parry attack if target has more dex 1`] = `
 "*explicabo* использовал _🤺 Парирование_
 
-*repellat* рубанул *explicabo* _Эпическим Мечом_ и нанёс *11* урона
-\\[ explicabo 💥 💔-11/-3 📖88 ]"
+*repellat* рубанул *explicabo* _Эпическим Мечом_ и нанёс *4.85* урона
+\\[ explicabo 💥 💔-4.85/3.15 📖39 ]"
 `;
 
 exports[`parry target should parry attack if initiator has more dex 1`] = `

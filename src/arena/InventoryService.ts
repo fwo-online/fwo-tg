@@ -36,7 +36,7 @@ export class InventoryService {
   }
 
   getEquippedWeapon() {
-    return this.getEquippedItems().find((item) => /^ab?$/.test(item.wear) && item.putOn);
+    return this.getEquippedItems().find((item) => item.wear.includes('rightHand') && item.putOn);
   }
 
   canEquip(itemToEquip: Item) {

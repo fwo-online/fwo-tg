@@ -37,7 +37,7 @@ describe('staticProtect', () => {
 
   it('should passively block if target has a lot of pdef', () => {
     game.players.players[0].stats.set('phys.attack', 0);
-    game.players.players[1].stats.set('phys.defence', 50);
+    game.players.players[1].stats.set('static.defence', 50);
     game.players.players[0].proc = 1;
 
     game.players.players[0].stats.set('phys.attack', 10);

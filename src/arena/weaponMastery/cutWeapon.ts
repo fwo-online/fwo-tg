@@ -2,7 +2,7 @@ import type { ActionType } from '@/arena/Constuructors/types';
 import CounterEvasionSkill from './constructors/counterEvasionSkill';
 
 class CutWeapon extends CounterEvasionSkill {
-  weaponTypes = ['c'];
+  weaponTypes = ['cut'];
   affectedActionType: ActionType = 'protect';
 
   constructor() {

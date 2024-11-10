@@ -1,7 +1,7 @@
-import { get } from 'lodash';
-import { floatNumber } from '../utils/floatNumber';
+import { get, set } from 'lodash';
+import { floatNumber } from '@/utils/floatNumber';
 import type { CharacterDynamicAttributes } from '@/schemas/character';
-import { PhysAttributes } from '@/schemas/shared/physAttributes';
+import type { PhysAttributes } from '@/schemas/shared/physAttributes';
 
 type CombineAll<T> = T extends {[name in keyof T]: infer Type} ? Type : never
 
@@ -46,15 +46,15 @@ export default class StatsService {
   }
 
   up(atr: StatsPath, val: number): void {
-    this.inRound[atr] = floatNumber(this.inRound[atr] + val);
+    set(this.inRound, atr, floatNumber(this.val(atr) + val));
   }
 
   down(atr: StatsPath, val: number): void {
-    this.inRound[atr] = floatNumber(this.inRound[atr] - val);
+    set(this.inRound, atr, floatNumber(this.val(atr) - val));
   }
 
   mul(atr: StatsPath, val: number): void {
-    this.inRound[atr] = floatNumber(this.inRound[atr] * val);
+    set(this.inRound, atr, floatNumber(this.val(atr) * val));
     console.log('Mul:', atr, ' val:', val, 'new val:', this.inRound[atr]);
   }
 

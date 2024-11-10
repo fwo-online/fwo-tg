@@ -49,7 +49,8 @@ const item = new Schema<Item, ItemModel>({
   code: {
     type: String, unique: true, required: true
   },
-  name: { type: String },
+  type: { type: String },
+  info: { type: Object },
   price: { type: Number },
   wear: { type: String },
   class: { type: [String] },

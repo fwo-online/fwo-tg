@@ -79,7 +79,7 @@ export default class TestUtils {
   }
 
   static async getWeapon(mayBeCode: true | string): Promise<Item> {
-    const code = typeof mayBeCode === 'string' ? mayBeCode : 'a100';
+    const code = typeof mayBeCode === 'string' ? mayBeCode : 'epicSword';
     await ItemModel.load();
     return ItemModel.findOne({ code }).orFail();
   }

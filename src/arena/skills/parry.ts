@@ -6,8 +6,8 @@ import CastError from '../errors/CastError';
 
 const parryableWeaponTypes = [
   's', // колющее
-  'c', // режущее
-  'h', // рубящее
+  'cut', // режущее
+  'chop', // рубящее
 ];
 
 /**

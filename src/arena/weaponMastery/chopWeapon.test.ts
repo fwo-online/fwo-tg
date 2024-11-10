@@ -24,7 +24,7 @@ describe('chopWeapon', () => {
       skills: {
         chopWeapon: 1,
       },
-    }, { withWeapon: 'a100' });
+    }, { withWeapon: 'epicSword' });
     target = await TestUtils.createCharacter();
   });
 

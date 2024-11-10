@@ -7,8 +7,8 @@ import MiscService from '../MiscService';
 
 const dodgeableWeaponTypes = [
   's', // колющее
-  'c', // режущее
-  'h', // рубящее
+  'cut', // режущее
+  'chop', // рубящее
   'l', // метательное
   'd', // оглушающее
 ];
