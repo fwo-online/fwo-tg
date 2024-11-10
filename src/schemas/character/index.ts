@@ -33,7 +33,7 @@ export const characterAttributesByClass: Record<CharacterClass, CharacterAttribu
   },
 };
 
-export type CharacterDynamicAttributes = Omit<ItemAttributes, 'requiredAttributes'> & {
+export type CharacterDynamicAttributes = Omit<ItemAttributes, 'requiredAttributes' | 'resists'> & {
   maxTarget: number;
   spellLength: number;
 };

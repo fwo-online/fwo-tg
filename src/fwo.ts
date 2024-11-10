@@ -4,7 +4,7 @@ import {
 } from 'telegraf';
 import arena from './arena';
 import * as actions from './arena/actions';
-import type Char from './arena/CharacterService';
+import type { CharacterService } from './arena/CharacterService';
 import * as magics from './arena/magics';
 import MM from './arena/MatchMakingService';
 import * as skills from './arena/skills';
@@ -16,7 +16,7 @@ import { server } from '@/server';
 import { registerAffects } from './utils/registerAffects';
 
 interface BotSession extends Scenes.SceneSession {
-  character: Char;
+  character: CharacterService;
 }
 export interface BotContext extends Context {
   session: BotSession;

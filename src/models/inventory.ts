@@ -199,7 +199,7 @@ export class InventoryDocument {
     this: InventoryModel,
     itemCode: string,
   ): string {
-    return arena.items[itemCode].name;
+    return arena.items[itemCode].info.name;
   }
 }
 

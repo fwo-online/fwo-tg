@@ -103,7 +103,7 @@ inventoryScene.action(/sellConfirm(?=_)/, async (ctx) => {
   const item = ctx.session.character.inventory.getItem(itemId);
   if (!item) return;
 
-  const { name, price } = arena.items[item.code];
+  const { info: { name }, price } = arena.items[item.code];
 
   await ctx.editMessageText(
     `Вы действительно хотите продать _${name}_ (${price / 2} 💰)?`,

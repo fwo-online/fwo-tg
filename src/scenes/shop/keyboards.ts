@@ -2,15 +2,16 @@ import _ from 'lodash';
 import { Markup } from 'telegraf';
 import type { Convenience } from 'telegraf/types';
 import arena from '../../arena';
-import type Char from '../../arena/CharacterService';
+import type { CharacterService } from '../../arena/CharacterService';
 import { stores } from '../../arena/MiscService';
 import type { Profs } from '../../data';
 import type { Item } from '@/schemas/item';
+import { CharacterClass } from '@/schemas/character';
 
 const storeKeys = Object.keys(stores);
 
 const itemToButton = (item: Item) => [Markup.button.callback(
-  `${item.name} (💰 ${item.price})`,
+  `${item.info.name} (💰 ${item.price})`,
   `itemInfo_${item.code}`,
 )];
 
@@ -31,7 +32,7 @@ const getTypeButtons = () => storeKeys.map((type) => [Markup.button.callback(
 const getItems = (wear: string, prof: Profs.Prof) => {
   const items: Item[] = _.filter(
     arena.items,
-    (item: Item) => item.wear === wear && item.race.includes(prof) && !item.onlymake && !item.hide,
+    (item: Item) => item.wear === wear && item.class.includes(prof as CharacterClass),
   );
   const buttons = items
     .sort((a, b) => b.price - a.price)
@@ -49,7 +50,7 @@ export const enter = (): Convenience.ExtraEditMessageText => Markup.inlineKeyboa
 ]);
 
 export const itemType = (
-  type: string, char: Char,
+  type: string, char: CharacterService,
 ): Convenience.ExtraEditMessageText => Markup.inlineKeyboard(
   getItems(type, char.prof),
 );
