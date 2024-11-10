@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`attack should reduce damage by target resists 1`] = `
-"*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *11.7* урона
-\\[ corporis 💥 💔-11.7/-3.7 📖94 ]
-*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *5.85* урона
-\\[ corporis 💥 💔-5.85/-9.55 📖47 ]"
+"*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *5.2* урона
+\\[ corporis 💥 💔-5.2/2.8 📖42 ]
+*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *2.6* урона
+\\[ corporis 💥 💔-2.6/0.2 📖21 ]"
 `;

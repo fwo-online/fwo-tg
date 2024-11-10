@@ -23,7 +23,7 @@ describe('thrustWeapon', () => {
       skills: {
         thrustWeapon: 1,
       },
-    }, { withWeapon: 'a60' });
+    }, { withWeapon: 'stiletto' });
     target = await TestUtils.createCharacter({
       skills: {
         dodge: 1,

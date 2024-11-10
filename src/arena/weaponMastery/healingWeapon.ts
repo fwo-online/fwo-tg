@@ -1,7 +1,7 @@
 import IncreaseEffectSkill from './constructors/increaseEffectSkill';
 
 class HealingWeapon extends IncreaseEffectSkill {
-  weaponTypes = ['g'];
+  weaponTypes = ['heal'];
 
   constructor() {
     super({

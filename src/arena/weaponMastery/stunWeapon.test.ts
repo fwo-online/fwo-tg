@@ -25,7 +25,7 @@ describe('stunWeapon', () => {
       skills: {
         stunWeapon: 1,
       },
-    }, { withWeapon: 'a101' });
+    }, { withWeapon: 'staff' });
     target = await TestUtils.createCharacter({
       skills: {
         dodge: 1,

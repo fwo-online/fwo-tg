@@ -2,7 +2,7 @@ import type { ActionType } from '@/arena/Constuructors/types';
 import CounterEvasionSkill from './constructors/counterEvasionSkill';
 
 class RangeWeapon extends CounterEvasionSkill {
-  weaponTypes = ['l'];
+  weaponTypes = ['range'];
   affectedActionType: ActionType = 'dodge';
 
   constructor() {

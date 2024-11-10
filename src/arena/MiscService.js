@@ -9,7 +9,7 @@
  */
 /** @type {Object.<string, weaponType>} */
 const WEAPON_TYPES = {
-  s: {
+  thrust: {
     name: 'колющее',
     action: (target, weapon) => `вонзил _${weapon.info.name}_ в *${target.nick}*`,
   },
@@ -25,7 +25,7 @@ const WEAPON_TYPES = {
     name: 'лечащее',
     action: (target, weapon) => `вонзил _${weapon.info.name}_ в *${target.nick}*`,
   },
-  l: {
+  range: {
     name: 'метательное',
     action: (target, weapon) => `швырнул в *${target.nick}* _${weapon.info.case}_`,
   },
@@ -37,7 +37,7 @@ const WEAPON_TYPES = {
     name: 'зажигательное',
     action: (target, weapon) => `обжег *${target.nick}* с помощью _${weapon.info.case}_`,
   },
-  d: {
+  stun: {
     name: 'оглушающее',
     action: (target, weapon) => `дал по башке *${target.nick}* _${weapon.info.case}_`,
   },

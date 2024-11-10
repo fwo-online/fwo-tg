@@ -1,12 +1,11 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
+// Bun Snapshot v1, https://goo.gl/fbAQLP
 exports[`magicWall should protect player 1`] = `
 "*repellat* использовал _Магическая стена_ на *repellat* с эффектом 140.21
 \\[ 📖0 ]
 *explicabo* пытался атаковать *repellat*, но у него не получилось
-_Магическая стена_ *repellat*: 📖254
+_Магическая стена_ *repellat*: 📖112
 *explicabo* пытался атаковать *repellat*, но у него не получилось
-_Магическая стена_ *repellat*: 📖254"
+_Магическая стена_ *repellat*: 📖112"
 `;
 
 exports[`magicWall target should be behind wall 1`] = `147.01`;

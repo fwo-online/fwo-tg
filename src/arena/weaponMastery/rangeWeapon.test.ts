@@ -23,7 +23,7 @@ describe('rangeWeapon', () => {
       skills: {
         rangeWeapon: 1,
       },
-    }, { withWeapon: 'a15' });
+    }, { withWeapon: 'rocks' });
     target = await TestUtils.createCharacter({
       skills: {
         dodge: 1,

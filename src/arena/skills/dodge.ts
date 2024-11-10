@@ -6,11 +6,11 @@ import CastError from '../errors/CastError';
 import MiscService from '../MiscService';
 
 const dodgeableWeaponTypes = [
-  's', // колющее
+  'thrust', // колющее
   'cut', // режущее
   'chop', // рубящее
-  'l', // метательное
-  'd', // оглушающее
+  'range', // метательное
+  'stun', // оглушающее
 ];
 
 /**

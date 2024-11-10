@@ -5,7 +5,7 @@ import type { SuccessArgs } from '../Constuructors/types';
 import CastError from '../errors/CastError';
 
 const parryableWeaponTypes = [
-  's', // колющее
+  'thrust', // колющее
   'cut', // режущее
   'chop', // рубящее
 ];
