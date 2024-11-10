@@ -1,16 +1,16 @@
 import { Scenes, Markup } from 'telegraf';
-import type Char from '../arena/CharacterService';
+import type { CharacterService } from '../arena/CharacterService';
 import { Harks } from '../data';
 import type { BotContext } from '../fwo';
 import { mono } from '../utils/formatString';
 
 export const harkScene = new Scenes.BaseScene<BotContext>('harks');
 
-const getInlineKeyboard = (character: Char) => {
+const getInlineKeyboard = (character: CharacterService) => {
   const inlineKeyboardArr = Harks.harksList
     .map((hark) => [
       Markup.button.callback(
-        `${Harks.harksData[hark].name}: ${character.harks[hark]}`,
+        `${Harks.harksData[hark].name}: ${character.attributes[hark]}`,
         `info_${hark}`,
       ),
       Markup.button.callback(
@@ -83,21 +83,21 @@ harkScene.action(/confirm|reset|back|increase(?=_)/, async (ctx) => {
 });
 
 harkScene.action('def_harks', async (ctx) => {
-  const { def, prof } = ctx.session.character;
+  const { dynamicAttributes, prof } = ctx.session.character;
   const message = mono([`
-Урон:                     ${def.hit.min} - ${def.hit.max}
-Атака:                    ${def.patk}
-Защита:                   ${def.pdef}
-Здоровье:                 ${def.maxHp}
-Лечение:                  ${def.hl.min} - ${def.hl.max}
-Мана:                     ${def.maxMp}
-Восстановление маны:      ${def.reg_mp}
-Энергия:                  ${def.maxEn}
-Восстановление энергии:   ${def.reg_en}
-Магическая атака:         ${def.mga}
-Магическая защита:        ${def.mgp}`,
-  prof === 'l' && `${`Кол-во целей для атаки:  ${def.maxTarget}`}`,
-  (prof === 'm' || prof === 'p') && `${`Длительность магии:       ${def.lspell}`}`,
+Урон:                     ${dynamicAttributes.hit.min} - ${dynamicAttributes.hit.max}
+Атака:                    ${dynamicAttributes.phys.attack}
+Защита:                   ${dynamicAttributes.phys.defence}
+Здоровье:                 ${dynamicAttributes.base.hp}
+Лечение:                  ${dynamicAttributes.heal.min} - ${dynamicAttributes.heal.max}
+Мана:                     ${dynamicAttributes.base.mp}
+Восстановление маны:      ${dynamicAttributes.regen.mp}
+Энергия:                  ${dynamicAttributes.base.en}
+Восстановление энергии:   ${dynamicAttributes.regen.en}
+Магическая атака:         ${dynamicAttributes.magic.attack}
+Магическая защита:        ${dynamicAttributes.magic.defence}`,
+  prof === 'l' && `${`Кол-во целей для атаки:  ${dynamicAttributes.maxTarget}`}`,
+  (prof === 'm' || prof === 'p') && `${`Длительность магии:       ${dynamicAttributes.spellLength}`}`,
   ].filter((val) => val).join('\n'));
 
   await ctx.editMessageText(

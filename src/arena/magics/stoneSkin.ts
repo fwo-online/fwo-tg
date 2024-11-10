@@ -28,7 +28,7 @@ class StoneSkin extends CommonMagic {
 
   run() {
     const { target } = this.params;
-    target.stats.up('def', this.effectVal());
+    target.stats.up('phys.defence', this.effectVal());
   }
 
   // eslint-disable-next-line class-methods-use-this

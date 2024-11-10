@@ -27,6 +27,6 @@ export class PlayerWeapon {
 
     const item = arena.items[this.inventory.code];
 
-    return types.includes(item.wtype);
+    return types.includes((item).type ?? '');
   }
 }

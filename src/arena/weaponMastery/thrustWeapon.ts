@@ -2,7 +2,7 @@ import type { ActionType } from '@/arena/Constuructors/types';
 import CounterEvasionSkill from './constructors/counterEvasionSkill';
 
 class ThrustWeapon extends CounterEvasionSkill {
-  weaponTypes = ['s'];
+  weaponTypes = ['thrust'];
   affectedActionType: ActionType = 'dodge';
 
   constructor() {

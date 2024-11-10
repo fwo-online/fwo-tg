@@ -36,23 +36,23 @@ describe('staticProtect', () => {
   });
 
   it('should passively block if target has a lot of pdef', () => {
-    game.players.players[0].stats.set('patk', 0);
-    game.players.players[1].stats.set('pdef', 50);
+    game.players.players[0].stats.set('phys.attack', 0);
+    game.players.players[1].stats.set('static.defence', 50);
     game.players.players[0].proc = 1;
 
-    game.players.players[0].stats.set('atk', 10);
+    game.players.players[0].stats.set('phys.attack', 10);
     attack.cast(game.players.players[0], game.players.players[1], game);
     expect(staticProtect.getChance()).toBe(33);
 
-    game.players.players[0].stats.set('atk', 25);
+    game.players.players[0].stats.set('phys.attack', 25);
     attack.cast(game.players.players[0], game.players.players[1], game);
     expect(staticProtect.getChance()).toBe(63);
 
-    game.players.players[0].stats.set('atk', 50);
+    game.players.players[0].stats.set('phys.attack', 50);
     attack.cast(game.players.players[0], game.players.players[1], game);
     expect(staticProtect.getChance()).toBe(86);
 
-    game.players.players[0].stats.set('atk', 100);
+    game.players.players[0].stats.set('phys.attack', 100);
     attack.cast(game.players.players[0], game.players.players[1], game);
     expect(staticProtect.getChance()).toBe(98);
 

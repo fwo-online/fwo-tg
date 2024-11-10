@@ -1,29 +1,29 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`physicalSadness should hit target with single hit 1`] = `-4.92`;
+exports[`physicalSadness should hit target with single hit 1`] = `1.23`;
 
-exports[`physicalSadness should hit target with single hit 2`] = `111`;
+exports[`physicalSadness should hit target with single hit 2`] = `62`;
 
 exports[`physicalSadness should hit target with single hit 3`] = `
-"*magni* рубанул *asperiores* _Эпическим Мечом_ и нанёс *10.9* урона
-\\[ asperiores 💥 💔-10.9/-2.9 📖87 ]
-*asperiores* сотворил _Вселенская скорбь_ на *magni* нанеся 12.92 урона
-\\[ magni 💥 💔-12.92/-4.92 📖111 ]"
+"*magni* рубанул *asperiores* _Эпическим Мечом_ и нанёс *4.75* урона
+\\[ asperiores 💥 💔-4.75/3.25 📖38 ]
+*asperiores* сотворил _Вселенская скорбь_ на *magni* нанеся 6.77 урона
+\\[ magni 💥 💔-6.77/1.23 📖62 ]"
 `;
 
-exports[`physicalSadness should hit targets with multiple hit 1`] = `3.25`;
+exports[`physicalSadness should hit targets with multiple hit 1`] = `4.79`;
 
-exports[`physicalSadness should hit targets with multiple hit 2`] = `46`;
+exports[`physicalSadness should hit targets with multiple hit 2`] = `34`;
 
 exports[`physicalSadness should hit targets with multiple hit 3`] = `
-"*magni* рубанул *asperiores* _Эпическим Мечом_ и нанёс *2.73* урона
-\\[ asperiores 💥 💔-2.73/5.27 📖22 ]
-*magni* рубанул *asperiores* _Эпическим Мечом_ и нанёс *2.73* урона
-\\[ asperiores 💥 💔-2.73/2.54 📖22 ]
-*magni* рубанул *asperiores* _Эпическим Мечом_ и нанёс *2.73* урона
-\\[ asperiores 💥 💔-2.73/-0.19 📖22 ]
-*magni* рубанул *asperiores* _Эпическим Мечом_ и нанёс *2.73* урона
-\\[ asperiores 💥 💔-2.73/-2.92 📖22 ]
-*asperiores* сотворил _Вселенская скорбь_ на *magni* нанеся 4.75 урона
-\\[ magni 💥 💔-4.75/3.25 📖46 ]"
+"*magni* рубанул *asperiores* _Эпическим Мечом_ и нанёс *1.19* урона
+\\[ asperiores 💥 💔-1.19/6.81 📖10 ]
+*magni* рубанул *asperiores* _Эпическим Мечом_ и нанёс *1.19* урона
+\\[ asperiores 💥 💔-1.19/5.62 📖10 ]
+*magni* рубанул *asperiores* _Эпическим Мечом_ и нанёс *1.19* урона
+\\[ asperiores 💥 💔-1.19/4.43 📖10 ]
+*magni* рубанул *asperiores* _Эпическим Мечом_ и нанёс *1.19* урона
+\\[ asperiores 💥 💔-1.19/3.24 📖10 ]
+*asperiores* сотворил _Вселенская скорбь_ на *magni* нанеся 3.21 урона
+\\[ magni 💥 💔-3.21/4.79 📖34 ]"
 `;

@@ -9,41 +9,41 @@
  */
 /** @type {Object.<string, weaponType>} */
 const WEAPON_TYPES = {
-  s: {
+  thrust: {
     name: 'колющее',
-    action: (target, weapon) => `вонзил _${weapon.name}_ в *${target.nick}*`,
+    action: (target, weapon) => `вонзил _${weapon.info.name}_ в *${target.nick}*`,
   },
-  c: {
+  cut: {
     name: 'режущее',
-    action: (target, weapon) => `пустил кровь *${target.nick}* с помощью _${weapon.name}_`,
+    action: (target, weapon) => `пустил кровь *${target.nick}* с помощью _${weapon.info.name}_`,
   },
-  h: {
+  chop: {
     name: 'рубящее',
-    action: (target, weapon) => `рубанул *${target.nick}* _${weapon.case}_`,
+    action: (target, weapon) => `рубанул *${target.nick}* _${weapon.info.case}_`,
   },
-  g: {
+  heal: {
     name: 'лечащее',
-    action: (target, weapon) => `вонзил _${weapon.name}_ в *${target.nick}*`,
+    action: (target, weapon) => `вонзил _${weapon.info.name}_ в *${target.nick}*`,
   },
-  l: {
+  range: {
     name: 'метательное',
-    action: (target, weapon) => `швырнул в *${target.nick}* _${weapon.case}_`,
+    action: (target, weapon) => `швырнул в *${target.nick}* _${weapon.info.case}_`,
   },
   m: {
     name: 'дальнобойное',
-    action: (target, weapon) => `стрельнул в *${target.nick}* _${weapon.case}_`,
+    action: (target, weapon) => `стрельнул в *${target.nick}* _${weapon.info.case}_`,
   },
   f: {
     name: 'зажигательное',
-    action: (target, weapon) => `обжег *${target.nick}* с помощью _${weapon.case}_`,
+    action: (target, weapon) => `обжег *${target.nick}* с помощью _${weapon.info.case}_`,
   },
-  d: {
+  stun: {
     name: 'оглушающее',
-    action: (target, weapon) => `дал по башке *${target.nick}* _${weapon.case}_`,
+    action: (target, weapon) => `дал по башке *${target.nick}* _${weapon.info.case}_`,
   },
   r: {
     name: 'спецоружие',
-    action: (target, weapon) => `атаковал *${target.nick}* _${weapon.case}_`,
+    action: (target, weapon) => `атаковал *${target.nick}* _${weapon.info.case}_`,
   },
 };
 /**
@@ -104,7 +104,7 @@ module.exports = {
   weaponTypes: WEAPON_TYPES,
   stores: STORES,
   getWeaponAction(target, weapon) {
-    return WEAPON_TYPES[weapon.wtype].action(target, weapon);
+    return WEAPON_TYPES[weapon.type].action(target, weapon);
   },
   /**
    * Функция рандома по формату 1d100+10;

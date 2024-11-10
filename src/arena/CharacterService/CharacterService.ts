@@ -3,12 +3,12 @@ import type { UpdateQuery } from 'mongoose';
 import { findCharacter, updateCharacter } from '@/api/character';
 import arena from '@/arena';
 import config from '@/arena/config';
-import InventoryService from '@/arena/InventoryService';
+import { InventoryService } from '@/arena/InventoryService';
 import type { HarksLvl } from '@/data/harks';
 import type { Char } from '@/models/character';
 import { assignWithSum } from '@/utils/assignWithSum';
-import { floatNumber } from '@/utils/floatNumber';
 import type { Character, CharacterClass } from '@/schemas/character';
+import { calculateDynamicAttributes } from './utils/calculate-dynamic-attributes';
 
 /**
  * Конструктор персонажа
@@ -16,82 +16,11 @@ import type { Character, CharacterClass } from '@/schemas/character';
  * @todo Сейчас массив arena.player не является массивом объектов Character,
  * нужно переработать
  */
-/**
- * Возвращает список динамических характеристик
- * @param charObj инстанс Char
- * @todo проверить что функция используется при загрузке игрока в игру
- */
-function getDynHarks(charObj: CharacterService) {
-  const { harks } = charObj.inventory;
-  const patk = charObj.prof === 'l'
-    ? floatNumber(harks.dex + harks.int * 0.5)
-    : floatNumber(harks.dex + harks.str * 0.4);
-  const pdef = floatNumber(harks.con * 0.6 + harks.dex * 0.4);
-  const maxHp = floatNumber(6 + harks.con / 3);
-  const maxMp = floatNumber(harks.wis * 1.5);
-  const maxEn = charObj.prof === 'l'
-    ? harks.dex + harks.int * 0.5 + harks.con * 0.25
-    : harks.dex + harks.str * 0.5 + harks.con * 0.25;
 
-  const mga = floatNumber(harks.wis * 0.6 + harks.int * 0.4);
-  const mgp = floatNumber(harks.wis * 0.6 + harks.int * 0.4);
-  /** @type {import('../models/item').MinMax} */
-  const hl = {
-    min: floatNumber(harks.int / 10),
-    max: floatNumber(harks.int / 5),
-  };
-
-  const reg_mp = floatNumber(harks.wis * 0.4 + harks.int * 0.6);
-
-  const reg_en = floatNumber(harks.con * 0.4 + harks.dex * 0.6);
-
-  /**
-   * Функция расчета наносимого урона
-   * @return {import('../models/item').MinMax} {min:xx,max:xx}
-   */
-  function calcHit() {
-    let dmgFromHarks = 0;
-    if (charObj.prof === 'l') {
-      dmgFromHarks = (harks.int - 2) / 10;
-    } else {
-      dmgFromHarks = (harks.str - 3) / 10;
-    }
-    const dmgFromItems = {
-      min: charObj.inventory.harksFromItems.hit?.min ?? 0,
-      max: charObj.inventory.harksFromItems.hit?.max ?? 0,
-    };
-
-    return {
-      min: floatNumber(dmgFromHarks + +dmgFromItems.min),
-      max: floatNumber(dmgFromHarks + +dmgFromItems.max),
-    };
-  }
-
-  const hit = calcHit();
-  const maxTarget = charObj.prof === 'l' ? Math.round(charObj.lvl + 3 / 2) : 1;
-  const lspell = charObj.prof === 'm' || charObj.prof === 'p'
-    ? Math.round((harks.int - 4) / 3)
-    : 0;
-  return {
-    patk,
-    pdef,
-    maxHp,
-    maxMp,
-    maxEn,
-    mga,
-    mgp,
-    hl,
-    reg_mp,
-    reg_en,
-    hit,
-    maxTarget,
-    lspell,
-  };
-}
 /**
  * Класс описывающий персонажа внутри игры
  */
-class CharacterService {
+export class CharacterService {
   tempHarks: HarksLvl & { free: number };
   mm: { status?: string; time?: number };
   inventory: InventoryService;
@@ -126,29 +55,14 @@ class CharacterService {
   }
 
   // Суммарный объект характеристик + вещей.
-  get def() {
-    const dynHarks = getDynHarks(this);
-    /**
-     * Проблематика на подумать:
-     * характеристики внутри чара имеют имена patk/pdef и т.д, а объект который
-     * был получен после возвращения updateHarkFromItems, имеет ключи типа:
-     * atk/prt (models/item). Это не позволяет прозрачно проводить сложение.
-     */
-    _.forEach(this.inventory.harksFromItems, (h, i) => {
-      if (_.isObject(h)) {
-        assignWithSum(dynHarks[i], h);
-      } else {
-        if (!_.isUndefined(dynHarks[i])) dynHarks[i] += Number(h);
-        if (i === 'atc') dynHarks.patk += Number(h);
-        if (i === 'prt') dynHarks.pdef += Number(h);
-        if (i === 'add_hp') dynHarks.maxHp += Number(h);
-        if (i === 'add_mp') dynHarks.maxMp += Number(h);
-        if (i === 'add_en') dynHarks.maxEn += Number(h);
-        if (!dynHarks[i]) dynHarks[i] = h;
-      }
-    });
-    // console.log('dyn', dynHarks);
-    return dynHarks;
+  get dynamicAttributes() {
+    const characterAttributes = structuredClone(this.attributes);
+    const inventoryAttributes = this.inventory.attributes;
+
+    assignWithSum(characterAttributes, inventoryAttributes);
+    const dynamicHarks = calculateDynamicAttributes(this, characterAttributes);
+    assignWithSum(dynamicHarks, this.inventory.harksFromItems);
+    return dynamicHarks;
   }
 
   get owner() {
@@ -216,16 +130,12 @@ class CharacterService {
   }
 
   // Базовые harks без учёта надетых вещей
-  get harks() {
+  get attributes() {
     return this.charObj.harks;
   }
 
   get magics() {
     return this.charObj.magics || {};
-  }
-
-  get plushark() {
-    return this.inventory.harksFromItems.plushark;
   }
 
   get skills() {
@@ -242,22 +152,6 @@ class CharacterService {
 
   get clan() {
     return this.charObj.clan;
-  }
-
-  get collection() {
-    return this.inventory.collection;
-  }
-
-  get resists() {
-    return this.collection?.resists;
-  }
-
-  get chance() {
-    return this.collection?.chance;
-  }
-
-  get statical() {
-    return this.collection?.statical;
   }
 
   /** Суммарное количество опыта, требуемое для следующего уровня */
@@ -515,9 +409,7 @@ class CharacterService {
   async saveToDb() {
     try {
       console.log('Saving char :: id', this.id);
-      const {
-        gold, exp, magics, bonus, skills, lvl, clan, free,
-      } = this;
+      const { gold, exp, magics, bonus, skills, lvl, clan, free } = this;
       return await updateCharacter(this.id, {
         gold,
         exp,
@@ -542,7 +434,7 @@ class CharacterService {
       owner: this.owner,
       name: this.nickname,
       class: this.prof as CharacterClass,
-      attributes: this.harks,
+      attributes: this.attributes,
       magics: this.magics,
       skills: this.skills,
       clan: this.clan,
@@ -553,5 +445,3 @@ class CharacterService {
     };
   }
 }
-
-export default CharacterService;

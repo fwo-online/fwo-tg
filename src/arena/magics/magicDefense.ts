@@ -27,7 +27,7 @@ class MagicDefense extends CommonMagic {
 
   run() {
     const { target } = this.params;
-    target.stats.mode('up', 'mgp', this.effectVal());
+    target.stats.mode('up', 'magic.defence', this.effectVal());
   }
 
   // eslint-disable-next-line class-methods-use-this

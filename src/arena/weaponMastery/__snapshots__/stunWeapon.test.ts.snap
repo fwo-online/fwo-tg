@@ -1,10 +1,10 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`stunWeapon should hit through protect 1`] = `
 "*quisquam* пытался атаковать *corporis*, но у него не получилось
-_Защита_ *corporis*: 📖176
-*quisquam* дал по башке *corporis* _Эпическим Посохом_ и нанёс *8.78* урона
-\\[ corporis 💥 💔-8.78/-0.78 📖70 ]
+_Защита_ *corporis*: 📖15
+*quisquam* дал по башке *corporis* _Посохом_ и нанёс *0.74* урона
+\\[ corporis 💥 💔-0.74/7.26 📖6 ]
 
 _Навык владения оглушающим оружием_ *quisquam*"
 `;

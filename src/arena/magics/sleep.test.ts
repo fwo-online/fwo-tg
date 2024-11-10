@@ -2,7 +2,7 @@ import {
   describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
 } from 'bun:test';
 import casual from 'casual';
-import CharacterService from '@/arena/CharacterService';
+import { CharacterService } from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import { handsHeal, protect } from '../actions';
@@ -43,7 +43,7 @@ describe('paralysis', () => {
 
   it('target should sleep and not be able to attack', async () => {
     game.players.players[0].proc = 1;
-    game.players.players[0].stats.set('maxMp', 99);
+    game.players.players[0].stats.set('base.mp', 99);
     game.players.players[0].stats.set('mp', 99);
     game.players.players[1].proc = 0.25;
 

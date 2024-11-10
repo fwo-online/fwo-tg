@@ -7,7 +7,7 @@ export class HealMagic extends CommonMagic {
 
   run(): void {
     const { target } = this.params;
-    const maxHP = target.stats.val('maxHp'); // показатель максимального HP
+    const maxHP = target.stats.val('base.hp'); // показатель максимального HP
     const realHP = target.stats.val('hp'); // показатель текущего HP
     const maxHeal = maxHP - realHP;
     this.status.effect = floatNumber(Math.min(this.effectVal(), maxHeal));

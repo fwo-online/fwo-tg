@@ -1,5 +1,5 @@
 import arena from '@/arena';
-import type Char from '@/arena/CharacterService';
+import type { CharacterService } from '@/arena/CharacterService';
 import FlagsConstructor from '@/arena/Constuructors/FlagsConstructor';
 import type { DamageType } from '@/arena/Constuructors/types';
 import type * as magics from '@/arena/magics';
@@ -7,7 +7,6 @@ import type { Stats } from '@/arena/StatsService';
 import StatsService from '@/arena/StatsService';
 import type { Prof } from '@/data/profs';
 import type { Clan } from '@/models/clan';
-import type { MinMax } from '@/models/item';
 import { PlayerWeapon } from './PlayerWeapon';
 
 export type Resists = Record<DamageType, number>;
@@ -17,22 +16,6 @@ export interface Chance {
   cast?: Partial<Record<keyof typeof magics, number>>
 }
 
-export interface Statical {
-  atc: number;
-  prt: number;
-  add_hp: number;
-  add_mp: number;
-  add_en: number;
-  mga: number;
-  mgp: number;
-  hl: MinMax;
-  reg_mp: number;
-  reg_en: number;
-  hit: MinMax;
-  maxTarget: number;
-  lspell: number;
-  weight: number;
-}
 /**
  * PlayerService
  * @description Объект игрока внутри боя ! Это не Character!
@@ -65,12 +48,11 @@ export default class Player {
   skills: Record<string, number>;
   magics: Record<string, number>;
   favoriteMagics: string[];
-  statical: Partial<Statical>;
   alive: boolean;
   proc: number;
   weapon: PlayerWeapon;
 
-  constructor(params: Char) {
+  constructor(params: CharacterService) {
     this.nick = params.nickname;
     this.id = params.id;
     this.owner = params.owner;
@@ -78,22 +60,22 @@ export default class Player {
     this.lvl = params.lvl;
     this.clan = params.clan;
     this.favoriteMagics = params.favoriteMagicList;
-    this.stats = new StatsService({ ...params.def, ...params.harks });
+    this.stats = new StatsService(params.dynamicAttributes);
     this.flags = new FlagsConstructor();
     // @todo закладка для вычисляемых статов
     this.modifiers = {
       magics: {
         chance: {
-          ...params.chance,
+          fail: {},
+          cast: {},
         },
       },
       castChance: 0,
     }; // Объект
     // модификаторов
-    this.resists = params.resists || {}; // Объект резистов
+    this.resists = {}; // Объект резистов
     this.skills = params.skills || {}; // Обькт доступных скилов
     this.magics = params.magics || {}; // объект изученых магий
-    this.statical = params.statical || {}; // статически реген
     this.alive = true;
     this.proc = 100;
     this.weapon = new PlayerWeapon(params.inventory.getEquippedWeapon());

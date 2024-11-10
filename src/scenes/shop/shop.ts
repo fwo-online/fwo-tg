@@ -49,22 +49,6 @@ shopScene.action(/buy(?=_)/, async (ctx) => {
   }
 });
 
-shopScene.action('collectionList', async (ctx) => {
-  await ctx.editMessageText(
-    messages.collectionList(),
-    keyboards.collectionList(),
-  );
-});
-
-shopScene.action(/collection(?=_)/, async (ctx) => {
-  const [, key] = ctx.match.input.split('_');
-
-  await ctx.editMessageText(
-    messages.collectionItem(key),
-    keyboards.collectionItem(key),
-  );
-});
-
 shopScene.action('back', async (ctx) => {
   await ctx.editMessageText(
     messages.enter(),

@@ -1,11 +1,11 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`protect should not get exp if protect enemy 1`] = `
-"*corporis* пытался атаковать *quisquam*, но у него не получилось
-_Защита_ *quisquam*: 📖163,*corporis*: 📖0"
-`;
+// Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`protect should protect player 1`] = `
 "*corporis* пытался атаковать *quisquam*, но у него не получилось
-_Защита_ *quisquam*: 📖220"
+_Защита_ *quisquam*: 📖90"
+`;
+
+exports[`protect should not get exp if protect enemy 1`] = `
+"*corporis* пытался атаковать *quisquam*, но у него не получилось
+_Защита_ *quisquam*: 📖67,*corporis*: 📖0"
 `;

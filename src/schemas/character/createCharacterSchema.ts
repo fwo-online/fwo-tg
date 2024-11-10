@@ -6,4 +6,4 @@ export const createCharacterSchema = z.object({
   class: characterClassSchema,
 });
 
-export type CreateCharacterDto = z.infer<typeof createCharacterSchema>
+export type CreateCharacterDto = z.infer<typeof createCharacterSchema>;

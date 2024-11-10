@@ -4,7 +4,7 @@ export enum CharacterClass {
   Warrior = 'w',
   Mage = 'm',
   Archer = 'l',
-  Priest = 'p'
+  Priest = 'p',
 }
 
 export const characterClassSchema = z.nativeEnum(CharacterClass);

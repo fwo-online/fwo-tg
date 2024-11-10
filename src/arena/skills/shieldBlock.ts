@@ -35,7 +35,7 @@ class ShieldBlock extends Skill {
     const initiatorSkillLvl = initiator.skills[this.name];
     const effect = this.effect[initiatorSkillLvl - 1] || 1;
     // изменяем
-    initiator.flags.isShielded = ((0.3 * initiator.stats.val('str')) + (0.7 * initiator.stats.val('con'))) * effect;
+    initiator.flags.isShielded = ((0.3 * initiator.stats.val('attributes.str')) + (0.7 * initiator.stats.val('attributes.con'))) * effect;
   }
 
   customMessage(args: SuccessArgs) {

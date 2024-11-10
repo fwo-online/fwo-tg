@@ -1,13 +1,13 @@
 import type { Telegraf } from 'telegraf';
 import type { BotContext } from '@/fwo';
 import type { Clan } from '@/models/clan';
-import type { Item } from '@/models/item';
 import type * as actions from './actions';
-import type CharacterService from './CharacterService';
+import type { CharacterService } from './CharacterService';
 import type GameService from './GameService';
 import type * as magics from './magics';
 import type MatchMaking from './MatchMakingService';
 import type * as skills from './skills';
+import type { Item } from '@/schemas/item';
 
 export default {
   mm: null as unknown as typeof MatchMaking,

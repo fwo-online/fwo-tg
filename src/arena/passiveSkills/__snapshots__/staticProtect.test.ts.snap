@@ -1,12 +1,12 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`staticProtect should passively block if target has a lot of pdef 1`] = `
 "*quisquam* пытался атаковать *corporis*, но у него не получилось
 _Статичная защита_ *corporis*
-*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *11.7* урона
-\\[ corporis 💥 💔-11.7/-3.7 📖94 ]
-*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *11.7* урона
-\\[ corporis 💥 💔-11.7/-15.4 📖94 ]
-*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *11.7* урона
-\\[ corporis 💥 💔-11.7/-27.1 📖94 ]"
+*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *5.2* урона
+\\[ corporis 💥 💔-5.2/2.8 📖42 ]
+*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *5.2* урона
+\\[ corporis 💥 💔-5.2/-2.4 📖42 ]
+*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *5.2* урона
+\\[ corporis 💥 💔-5.2/-7.6 📖42 ]"
 `;

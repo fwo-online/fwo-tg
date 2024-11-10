@@ -1,7 +1,7 @@
 import casual from 'casual';
 import type { AnyKeys } from 'mongoose';
 import arena from '@/arena';
-import CharacterService from '@/arena/CharacterService';
+import { CharacterService } from '@/arena/CharacterService';
 import { ClanService } from '@/arena/ClanService';
 import type { HistoryItem } from '@/arena/HistoryService';
 import { formatMessage } from '@/arena/LogService/utils';
@@ -9,7 +9,8 @@ import { profsList, profsData, type Prof } from '@/data/profs';
 import { type Char, CharModel } from '@/models/character';
 import { type Clan, ClanModel } from '@/models/clan';
 import { InventoryModel } from '@/models/inventory';
-import { type Item, ItemModel } from '@/models/item';
+import { ItemModel } from '@/models/item';
+import type { Item } from '@/schemas/item';
 
 const functions = casual.functions();
 
@@ -19,7 +20,7 @@ export default class TestUtils {
   }: { withWeapon?: boolean | string } = {}) {
     const prof: Prof = params?.prof ?? casual.random_element([...profsList]);
     const char = await CharModel.create({
-      tgId: casual.integer(1_000_000, 9_999_999),
+      owner: casual.integer(1_000_000, 9_999_999).toString(),
       nickname: functions.word(),
       sex: casual.random_element(['m', 'f']),
       prof,
@@ -78,7 +79,7 @@ export default class TestUtils {
   }
 
   static async getWeapon(mayBeCode: true | string): Promise<Item> {
-    const code = typeof mayBeCode === 'string' ? mayBeCode : 'a100';
+    const code = typeof mayBeCode === 'string' ? mayBeCode : 'epicSword';
     await ItemModel.load();
     return ItemModel.findOne({ code }).orFail();
   }

@@ -5,9 +5,9 @@ import type { SuccessArgs } from '../Constuructors/types';
 import CastError from '../errors/CastError';
 
 const parryableWeaponTypes = [
-  's', // колющее
-  'c', // режущее
-  'h', // рубящее
+  'thrust', // колющее
+  'cut', // режущее
+  'chop', // рубящее
 ];
 
 /**
@@ -37,14 +37,14 @@ class Parry extends Skill implements Affect {
     const initiatorSkillLvl = initiator.getSkillLevel(this.name);
     const effect = this.effect[initiatorSkillLvl - 1] || 1;
     // изменяем
-    initiator.flags.isParry = initiator.stats.val('dex') * effect;
+    initiator.flags.isParry = initiator.stats.val('attributes.dex') * effect;
   }
 
   preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }): undefined => {
     const isParryable = initiator.weapon.isOfType(parryableWeaponTypes);
 
     if (target.flags.isParry && isParryable) {
-      const initiatorDex = initiator.stats.val('dex');
+      const initiatorDex = initiator.stats.val('attributes.dex');
 
       if ((target.flags.isParry - initiatorDex) > 0) {
         this.calculateExp();

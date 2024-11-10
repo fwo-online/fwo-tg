@@ -23,7 +23,7 @@ describe('thrustWeapon', () => {
       skills: {
         thrustWeapon: 1,
       },
-    }, { withWeapon: 'a60' });
+    }, { withWeapon: 'stiletto' });
     target = await TestUtils.createCharacter({
       skills: {
         dodge: 1,
@@ -46,7 +46,7 @@ describe('thrustWeapon', () => {
   it('should hit through dodge', () => {
     game.players.players[0].proc = 1;
     game.players.players[1].proc = 1;
-    game.players.players[1].stats.set('dex', 20);
+    game.players.players[1].stats.set('attributes.dex', 20);
     game.players.players[1].stats.set('en', 100);
 
     dodge.cast(game.players.players[1], game.players.players[1], game);

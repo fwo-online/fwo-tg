@@ -32,11 +32,11 @@ class Regeneration {
    */
   // eslint-disable-next-line class-methods-use-this
   cast(initiator: Player, _target: Player, _game: Game) {
-    if ((initiator.prof === 'l') || (initiator.prof === 'w')) {
-      const val = initiator.stats.val('reg_en') * initiator.proc; // размер восстан
+    if (initiator.prof === 'l' || initiator.prof === 'w') {
+      const val = initiator.stats.val('regen.en') * initiator.proc; // размер восстан
       initiator.stats.up('en', val);
     } else {
-      const val = initiator.stats.val('reg_mp') * initiator.proc; // размер восстан
+      const val = initiator.stats.val('regen.mp') * initiator.proc; // размер восстан
       initiator.stats.up('mp', val);
     }
   }

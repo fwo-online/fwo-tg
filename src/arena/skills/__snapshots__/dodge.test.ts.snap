@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`dodge target should dodge attack if has initiator more dex 1`] = `
 "*alias* использовал _🐍 Увертка_
@@ -10,6 +10,6 @@ _🐍 Увертка_ *alias*: 📖50"
 exports[`dodge target should not dodge attack if target has more dex 1`] = `
 "*explicabo* использовал _🐍 Увертка_
 
-*repellat* рубанул *explicabo* _Эпическим Мечом_ и нанёс *11* урона
-\\[ explicabo 💥 💔-11/-3 📖88 ]"
+*repellat* рубанул *explicabo* _Эпическим Мечом_ и нанёс *4.85* урона
+\\[ explicabo 💥 💔-4.85/3.15 📖39 ]"
 `;

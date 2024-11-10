@@ -3,7 +3,7 @@ import {
 } from 'bun:test';
 import casual from 'casual';
 import { times } from 'lodash';
-import CharacterService from '@/arena/CharacterService';
+import { CharacterService } from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import chainLightning from './chainLightning';

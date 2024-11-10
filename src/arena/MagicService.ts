@@ -2,7 +2,7 @@ import arena from '@/arena';
 import config from '@/arena/config';
 import MiscService from '@/arena/MiscService';
 import type { Prof } from '@/data/profs';
-import type CharacterService from './CharacterService';
+import type { CharacterService } from './CharacterService';
 import type { Magic } from './Constuructors/MagicConstructor';
 
 const chance = config.magic.learnChance;

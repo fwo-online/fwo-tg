@@ -1,5 +1,5 @@
 import { Scenes, Markup } from 'telegraf';
-import type CharacterService from '@/arena/CharacterService';
+import type {CharacterService} from '@/arena/CharacterService';
 import MagicService from '@/arena/MagicService';
 import type { BotContext } from '@/fwo';
 import { getMagicDescription } from './utils';

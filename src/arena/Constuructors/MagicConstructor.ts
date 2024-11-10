@@ -131,7 +131,7 @@ export abstract class Magic extends AffectableAction {
   }
 
   applyCasterModifiers(effect: number, initiator: Player): number {
-    return effect * (1 + 0.01 * initiator.stats.val('mga'));
+    return effect * (1 + 0.01 * initiator.stats.val('magic.attack'));
   }
 
   /**
@@ -186,7 +186,7 @@ export abstract class Magic extends AffectableAction {
     // тут нужно взять получившийся шанс и проверить ещё отношение mga цели
     // @todo magics cast chance
     if (this.magType === 'bad') {
-      const x = (initiator.stats.val('mga') / target.stats.val('mgp')) * 3;
+      const x = (initiator.stats.val('magic.attack') / target.stats.val('magic.defence')) * 3;
       result += x;
     }
     return result * initiator.proc;

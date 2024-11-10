@@ -24,7 +24,7 @@ describe('healingWeapon', () => {
       skills: {
         healingWeapon: 1,
       },
-    }, { withWeapon: 'a27' });
+    }, { withWeapon: 'healStaff' });
     target = await TestUtils.createCharacter();
   });
 

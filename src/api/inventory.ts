@@ -1,4 +1,4 @@
-import { type InventoryDocument, InventoryModel } from "@/models/inventory";
+import { InventoryModel } from "@/models/inventory";
 
 function dbErr(e) {
   throw new Error(`Fail in inventory: ${e}`);
@@ -36,7 +36,4 @@ type AddItemParams = {
 
 export async function addItem({ charId, itemCode }: AddItemParams) {
   return InventoryModel.addItem(charId, itemCode);
-}
-export function getCollection(inventory: InventoryDocument[]) {
-  return InventoryModel.getCollection(inventory);
 }

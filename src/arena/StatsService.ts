@@ -1,20 +1,32 @@
-import _ from 'lodash';
-import type { Harks } from '../data';
-import { floatNumber } from '../utils/floatNumber';
-import type Char from './CharacterService';
+import { get, set } from 'lodash';
+import { floatNumber } from '@/utils/floatNumber';
+import type { CharacterDynamicAttributes } from '@/schemas/character';
+import type { PhysAttributes } from '@/schemas/shared/physAttributes';
 
-type StatsServiceArgs = Char['def'] & Harks.HarksLvl;
+type CombineAll<T> = T extends {[name in keyof T]: infer Type} ? Type : never
 
-export type Stats = StatsServiceArgs & {
+type PropertyNameMap<T, IncludeIntermediate extends boolean> = {
+    [name in keyof T]: T[name] extends object ? (
+        SubPathsOf<name, T, IncludeIntermediate> | (IncludeIntermediate extends true ? name : never) 
+    ) : name
+}
+
+type SubPathsOf<key extends keyof T, T, IncludeIntermediate extends boolean> = (
+    `${string & key}.${string & PathsOf<T[key], IncludeIntermediate>}`
+)
+
+export type PathsOf<T, IncludeIntermediate extends boolean = false> = CombineAll<PropertyNameMap<T,IncludeIntermediate>>
+
+export type Stats = CharacterDynamicAttributes & {
   hp: number;
   mp: number;
   en: number;
   exp: number;
-  def: number;
-  atk: number;
+  static: PhysAttributes;
 };
 
-const isMinMax = (atr: keyof Stats): atr is 'hl' | 'hit' => atr === 'hl' || atr === 'hit';
+type StatsPath = PathsOf<Stats>
+type StatsPathPartial = PathsOf<Stats, true>;
 
 /**
  * Класс для хранения stats
@@ -27,53 +39,26 @@ export default class StatsService {
    * @param defStat объект параметров
    */
   constructor(
-    private defStat: StatsServiceArgs,
+    private defStat: CharacterDynamicAttributes,
   ) {
     this.refresh();
   }
 
-  private setDefaultVal(atr: keyof Stats) {
-    if (typeof this.inRound[atr] === 'undefined' && !isMinMax(atr)) {
-      console.error('mode atr error', atr);
-      this.inRound[atr] = 0;
-    }
+  up(atr: StatsPath, val: number): void {
+    set(this.inRound, atr, floatNumber(this.val(atr) + val));
   }
 
-  up(atr: keyof Stats, val: number): void {
-    this.setDefaultVal(atr);
-    if (isMinMax(atr)) {
-      this.inRound[atr].max = floatNumber(this.inRound[atr].max + val);
-    } else {
-      this.inRound[atr] = floatNumber(this.inRound[atr] + val);
-    }
+  down(atr: StatsPath, val: number): void {
+    set(this.inRound, atr, floatNumber(this.val(atr) - val));
   }
 
-  down(atr: keyof Stats, val: number): void {
-    this.setDefaultVal(atr);
-    if (isMinMax(atr)) {
-      this.inRound[atr].max = floatNumber(this.inRound[atr].max - val);
-    } else {
-      this.inRound[atr] = floatNumber(this.inRound[atr] - val);
-    }
-  }
-
-  mul(atr: keyof Stats, val: number): void {
-    this.setDefaultVal(atr);
-    if (isMinMax(atr)) {
-      this.inRound[atr].max = floatNumber(this.inRound[atr].max * val);
-    } else {
-      this.inRound[atr] = floatNumber(this.inRound[atr] * val);
-    }
+  mul(atr: StatsPath, val: number): void {
+    set(this.inRound, atr, floatNumber(this.val(atr) * val));
     console.log('Mul:', atr, ' val:', val, 'new val:', this.inRound[atr]);
   }
 
-  set(atr: keyof Stats, val: number): void {
-    this.setDefaultVal(atr);
-    if (isMinMax(atr)) {
-      this.inRound[atr].max = floatNumber(val);
-    } else {
-      this.inRound[atr] = floatNumber(val);
-    }
+  set(atr: StatsPath, val: number): void {
+    this.inRound[atr] = floatNumber(val);
   }
 
   /**
@@ -82,34 +67,18 @@ export default class StatsService {
    * @param atr изменяемый атрибут atk/hark.str/def
    * @param val значение на которое будет изменено
    * изменение может происходить только внутри inRound
-   * @deprecated
+   * @deprecated use up/down/set methods instead
    */
-  mode(type: 'up' | 'down' | 'set', atr: keyof Stats, val: number): void {
-    this.setDefaultVal(atr);
-    let oldValue: number;
-    if (isMinMax(atr)) {
-      oldValue = this.inRound[atr].max;
-    } else {
-      oldValue = this.inRound[atr];
-    }
+  mode(type: 'up' | 'down' | 'set', atr: StatsPath, val: number): void {
     switch (type) {
       case 'up':
-        // @ts-expect-error @deplecated
-        this.inRound[atr] = floatNumber(oldValue + val);
+        this.up(atr, val)
         break;
       case 'down':
-        // @ts-expect-error @deplecated
-        this.inRound[atr] = floatNumber(oldValue - val);
+        this.down(atr, val)
         break;
       case 'set':
-        if (atr === 'hit' || atr === 'hl') {
-          // @ts-expect-error @deplecated
-          oldValue = floatNumber(a * val);
-          this.inRound[atr].max = oldValue;
-        } else {
-          oldValue = floatNumber(val);
-          this.inRound[atr] = oldValue;
-        }
+        this.set(atr, val)
         break;
       default:
         console.error('Stats mode type error', type);
@@ -122,21 +91,19 @@ export default class StatsService {
    * Функция обнуления состояние inRound Object
    */
   refresh(): void {
-    const oldData = _.cloneDeep(this.inRound ?? {}); // ссылаемся на внешний объект
+    const oldData = structuredClone(this.inRound ?? {}); // ссылаемся на внешний объект
     if (oldData.exp) {
       this.collect.exp += oldData.exp;
     }
 
     // выставляем ману и хп на начало раунда
     this.inRound = {
-      ..._.cloneDeep(this.defStat),
-      hp: oldData.hp ?? this.defStat.maxHp, // @todo hardcord
-      mp: oldData.mp ?? this.defStat.maxMp,
-      en: oldData.en ?? this.defStat.maxEn,
+      ...structuredClone(this.defStat),
+      hp: oldData.hp ?? this.defStat.base.hp, // @todo hardcord
+      mp: oldData.mp ?? this.defStat.base.mp,
+      en: oldData.en ?? this.defStat.base.en,
       exp: 0, // кол-во Exp на начало раунда
-      def: this.defStat.pdef, // кол-во дефа на начало
-      atk: this.defStat.patk,
-      dex: oldData.dex ?? this.defStat.dex, // кол-во ловкости на начало
+      static: structuredClone(this.defStat.phys),
     };
   }
 
@@ -144,12 +111,8 @@ export default class StatsService {
    * Функция возвращающее значение атрибута
    * @param atr str/atk/prt/dex
    */
-  val<T extends keyof Stats>(atr: T): Stats[T] {
-    const a = this.inRound[atr];
-    if (typeof a === 'number') {
-      return <Stats[T]>floatNumber(a);
-    }
-    return a;
+  val<T extends StatsPathPartial>(atr: T) {
+    return get(this.inRound, atr);
   }
 
   /**

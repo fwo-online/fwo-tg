@@ -1,10 +1,10 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`healingWeapon should increase damage with chance 1`] = `
-"*quisquam* вонзил _Лечащий посох_ в *corporis* и нанёс *4.9* урона
-\\[ corporis 💥 💔-4.9/3.1 📖39 ]
-*quisquam* вонзил _Лечащий посох_ в *corporis* и нанёс *5.01* урона
-\\[ corporis 💥 💔-5.01/-1.91 📖40 ]
+"*quisquam* вонзил _Лечащий посох_ в *corporis* и нанёс *2.8* урона
+\\[ corporis 💥 💔-2.8/5.2 📖22 ]
+*quisquam* вонзил _Лечащий посох_ в *corporis* и нанёс *2.86* урона
+\\[ corporis 💥 💔-2.86/2.34 📖23 ]
 
 _Навык владения лечащим оружием_ *quisquam*"
 `;

@@ -17,12 +17,7 @@
     "type": "git",
     "url": "git+ssh://git@github.com/catHD/fwo-tg.git"
   },
-  "keywords": [
-    "fwo",
-    "game",
-    "nodejs",
-    "mmorpg"
-  ],
+  "keywords": ["fwo", "game", "nodejs", "mmorpg"],
   "author": "FWO Team",
   "license": "ISC",
   "bugs": {
@@ -32,19 +27,19 @@
   "dependencies": {
     "@hono/zod-validator": "^0.4.1",
     "@telegram-apps/init-data-node": "^1.1.1",
-    "@types/bun": "^1.1.11",
-    "@types/node": "^22.7.5",
-    "bun": "^1.1.30",
     "hono": "^4.6.5",
     "lodash": "^4.17.21",
-    "mongoose": "^8.7.1",
+    "mongoose": "^8.8.0",
     "telegraf": "^4.16.3",
     "typescript": "^5.6.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@types/bun": "^1.1.13",
     "@types/lodash": "^4.17.10",
-    "casual": "^1.6.2"
+    "@types/node": "^22.9.0",
+    "casual": "^1.6.2",
+    "csvtojson": "^2.0.10"
   }
 }
