@@ -4,7 +4,7 @@ import { minMaxSchema } from '@/schemas/shared/minMaxSchema';
 import { magicAttributesSchema } from '@/schemas/shared/magicAttrututes';
 import { physAttributesSchema } from '@/schemas/shared/physAttributes';
 import { baseAttributesSchema } from '@/schemas/shared/baseAttributes';
-import { elementAttributesSchema } from '../shared/elementAttributes';
+import { elementAttributesSchema } from '@/schemas/shared/elementAttributes';
 
 export const itemAttributesSchema = z.object({
   requiredAttributes: characterAttributesSchema.default({
@@ -27,7 +27,7 @@ export const itemAttributesSchema = z.object({
   regen: baseAttributesSchema.default({ hp: 0, mp: 0, en: 0 }),
   heal: minMaxSchema.default({ min: 0, max: 0 }),
   hit: minMaxSchema.default({ min: 0, max: 0 }),
-  resists: elementAttributesSchema.default({ fire: 0, frost: 0, acid: 0, lightning: 0 })
+  resists: elementAttributesSchema.default({ fire: 0, frost: 0, acid: 0, lightning: 0 }),
 });
 
 export type ItemAttributes = z.infer<typeof itemAttributesSchema>;

@@ -8,6 +8,7 @@ import type * as magics from './magics';
 import type MatchMaking from './MatchMakingService';
 import type * as skills from './skills';
 import type { Item } from '@/schemas/item';
+import type { ItemSet } from '@/schemas/itemSet';
 
 export default {
   mm: null as unknown as typeof MatchMaking,
@@ -17,6 +18,7 @@ export default {
    * @description Item from DB
    */
   items: {} as unknown as Record<string, Item>,
+  itemsSets: {} as unknown as Record<string, ItemSet>,
   magics: null as unknown as typeof magics,
   skills: null as unknown as typeof skills,
   actions: null as unknown as typeof actions,

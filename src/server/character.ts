@@ -19,7 +19,6 @@ export const character = new Hono()
       magics: profsData[createCharacterDto.class].mag,
       sex: 'm',
     });
-    // return c.redirect('/');
 
     return c.json({}, 200);
   })

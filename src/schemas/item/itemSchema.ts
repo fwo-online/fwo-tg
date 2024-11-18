@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { characterClassSchema } from '../character';
 import { itemAttributesSchema } from './itemAttributesSchema';
 import { itemInfoSchema } from './itemInfoSchema';
+import { bonusAttributesSchema } from '../shared/bonusAttributes';
 
 export const itemSchema = z
   .object({
@@ -11,10 +12,8 @@ export const itemSchema = z
     type: z.string().optional(),
     wear: z.string(),
     weight: z.number(),
-    class: z
-      .string()
-      .transform((s) => s.split(', '))
-      .pipe(characterClassSchema.array()),
+    class: characterClassSchema.array(),
+    bonus: bonusAttributesSchema.array().default([]),
   })
   .merge(itemAttributesSchema);
 

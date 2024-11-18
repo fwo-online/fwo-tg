@@ -8,6 +8,7 @@ import type { Inventory } from '@/schemas/inventory';
 import { assignWithSum } from '@/utils/assignWithSum';
 import { itemAttributesSchema, type ItemAttributes } from '@/schemas/item/itemAttributesSchema';
 import type { Item } from '@/schemas/item';
+import type { ItemSet } from '@/schemas/itemSet';
 
 export class InventoryService {
   harksFromItems: ItemAttributes;
@@ -21,6 +22,13 @@ export class InventoryService {
 
   static getItemsByInventory(inventory: InventoryDocument[]): Item[] {
     return inventory.map(({ code }) => arena.items[code]);
+  }
+
+  static getItemsSetsByInventory(inventory: InventoryDocument[]): ItemSet[] {
+    const codes = new Set(inventory.map(({ code }) => code));
+    return Object.values(arena.itemsSets).filter(({ items }) => {
+      items.some(( item ) => codes.has(item));
+    })
   }
 
   get attributes() {
@@ -88,7 +96,7 @@ export class InventoryService {
     await this.updateHarkFromItems();
 
     const items = this.getEquippedItems().filter(
-      (i) => !this.hasRequiredAttributes(arena.items[i.code]),
+      ({ code }) => !this.hasRequiredAttributes(arena.items[code]),
     );
     if (items.length) {
       const putOffItems = items.map((i) => putOffItem({ charId: this.char.id, itemId: i.id }));
@@ -110,7 +118,11 @@ export class InventoryService {
     const itemAttriributes = itemAttributesSchema.array().parse(items);
     const harksFromItems = itemAttriributes.reduce(assignWithSum, itemAttributesSchema.parse({}));
 
-    this.harksFromItems = harksFromItems;
+    const itemsSets = InventoryService.getItemsSetsByInventory(this.getEquippedItems())
+    const itemsSetsAttriributes = itemAttributesSchema.array().parse(itemsSets);
+    const harksFromItemsSets = itemsSetsAttriributes.reduce(assignWithSum, harksFromItems);
+
+    this.harksFromItems = harksFromItemsSets;
     return harksFromItems;
   }
 
