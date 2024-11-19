@@ -5,7 +5,6 @@
  *
  */
 
-
 export default {
   Name: 'Arena-Beta',
   noReg: false, // Запрещена регистрация
@@ -31,56 +30,59 @@ export default {
     learnChance: 60,
   },
   defaultItems: {
-    w: 'waa', l: 'wab', p: 'wac', m: 'wac',
+    w: 'waa',
+    l: 'wab',
+    p: 'wac',
+    m: 'wac',
   }, // Порядок выполнения магия (ОЧЕНЬ ОПАСНО!)
   stages: [
     'silence',
     'magicDefense',
-    'mass_silence',
+    // 'mass_silence',
     'dispel',
     'exorcism',
     'anathema',
     // 8mpb armag
     // 8pmb podmena?!?
     // 8wpb clonirivanie
-    'magic_devastation',
-    'energy_devastation', // predlagay sna4alo sdelat energy potom mag
-    'satanic_glitches',
+    // 'magic_devastation',
+    // 'energy_devastation', // predlagay sna4alo sdelat energy potom mag
+    // 'satanic_glitches',
     // 8mpa ahuyalipsis
-    'sacrifice',
-    'dead_call',
-    'firestorm',
+    // 'sacrifice',
+    // 'dead_call',
+    // 'firestorm',
     // 8mma mozgovaya huyaka
-    'plague',
-    'pray',
+    // 'plague',
+    // 'pray',
     'sleep', // ?!?!?!?!!? why there?
     'lightShield',
-    'sphere',
-    'mana_burn',
+    // 'sphere',
+    // 'mana_burn',
     // 8ppa
     [
-      'blessing',
-      'curse',
-      'entangle'], // ???
+      // 'blessing',
+      // 'curse',
+      // 'entangle'
+    ], // ???
+    ['blight', 'bodySpirit'],
+    // 'mirror_reflection',
     [
-      'blight',
-      'bodySpirit'],
-    'mirror_reflection',
-    [
-      'smallAura',
-      'magicArmor', 'strongAura',
-      'dustShield', 'mediumAura',
+      // 'smallAura',
+      'magicArmor',
+      // 'strongAura',
+      'dustShield',
+      // 'mediumAura',
       'stoneSkin',
-      'magicWall'], // ???
-    'cats_claw',
-    'vampiric_aura',
+      'magicWall',
+    ], // ???
+    // 'cats_claw',
+    // 'vampiric_aura',
     'glitch',
     'madness',
-    'holy_weapon',
+    // 'holy_weapon',
     //
-    [
-      'paralysis',
-      'eclipse'],
+    ['paralysis', 'eclipse'],
     // @todo Тут пойду ВСЕ скилы, очередность в процессе
     // SKILLS:
     'berserk',
@@ -89,29 +91,37 @@ export default {
     'disarm',
     [
       'protect',
-      'regen_energy',
-      'regen_mana',
-      'regeneration'],
+      // 'regen_energy',
+      // 'regen_mana',
+      'regeneration',
+    ],
     'attack',
     //
     [
       'fireBall',
-      'ice_lance',
+      // 'ice_lance',
       'magicArrow',
       'poisonBreath',
-      'frostTouch', 'acidSpittle', 'chainLightning', 'fireRain',
-      'wild_lighting',
+      'frostTouch',
+      'acidSpittle',
+      'chainLightning',
+      'fireRain',
+      // 'wild_lighting',
       'rockfall',
-      'physicalSadness'],
-    'magic_sadness',
+      'physicalSadness',
+    ],
+    // 'magic_sadness',
     [
       'lightHeal',
-      'mass_heal', 'mediumHeal', 'strongHeal'],
+      // 'mass_heal',
+      'mediumHeal',
+      'strongHeal',
+    ],
     'handsHeal',
-    'postHeal',
-    'life_force',
-    'vampirism',
-    'spirit_unity', 'secondLife'], /**
-   * Суммируемые атрибуты для вещей
-   */
+    // 'postHeal',
+    // 'life_force',
+    // 'vampirism',
+    // 'spirit_unity',
+    'secondLife',
+  ] as const,
 };

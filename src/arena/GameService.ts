@@ -4,7 +4,7 @@ import { Profs } from '../data';
 import * as channelHelper from '../helpers/channelHelper';
 import type { Game } from '../models/game';
 import type { LongItem } from './Constuructors/LongMagicConstructor';
-import { engine } from './engineService';
+import { engine } from './EngineService';
 import { HistoryService, type HistoryItem } from './HistoryService';
 import { LogService } from './LogService';
 import type * as magics from './magics';

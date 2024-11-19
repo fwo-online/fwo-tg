@@ -1,19 +1,20 @@
 import arena from '@/arena';
+import type { Action } from '@/arena/ActionService';
 import type { CharacterService } from '@/arena/CharacterService';
 import FlagsConstructor from '@/arena/Constuructors/FlagsConstructor';
 import type { DamageType } from '@/arena/Constuructors/types';
-import type * as magics from '@/arena/magics';
 import type { Stats } from '@/arena/StatsService';
 import StatsService from '@/arena/StatsService';
 import type { Prof } from '@/data/profs';
 import type { Clan } from '@/models/clan';
 import { PlayerWeapon } from './PlayerWeapon';
+import { convertItemModifiers } from './utils';
 
 export type Resists = Record<DamageType, number>;
 
 export interface Chance {
-  fail?: Partial<Record<keyof typeof magics, number>>
-  cast?: Partial<Record<keyof typeof magics, number>>
+  fail: Partial<Record<Action, number>>;
+  cast: Partial<Record<Action, number>>;
 }
 
 /**
@@ -38,9 +39,7 @@ export default class Player {
   stats: StatsService;
   flags: FlagsConstructor;
   modifiers: {
-    magics: {
-      chance: Chance;
-    }
+    chance: Chance;
     castChance: number;
   };
 
@@ -62,17 +61,10 @@ export default class Player {
     this.favoriteMagics = params.favoriteMagicList;
     this.stats = new StatsService(params.dynamicAttributes);
     this.flags = new FlagsConstructor();
-    // @todo закладка для вычисляемых статов
     this.modifiers = {
-      magics: {
-        chance: {
-          fail: {},
-          cast: {},
-        },
-      },
+      chance: convertItemModifiers(params.inventory.modifiers),
       castChance: 0,
-    }; // Объект
-    // модификаторов
+    }; // Объект модификаторов
     this.resists = {}; // Объект резистов
     this.skills = params.skills || {}; // Обькт доступных скилов
     this.magics = params.magics || {}; // объект изученых магий
@@ -89,12 +81,12 @@ export default class Player {
     return new Player(arena.characters[charId]);
   }
 
-  get failChance(): Chance['fail'] {
-    return this.modifiers.magics.chance.fail ?? {};
+  getFailChance(action: Action) {
+    return this.modifiers.chance.fail[action] ?? 0;
   }
 
-  get castChance(): Chance['cast'] {
-    return this.modifiers.magics.chance.cast ?? {};
+  getCastChance(action: Action) {
+    return this.modifiers.chance.cast[action] ?? 0;
   }
 
   /**
@@ -118,16 +110,16 @@ export default class Player {
   }
 
   /**
-  * Возвращает убийцу игрока если он записан
-  */
+   * Возвращает убийцу игрока если он записан
+   */
   getKiller(): string {
     return this.flags.isDead;
   }
 
   /**
-  * Устанавливает убийцу игрока
-  * @param player записывает id убийцы
-  */
+   * Устанавливает убийцу игрока
+   * @param player записывает id убийцы
+   */
   setKiller(player: Player): void {
     this.flags.isDead = player.id;
   }

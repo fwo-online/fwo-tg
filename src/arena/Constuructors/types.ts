@@ -8,16 +8,16 @@ export type OrderType = 'all' | 'any' | 'enemy' | 'self' | 'team' | 'teamExceptS
 export type AOEType = 'target' | 'team';
 export type DamageType = 'acid' | 'fire' | 'lighting' | 'frost' | 'physical' | 'clear';
 export type BreaksMessage =
-  'NO_INITIATOR' |
-  'NO_TARGET' |
-  'NO_MANA' |
-  'NO_ENERGY' |
-  'CHANCE_FAIL' |
-  'GOD_FAIL' |
-  'HEAL_FAIL' |
-  'SKILL_FAIL' |
-  'PHYS_FAIL' |
-  'NO_WEAPON';
+  | 'NO_INITIATOR'
+  | 'NO_TARGET'
+  | 'NO_MANA'
+  | 'NO_ENERGY'
+  | 'CHANCE_FAIL'
+  | 'GOD_FAIL'
+  | 'HEAL_FAIL'
+  | 'SKILL_FAIL'
+  | 'PHYS_FAIL'
+  | 'NO_WEAPON';
 
 export type ExpArr = {
   initiator: Player;
@@ -51,14 +51,27 @@ export type SuccessArgs = {
   effect: number;
   hp: number;
   expArr: ExpArr;
-  weapon: Item | undefined
+  weapon: Item | undefined;
   effectType?: DamageType;
   orderType: OrderType;
   affects?: SuccessArgs[];
   msg?: CustomMessageFn;
-}
+};
 
-export type ActionType = 'magic' | 'dmg-magic' | 'dmg-magic-long' | 'aoe-dmg-magic' | 'magic-long' | 'skill' | 'phys' | 'heal-magic' | 'heal' | 'protect' | 'dodge' | 'passive';
+export type ActionType =
+  | 'magic'
+  | 'dmg-magic'
+  | 'dmg-magic-long'
+  | 'aoe-dmg-magic'
+  | 'magic-long'
+  | 'skill'
+  | 'phys'
+  | 'heal-magic'
+  | 'heal'
+  | 'protect'
+  | 'dodge'
+  | 'passive'
+  | 'regeneration';
 
 export interface FailArgs {
   actionType: ActionType;

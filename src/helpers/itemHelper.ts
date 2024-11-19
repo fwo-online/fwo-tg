@@ -1,6 +1,6 @@
-import { itemSchema } from "@/schemas/item/itemSchema";
-import { itemSetSchema } from "@/schemas/itemSet/itemSetSchema";
-import csv from 'csvtojson'
+import { itemSchema } from '@/schemas/item/itemSchema';
+import { itemSetSchema } from '@/schemas/itemSet/itemSetSchema';
+import csv from 'csvtojson';
 
 export const generateItems = async () => {
   const rawItems = await csv({
@@ -9,12 +9,12 @@ export const generateItems = async () => {
     colParser: {
       class: (value) => value.split(', '),
     },
-  }).fromFile('./items.csv')
+  }).fromFile('./items.csv');
 
   const items = itemSchema.array().parse(rawItems);
 
   return items;
-}
+};
 
 export const generateItemsSets = async () => {
   const rawItemsSets = await csv({
@@ -23,26 +23,26 @@ export const generateItemsSets = async () => {
     colParser: {
       items: (value) => value.split(', '),
     },
-  }).fromFile('./items-sets.csv')
+  }).fromFile('./items-sets.csv');
 
-  const mergeBonuses = (acc, curr) => {
-    const prev = acc.at(-1)
+  const mergeModifiers = (acc, curr) => {
+    const prev = acc.at(-1);
     if (prev?.code === curr.code) {
-      prev.bonus ??= [];
-      if (curr.bonus) {
-        prev.bonus.push(curr.bonus);
+      prev.modifiers ??= [];
+      if (curr.modifiers) {
+        prev.modifiers.push(curr.modifiers);
       }
-      return acc
+      return acc;
     }
 
-    curr.bonus = [];
+    curr.modifiers = [];
     acc.push(curr);
     return acc;
-  }
+  };
 
-  const mergedItemsSets = rawItemsSets.reduce(mergeBonuses, [])
+  const mergedItemsSets = rawItemsSets.reduce(mergeModifiers, []);
 
   const itemsSets = itemSetSchema.array().parse(mergedItemsSets);
 
   return itemsSets;
-}
+};

@@ -1,14 +1,15 @@
-import _ from 'lodash';
-import { getItems, addItem, removeItem, putOnItem, putOffItem } from '@/api/inventory';
+import { addItem, getItems, putOffItem, putOnItem, removeItem } from '@/api/inventory';
 import arena from '@/arena';
 import ValidationError from '@/arena/errors/ValidationError';
 import type { Char } from '@/models/character';
 import type { InventoryDocument } from '@/models/inventory';
 import type { Inventory } from '@/schemas/inventory';
-import { assignWithSum } from '@/utils/assignWithSum';
-import { itemAttributesSchema, type ItemAttributes } from '@/schemas/item/itemAttributesSchema';
 import type { Item } from '@/schemas/item';
+import { type ItemAttributes, itemAttributesSchema } from '@/schemas/item/itemAttributesSchema';
 import type { ItemSet } from '@/schemas/itemSet';
+import type { Modifiers } from '@/schemas/shared/modifiers';
+import { assignWithSum } from '@/utils/assignWithSum';
+import _ from 'lodash';
 
 export class InventoryService {
   harksFromItems: ItemAttributes;
@@ -24,15 +25,41 @@ export class InventoryService {
     return inventory.map(({ code }) => arena.items[code]);
   }
 
-  static getItemsSetsByInventory(inventory: InventoryDocument[]): ItemSet[] {
+  static getItemsSetsByInventory(inventory: InventoryDocument[], full = true): ItemSet[] {
     const codes = new Set(inventory.map(({ code }) => code));
     return Object.values(arena.itemsSets).filter(({ items }) => {
-      items.some(( item ) => codes.has(item));
-    })
+      if (full) {
+        return items.every((item) => codes.has(item));
+      }
+
+      return items.some((item) => codes.has(item));
+    });
+  }
+
+  static getItemSetsModifiersByInventory(inventory: InventoryDocument[]): Modifiers[] {
+    const itemsSets = InventoryService.getItemsSetsByInventory(inventory, false);
+    const codes = new Set(inventory.map(({ code }) => code));
+    const modifiers: Modifiers[] = [];
+
+    for (const itemSet of itemsSets) {
+      const itemsCount = itemSet.items.reduce((sum, item) => (codes.has(item) ? sum + 1 : sum), 0);
+
+      for (const modifier of itemSet.modifiers) {
+        if (modifier.itemsRequired <= itemsCount) {
+          modifiers.push(modifier);
+        }
+      }
+    }
+
+    return modifiers;
   }
 
   get attributes() {
     return this.harksFromItems.attributes;
+  }
+
+  get modifiers() {
+    return InventoryService.getItemSetsModifiersByInventory(this.inventory);
   }
 
   getItem(itemId) {
@@ -118,7 +145,7 @@ export class InventoryService {
     const itemAttriributes = itemAttributesSchema.array().parse(items);
     const harksFromItems = itemAttriributes.reduce(assignWithSum, itemAttributesSchema.parse({}));
 
-    const itemsSets = InventoryService.getItemsSetsByInventory(this.getEquippedItems())
+    const itemsSets = InventoryService.getItemsSetsByInventory(this.getEquippedItems());
     const itemsSetsAttriributes = itemAttributesSchema.array().parse(itemsSets);
     const harksFromItemsSets = itemsSetsAttriributes.reduce(assignWithSum, harksFromItems);
 

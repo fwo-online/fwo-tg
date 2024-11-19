@@ -7,13 +7,6 @@ import { baseAttributesSchema } from '@/schemas/shared/baseAttributes';
 import { elementAttributesSchema } from '@/schemas/shared/elementAttributes';
 
 export const itemAttributesSchema = z.object({
-  requiredAttributes: characterAttributesSchema.default({
-    str: 0,
-    dex: 0,
-    con: 0,
-    int: 0,
-    wis: 0,
-  }),
   attributes: characterAttributesSchema.default({
     str: 0,
     dex: 0,
