@@ -60,22 +60,10 @@ export default {
     // 'sphere',
     // 'mana_burn',
     // 8ppa
-    [
-      // 'blessing',
-      // 'curse',
-      // 'entangle'
-    ], // ???
+    ['blessing', 'curse', 'entangle'], // ???
     ['blight', 'bodySpirit'],
     // 'mirror_reflection',
-    [
-      // 'smallAura',
-      'magicArmor',
-      // 'strongAura',
-      'dustShield',
-      // 'mediumAura',
-      'stoneSkin',
-      'magicWall',
-    ], // ???
+    ['smallAura', 'magicArmor', 'strongAura', 'dustShield', 'mediumAura', 'stoneSkin', 'magicWall'], // ???
     // 'cats_claw',
     // 'vampiric_aura',
     'glitch',
@@ -120,7 +108,7 @@ export default {
     'handsHeal',
     // 'postHeal',
     // 'life_force',
-    // 'vampirism',
+    'vampirism',
     // 'spirit_unity',
     'secondLife',
   ] as const,

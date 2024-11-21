@@ -7,7 +7,6 @@ import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 class Vampirism extends DmgMagic {
   constructor() {
     super({
-      // @ts-expect-error не используется
       name: 'vampirism',
       displayName: 'Вампиризм',
       desc: 'Возвращает часть нанесеного урона в качесте жизней',
