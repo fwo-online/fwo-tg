@@ -1,4 +1,5 @@
-import type { OrderType } from '../Constuructors/types';
+import { AffectableAction } from '../Constuructors/AffectableAction';
+import type { ActionType, OrderType } from '../Constuructors/types';
 import type Game from '../GameService';
 import type { Player } from '../PlayersService';
 
@@ -6,22 +7,13 @@ import type { Player } from '../PlayersService';
  * Класс регенерации
  */
 
-class Regeneration {
-  name: string;
-  displayName: string;
-  desc: string;
-  lvl: number;
-  orderType: OrderType;
-  /**
-   * Изменяем состояние цели, создаем custom run
-   */
-  constructor() {
-    this.name = 'regeneration';
-    this.displayName = 'Восстановление';
-    this.desc = 'Регенерация маны/энергии';
-    this.lvl = 0;
-    this.orderType = 'self';
-  }
+class Regeneration extends AffectableAction {
+  name = 'regeneration';
+  displayName = 'Восстановление';
+  desc = 'Регенерация маны/энергии';
+  lvl = 0;
+  orderType: OrderType = 'self';
+  actionType: ActionType = 'regeneration';
 
   /**
    * Каст регенерации
@@ -31,7 +23,12 @@ class Regeneration {
    * @param game Объект игры (не обязателен)
    */
   // eslint-disable-next-line class-methods-use-this
-  cast(initiator: Player, _target: Player, _game: Game) {
+  cast(initiator: Player, target: Player, game: Game) {
+    this.createContext(initiator, target, game)
+    this.run(initiator, target, game)
+  }
+
+  run(initiator: Player, _target: Player, _game: Game) {
     if (initiator.prof === 'l' || initiator.prof === 'w') {
       const val = initiator.stats.val('regen.en') * initiator.proc; // размер восстан
       initiator.stats.up('en', val);

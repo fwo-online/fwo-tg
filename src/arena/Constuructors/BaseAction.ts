@@ -30,6 +30,7 @@ export abstract class BaseAction {
   orderType: OrderType;
   actionType: ActionType;
   effectType?: DamageType;
+  lvl: number;
 
   context: BaseActionContext;
   params: BaseActionParams;

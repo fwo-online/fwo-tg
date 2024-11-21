@@ -166,8 +166,8 @@ export abstract class Magic extends AffectableAction {
     const { initiator, target } = this.params;
     const initiatorMagicLvl = initiator.magics[this.name];
     const imc = initiator.modifiers.castChance; // мод шанс прохождения
-    const castChance = initiator.castChance?.[this.name] ?? 0; // мод action'а
-    const failChance = target.failChance?.[this.name] ?? 0;
+    const castChance = initiator.getCastChance(this.name); // мод action'а
+    const failChance = target.getFailChance(this.name);
     let chance = this.chance[initiatorMagicLvl - 1];
     if (typeof chance === 'string') {
       chance = MiscService.dice(chance);

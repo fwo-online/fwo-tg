@@ -1,18 +1,18 @@
+import { server } from '@/server';
 import type { Context, Scenes } from 'telegraf';
-import {
-  Telegraf, session,
-} from 'telegraf';
+import { Telegraf, session } from 'telegraf';
 import arena from './arena';
-import * as actions from './arena/actions';
 import type { CharacterService } from './arena/CharacterService';
-import * as magics from './arena/magics';
 import MM from './arena/MatchMakingService';
+import * as actions from './arena/actions';
+import * as magics from './arena/magics';
+import * as passiveSkills from './arena/passiveSkills';
 import * as skills from './arena/skills';
+import * as weaponMastery from './arena/weaponMastery';
 import * as middlewares from './middlewares';
 import { connect } from './models';
 import { ItemModel } from './models/item';
 import { stage } from './scenes/stage';
-import { server } from '@/server';
 import { registerAffects } from './utils/registerAffects';
 
 interface BotSession extends Scenes.SceneSession {
@@ -35,7 +35,7 @@ void connect(async () => {
 arena.mm = MM;
 arena.magics = magics;
 arena.skills = skills;
-arena.actions = actions;
+arena.actions = { ...actions, ...magics, ...skills, ...passiveSkills, ...weaponMastery };
 
 registerAffects();
 

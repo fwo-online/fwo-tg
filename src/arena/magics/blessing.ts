@@ -10,7 +10,6 @@ import type { SuccessArgs } from '../Constuructors/types';
 class Blessing extends CommonMagic {
   constructor() {
     super({
-      // @ts-expect-error не используется
       name: 'blessing',
       displayName: 'Благословление',
       desc: 'Благословляет цель увеличивая её параметры',

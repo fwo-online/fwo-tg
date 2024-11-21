@@ -1,8 +1,8 @@
+import arena from '@/arena';
+import { ActionService } from '@/arena/ActionService';
+import { RoundStatus } from '@/arena/RoundService';
+import OrderError from '@/arena/errors/OrderError';
 import _ from 'lodash';
-import * as actions from './actions';
-import OrderError from './errors/OrderError';
-import { RoundStatus } from './RoundService';
-import arena from './index';
 
 export interface Order {
   initiator: string;
@@ -29,7 +29,7 @@ export default class Orders {
    * @desc Проверка доступно ли действие для персонажа
    */
   static isValidAct({ initiator, action }: Order): boolean {
-    if (actions[action]) {
+    if (ActionService.isBaseAction(action)) {
       return true;
     }
     const { skills, magics } = arena.characters[initiator];
