@@ -1,4 +1,3 @@
-import { Magics } from '@/data';
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 
 /**
@@ -6,6 +5,25 @@ import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
  * Основное описание магии общее требовани есть в конструкторе
  */
 class AcidSpittle extends DmgMagic {
+  constructor() {
+    super({
+      name: 'acidSpittle',
+      displayName: 'Кислотный плевок',
+      desc: 'Кислотный плевок',
+      cost: 10,
+      baseExp: 12,
+      costType: 'mp',
+      lvl: 3,
+      orderType: 'enemy',
+      aoeType: 'target',
+      magType: 'bad',
+      chance: [92, 94, 95],
+      effect: ['1d3+3', '1d3+4', '1d3+5'],
+      dmgType: 'acid',
+      profList: ['m'],
+    })
+  }
+
   /**
    * Основная функция запуска магии
    */
@@ -15,4 +33,4 @@ class AcidSpittle extends DmgMagic {
   }
 }
 
-export const acidSpittle = new AcidSpittle(Magics.baseParams.acidSpittle);
+export const acidSpittle = new AcidSpittle();
