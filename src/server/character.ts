@@ -3,7 +3,7 @@ import { Hono } from 'hono';
 import { createCharacter } from '@/api/character';
 import { CharacterService } from '@/arena/CharacterService';
 import { profsData } from '@/data/profs';
-import { characterAttributesSchema, createCharacterSchema } from '@/schemas/character';
+import { characterAttributesSchema, createCharacterSchema } from '@fwo/schemas';
 import { characterMiddleware } from './middlewares/characterMiddleware';
 import { userMiddleware } from './middlewares/userMiddleware';
 

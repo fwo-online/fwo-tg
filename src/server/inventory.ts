@@ -1,6 +1,6 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
-import { idSchema } from '@/schemas';
+import { idSchema } from '@fwo/schemas';
 import { characterMiddleware } from './middlewares/characterMiddleware';
 
 export const inventory = new Hono()

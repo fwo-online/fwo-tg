@@ -212,4 +212,10 @@ export abstract class Magic extends AffectableAction {
       target.setKiller(initiator);
     }
   }
+
+  toObject() {
+    return {
+      name: this.name,
+    }
+  }
 }
