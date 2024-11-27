@@ -1,6 +1,6 @@
 import { retrieveLaunchParams } from '@telegram-apps/sdk-react';
 import { hc } from 'hono/client';
-import type { Server } from '@fwo/core/server';
+import type { Server } from '@fwo/server';
 
 const { initDataRaw } = retrieveLaunchParams();
 

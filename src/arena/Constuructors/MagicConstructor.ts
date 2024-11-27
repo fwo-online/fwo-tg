@@ -216,6 +216,12 @@ export abstract class Magic extends AffectableAction {
   toObject() {
     return {
       name: this.name,
+      displayName: this.displayName,
+      desc: this.desc,
+      cost: this.cost,
+      effect: this.effect,
+      effectType: this.effectType,
+      lvl: this.lvl,
     }
   }
 }

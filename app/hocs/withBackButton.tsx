@@ -19,6 +19,6 @@ export function withBackButton(Component: ComponentType) {
       };
     }, [back]);
 
-    return (<Component />);
+    return <Component />;
   };
 }

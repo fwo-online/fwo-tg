@@ -3,7 +3,7 @@ import { AppRoot, Placeholder } from '@telegram-apps/telegram-ui';
 import { Suspense } from 'react';
 import { RouterProvider } from 'react-router-dom';
 
-import { loadCharacter } from '../client/character';
+import { getCharacter } from '../client/character';
 import { CharacterProvider } from '../contexts/character';
 import { router } from '../router';
 
@@ -16,8 +16,8 @@ export function App() {
       appearance={isDark ? 'dark' : 'light'}
       platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}
     >
-      <Suspense fallback={<Placeholder description='Ищем вашего персонажа...'/>}>
-        <CharacterProvider characterPromise={loadCharacter()} >
+      <Suspense fallback={<Placeholder description="Ищем вашего персонажа..." />}>
+        <CharacterProvider characterPromise={getCharacter()}>
           <RouterProvider router={router} />
         </CharacterProvider>
       </Suspense>

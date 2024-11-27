@@ -15,12 +15,7 @@
     "type": "git",
     "url": "git+ssh://git@github.com/catHD/fwo-tg.git"
   },
-  "keywords": [
-    "fwo",
-    "game",
-    "nodejs",
-    "mmorpg"
-  ],
+  "keywords": ["fwo", "game", "nodejs", "mmorpg"],
   "author": "FWO Team",
   "license": "ISC",
   "bugs": {
@@ -28,7 +23,7 @@
   },
   "homepage": "https://github.com/catHD/fwo-tg#readme",
   "dependencies": {
-    "@fwo/core": "workspace:^",
+    "@fwo/server": "workspace:^",
     "@fwo/schemas": "workspace:^",
     "@telegram-apps/react-router-integration": "^1.0.1",
     "@telegram-apps/sdk-react": "^2.0.8",

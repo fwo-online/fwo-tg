@@ -25,12 +25,12 @@ export const router = createHashRouter([
       },
       {
         path: 'magics',
-        Component: withBackButton(CharacterMagics)
-      }
+        Component: withBackButton(CharacterMagics),
+      },
     ],
   },
   {
     path: '*',
-    element: <Navigate to='/' />,
+    element: <Navigate to="/" />,
   },
 ]);

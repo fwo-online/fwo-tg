@@ -1,5 +1,5 @@
 {
-  "name": "@fwo/core",
+  "name": "@fwo/server",
   "version": "0.3.1",
   "description": "FightWorld Telegram",
   "main": "index.js",
@@ -25,7 +25,7 @@
     "url": "https://github.com/catHD/fwo-tg/issues"
   },
   "exports": {
-    "./server": {
+    ".": {
       "default": "./server/index.ts",
       "types": "./server/index.ts"
     }

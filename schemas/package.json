@@ -11,7 +11,8 @@
   "scripts": {
     "dev": "tsc",
     "lint": "biome lint",
-    "format": "biome format"
+    "format": "biome format",
+    "types": "tsc"
   },
   "type": "module",
   "types": "./out/index.d.ts"

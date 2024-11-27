@@ -4,11 +4,7 @@
   "description": "FightWorld Telegram",
   "main": "index.js",
   "type": "module",
-  "workspaces": [
-    "src",
-    "app",
-    "schemas"
-  ],
+  "workspaces": ["src", "app", "schemas"],
   "scripts": {
     "start": "NODE_ENV=production bun src/fwo.ts",
     "dev": "bun src/cli/dev.ts",
@@ -23,12 +19,7 @@
     "type": "git",
     "url": "git+ssh://git@github.com/catHD/fwo-tg.git"
   },
-  "keywords": [
-    "fwo",
-    "game",
-    "nodejs",
-    "mmorpg"
-  ],
+  "keywords": ["fwo", "game", "nodejs", "mmorpg"],
   "author": "FWO Team",
   "license": "ISC",
   "bugs": {
