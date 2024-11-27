@@ -1,33 +1,27 @@
-const { default: config } = require('../config');
-const { default: GameService } = require('../GameService');
-
-/**
- * @typedef {Object} mmObj
- * @property {string} charId
- * @property {number} psr
- * @property {number} startTime
- */
+import config from '@/arena/config';
+import GameService from '@/arena/GameService';
+import type { MatchMakingItem } from '@/arena/MatchMakingService';
 
 /**
  * Конструктор объекта очереди
  */
 class QueueConstructor {
+  psr = 0;
+  open = true;
+  players: MatchMakingItem[]
   /**
    * Конструтор пустой очереди
    * @param {mmObj[]} searchers
    */
-  constructor(searchers) {
-    this.psr = 0;
-    /** @type {mmObj[]} */
+  constructor(searchers: MatchMakingItem[]) {
     this.players = searchers;
-    this.open = true;
   }
 
   /**
    * Добавление чара в предсобранную комнату для игры
-   * @param {mmObj} searcherObj Объект чара начавшего поиск
+   * @param searcherObj Объект чара начавшего поиск
    */
-  async addTo(searcherObj) {
+  async addTo(searcherObj: MatchMakingItem) {
     try {
       this.players.push(searcherObj);
       if (this.checkStatus()) {
@@ -41,12 +35,12 @@ class QueueConstructor {
 
   /**
    * Описание политики объекта очереди
-   * @param {mmObj} searcherObj
+   * @param searcherObj
    * @return {Boolean}
    */
-  policy(searcherObj) {
+  policy(searcherObj: MatchMakingItem) {
     const playerPsr = searcherObj.psr;
-    return (!this.length) || (playerPsr > (this.psr / this.length + 50));
+    return (!this.players.length) || (playerPsr > (this.psr / this.players.length + 50));
   }
 
   /**
@@ -73,4 +67,4 @@ class QueueConstructor {
   }
 }
 
-module.exports = QueueConstructor;
+export default QueueConstructor;
