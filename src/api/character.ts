@@ -13,7 +13,7 @@ export async function findCharacter(query: FilterQuery<Char>) {
   return character.toObject({ minimize: false });
 }
 
-export async function removeCharacter(owner?: string) {
+export async function removeCharacter(owner?: string | number) {
   const character = await CharModel.findOneAndUpdate(
     { owner, deleted: false },
     { deleted: true },

@@ -1,12 +1,12 @@
-import { use } from 'react';
 import { Navigate, Outlet } from 'react-router';
-import { CharacterContext } from '@/contexts/character';
+import { useCharacterContext } from '@/hooks/useCharacterContext';
 
 export const ProtectedRoute = () => {
-  const { character } = use(CharacterContext);
+  const { character } = useCharacterContext();
 
   if (!character) {
     return <Navigate to="/" />;
   }
+
   return <Outlet />;
 };

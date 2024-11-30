@@ -15,9 +15,9 @@
     "test": "bun src/cli/test.ts -i",
     "generate:items": "bun src/cli/generateItems.ts",
     "reset-harks": "bun src/cli/resetHarks.ts",
-    "lint": "biome lint",
-    "format": "biome format",
-    "types": "tsc --noEmit"
+    "lint": "bun run --filter '@fwo/*' lint",
+    "format": "bun run --filter '@fwo/*' format",
+    "types": "bun run --filter '@fwo/*' types"
   },
   "repository": {
     "type": "git",

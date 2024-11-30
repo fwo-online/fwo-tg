@@ -1,32 +1,21 @@
 import type { Character } from '@fwo/schemas';
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react';
-import { createContext, use, useCallback, useState } from 'react';
+import { createContext, use, useState } from 'react';
 
 export type CharacterContextType = {
-  character: Character;
-  setCharacter: Dispatch<SetStateAction<Character>>;
-  resetCharacter: () => void;
+  character: Character | undefined;
+  setCharacter: Dispatch<SetStateAction<Character | undefined>>;
 };
-// @ts-expect-error fix default type
-export const CharacterContext = createContext<CharacterContextType>(null);
+
+export const CharacterContext = createContext<CharacterContextType | undefined>(undefined);
 
 export const CharacterProvider = ({
   children,
   characterPromise,
-}: PropsWithChildren<{ characterPromise: Promise<Character | void> }>) => {
+}: PropsWithChildren<{ characterPromise: Promise<Character | undefined> }>) => {
   const result = use(characterPromise);
 
-  // @ts-expect-error fix void type
-  const [character, setCharacter] = useState<Character>(result);
+  const [character, setCharacter] = useState(result);
 
-  const resetCharacter = useCallback(() => {
-    // @ts-expect-error fix void type
-    setCharacter(undefined);
-  }, []);
-
-  return (
-    <CharacterContext value={{ character, setCharacter, resetCharacter }}>
-      {children}
-    </CharacterContext>
-  );
+  return <CharacterContext value={{ character, setCharacter }}>{children}</CharacterContext>;
 };

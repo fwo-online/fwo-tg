@@ -1,10 +1,14 @@
-import { use, useContext } from 'react';
-import { CharacterContext } from '@/contexts/character';
+import { useCharacterContext } from './useCharacterContext';
 
 export const useCharacter = () => {
-  const { character } = use(CharacterContext);
+  const { character, setCharacter } = useCharacterContext();
+
+  if (!character) {
+    throw new Error('character must be within ProtectedRoute');
+  }
 
   return {
+    setCharacter,
     character,
   };
 };
