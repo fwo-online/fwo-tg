@@ -5,11 +5,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "NODE_ENV=production bun src/fwo.ts",
-    "dev": "bun src/cli/dev.ts",
-    "test": "bun src/cli/test.ts -i",
-    "generate:items": "bun src/cli/generateItems.ts",
-    "reset-harks": "bun src/cli/resetHarks.ts",
+    "start": "NODE_ENV=production bun fwo.ts",
+    "dev": "bun cli/dev.ts",
+    "test": "bun cli/test.ts -i",
+    "generate:items": "bun cli/generateItems.ts",
+    "reset-harks": "bun cli/resetHarks.ts",
     "lint": "biome lint",
     "format": "biome format",
     "types": "tsc"

@@ -1,4 +1,4 @@
-import { createHashRouter, Navigate } from 'react-router-dom';
+import { createHashRouter, Navigate } from 'react-router';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { withBackButton } from './hocs/withBackButton';
 import { CharacterAttributesPage } from './pages/CharacterAttributesPage/CharacterAttributesPage';

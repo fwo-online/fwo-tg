@@ -1,11 +1,11 @@
-import { useLaunchParams, miniApp, useSignal } from '@telegram-apps/sdk-react';
+import { miniApp, useSignal, useLaunchParams } from '@telegram-apps/sdk-react';
 import { AppRoot, Placeholder } from '@telegram-apps/telegram-ui';
 import { Suspense } from 'react';
-import { RouterProvider } from 'react-router-dom';
+import { RouterProvider } from 'react-router';
 
-import { getCharacter } from '../client/character';
-import { CharacterProvider } from '../contexts/character';
-import { router } from '../router';
+import { getCharacter } from '@/client/character';
+import { CharacterProvider } from '@/contexts/character';
+import { router } from '@/router';
 
 export function App() {
   const lp = useLaunchParams();

@@ -1,12 +1,12 @@
 import type { CreateCharacterDto } from '@fwo/schemas';
-import { useContext } from 'react';
-import { Navigate } from 'react-router-dom';
+import { use, useContext } from 'react';
+import { Navigate } from 'react-router';
 import { createCharacter } from '@/client/character';
 import { SelectCharacter } from '@/components/SelectCharacter/SelectCharacter';
 import { CharacterContext } from '@/contexts/character';
 
 export const CreateCharacterPage = () => {
-  const { character, setCharacter } = useContext(CharacterContext);
+  const { character, setCharacter } = use(CharacterContext);
 
   const onSelect = async (createCharacterDto: CreateCharacterDto) => {
     const character = await createCharacter(createCharacterDto);
@@ -19,7 +19,5 @@ export const CreateCharacterPage = () => {
     return <Navigate to="/character" />;
   }
 
-  return (
-    <SelectCharacter onSelect={onSelect} />
-  );
+  return <SelectCharacter onSelect={onSelect} />;
 };

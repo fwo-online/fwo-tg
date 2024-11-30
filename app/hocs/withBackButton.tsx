@@ -1,7 +1,7 @@
 import { backButton } from '@telegram-apps/sdk-react';
 import type { ComponentType } from 'react';
 import { useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 export function withBackButton(Component: ComponentType) {
   return () => {

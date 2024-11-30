@@ -11,9 +11,7 @@ export const characterMiddleware = createMiddleware<{
 }>(
   async (c, next) => {
     const user = c.get('user');
-    if (!user) {
-      throw new HTTPException(401);
-    }
+
     try {
       const character = await CharacterService.getCharacter(user.id.toString());
       c.set('character', character);

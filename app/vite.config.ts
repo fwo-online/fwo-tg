@@ -1,4 +1,4 @@
-import react from '@vitejs/plugin-react-swc';
+import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
@@ -8,10 +8,7 @@ export default defineConfig({
       localsConvention: 'camelCaseOnly',
     },
   },
-  plugins: [
-    react(),
-    tsconfigPaths({ projects: ['./tsconfig.json', '../../tsconfig.json'] }),
-  ],
+  plugins: [react(), tsconfigPaths({ projects: ['./tsconfig.json'] })],
   // publicDir: './assets',
   server: {
     host: true,

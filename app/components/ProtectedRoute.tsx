@@ -1,9 +1,9 @@
-import { useContext } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import { CharacterContext } from '../contexts/character';
+import { use, useContext } from 'react';
+import { Navigate, Outlet } from 'react-router';
+import { CharacterContext } from '@/contexts/character';
 
 export const ProtectedRoute = () => {
-  const { character } = useContext(CharacterContext);
+  const { character } = use(CharacterContext);
 
   if (!character) {
     return <Navigate to="/" />;
