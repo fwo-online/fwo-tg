@@ -41,7 +41,6 @@
     "telegraf": "^4.16.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
     "@types/bun": "^1.1.13",
     "@types/lodash": "^4.17.10",
     "@types/node": "^22.9.0",

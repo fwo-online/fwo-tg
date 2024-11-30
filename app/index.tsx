@@ -18,9 +18,9 @@ try {
 
   root.render(
     <StrictMode>
-      <Root/>
+      <Root />
     </StrictMode>,
   );
 } catch {
-  root.render(<EnvUnsupported/>);
+  root.render(<EnvUnsupported />);
 }

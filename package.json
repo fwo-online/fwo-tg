@@ -4,10 +4,14 @@
   "description": "FightWorld Telegram",
   "main": "index.js",
   "type": "module",
-  "workspaces": ["src", "app", "schemas"],
+  "workspaces": [
+    "src",
+    "app",
+    "schemas"
+  ],
   "scripts": {
     "start": "NODE_ENV=production bun src/fwo.ts",
-    "dev": "bun src/cli/dev.ts",
+    "dev": "bun run --filter '@fwo/*' dev",
     "test": "bun src/cli/test.ts -i",
     "generate:items": "bun src/cli/generateItems.ts",
     "reset-harks": "bun src/cli/resetHarks.ts",
@@ -19,7 +23,12 @@
     "type": "git",
     "url": "git+ssh://git@github.com/catHD/fwo-tg.git"
   },
-  "keywords": ["fwo", "game", "nodejs", "mmorpg"],
+  "keywords": [
+    "fwo",
+    "game",
+    "nodejs",
+    "mmorpg"
+  ],
   "author": "FWO Team",
   "license": "ISC",
   "bugs": {
@@ -30,6 +39,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "typescript": "^5.7.2"
   }
 }

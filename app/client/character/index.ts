@@ -21,3 +21,7 @@ export const changeCharacterAttributes = async (body: CharacterAttributes) => {
     .then((r) => r.json())
     .catch(console.log);
 };
+
+export const deleteCharacter = async () => {
+  return client.character.$delete().catch(console.log);
+};

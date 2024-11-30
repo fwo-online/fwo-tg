@@ -1,6 +1,6 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
-import { createCharacter } from '@/api/character';
+import { createCharacter, removeCharacter } from '@/api/character';
 import { CharacterService } from '@/arena/CharacterService';
 import { profsData } from '@/data/profs';
 import { characterAttributesSchema, createCharacterSchema } from '@fwo/schemas';
@@ -29,6 +29,12 @@ export const character = new Hono()
     const character = c.get('character');
 
     return c.json(character.toObject(), 200);
+  })
+  .delete('/', async (c) => {
+    const character = c.get('character');
+    await removeCharacter(character.owner);
+
+    return c.json({}, 200);
   })
   .patch('/attributes', zValidator('json', characterAttributesSchema), async (c) => {
     const character = c.get('character');

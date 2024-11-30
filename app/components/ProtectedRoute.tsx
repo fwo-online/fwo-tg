@@ -1,4 +1,4 @@
-import { use, useContext } from 'react';
+import { use } from 'react';
 import { Navigate, Outlet } from 'react-router';
 import { CharacterContext } from '@/contexts/character';
 
