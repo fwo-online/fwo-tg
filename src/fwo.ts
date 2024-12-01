@@ -14,6 +14,7 @@ import { connect } from './models';
 import { ItemModel } from './models/item';
 import { stage } from './scenes/stage';
 import { registerAffects } from './utils/registerAffects';
+import { websocket } from './server/battle';
 
 interface BotSession extends Scenes.SceneSession {
   character: CharacterService;
@@ -59,4 +60,9 @@ bot.command('inventory', (ctx) => ctx.scene.enter('inventory'));
 // bot.startWebhook('/test', null, 3000);
 arena.bot = bot;
 
-export default server;
+// export default server;
+
+Bun.serve({
+  fetch: server.fetch,
+  websocket: websocket,
+});

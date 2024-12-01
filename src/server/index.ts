@@ -5,6 +5,7 @@ import { character } from './character';
 import { inventory } from './inventory';
 import { magic } from './magic';
 import { skill } from './skill';
+import { battle } from './battle';
 
 export const server = new Hono()
   // .use(cors({
@@ -19,7 +20,8 @@ export const server = new Hono()
   .route('/character', character)
   .route('/magic', magic)
   .route('/skill', skill)
-  .route('/inventory', inventory);
+  .route('/inventory', inventory)
+  .route('/battle', battle);
 
 export default server;
 

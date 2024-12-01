@@ -3,9 +3,7 @@ import type { CharacterAttributes, CreateCharacterDto } from '@fwo/schemas';
 
 export const getCharacter = async () => {
   try {
-    const character = await client.character.$get().then((r) => r.json());
-
-    return character;
+    return client.character.$get().then((r) => r.json());
   } catch (e) {
     console.log(e);
     return;

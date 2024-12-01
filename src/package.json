@@ -11,7 +11,7 @@
     "generate:items": "bun cli/generateItems.ts",
     "reset-harks": "bun cli/resetHarks.ts",
     "lint": "biome lint",
-    "format": "biome format",
+    "format": "biome format --fix",
     "types": "tsc"
   },
   "repository": {

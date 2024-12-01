@@ -1,11 +1,11 @@
 import { deleteCharacter } from '@/client/character';
-import { CharacterContext } from '@/contexts/character';
+import { useCharacter } from '@/hooks/useCharacter';
 import { popup } from '@telegram-apps/sdk-react';
 import { ButtonCell, List } from '@telegram-apps/telegram-ui';
-import { use } from 'react';
 
 export function SettingsPage() {
-  const { resetCharacter } = use(CharacterContext);
+  const { setCharacter } = useCharacter();
+
   const handleClick = async () => {
     const buttonId = await popup.open({
       title: 'Удаление персонажа',
@@ -15,7 +15,7 @@ export function SettingsPage() {
 
     if (buttonId === 'delete') {
       await deleteCharacter();
-      resetCharacter();
+      setCharacter(undefined);
     }
   };
 
