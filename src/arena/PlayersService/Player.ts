@@ -92,8 +92,9 @@ export default class Player {
   /**
    * Функция вернет объект состояния Player
    */
-  getStatus(): Pick<Stats, 'hp'> {
+  getShortStatus() {
     return {
+      name: this.nick,
       hp: this.stats.val('hp'),
     };
   }
@@ -101,8 +102,9 @@ export default class Player {
   /**
    * Функция вернет объект состояния Player для отображения команде
    */
-  getFullStatus(): Pick<Stats, 'hp' | 'mp' | 'en'> {
+  getStatus() {
     return {
+      name: this.nick,
       hp: this.stats.val('hp'),
       mp: this.stats.val('mp'),
       en: this.stats.val('en'),

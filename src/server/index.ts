@@ -20,8 +20,7 @@ export const server = new Hono()
   .route('/character', character)
   .route('/magic', magic)
   .route('/skill', skill)
-  .route('/inventory', inventory)
-  .route('/battle', battle);
+  .route('/ws', ws);
 
 export default server;
 
