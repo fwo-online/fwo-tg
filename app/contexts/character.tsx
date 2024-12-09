@@ -13,9 +13,7 @@ export const CharacterProvider = ({
   children,
   characterPromise,
 }: PropsWithChildren<{ characterPromise: Promise<Character | undefined> }>) => {
-  const result = use(characterPromise);
-
-  const [character, setCharacter] = useState(result);
+  const [character, setCharacter] = useState(use(characterPromise) ?? undefined);
 
   return <CharacterContext value={{ character, setCharacter }}>{children}</CharacterContext>;
 };

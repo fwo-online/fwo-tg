@@ -7,6 +7,7 @@ import { CreateCharacterPage } from './pages/CreateCharacterPage/CreateCharacter
 import { CharacterMagics } from './pages/CharacterMagics/CharacterMagics';
 import { AppLayout } from './components/AppLayout';
 import { SettingsPage } from './pages/SettingsPage/SettingsPage';
+import { LobbyPage } from './pages/LobbyPage/LobbyPage';
 
 export function Router() {
   return (
@@ -19,6 +20,7 @@ export function Router() {
             <Route path="attributes" Component={withBackButton(CharacterAttributesPage)} />
             <Route path="magics" Component={withBackButton(CharacterMagics)} />
           </Route>
+          <Route path="/lobby" element={<LobbyPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Route>
       </Route>

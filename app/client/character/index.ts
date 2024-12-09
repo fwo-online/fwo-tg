@@ -2,12 +2,14 @@ import { client } from '@/client';
 import type { CharacterAttributes, CreateCharacterDto } from '@fwo/schemas';
 
 export const getCharacter = async () => {
-  try {
-    return client.character.$get().then((r) => r.json());
-  } catch (e) {
-    console.log(e);
-    return;
-  }
+  return client.character
+    .$get()
+    .then((r) => {
+      if (r.ok) {
+        return r.json();
+      }
+    })
+    .catch(console.log);
 };
 
 export const createCharacter = async (json: CreateCharacterDto) => {

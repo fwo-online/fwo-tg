@@ -42,3 +42,4 @@ export * from './characterAttributesSchema';
 export * from './characterClassSchema';
 export * from './characterSchema';
 export * from './createCharacterSchema';
+export * from './characterPublic';
