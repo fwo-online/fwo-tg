@@ -4,8 +4,7 @@ import { createCharacter, removeCharacter } from '@/api/character';
 import { CharacterService } from '@/arena/CharacterService';
 import { profsData } from '@/data/profs';
 import { characterAttributesSchema, createCharacterSchema } from '@fwo/schemas';
-import { characterMiddleware } from './middlewares/characterMiddleware';
-import { userMiddleware } from './middlewares/userMiddleware';
+import { characterMiddleware, userMiddleware } from './middlewares';
 
 export const character = new Hono()
   .use(userMiddleware)

@@ -2,10 +2,10 @@ import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { z } from 'zod';
 import MagicService from '@/arena/MagicService';
-import { characterMiddleware } from './middlewares/characterMiddleware';
+import { characterMiddleware, userMiddleware } from '@/server/middlewares';
 
 export const magic = new Hono()
-  .use(characterMiddleware)
+  .use(userMiddleware, characterMiddleware)
   .patch('/:lvl', zValidator('param', z.object({ lvl: z.number({ coerce: true }) })), async (c) => {
     const character = c.get('character');
     const { lvl } = c.req.valid('param');
