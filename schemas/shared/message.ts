@@ -1,5 +1,7 @@
 import { characterPublicSchema } from '@/character';
+import { gameMessageSchema } from '@/game';
 import { z } from 'zod';
+import { orderSchema } from './orderSchema';
 
 export const clientToServerMessageSchema = z.union([
   z.object({ id: z.string().optional(), type: z.literal('lobby'), action: z.literal('enter') }),
@@ -13,6 +15,11 @@ export const clientToServerMessageSchema = z.union([
     id: z.string().optional(),
     type: z.literal('match_making'),
     action: z.literal('stop_search'),
+  }),
+  z.object({
+    type: z.literal('game'),
+    action: z.literal('order'),
+    order: orderSchema,
   }),
 ]);
 
@@ -43,6 +50,7 @@ export const serverToClientMessageSchema = z.union([
     action: z.literal('stop_search'),
     data: characterPublicSchema,
   }),
+  gameMessageSchema,
 ]);
 
 export type ServerToClientMessage = z.infer<typeof serverToClientMessageSchema>;

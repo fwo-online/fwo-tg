@@ -1,5 +1,5 @@
 import { groupBy, keyBy, partition } from 'lodash';
-import Player from './Player';
+import Player from './PlayerService';
 
 export default class PlayersService {
   readonly init: string[];
@@ -72,7 +72,7 @@ export default class PlayersService {
   }
 
   groupByClan() {
-    return Object.groupBy(this.players, ({ clan }) => clan?.name || Symbol('noClan'));
+    return Object.groupBy(this.players, ({ clan }) => clan?.name || 'noClan');
   }
 
   /**

@@ -37,7 +37,7 @@ export class ChatService {
   unsubscribe(id: string) {
     const ws = ChatService.connections.get(id);
     ws?.raw.unsubscribe(this.getRoom());
-    const clanID = this.playersService.getById(id)?.clan?.id ?? 'empty';
+    const clanID = this.playersService.getById(id)?.clan?.id ?? 'noClan';
     ws?.raw.unsubscribe(this.getRoom(clanID));
   }
 

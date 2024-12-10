@@ -8,7 +8,7 @@ import type { MatchMakingItem } from '@/arena/MatchMakingService';
 class QueueConstructor {
   psr = 0;
   open = true;
-  players: MatchMakingItem[]
+  players: MatchMakingItem[];
   /**
    * Конструтор пустой очереди
    * @param {mmObj[]} searchers
@@ -40,7 +40,7 @@ class QueueConstructor {
    */
   policy(searcherObj: MatchMakingItem) {
     const playerPsr = searcherObj.psr;
-    return (!this.players.length) || (playerPsr > (this.psr / this.players.length + 50));
+    return !this.players.length || playerPsr > this.psr / this.players.length + 50;
   }
 
   /**
@@ -58,7 +58,7 @@ class QueueConstructor {
    */
   async goStartGame() {
     try {
-      const newGame = new GameService(this.players.map((pl) => pl.charId));
+      const newGame = new GameService(this.players.map((pl) => pl.id));
       await newGame.createGame();
       this.open = false;
     } catch (e) {

@@ -3,12 +3,11 @@ import type { Action } from '@/arena/ActionService';
 import type { CharacterService } from '@/arena/CharacterService';
 import FlagsConstructor from '@/arena/Constuructors/FlagsConstructor';
 import type { DamageType } from '@/arena/Constuructors/types';
-import type { Stats } from '@/arena/StatsService';
 import StatsService from '@/arena/StatsService';
-import type { Prof } from '@/data/profs';
 import type { Clan } from '@/models/clan';
 import { PlayerWeapon } from './PlayerWeapon';
 import { convertItemModifiers } from './utils';
+import type { CharacterClass, Player, PublicPlayer } from '@fwo/schemas';
 
 export type Resists = Record<DamageType, number>;
 
@@ -22,18 +21,11 @@ export interface Chance {
  * @description Объект игрока внутри боя ! Это не Character!
  * @module Service/Player
  */
-
-// @todo нужно создать отдельный метод, для автоматического сложения всех харок
-// аналогично парсеру.
-
-/**
- * Объект игрока со всеми плюшками
- */
-export default class Player {
+export default class PlayerService {
   nick: string;
   id: string;
   owner: string;
-  prof: Prof;
+  prof: CharacterClass;
   lvl: number;
   clan?: Clan;
   stats: StatsService;
@@ -55,7 +47,7 @@ export default class Player {
     this.nick = params.nickname;
     this.id = params.id;
     this.owner = params.owner;
-    this.prof = params.prof;
+    this.prof = params.prof as CharacterClass;
     this.lvl = params.lvl;
     this.clan = params.clan;
     this.favoriteMagics = params.favoriteMagicList;
@@ -78,7 +70,7 @@ export default class Player {
    * @param charId идентификатор чара
    */
   static load(charId: string) {
-    return new Player(arena.characters[charId]);
+    return new PlayerService(arena.characters[charId]);
   }
 
   getFailChance(action: Action) {
@@ -118,16 +110,22 @@ export default class Player {
     return this.flags.isDead;
   }
 
+  kill(killer: PlayerService, action: string) {
+    this.flags.isDead = killer.id;
+    this.flags.isKilledBy = action;
+  }
+
   /**
    * Устанавливает убийцу игрока
    * @param player записывает id убийцы
    */
-  setKiller(player: Player): void {
+  setKiller(player: PlayerService): void {
     this.flags.isDead = player.id;
   }
 
   resetKiller(): void {
     this.flags.isDead = '';
+    this.flags.isKilledBy = '';
   }
 
   setProc(proc: number) {
@@ -156,7 +154,7 @@ export default class Player {
     return this.skills[skill] ?? 0;
   }
 
-  isAlly(player: Player, includeSelf = true) {
+  isAlly(player: PlayerService, includeSelf = true) {
     if (player.id === this.id) {
       return includeSelf;
     }
@@ -166,5 +164,27 @@ export default class Player {
     }
 
     return this.clan.id === player.clan.id;
+  }
+
+  toObject(): Player {
+    return {
+      id: this.id,
+      name: this.nick,
+      class: this.prof,
+      lvl: this.lvl,
+      clan: this.clan,
+      alive: this.alive,
+    };
+  }
+
+  toPublicObject(): PublicPlayer {
+    return {
+      id: this.id,
+      name: this.nick,
+      class: this.prof,
+      lvl: this.lvl,
+      clan: this.clan,
+      alive: this.alive,
+    };
   }
 }

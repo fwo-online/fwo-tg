@@ -1,19 +1,19 @@
 import _ from 'lodash';
 import { createGame } from '@/api/game';
-import * as channelHelper from '../helpers/channelHelper';
-import type { Game } from '../models/game';
-import type { LongItem } from './Constuructors/LongMagicConstructor';
-import { engine } from './EngineService';
-import { HistoryService, type HistoryItem } from './HistoryService';
-import { LogService } from './LogService';
-import type * as magics from './magics';
-import OrderService from './OrderService';
-import PlayersService, { type Player } from './PlayersService';
-import { RoundService, RoundStatus } from './RoundService';
-import testGame from './testGame';
-import arena from './index';
-import { ChatService } from './ChatService';
+import type { Game } from '@/models/game';
+import type { LongItem } from '@/arena/Constuructors/LongMagicConstructor';
+import { engine } from '@/arena/EngineService';
+import { HistoryService, type HistoryItem } from '@/arena/HistoryService';
+import { LogService } from '@/arena/LogService';
+import type * as magics from '@/arena/magics';
+import OrderService from '@/arena/OrderService';
+import PlayersService, { type Player } from '@/arena/PlayersService';
+import { RoundService, RoundStatus } from '@/arena/RoundService';
+import testGame from '@/arena/testGame';
+import arena from '@/arena';
+import { ChatService } from '@/arena/ChatService';
 import { mapValues } from 'es-toolkit';
+import ActionsHelper from '@/helpers/actionsHelper';
 
 export type KickReason = 'afk' | 'run';
 
@@ -118,14 +118,6 @@ export default class GameService {
   }
 
   /**
-   * @param data строка, отправляемая в общий чат
-   */
-  sendToAll(data: string): void {
-    console.debug('GC debug:: sendToAll', this.info.id);
-    void this.chat.sendToAll(data);
-  }
-
-  /**
    *@todo Остановка игры
    */
   pauseGame(): void {
@@ -152,20 +144,18 @@ export default class GameService {
    * @param id id игрока, который будет выброшен
    * @param reason причина кика
    */
-  kick(id: string, reason?: KickReason): void {
+  kick(id: string, reason: KickReason): void {
     const player = this.players.getById(id);
     if (!player) {
       console.log('GC debug:: kick', id, 'no player');
       return;
     }
-    void channelHelper.sendRunButton(player);
-    this.chat.sendToAll({ type: 'game', action: 'kick', data: { id, reason } });
-    // if (reason === 'run') {
-    //   void channelHelper.broadcast(`Игрок *${player.nick}* сбежал из боя`);
-    // } else {
-    //   this.chat.sendToAll({ type: 'game', action: 'kick', id });
-    //   void channelHelper.broadcast(`Игрок *${player.nick}* был выброшен из игры`);
-    // }
+    this.chat.sendToAll({
+      type: 'game',
+      action: 'kick',
+      reason,
+      player: player.toPublicObject(),
+    });
     const char = arena.characters[id];
     char.addGameStat({ runs: 1 });
     void char.saveToDb();
@@ -233,7 +223,7 @@ export default class GameService {
         statistic: this.statistic(),
       });
       this.saveGame();
-      this.forAllPlayers(this.chat.unsubscribe.bind(this.chat));
+      this.forAllPlayers(({ id }) => this.chat.unsubscribe(id));
       // }, 5000);
       // setTimeout(() => {
       // this.chat.sendToAll({ type: 'game', action: 'end' });
@@ -279,7 +269,11 @@ export default class GameService {
   }
 
   async sendMessages(messages: HistoryItem[]): Promise<void> {
-    await this.logger.sendBattleLog(messages);
+    await this.chat.sendToAll({
+      type: 'game',
+      action: 'log',
+      messages: this.logger.getBattleLog(messages),
+    });
   }
 
   /**
@@ -287,11 +281,11 @@ export default class GameService {
    */
   initHandlers(): void {
     // Обработка сообщений от Round Module
-    this.round.subscribe((data) => {
-      switch (data.state) {
+    this.round.subscribe(({ state, round }) => {
+      switch (state) {
         case RoundStatus.START_ROUND: {
           this.forAllPlayers(this.checkOrders);
-          this.chat.sendToAll({ type: 'game', action: 'startRound', data: data.round });
+          this.chat.sendToAll({ type: 'game', action: 'startRound', round });
           this.sendStatus();
           break;
         }
@@ -301,6 +295,7 @@ export default class GameService {
           this.players.reset();
           this.orders.reset();
           this.handleEndGameFlags();
+          this.sendMessages(this.getRoundResults());
           if (this.isGameEnd) {
             this.round.unsubscribe();
             this.endGame();
@@ -316,6 +311,7 @@ export default class GameService {
         }
         case RoundStatus.START_ORDERS: {
           this.chat.sendToAll({ type: 'game', action: 'startOrders' });
+          this.sendActions();
           break;
         }
         case RoundStatus.END_ORDERS: {
@@ -327,7 +323,7 @@ export default class GameService {
           break;
         }
         default: {
-          console.log('InitHandler:', data.state, 'undef event');
+          console.log('InitHandler:', state, 'undef event');
         }
       }
     });
@@ -407,7 +403,7 @@ export default class GameService {
    * чтобы выводило от чего и от кого умер игрок
    */
   sortDead(): void {
-    const dead = this.players.sortDead();
+    const dead = this.players.sortDead().map((p) => p.toPublicObject());
     this.cleanLongMagics();
     if (dead.length) {
       this.chat.sendToAll({ type: 'game', action: 'dead', dead });
@@ -418,13 +414,11 @@ export default class GameService {
    * Очистка массива длительных магий от умерших
    */
   cleanLongMagics(): void {
-    _.forEach(this.longActions, (longMagicType, k) => {
-      this.longActions[k] = _.filter(longMagicType, (act) => {
-        const p = this.players.getById(act.target);
-        return p?.alive;
+    this.longActions = mapValues(this.longActions, (longMagicType) => {
+      return longMagicType?.filter((act) => {
+        return this.players.getById(act.target)?.alive;
       });
     });
-    this.longActions = this.longActions;
   }
 
   /**
@@ -435,6 +429,19 @@ export default class GameService {
     this.players.players.forEach((p) => f.call(this, p));
   }
 
+  sendActions(): void {
+    this.players.alivePlayers.forEach((player) => {
+      this.chat.send(player.id, {
+        type: 'game',
+        action: 'order',
+        proc: player.proc,
+        actions: ActionsHelper.getBasicActions(player, this),
+        magics: ActionsHelper.getAvailableMagics(player, this),
+        skills: ActionsHelper.getAvailableSkills(player, this),
+      });
+    });
+  }
+
   /**
    * Рассылка состояний живым игрокам
    * @param player объект игрока
@@ -442,17 +449,17 @@ export default class GameService {
   sendStatus(): void {
     const playersByClan = this.players.groupByClan();
 
-    const statusByClan = mapValues(playersByClan, (players) => {
+    const statusByClan = mapValues(playersByClan, (players = []) => {
       return players?.map((p) => p.getShortStatus());
     });
 
     for (const clan in playersByClan) {
-      const players = playersByClan[clan];
-      // const status = players?.map((p) => p.getStatus());
+      const players = playersByClan[clan] ?? [];
+
       this.chat.sendToClan(clan, {
         type: 'game',
         action: 'status',
-        data: players?.map((p) => p.getStatus()),
+        status: players.map((p) => p.getStatus()),
         statusByClan,
       });
     }

@@ -5,23 +5,14 @@ import { character } from './character';
 import { inventory } from './inventory';
 import { magic } from './magic';
 import { skill } from './skill';
-import { battle } from './battle';
+import { ws } from './ws';
 
-export const server = new Hono()
-  // .use(cors({
-  //   origin: ['http://192.168.10.32:5173'],
-  // }))
-  // .get('/', (c) => {
-  //   return c.json({
-  //     data: 'Hello FightWorld!',
-  //   }, 200);
-  // })
-  // .use(logger())
+export const app = new Hono()
   .route('/character', character)
   .route('/magic', magic)
   .route('/skill', skill)
   .route('/ws', ws);
 
-export default server;
+export default app;
 
-export declare type Server = typeof server;
+export declare type Server = typeof app;

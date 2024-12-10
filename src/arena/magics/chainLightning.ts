@@ -24,7 +24,7 @@ class ChainLightning extends AoeDmgMagic {
       effect: ['1d3+1', '1d3+2', '1d3+3'],
       dmgType: 'lighting',
       profList: ['m'],
-    })
+    });
   }
 
   maxTargets = [3, 4, 5];
@@ -34,7 +34,8 @@ class ChainLightning extends AoeDmgMagic {
     const magicLevel = initiator.getMagicLevel(this.name);
     const maxTargets = this.maxTargets[magicLevel - 1];
 
-    return game.players.getPlayersByClan(target.clan?.id)
+    return game.players
+      .getPlayersByClan(target.clan?.id)
       .filter(({ alive }) => alive)
       .filter(({ id }) => id !== target.id)
       .slice(0, maxTargets - 1);
@@ -74,4 +75,4 @@ class ChainLightning extends AoeDmgMagic {
   }
 }
 
-export const chainLightning = new ChainLightning();
+export default new ChainLightning();

@@ -1,12 +1,12 @@
 /**
  * Первичный загрузчик магий
  */
-export { acidSpittle } from './acidSpittle';
+export { default as acidSpittle } from './acidSpittle';
 export { default as anathema } from './anathema';
 export { default as blessing } from './blessing';
 export { default as blight } from './blight';
 export { default as bodySpirit } from './bodySpirit';
-export { chainLightning } from './chainLightning';
+export { default as chainLightning } from './chainLightning';
 export { default as curse } from './curse';
 export { default as dispel } from './dispel';
 export { default as dustShield } from './dustShield';

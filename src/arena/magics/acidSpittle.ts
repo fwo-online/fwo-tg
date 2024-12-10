@@ -21,7 +21,7 @@ class AcidSpittle extends DmgMagic {
       effect: ['1d3+3', '1d3+4', '1d3+5'],
       dmgType: 'acid',
       profList: ['m'],
-    })
+    });
   }
 
   /**
@@ -33,4 +33,4 @@ class AcidSpittle extends DmgMagic {
   }
 }
 
-export const acidSpittle = new AcidSpittle();
+export default new AcidSpittle();
