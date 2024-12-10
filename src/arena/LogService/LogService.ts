@@ -42,6 +42,18 @@ export class LogService {
     }
   }
 
+  getBattleLog(history: HistoryItem[]) {
+    history.forEach((item) => {
+      if (isSuccessResult(item)) {
+        this.success(item);
+      } else {
+        this.fail(item);
+      }
+    });
+
+    return this.messages;
+  }
+
   /**
    * Удачный проход action
    * @param message сообщение
