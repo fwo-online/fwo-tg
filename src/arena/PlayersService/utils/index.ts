@@ -1,4 +1,4 @@
-import type { Chance } from '@/arena/PlayersService/Player';
+import type { Chance } from '@/arena/PlayersService';
 import type { Modifiers } from '@fwo/schemas';
 
 export function convertItemModifiers(modifiers: Modifiers[]): Chance {

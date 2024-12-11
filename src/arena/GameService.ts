@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { createGame } from '@/api/game';
 import type { Game } from '@/models/game';
 import type { LongItem } from '@/arena/Constuructors/LongMagicConstructor';
@@ -11,9 +10,9 @@ import PlayersService, { type Player } from '@/arena/PlayersService';
 import { RoundService, RoundStatus } from '@/arena/RoundService';
 import testGame from '@/arena/testGame';
 import arena from '@/arena';
-import { ChatService } from '@/arena/ChatService';
 import { mapValues } from 'es-toolkit';
-import ActionsHelper from '@/helpers/actionsHelper';
+import EventEmitter from 'node:events';
+import type { GameMessage } from '@fwo/schemas';
 
 export type KickReason = 'afk' | 'run';
 
@@ -31,12 +30,17 @@ export interface GlobalFlags {
  * переподключился к игре после disconnect(разрыв соединения)
  */
 
+type GameMessageMap = {
+  [K in GameMessage['action']]: Omit<Extract<GameMessage, { action: K }>, 'action' | 'type'>;
+};
+
 /**
  * Класс для объекта игры
  */
-export default class GameService {
+export default class GameService extends EventEmitter<{
+  game: [GameMessage, scope?: string];
+}> {
   players: PlayersService;
-  chat: ChatService;
   orders: OrderService;
   round = new RoundService();
   logger = new LogService();
@@ -53,8 +57,9 @@ export default class GameService {
    * @param players массив игроков
    */
   constructor(players: string[]) {
+    super();
+
     this.players = new PlayersService(players);
-    this.chat = new ChatService('test', this.players);
     this.orders = new OrderService(this.players, this.round);
     this.flags = {
       noDamageRound: 0,
@@ -80,6 +85,10 @@ export default class GameService {
       return Object.keys(groupByClan).length === 1;
     }
     return withoutClan.length === 1 && !withClan.length;
+  }
+
+  send<K extends keyof GameMessageMap>(action: K, message: GameMessageMap[K], scope?: string) {
+    this.emit('game', { type: 'game', action, ...message } as GameMessage, scope);
   }
 
   getEndGameReason() {
@@ -113,7 +122,7 @@ export default class GameService {
   startGame(): void {
     console.debug('GC debug:: startGame', 'gameId:', this.info.id);
     // рассылаем статусы хп команды и врагов
-    this.chat.sendToAll({ type: 'game', action: 'start' });
+    this.send('start', { players: this.players.players.map((p) => p.toPublicObject()) });
     this.round.initRound();
   }
 
@@ -136,7 +145,6 @@ export default class GameService {
       return;
     }
     player.preKick(reason);
-    this.chat.send(id, { type: 'game', action: 'preKick', reason });
   }
 
   /**
@@ -150,12 +158,9 @@ export default class GameService {
       console.log('GC debug:: kick', id, 'no player');
       return;
     }
-    this.chat.sendToAll({
-      type: 'game',
-      action: 'kick',
-      reason,
-      player: player.toPublicObject(),
-    });
+
+    this.send('kick', { reason, player: player.toPublicObject() });
+
     const char = arena.characters[id];
     char.addGameStat({ runs: 1 });
     void char.saveToDb();
@@ -216,14 +221,9 @@ export default class GameService {
     console.log('GC debug:: endGame', this.info.id);
     // Отправляем статистику
     setTimeout(() => {
-      this.chat.sendToAll({
-        type: 'game',
-        action: 'end',
-        reason: this.getEndGameReason(),
-        statistic: this.statistic(),
-      });
+      this.send('end', { reason: this.getEndGameReason(), statistic: this.statistic() });
+
       this.saveGame();
-      this.forAllPlayers(({ id }) => this.chat.unsubscribe(id));
       // }, 5000);
       // setTimeout(() => {
       // this.chat.sendToAll({ type: 'game', action: 'end' });
@@ -252,12 +252,12 @@ export default class GameService {
    * Создание объекта в базе // потребуется для ведения истории
    * @return Объект созданный в базе
    */
-  async createGame(): Promise<boolean> {
+  async createGame() {
     const dbGame = await createGame(this.players.init);
     this.info = dbGame;
     this.info.id = this.info._id.toString();
     this.preLoading();
-    return true;
+    return this.info.id;
   }
 
   /**
@@ -268,12 +268,8 @@ export default class GameService {
     this.flags.global = {};
   }
 
-  async sendMessages(messages: HistoryItem[]): Promise<void> {
-    await this.chat.sendToAll({
-      type: 'game',
-      action: 'log',
-      messages: this.logger.getBattleLog(messages),
-    });
+  sendMessages(messages: HistoryItem[]) {
+    this.send('log', { messages: this.logger.getBattleLog(messages) });
   }
 
   /**
@@ -285,12 +281,12 @@ export default class GameService {
       switch (state) {
         case RoundStatus.START_ROUND: {
           this.forAllPlayers(this.checkOrders);
-          this.chat.sendToAll({ type: 'game', action: 'startRound', round });
+          this.send('startRound', { round });
           this.sendStatus();
           break;
         }
         case RoundStatus.END_ROUND: {
-          this.chat.sendToAll({ type: 'game', action: 'endRound' });
+          this.send('endRound', {});
           this.sortDead();
           this.players.reset();
           this.orders.reset();
@@ -310,12 +306,13 @@ export default class GameService {
           break;
         }
         case RoundStatus.START_ORDERS: {
-          this.chat.sendToAll({ type: 'game', action: 'startOrders' });
-          this.sendActions();
+          this.send('startOrders', {});
+          // this.chat.sendToAll({ type: 'game', action: 'startOrders' });
+          // this.sendActions();
           break;
         }
         case RoundStatus.END_ORDERS: {
-          this.chat.sendToAll({ type: 'game', action: 'endOrders' });
+          this.send('endOrders', {});
           // Debug Game Hack
           if (process.env.NODE_ENV === 'development') {
             this.orders.ordersList = this.orders.ordersList.concat(testGame.orders);
@@ -335,7 +332,7 @@ export default class GameService {
    */
   saveGame(): void {
     try {
-      _.forEach(this.info.players, async (id) => {
+      this.info.players.forEach(async (id) => {
         const player = this.players.getById(id);
         if (!player) {
           return;
@@ -406,7 +403,7 @@ export default class GameService {
     const dead = this.players.sortDead().map((p) => p.toPublicObject());
     this.cleanLongMagics();
     if (dead.length) {
-      this.chat.sendToAll({ type: 'game', action: 'dead', dead });
+      this.send('dead', { dead });
     }
   }
 
@@ -429,19 +426,6 @@ export default class GameService {
     this.players.players.forEach((p) => f.call(this, p));
   }
 
-  sendActions(): void {
-    this.players.alivePlayers.forEach((player) => {
-      this.chat.send(player.id, {
-        type: 'game',
-        action: 'order',
-        proc: player.proc,
-        actions: ActionsHelper.getBasicActions(player, this),
-        magics: ActionsHelper.getAvailableMagics(player, this),
-        skills: ActionsHelper.getAvailableSkills(player, this),
-      });
-    });
-  }
-
   /**
    * Рассылка состояний живым игрокам
    * @param player объект игрока
@@ -454,14 +438,9 @@ export default class GameService {
     });
 
     for (const clan in playersByClan) {
-      const players = playersByClan[clan] ?? [];
+      const players = clan === 'noClan' ? [] : (playersByClan[clan] ?? []);
 
-      this.chat.sendToClan(clan, {
-        type: 'game',
-        action: 'status',
-        status: players.map((p) => p.getStatus()),
-        statusByClan,
-      });
+      this.send('status', { status: players.map((p) => p.getStatus()), statusByClan }, clan);
     }
   }
 }

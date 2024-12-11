@@ -2,7 +2,7 @@ import { clientToServerMessageSchema, type ServerToClientMessage } from '@fwo/sc
 import type { Server, ServerWebSocket } from 'bun';
 
 export class WebSocketHelper {
-  public raw: ServerWebSocket;
+  public raw!: ServerWebSocket;
   static server: Server;
 
   static setServer(server: Server) {

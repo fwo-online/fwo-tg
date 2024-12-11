@@ -1,21 +1,41 @@
 import type { ClientToServerMessage } from '@fwo/schemas';
 import type { CharacterService } from '@/arena/CharacterService';
 import type { WebSocketHelper } from '@/helpers/webSocketHelper';
-import { lobby } from './modules/lobby';
-import { matchMaking } from './modules/matchMaking';
-import { game } from './modules/game';
+import { LobbyModule } from './modules/lobby';
+import { MatchMakingModule } from './modules/matchMaking';
+import { GameModule } from './modules/game';
 
-export const createWsRouter = (ws: WebSocketHelper, character: CharacterService) => {
-  return (message: ClientToServerMessage) => {
+export class WebSocketRouter {
+  ws: WebSocketHelper;
+  character: CharacterService;
+
+  constructor(ws: WebSocketHelper, character: CharacterService) {
+    this.ws = ws;
+    this.character = character;
+  }
+
+  static init() {
+    GameModule.init();
+  }
+
+  handleClose() {
+    LobbyModule.handleClose(this.character, this.ws);
+  }
+
+  handleMessage(message: ClientToServerMessage) {
     switch (message.type) {
       case 'lobby':
-        lobby(message, character, ws);
+        LobbyModule.handleMessage(message, this.character, this.ws);
         break;
       case 'match_making':
-        matchMaking(message, character, ws);
+        MatchMakingModule.handleMessage(message, this.character, this.ws);
         break;
       case 'game':
-        game(message, character, ws);
+        GameModule.handleMessage(message, this.character, this.ws);
     }
-  };
-};
+  }
+
+  handleOpen() {
+    GameModule.handleOpen(this.character, this.ws);
+  }
+}

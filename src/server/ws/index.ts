@@ -2,10 +2,12 @@ import { type Context, Hono } from 'hono';
 import { createBunWebSocket } from 'hono/bun';
 import type { ServerWebSocket } from 'bun';
 import { userMiddleware, characterMiddleware, type CharacterEnv } from '@/server/middlewares';
-import { createWsRouter } from './router';
+import { WebSocketRouter } from './router';
 import { WebSocketHelper } from '@/helpers/webSocketHelper';
 
-export const { upgradeWebSocket } = createBunWebSocket<ServerWebSocket>();
+const { upgradeWebSocket } = createBunWebSocket<ServerWebSocket>();
+
+WebSocketRouter.init();
 
 export const ws = new Hono()
   .use(userMiddleware)
@@ -15,20 +17,24 @@ export const ws = new Hono()
     upgradeWebSocket((c: Context<CharacterEnv>) => {
       const webSocketHelper = new WebSocketHelper();
 
-      const router = createWsRouter(webSocketHelper, c.get('character'));
+      const router = new WebSocketRouter(webSocketHelper, c.get('character'));
 
       return {
         async onOpen(_, ws) {
           if (ws.raw) {
             webSocketHelper.setWs(ws.raw);
+            router.handleOpen();
           }
         },
         onMessage({ data }) {
           const message = WebSocketHelper.read(data);
 
           if (message) {
-            router(message);
+            router.handleMessage(message);
           }
+        },
+        onClose() {
+          router.handleClose();
         },
       };
     }),
