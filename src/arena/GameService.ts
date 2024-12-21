@@ -253,11 +253,16 @@ export default class GameService extends EventEmitter<{
    * @return Объект созданный в базе
    */
   async createGame() {
-    const dbGame = await createGame(this.players.init);
-    this.info = dbGame;
-    this.info.id = this.info._id.toString();
-    this.preLoading();
-    return this.info.id;
+    try {
+      const dbGame = await createGame(this.players.init);
+      this.info = dbGame;
+      this.info.id = this.info._id.toString();
+      return this.info.id;
+    } catch (e) {
+      console.log('GC debug:: createGame', e);
+    } finally {
+      this.preLoading();
+    }
   }
 
   /**
@@ -438,7 +443,7 @@ export default class GameService extends EventEmitter<{
     });
 
     for (const clan in playersByClan) {
-      const players = clan === 'noClan' ? [] : (playersByClan[clan] ?? []);
+      const players = playersByClan[clan] ?? [];
 
       this.send('status', { status: players.map((p) => p.getStatus()), statusByClan }, clan);
     }

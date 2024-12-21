@@ -7,8 +7,6 @@ import { WebSocketHelper } from '@/helpers/webSocketHelper';
 
 const { upgradeWebSocket } = createBunWebSocket<ServerWebSocket>();
 
-WebSocketRouter.init();
-
 export const ws = new Hono()
   .use(userMiddleware)
   .use(characterMiddleware)
@@ -23,18 +21,18 @@ export const ws = new Hono()
         async onOpen(_, ws) {
           if (ws.raw) {
             webSocketHelper.setWs(ws.raw);
-            router.handleOpen();
+            router.onOpen();
           }
         },
         onMessage({ data }) {
           const message = WebSocketHelper.read(data);
 
           if (message) {
-            router.handleMessage(message);
+            router.onMessage(message);
           }
         },
         onClose() {
-          router.handleClose();
+          router.onClosed();
         },
       };
     }),

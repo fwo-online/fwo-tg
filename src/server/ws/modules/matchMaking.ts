@@ -4,7 +4,7 @@ import type { WebSocketHelper } from '@/helpers/webSocketHelper';
 import type { ClientToServerMessage } from '@fwo/schemas';
 
 export class MatchMakingModule {
-  static handleMessage(
+  static onMessage(
     message: ClientToServerMessage,
     character: CharacterService,
     ws: WebSocketHelper,

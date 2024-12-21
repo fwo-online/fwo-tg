@@ -14,28 +14,24 @@ export class WebSocketRouter {
     this.character = character;
   }
 
-  static init() {
-    GameModule.init();
+  onClosed() {
+    LobbyModule.onClosed(this.character, this.ws);
   }
 
-  handleClose() {
-    LobbyModule.handleClose(this.character, this.ws);
-  }
-
-  handleMessage(message: ClientToServerMessage) {
+  onMessage(message: ClientToServerMessage) {
     switch (message.type) {
       case 'lobby':
-        LobbyModule.handleMessage(message, this.character, this.ws);
+        LobbyModule.onMessage(message, this.character, this.ws);
         break;
       case 'match_making':
-        MatchMakingModule.handleMessage(message, this.character, this.ws);
+        MatchMakingModule.onMessage(message, this.character, this.ws);
         break;
       case 'game':
-        GameModule.handleMessage(message, this.character, this.ws);
+        GameModule.onMessage(message, this.character, this.ws);
     }
   }
 
-  handleOpen() {
-    GameModule.handleOpen(this.character, this.ws);
+  onOpen() {
+    GameModule.onOpen(this.character, this.ws);
   }
 }

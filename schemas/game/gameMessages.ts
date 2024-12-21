@@ -6,6 +6,7 @@ export const gameMessageSchema = z.discriminatedUnion('action', [
   z.object({
     type: z.literal('game'),
     action: z.literal('start'),
+    gameID: z.string(),
   }),
   z.object({
     type: z.literal('game'),

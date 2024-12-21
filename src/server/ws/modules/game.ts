@@ -1,99 +1,64 @@
-import arena from '@/arena';
 import type { CharacterService } from '@/arena/CharacterService';
+import type GameService from '@/arena/GameService';
 import MatchMakingService from '@/arena/MatchMakingService';
 import ActionsHelper from '@/helpers/actionsHelper';
 import { WebSocketHelper } from '@/helpers/webSocketHelper';
-import type { ClientToServerMessage, GameMessage } from '@fwo/schemas';
+import type { ClientToServerMessage, GameMessage, Order } from '@fwo/schemas';
 
 export abstract class GameModule {
-  static init() {
-    const startGame = (gameID: string) => {
-      const game = arena.games[gameID];
-      if (!game) return;
-
-      const handleMessage = (message: GameMessage, scope?: string) => {
-        if (scope) {
-          WebSocketHelper.server.publish(`${gameID}:${scope}`, JSON.stringify(message));
-        } else {
-          WebSocketHelper.server.publish(gameID, JSON.stringify(message));
-        }
-      };
-
-      const endGame = (message: GameMessage) => {
-        if (message.action === 'end') {
-          game.off('game', handleMessage);
-        }
-      };
-
-      game.on('game', endGame);
-      game.on('game', handleMessage);
-    };
-
-    MatchMakingService.on('start', startGame);
-  }
-
-  static handleOpen(character: CharacterService, ws: WebSocketHelper) {
-    const startGame = (gameID: string, players: string[]) => {
+  static createGameStartHandler(character: CharacterService, ws: WebSocketHelper) {
+    return (gameID: string, players: string[]) => {
       if (!players.includes(character.id)) {
         return;
       }
 
-      MatchMakingService.off('start', startGame);
-
       const game = character.currentGame;
-      console.assert(game, 'ws game: game not found');
+
       if (!game) {
+        console.error(game, 'ws game: game not found');
         return;
       }
 
-      ws.raw.subscribe(gameID);
-      ws.raw.subscribe(`${gameID}:${character.clan?.name ?? 'noClan'}`);
+      GameModule.subscribe(character, ws, gameID);
 
-      const handleMessage = (message: GameMessage) => {
-        if (message.action === 'end') {
-          ws.raw.unsubscribe(gameID);
-          ws.raw.unsubscribe(`${gameID}:${character.clan?.name ?? 'noClan'}`);
-          game.off('game', handleMessage);
-        }
-        if (message.action === 'startOrders') {
-          const player = game.players.getById(character.id);
-
-          console.assert(player, 'ws game: player %s not found', character.id);
-          if (!player) {
-            return;
-          }
-
-          GameModule.sendAvailableActions(character, ws);
-        }
-      };
-
-      game.on('game', handleMessage);
+      game.on('game', GameModule.createGameMessageHandler(character, game, ws));
     };
-
-    MatchMakingService.on('start', startGame);
   }
 
-  static handleMessage(
+  static createGameMessageHandler(
+    character: CharacterService,
+    game: GameService,
+    ws: WebSocketHelper,
+  ) {
+    return (message: GameMessage, scope?: string) => {
+      switch (message.action) {
+        case 'end':
+          GameModule.unsubscribe(character, ws, game.info.id);
+          GameModule.sendGameMessage(game.info.id, message, scope);
+          break;
+        case 'startOrders':
+          GameModule.sendAvailableActions(character, ws);
+          break;
+        default:
+          GameModule.sendGameMessage(game.info.id, message, scope);
+      }
+    };
+  }
+
+  static onOpen(character: CharacterService, ws: WebSocketHelper) {
+    const handleGameStart = GameModule.createGameStartHandler(character, ws);
+
+    MatchMakingService.on('start', handleGameStart);
+  }
+
+  static onMessage(
     message: ClientToServerMessage,
     character: CharacterService,
     ws: WebSocketHelper,
   ) {
-    const game = character.currentGame;
-
-    if (!game) {
-      console.log('ws game: game not found');
-      return;
-    }
-
     switch (message.action) {
       case 'order':
-        game.orders.orderAction({
-          initiator: character.id,
-          target: message.order.target,
-          action: message.order.action,
-          proc: message.order.proc,
-        });
-
+        GameModule.orderAction(character, ws, message.order);
         GameModule.sendAvailableActions(character, ws);
         break;
       default:
@@ -101,13 +66,49 @@ export abstract class GameModule {
     }
   }
 
+  static sendGameMessage(gameID: string, message: GameMessage, scope?: string) {
+    if (scope) {
+      WebSocketHelper.server.publish(`${gameID}:${scope}`, JSON.stringify(message));
+    } else {
+      WebSocketHelper.server.publish(gameID, JSON.stringify(message));
+    }
+  }
+
+  private static orderAction(character: CharacterService, _ws: WebSocketHelper, order: Order) {
+    const game = character.currentGame;
+
+    if (!game) {
+      console.error('ws game: game not found');
+      return;
+    }
+
+    game.orders.orderAction({
+      initiator: character.id,
+      target: order.target,
+      action: order.action,
+      proc: order.proc,
+    });
+  }
+
+  private static subscribe(character: CharacterService, ws: WebSocketHelper, gameID: string) {
+    const channel = `${gameID}:${character.clan?.name ?? 'noClan'}`;
+    ws.raw.subscribe(gameID);
+    ws.raw.subscribe(channel);
+  }
+
+  private static unsubscribe(character: CharacterService, ws: WebSocketHelper, gameID: string) {
+    const channel = `${gameID}:${character.clan?.name ?? 'noClan'}`;
+    ws.raw.unsubscribe(gameID);
+    ws.raw.unsubscribe(channel);
+  }
+
   private static sendAvailableActions(character: CharacterService, ws: WebSocketHelper) {
     const game = character.currentGame;
     const player = game?.players.getById(character.id);
 
     if (!game || !player) {
-      console.assert(game, 'ws game: game not found');
-      console.assert(player, 'ws game: player %s not found', character.id);
+      console.assert('ws game: game not found');
+      console.assert('ws game: player %s not found', character.id);
       return;
     }
 

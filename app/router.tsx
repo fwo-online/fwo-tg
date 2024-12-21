@@ -8,6 +8,7 @@ import { CharacterMagics } from './pages/CharacterMagics/CharacterMagics';
 import { AppLayout } from './components/AppLayout';
 import { SettingsPage } from './pages/SettingsPage/SettingsPage';
 import { LobbyPage } from './pages/LobbyPage/LobbyPage';
+import { GamePage } from './pages/GamePage/GamePage';
 
 export function Router() {
   return (
@@ -23,6 +24,7 @@ export function Router() {
           <Route path="/lobby" element={<LobbyPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Route>
+        <Route path="/game/:gameID" element={<GamePage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>

@@ -1,4 +1,4 @@
-import { FixedLayout, Tabbar } from '@telegram-apps/telegram-ui';
+import { Tabbar } from '@telegram-apps/telegram-ui';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 
 const tabs = [
@@ -11,6 +11,11 @@ const tabs = [
     path: '/shop',
     text: 'Магазин',
     icon: '🛒',
+  },
+  {
+    path: '/lobby',
+    text: 'Лобби',
+    icon: '',
   },
   {
     path: '/clan',

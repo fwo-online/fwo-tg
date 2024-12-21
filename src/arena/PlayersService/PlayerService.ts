@@ -1,5 +1,5 @@
 import arena from '@/arena';
-import type { Action } from '@/arena/ActionService';
+import type { ActionKey } from '@/arena/ActionService';
 import type { CharacterService } from '@/arena/CharacterService';
 import FlagsConstructor from '@/arena/Constuructors/FlagsConstructor';
 import type { DamageType } from '@/arena/Constuructors/types';
@@ -7,13 +7,19 @@ import StatsService from '@/arena/StatsService';
 import type { Clan } from '@/models/clan';
 import { PlayerWeapon } from './PlayerWeapon';
 import { convertItemModifiers } from './utils';
-import type { CharacterClass, Player, PublicPlayer } from '@fwo/schemas';
+import type {
+  CharacterClass,
+  GameStatus,
+  Player,
+  PublicGameStatus,
+  PublicPlayer,
+} from '@fwo/schemas';
 
 export type Resists = Record<DamageType, number>;
 
 export interface Chance {
-  fail: Partial<Record<Action, number>>;
-  cast: Partial<Record<Action, number>>;
+  fail: Partial<Record<ActionKey, number>>;
+  cast: Partial<Record<ActionKey, number>>;
 }
 
 /**
@@ -73,18 +79,18 @@ export default class PlayerService {
     return new PlayerService(arena.characters[charId]);
   }
 
-  getFailChance(action: Action) {
+  getFailChance(action: ActionKey) {
     return this.modifiers.chance.fail[action] ?? 0;
   }
 
-  getCastChance(action: Action) {
+  getCastChance(action: ActionKey) {
     return this.modifiers.chance.cast[action] ?? 0;
   }
 
   /**
    * Функция вернет объект состояния Player
    */
-  getShortStatus() {
+  getShortStatus(): PublicGameStatus {
     return {
       name: this.nick,
       hp: this.stats.val('hp'),
@@ -94,7 +100,7 @@ export default class PlayerService {
   /**
    * Функция вернет объект состояния Player для отображения команде
    */
-  getStatus() {
+  getStatus(): GameStatus {
     return {
       name: this.nick,
       hp: this.stats.val('hp'),
@@ -174,6 +180,7 @@ export default class PlayerService {
       lvl: this.lvl,
       clan: this.clan,
       alive: this.alive,
+      weapon: this.weapon.item?.info,
     };
   }
 
@@ -185,6 +192,7 @@ export default class PlayerService {
       lvl: this.lvl,
       clan: this.clan,
       alive: this.alive,
+      weapon: this.weapon.item?.info,
     };
   }
 }

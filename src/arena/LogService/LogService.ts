@@ -2,14 +2,12 @@ import type { SuccessArgs, FailArgs } from '@/arena/Constuructors/types';
 import { isSuccessResult } from '@/arena/Constuructors/utils';
 import type { HistoryItem } from '@/arena/HistoryService';
 import { sendBattleLogMessages } from '@/helpers/channelHelper';
-import {
-  joinLongDmgMessages, joinLongMessages, formatMessage, joinHealMessages,
-} from './utils';
+import { joinLongDmgMessages, joinLongMessages, formatMessage, joinHealMessages } from './utils';
 
-export type Message = SuccessArgs | FailArgs
+export type Message = SuccessArgs | FailArgs;
 
 type Formatter = (message: Message) => string;
-type Writer = (data: string | string[]) => void | Promise<void>
+type Writer = (data: string[]) => void | Promise<void>;
 
 /**
  * Класс вывода данных в battlelog
@@ -43,15 +41,19 @@ export class LogService {
   }
 
   getBattleLog(history: HistoryItem[]) {
-    history.forEach((item) => {
-      if (isSuccessResult(item)) {
-        this.success(item);
-      } else {
-        this.fail(item);
-      }
-    });
+    try {
+      history.forEach((item) => {
+        if (isSuccessResult(item)) {
+          this.success(item);
+        } else {
+          this.fail(item);
+        }
+      });
 
-    return this.messages;
+      return this.messages;
+    } finally {
+      this.reset();
+    }
   }
 
   /**
