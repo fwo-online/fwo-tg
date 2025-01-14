@@ -1,41 +1,26 @@
-import type { CharacterService } from '@/arena/CharacterService';
-import type { WebSocketHelper } from '@/helpers/webSocketHelper';
-import type { ClientToServerMessage } from '@fwo/schemas';
+import { WebSocketRoute } from '../route';
 
-export abstract class LobbyModule {
-  static onClosed(character: CharacterService, ws: WebSocketHelper) {
-    LobbyModule.leave(character, ws);
-  }
+export const lobby = new WebSocketRoute('lobby')
+  .on('enter', (c) => {
+    const character = c.get('character');
 
-  static onMessage(
-    message: ClientToServerMessage,
-    character: CharacterService,
-    ws: WebSocketHelper,
-  ) {
-    if (message.type !== 'lobby') {
-      return;
-    }
+    c.subscribe('lobby');
+    c.subscribe('match_making');
+    c.publish('lobby', { type: 'lobby', action: 'enter', data: character.toPublicObject() });
+  })
+  .on('leave', (c) => {
+    const character = c.get('character');
 
-    switch (message.action) {
-      case 'enter':
-        LobbyModule.enter(character, ws);
-        break;
-      case 'leave':
-        LobbyModule.leave(character, ws);
-        break;
-      default:
-    }
-  }
+    c.unsubscribe('lobby');
+    c.unsubscribe('match_making');
 
-  private static enter(character: CharacterService, ws: WebSocketHelper) {
-    ws.raw.subscribe('lobby');
-    ws.raw.subscribe('match_making');
-    ws.publish({ type: 'lobby', action: 'enter', data: character.toPublicObject() });
-  }
+    c.publish('lobby', { type: 'lobby', action: 'leave', data: character.toPublicObject() });
+  })
+  .close((c) => {
+    const character = c.get('character');
 
-  private static leave(character: CharacterService, ws: WebSocketHelper) {
-    ws.raw.unsubscribe('lobby');
-    ws.raw.unsubscribe('match_making');
-    ws.publish({ type: 'lobby', action: 'leave', data: character.toPublicObject() });
-  }
-}
+    c.unsubscribe('lobby');
+    c.unsubscribe('match_making');
+
+    c.publish('lobby', { type: 'lobby', action: 'leave', data: character.toPublicObject() });
+  });

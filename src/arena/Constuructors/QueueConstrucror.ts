@@ -59,9 +59,9 @@ class QueueConstructor {
   async goStartGame() {
     try {
       const newGame = new GameService(this.players.map((pl) => pl.id));
-      const id = await newGame.createGame();
+      const game = await newGame.createGame();
       this.open = false;
-      return id;
+      return game;
     } catch (e) {
       console.error(e);
     }

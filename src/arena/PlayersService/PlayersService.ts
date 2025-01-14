@@ -59,20 +59,8 @@ export default class PlayersService {
     return alive[Math.floor(Math.random() * alive.length)];
   }
 
-  get partitionByClan() {
-    const [withClan, withoutClan] = partition(this.list, ({ clan }) => clan);
-    const groupByClan = groupBy(withClan, ({ clan }) => clan?.name);
-    return { withClan, withoutClan, groupByClan };
-  }
-
-  get partitionAliveByClan() {
-    const [withClan, withoutClan] = partition(this.alivePlayers, ({ clan }) => clan);
-    const groupByClan = groupBy(withClan, ({ clan }) => clan?.name);
-    return { withClan, withoutClan, groupByClan };
-  }
-
-  groupByClan() {
-    return Object.groupBy(this.players, ({ clan }) => clan?.name || 'noClan');
+  groupByClan(players = this.players) {
+    return Object.groupBy(players, ({ clan }) => clan?.name || 'noClan');
   }
 
   /**

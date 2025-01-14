@@ -6,7 +6,7 @@ import arena from '@/arena';
 import type { Clan } from '@/models/clan';
 import TestUtils from '@/utils/testUtils';
 import { CharacterService } from '../CharacterService';
-import Player from './Player';
+import Player from './PlayerService';
 import PlayersService from './PlayersService';
 
 // npm t src/arena/PlayersService/PlayersService.test.ts
@@ -42,9 +42,8 @@ describe('PlayerService', () => {
   });
 
   it('should participate by clan', () => {
-    expect(players.partitionByClan.withClan).toHaveLength(6);
-    expect(players.partitionByClan.withoutClan).toHaveLength(3);
-    expect(players.partitionByClan.groupByClan).toMatchObject({
+    expect(players.groupByClan()).toHaveLength(6);
+    expect(players.groupByClan()).toMatchObject({
       [clans[0].name]: [
         { id: characters[0].id }, { id: characters[1].id }, { id: characters[2].id },
       ],
@@ -63,9 +62,8 @@ describe('PlayerService', () => {
     players.players[3].setDead();
     players.players[1].setDead();
 
-    expect(players.partitionAliveByClan.withClan).toHaveLength(3);
-    expect(players.partitionAliveByClan.withoutClan).toHaveLength(2);
-    expect(players.partitionAliveByClan.groupByClan).toMatchObject({
+    expect(players.groupByClan(players.alivePlayers)).toHaveLength(3);
+    expect(players.groupByClan(players.alivePlayers)).toMatchObject({
       [clans[0].name]: [{ id: characters[0].id }, { id: characters[2].id }],
       [clans[1].name]: [{ id: characters[4].id }],
     });

@@ -15,7 +15,7 @@ import type * as weaponMastery from './weaponMastery';
 export default {
   mm: null as unknown as typeof MatchMaking,
   characters: {} as Record<string, CharacterService>,
-  games: {} as Record<string, GameService>,
+  games: {} as Partial<Record<string, GameService>>,
   items: {} as unknown as Record<string, Item>,
   itemsSets: {} as unknown as Record<string, ItemSet>,
   magics: {} as unknown as typeof magics,

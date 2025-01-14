@@ -31,15 +31,16 @@ export interface GlobalFlags {
  */
 
 type GameMessageMap = {
-  [K in GameMessage['action']]: Omit<Extract<GameMessage, { action: K }>, 'action' | 'type'>;
+  [K in GameMessage['action']]: [
+    Omit<Extract<GameMessage, { action: K }>, 'action' | 'type'>,
+    scope?: string,
+  ];
 };
 
 /**
  * Класс для объекта игры
  */
-export default class GameService extends EventEmitter<{
-  game: [GameMessage, scope?: string];
-}> {
+export default class GameService extends EventEmitter<GameMessageMap> {
   players: PlayersService;
   orders: OrderService;
   round = new RoundService();
@@ -80,15 +81,11 @@ export default class GameService extends EventEmitter<{
   }
 
   get isTeamWin(): boolean {
-    const { withClan, withoutClan, groupByClan } = this.players.partitionAliveByClan;
-    if (!withoutClan.length) {
+    const { noClan, ...groupByClan } = this.players.groupByClan(this.players.alivePlayers);
+    if (!noClan?.length) {
       return Object.keys(groupByClan).length === 1;
     }
-    return withoutClan.length === 1 && !withClan.length;
-  }
-
-  send<K extends keyof GameMessageMap>(action: K, message: GameMessageMap[K], scope?: string) {
-    this.emit('game', { type: 'game', action, ...message } as GameMessage, scope);
+    return noClan.length === 1 && !Object.keys(groupByClan).length;
   }
 
   getEndGameReason() {
@@ -121,8 +118,6 @@ export default class GameService extends EventEmitter<{
    */
   startGame(): void {
     console.debug('GC debug:: startGame', 'gameId:', this.info.id);
-    // рассылаем статусы хп команды и врагов
-    this.send('start', { players: this.players.players.map((p) => p.toPublicObject()) });
     this.round.initRound();
   }
 
@@ -159,7 +154,7 @@ export default class GameService extends EventEmitter<{
       return;
     }
 
-    this.send('kick', { reason, player: player.toPublicObject() });
+    this.emit('kick', { reason, player: player.toPublicObject() });
 
     const char = arena.characters[id];
     char.addGameStat({ runs: 1 });
@@ -221,7 +216,7 @@ export default class GameService extends EventEmitter<{
     console.log('GC debug:: endGame', this.info.id);
     // Отправляем статистику
     setTimeout(() => {
-      this.send('end', { reason: this.getEndGameReason(), statistic: this.statistic() });
+      this.emit('end', { reason: this.getEndGameReason(), statistic: this.statistic() });
 
       this.saveGame();
       // }, 5000);
@@ -257,7 +252,7 @@ export default class GameService extends EventEmitter<{
       const dbGame = await createGame(this.players.init);
       this.info = dbGame;
       this.info.id = this.info._id.toString();
-      return this.info.id;
+      return this;
     } catch (e) {
       console.log('GC debug:: createGame', e);
     } finally {
@@ -273,10 +268,6 @@ export default class GameService extends EventEmitter<{
     this.flags.global = {};
   }
 
-  sendMessages(messages: HistoryItem[]) {
-    this.send('log', { messages: this.logger.getBattleLog(messages) });
-  }
-
   /**
    * Подвес
    */
@@ -286,17 +277,14 @@ export default class GameService extends EventEmitter<{
       switch (state) {
         case RoundStatus.START_ROUND: {
           this.forAllPlayers(this.checkOrders);
-          this.send('startRound', { round });
-          this.sendStatus();
+          this.sendStatus(round);
           break;
         }
         case RoundStatus.END_ROUND: {
-          this.send('endRound', {});
-          this.sortDead();
+          this.emit('endRound', { dead: this.sortDead(), log: this.getRoundResults() });
           this.players.reset();
           this.orders.reset();
           this.handleEndGameFlags();
-          this.sendMessages(this.getRoundResults());
           if (this.isGameEnd) {
             this.round.unsubscribe();
             this.endGame();
@@ -311,13 +299,11 @@ export default class GameService extends EventEmitter<{
           break;
         }
         case RoundStatus.START_ORDERS: {
-          this.send('startOrders', {});
-          // this.chat.sendToAll({ type: 'game', action: 'startOrders' });
-          // this.sendActions();
+          this.emit('startOrders', {});
           break;
         }
         case RoundStatus.END_ORDERS: {
-          this.send('endOrders', {});
+          this.emit('endOrders', {});
           // Debug Game Hack
           if (process.env.NODE_ENV === 'development') {
             this.orders.ordersList = this.orders.ordersList.concat(testGame.orders);
@@ -404,12 +390,10 @@ export default class GameService extends EventEmitter<{
    * @todo сообщение о смерти как-то нормально нужно сделать,
    * чтобы выводило от чего и от кого умер игрок
    */
-  sortDead(): void {
+  sortDead() {
     const dead = this.players.sortDead().map((p) => p.toPublicObject());
     this.cleanLongMagics();
-    if (dead.length) {
-      this.send('dead', { dead });
-    }
+    return dead;
   }
 
   /**
@@ -433,9 +417,8 @@ export default class GameService extends EventEmitter<{
 
   /**
    * Рассылка состояний живым игрокам
-   * @param player объект игрока
    */
-  sendStatus(): void {
+  sendStatus(round: number): void {
     const playersByClan = this.players.groupByClan();
 
     const statusByClan = mapValues(playersByClan, (players = []) => {
@@ -444,8 +427,9 @@ export default class GameService extends EventEmitter<{
 
     for (const clan in playersByClan) {
       const players = playersByClan[clan] ?? [];
+      const status = players.map((p) => p.getStatus());
 
-      this.send('status', { status: players.map((p) => p.getStatus()), statusByClan }, clan);
+      this.emit('startRound', { round, status, statusByClan }, clan);
     }
   }
 }

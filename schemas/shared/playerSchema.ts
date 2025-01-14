@@ -1,4 +1,5 @@
 import { characterClassSchema } from '@/character';
+import { itemInfoSchema } from '@/item';
 import { z } from 'zod';
 
 export const playerSchema = z.object({
@@ -8,6 +9,7 @@ export const playerSchema = z.object({
   lvl: z.number(),
   clan: z.any(),
   alive: z.boolean(),
+  weapon: itemInfoSchema.optional(),
 });
 
 export const publicPlayerSchema = playerSchema.pick({
@@ -17,6 +19,7 @@ export const publicPlayerSchema = playerSchema.pick({
   lvl: true,
   clan: true,
   alive: true,
+  weapon: true,
 });
 
 export type Player = z.infer<typeof playerSchema>;

@@ -1,124 +1,69 @@
-import type { CharacterService } from '@/arena/CharacterService';
+import { WebSocketRoute } from '@/server/ws/route';
+import type { WebSocketEnv } from '@/server/ws/context';
 import type GameService from '@/arena/GameService';
-import MatchMakingService from '@/arena/MatchMakingService';
-import ActionsHelper from '@/helpers/actionsHelper';
+import type PlayerService from '@/arena/PlayersService/PlayerService';
 import { WebSocketHelper } from '@/helpers/webSocketHelper';
-import type { ClientToServerMessage, GameMessage, Order } from '@fwo/schemas';
+import MatchMakingService from '@/arena/MatchMakingService';
+import { noClanName } from '@/arena/ClanService';
+import { gameMessageSchema } from '@fwo/schemas';
 
-export abstract class GameModule {
-  static createGameStartHandler(character: CharacterService, ws: WebSocketHelper) {
-    return (gameID: string, players: string[]) => {
-      if (!players.includes(character.id)) {
-        return;
-      }
+type GameEnv = WebSocketEnv & {
+  Variables: {
+    game: GameService;
+    player: PlayerService;
+    gameHandler: (game: GameService) => void;
+  };
+};
 
-      const game = character.currentGame;
+const buildScope = (game: GameService, scope?: string) => {
+  return `${game.info.id}:${scope}`;
+};
 
-      if (!game) {
-        console.error(game, 'ws game: game not found');
-        return;
-      }
+export const game = new WebSocketRoute<GameEnv, 'game'>('game')
+  .open((c) => {
+    const character = c.get('character');
 
-      GameModule.subscribe(character, ws, gameID);
+    const handler = (game: GameService) => {
+      const player = game.players.getById(character.id);
+      if (player) {
+        c.set('game', game);
+        c.set('player', player);
 
-      game.on('game', GameModule.createGameMessageHandler(character, game, ws));
-    };
-  }
+        const scope = player.clan?.name ?? noClanName;
 
-  static createGameMessageHandler(
-    character: CharacterService,
-    game: GameService,
-    ws: WebSocketHelper,
-  ) {
-    return (message: GameMessage, scope?: string) => {
-      switch (message.action) {
-        case 'end':
-          GameModule.unsubscribe(character, ws, game.info.id);
-          GameModule.sendGameMessage(game.info.id, message, scope);
-          break;
-        case 'startOrders':
-          GameModule.sendAvailableActions(character, ws);
-          break;
-        default:
-          GameModule.sendGameMessage(game.info.id, message, scope);
+        c.subscribe(buildScope(game));
+        c.subscribe(buildScope(game, scope));
       }
     };
-  }
 
-  static onOpen(character: CharacterService, ws: WebSocketHelper) {
-    const handleGameStart = GameModule.createGameStartHandler(character, ws);
-
-    MatchMakingService.on('start', handleGameStart);
-  }
-
-  static onMessage(
-    message: ClientToServerMessage,
-    character: CharacterService,
-    ws: WebSocketHelper,
-  ) {
-    switch (message.action) {
-      case 'order':
-        GameModule.orderAction(character, ws, message.order);
-        GameModule.sendAvailableActions(character, ws);
-        break;
-      default:
-        console.log(message);
-    }
-  }
-
-  static sendGameMessage(gameID: string, message: GameMessage, scope?: string) {
-    if (scope) {
-      WebSocketHelper.server.publish(`${gameID}:${scope}`, JSON.stringify(message));
-    } else {
-      WebSocketHelper.server.publish(gameID, JSON.stringify(message));
-    }
-  }
-
-  private static orderAction(character: CharacterService, _ws: WebSocketHelper, order: Order) {
-    const game = character.currentGame;
+    MatchMakingService.on('start', handler);
+    c.set('gameHandler', handler);
+  })
+  .close((c) => {
+    const game = c.get('game');
+    const player = c.get('player');
 
     if (!game) {
-      console.error('ws game: game not found');
       return;
     }
 
-    game.orders.orderAction({
-      initiator: character.id,
-      target: order.target,
-      action: order.action,
-      proc: order.proc,
+    MatchMakingService.off('start', c.var.gameHandler);
+    const scope = player.clan?.name ?? 'noClan';
+
+    c.unsubscribe(buildScope(game));
+    c.unsubscribe(buildScope(game, scope));
+  });
+
+MatchMakingService.on('start', (game) => {
+  gameMessageSchema.options.forEach((option) => {
+    const action = option.shape.action.value;
+
+    game.on(action, (message, scope) => {
+      WebSocketHelper.publish(buildScope(game, scope), {
+        type: 'game',
+        action,
+        ...message,
+      });
     });
-  }
-
-  private static subscribe(character: CharacterService, ws: WebSocketHelper, gameID: string) {
-    const channel = `${gameID}:${character.clan?.name ?? 'noClan'}`;
-    ws.raw.subscribe(gameID);
-    ws.raw.subscribe(channel);
-  }
-
-  private static unsubscribe(character: CharacterService, ws: WebSocketHelper, gameID: string) {
-    const channel = `${gameID}:${character.clan?.name ?? 'noClan'}`;
-    ws.raw.unsubscribe(gameID);
-    ws.raw.unsubscribe(channel);
-  }
-
-  private static sendAvailableActions(character: CharacterService, ws: WebSocketHelper) {
-    const game = character.currentGame;
-    const player = game?.players.getById(character.id);
-
-    if (!game || !player) {
-      console.assert('ws game: game not found');
-      console.assert('ws game: player %s not found', character.id);
-      return;
-    }
-
-    ws.send({
-      type: 'game',
-      action: 'order',
-      proc: player.proc,
-      actions: ActionsHelper.getBasicActions(player, game),
-      magics: ActionsHelper.getAvailableMagics(player, game),
-      skills: ActionsHelper.getAvailableSkills(player, game),
-    });
-  }
-}
+  });
+});

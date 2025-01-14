@@ -1,29 +1,16 @@
-import type { CharacterService } from '@/arena/CharacterService';
 import MatchMakingService from '@/arena/MatchMakingService';
-import type { WebSocketHelper } from '@/helpers/webSocketHelper';
-import type { ClientToServerMessage } from '@fwo/schemas';
+import { WebSocketRoute } from '../route';
 
-export class MatchMakingModule {
-  static onMessage(
-    message: ClientToServerMessage,
-    character: CharacterService,
-    ws: WebSocketHelper,
-  ) {
-    if (message.type !== 'match_making') {
-      return;
-    }
+export const matchMaking = new WebSocketRoute('match_making')
+  .on('start_search', (c, message) => {
+    const character = c.get('character');
 
-    switch (message.action) {
-      case 'start_search':
-        MatchMakingService.push({ id: character.id, psr: 1000, startTime: Date.now() });
-        ws.publish({ ...message, data: character.toPublicObject() });
-        break;
-      case 'stop_search':
-        MatchMakingService.pull(character.id);
-        ws.publish({ ...message, data: character.toPublicObject() });
+    MatchMakingService.push({ id: character.id, psr: 1000, startTime: Date.now() });
+    c.publish('match_making', { ...message, data: character.toPublicObject() });
+  })
+  .on('stop_search', (c, message) => {
+    const character = c.get('character');
 
-        break;
-      default:
-    }
-  }
-}
+    MatchMakingService.pull(character.id);
+    c.publish('match_making', { ...message, data: character.toPublicObject() });
+  });
