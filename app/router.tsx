@@ -1,9 +1,9 @@
 import { Navigate, Route, Routes } from 'react-router';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { withBackButton } from './hocs/withBackButton';
-import { CharacterAttributesPage } from './pages/CharacterAttributesPage/CharacterAttributesPage';
-import { CharacterPage } from './pages/CharacterPage/CharacterPage';
-import { CreateCharacterPage } from './pages/CreateCharacterPage/CreateCharacterPage';
+import { CharacterAttributesPage } from '@/modules/character/pages/CharacterAttributesPage';
+import { CharacterPage } from '@/modules/character/pages/CharacterPage';
+import { CharacterCreatePage } from '@/modules/character/pages/CharacterCreatePage';
 import { CharacterMagics } from './pages/CharacterMagics/CharacterMagics';
 import { AppLayout } from './components/AppLayout';
 import { SettingsPage } from './pages/SettingsPage/SettingsPage';
@@ -13,7 +13,7 @@ import { GamePage } from './pages/GamePage/GamePage';
 export function Router() {
   return (
     <Routes>
-      <Route index element={<CreateCharacterPage />} />
+      <Route index element={<CharacterCreatePage />} />
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
           <Route path="/character">

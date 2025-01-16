@@ -1,19 +1,19 @@
-import { ButtonCell, Card, Cell, List, Section } from '@telegram-apps/telegram-ui';
+import { Card, Cell, InlineButtons, List, Section } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 
-import { Link } from '@/components/Link/Link';
 import { useCharacter } from '@/hooks/useCharacter';
-import { Character } from '@/components/Character/Character';
+import { CharacterImage } from '@/components/character/CharacterImage';
 import { characterClassNameMap } from '@/constants/character';
+import { useNavigate } from 'react-router';
 
 export const CharacterPage: FC = () => {
+  const navigate = useNavigate();
   const { character } = useCharacter();
-
   return (
     <List>
       <Card style={{ display: 'block', marginRight: 'auto', marginLeft: 'auto' }}>
         <Card.Chip>lvl {character.lvl}</Card.Chip>
-        <Character />
+        <CharacterImage />
         <Card.Cell>{character.name}</Card.Cell>
       </Card>
       <Section>
@@ -21,13 +21,16 @@ export const CharacterPage: FC = () => {
         <Cell subhead="Золото">{character.gold}</Cell>
         <Cell subhead="Опыт">{character.exp}</Cell>
       </Section>
-      <ButtonCell>
-        <Link to="/character/attributes">Просмотр характеристик</Link>
-      </ButtonCell>
-      <ButtonCell>
-        <Link to="/character/magics"> Магии (wip) </Link>
-      </ButtonCell>
-      <ButtonCell>Инвентарь (wip)</ButtonCell>
+      <Section>
+        <InlineButtons>
+          <InlineButtons.Item onClick={() => navigate('/character/attributes')}>
+            Характеристики
+          </InlineButtons.Item>
+          <InlineButtons.Item onClick={() => navigate('/character/magics')}>
+            Магии
+          </InlineButtons.Item>
+        </InlineButtons>
+      </Section>
     </List>
   );
 };

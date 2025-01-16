@@ -9,6 +9,8 @@ import type { Char } from '@/models/character';
 import type { Character, CharacterClass, CharacterPublic } from '@fwo/schemas';
 import { assignWithSum } from '@/utils/assignWithSum';
 import { calculateDynamicAttributes } from './utils/calculate-dynamic-attributes';
+import { sum } from 'es-toolkit';
+import ValidationError from '@/arena/errors/ValidationError';
 
 /**
  * Конструктор персонажа
@@ -52,17 +54,6 @@ export class CharacterService {
 
   get lvl() {
     return this.charObj.lvl;
-  }
-
-  // Суммарный объект характеристик + вещей.
-  get dynamicAttributes() {
-    const characterAttributes = structuredClone(this.attributes);
-    const inventoryAttributes = this.inventory.attributes;
-
-    assignWithSum(characterAttributes, inventoryAttributes);
-    const dynamicHarks = calculateDynamicAttributes(this, characterAttributes);
-    assignWithSum(dynamicHarks, this.inventory.harksFromItems);
-    return dynamicHarks;
   }
 
   get owner() {
@@ -168,6 +159,17 @@ export class CharacterService {
     this.charObj.favoriteMagicList = value;
   }
 
+  // Суммарный объект характеристик + вещей.
+  getDynamicAttributes(attributes = this.attributes) {
+    const characterAttributes = structuredClone(attributes);
+    const inventoryAttributes = this.inventory.attributes;
+
+    assignWithSum(characterAttributes, inventoryAttributes);
+    const dynamicHarks = calculateDynamicAttributes(this, characterAttributes);
+    assignWithSum(dynamicHarks, this.inventory.harksFromItems);
+    return dynamicHarks;
+  }
+
   resetExpLimit() {
     const date = new Date();
     if (date > this.charObj.expLimit.expiresAt) {
@@ -251,6 +253,23 @@ export class CharacterService {
       ...this.charObj.harks,
       free: this.charObj.free,
     };
+  }
+
+  async increaseHarks(harks: HarksLvl) {
+    const isValid = Object.entries(harks).every(([key, value]) => value >= this.charObj.harks[key]);
+    if (!isValid) {
+      throw new ValidationError('Аттрибут не может быть уменьшен');
+    }
+
+    const free = this.free - (sum(Object.values(harks)) - sum(Object.values(this.charObj.harks)));
+    if (free < 0) {
+      throw new ValidationError('Недостаточно очков');
+    }
+
+    this.charObj.harks = harks;
+    this.charObj.free = free;
+
+    await this.save({ harks, free });
   }
 
   async submitIncreaseHarks({ free, ...harks } = this.tempHarks) {
@@ -439,10 +458,12 @@ export class CharacterService {
       skills: this.skills,
       clan: this.clan,
       inventory: this.inventory.toObject(),
-      bonus: this.charObj.bonus,
+      free: this.charObj.free,
+      bonus: this.bonus,
       gold: this.gold,
       lvl: this.lvl,
       exp: this.exp,
+      dynamicAttributes: this.getDynamicAttributes(),
     };
   }
 

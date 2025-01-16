@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useCharacter } from '@/hooks/useCharacter';
 import { drawCharacter } from './drawCharacter';
 
-export const Character = () => {
+export const CharacterImage = () => {
   const { character } = useCharacter();
   const canvas = useRef<HTMLCanvasElement>(null);
 
@@ -13,11 +13,6 @@ export const Character = () => {
   }, [character]);
 
   return (
-    <canvas
-      ref={canvas}
-      style={{ display: 'block', margin: 'auto' }}
-      width={200}
-      height={200}
-    />
+    <canvas ref={canvas} style={{ display: 'block', margin: 'auto' }} width={200} height={200} />
   );
 };

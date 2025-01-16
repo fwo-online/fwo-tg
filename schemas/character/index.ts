@@ -1,6 +1,6 @@
-import type { ItemAttributes } from '@/item/itemAttributesSchema';
 import type { CharacterAttributes } from './characterAttributesSchema';
 import { CharacterClass } from './characterClassSchema';
+import type { Attributes } from '@/shared/attributes';
 
 export const characterAttributesByClass: Record<CharacterClass, CharacterAttributes> = {
   [CharacterClass.Warrior]: {
@@ -33,7 +33,7 @@ export const characterAttributesByClass: Record<CharacterClass, CharacterAttribu
   },
 };
 
-export type CharacterDynamicAttributes = Omit<ItemAttributes, 'requiredAttributes' | 'resists'> & {
+export type CharacterDynamicAttributes = Attributes & {
   maxTarget: number;
   spellLength: number;
 };

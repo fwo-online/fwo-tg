@@ -19,8 +19,8 @@ export const character = new Hono()
       magics: profsData[createCharacterDto.class].mag,
       sex: 'm',
     });
-    const character = await CharacterService.getCharacter(user.id.toString());
 
+    const character = await CharacterService.getCharacter(user.id.toString());
     return c.json(character.toObject(), 200);
   })
   .use(characterMiddleware)
@@ -37,10 +37,16 @@ export const character = new Hono()
   })
   .patch('/attributes', zValidator('json', characterAttributesSchema), async (c) => {
     const character = c.get('character');
-    const harks = c.req.valid('json');
-    // fixme validate harks and bonus
-    await character.submitIncreaseHarks({ ...harks, free: 0 });
-    await character.save({ harks, bonus: 0 });
+    const attributes = c.req.valid('json');
+
+    await character.increaseHarks(attributes);
 
     return c.json(character.toObject(), 200);
+  })
+  .get('dynamic-attributes', zValidator('query', characterAttributesSchema), async (c) => {
+    const character = c.get('character');
+    const attributes = c.req.valid('query');
+    const dynamicAttributes = character.getDynamicAttributes(attributes);
+
+    return c.json(dynamicAttributes, 200);
   });

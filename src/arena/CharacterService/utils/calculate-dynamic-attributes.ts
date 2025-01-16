@@ -1,10 +1,10 @@
 import { floatNumber } from '@/utils/floatNumber';
-import type { CharacterService } from '../CharacterService';
 import {
   type CharacterAttributes,
   CharacterClass,
   type CharacterDynamicAttributes,
 } from '@fwo/schemas';
+import type { CharacterService } from '../CharacterService';
 
 const calculateBaseAttributes = (
   { wis, int, con, dex, str }: CharacterAttributes,
@@ -14,8 +14,8 @@ const calculateBaseAttributes = (
   const mp = floatNumber(wis * 1.5);
   const en =
     characterClass === CharacterClass.Archer
-      ? dex + int * 0.5 + con * 0.25
-      : dex + str * 0.5 + con * 0.25;
+      ? floatNumber(dex + int * 0.5 + con * 0.25)
+      : floatNumber(dex + str * 0.5 + con * 0.25);
 
   return { hp, mp, en };
 };
@@ -41,7 +41,10 @@ const calculateMagicAttributes = ({ wis, int }: CharacterAttributes) => {
 };
 
 const calculateHit = ({ str, int }: CharacterAttributes, characterClass: CharacterClass) => {
-  const hit = characterClass === CharacterClass.Archer ? (int - 2) / 10 : (str - 3) / 10;
+  const hit =
+    characterClass === CharacterClass.Archer
+      ? floatNumber((int - 2) / 10)
+      : floatNumber((str - 3) / 10);
 
   return { min: hit, max: hit };
 };
@@ -55,7 +58,6 @@ const calculateHeal = ({ int }: CharacterAttributes) => {
 
 const calculateRegenAttributes = ({ wis, int, dex, con }: CharacterAttributes) => {
   const mp = floatNumber(wis * 0.4 + int * 0.6);
-
   const en = floatNumber(con * 0.4 + dex * 0.6);
 
   return { mp, en, hp: 0 };
@@ -79,5 +81,6 @@ export const calculateDynamicAttributes = (
     hit: calculateHit(attributes, charObj.prof as CharacterClass),
     maxTarget,
     spellLength,
+    resists: { acid: 0, fire: 0, frost: 0, lightning: 0 },
   };
 };

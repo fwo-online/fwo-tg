@@ -4,7 +4,7 @@ import { createCharacter } from '@/client/character';
 import { SelectCharacter } from '@/components/SelectCharacter/SelectCharacter';
 import { useCharacterContext } from '@/hooks/useCharacterContext';
 
-export const CreateCharacterPage = () => {
+export const CharacterCreatePage = () => {
   const { character, setCharacter } = useCharacterContext();
 
   const onSelect = async (createCharacterDto: CreateCharacterDto) => {

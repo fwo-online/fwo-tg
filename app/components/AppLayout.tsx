@@ -41,7 +41,7 @@ export function AppLayout() {
           <Tabbar.Item
             key={path}
             text={text}
-            selected={location.pathname === path}
+            selected={location.pathname.startsWith(path)}
             onClick={() => navigate(path)}
           >
             {icon}

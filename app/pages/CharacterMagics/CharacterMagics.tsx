@@ -1,8 +1,9 @@
-import { getMagicList } from '@/client/magic';
+import { getMagicList, learnMagic } from '@/client/magic';
 import { useCharacter } from '@/hooks/useCharacter';
-import { ButtonCell, Cell, List, Modal, Spinner } from '@telegram-apps/telegram-ui';
+import { Button, ButtonCell, Cell, List, Modal, Spinner } from '@telegram-apps/telegram-ui';
 import { useEffect, useState } from 'react';
 import type { Magic } from '@fwo/schemas';
+import { popup } from '@telegram-apps/sdk-react';
 
 export const CharacterMagics = () => {
   const { character } = useCharacter();
@@ -36,6 +37,37 @@ export const CharacterMagics = () => {
     );
   };
 
+  const handleLearn = async (lvl: number) => {
+    const id = await popup.open({
+      message: `Стоимость изучения ${lvl}💡`,
+      buttons: [
+        {
+          id: 'close',
+          type: 'close',
+        },
+        {
+          id: 'ok',
+          type: 'ok',
+        },
+      ],
+    });
+
+    if (id === 'ok') {
+      const magic = await learnMagic(lvl);
+      if (magic) {
+        await popup.open({
+          title: 'Успешное изучение',
+          message: `${magic.displayName}`,
+        });
+      } else {
+        await popup.open({
+          title: 'Не удалось изучить',
+          message: 'Бонусы не возвращаем',
+        });
+      }
+    }
+  };
+
   if (!magics.length) {
     return <Spinner size="l" />;
   }
@@ -45,6 +77,13 @@ export const CharacterMagics = () => {
       {magics.map((magic) => (
         <Magic key={magic.name} magic={magic} />
       ))}
+      <Modal trigger={<ButtonCell>Изучить</ButtonCell>}>
+        <List>
+          <Button stretched onClick={() => handleLearn(1)}>
+            1
+          </Button>
+        </List>
+      </Modal>
     </List>
   );
 };

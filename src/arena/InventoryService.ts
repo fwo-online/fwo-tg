@@ -5,14 +5,14 @@ import type { Char } from '@/models/character';
 import type { InventoryDocument } from '@/models/inventory';
 import type { Inventory } from '@fwo/schemas';
 import type { Item } from '@fwo/schemas';
-import { type ItemAttributes, itemAttributesSchema } from '@fwo/schemas';
+import { attributesSchema, type Attributes } from '@fwo/schemas';
 import type { ItemSet } from '@fwo/schemas';
 import type { Modifiers } from '@fwo/schemas';
 import { assignWithSum } from '@/utils/assignWithSum';
 import _ from 'lodash';
 
 export class InventoryService {
-  harksFromItems: ItemAttributes;
+  harksFromItems: Attributes;
 
   constructor(
     private char: Char,
@@ -62,7 +62,7 @@ export class InventoryService {
     return InventoryService.getItemSetsModifiersByInventory(this.inventory);
   }
 
-  getItem(itemId) {
+  getItem(itemId: string) {
     return this.inventory.find((item) => item._id.equals(itemId));
   }
 
@@ -112,7 +112,7 @@ export class InventoryService {
     await this.updateHarkFromItems();
   }
 
-  async unEquipItem(itemId) {
+  async unEquipItem(itemId: string) {
     await putOffItem({ charId: this.char.id, itemId });
     await this.unEquipNonEquippableItems();
   }
@@ -142,11 +142,11 @@ export class InventoryService {
    */
   updateHarkFromItems() {
     const items = InventoryService.getItemsByInventory(this.getEquippedItems());
-    const itemAttriributes = itemAttributesSchema.array().parse(items);
-    const harksFromItems = itemAttriributes.reduce(assignWithSum, itemAttributesSchema.parse({}));
+    const itemAttriributes = attributesSchema.array().parse(items);
+    const harksFromItems = itemAttriributes.reduce(assignWithSum, attributesSchema.parse({}));
 
     const itemsSets = InventoryService.getItemsSetsByInventory(this.getEquippedItems());
-    const itemsSetsAttriributes = itemAttributesSchema.array().parse(itemsSets);
+    const itemsSetsAttriributes = attributesSchema.array().parse(itemsSets);
     const harksFromItemsSets = itemsSetsAttriributes.reduce(assignWithSum, harksFromItems);
 
     this.harksFromItems = harksFromItemsSets;

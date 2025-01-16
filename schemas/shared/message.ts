@@ -1,5 +1,5 @@
-import { characterPublicSchema } from '@/character';
-import { gameMessageSchema } from '@/game';
+import { characterPublicSchema } from '@/character/characterPublic';
+import { gameMessageSchema } from '@/game/gameMessages';
 import { z } from 'zod';
 import { orderSchema } from './orderSchema';
 

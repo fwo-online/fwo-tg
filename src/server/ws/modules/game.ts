@@ -42,12 +42,13 @@ export const game = new WebSocketRoute<GameEnv, 'game'>('game')
   .close((c) => {
     const game = c.get('game');
     const player = c.get('player');
+    const gameHandler = c.get('gameHandler');
+    MatchMakingService.off('start', gameHandler);
 
     if (!game) {
       return;
     }
 
-    MatchMakingService.off('start', c.var.gameHandler);
     const scope = player.clan?.name ?? 'noClan';
 
     c.unsubscribe(buildScope(game));

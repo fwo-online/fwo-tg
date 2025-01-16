@@ -19,7 +19,6 @@ export const drawCharacter = (canvas: HTMLCanvasElement, character: Character) =
     const body = new Image();
     body.src = new URL('/character/male.png', import.meta.url).href;
     body.onload = () => {
-      console.log('test');
       layers.push(body);
       draw();
     };
@@ -28,16 +27,17 @@ export const drawCharacter = (canvas: HTMLCanvasElement, character: Character) =
   const drawWeapon = () => {
     const body = new Image();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { code } = character.inventory[0];
+    // const { code } = character.inventory[0];
     // fixme fix vite dynamic import
     body.src = new URL('/items/wac.png', import.meta.url).href;
     body.onload = () => {
-      console.log('test');
       layers.push(body);
       draw();
     };
   };
 
   drawBody();
-  drawWeapon();
+  if (character.inventory.length) {
+    drawWeapon();
+  }
 };

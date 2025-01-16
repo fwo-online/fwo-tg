@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { characterAttributesSchema, characterClassSchema } from '@/character';
-import { itemAttributesSchema } from '@/item/itemAttributesSchema';
 import { itemInfoSchema } from '@/item/itemInfoSchema';
+import { attributesSchema } from '@/shared/attributes';
 
 export const itemSchema = z
   .object({
@@ -20,6 +20,6 @@ export const itemSchema = z
       wis: 0,
     }),
   })
-  .merge(itemAttributesSchema);
+  .merge(attributesSchema);
 
 export type Item = z.infer<typeof itemSchema>;

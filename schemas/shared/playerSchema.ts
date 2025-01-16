@@ -1,5 +1,5 @@
-import { characterClassSchema } from '@/character';
-import { itemInfoSchema } from '@/item';
+import { characterClassSchema } from '@/character/characterClassSchema';
+import { itemInfoSchema } from '@/item/itemInfoSchema';
 import { z } from 'zod';
 
 export const playerSchema = z.object({
