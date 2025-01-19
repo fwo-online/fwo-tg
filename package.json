@@ -1,5 +1,5 @@
 {
-  "name": "@fwo/core",
+  "name": "@fwo/server",
   "version": "0.3.1",
   "description": "FightWorld Telegram",
   "main": "index.js",

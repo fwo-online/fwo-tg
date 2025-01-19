@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useCharacter } from '@/hooks/useCharacter';
-import { drawCharacter } from './drawCharacter';
+import { drawCharacter } from '@/modules/character/hooks/useDrawCharacter';
 
 export const CharacterImage = () => {
   const { character } = useCharacter();

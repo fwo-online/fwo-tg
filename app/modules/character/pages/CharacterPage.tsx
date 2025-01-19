@@ -2,7 +2,7 @@ import { Card, Cell, InlineButtons, List, Section } from '@telegram-apps/telegra
 import type { FC } from 'react';
 
 import { useCharacter } from '@/hooks/useCharacter';
-import { CharacterImage } from '@/components/character/CharacterImage';
+import { CharacterImage } from '@/modules/character/components/CharacterImage';
 import { characterClassNameMap } from '@/constants/character';
 import { useNavigate } from 'react-router';
 

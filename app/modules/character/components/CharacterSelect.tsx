@@ -4,7 +4,7 @@ import {
 } from '@telegram-apps/telegram-ui';
 import { useEffect, useRef, useState } from 'react';
 import { characterClassImageMap, characterClassList, characterClassNameMap } from '@/constants/character';
-import styles from './SelectCharacter.module.css';
+import styles from './CharacterSelect.module.css';
 
 const Slide = ({ value }: { value: CharacterClass }) => {
   return (

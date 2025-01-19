@@ -4,7 +4,7 @@ import type { FC } from 'react';
 import { CharacterAttributesEditor } from '@/modules/character/components/CharacterAttributesEditor';
 import { useCharacterAttributes } from '@/modules/character/hooks/useCharacterAttributes';
 import { useCharacterDynamicAttributes } from '@/modules/character/hooks/useCharacterDynamicAttributes';
-import { CharacterAttributes } from '../components/CharacterDynamicAttributes';
+import { CharacterAttributes } from '@/modules/character/components/CharacterDynamicAttributes';
 
 export const CharacterAttributesPage: FC = () => {
   const { attributes, free, handleSave, handleChangeAttribute, handleReset } =

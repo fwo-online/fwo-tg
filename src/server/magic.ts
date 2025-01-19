@@ -6,7 +6,7 @@ import { characterMiddleware, userMiddleware } from '@/server/middlewares';
 
 export const magic = new Hono()
   .use(userMiddleware, characterMiddleware)
-  .patch('/:lvl', zValidator('param', z.object({ lvl: z.number({ coerce: true }) })), async (c) => {
+  .post('/:lvl', zValidator('param', z.object({ lvl: z.number({ coerce: true }) })), async (c) => {
     const character = c.get('character');
     const { lvl } = c.req.valid('param');
 

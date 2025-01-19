@@ -1,23 +1,26 @@
 import { getCharacterDynamicAttributes } from '@/client/character';
 import { useCharacter } from '@/hooks/useCharacter';
-import type { CharacterAttributes } from '@fwo/schemas';
-import { useEffect, useState } from 'react';
+import type { CharacterAttributes, CharacterDynamicAttributes } from '@fwo/schemas';
+import { useActionState, useEffect } from 'react';
+
+const updateCharacterDynamicAttributes = (
+  _: CharacterDynamicAttributes,
+  attributes: CharacterAttributes,
+) => {
+  return getCharacterDynamicAttributes(attributes);
+};
 
 export const useCharacterDynamicAttributes = (attributes: CharacterAttributes) => {
   const { character } = useCharacter();
-  const [dynamicAttributes, setDynamicAttributes] = useState(character.dynamicAttributes);
-  const [loading, setLoading] = useState(true);
+
+  const [dynamicAttributes, updateDynamicAttributes, loading] = useActionState(
+    updateCharacterDynamicAttributes,
+    character.dynamicAttributes as CharacterDynamicAttributes,
+  );
 
   useEffect(() => {
-    setLoading(true);
-    getCharacterDynamicAttributes(attributes)
-      .then((dynamicAttributes) => {
-        if (dynamicAttributes) {
-          setDynamicAttributes(dynamicAttributes);
-        }
-      })
-      .finally(() => setLoading(false));
-  }, [attributes]);
+    updateDynamicAttributes(attributes);
+  }, [attributes, updateDynamicAttributes]);
 
   return {
     loading,

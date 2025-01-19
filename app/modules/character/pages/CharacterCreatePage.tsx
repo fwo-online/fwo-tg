@@ -1,7 +1,7 @@
 import type { CreateCharacterDto } from '@fwo/schemas';
 import { Navigate } from 'react-router';
 import { createCharacter } from '@/client/character';
-import { SelectCharacter } from '@/components/SelectCharacter/SelectCharacter';
+import { SelectCharacter } from '@/modules/character/components/CharacterSelect';
 import { useCharacterContext } from '@/hooks/useCharacterContext';
 
 export const CharacterCreatePage = () => {

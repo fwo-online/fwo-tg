@@ -23,7 +23,7 @@ export const getMagic = async (id: string) => {
 
 export const learnMagic = async (lvl: number) => {
   return client.magic[':lvl']
-    .$patch({ param: { lvl: lvl.toString() } })
+    .$post({ param: { lvl: lvl.toString() } })
     .then((r) => r.json())
     .catch(console.log);
 };

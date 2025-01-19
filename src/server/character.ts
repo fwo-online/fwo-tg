@@ -43,7 +43,7 @@ export const character = new Hono()
 
     return c.json(character.toObject(), 200);
   })
-  .get('dynamic-attributes', zValidator('query', characterAttributesSchema), async (c) => {
+  .get('/dynamic-attributes', zValidator('query', characterAttributesSchema), async (c) => {
     const character = c.get('character');
     const attributes = c.req.valid('query');
     const dynamicAttributes = character.getDynamicAttributes(attributes);
