@@ -1,6 +1,7 @@
 import { itemSchema } from '@fwo/schemas';
 import { itemSetSchema } from '@fwo/schemas';
 import csv from 'csvtojson';
+import { parse, array } from 'valibot';
 
 export const generateItems = async () => {
   const rawItems = await csv({
@@ -11,7 +12,7 @@ export const generateItems = async () => {
     },
   }).fromFile('./items.csv');
 
-  const items = itemSchema.array().parse(rawItems);
+  const items = parse(array(itemSchema), rawItems);
 
   return items;
 };
@@ -42,7 +43,7 @@ export const generateItemsSets = async () => {
 
   const mergedItemsSets = rawItemsSets.reduce(mergeModifiers, []);
 
-  const itemsSets = itemSetSchema.array().parse(mergedItemsSets);
+  const itemsSets = parse(array(itemSetSchema), mergedItemsSets);
 
   return itemsSets;
 };

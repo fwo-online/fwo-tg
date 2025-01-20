@@ -1,6 +1,6 @@
-import { z } from 'zod';
+import * as v from 'valibot';
 
-export const idSchema = z.object({ id: z.string() });
+export const idSchema = v.object({ id: v.string() });
 
 export * from './character';
 export * from './inventory';

@@ -1,9 +1,9 @@
-import { z } from 'zod';
+import * as v from 'valibot';
 
-export const baseAttributesSchema = z.object({
-  hp: z.number().default(0),
-  mp: z.number().default(0),
-  en: z.number().default(0),
+export const baseAttributesSchema = v.object({
+  hp: v.optional(v.number(), 0),
+  mp: v.optional(v.number(), 0),
+  en: v.optional(v.number(), 0),
 });
 
-export type BaseAttributes = z.infer<typeof baseAttributesSchema>;
+export type BaseAttributes = v.InferOutput<typeof baseAttributesSchema>;

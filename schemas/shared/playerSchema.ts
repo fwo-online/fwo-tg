@@ -1,26 +1,18 @@
 import { characterClassSchema } from '@/character/characterClassSchema';
 import { itemInfoSchema } from '@/item/itemInfoSchema';
-import { z } from 'zod';
+import * as v from 'valibot';
 
-export const playerSchema = z.object({
-  id: z.string(),
-  name: z.string(),
+export const playerSchema = v.object({
+  id: v.string(),
+  name: v.string(),
   class: characterClassSchema,
-  lvl: z.number(),
-  clan: z.any(),
-  alive: z.boolean(),
-  weapon: itemInfoSchema.optional(),
+  lvl: v.number(),
+  clan: v.any(),
+  alive: v.boolean(),
+  weapon: v.optional(itemInfoSchema),
 });
 
-export const publicPlayerSchema = playerSchema.pick({
-  id: true,
-  name: true,
-  class: true,
-  lvl: true,
-  clan: true,
-  alive: true,
-  weapon: true,
-});
+export const publicPlayerSchema = playerSchema;
 
-export type Player = z.infer<typeof playerSchema>;
-export type PublicPlayer = z.infer<typeof publicPlayerSchema>;
+export type Player = v.InferOutput<typeof playerSchema>;
+export type PublicPlayer = v.InferOutput<typeof publicPlayerSchema>;

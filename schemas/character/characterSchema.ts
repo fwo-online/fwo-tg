@@ -1,24 +1,24 @@
-import { z } from 'zod';
+import * as v from 'valibot';
 import { inventorySchema } from '@/inventory/inventorySchema';
 import { characterAttributesSchema } from './characterAttributesSchema';
 import { characterClassSchema } from './characterClassSchema';
 import { attributesSchema } from '@/shared/attributes';
 
-export const characterSchema = z.object({
-  name: z.string().min(3),
-  owner: z.string(),
-  gold: z.number().positive().int(),
-  free: z.number().positive().int(),
-  bonus: z.number().positive().int(),
-  lvl: z.number().positive().int(),
-  exp: z.number().int(),
+export const characterSchema = v.object({
+  name: v.pipe(v.string(), v.minLength(3)),
+  owner: v.string(),
+  gold: v.pipe(v.number(), v.minValue(0), v.integer()),
+  free: v.pipe(v.number(), v.minValue(0), v.integer()),
+  bonus: v.pipe(v.number(), v.minValue(0), v.integer()),
+  lvl: v.pipe(v.number(), v.minValue(0), v.integer()),
+  exp: v.pipe(v.number(), v.minValue(0), v.integer()),
   class: characterClassSchema,
   attributes: characterAttributesSchema,
-  inventory: z.array(inventorySchema),
-  magics: z.record(z.number()),
-  skills: z.record(z.number()),
-  clan: z.any(),
+  inventory: v.array(inventorySchema),
+  magics: v.record(v.string(), v.number()),
+  skills: v.record(v.string(), v.number()),
+  clan: v.any(),
   dynamicAttributes: attributesSchema,
 });
 
-export type Character = z.infer<typeof characterSchema>;
+export type Character = v.InferOutput<typeof characterSchema>;

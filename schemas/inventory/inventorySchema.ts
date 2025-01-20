@@ -1,9 +1,9 @@
-import { z } from 'zod';
+import * as v from 'valibot';
 
-export const inventorySchema = z.object({
-  code: z.string(),
-  putOn: z.boolean(),
-  wear: z.string(),
+export const inventorySchema = v.object({
+  code: v.string(),
+  putOn: v.boolean(),
+  wear: v.string(),
 });
 
-export type Inventory = z.infer<typeof inventorySchema>;
+export type Inventory = v.InferOutput<typeof inventorySchema>;

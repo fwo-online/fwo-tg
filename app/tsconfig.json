@@ -67,7 +67,6 @@
     // "typeRoots": [],                       /* List of folders to include type definitions from. */
     "types": [
         "lodash",
-        "zod",
         "react",
         "react-dom"
     ],                           /* Type declaration files to be included in compilation. */

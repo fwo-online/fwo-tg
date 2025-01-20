@@ -1,9 +1,9 @@
-import { z } from 'zod';
+import * as v from 'valibot';
 
-export const orderSchema = z.object({
-  target: z.string(),
-  action: z.string(),
-  proc: z.number(),
+export const orderSchema = v.object({
+  target: v.string(),
+  action: v.string(),
+  proc: v.number(),
 });
 
-export type Order = z.infer<typeof orderSchema>;
+export type Order = v.InferOutput<typeof orderSchema>;

@@ -1,8 +1,8 @@
-import { z } from 'zod';
+import * as v from 'valibot';
 
-export const physAttributesSchema = z.object({
-  attack: z.number().default(0),
-  defence: z.number().default(0),
+export const physAttributesSchema = v.object({
+  attack: v.optional(v.number(), 0),
+  defence: v.optional(v.number(), 0),
 });
 
-export type PhysAttributes = z.infer<typeof physAttributesSchema>;
+export type PhysAttributes = v.InferOutput<typeof physAttributesSchema>;

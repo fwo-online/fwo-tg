@@ -3,7 +3,7 @@
   "workspaces": {
     "": {
       "dependencies": {
-        "zod": "^3.24.1",
+        "valibot": "^1.0.0-beta.12",
       },
       "devDependencies": {
         "@biomejs/biome": "^1.9.4",
@@ -17,20 +17,20 @@
         "@fwo/schemas": "schemas",
         "@fwo/server": "src",
         "@telegram-apps/react-router-integration": "^1.0.1",
-        "@telegram-apps/sdk-react": "^2.0.22",
+        "@telegram-apps/sdk-react": "^2.0.25",
         "@telegram-apps/telegram-ui": "^2.1.8",
-        "@tonconnect/ui-react": "^2.0.9",
+        "@tonconnect/ui-react": "^2.0.11",
         "es-toolkit": "^1.31.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
-        "react-router": "^7.1.0",
+        "react-router": "^7.1.2",
         "react-use-websocket": "^4.11.1",
       },
       "devDependencies": {
-        "@types/react": "^19.0.2",
-        "@types/react-dom": "^19.0.2",
+        "@types/react": "^19.0.7",
+        "@types/react-dom": "^19.0.3",
         "@vitejs/plugin-react": "^4.3.4",
-        "vite": "^6.0.5",
+        "vite": "^6.0.7",
         "vite-tsconfig-paths": "^5.1.4",
       },
     },
@@ -42,7 +42,7 @@
       "version": "0.3.1",
       "dependencies": {
         "@fwo/schemas": "schemas",
-        "@hono/zod-validator": "^0.4.2",
+        "@hono/valibot-validator": "^0.5.2",
         "@telegram-apps/init-data-node": "^1.2.1",
         "es-toolkit": "^1.30.1",
         "hono": "^4.6.14",
@@ -174,13 +174,13 @@
 
     "@floating-ui/utils": ["@floating-ui/utils@0.2.8", "", {}, "sha512-kym7SodPp8/wloecOpcmSnWJsK7M0E5Wg8UcFA+uO4B9s5d0ywXOEro/8HM9x0rW+TljRzul/14UYz3TleT3ig=="],
 
-    "@fwo/app": ["@fwo/app@workspace:app", { "dependencies": { "@fwo/schemas": "schemas", "@fwo/server": "src", "@telegram-apps/react-router-integration": "^1.0.1", "@telegram-apps/sdk-react": "^2.0.22", "@telegram-apps/telegram-ui": "^2.1.8", "@tonconnect/ui-react": "^2.0.9", "es-toolkit": "^1.31.0", "react": "^19.0.0", "react-dom": "^19.0.0", "react-router": "^7.1.0", "react-use-websocket": "^4.11.1" }, "devDependencies": { "@types/react": "^19.0.2", "@types/react-dom": "^19.0.2", "@vitejs/plugin-react": "^4.3.4", "vite": "^6.0.5", "vite-tsconfig-paths": "^5.1.4" } }],
+    "@fwo/app": ["@fwo/app@workspace:app", { "dependencies": { "@fwo/schemas": "schemas", "@fwo/server": "src", "@telegram-apps/react-router-integration": "^1.0.1", "@telegram-apps/sdk-react": "^2.0.25", "@telegram-apps/telegram-ui": "^2.1.8", "@tonconnect/ui-react": "^2.0.11", "es-toolkit": "^1.31.0", "react": "^19.0.0", "react-dom": "^19.0.0", "react-router": "^7.1.2", "react-use-websocket": "^4.11.1" }, "devDependencies": { "@types/react": "^19.0.7", "@types/react-dom": "^19.0.3", "@vitejs/plugin-react": "^4.3.4", "vite": "^6.0.7", "vite-tsconfig-paths": "^5.1.4" } }],
 
     "@fwo/schemas": ["@fwo/schemas@workspace:schemas", {}],
 
-    "@fwo/server": ["@fwo/server@workspace:src", { "dependencies": { "@fwo/schemas": "schemas", "@hono/zod-validator": "^0.4.2", "@telegram-apps/init-data-node": "^1.2.1", "es-toolkit": "^1.30.1", "hono": "^4.6.14", "lodash": "^4.17.21", "mongoose": "^8.9.2", "telegraf": "^4.16.3" }, "devDependencies": { "@types/bun": "^1.1.14", "@types/lodash": "^4.17.13", "@types/node": "^22.10.2", "casual": "^1.6.2", "csvtojson": "^2.0.10" } }],
+    "@fwo/server": ["@fwo/server@workspace:src", { "dependencies": { "@fwo/schemas": "schemas", "@hono/valibot-validator": "^0.5.2", "@telegram-apps/init-data-node": "^1.2.1", "es-toolkit": "^1.30.1", "hono": "^4.6.14", "lodash": "^4.17.21", "mongoose": "^8.9.2", "telegraf": "^4.16.3" }, "devDependencies": { "@types/bun": "^1.1.14", "@types/lodash": "^4.17.13", "@types/node": "^22.10.2", "casual": "^1.6.2", "csvtojson": "^2.0.10" } }],
 
-    "@hono/zod-validator": ["@hono/zod-validator@0.4.2", "", { "peerDependencies": { "hono": ">=3.9.0", "zod": "^3.19.1" } }, "sha512-1rrlBg+EpDPhzOV4hT9pxr5+xDVmKuz6YJl+la7VCwK6ass5ldyKm5fD+umJdV2zhHD6jROoCCv8NbTwyfhT0g=="],
+    "@hono/valibot-validator": ["@hono/valibot-validator@0.5.2", "", { "peerDependencies": { "hono": ">=3.9.0", "valibot": "^1.0.0 || ^1.0.0-beta.4 || ^1.0.0-rc" } }, "sha512-WbTr8PCFNAME0ale62rmmq+E8bGp5a7VPiVNmNT+Ue12GJE3Ax+CWBGtHhR0TzAEiloPvJND3IbjHIgtNtsqhw=="],
 
     "@jridgewell/gen-mapping": ["@jridgewell/gen-mapping@0.3.5", "", { "dependencies": { "@jridgewell/set-array": "^1.2.1", "@jridgewell/sourcemap-codec": "^1.4.10", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-IzL8ZoEDIBRWEzlCcRhOaCupYyN5gdIK+Q6fbFdPDg6HqX6jpkItn7DFIpW9LQzXG6Df9sA7+OKnq0qlz/GaQg=="],
 
@@ -516,6 +516,8 @@
 
     "use-sidecar": ["use-sidecar@1.1.2", "", { "dependencies": { "detect-node-es": "^1.1.0", "tslib": "^2.0.0" }, "peerDependencies": { "@types/react": "^16.9.0 || ^17.0.0 || ^18.0.0", "react": "^16.8.0 || ^17.0.0 || ^18.0.0" }, "optionalPeers": ["@types/react"] }, "sha512-epTbsLuzZ7lPClpz2TyryBfztm7m+28DlEv2ZCQ3MDr5ssiwyOwGH/e5F9CkfWjJ1t4clvI58yF822/GUkjjhw=="],
 
+    "valibot": ["valibot@1.0.0-beta.12", "", { "peerDependencies": { "typescript": ">=5" }, "optionalPeers": ["typescript"] }, "sha512-j3WIxJ0pmUFMfdfUECn3YnZPYOiG0yHYcFEa/+RVgo0I+MXE3ToLt7gNRLtY5pwGfgNmsmhenGZfU5suu9ijUA=="],
+
     "vite": ["vite@6.0.7", "", { "dependencies": { "esbuild": "^0.24.2", "postcss": "^8.4.49", "rollup": "^4.23.0" }, "optionalDependencies": { "fsevents": "~2.3.3" }, "peerDependencies": { "@types/node": "^18.0.0 || ^20.0.0 || >=22.0.0", "jiti": ">=1.21.0", "less": "*", "lightningcss": "^1.21.0", "sass": "*", "sass-embedded": "*", "stylus": "*", "sugarss": "*", "terser": "^5.16.0", "tsx": "^4.8.1", "yaml": "^2.4.2" }, "optionalPeers": ["@types/node", "jiti", "less", "lightningcss", "sass", "sass-embedded", "stylus", "sugarss", "terser", "tsx", "yaml"], "bin": { "vite": "bin/vite.js" } }, "sha512-RDt8r/7qx9940f8FcOIAH9PTViRrghKaK2K1jY3RaAURrEUbm9Du1mJ72G+jlhtG3WwodnfzY8ORQZbBavZEAQ=="],
 
     "vite-tsconfig-paths": ["vite-tsconfig-paths@5.1.4", "", { "dependencies": { "debug": "^4.1.1", "globrex": "^0.1.2", "tsconfck": "^3.0.3" }, "peerDependencies": { "vite": "*" }, "optionalPeers": ["vite"] }, "sha512-cYj0LRuLV2c2sMqhqhGpaO3LretdtMn/BVX4cPLanIZuwwrkVl+lK84E/miEXkCHWXuq65rhNN4rXsBcOB3S4w=="],
@@ -525,8 +527,6 @@
     "whatwg-url": ["whatwg-url@5.0.0", "", { "dependencies": { "tr46": "~0.0.3", "webidl-conversions": "^3.0.0" } }, "sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw=="],
 
     "yallist": ["yallist@3.1.1", "", {}, "sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g=="],
-
-    "zod": ["zod@3.24.1", "", {}, "sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A=="],
 
     "@telegram-apps/bridge/@telegram-apps/toolkit": ["@telegram-apps/toolkit@1.0.0", "", {}, "sha512-fSVoveLuMzwRKWeXEufMSXxH+HvjsFKb1DeT3pG5qLpnb2rdtejnNcwAt6WEPtiZ3a4YntYaFuR3KYgVv0ZxeQ=="],
 

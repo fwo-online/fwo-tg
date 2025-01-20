@@ -1,51 +1,51 @@
 import { publicPlayerSchema } from '@/shared';
-import { z } from 'zod';
+import * as v from 'valibot';
 import { gameStatus, publicGameStatus } from './gameStatus';
 
-export const gameMessageSchema = z.discriminatedUnion('action', [
-  z.object({
-    type: z.literal('game'),
-    action: z.literal('start'),
-    gameID: z.string(),
+export const gameMessageSchema = v.variant('action', [
+  v.object({
+    type: v.literal('game'),
+    action: v.literal('start'),
+    gameID: v.string(),
   }),
-  z.object({
-    type: z.literal('game'),
-    action: z.literal('end'),
-    reason: z.string().optional(),
-    statistic: z.any(),
+  v.object({
+    type: v.literal('game'),
+    action: v.literal('end'),
+    reason: v.optional(v.string()),
+    statistic: v.any(),
   }),
-  z.object({
-    type: z.literal('game'),
-    action: z.literal('startOrders'),
+  v.object({
+    type: v.literal('game'),
+    action: v.literal('startOrders'),
   }),
-  z.object({
-    type: z.literal('game'),
-    action: z.literal('endOrders'),
+  v.object({
+    type: v.literal('game'),
+    action: v.literal('endOrders'),
   }),
-  z.object({
-    type: z.literal('game'),
-    action: z.literal('startRound'),
-    round: z.number(),
-    status: gameStatus.array(),
-    statusByClan: z.record(publicGameStatus.array()),
+  v.object({
+    type: v.literal('game'),
+    action: v.literal('startRound'),
+    round: v.number(),
+    status: v.array(gameStatus),
+    statusByClan: v.record(v.string(), v.array(publicGameStatus)),
   }),
-  z.object({
-    type: z.literal('game'),
-    action: z.literal('endRound'),
-    dead: publicPlayerSchema.array(),
-    log: z.any().array(),
+  v.object({
+    type: v.literal('game'),
+    action: v.literal('endRound'),
+    dead: v.array(publicPlayerSchema),
+    log: v.array(v.any()),
   }),
-  z.object({
-    type: z.literal('game'),
-    action: z.literal('kick'),
-    reason: z.string(),
+  v.object({
+    type: v.literal('game'),
+    action: v.literal('kick'),
+    reason: v.string(),
     player: publicPlayerSchema,
   }),
-  z.object({
-    type: z.literal('game'),
-    action: z.literal('preKick'),
-    reason: z.string(),
+  v.object({
+    type: v.literal('game'),
+    action: v.literal('preKick'),
+    reason: v.string(),
   }),
 ]);
 
-export type GameMessage = z.infer<typeof gameMessageSchema>;
+export type GameMessage = v.InferOutput<typeof gameMessageSchema>;

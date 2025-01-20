@@ -1,21 +1,20 @@
 import { itemInfoSchema } from '@/item/itemInfoSchema';
 import { attributesSchema } from '@/shared/attributes';
 import { modifiersSchema } from '@/shared/modifiers';
-import { z } from 'zod';
+import * as v from 'valibot';
 
-export const itemSetSchema = z
-  .object({
-    code: z.string(),
-    info: itemInfoSchema,
-    items: z.string().array(),
-    modifiers: modifiersSchema
-      .merge(
-        z.object({
-          itemsRequired: z.number(),
-        }),
-      )
-      .array(),
-  })
-  .merge(attributesSchema);
+export const itemSetSchema = v.object({
+  code: v.string(),
+  info: itemInfoSchema,
+  items: v.array(v.string()),
+  modifiers: v.array(
+    v.object({
+      itemsRequired: v.number(),
+      ...modifiersSchema.entries,
+    }),
+  ),
+  ...attributesSchema.entries,
+});
 
-export type ItemSet = z.infer<typeof itemSetSchema>;
+export type ItemSetInput = v.InferInput<typeof itemSetSchema>;
+export type ItemSet = v.InferOutput<typeof itemSetSchema>;

@@ -1,56 +1,60 @@
 import { characterPublicSchema } from '@/character/characterPublic';
 import { gameMessageSchema } from '@/game/gameMessages';
-import { z } from 'zod';
+import * as v from 'valibot';
 import { orderSchema } from './orderSchema';
 
-export const clientToServerMessageSchema = z.union([
-  z.object({ id: z.string().optional(), type: z.literal('lobby'), action: z.literal('enter') }),
-  z.object({ id: z.string().optional(), type: z.literal('lobby'), action: z.literal('leave') }),
-  z.object({
-    id: z.string().optional(),
-    type: z.literal('match_making'),
-    action: z.literal('start_search'),
-  }),
-  z.object({
-    id: z.string().optional(),
-    type: z.literal('match_making'),
-    action: z.literal('stop_search'),
-  }),
-  z.object({
-    type: z.literal('game'),
-    action: z.literal('order'),
-    order: orderSchema,
-  }),
+export const clientToServerMessageSchema = v.variant('type', [
+  v.variant('action', [
+    v.object({ type: v.literal('lobby'), action: v.literal('enter') }),
+    v.object({ type: v.literal('lobby'), action: v.literal('leave') }),
+  ]),
+  v.variant('action', [
+    v.object({
+      type: v.literal('match_making'),
+      action: v.literal('start_search'),
+    }),
+    v.object({
+      type: v.literal('match_making'),
+      action: v.literal('stop_search'),
+    }),
+  ]),
+  v.variant('action', [
+    v.object({
+      type: v.literal('game'),
+      action: v.literal('order'),
+      order: orderSchema,
+    }),
+  ]),
 ]);
 
-export type ClientToServerMessage = z.infer<typeof clientToServerMessageSchema>;
+export type ClientToServerMessage = v.InferOutput<typeof clientToServerMessageSchema>;
 
-export const serverToClientMessageSchema = z.union([
-  z.object({
-    id: z.string().optional(),
-    type: z.literal('lobby'),
-    action: z.literal('enter'),
-    data: characterPublicSchema,
-  }),
-  z.object({
-    id: z.string().optional(),
-    type: z.literal('lobby'),
-    action: z.literal('leave'),
-    data: characterPublicSchema,
-  }),
-  z.object({
-    id: z.string().optional(),
-    type: z.literal('match_making'),
-    action: z.literal('start_search'),
-    data: characterPublicSchema,
-  }),
-  z.object({
-    id: z.string().optional(),
-    type: z.literal('match_making'),
-    action: z.literal('stop_search'),
-    data: characterPublicSchema,
-  }),
-  gameMessageSchema,
+export const serverToClientMessageSchema = v.variant('type', [
+  v.variant('action', [
+    v.object({
+      type: v.literal('lobby'),
+      action: v.literal('enter'),
+      data: characterPublicSchema,
+    }),
+    v.object({
+      type: v.literal('lobby'),
+      action: v.literal('leave'),
+      data: characterPublicSchema,
+    }),
+  ]),
+  v.variant('action', [
+    v.object({
+      type: v.literal('match_making'),
+      action: v.literal('start_search'),
+      data: characterPublicSchema,
+    }),
+    v.object({
+      type: v.literal('match_making'),
+      action: v.literal('stop_search'),
+      data: characterPublicSchema,
+    }),
+  ]),
+  v.variant('action', [gameMessageSchema]),
 ]);
 
-export type ServerToClientMessage = z.infer<typeof serverToClientMessageSchema>;
+export type ServerToClientMessage = v.InferOutput<typeof serverToClientMessageSchema>;

@@ -1,10 +1,10 @@
-import { z } from 'zod';
+import * as v from 'valibot';
 
-export const elementAttributesSchema = z.object({
-  fire: z.number().default(0),
-  frost: z.number().default(0),
-  acid: z.number().default(0),
-  lightning: z.number().default(0),
+export const elementAttributesSchema = v.object({
+  fire: v.optional(v.number(), 0),
+  frost: v.optional(v.number(), 0),
+  acid: v.optional(v.number(), 0),
+  lightning: v.optional(v.number(), 0),
 });
 
-export type ElementAttributes = z.infer<typeof elementAttributesSchema>;
+export type ElementAttributes = v.InferOutput<typeof elementAttributesSchema>;

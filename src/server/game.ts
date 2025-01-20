@@ -1,4 +1,4 @@
-import { zValidator } from '@hono/zod-validator';
+import { vValidator } from '@hono/valibot-validator';
 import { Hono } from 'hono';
 import { orderSchema } from '@fwo/schemas';
 import { characterMiddleware, userMiddleware, gameMiddleware } from '@/server/middlewares';
@@ -6,7 +6,7 @@ import { HTTPException } from 'hono/http-exception';
 
 export const game = new Hono()
   .use(userMiddleware, characterMiddleware, gameMiddleware)
-  .post('/order', zValidator('json', orderSchema), async (c) => {
+  .post('/order', vValidator('json', orderSchema), async (c) => {
     const player = c.get('player');
     const game = c.get('game');
     const order = c.req.valid('json');

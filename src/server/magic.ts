@@ -1,19 +1,23 @@
-import { zValidator } from '@hono/zod-validator';
+import { vValidator } from '@hono/valibot-validator';
 import { Hono } from 'hono';
-import { z } from 'zod';
+import * as v from 'valibot';
 import MagicService from '@/arena/MagicService';
 import { characterMiddleware, userMiddleware } from '@/server/middlewares';
 
 export const magic = new Hono()
   .use(userMiddleware, characterMiddleware)
-  .post('/:lvl', zValidator('param', z.object({ lvl: z.number({ coerce: true }) })), async (c) => {
-    const character = c.get('character');
-    const { lvl } = c.req.valid('param');
+  .post(
+    '/:lvl',
+    vValidator('param', v.object({ lvl: v.pipe(v.string(), v.decimal(), v.transform(Number)) })),
+    async (c) => {
+      const character = c.get('character');
+      const { lvl } = c.req.valid('param');
 
-    const magic = await MagicService.learnMagic(character, lvl);
-    return c.json({ name: magic.name });
-  })
-  .get('/', zValidator('query', z.object({ ids: z.string().array() })), async (c) => {
+      const magic = await MagicService.learnMagic(character, lvl);
+      return c.json({ name: magic.name });
+    },
+  )
+  .get('/', vValidator('query', v.object({ ids: v.array(v.string()) })), async (c) => {
     const { ids } = c.req.valid('query');
     const magics = MagicService.getMagicListByIds(ids);
 

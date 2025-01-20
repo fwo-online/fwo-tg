@@ -10,6 +10,7 @@ import type { ItemSet } from '@fwo/schemas';
 import type { Modifiers } from '@fwo/schemas';
 import { assignWithSum } from '@/utils/assignWithSum';
 import _ from 'lodash';
+import { array, parse } from 'valibot';
 
 export class InventoryService {
   harksFromItems: Attributes;
@@ -142,11 +143,11 @@ export class InventoryService {
    */
   updateHarkFromItems() {
     const items = InventoryService.getItemsByInventory(this.getEquippedItems());
-    const itemAttriributes = attributesSchema.array().parse(items);
-    const harksFromItems = itemAttriributes.reduce(assignWithSum, attributesSchema.parse({}));
+    const itemAttriributes = parse(array(attributesSchema), items);
+    const harksFromItems = itemAttriributes.reduce(assignWithSum, parse(attributesSchema, {}));
 
     const itemsSets = InventoryService.getItemsSetsByInventory(this.getEquippedItems());
-    const itemsSetsAttriributes = attributesSchema.array().parse(itemsSets);
+    const itemsSetsAttriributes = parse(array(attributesSchema), itemsSets);
     const harksFromItemsSets = itemsSetsAttriributes.reduce(assignWithSum, harksFromItems);
 
     this.harksFromItems = harksFromItemsSets;

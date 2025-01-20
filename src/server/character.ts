@@ -1,4 +1,4 @@
-import { zValidator } from '@hono/zod-validator';
+import { vValidator } from '@hono/valibot-validator';
 import { Hono } from 'hono';
 import { createCharacter, removeCharacter } from '@/api/character';
 import { CharacterService } from '@/arena/CharacterService';
@@ -8,7 +8,7 @@ import { characterMiddleware, userMiddleware } from './middlewares';
 
 export const character = new Hono()
   .use(userMiddleware)
-  .post('/', zValidator('json', createCharacterSchema), async (c) => {
+  .post('/', vValidator('json', createCharacterSchema), async (c) => {
     const createCharacterDto = await c.req.valid('json');
     const user = c.get('user');
     await createCharacter({
@@ -35,7 +35,7 @@ export const character = new Hono()
 
     return c.json({}, 200);
   })
-  .patch('/attributes', zValidator('json', characterAttributesSchema), async (c) => {
+  .patch('/attributes', vValidator('json', characterAttributesSchema), async (c) => {
     const character = c.get('character');
     const attributes = c.req.valid('json');
 
@@ -43,7 +43,7 @@ export const character = new Hono()
 
     return c.json(character.toObject(), 200);
   })
-  .get('/dynamic-attributes', zValidator('query', characterAttributesSchema), async (c) => {
+  .get('/dynamic-attributes', vValidator('query', characterAttributesSchema), async (c) => {
     const character = c.get('character');
     const attributes = c.req.valid('query');
     const dynamicAttributes = character.getDynamicAttributes(attributes);

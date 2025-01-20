@@ -1,9 +1,9 @@
-import { z } from 'zod';
+import * as v from 'valibot';
 
-export const modifiersSchema = z.object({
-  type: z.string(),
-  chance: z.number().default(0),
-  effect: z.number().default(0),
+export const modifiersSchema = v.object({
+  type: v.string(),
+  chance: v.optional(v.number(), 0),
+  effect: v.optional(v.number(), 0),
 });
 
-export type Modifiers = z.infer<typeof modifiersSchema>;
+export type Modifiers = v.InferOutput<typeof modifiersSchema>;

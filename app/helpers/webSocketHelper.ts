@@ -3,6 +3,7 @@ import {
   serverToClientMessageSchema,
   type ClientToServerMessage,
 } from '@fwo/schemas';
+import { parse } from 'valibot';
 
 export class WebSocketHelper {
   ws: WebSocket;
@@ -13,7 +14,7 @@ export class WebSocketHelper {
   }
 
   private read(data: string) {
-    return serverToClientMessageSchema.safeParse(JSON.parse(data)).data;
+    return parse(serverToClientMessageSchema, JSON.parse(data));
   }
 
   send(message: ClientToServerMessage) {

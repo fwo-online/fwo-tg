@@ -1,8 +1,8 @@
-import { z } from 'zod';
+import * as v from 'valibot';
 
-export const minMaxSchema = z.object({
-  min: z.number().int().default(0),
-  max: z.number().int().default(0),
+export const minMaxSchema = v.object({
+  min: v.optional(v.number(), 0),
+  max: v.optional(v.number(), 0),
 });
 
-export type MinMax = z.infer<typeof minMaxSchema>;
+export type MinMax = v.InferOutput<typeof minMaxSchema>;

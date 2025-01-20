@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import * as v from 'valibot';
 
 export enum CharacterClass {
   Warrior = 'w',
@@ -7,4 +7,4 @@ export enum CharacterClass {
   Priest = 'p',
 }
 
-export const characterClassSchema = z.nativeEnum(CharacterClass);
+export const characterClassSchema = v.enum(CharacterClass);

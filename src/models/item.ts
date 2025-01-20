@@ -2,9 +2,10 @@ import type { Model } from 'mongoose';
 import mongoose, { Document, Schema } from 'mongoose';
 import arena from '@/arena';
 import type { Item } from '@fwo/schemas';
-import { itemAttributesSchema } from '@fwo/schemas';
+import { attributesSchema } from '@fwo/schemas';
 import _ from 'lodash';
 import { generateItems } from '@/helpers/itemHelper';
+import { parse } from 'valibot';
 
 export type ItemModel = Model<Item> & typeof ItemDocument;
 
@@ -16,7 +17,7 @@ export class ItemDocument extends Document<Item> {
       if (items.length) {
         arena.items = _.keyBy(items, ({ code }) => code);
       } else {
-        const items = await generateItems()
+        const items = await generateItems();
         console.log('File Loaded: ', Date.now() - timer, 'ms');
 
         const createdItems = await ItemModel.create(items);
@@ -34,7 +35,7 @@ export class ItemDocument extends Document<Item> {
    * @param itemCode код вещи
    */
   static getAttributes(this: ItemModel, itemCode: string) {
-    return itemAttributesSchema.parse(arena.items[itemCode])
+    return parse(attributesSchema, arena.items[itemCode]);
   }
 }
 
@@ -45,26 +46,31 @@ export class ItemDocument extends Document<Item> {
  * @module Model/Item
  */
 
-const item = new Schema<Item, ItemModel>({
-  code: {
-    type: String, unique: true, required: true
+const item = new Schema<Item, ItemModel>(
+  {
+    code: {
+      type: String,
+      unique: true,
+      required: true,
+    },
+    type: { type: String },
+    info: { type: Object },
+    price: { type: Number },
+    wear: { type: String },
+    class: { type: [String] },
+    weight: { type: Number },
+    // requiredAttributes: { type: Object },
+    // attributes: { type: Object },
+    base: { type: Object },
+    phys: { type: Object },
+    magic: { type: Object },
+    heal: { type: Object },
+    hit: { type: Object },
   },
-  type: { type: String },
-  info: { type: Object },
-  price: { type: Number },
-  wear: { type: String },
-  class: { type: [String] },
-  weight: { type: Number },
-  requiredAttributes: { type: Object },
-  attributes: { type: Object },
-  base: { type: Object },
-  phys: { type: Object },
-  magic: { type: Object },
-  heal: { type: Object },
-  hit: { type: Object },
-}, {
-  versionKey: false,
-});
+  {
+    versionKey: false,
+  },
+);
 
 item.loadClass(ItemDocument);
 

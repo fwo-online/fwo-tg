@@ -1,11 +1,6 @@
-import type { z } from 'zod';
+import * as v from 'valibot';
 import { characterSchema } from './characterSchema';
 
-export const characterPublicSchema = characterSchema.pick({
-  name: true,
-  lvl: true,
-  class: true,
-  clan: true,
-});
+export const characterPublicSchema = v.pick(characterSchema, ['name', 'lvl', 'class', 'clan']);
 
-export type CharacterPublic = z.infer<typeof characterPublicSchema>;
+export type CharacterPublic = v.InferOutput<typeof characterPublicSchema>;

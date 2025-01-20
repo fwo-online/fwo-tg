@@ -1,9 +1,6 @@
-import {
-  type ClientToServerMessage,
-  clientToServerMessageSchema,
-  type ServerToClientMessage,
-} from '@fwo/schemas';
+import { clientToServerMessageSchema, type ServerToClientMessage } from '@fwo/schemas';
 import type { Server, ServerWebSocket } from 'bun';
+import { safeParse } from 'valibot';
 
 export class WebSocketHelper {
   public raw!: ServerWebSocket;
@@ -17,14 +14,16 @@ export class WebSocketHelper {
     WebSocketHelper.server = server;
   }
 
-  static parse(message: string): ClientToServerMessage | undefined {
-    const { data, error } = clientToServerMessageSchema.safeParse(JSON.parse(message));
+  static parse(message: string) {
+    const { output, typed, issues } = safeParse(clientToServerMessageSchema, JSON.parse(message));
 
-    if (error) {
-      console.log(error);
+    if (issues) {
+      console.log(issues);
     }
 
-    return data;
+    if (typed) {
+      return output;
+    }
   }
 
   setWs(ws: ServerWebSocket) {

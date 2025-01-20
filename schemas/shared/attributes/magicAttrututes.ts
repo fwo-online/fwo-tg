@@ -1,8 +1,8 @@
-import { z } from 'zod';
+import * as v from 'valibot';
 
-export const magicAttributesSchema = z.object({
-  attack: z.number().default(0),
-  defence: z.number().default(0),
+export const magicAttributesSchema = v.object({
+  attack: v.optional(v.number(), 0),
+  defence: v.optional(v.number(), 0),
 });
 
-export type MagicAttributes = z.infer<typeof magicAttributesSchema>;
+export type MagicAttributes = v.InferOutput<typeof magicAttributesSchema>;

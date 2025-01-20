@@ -1,12 +1,12 @@
-import { z } from 'zod';
+import * as v from 'valibot';
 
-export const magicSchema = z.object({
-  name: z.string(),
-  desc: z.string(),
-  displayName: z.string(),
-  cost: z.number(),
-  effect: z.string().array(),
-  lvl: z.number(),
+export const magicSchema = v.object({
+  name: v.string(),
+  desc: v.string(),
+  displayName: v.string(),
+  cost: v.number(),
+  effect: v.array(v.string()),
+  lvl: v.number(),
 });
 
-export type Magic = z.infer<typeof magicSchema>;
+export type Magic = v.InferOutput<typeof magicSchema>;
