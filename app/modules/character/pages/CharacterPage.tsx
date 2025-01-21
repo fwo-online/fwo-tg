@@ -5,6 +5,7 @@ import { useCharacter } from '@/hooks/useCharacter';
 import { CharacterImage } from '@/modules/character/components/CharacterImage';
 import { characterClassNameMap } from '@/constants/character';
 import { useNavigate } from 'react-router';
+import { CharacterClass } from '@fwo/schemas';
 
 export const CharacterPage: FC = () => {
   const navigate = useNavigate();
@@ -24,11 +25,18 @@ export const CharacterPage: FC = () => {
       <Section>
         <InlineButtons>
           <InlineButtons.Item onClick={() => navigate('/character/attributes')}>
-            Характеристики
+            💪 Характеристики
           </InlineButtons.Item>
-          <InlineButtons.Item onClick={() => navigate('/character/magics')}>
-            Магии
-          </InlineButtons.Item>
+          {character.class === CharacterClass.Archer ||
+          character.class === CharacterClass.Warrior ? (
+            <InlineButtons.Item onClick={() => navigate('/character/skills')}>
+              ⚡️ Умения
+            </InlineButtons.Item>
+          ) : (
+            <InlineButtons.Item onClick={() => navigate('/character/magics')}>
+              Магии
+            </InlineButtons.Item>
+          )}
         </InlineButtons>
       </Section>
     </List>

@@ -3,14 +3,11 @@ import type { CharacterAttributes, CreateCharacterDto } from '@fwo/schemas';
 import { mapValues } from 'es-toolkit';
 
 export const getCharacter = async () => {
-  return client.character
-    .$get()
-    .then((r) => {
-      if (r.ok) {
-        return r.json();
-      }
-    })
-    .catch(console.log);
+  const res = await client.character.$get();
+
+  if (res.ok) {
+    return res.json();
+  }
 };
 
 export const createCharacter = async (json: CreateCharacterDto) => {

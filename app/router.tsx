@@ -5,6 +5,7 @@ import { CharacterAttributesPage } from '@/modules/character/pages/CharacterAttr
 import { CharacterPage } from '@/modules/character/pages/CharacterPage';
 import { CharacterCreatePage } from '@/modules/character/pages/CharacterCreatePage';
 import { CharacterMagics } from './pages/CharacterMagics/CharacterMagics';
+import { CharacterSkillPage } from '@/modules/character/pages/CharacterSkillsPage';
 import { AppLayout } from './components/AppLayout';
 import { SettingsPage } from './pages/SettingsPage/SettingsPage';
 import { LobbyPage } from './pages/LobbyPage/LobbyPage';
@@ -20,6 +21,7 @@ export function Router() {
             <Route path="" element={<CharacterPage />} />
             <Route path="attributes" Component={withBackButton(CharacterAttributesPage)} />
             <Route path="magics" Component={withBackButton(CharacterMagics)} />
+            <Route path="skills" Component={withBackButton(CharacterSkillPage)} />
           </Route>
           <Route path="/lobby" element={<LobbyPage />} />
           <Route path="/settings" element={<SettingsPage />} />

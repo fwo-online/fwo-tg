@@ -7,5 +7,5 @@ export * from './inventory';
 export * from './item';
 export * from './itemSet';
 export * from './shared';
-export * from './magic';
+export * from './actions';
 export * from './game';
