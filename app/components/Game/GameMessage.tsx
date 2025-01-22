@@ -9,23 +9,25 @@ export function GameMessageComponent({ message }: { message: GameMessage }) {
     case 'startRound':
       return <Cell>Начался раунд {message.round}</Cell>;
     case 'endRound':
-      return <Cell>Раунд закончился</Cell>;
+      return (
+        <>
+          <Cell>Раунд закончился</Cell>
+          {message.log.map((message, index) => (
+            <Cell key={index}>{formatMessage(message)}</Cell>
+          ))}
+          <Cell>Погибшие в этом раунде: {message.dead.map((name) => name).join(', ')}</Cell>
+        </>
+      );
     case 'startOrders':
       return <Cell>Начался этап заказов</Cell>;
     case 'endOrders':
       return <Cell>Закончился этап заказов</Cell>;
-    case 'dead':
-      return <Cell>Погибшие в этом раунде: {message.dead.map((name) => name).join(', ')}</Cell>;
     case 'kick':
       return (
         <Cell>
           {message.player.name} был кикнут из игры: {message.reason}
         </Cell>
       );
-    case 'log':
-      return message.messages.map((message, index) => (
-        <Cell key={index}>{formatMessage(message)}</Cell>
-      ));
     default:
       return null;
   }
