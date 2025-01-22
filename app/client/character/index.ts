@@ -34,3 +34,13 @@ export const getCharacterDynamicAttributes = async (attributes: CharacterAttribu
     .then((r) => r.json())
     .catch(console.log);
 };
+
+export const buyItem = async (id: string) => {
+  const res = await client.inventory.buy[':id'].$post({ param: { id } });
+
+  if (res.ok) {
+    return res.json();
+  }
+
+  throw new Error(await res.text());
+};

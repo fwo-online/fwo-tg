@@ -10,6 +10,9 @@ import { AppLayout } from './components/AppLayout';
 import { SettingsPage } from './pages/SettingsPage/SettingsPage';
 import { LobbyPage } from './pages/LobbyPage/LobbyPage';
 import { GamePage } from './pages/GamePage/GamePage';
+import { ShopPage } from '@/modules/shop/pages/ShopPage';
+import { ShopTypesList } from './modules/shop/components/ShopTypesList';
+import { ShopListPage } from '@/modules/shop/pages/ShopListPage';
 
 export function Router() {
   return (
@@ -25,6 +28,11 @@ export function Router() {
           </Route>
           <Route path="/lobby" element={<LobbyPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/shop" element={<ShopPage />}>
+            <Route path="" Component={withBackButton(ShopTypesList)} />
+            <Route path=":wear" Component={withBackButton(ShopListPage)} />
+            <Route path=":wear/:id" />
+          </Route>
         </Route>
         <Route path="/game/:gameID" element={<GamePage />} />
       </Route>

@@ -1,2 +1,2 @@
 export * from './ClanService';
-export const noClanName = 'tst';
+export * from './constants';

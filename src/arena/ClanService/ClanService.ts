@@ -1,11 +1,17 @@
 import type { UpdateQuery } from 'mongoose';
 import {
-  createClan, deleteClan, getClanById, getClanByPlayerRequest, getClans, updateClan,
+  createClan,
+  deleteClan,
+  getClanById,
+  getClanByPlayerRequest,
+  getClans,
+  updateClan,
 } from '@/api/clan';
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
 import ValidationError from '@/arena/errors/ValidationError';
 import type { Clan } from '@/models/clan';
+import { noClanName } from './constants';
 
 /**
  * Clan Service
@@ -48,6 +54,9 @@ export class ClanService {
    */
   static async createClan(charId: string, name: string) {
     const char: CharacterService = arena.characters[charId];
+    if (name === noClanName) {
+      throw new Error('Недопустимое название клана');
+    }
     if (char.gold < this.lvlCost[0]) {
       throw new Error('Нужно больше золота');
     }
@@ -142,7 +151,9 @@ export class ClanService {
     }
     const penaltyForLeave = char.getPenaltyDate('clan_leave');
     if (penaltyForLeave) {
-      throw new Error(`Вступить в новый клан ты сможешь через ${remainingTime(penaltyForLeave)} мин.`);
+      throw new Error(
+        `Вступить в новый клан ты сможешь через ${remainingTime(penaltyForLeave)} мин.`,
+      );
     }
 
     if (clan.requests.some((p) => p.owner === char.owner)) {

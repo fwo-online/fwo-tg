@@ -284,7 +284,7 @@ export class CharacterService {
     const item = arena.items[itemCode];
 
     if (this.gold < item.price) {
-      return false;
+      throw new ValidationError('Недостаточно золота');
     }
 
     this.gold -= item.price;

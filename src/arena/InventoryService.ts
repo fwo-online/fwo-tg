@@ -87,6 +87,10 @@ export class InventoryService {
   }
 
   async removeItem(itemId: string) {
+    const item = this.getItem(itemId);
+    if (item?.putOn) {
+      throw new ValidationError('Нельзя продать надетый предмет');
+    }
     await removeItem({ charId: this.char.id, itemId });
     await this.unEquipNonEquippableItems();
   }
@@ -94,7 +98,7 @@ export class InventoryService {
   async equipItem(itemId: string) {
     const charItem = this.getItem(itemId);
     if (!charItem) {
-      throw new ValidationError('Этого предмета больше не существует');
+      throw new ValidationError('Предмет не найден');
     }
 
     const item = arena.items[charItem.code];
