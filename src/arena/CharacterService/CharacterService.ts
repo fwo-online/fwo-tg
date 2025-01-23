@@ -52,6 +52,10 @@ export class CharacterService {
     return this.charObj.prof;
   }
 
+  get class() {
+    return this.charObj.prof as CharacterClass;
+  }
+
   get lvl() {
     return this.charObj.lvl;
   }
@@ -442,6 +446,7 @@ export class CharacterService {
         expLimit: this.charObj.expLimit,
         statistics: this.charObj.statistics,
         favoriteMagicList: this.charObj.favoriteMagicList,
+        inventory: this.inventory.inventory,
       });
     } catch (e) {
       console.error('Fail on CharSave:', e);

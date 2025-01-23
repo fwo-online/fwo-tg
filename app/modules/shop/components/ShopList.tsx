@@ -1,20 +1,40 @@
 import type { Item } from '@fwo/schemas';
-import { Cell, Section } from '@telegram-apps/telegram-ui';
+import { ButtonCell, Navigation, Placeholder } from '@telegram-apps/telegram-ui';
 import { type ReactNode, use, useState, type FC } from 'react';
+import { ShopItemModal } from './ShopItemModal';
+import { buyItem } from '@/client/character';
+import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
+import { popup } from '@telegram-apps/sdk-react';
 
-export const ShopList: FC<{ shopPromise: Promise<Item[]>; after: (item: Item) => ReactNode }> = ({
-  shopPromise,
-  after,
-}) => {
+export const ShopList: FC<{ shopPromise: Promise<Item[]> }> = ({ shopPromise }) => {
   const [items] = useState(use(shopPromise));
+  const { updateCharacter } = useUpdateCharacter();
 
-  return (
-    <Section>
+  const handleBuy = async (item: Item) => {
+    try {
+      await buyItem(item.code);
+      await updateCharacter();
+    } catch (e) {
+      popup.open(e);
+    }
+  };
+
+  return items.length ? (
+    <>
       {items.map((item) => (
-        <Cell key={item.code} after={after(item)}>
-          {item.info.name}
-        </Cell>
+        <ShopItemModal
+          key={item.code}
+          item={item}
+          onBuy={handleBuy}
+          trigger={
+            <ButtonCell>
+              <Navigation>{item.info.name}</Navigation>
+            </ButtonCell>
+          }
+        />
       ))}
-    </Section>
+    </>
+  ) : (
+    <Placeholder description="Ничего не найдено" />
   );
 };
