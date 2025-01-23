@@ -1,32 +1,33 @@
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useCharacter } from '@/hooks/useCharacter';
 import type { Skill } from '@fwo/schemas';
-import { Banner, Button, ButtonCell, List, Modal } from '@telegram-apps/telegram-ui';
+import { Banner, Button, List, Modal } from '@telegram-apps/telegram-ui';
 
 export const CharacterSkillModal: FC<{
   skill: Skill;
   loading?: boolean;
-  onClick: (skill: Skill) => void;
-}> = ({ skill, loading, onClick }) => {
+  trigger?: ReactNode;
+  onLearn: (skill: Skill) => void;
+}> = ({ skill, loading, trigger, onLearn }) => {
   const { character } = useCharacter();
-  const isKnownSkill = character.skills[skill.name] !== undefined;
+  const hasMaxSkillLvl = character.skills[skill.name] === skill.bonusCost.length;
   const hasRequiredLvl = character.lvl >= (skill.classList[character.class] ?? 0);
   const hasRequiredBonus = character.bonus >= skill.bonusCost[character.skills[skill.name] || 0];
 
   return (
-    <Modal
-      trigger={
-        <ButtonCell>{isKnownSkill ? character.skills[skill.name] : 'Не изучено'} »</ButtonCell>
-      }
-    >
+    <Modal trigger={trigger}>
       <List>
         <Banner header={skill.displayName} subheader={skill.description}>
-          {hasRequiredLvl ? (
+          {hasMaxSkillLvl ? (
+            <Button stretched disabled>
+              Достигнут максимальный уровень
+            </Button>
+          ) : hasRequiredLvl ? (
             <>
               <Button
                 stretched
                 loading={loading}
-                onClick={() => onClick(skill)}
+                onClick={() => onLearn(skill)}
                 disabled={!hasRequiredBonus}
               >
                 Изучить за {skill.bonusCost[character.skills[skill.name] || 0]}💡
