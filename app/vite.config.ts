@@ -1,6 +1,7 @@
-import react from '@vitejs/plugin-react';
+import preact from '@preact/preset-vite';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { analyzer } from 'vite-bundle-analyzer';
 
 export default defineConfig({
   css: {
@@ -8,7 +9,11 @@ export default defineConfig({
       localsConvention: 'camelCaseOnly',
     },
   },
-  plugins: [react(), tsconfigPaths({ projects: ['./tsconfig.json'] })],
+  plugins: [
+    preact({ reactAliasesEnabled: true }),
+    tsconfigPaths({ projects: ['./tsconfig.json'] }),
+    analyzer({ openAnalyzer: true }),
+  ],
   // publicDir: './assets',
   server: {
     host: true,

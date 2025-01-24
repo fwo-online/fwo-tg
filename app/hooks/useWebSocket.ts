@@ -1,8 +1,8 @@
 import { WebSocketContext } from '@/contexts/webSocket';
-import { use } from 'react';
+import { useContext } from 'react';
 
 export const useWebSocket = () => {
-  const ws = use(WebSocketContext);
+  const ws = useContext(WebSocketContext);
 
   if (!ws) {
     throw new Error('ws must be within WebSocketContext');
