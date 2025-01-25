@@ -12,21 +12,24 @@ import { LobbyPage } from './pages/LobbyPage/LobbyPage';
 import { GamePage } from './pages/GamePage/GamePage';
 import { ShopPage } from '@/modules/shop/pages/ShopPage';
 import { ShopListPage } from '@/modules/shop/pages/ShopListPage';
+import { withSettingsButton } from './hocs/withSettingsButton';
+import { CharacterInventoryPage } from './modules/character/pages/CharacterInventoryPage';
 
 export function Router() {
   return (
     <Routes>
       <Route index element={<CharacterCreatePage />} />
       <Route element={<ProtectedRoute />}>
-        <Route element={<AppLayout />}>
+        <Route Component={withSettingsButton(AppLayout)}>
           <Route path="/character">
             <Route path="" element={<CharacterPage />} />
             <Route path="attributes" Component={withBackButton(CharacterAttributesPage)} />
             <Route path="magics" Component={withBackButton(CharacterMagics)} />
             <Route path="skills" Component={withBackButton(CharacterSkillPage)} />
+            <Route path="inventory" Component={withBackButton(CharacterInventoryPage)} />
           </Route>
           <Route path="/lobby" element={<LobbyPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/settings" Component={withBackButton(SettingsPage)} />
           <Route path="/shop">
             <Route path="" Component={withBackButton(ShopPage)} />
             <Route path=":wear" Component={withBackButton(ShopListPage)} />

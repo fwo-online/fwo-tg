@@ -160,6 +160,7 @@ export class InventoryService {
 
   toObject() {
     return this.inventory.map<Inventory>((item) => ({
+      id: item.id,
       code: item.code,
       putOn: item.putOn,
       wear: item.wear,

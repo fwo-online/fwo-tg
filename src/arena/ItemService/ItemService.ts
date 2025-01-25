@@ -2,7 +2,7 @@ import arena from '@/arena';
 import type { CharacterClass } from '@fwo/schemas';
 import { filterByClass, filterByWear } from './utils';
 
-export class ShopService {
+export class ItemService {
   static getItemsByClass(characterClass: CharacterClass, filter?: { wear: string }) {
     const itemsByClass = Object.values(arena.items).filter(filterByClass(characterClass));
 
@@ -11,5 +11,9 @@ export class ShopService {
     }
 
     return itemsByClass;
+  }
+
+  static getItemsByCodes(codes: string[]) {
+    return codes.map((code) => arena.items[code]).filter(Boolean);
   }
 }

@@ -1,10 +1,10 @@
 import { deleteCharacter } from '@/client/character';
-import { useCharacter } from '@/hooks/useCharacter';
+import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 import { popup } from '@telegram-apps/sdk-react';
-import { ButtonCell, List } from '@telegram-apps/telegram-ui';
+import { ButtonCell, List, Navigation, Section } from '@telegram-apps/telegram-ui';
 
 export function SettingsPage() {
-  const { setCharacter } = useCharacter();
+  const { updateCharacter } = useUpdateCharacter();
 
   const handleClick = async () => {
     const buttonId = await popup.open({
@@ -14,14 +14,18 @@ export function SettingsPage() {
     });
 
     if (buttonId === 'delete') {
-      await deleteCharacter();
-      setCharacter(undefined);
+      await deleteCharacter().then(updateCharacter);
     }
   };
 
   return (
     <List>
-      <ButtonCell onClick={() => handleClick()}>Удалить персонажа</ButtonCell>
+      <Section>
+        <Section.Header>Настройки</Section.Header>
+        <ButtonCell onClick={handleClick}>
+          <Navigation> Удалить персонажа</Navigation>
+        </ButtonCell>
+      </Section>
     </List>
   );
 }

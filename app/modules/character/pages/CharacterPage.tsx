@@ -38,6 +38,12 @@ export const CharacterPage: FC = () => {
             </InlineButtons.Item>
           )}
         </InlineButtons>
+        <InlineButtons>
+          <InlineButtons.Item onClick={() => navigate('/character/inventory')}>
+            Инвентарь
+          </InlineButtons.Item>
+          <InlineButtons.Item>noop</InlineButtons.Item>
+        </InlineButtons>
       </Section>
     </List>
   );

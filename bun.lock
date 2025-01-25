@@ -1,5 +1,5 @@
 {
-  "lockfileVersion": 0,
+  "lockfileVersion": 1,
   "workspaces": {
     "": {
       "dependencies": {
@@ -14,8 +14,8 @@
       "name": "@fwo/app",
       "version": "0.3.1",
       "dependencies": {
-        "@fwo/schemas": "schemas",
-        "@fwo/server": "src",
+        "@fwo/schemas": "workspace:^",
+        "@fwo/server": "workspace:^",
         "@telegram-apps/react-router-integration": "^1.0.1",
         "@telegram-apps/sdk-react": "^2.0.25",
         "@telegram-apps/telegram-ui": "^2.1.8",
@@ -41,7 +41,7 @@
       "name": "@fwo/server",
       "version": "0.3.1",
       "dependencies": {
-        "@fwo/schemas": "schemas",
+        "@fwo/schemas": "workspace:*",
         "@hono/valibot-validator": "^0.5.2",
         "@telegram-apps/init-data-node": "^1.2.1",
         "es-toolkit": "^1.30.1",
@@ -174,11 +174,11 @@
 
     "@floating-ui/utils": ["@floating-ui/utils@0.2.8", "", {}, "sha512-kym7SodPp8/wloecOpcmSnWJsK7M0E5Wg8UcFA+uO4B9s5d0ywXOEro/8HM9x0rW+TljRzul/14UYz3TleT3ig=="],
 
-    "@fwo/app": ["@fwo/app@workspace:app", { "dependencies": { "@fwo/schemas": "schemas", "@fwo/server": "src", "@telegram-apps/react-router-integration": "^1.0.1", "@telegram-apps/sdk-react": "^2.0.25", "@telegram-apps/telegram-ui": "^2.1.8", "@tonconnect/ui-react": "^2.0.11", "es-toolkit": "^1.31.0", "react": "^19.0.0", "react-dom": "^19.0.0", "react-router": "^7.1.2", "react-use-websocket": "^4.11.1" }, "devDependencies": { "@types/react": "^19.0.7", "@types/react-dom": "^19.0.3", "@vitejs/plugin-react": "^4.3.4", "vite": "^6.0.7", "vite-tsconfig-paths": "^5.1.4" } }],
+    "@fwo/app": ["@fwo/app@workspace:app"],
 
-    "@fwo/schemas": ["@fwo/schemas@workspace:schemas", {}],
+    "@fwo/schemas": ["@fwo/schemas@workspace:schemas"],
 
-    "@fwo/server": ["@fwo/server@workspace:src", { "dependencies": { "@fwo/schemas": "schemas", "@hono/valibot-validator": "^0.5.2", "@telegram-apps/init-data-node": "^1.2.1", "es-toolkit": "^1.30.1", "hono": "^4.6.14", "lodash": "^4.17.21", "mongoose": "^8.9.2", "telegraf": "^4.16.3" }, "devDependencies": { "@types/bun": "^1.1.14", "@types/lodash": "^4.17.13", "@types/node": "^22.10.2", "casual": "^1.6.2", "csvtojson": "^2.0.10" } }],
+    "@fwo/server": ["@fwo/server@workspace:src"],
 
     "@hono/valibot-validator": ["@hono/valibot-validator@0.5.2", "", { "peerDependencies": { "hono": ">=3.9.0", "valibot": "^1.0.0 || ^1.0.0-beta.4 || ^1.0.0-rc" } }, "sha512-WbTr8PCFNAME0ale62rmmq+E8bGp5a7VPiVNmNT+Ue12GJE3Ax+CWBGtHhR0TzAEiloPvJND3IbjHIgtNtsqhw=="],
 

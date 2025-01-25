@@ -5,10 +5,7 @@ export const useUpdateCharacter = () => {
   const { setCharacter } = useCharacter();
 
   const updateCharacter = async () => {
-    const character = await getCharacter();
-    if (character) {
-      setCharacter(character);
-    }
+    await getCharacter().then(setCharacter);
   };
 
   return {

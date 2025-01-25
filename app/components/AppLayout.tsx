@@ -22,11 +22,6 @@ const tabs = [
     text: 'Клан',
     icon: '🏰',
   },
-  {
-    path: '/settings',
-    text: 'Настройки',
-    icon: '⚙️',
-  },
 ];
 
 export function AppLayout() {

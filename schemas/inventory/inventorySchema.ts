@@ -1,9 +1,11 @@
-import * as v from 'valibot';
+import { idSchema } from '@/shared';
+import { object, string, boolean, type InferOutput } from 'valibot';
 
-export const inventorySchema = v.object({
-  code: v.string(),
-  putOn: v.boolean(),
-  wear: v.string(),
+export const inventorySchema = object({
+  ...idSchema.entries,
+  code: string(),
+  putOn: boolean(),
+  wear: string(),
 });
 
-export type Inventory = v.InferOutput<typeof inventorySchema>;
+export type Inventory = InferOutput<typeof inventorySchema>;
