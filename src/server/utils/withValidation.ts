@@ -1,12 +1,12 @@
 import ValidationError from '@/arena/errors/ValidationError';
 import { HTTPException } from 'hono/http-exception';
 
-export const withValidation = <T>(fn: () => T): T => {
+export const withValidation = async <T>(fn: () => T): Promise<T> => {
   try {
-    return fn();
+    return await fn();
   } catch (e) {
     if (e instanceof ValidationError) {
-      throw new HTTPException(400, e);
+      throw new HTTPException(400, { message: e.message });
     }
 
     throw e;

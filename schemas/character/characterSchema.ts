@@ -1,8 +1,8 @@
 import * as v from 'valibot';
-import { inventorySchema } from '@/inventory/inventorySchema';
 import { characterAttributesSchema } from './characterAttributesSchema';
 import { characterClassSchema } from './characterClassSchema';
 import { attributesSchema } from '@/shared/attributes';
+import { inventorySchema } from '@/inventory/inventorySchema';
 
 export const characterSchema = v.object({
   name: v.pipe(v.string(), v.minLength(3)),

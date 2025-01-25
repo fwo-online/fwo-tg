@@ -7,6 +7,7 @@ import { wearListTranslations } from '@/constants/inventory';
 
 export const ShopListPage: FC = () => {
   const { wear } = useParams();
+
   return (
     <List>
       <Section>

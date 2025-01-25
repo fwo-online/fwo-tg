@@ -3,10 +3,11 @@ import { Hono } from 'hono';
 import { idSchema } from '@fwo/schemas';
 import { characterMiddleware, userMiddleware } from '@/server/middlewares';
 import { withValidation } from './utils/withValidation';
+import { object, string } from 'valibot';
 
 export const inventory = new Hono()
   .use(userMiddleware, characterMiddleware)
-  .patch('/equip/:id', vValidator('param', idSchema), async (c) => {
+  .patch('/:id/equip', vValidator('param', idSchema), async (c) => {
     const character = c.get('character');
     const { id } = c.req.valid('param');
 
@@ -14,24 +15,24 @@ export const inventory = new Hono()
 
     return c.json({}, 200);
   })
-  .patch('/unequip/:id', vValidator('param', idSchema), async (c) => {
+  .patch('/:id/unequip', vValidator('param', idSchema), async (c) => {
     const character = c.get('character');
     const { id } = c.req.valid('param');
 
     await character.inventory.unEquipItem(id);
     return c.json({}, 200);
   })
-  .post('/buy/:id', vValidator('param', idSchema), async (c) => {
+  .post('/:code', vValidator('param', object({ code: string() })), async (c) => {
     const character = c.get('character');
-    const { id } = c.req.valid('param');
+    const { code } = c.req.valid('param');
 
-    await character.buyItem(id);
+    await withValidation(() => character.buyItem(code));
     return c.json({}, 200);
   })
-  .delete('/sell/:id', vValidator('param', idSchema), async (c) => {
+  .delete('/:id', vValidator('param', idSchema), async (c) => {
     const character = c.get('character');
     const { id } = c.req.valid('param');
 
-    await character.sellItem(id);
+    await withValidation(() => character.sellItem(id));
     return c.json({}, 200);
   });

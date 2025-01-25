@@ -88,11 +88,17 @@ export class InventoryService {
 
   async removeItem(itemId: string) {
     const item = this.getItem(itemId);
-    if (item?.putOn) {
+    if (!item) {
+      throw new ValidationError('Предмет не найден');
+    }
+    if (item.putOn) {
       throw new ValidationError('Нельзя продать надетый предмет');
     }
+
     await removeItem({ charId: this.char.id, itemId });
     await this.unEquipNonEquippableItems();
+
+    return item;
   }
 
   async equipItem(itemId: string) {
@@ -138,7 +144,7 @@ export class InventoryService {
   }
 
   hasRequiredAttributes(item: Item) {
-    return _.some(item.requiredAttributes, (value, attr) => value > this.char.harks[attr]);
+    return _.every(item.requiredAttributes, (value, attr) => value <= this.char.harks[attr]);
   }
 
   /**
@@ -164,6 +170,7 @@ export class InventoryService {
       code: item.code,
       putOn: item.putOn,
       wear: item.wear,
+      item: arena.items[item.code],
     }));
   }
 }

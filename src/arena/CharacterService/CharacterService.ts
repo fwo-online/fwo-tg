@@ -284,7 +284,7 @@ export class CharacterService {
     return this.save({ harks, free });
   }
 
-  async buyItem(itemCode) {
+  async buyItem(itemCode: string) {
     const item = arena.items[itemCode];
 
     if (this.gold < item.price) {
@@ -299,14 +299,9 @@ export class CharacterService {
   /**
    * Продажа предмета.
    */
-  async sellItem(itemId) {
-    const inventory = this.inventory.getItem(itemId);
-    if (!inventory) {
-      return;
-    }
+  async sellItem(inventoryID: string) {
+    const inventory = await this.inventory.removeItem(inventoryID);
     const item = arena.items[inventory.code];
-
-    await this.inventory.removeItem(itemId);
 
     this.gold += item.price / 2;
     await this.saveToDb();

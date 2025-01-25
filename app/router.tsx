@@ -1,19 +1,21 @@
 import { Navigate, Route, Routes } from 'react-router';
-import { ProtectedRoute } from './components/ProtectedRoute';
-import { withBackButton } from './hocs/withBackButton';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { AppLayout } from '@/components/AppLayout';
+import { withSettingsButton } from '@/hocs/withSettingsButton';
+import { withBackButton } from '@/hocs/withBackButton';
 import { CharacterAttributesPage } from '@/modules/character/pages/CharacterAttributesPage';
 import { CharacterPage } from '@/modules/character/pages/CharacterPage';
 import { CharacterCreatePage } from '@/modules/character/pages/CharacterCreatePage';
 import { CharacterMagics } from './pages/CharacterMagics/CharacterMagics';
 import { CharacterSkillPage } from '@/modules/character/pages/CharacterSkillsPage';
-import { AppLayout } from './components/AppLayout';
-import { SettingsPage } from './pages/SettingsPage/SettingsPage';
 import { LobbyPage } from './pages/LobbyPage/LobbyPage';
 import { GamePage } from './pages/GamePage/GamePage';
 import { ShopPage } from '@/modules/shop/pages/ShopPage';
 import { ShopListPage } from '@/modules/shop/pages/ShopListPage';
-import { withSettingsButton } from './hocs/withSettingsButton';
-import { CharacterInventoryPage } from './modules/character/pages/CharacterInventoryPage';
+import { CharacterInventoryPage } from '@/modules/character/pages/CharacterInventoryPage';
+import { SettingsPage } from '@/modules/settings/pages/SettingsPage';
+import { CharacterInventoryWearList } from './modules/character/components/CharacterInventoryWearList';
+import { CharacterInventoryList } from './modules/character/components/CharacterInventoryList';
 
 export function Router() {
   return (
@@ -26,7 +28,10 @@ export function Router() {
             <Route path="attributes" Component={withBackButton(CharacterAttributesPage)} />
             <Route path="magics" Component={withBackButton(CharacterMagics)} />
             <Route path="skills" Component={withBackButton(CharacterSkillPage)} />
-            <Route path="inventory" Component={withBackButton(CharacterInventoryPage)} />
+            <Route path="inventory" Component={withBackButton(CharacterInventoryPage)}>
+              <Route path="" Component={withBackButton(CharacterInventoryWearList)} />
+              <Route path=":wear" Component={withBackButton(CharacterInventoryList)} />
+            </Route>
           </Route>
           <Route path="/lobby" element={<LobbyPage />} />
           <Route path="/settings" Component={withBackButton(SettingsPage)} />

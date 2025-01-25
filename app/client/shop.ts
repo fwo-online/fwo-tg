@@ -6,4 +6,6 @@ export const getShopItems = async (query?: { wear: string }) => {
   if (res.ok) {
     return res.json();
   }
+
+  throw new Error(await res.text());
 };
