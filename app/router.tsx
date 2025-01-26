@@ -6,7 +6,6 @@ import { withBackButton } from '@/hocs/withBackButton';
 import { CharacterAttributesPage } from '@/modules/character/pages/CharacterAttributesPage';
 import { CharacterPage } from '@/modules/character/pages/CharacterPage';
 import { CharacterCreatePage } from '@/modules/character/pages/CharacterCreatePage';
-import { CharacterMagics } from './pages/CharacterMagics/CharacterMagics';
 import { CharacterSkillPage } from '@/modules/character/pages/CharacterSkillsPage';
 import { LobbyPage } from './pages/LobbyPage/LobbyPage';
 import { GamePage } from './pages/GamePage/GamePage';
@@ -14,8 +13,9 @@ import { ShopPage } from '@/modules/shop/pages/ShopPage';
 import { ShopListPage } from '@/modules/shop/pages/ShopListPage';
 import { CharacterInventoryPage } from '@/modules/character/pages/CharacterInventoryPage';
 import { SettingsPage } from '@/modules/settings/pages/SettingsPage';
-import { CharacterInventoryWearList } from './modules/character/components/CharacterInventoryWearList';
-import { CharacterInventoryList } from './modules/character/components/CharacterInventoryList';
+import { CharacterInventoryWearList } from '@/modules/character/components/CharacterInventoryWearList';
+import { CharacterInventoryList } from '@/modules/character/components/CharacterInventoryList';
+import { CharacterMagicsPage } from '@/modules/character/pages/CharacterMagicsPage';
 
 export function Router() {
   return (
@@ -26,7 +26,7 @@ export function Router() {
           <Route path="/character">
             <Route path="" element={<CharacterPage />} />
             <Route path="attributes" Component={withBackButton(CharacterAttributesPage)} />
-            <Route path="magics" Component={withBackButton(CharacterMagics)} />
+            <Route path="magics" Component={withBackButton(CharacterMagicsPage)} />
             <Route path="skills" Component={withBackButton(CharacterSkillPage)} />
             <Route path="inventory" Component={withBackButton(CharacterInventoryPage)}>
               <Route path="" Component={withBackButton(CharacterInventoryWearList)} />

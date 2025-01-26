@@ -1,3 +1,4 @@
+import { Description } from '@/components/Description';
 import type { Item, MinMax } from '@fwo/schemas';
 import { Banner, Caption, Cell, Info, Modal, Section } from '@telegram-apps/telegram-ui';
 import { get, isNumber } from 'es-toolkit/compat';
@@ -43,57 +44,43 @@ const attributeSections = [
   },
 ];
 
-const ItemAttributesRow: FC<{ name: string; attribute: number | MinMax }> = ({
-  name,
-  attribute,
-}) => {
-  return (
-    <Cell
-      style={{ '--tgui--cell--middle--padding': 0 }}
-      disabled={isNumber(attribute) ? !attribute : !attribute.min && !attribute.max}
-      after={
-        isNumber(attribute) ? (
-          <Info type="text">
-            <Caption> {attribute}</Caption>
-          </Info>
-        ) : (
-          <Info type="text">
-            <Caption>
-              {attribute.min} - {attribute.max}
-            </Caption>
-          </Info>
-        )
-      }
-    >
-      <Caption>{name}</Caption>
-    </Cell>
-  );
+const isDisabled = (value: number | MinMax) => {
+  return isNumber(value) ? !value : !value.min && !value.max;
+};
+
+const normalizeValue = (value: number | MinMax) => {
+  return isNumber(value) ? value : `${value.min} - ${value.max}`;
 };
 
 export const ItemModal: FC<{
   item: Item;
-  trigger: (item: Item) => ReactNode;
-  footer?: (item: Item) => ReactNode;
+  trigger: ReactNode;
+  footer?: ReactNode;
 }> = ({ item, trigger, footer }) => {
   return (
-    <Modal trigger={trigger(item)}>
+    <Modal trigger={trigger}>
       <Banner
         header={item.info.name}
         subheader={item.info.description}
         description={
           <Section>
             {attributeSections.map(({ key, label, attributes }) => (
-              <Section key={key}>
-                <Section.Header>{label}</Section.Header>
+              <Description key={key} header={label}>
                 {attributes.map(({ name, key }) => (
-                  <ItemAttributesRow key={key} name={name} attribute={get(item, key)} />
+                  <Description.Item
+                    key={key}
+                    after={normalizeValue(get(item, key))}
+                    disabled={isDisabled(get(item, key))}
+                  >
+                    {name}
+                  </Description.Item>
                 ))}
-              </Section>
+              </Description>
             ))}
           </Section>
         }
       >
-        {footer?.(item)}
+        {footer}
       </Banner>
     </Modal>
   );

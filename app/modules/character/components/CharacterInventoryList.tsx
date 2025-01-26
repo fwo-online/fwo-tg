@@ -42,32 +42,30 @@ export const CharacterInventoryList: FC = () => {
         <ItemModal
           key={inventory.id}
           item={inventory.item}
-          trigger={(item) => (
+          trigger={
             <ButtonCell
               style={{ justifyContent: 'space-between' }}
               after={<Info type="text">{inventory.putOn && 'Надето'}</Info>}
             >
-              <Navigation>{item.info.name}</Navigation>
+              <Navigation>{inventory.item.info.name}</Navigation>
             </ButtonCell>
-          )}
-          footer={(item) => (
-            <>
-              {inventory.putOn ? (
-                <Button stretched onClick={() => handleUnEquip(inventory.id)}>
-                  Снять
+          }
+          footer={
+            inventory.putOn ? (
+              <Button stretched onClick={() => handleUnEquip(inventory.id)}>
+                Снять
+              </Button>
+            ) : (
+              <>
+                <Button stretched onClick={() => handleEquip(inventory.id)}>
+                  Надеть
                 </Button>
-              ) : (
-                <>
-                  <Button stretched onClick={() => handleEquip(inventory.id)}>
-                    Надеть
-                  </Button>
-                  <Button stretched mode="bezeled" onClick={() => handleSell(inventory.id)}>
-                    Продать {item.price / 2}💰
-                  </Button>
-                </>
-              )}
-            </>
-          )}
+                <Button stretched mode="bezeled" onClick={() => handleSell(inventory.id)}>
+                  Продать {inventory.item.price / 2}💰
+                </Button>
+              </>
+            )
+          }
         />
       ))}
     </>

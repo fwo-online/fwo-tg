@@ -28,12 +28,12 @@ export const ShopList: FC<{ shopPromise: Promise<Item[]> }> = ({ shopPromise }) 
         <ItemModal
           key={item.code}
           item={item}
-          trigger={(item) => (
+          trigger={
             <ButtonCell>
               <Navigation>{item.info.name}</Navigation>
             </ButtonCell>
-          )}
-          footer={(item) => (
+          }
+          footer={
             <>
               <Button stretched disabled={!canBuy(item)} onClick={() => handleBuy(item)}>
                 Купить за {item.price}💰
@@ -42,7 +42,7 @@ export const ShopList: FC<{ shopPromise: Promise<Item[]> }> = ({ shopPromise }) 
                 У тебя {character.gold}💰
               </Button>
             </>
-          )}
+          }
         />
       ))}
     </>

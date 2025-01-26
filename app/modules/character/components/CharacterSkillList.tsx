@@ -32,7 +32,6 @@ export const CharacterSkillList: FC<{
           onLearn={handleLearn}
           trigger={
             <ButtonCell
-              key={skill.name}
               after={
                 <Info style={{ marginLeft: 'auto' }} type="text">
                   {character.skills[skill.name]}

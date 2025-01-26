@@ -1,12 +1,24 @@
 import { getMagicList, learnMagic } from '@/client/magic';
 import { useCharacter } from '@/hooks/useCharacter';
-import { Button, ButtonCell, Cell, List, Modal, Spinner } from '@telegram-apps/telegram-ui';
+import {
+  Banner,
+  Button,
+  ButtonCell,
+  List,
+  Modal,
+  Section,
+  Spinner,
+} from '@telegram-apps/telegram-ui';
 import { useEffect, useState } from 'react';
 import type { Magic } from '@fwo/schemas';
 import { popup } from '@telegram-apps/sdk-react';
+import { CharacterMagicList } from '../components/CharacterMagicList';
+import { times } from 'es-toolkit/compat';
+import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 
-export const CharacterMagics = () => {
+export const CharacterMagicsPage = () => {
   const { character } = useCharacter();
+  const { updateCharacter } = useUpdateCharacter();
 
   const [magics, setMagics] = useState<Magic[]>([]);
 
@@ -15,26 +27,6 @@ export const CharacterMagics = () => {
       setMagics(magics ?? []);
     });
   }, [character.magics]);
-
-  const Magic = ({ magic }: { magic: Magic }) => {
-    const { lvl, cost, displayName, desc, name } = magic;
-    return (
-      <Modal
-        trigger={
-          <ButtonCell>
-            {displayName}: {character.magics[name]}
-          </ButtonCell>
-        }
-      >
-        <List>
-          <Cell subhead="Name">{displayName}</Cell>
-          <Cell subhead="Description">{desc}</Cell>
-          <Cell subhead="Level">{lvl}</Cell>
-          <Cell subhead="Cost">{cost}💧</Cell>
-        </List>
-      </Modal>
-    );
-  };
 
   const handleLearn = async (lvl: number) => {
     const id = await popup.open({
@@ -58,6 +50,7 @@ export const CharacterMagics = () => {
           title: 'Успешное изучение',
           message: `${magic.displayName}`,
         });
+        await updateCharacter();
       } else {
         await popup.open({
           title: 'Не удалось изучить',
@@ -73,15 +66,34 @@ export const CharacterMagics = () => {
 
   return (
     <List>
-      {magics.map((magic) => (
-        <Magic key={magic.name} magic={magic} />
-      ))}
+      <Section>
+        <Section.Header>Магии</Section.Header>
+        <CharacterMagicList magics={magics} />
+      </Section>
+
       <Modal trigger={<ButtonCell>Изучить</ButtonCell>}>
-        <List>
-          <Button stretched onClick={() => handleLearn(1)}>
-            1
-          </Button>
-        </List>
+        <Section>
+          <Banner
+            header="Изучение магии"
+            description=" Выбери уровень изучаемой магии. Стоимость изучения равна уровню магии"
+          >
+            {times(4, (i) => i + 1).map((lvl) => (
+              <Button
+                key={lvl}
+                stretched
+                disabled={lvl > character.bonus}
+                onClick={() => handleLearn(lvl)}
+              >
+                {lvl}💡
+              </Button>
+            ))}
+          </Banner>
+          <List>
+            <Button stretched mode="plain">
+              У тебя {character.bonus}💡
+            </Button>
+          </List>
+        </Section>
       </Modal>
     </List>
   );
