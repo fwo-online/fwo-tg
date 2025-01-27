@@ -3,7 +3,7 @@ import config from '@/arena/config';
 import MiscService from '@/arena/MiscService';
 import type { Prof } from '@/data/profs';
 import type { CharacterService } from './CharacterService';
-
+import ValidationError from '@/arena/errors/ValidationError';
 
 const chance = config.magic.learnChance;
 
@@ -22,13 +22,16 @@ export default class MagicService {
    * @param lvl круг проучиваемой магии
    */
   static async learnMagic(character: CharacterService, lvl: number) {
+    if (lvl > character.lvl) {
+      throw new ValidationError('Слишком низкий уровень персонажа');
+    }
     if (lvl > character.bonus) {
-      throw Error('Не хватает бонусов');
+      throw new ValidationError('Не хватает бонусов');
     }
 
     const magicsToLearn = MagicService.getMagicsToLearn(character, lvl);
     if (!magicsToLearn.length) {
-      throw Error('Нет магий для изучения');
+      throw new ValidationError('Нет магий для изучения');
     }
 
     const magic = magicsToLearn[MiscService.randInt(0, magicsToLearn.length)];
@@ -37,7 +40,7 @@ export default class MagicService {
     await character.save({ bonus: character.bonus });
 
     if (!learnChance()) {
-      throw Error('Не удалось выучить. Удача не на твоей стороне');
+      throw new ValidationError('Не удалось выучить. Удача не на твоей стороне');
     }
 
     const charMagicLvl = character.magics[magic.name] || 0;
@@ -66,7 +69,7 @@ export default class MagicService {
    * @param magId строка идентификатор магии
    */
   static getMagicById(magic: string) {
-    return arena.magics[magic as keyof typeof arena['magics']].toObject();
+    return arena.magics[magic as keyof (typeof arena)['magics']].toObject();
   }
 
   /**
@@ -76,13 +79,15 @@ export default class MagicService {
    * @returns возвращает магии всех кругов если не передан круг
    */
   static getMagicListByProf(prof: Prof, lvl?: number) {
-    return Object.values(arena.magics).filter((magic) => {
-      if (!lvl) {
-        return magic.profList.includes(prof);
-      }
+    return Object.values(arena.magics)
+      .filter((magic) => {
+        if (!lvl) {
+          return magic.profList.includes(prof);
+        }
 
-      return magic.lvl === lvl && magic.profList.includes(prof);
-    }).map((magic) => magic.toObject());
+        return magic.lvl === lvl && magic.profList.includes(prof);
+      })
+      .map((magic) => magic.toObject());
   }
 
   static getMagicListByIds(magics: string[]) {

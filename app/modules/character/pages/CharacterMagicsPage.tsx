@@ -44,18 +44,15 @@ export const CharacterMagicsPage = () => {
     });
 
     if (id === 'ok') {
-      const magic = await learnMagic(lvl);
-      if (magic) {
+      try {
+        const magic = await learnMagic(lvl);
         await popup.open({
           title: 'Успешное изучение',
           message: `${magic.displayName}`,
         });
         await updateCharacter();
-      } else {
-        await popup.open({
-          title: 'Не удалось изучить',
-          message: 'Бонусы не возвращаем',
-        });
+      } catch (e) {
+        await popup.open(e);
       }
     }
   };
@@ -81,7 +78,7 @@ export const CharacterMagicsPage = () => {
               <Button
                 key={lvl}
                 stretched
-                disabled={lvl > character.bonus}
+                disabled={lvl > character.bonus || lvl > character.lvl}
                 onClick={() => handleLearn(lvl)}
               >
                 {lvl}💡

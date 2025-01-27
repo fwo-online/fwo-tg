@@ -22,8 +22,11 @@ export const getMagic = async (id: string) => {
 };
 
 export const learnMagic = async (lvl: number) => {
-  return client.magic[':lvl']
-    .$post({ param: { lvl: lvl.toString() } })
-    .then((r) => r.json())
-    .catch(console.log);
+  const res = await client.magic[':lvl'].$post({ param: { lvl: lvl.toString() } });
+
+  if (res.ok) {
+    return res.json();
+  }
+
+  throw new Error(await res.text());
 };
