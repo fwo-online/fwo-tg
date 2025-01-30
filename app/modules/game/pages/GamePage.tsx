@@ -1,14 +1,16 @@
 import { GameMessageComponent } from '@/components/Game/GameMessage';
 import { GameStatusComponent } from '@/components/Game/GameStatus';
+import { useCharacter } from '@/hooks/useCharacter';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import type { Action, GameStatus, ServerToClientMessage } from '@fwo/schemas';
 import { ButtonCell, Cell, List, Slider } from '@telegram-apps/telegram-ui';
 import { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { Navigate, useParams } from 'react-router';
 
 export function GamePage() {
   const { ws } = useWebSocket();
   const { gameID } = useParams();
+  const { character } = useCharacter();
 
   const [messages, setMessages] = useState<ServerToClientMessage[]>([]);
   const [actions, setActions] = useState<Action[]>([]);
@@ -17,6 +19,10 @@ export function GamePage() {
   const [power, setPower] = useState(0);
   const [remainPower, setRemainPower] = useState(100);
   const [status, setStatus] = useState<GameStatus[]>([]);
+
+  if (!character.game) {
+    return <Navigate to="/" />;
+  }
 
   const handleMessage = useCallback((message: ServerToClientMessage) => {
     setMessages((messages) => messages.concat(message));

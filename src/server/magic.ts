@@ -4,6 +4,7 @@ import * as v from 'valibot';
 import MagicService from '@/arena/MagicService';
 import { characterMiddleware, userMiddleware } from '@/server/middlewares';
 import { normalizeToArray } from '@/utils/array';
+import { withValidation } from '@/server/utils/withValidation';
 
 export const magic = new Hono()
   .use(userMiddleware, characterMiddleware)
@@ -14,8 +15,8 @@ export const magic = new Hono()
       const character = c.get('character');
       const { lvl } = c.req.valid('param');
 
-      const magic = await MagicService.learnMagic(character, lvl);
-      return c.json({ name: magic.name });
+      const magic = await withValidation(MagicService.learnMagic(character, lvl));
+      return c.json(magic);
     },
   )
   .get(

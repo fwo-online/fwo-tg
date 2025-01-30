@@ -1,12 +1,11 @@
-import type { User } from '@telegram-apps/init-data-node';
 import { createMiddleware } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
 import { CharacterService } from '@/arena/CharacterService';
+import type { UserEnv } from '@/server/middlewares/userMiddleware';
 
-export type CharacterEnv = {
+export type CharacterEnv = UserEnv & {
   Variables: {
     character: CharacterService;
-    user: User;
   };
 };
 
