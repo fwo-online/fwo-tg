@@ -15,8 +15,10 @@ import { ItemModel } from './models/item';
 import { stage } from './scenes/stage';
 import { registerAffects } from './utils/registerAffects';
 import { serve } from 'bun';
-import { WebSocketHelper } from './helpers/webSocketHelper';
 import { createBunWebSocket } from 'hono/bun';
+import { Server } from 'socket.io';
+import { createServer } from 'node:http';
+import { middleware, onConnection, onCreate } from '@/server/ws';
 
 const { websocket } = createBunWebSocket();
 
@@ -64,9 +66,22 @@ bot.command('inventory', (ctx) => ctx.scene.enter('inventory'));
 // bot.startWebhook('/test', null, 3000);
 arena.bot = bot;
 
-const server = serve({
+serve({
   fetch: app.fetch,
   websocket,
+  port: 3000,
 });
 
-WebSocketHelper.setServer(server);
+const httpServer = createServer();
+const io = new Server(httpServer, {
+  cors: { origin: ['http://192.168.10.56:5173'] },
+});
+
+onCreate(io);
+
+httpServer.listen(4000);
+
+io.use(middleware);
+io.on('connection', (socket) => {
+  onConnection(io, socket);
+});

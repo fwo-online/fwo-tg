@@ -1,6 +1,3 @@
-import * as v from 'valibot';
-import { characterSchema } from './characterSchema';
+import type { Character } from './characterSchema';
 
-export const characterPublicSchema = v.pick(characterSchema, ['name', 'lvl', 'class', 'clan']);
-
-export type CharacterPublic = v.InferOutput<typeof characterPublicSchema>;
+export type CharacterPublic = Pick<Character, 'name' | 'lvl' | 'class'>;

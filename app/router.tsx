@@ -7,7 +7,6 @@ import { CharacterAttributesPage } from '@/modules/character/pages/CharacterAttr
 import { CharacterPage } from '@/modules/character/pages/CharacterPage';
 import { CharacterCreatePage } from '@/modules/character/pages/CharacterCreatePage';
 import { CharacterSkillPage } from '@/modules/character/pages/CharacterSkillsPage';
-import { LobbyPage } from './pages/LobbyPage/LobbyPage';
 import { GamePage } from '@/modules/game/pages/GamePage';
 import { ShopPage } from '@/modules/shop/pages/ShopPage';
 import { ShopListPage } from '@/modules/shop/pages/ShopListPage';
@@ -16,6 +15,8 @@ import { SettingsPage } from '@/modules/settings/pages/SettingsPage';
 import { CharacterInventoryWearList } from '@/modules/character/components/CharacterInventoryWearList';
 import { CharacterInventoryList } from '@/modules/character/components/CharacterInventoryList';
 import { CharacterMagicsPage } from '@/modules/character/pages/CharacterMagicsPage';
+import { ErrorPage } from '@/modules/error/pages/ErrorPage';
+import { LobbyPage } from '@/modules/lobby/pages/LobbyPage';
 
 export function Router() {
   return (
@@ -42,6 +43,7 @@ export function Router() {
         </Route>
         <Route path="/game/:gameID" element={<GamePage />} />
       </Route>
+      <Route path="/error" element={<ErrorPage />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

@@ -1,14 +1,17 @@
-import { client } from '@/client';
-import { WebSocketHelper } from '@/helpers/webSocketHelper';
+import { createWebSocket } from '@/client';
+import type { ClientToServerMessage, ServerToClientMessage } from '@fwo/schemas';
 import type { PropsWithChildren } from 'react';
-import { createContext, useRef } from 'react';
+import { createContext, use, useState } from 'react';
+import type { Socket } from 'socket.io-client';
 
-export const WebSocketContext = createContext<WebSocketHelper | undefined>(undefined);
+export const WebSocketContext = createContext<
+  Socket<ServerToClientMessage, ClientToServerMessage> | undefined
+>(undefined);
+
+export const socket = createWebSocket();
 
 export const WebSocketProvider = ({ children }: PropsWithChildren) => {
-  const ws = client.ws.$ws();
+  const [ws] = useState(use(socket));
 
-  const wsRef = useRef(new WebSocketHelper(ws));
-
-  return <WebSocketContext value={wsRef.current}>{children}</WebSocketContext>;
+  return <WebSocketContext value={ws}>{children}</WebSocketContext>;
 };

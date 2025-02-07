@@ -3,9 +3,10 @@ import { AppRoot, Placeholder } from '@telegram-apps/telegram-ui';
 import { Suspense } from 'react';
 import { HashRouter } from 'react-router';
 
-import { getCharacter } from '@/client/character';
 import { CharacterProvider } from '@/contexts/character';
 import { Router } from '@/router';
+
+import { WebSocketProvider } from '@/contexts/webSocket';
 
 export function App() {
   const lp = useLaunchParams();
@@ -18,9 +19,11 @@ export function App() {
     >
       <HashRouter>
         <Suspense fallback={<Placeholder description="Ищем вашего персонажа..." />}>
-          <CharacterProvider characterPromise={getCharacter()}>
-            <Router />
-          </CharacterProvider>
+          <WebSocketProvider>
+            <CharacterProvider>
+              <Router />
+            </CharacterProvider>
+          </WebSocketProvider>
         </Suspense>
       </HashRouter>
     </AppRoot>

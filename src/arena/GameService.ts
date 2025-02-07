@@ -12,7 +12,8 @@ import testGame from '@/arena/testGame';
 import arena from '@/arena';
 import { mapValues } from 'es-toolkit';
 import EventEmitter from 'node:events';
-import type { GameMessage } from '@fwo/schemas';
+import { noClanName } from './ClanService';
+import type { ServerToClientMessage } from '@fwo/schemas';
 
 export type KickReason = 'afk' | 'run';
 
@@ -31,8 +32,8 @@ export interface GlobalFlags {
  */
 
 type GameMessageMap = {
-  [K in GameMessage['action']]: [
-    Omit<Extract<GameMessage, { action: K }>, 'action' | 'type'>,
+  [K in keyof ServerToClientMessage as K extends `game:${infer T}` ? T : never]: [
+    Parameters<ServerToClientMessage[K]>[0],
     scope?: string,
   ];
 };
@@ -299,11 +300,11 @@ export default class GameService extends EventEmitter<GameMessageMap> {
           break;
         }
         case RoundStatus.START_ORDERS: {
-          this.emit('startOrders', {});
+          this.emit('startOrders', undefined);
           break;
         }
         case RoundStatus.END_ORDERS: {
-          this.emit('endOrders', {});
+          this.emit('endOrders', undefined);
           // Debug Game Hack
           if (process.env.NODE_ENV === 'development') {
             this.orders.ordersList = this.orders.ordersList.concat(testGame.orders);
@@ -427,7 +428,7 @@ export default class GameService extends EventEmitter<GameMessageMap> {
 
     for (const clan in playersByClan) {
       const players = playersByClan[clan] ?? [];
-      const status = players.map((p) => p.getStatus());
+      const status = clan === noClanName ? [] : players.map((p) => p.getStatus());
 
       this.emit('startRound', { round, status, statusByClan }, clan);
     }

@@ -1,43 +1,35 @@
-import { type Context, Hono } from 'hono';
-import { createBunWebSocket } from 'hono/bun';
-import type { ServerWebSocket } from 'bun';
-import { userMiddleware, characterMiddleware } from '@/server/middlewares';
-import { WebSocketRouter } from './router';
-import { WebSocketHelper } from '@/helpers/webSocketHelper';
-import type { WebSocketEnv } from './context';
-import { matchMaking } from './modules/matchMaking';
-import { lobby } from './modules/lobby';
-import { game } from './modules/game';
+import type { CharacterService } from '@/arena/CharacterService';
+import type { ClientToServerMessage, ServerToClientMessage } from '@fwo/schemas';
+import type { Server as IOServer, Socket as IOSocket } from 'socket.io';
+import * as game from './game';
+import * as lobby from './lobby';
+import * as matchMaking from './matchMaking';
+import * as character from './character';
 
-const { upgradeWebSocket } = createBunWebSocket<ServerWebSocket>();
+export type Server = IOServer<
+  ClientToServerMessage,
+  ServerToClientMessage,
+  {},
+  { character: CharacterService }
+>;
+export type Socket = IOSocket<
+  ClientToServerMessage,
+  ServerToClientMessage,
+  {},
+  { character: CharacterService }
+>;
 
-WebSocketRouter.route(lobby).route(matchMaking).route(game);
+export const middleware = (socket: Socket, next: (error?: Error) => void) => {
+  character.middleware(socket, next);
+};
 
-export const ws = new Hono()
-  .use(userMiddleware)
-  .use(characterMiddleware)
-  .get(
-    '/',
-    upgradeWebSocket((c: Context<WebSocketEnv>) => {
-      const router = new WebSocketRouter(c);
+export const onCreate = (io: Server) => {
+  game.onCreate(io);
+};
 
-      return {
-        async onOpen(_, ws) {
-          if (ws.raw) {
-            c.set('ws', new WebSocketHelper(ws.raw));
-            router.onOpen();
-          }
-        },
-        onMessage({ data }) {
-          const message = WebSocketHelper.parse(data);
-
-          if (message) {
-            router.onMessage(message);
-          }
-        },
-        onClose() {
-          router.onClosed();
-        },
-      };
-    }),
-  );
+export const onConnection = (io: Server, socket: Socket) => {
+  character.onConnection(io, socket);
+  lobby.onConnection(io, socket);
+  matchMaking.onConnection(io, socket);
+  game.onConnection(io, socket);
+};

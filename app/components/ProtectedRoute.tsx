@@ -9,9 +9,9 @@ export const ProtectedRoute = () => {
     return <Navigate to="/" />;
   }
 
-  return (
-    <WebSocketProvider>
-      <Outlet />
-    </WebSocketProvider>
-  );
+  if (character.game) {
+    return <Navigate to={`game/${character.game}`} />;
+  }
+
+  return <Outlet />;
 };

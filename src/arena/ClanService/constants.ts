@@ -1,1 +1,1 @@
-export const noClanName = 'noClan';
+export const noClanName = '__clan';

@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router';
 export function withSettingsButton(Component: ComponentType) {
   return () => {
     const navigate = useNavigate();
-
     const settings = useCallback(() => navigate('/settings'), [navigate]);
 
     useEffect(() => {

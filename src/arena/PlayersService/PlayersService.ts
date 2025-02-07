@@ -1,5 +1,6 @@
-import { groupBy, keyBy, partition } from 'lodash';
+import { keyBy } from 'lodash';
 import Player from './PlayerService';
+import { noClanName } from '@/arena/ClanService';
 
 export default class PlayersService {
   readonly init: string[];
@@ -60,7 +61,7 @@ export default class PlayersService {
   }
 
   groupByClan(players = this.players) {
-    return Object.groupBy(players, ({ clan }) => clan?.name || 'noClan');
+    return Object.groupBy(players, ({ clan }) => clan?.name || noClanName);
   }
 
   /**
