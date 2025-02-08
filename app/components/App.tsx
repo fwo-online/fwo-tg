@@ -16,6 +16,9 @@ export function App() {
     <AppRoot
       appearance={isDark ? 'dark' : 'light'}
       platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}
+      style={{
+        '--tgui--font-family': '"Pixeloid", serif',
+      }}
     >
       <HashRouter>
         <Suspense fallback={<Placeholder description="Ищем вашего персонажа..." />}>
