@@ -1,5 +1,8 @@
+import { noClanName } from '@/arena/ClanService';
+import OrderError from '@/arena/errors/OrderError';
 import type GameService from '@/arena/GameService';
 import MatchMakingService from '@/arena/MatchMakingService';
+import { getAvailableActions } from '@/helpers/actionsHelper';
 
 import type { Server, Socket } from '@/server/ws';
 
@@ -15,10 +18,6 @@ export const onCreate = (io: Server) => {
   MatchMakingService.on('start', (game) => {
     game.on('start', (e) => {
       io.to(getRoom(game)).emit('game:start', e);
-    });
-
-    game.on('startOrders', () => {
-      io.to(getRoom(game)).emit('game:startOrders');
     });
 
     game.on('endOrders', () => {
@@ -42,9 +41,11 @@ export const onCreate = (io: Server) => {
 export const onConnection = (_io: Server, socket: Socket) => {
   const { character } = socket.data;
 
-  const onGameStart = (game: GameService) => {
-    socket.join(`game:${game.info.id}`);
-    socket.join(`game:${game.info.id}:${character.clan?.id}`);
+  const onGameStart = async (game: GameService) => {
+    await socket.join(getRoom(game));
+    await socket.join(getRoom(game, character.clan?.id ?? character.id));
+
+    await socket.to(getRoom(game)).emit('game:start', game.info.id);
 
     game.on('preKick', (e) => {
       socket.emit('game:preKick', e);
@@ -53,9 +54,32 @@ export const onConnection = (_io: Server, socket: Socket) => {
     game.on('kick', (e) => {
       socket.emit('game:kick', e);
     });
+
+    game.on('startOrders', () => {
+      socket.emit('game:startOrders', getAvailableActions(character));
+    });
   };
 
-  MatchMakingService.on('start', onGameStart);
+  MatchMakingService.prependListener('start', onGameStart);
+
+  socket.on('game:order', (order, callback) => {
+    try {
+      character.currentGame?.orders.orderAction({
+        action: order.action,
+        target: order.target,
+        proc: order.power,
+        initiator: character.id,
+      });
+
+      callback({ success: true, ...getAvailableActions(character), power: 50, orders: [order] });
+    } catch (e) {
+      if (e instanceof OrderError) {
+        callback({ success: false, message: e.message });
+      } else {
+        console.log('game:order', e);
+      }
+    }
+  });
 
   socket.on('disconnect', () => {
     MatchMakingService.off('start', onGameStart);

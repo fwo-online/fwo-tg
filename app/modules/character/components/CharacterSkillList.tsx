@@ -13,7 +13,7 @@ export const CharacterSkillList: FC<{
   const { character } = useCharacter();
   const [skills] = useState(use(skillsPromise));
   const { updateCharacter } = useUpdateCharacter();
-  const { isPending, makeRequest } = useRequest();
+  const [isPending, makeRequest] = useRequest();
 
   const handleLearn = async (skill: Skill) => {
     makeRequest(async () => {

@@ -1,9 +1,25 @@
-import { Navigate, Outlet } from 'react-router';
+import { Navigate, Outlet, useNavigate } from 'react-router';
 import { useCharacterContext } from '@/hooks/useCharacterContext';
 import { WebSocketProvider } from '@/contexts/webSocket';
+import { useWebSocket } from '@/hooks/useWebSocket';
+import { useEffect } from 'react';
 
 export const ProtectedRoute = () => {
   const { character } = useCharacterContext();
+  const socket = useWebSocket();
+  const navigate = useNavigate();
+
+  const navigateToGame = (gameID: string) => {
+    navigate(`game/${gameID}`);
+  };
+
+  useEffect(() => {
+    socket.on('game:start', navigateToGame);
+
+    return () => {
+      socket.off('game:start', navigateToGame);
+    };
+  });
 
   if (!character) {
     return <Navigate to="/" />;

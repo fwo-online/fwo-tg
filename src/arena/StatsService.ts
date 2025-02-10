@@ -3,19 +3,23 @@ import { floatNumber } from '@/utils/floatNumber';
 import type { CharacterDynamicAttributes } from '@fwo/schemas';
 import type { PhysAttributes } from '@fwo/schemas';
 
-type CombineAll<T> = T extends {[name in keyof T]: infer Type} ? Type : never
+type CombineAll<T> = T extends { [name in keyof T]: infer Type } ? Type : never;
 
 type PropertyNameMap<T, IncludeIntermediate extends boolean> = {
-    [name in keyof T]: T[name] extends object ? (
-        SubPathsOf<name, T, IncludeIntermediate> | (IncludeIntermediate extends true ? name : never) 
-    ) : name
-}
+  [name in keyof T]: T[name] extends object
+    ? SubPathsOf<name, T, IncludeIntermediate> | (IncludeIntermediate extends true ? name : never)
+    : name;
+};
 
-type SubPathsOf<key extends keyof T, T, IncludeIntermediate extends boolean> = (
-    `${string & key}.${string & PathsOf<T[key], IncludeIntermediate>}`
-)
+type SubPathsOf<
+  key extends keyof T,
+  T,
+  IncludeIntermediate extends boolean,
+> = `${string & key}.${string & PathsOf<T[key], IncludeIntermediate>}`;
 
-export type PathsOf<T, IncludeIntermediate extends boolean = false> = CombineAll<PropertyNameMap<T,IncludeIntermediate>>
+export type PathsOf<T, IncludeIntermediate extends boolean = false> = CombineAll<
+  PropertyNameMap<T, IncludeIntermediate>
+>;
 
 export type Stats = CharacterDynamicAttributes & {
   hp: number;
@@ -25,7 +29,7 @@ export type Stats = CharacterDynamicAttributes & {
   static: PhysAttributes;
 };
 
-type StatsPath = PathsOf<Stats>
+type StatsPath = PathsOf<Stats>;
 type StatsPathPartial = PathsOf<Stats, true>;
 
 /**
@@ -38,9 +42,7 @@ export default class StatsService {
    * Конструктор класса stats
    * @param defStat объект параметров
    */
-  constructor(
-    private defStat: CharacterDynamicAttributes,
-  ) {
+  constructor(private defStat: CharacterDynamicAttributes) {
     this.refresh();
   }
 
@@ -54,11 +56,11 @@ export default class StatsService {
 
   mul(atr: StatsPath, val: number): void {
     set(this.inRound, atr, floatNumber(this.val(atr) * val));
-    console.log('Mul:', atr, ' val:', val, 'new val:', this.inRound[atr]);
+    console.log('Mul:', atr, ' val:', val, 'new val:', get(this.inRound, atr));
   }
 
   set(atr: StatsPath, val: number): void {
-    this.inRound[atr] = floatNumber(val);
+    set(this.inRound, atr, floatNumber(val));
   }
 
   /**
@@ -72,19 +74,19 @@ export default class StatsService {
   mode(type: 'up' | 'down' | 'set', atr: StatsPath, val: number): void {
     switch (type) {
       case 'up':
-        this.up(atr, val)
+        this.up(atr, val);
         break;
       case 'down':
-        this.down(atr, val)
+        this.down(atr, val);
         break;
       case 'set':
-        this.set(atr, val)
+        this.set(atr, val);
         break;
       default:
         console.error('Stats mode type error', type);
         throw new Error('stat mode fail');
     }
-    console.log('new stat:', this.inRound[atr], 'atr', atr, 'val', val);
+    console.log('new stat:', get(this.inRound, atr), 'atr', atr, 'val', val);
   }
 
   /**

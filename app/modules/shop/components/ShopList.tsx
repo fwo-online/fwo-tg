@@ -11,7 +11,7 @@ export const ShopList: FC<{ shopPromise: Promise<Item[]> }> = ({ shopPromise }) 
   const [items] = useState(use(shopPromise));
   const { character } = useCharacter();
   const { updateCharacter } = useUpdateCharacter();
-  const { makeRequest } = useRequest();
+  const [_, makeRequest] = useRequest();
 
   const canBuy = (item: Item) => character.gold >= item.price;
 

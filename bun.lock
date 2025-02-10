@@ -20,17 +20,17 @@
         "@telegram-apps/sdk-react": "^2.0.25",
         "@telegram-apps/telegram-ui": "^2.1.8",
         "@tonconnect/ui-react": "^2.0.11",
-        "es-toolkit": "^1.31.0",
+        "es-toolkit": "^1.32.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
-        "react-router": "^7.1.2",
+        "react-router": "^7.1.5",
         "socket.io-client": "^4.8.1",
       },
       "devDependencies": {
-        "@types/react": "^19.0.7",
+        "@types/react": "^19.0.8",
         "@types/react-dom": "^19.0.3",
         "@vitejs/plugin-react": "^4.3.4",
-        "vite": "^6.0.7",
+        "vite": "^6.1.0",
         "vite-tsconfig-paths": "^5.1.4",
       },
     },
@@ -535,7 +535,7 @@
 
     "tweetnacl-util": ["tweetnacl-util@0.15.1", "", {}, "sha512-RKJBIj8lySrShN4w6i/BonWp2Z/uxwC3h4y7xsRrpP59ZboCd0GpEVsOnMDYLMmKBpYhb5TgHzZXy7wTfYFBRw=="],
 
-    "typescript": ["typescript@5.7.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-i5t66RHxDvVN40HfDd1PsEThGNnlMCMT3jMUuoh9/0TaqWevNontacunWyN02LA9/fIbEWlcHZcgTKb9QoaLfg=="],
+    "typescript": ["typescript@5.7.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw=="],
 
     "ua-parser-js": ["ua-parser-js@1.0.39", "", { "bin": { "ua-parser-js": "script/cli.js" } }, "sha512-k24RCVWlEcjkdOxYmVJgeD/0a1TiSpqLg+ZalVGV9lsnr4yqu0w7tX/x2xX6G4zpkgQnRf89lxuZ1wsbjXM8lw=="],
 
@@ -547,7 +547,7 @@
 
     "use-sidecar": ["use-sidecar@1.1.2", "", { "dependencies": { "detect-node-es": "^1.1.0", "tslib": "^2.0.0" }, "peerDependencies": { "@types/react": "^16.9.0 || ^17.0.0 || ^18.0.0", "react": "^16.8.0 || ^17.0.0 || ^18.0.0" }, "optionalPeers": ["@types/react"] }, "sha512-epTbsLuzZ7lPClpz2TyryBfztm7m+28DlEv2ZCQ3MDr5ssiwyOwGH/e5F9CkfWjJ1t4clvI58yF822/GUkjjhw=="],
 
-    "valibot": ["valibot@1.0.0-beta.12", "", { "peerDependencies": { "typescript": ">=5" }, "optionalPeers": ["typescript"] }, "sha512-j3WIxJ0pmUFMfdfUECn3YnZPYOiG0yHYcFEa/+RVgo0I+MXE3ToLt7gNRLtY5pwGfgNmsmhenGZfU5suu9ijUA=="],
+    "valibot": ["valibot@1.0.0-rc.0", "", { "peerDependencies": { "typescript": ">=5" }, "optionalPeers": ["typescript"] }, "sha512-9ZUrOXOejY/WaIn8p0Z469R1qBAwNJeqq8jzOIDsl1qR8gqtObHQmyHLFli0UCkcGiTco5kH6/KPLWsTWE9b2g=="],
 
     "vary": ["vary@1.1.2", "", {}, "sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg=="],
 

@@ -1,4 +1,4 @@
-import type { Character } from '@fwo/schemas';
+import { CharacterClass, type Character } from '@fwo/schemas';
 
 export const drawCharacter = (canvas: HTMLCanvasElement, character: Character) => {
   const ctx = canvas.getContext('2d');
@@ -17,7 +17,17 @@ export const drawCharacter = (canvas: HTMLCanvasElement, character: Character) =
 
   const drawBody = () => {
     const body = new Image();
-    body.src = new URL('/character/male.png', import.meta.url).href;
+    switch (character.class) {
+      case CharacterClass.Warrior:
+        body.src = new URL('/images/warrior.png', import.meta.url).href;
+        break;
+      case CharacterClass.Mage:
+        body.src = new URL('/images/mage.png', import.meta.url).href;
+        break;
+      default:
+        body.src = new URL('/character/male.png', import.meta.url).href;
+    }
+
     body.onload = () => {
       layers.push(body);
       draw();

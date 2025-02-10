@@ -1,104 +1,179 @@
-import { GameMessageComponent } from '@/components/Game/GameMessage';
-import { GameStatusComponent } from '@/components/Game/GameStatus';
+import { GameStatusComponent } from '@/modules/game/components/GameStatus';
 import { useCharacter } from '@/hooks/useCharacter';
 import { useWebSocket } from '@/hooks/useWebSocket';
-import type { Action, GameStatus, ServerToClientMessage } from '@fwo/schemas';
-import { ButtonCell, Cell, List, Slider } from '@telegram-apps/telegram-ui';
-import { useCallback, useEffect, useState } from 'react';
-import { Navigate, useParams } from 'react-router';
+import type { Action, GameStatus, PublicGameStatus, ServerToClientMessage } from '@fwo/schemas';
+import { popup } from '@telegram-apps/sdk-react';
+import {
+  ButtonCell,
+  FixedLayout,
+  Info,
+  InlineButtons,
+  List,
+  Section,
+  Slider,
+  Title,
+} from '@telegram-apps/telegram-ui';
+import { type ReactNode, useCallback, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router';
 
 export function GamePage() {
-  const { ws } = useWebSocket();
+  const socket = useWebSocket();
   const { gameID } = useParams();
   const { character } = useCharacter();
+  const navigate = useNavigate();
 
-  const [messages, setMessages] = useState<ServerToClientMessage[]>([]);
+  const [messages, setMessages] = useState<ReactNode[]>([]);
+  const [canOrder, setCanOrder] = useState(false);
   const [actions, setActions] = useState<Action[]>([]);
   const [magics, setMagics] = useState<Action[]>([]);
   const [skills, setSkills] = useState<Action[]>([]);
   const [power, setPower] = useState(0);
   const [remainPower, setRemainPower] = useState(100);
   const [status, setStatus] = useState<GameStatus[]>([]);
+  const [statusByClan, setStatusByClan] = useState<Record<string, PublicGameStatus[]>>({});
+  const [round, setRound] = useState<number>(1);
+  const [selectedAction, setSelectedAction] = useState<Action>();
+  const [orders, setOrders] = useState<
+    {
+      target: string;
+      action: string;
+      power: number;
+    }[]
+  >([]);
 
-  if (!character.game) {
-    return <Navigate to="/" />;
-  }
+  const handleStartRound = useCallback(
+    ({ round, status, statusByClan }: Parameters<ServerToClientMessage['game:startRound']>[0]) => {
+      setRound(round);
+      setStatus(status);
+      setStatusByClan(statusByClan);
+    },
+    [],
+  );
 
-  const handleMessage = useCallback((message: ServerToClientMessage) => {
-    setMessages((messages) => messages.concat(message));
-    if (message.type !== 'game') {
-      return;
-    }
-
-    if (message.action === 'order') {
-      setActions(message.actions);
-      setMagics(message.magics);
-      setSkills(message.skills);
-      setRemainPower(message.proc);
-    }
-
-    if (message.action === 'endOrders') {
-      setActions([]);
-      setMagics([]);
-      setSkills([]);
-    }
-
-    if (message.action === 'status') {
-      setStatus(message.status);
-    }
+  const handlePreKick = useCallback(() => {
+    popup.open({
+      message: 'Вы будете выброшены из игры в следующем раунде, если не сделаете заказ',
+    });
   }, []);
 
-  useEffect(() => {
-    const unsubscribe = ws.subscribe(handleMessage);
+  const handleKick = useCallback(async () => {
+    navigate('/');
+    await popup.open({ message: 'Вы были выброшены из игры' });
+  }, [navigate]);
 
-    return () => unsubscribe();
-  }, [ws, handleMessage]);
+  const handleStartOrders = useCallback(
+    ({ actions, magics, skills }: Parameters<ServerToClientMessage['game:startOrders']>[0]) => {
+      setActions(actions);
+      setMagics(magics);
+      setSkills(skills);
+    },
+    [],
+  );
 
   useEffect(() => {
-    ws.send({ type: 'lobby', action: 'enter' });
+    socket.on('game:startRound', handleStartRound);
+    socket.on('game:preKick', handlePreKick);
+    socket.on('game:kick', handleKick);
+    socket.on('game:startOrders', handleStartOrders);
 
     return () => {
-      ws.send({ type: 'lobby', action: 'leave' });
-      ws.send({ type: 'match_making', action: 'stop_search' });
+      socket.off('game:startRound', handleStartRound);
+      socket.off('game:preKick', handlePreKick);
+      socket.off('game:kick', handleKick);
+      socket.off('game:startOrders', handleStartOrders);
     };
-  }, [ws]);
+  }, [socket.on, socket.off, handleStartRound, handlePreKick, handleKick, handleStartOrders]);
 
   const handleClick = async () => {
-    ws.send({ type: 'match_making', action: 'start_search' });
+    // ws.send({ type: 'match_making', action: 'start_search' });
   };
 
-  const handleActionClick = async (action: Action) => {
-    ws.send({
-      type: 'game',
-      action: 'order',
-      order: {
-        action: action.name,
-        target: '675834439ab73b12ebe8a44c',
-        proc: power,
-      },
-    });
+  const handleActionClick = async (target: string) => {
+    if (selectedAction) {
+      socket
+        .emitWithAck('game:order', {
+          power,
+          target,
+          action: selectedAction?.name,
+        })
+        .then((res) => {
+          if (res.success) {
+            setOrders(res.orders);
+          } else {
+            popup.open({ message: res.message });
+          }
+        });
+    }
   };
 
   const handleSliderChange = (value: number) => {
     setPower(Math.min(remainPower, value));
   };
 
+  const actionEmoji = {
+    attack: '⚔️',
+    protect: '🛡️',
+    regeneration: '🛌',
+    handsHeal: '🤲',
+  };
+
   return (
     <List>
+      <Section>
+        <Section.Header>Раунд {round}</Section.Header>
+      </Section>
       <GameStatusComponent status={status} />
-      {messages.map((message, index) => (
-        // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-        <GameMessageComponent key={index} message={message} />
-      ))}
+      {messages.map((message, index) => message)}
 
-      <ButtonCell onClick={() => handleClick()}>Начать поиск игры</ButtonCell>
+      <Section>
+        <Section.Header>Заказы</Section.Header>
 
-      {actions.map((action) => (
-        <ButtonCell onClick={() => handleActionClick(action)} key={action.name}>
-          {action.name}
-        </ButtonCell>
-      ))}
-      <Slider min={0} max={100} step={5} onChange={handleSliderChange} />
+        {orders.map((order) => (
+          <ButtonCell key={order.action}>
+            {order.action} на {order.target} ({order.power})
+          </ButtonCell>
+        ))}
+      </Section>
+
+      {selectedAction &&
+        Object.entries(statusByClan).map(([clan, status]) => (
+          <Section key={clan}>
+            <Section.Header>{clan}</Section.Header>
+            {status.map(({ id, name, hp }) => (
+              <ButtonCell
+                after={<Info type="text">❤️{hp}</Info>}
+                key={id}
+                onClick={() => handleActionClick(id)}
+              >
+                {name}
+              </ButtonCell>
+            ))}
+          </Section>
+        ))}
+      <FixedLayout vertical="bottom">
+        {magics.map((action) => (
+          <ButtonCell key={action.name}> {action.displayName}</ButtonCell>
+        ))}
+        {skills.map((action) => (
+          <ButtonCell key={action.name}>{action.displayName}</ButtonCell>
+        ))}
+        {/* <Section></Section> */}
+        <InlineButtons mode="gray">
+          {actions.map((action) => (
+            <InlineButtons.Item key={action.name} onClick={() => setSelectedAction(action)}>
+              <Title className="og">{actionEmoji[action.name]}</Title>
+            </InlineButtons.Item>
+          ))}
+        </InlineButtons>
+        <Slider
+          before={power}
+          after={remainPower}
+          min={0}
+          max={remainPower}
+          value={power}
+          onChange={handleSliderChange}
+        />
+      </FixedLayout>
     </List>
   );
 }

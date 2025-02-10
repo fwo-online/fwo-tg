@@ -3,6 +3,7 @@ import _ from 'lodash';
 import config from './config';
 import QueueConstructor from './Constuructors/QueueConstrucror';
 import arena from './index';
+import type GameService from './GameService';
 
 /**
  * MatchMaking system
@@ -11,34 +12,38 @@ import arena from './index';
  * */
 
 export type MatchMakingItem = {
-  charId: string
-  psr: number
-  startTime: number
-}
+  id: string;
+  psr: number;
+  startTime: number;
+};
 /**
  * Общий класс объекта MatchMaking
  */
-class MatchMaking extends EventEmitter {
+class MatchMaking extends EventEmitter<{
+  start: [game: GameService];
+  list: [players: MatchMakingItem[]];
+}> {
   allQueue: QueueConstructor[] = [];
   mmQueue: MatchMakingItem[] = [];
   timerId?: NodeJS.Timer;
 
   checkStatus() {
-    const [withClans] = _.partition(this.mmQueue, (mmObj) => arena.characters[mmObj.charId].clan);
-    const clans = _.groupBy(withClans, (mmObj) => arena.characters[mmObj.charId].clan?.id);
+    const [withClans] = _.partition(this.mmQueue, (mmObj) => arena.characters[mmObj.id].clan);
+    const clans = _.groupBy(withClans, (mmObj) => arena.characters[mmObj.id].clan?.id);
     const isEveryEnemy = Object.values(clans).every((c) => c.length <= this.mmQueue.length / 2);
     return this.mmQueue.length >= config.minPlayersLimit && isEveryEnemy;
   }
 
   /**
    * Удаление объекта игрока в очередь поиска
-   * @param {String} charId id чара в поиске
+   * @param id id чара в поиске
    */
-  pull(charId) {
-    const obj = this.mmQueue.find((el) => el.charId === charId);
+  pull(id: string) {
+    const obj = this.mmQueue.find((el) => el.id === id);
     if (obj) {
       this.mmQueue.splice(this.mmQueue.indexOf(obj), 1);
       this.main();
+      this.emit('list', this.mmQueue);
     }
     // @todo убрать после дебага
     console.log('MM pull debug', this.mmQueue);
@@ -46,10 +51,15 @@ class MatchMaking extends EventEmitter {
 
   /**
    * Добавление объекта игрока в очередь поиска
-   * @param {mmObj} obj Объект запроса поиска {charId,psr,startTime}
+   * @param obj Объект запроса поиска {charId,psr,startTime}
    */
-  push(obj) {
+  push(obj: MatchMakingItem) {
+    if (this.mmQueue.some((el) => el.id === obj.id)) {
+      return;
+    }
+
     this.mmQueue.push(obj);
+    this.emit('list', this.mmQueue);
     this.main();
   }
 
@@ -82,7 +92,11 @@ class MatchMaking extends EventEmitter {
       const queue = new QueueConstructor(this.mmQueue.splice(0, config.maxPlayersLimit));
       if (queue.checkStatus()) {
         this.allQueue.push(queue);
-        void queue.goStartGame();
+        queue.goStartGame().then((game) => {
+          if (game) {
+            this.emit('start', game);
+          }
+        });
       }
     }
   }
@@ -101,9 +115,12 @@ class MatchMaking extends EventEmitter {
   main() {
     this.stop();
     if (this.checkStatus()) {
-      this.timerId = setTimeout(() => { this.start(); }, config.startGameTimeout);
+      this.timerId = setTimeout(() => {
+        this.start();
+      }, config.startGameTimeout);
     }
   }
 }
 
-export default new MatchMaking();
+const matchMaking = new MatchMaking();
+export default matchMaking;

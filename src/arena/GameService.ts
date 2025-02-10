@@ -82,7 +82,9 @@ export default class GameService extends EventEmitter<GameMessageMap> {
   }
 
   get isTeamWin(): boolean {
-    const { noClan, ...groupByClan } = this.players.groupByClan(this.players.alivePlayers);
+    const { [noClanName]: noClan, ...groupByClan } = this.players.groupByClan(
+      this.players.alivePlayers,
+    );
     if (!noClan?.length) {
       return Object.keys(groupByClan).length === 1;
     }
@@ -141,6 +143,7 @@ export default class GameService extends EventEmitter<GameMessageMap> {
       return;
     }
     player.preKick(reason);
+    this.emit('preKick', { reason });
   }
 
   /**
@@ -170,7 +173,7 @@ export default class GameService extends EventEmitter<GameMessageMap> {
    * @param player
    */
   checkOrders(player: Player): void {
-    if (!player.alive) {
+    if (!player.alive || this.round.count === 1) {
       return;
     }
 
@@ -179,10 +182,15 @@ export default class GameService extends EventEmitter<GameMessageMap> {
       return;
     }
 
-    if (player.flags.isKicked === 'afk' && !this.orders.checkPlayerOrderLastRound(player.id)) {
-      this.kick(player.id, player.flags.isKicked);
+    if (!this.orders.checkPlayerOrderLastRound(player.id)) {
+      if (player.flags.isKicked === 'afk') {
+        this.kick(player.id, 'afk');
+      } else {
+        this.preKick(player.id, 'afk');
+      }
     } else {
-      player.preKick(this.orders.checkPlayerOrderLastRound(player.id) ? undefined : 'afk');
+      /** @todo create clear kick flag method */
+      player.preKick(undefined);
     }
   }
 
@@ -428,9 +436,18 @@ export default class GameService extends EventEmitter<GameMessageMap> {
 
     for (const clan in playersByClan) {
       const players = playersByClan[clan] ?? [];
-      const status = clan === noClanName ? [] : players.map((p) => p.getStatus());
+      if (clan === noClanName) {
+        /** @todo find another way to send status */
+        players.forEach((player) => {
+          const status = [player.getStatus()];
 
-      this.emit('startRound', { round, status, statusByClan }, clan);
+          this.emit('startRound', { round, status, statusByClan }, player.id);
+        });
+      } else {
+        const status = players.map((p) => p.getStatus());
+
+        this.emit('startRound', { round, status, statusByClan }, clan);
+      }
     }
   }
 }

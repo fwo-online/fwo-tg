@@ -9,14 +9,12 @@ export const getAvailableActions = (character: CharacterService) => {
 
   console.assert(game, 'actionsHelper: game not found');
   if (!game) {
-    return [];
+    throw new Error('game not found');
   }
 
   const player = game.players.getById(character.id);
-
-  console.assert(player, 'actionsHelper: player %s not found', character.id);
   if (!player) {
-    return [];
+    throw new Error('game not found');
   }
 
   return ActionsHelper.buildActions(player, game);
@@ -93,11 +91,11 @@ export abstract class ActionsHelper {
   }
 
   static buildActions(player: Player, game: GameService) {
-    const basicActions = this.getBasicActions(player, game);
-    const availableMagics = this.getAvailableMagics(player, game);
-    const availableSkills = this.getAvailableSkills(player, game);
+    const actions = this.getBasicActions(player, game);
+    const magics = this.getAvailableMagics(player, game);
+    const skills = this.getAvailableSkills(player, game);
 
-    return [...basicActions, ...availableMagics, ...availableSkills];
+    return { actions, magics, skills };
   }
 }
 

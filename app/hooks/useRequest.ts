@@ -17,8 +17,5 @@ export const useRequest = () => {
     });
   };
 
-  return {
-    isPending,
-    makeRequest,
-  };
+  return [isPending, makeRequest] as const;
 };

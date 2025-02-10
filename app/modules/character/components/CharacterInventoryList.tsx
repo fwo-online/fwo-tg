@@ -11,7 +11,7 @@ export const CharacterInventoryList: FC = () => {
   const { character } = useCharacter();
   const { updateCharacter } = useUpdateCharacter();
   const { wear } = useParams();
-  const { makeRequest } = useRequest();
+  const [_, makeRequest] = useRequest();
 
   const inventory = character.inventory.filter((item) => item.wear === wear);
 

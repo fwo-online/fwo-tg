@@ -4,6 +4,14 @@ body {
   margin: 0;
 }
 
+button {
+  font-family: var(--tgui--font-family);
+}
+
+div {
+  font-family: var(--tgui--font-family);
+}
+
 @font-face {
   font-family: 'Pixeloid';
   src: url('fonts/PixeloidSans.woff2') format('woff2');

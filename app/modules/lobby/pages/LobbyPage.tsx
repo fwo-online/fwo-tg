@@ -1,56 +1,97 @@
 import { LobbyMessageComponent } from '@/components/Lobby/LobbyMessage';
+import { useCharacter } from '@/hooks/useCharacter';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import type { CharacterPublic, ServerToClientMessage } from '@fwo/schemas';
-import { ButtonCell, Cell, List } from '@telegram-apps/telegram-ui';
-import { useCallback, useEffect, useState } from 'react';
+import { ButtonCell, Text, List, Section, Info, Cell } from '@telegram-apps/telegram-ui';
+import { type ReactNode, use, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 export function LobbyPage() {
   const socket = useWebSocket();
+  const { character } = useCharacter();
+
+  const [characters, setCharacters] = useState<CharacterPublic[]>([]);
+  const [messages, setMessages] = useState<ReactNode[]>([]);
   const navigate = useNavigate();
 
-  const [messages, setMessages] = useState<string[]>([]);
+  const isSearching = characters.some(({ id }) => id === character.id);
 
-  const handleEnterLobby = useCallback((character: CharacterPublic) => {
-    setMessages((messages) => messages.concat(`${character.name} подключается к лобби`));
+  const handleStartMatchMaking = useCallback((character: CharacterPublic) => {
+    setMessages((messages) =>
+      messages.concat(
+        <Text>
+          <Text weight="3">
+            {character.name} ({character.lvl})
+          </Text>{' '}
+          начал поиск игры
+        </Text>,
+      ),
+    );
   }, []);
 
-  const handleLeaveLobby = useCallback((character: CharacterPublic) => {
-    setMessages((messages) => messages.concat(`${character.name} покидает лобби`));
+  const handleStopMatchMaking = useCallback((character: CharacterPublic) => {
+    setMessages((messages) =>
+      messages.concat(
+        <Text>
+          <Text weight="3">
+            {character.name} ({character.lvl})
+          </Text>{' '}
+          покидает лобби
+        </Text>,
+      ),
+    );
   }, []);
 
   useEffect(() => {
-    socket.on('lobby:enter', handleEnterLobby);
-    socket.on('lobby:leave', handleLeaveLobby);
+    socket.on('lobby:list', setCharacters);
+    socket.on('lobby:start', handleStartMatchMaking);
+    socket.on('lobby:stop', handleStopMatchMaking);
 
     return () => {
-      socket.off('lobby:enter', handleEnterLobby);
-      socket.off('lobby:leave', handleLeaveLobby);
+      socket.off('lobby:start', handleStartMatchMaking);
+      socket.off('lobby:start', handleStopMatchMaking);
     };
-  }, [socket, handleEnterLobby, handleLeaveLobby]);
+  }, [socket, handleStartMatchMaking, handleStopMatchMaking]);
 
   useEffect(() => {
-    socket.emit('lobby:enter');
+    socket.emitWithAck('lobby:enter').then(setCharacters);
+    socket.on('lobby:list', setCharacters);
 
     return () => {
+      socket.off('lobby:list', setCharacters);
       socket.emit('lobby:leave');
     };
-  }, []);
+  }, [socket.emit, socket.on, socket.emitWithAck, socket.off]);
 
   const handleClick = async () => {
-    socket.emit('matchMaking:start');
+    if (isSearching) {
+      socket.emit('lobby:stop');
+    } else {
+      socket.emit('lobby:start');
+    }
   };
 
   return (
     <List>
-      {messages.map(
-        (message, index) =>
-          // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-          message,
-      )}
+      <Section>
+        {characters.map((character) => (
+          <Cell key={character.name}>
+            <Info type="text">
+              {character.name}({character.lvl})
+            </Info>
+          </Cell>
+        ))}
+      </Section>
+      {messages.map((message, index) => message)}
 
-      <ButtonCell onClick={() => navigate('/game/test')}>debug game</ButtonCell>
-      <ButtonCell onClick={() => handleClick()}>Начать поиск игры</ButtonCell>
+      <ButtonCell onClick={() => navigate('/game/123')}>Debug</ButtonCell>
+      {isSearching ? (
+        <ButtonCell mode="destructive" onClick={() => handleClick()}>
+          Остановить поиск игры
+        </ButtonCell>
+      ) : (
+        <ButtonCell onClick={() => handleClick()}>Начать поиск игры</ButtonCell>
+      )}
     </List>
   );
 }

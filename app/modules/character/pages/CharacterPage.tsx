@@ -1,4 +1,12 @@
-import { Card, Cell, InlineButtons, List, Section } from '@telegram-apps/telegram-ui';
+import {
+  ButtonCell,
+  Card,
+  Cell,
+  InlineButtons,
+  List,
+  Navigation,
+  Section,
+} from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 
 import { useCharacter } from '@/hooks/useCharacter';
@@ -13,34 +21,36 @@ export const CharacterPage: FC = () => {
   return (
     <List>
       <Card style={{ display: 'block', marginRight: 'auto', marginLeft: 'auto' }}>
-        <Card.Chip>lvl {character.lvl}</Card.Chip>
+        <Card.Chip>
+          {characterClassNameMap[character.class]} {character.lvl}
+        </Card.Chip>
         <CharacterImage />
         <Card.Cell>{character.name}</Card.Cell>
       </Card>
       <Section>
-        <Cell subhead="Класс">{characterClassNameMap[character.class]}</Cell>
-        <Cell subhead="Золото">{character.gold}</Cell>
-        <Cell subhead="Опыт">{character.exp}</Cell>
+        <InlineButtons>
+          <InlineButtons.Item text={character.gold.toString()}>💰</InlineButtons.Item>
+          <InlineButtons.Item text={character.exp.toString()}>📖</InlineButtons.Item>
+          <InlineButtons.Item text={character.bonus.toString()}>💡</InlineButtons.Item>
+        </InlineButtons>
       </Section>
       <Section>
-        <InlineButtons>
-          <InlineButtons.Item onClick={() => navigate('/character/attributes')}>
-            Характеристики
-          </InlineButtons.Item>
-          {character.class === CharacterClass.Archer ||
-          character.class === CharacterClass.Warrior ? (
-            <InlineButtons.Item onClick={() => navigate('/character/skills')}>
-              ⚡️ Умения
-            </InlineButtons.Item>
-          ) : (
-            <InlineButtons.Item onClick={() => navigate('/character/magics')}>
-              Магии
-            </InlineButtons.Item>
-          )}
-          <InlineButtons.Item onClick={() => navigate('/character/inventory')}>
-            Инвентарь
-          </InlineButtons.Item>
-        </InlineButtons>
+        <ButtonCell onClick={() => navigate('/character/attributes')}>
+          <Navigation>Характеристики</Navigation>
+        </ButtonCell>
+
+        {character.class === CharacterClass.Archer || character.class === CharacterClass.Warrior ? (
+          <ButtonCell onClick={() => navigate('/character/skills')}>
+            <Navigation>⚡️ Умения</Navigation>
+          </ButtonCell>
+        ) : (
+          <ButtonCell onClick={() => navigate('/character/magics')}>
+            <Navigation>Магии</Navigation>
+          </ButtonCell>
+        )}
+        <ButtonCell onClick={() => navigate('/character/inventory')}>
+          <Navigation>Инвентарь</Navigation>
+        </ButtonCell>
       </Section>
     </List>
   );

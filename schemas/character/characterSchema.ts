@@ -4,6 +4,7 @@ import type { Attributes } from '@/shared/attributes';
 import type { Inventory } from '@/inventory/inventorySchema';
 
 export type Character = {
+  id: string;
   owner: string;
   name: string;
   gold: number;

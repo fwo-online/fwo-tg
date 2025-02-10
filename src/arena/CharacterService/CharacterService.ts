@@ -450,6 +450,7 @@ export class CharacterService {
 
   toObject(): Character {
     return {
+      id: this.id,
       owner: this.owner,
       name: this.nickname,
       class: this.prof as CharacterClass,
@@ -464,11 +465,13 @@ export class CharacterService {
       lvl: this.lvl,
       exp: this.exp,
       dynamicAttributes: this.getDynamicAttributes(),
+      game: this.currentGame?.info.id,
     };
   }
 
   toPublicObject(): CharacterPublic {
     return {
+      id: this.id,
       name: this.nickname,
       class: this.prof as CharacterClass,
       lvl: this.lvl,
