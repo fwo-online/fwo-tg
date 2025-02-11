@@ -1,17 +1,19 @@
-import type { GameStatus } from '@fwo/schemas';
 import { Cell, List } from '@telegram-apps/telegram-ui';
+import { useGameStore } from '@/modules/game/store/useGameStore';
 
-export function GameStatusComponent({ status }: { status: GameStatus[] }) {
+export function GameStatus() {
+  const status = useGameStore((state) => state.status);
+
   return (
     <List>
       {status.map((status) => (
         <Cell
           key={status.name}
-          description={
+          after={
             <>
-              {status.hp && <div>HP: {status.hp}</div>}
-              {status.mp && <div>MP: {status.mp}</div>}
-              {status.en && <div>SP: {status.en}</div>}
+              {status.hp && <>❤️ {status.hp}</>}
+              {status.mp && <>💧 {status.mp}</>}
+              {status.en && <>🔋 {status.en}</>}
             </>
           }
         >

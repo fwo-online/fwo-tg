@@ -1,15 +1,35 @@
+import arena from '@/arena';
+import MatchMakingService from '@/arena/MatchMakingService';
 import type { Server, Socket } from '@/server/ws';
 
-export const onConnection = (io: Server, socket: Socket) => {
+export const onCreate = (io: Server) => {
+  MatchMakingService.on('list', (mmItems) => {
+    const characters = mmItems.map(({ id }) => arena.characters[id].toPublicObject());
+    io.to('lobby').emit('lobby:list', characters);
+  });
+};
+
+export const onConnection = (_io: Server, socket: Socket) => {
   const { character } = socket.data;
 
-  socket.on('lobby:enter', () => {
+  socket.on('lobby:enter', (callback) => {
     socket.join('lobby');
-    io.to('lobby').emit('lobby:enter', character.toPublicObject());
+    callback(MatchMakingService.mmQueue.map(({ id }) => arena.characters[id].toPublicObject()));
   });
 
   socket.on('lobby:leave', () => {
     socket.leave('lobby');
-    io.to('lobby').emit('lobby:leave', character.toPublicObject());
+  });
+
+  socket.on('lobby:start', () => {
+    MatchMakingService.push({ id: character.id, psr: 1000, startTime: Date.now() });
+  });
+
+  socket.on('lobby:stop', () => {
+    MatchMakingService.pull(character.id);
+  });
+
+  socket.on('disconnect', () => {
+    MatchMakingService.pull(character.id);
   });
 };
