@@ -55,10 +55,10 @@ export class ClanService {
   static async createClan(charId: string, name: string) {
     const char: CharacterService = arena.characters[charId];
     if (name === noClanName) {
-      throw new Error('Недопустимое название клана');
+      throw new ValidationError('Недопустимое название клана');
     }
     if (char.gold < this.lvlCost[0]) {
-      throw new Error('Нужно больше золота');
+      throw new ValidationError('Нужно больше золота');
     }
     char.gold -= this.lvlCost[0];
     await char.saveToDb();
@@ -125,7 +125,7 @@ export class ClanService {
   static async addGold(clanId: string, charId: string, gold: number) {
     const char: CharacterService = arena.characters[charId];
     if (char.gold < gold) {
-      throw new Error('Недостаточно золота');
+      throw new ValidationError('Недостаточно золота');
     }
     char.gold -= gold;
     await char.saveToDb();
@@ -143,15 +143,17 @@ export class ClanService {
     const char = arena.characters[charId];
     const clan = await this.getClanById(clanId);
 
-    const remainingTime = (date) => ((date.valueOf() - Date.now()) / 60000).toFixed();
+    const remainingTime = (date: Date) => ((date.valueOf() - Date.now()) / 60000).toFixed();
 
     const penaltyForRequest = char.getPenaltyDate('clan_request');
     if (penaltyForRequest) {
-      throw new Error(`Определись и возвращайся через ${remainingTime(penaltyForRequest)} мин.`);
+      throw new ValidationError(
+        `Определись и возвращайся через ${remainingTime(penaltyForRequest)} мин.`,
+      );
     }
     const penaltyForLeave = char.getPenaltyDate('clan_leave');
     if (penaltyForLeave) {
-      throw new Error(
+      throw new ValidationError(
         `Вступить в новый клан ты сможешь через ${remainingTime(penaltyForLeave)} мин.`,
       );
     }
@@ -164,11 +166,11 @@ export class ClanService {
     const requestClan = await getClanByPlayerRequest(charId);
 
     if (requestClan) {
-      throw new Error('Сначала отмени предыдущую заявку');
+      throw new ValidationError('Сначала отмени предыдущую заявку');
     }
 
     if (!clan.hasEmptySlot) {
-      throw new Error('Клан уже сформирован');
+      throw new ValidationError('Клан уже сформирован');
     }
     await this.createRequest(clan.id, char.id);
     return 'Заявка на вступление отправлена';
@@ -199,16 +201,20 @@ export class ClanService {
    * @param clanId - id клана
    * @param charId - id игрока
    */
-  static async acceptRequest(clanId: string, charId: string) {
+  static async acceptRequest(clanId: string, requesterID: string) {
     const clan = await this.getClanById(clanId);
-    if (!clan.hasEmptySlot) {
-      throw new Error('Клан уже сформирован');
+    if (clan.requests.find(({ id }) => id === requesterID)) {
+      throw new ValidationError('Заявка уже принята');
     }
-    const char = await CharacterService.getCharacterById(charId);
+
+    if (!clan.hasEmptySlot) {
+      throw new ValidationError('Клан уже сформирован');
+    }
+    const char = await CharacterService.getCharacterById(requesterID);
 
     await this.updateClan(clan.id, {
-      $push: { players: charId },
-      $pull: { requests: { $in: [charId] } },
+      $push: { players: requesterID },
+      $pull: { requests: { $in: [requesterID] } },
     });
 
     await char?.joinClan(clan);
@@ -235,7 +241,7 @@ export class ClanService {
   static async leaveClan(clanId: string, charId: string) {
     const clan = await ClanService.getClanById(clanId);
     if (clan.owner.id === charId) {
-      throw new Error('Невозможно покинуть клан, где вы являетесь владельцем');
+      throw new ValidationError('Невозможно покинуть клан, где вы являетесь владельцем');
     }
     await this.updateClan(clanId, {
       $pull: { players: { $in: [charId] } },
