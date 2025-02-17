@@ -7,13 +7,7 @@ import StatsService from '@/arena/StatsService';
 import type { Clan } from '@/models/clan';
 import { PlayerWeapon } from './PlayerWeapon';
 import { convertItemModifiers } from './utils';
-import type {
-  CharacterClass,
-  GameStatus,
-  Player,
-  PublicGameStatus,
-  PublicPlayer,
-} from '@fwo/schemas';
+import type { CharacterClass, GameStatus, Player, PublicGameStatus } from '@fwo/schemas';
 
 export type Resists = Record<DamageType, number>;
 
@@ -92,6 +86,7 @@ export default class PlayerService {
    */
   getShortStatus(): PublicGameStatus {
     return {
+      id: this.id,
       name: this.nick,
       hp: this.stats.val('hp'),
     };
@@ -102,6 +97,7 @@ export default class PlayerService {
    */
   getStatus(): GameStatus {
     return {
+      id: this.id,
       name: this.nick,
       hp: this.stats.val('hp'),
       mp: this.stats.val('mp'),
@@ -178,19 +174,7 @@ export default class PlayerService {
       name: this.nick,
       class: this.prof,
       lvl: this.lvl,
-      clan: this.clan,
-      alive: this.alive,
-      weapon: this.weapon.item?.info,
-    };
-  }
-
-  toPublicObject(): PublicPlayer {
-    return {
-      id: this.id,
-      name: this.nick,
-      class: this.prof,
-      lvl: this.lvl,
-      clan: this.clan,
+      clan: this.clan?.id,
       alive: this.alive,
       weapon: this.weapon.item?.info,
     };

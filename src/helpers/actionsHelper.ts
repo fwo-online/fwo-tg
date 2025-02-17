@@ -1,13 +1,11 @@
 import arena from '@/arena';
 import { ActionService } from '@/arena/ActionService';
 import type { CharacterService } from '@/arena/CharacterService';
-import type GameService from '@/arena/GameService';
+import GameService from '@/arena/GameService';
 import type { Player } from '@/arena/PlayersService';
 
 export const getAvailableActions = (character: CharacterService) => {
-  const game = arena.characters[character.id].currentGame;
-
-  console.assert(game, 'actionsHelper: game not found');
+  const game = new GameService([character.id]);
   if (!game) {
     throw new Error('game not found');
   }

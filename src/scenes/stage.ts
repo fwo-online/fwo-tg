@@ -6,12 +6,12 @@ import { create } from './create';
 import { createClanScene } from './createClan';
 import { greeter } from './greeter';
 import { harkScene } from './harks';
-import { inventoryScene } from './inventory';
+// import { inventoryScene } from './inventory';
 import { lobby } from './lobby';
 import { magicScene } from './magics';
 import { profile } from './profile';
 import { settingsScene } from './settings';
-import { shopScene } from './shop';
+// import { shopScene } from './shop';
 import { skillsScene } from './skills';
 
 export const stage = new Scenes.Stage<BotContext>([
@@ -20,16 +20,18 @@ export const stage = new Scenes.Stage<BotContext>([
   create,
   createClanScene,
   greeter,
-  inventoryScene,
+  // inventoryScene,
   harkScene,
   lobby,
   magicScene,
   profile,
   settingsScene,
-  shopScene,
+  // shopScene,
   skillsScene,
 ]);
 const { leave } = Scenes.Stage;
 
 // Глобальная команда выхода из сцен
-stage.command('cancel', () => { leave(); });
+stage.command('cancel', () => {
+  leave();
+});

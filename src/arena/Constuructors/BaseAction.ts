@@ -3,44 +3,43 @@ import type GameService from '@/arena/GameService';
 import type { Player } from '@/arena/PlayersService';
 import { normalizeToArray } from '@/utils/array';
 import { floatNumber } from '@/utils/floatNumber';
-import type {
-  ActionType, BreaksMessage, DamageType, ExpArr, FailArgs, OrderType, SuccessArgs,
-} from './types';
+import type { ActionType, BreaksMessage, ExpArr, FailArgs, SuccessArgs } from './types';
+import type { EffectType, FailMessage, OrderType, SuccessMessage } from '@fwo/schemas';
 
 export type BaseActionParams = {
   initiator: Player;
   target: Player;
-  game: GameService
-}
+  game: GameService;
+};
 
 export type BaseActionStatus = {
   effect: number;
   exp: number;
-  expArr: ExpArr
-}
+  expArr: ExpArr;
+};
 
 export type BaseActionContext = {
   params: BaseActionParams;
   status: BaseActionStatus;
-}
+};
 
 export abstract class BaseAction {
   name: string;
   displayName: string;
   orderType: OrderType;
   actionType: ActionType;
-  effectType?: DamageType;
+  effectType?: EffectType;
   lvl: number;
 
   context: BaseActionContext;
   params: BaseActionParams;
 
   status: BaseActionStatus = { effect: 0, exp: 0, expArr: [] };
-  results: SuccessArgs;
+  results: SuccessMessage;
 
-  abstract cast(initiator: Player, target: Player, game: GameService)
+  abstract cast(initiator: Player, target: Player, game: GameService);
 
-  abstract run(initiator: Player, target: Player, game: GameService)
+  abstract run(initiator: Player, target: Player, game: GameService);
 
   createContext(initiator: Player, target: Player, game: GameService) {
     this.reset();
@@ -77,16 +76,16 @@ export abstract class BaseAction {
     };
   }
 
-  getSuccessResult({ initiator, target } = this.params): SuccessArgs {
+  getSuccessResult({ initiator, target } = this.params): SuccessMessage {
     return {
       exp: this.status.exp,
       action: this.displayName,
       actionType: this.actionType,
-      target,
-      initiator,
+      target: target.toObject(),
+      initiator: initiator.toObject(),
       effect: floatNumber(this.status.effect),
       hp: target.stats.val('hp'),
-      weapon: initiator.weapon.item,
+      weapon: initiator.weapon.item?.info,
       effectType: this.effectType,
       orderType: this.orderType,
       expArr: this.status.expArr,

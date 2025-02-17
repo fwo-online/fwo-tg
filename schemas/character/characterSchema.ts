@@ -19,4 +19,5 @@ export type Character = {
   class: CharacterClass;
   dynamicAttributes: Attributes;
   game?: string;
+  clan?: { id: string; name: string };
 };

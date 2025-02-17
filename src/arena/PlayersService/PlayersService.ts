@@ -3,7 +3,7 @@ import Player from './PlayerService';
 import { noClanName } from '@/arena/ClanService';
 
 export default class PlayersService {
-  readonly init: string[];
+  init: string[];
   private list: Record<string, Player>;
   /**
    * Конструктор объекта
@@ -16,15 +16,15 @@ export default class PlayersService {
     this.list = keyBy(players, ({ id }) => id);
   }
 
-  get players(): readonly Player[] {
+  get players(): Player[] {
     return Object.values(this.list);
   }
 
-  get alivePlayers(): readonly Player[] {
+  get alivePlayers(): Player[] {
     return this.players.filter(({ alive }) => alive);
   }
 
-  get deadPlayers(): readonly Player[] {
+  get deadPlayers(): Player[] {
     return this.players.filter(({ alive }) => !alive);
   }
 
@@ -36,7 +36,7 @@ export default class PlayersService {
    * Функция вернет массив игроков в моей тиме
    * @param clan объект клана
    */
-  getMyTeam(id: string): readonly Player[] {
+  getMyTeam(id: string): Player[] {
     const player = this.getById(id);
     if (!player?.clan) {
       return [];
@@ -44,7 +44,7 @@ export default class PlayersService {
     return this.players.filter((p) => p.clan?.id === player.clan?.id);
   }
 
-  getPlayersByClan(clanId: string | undefined): readonly Player[] {
+  getPlayersByClan(clanId: string | undefined): Player[] {
     if (!clanId) {
       return this.players.filter((player) => !player.clan);
     }
@@ -55,7 +55,7 @@ export default class PlayersService {
    * Функция возвращает рандомного игрока из массива живых
    * @return
    */
-  get randomAlive(): Readonly<Player> {
+  get randomAlive(): Player {
     const alive = this.alivePlayers;
     return alive[Math.floor(Math.random() * alive.length)];
   }
@@ -71,7 +71,7 @@ export default class PlayersService {
     this.players.forEach((player) => player.reset());
   }
 
-  sortDead(): readonly Player[] {
+  sortDead(): Player[] {
     const dead: Player[] = [];
     this.players.forEach((player) => {
       if (player.stats.val('hp') <= 0 && player.alive) {
@@ -83,7 +83,7 @@ export default class PlayersService {
     return dead;
   }
 
-  getKills(id: string): readonly Player[] {
+  getKills(id: string): Player[] {
     return this.players.filter((player) => player.getKiller() === id);
   }
 

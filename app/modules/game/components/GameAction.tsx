@@ -30,7 +30,7 @@ export const GameAction: FC<{
     [remainPower],
   );
 
-  const avaiableTargets: Record<string, PublicGameStatus[]> = useMemo(() => {
+  const availableTargets: Record<string, PublicGameStatus[]> = useMemo(() => {
     switch (action.orderType) {
       case 'all':
       case 'any':
@@ -39,7 +39,7 @@ export const GameAction: FC<{
         return omit(statusByClan, [character.clan?.id ?? '__clan']);
       case 'self':
         return {
-          [character.clan?.id ?? '__clan']: statusByClan[character.clan?.id ?? '__clan'].filter(
+          [character.clan?.id ?? '__clan']: statusByClan[character.clan?.id ?? '__clan']?.filter(
             ({ id }) => id === character.id,
           ),
         };
@@ -54,8 +54,8 @@ export const GameAction: FC<{
 
   return (
     <Section>
-      <Section.Header>{action.name}</Section.Header>
-      {Object.entries(avaiableTargets).map(([clan, statuses]) => (
+      <Section.Header>Выбери цель для {action.displayName}</Section.Header>
+      {Object.entries(availableTargets).map(([clan, statuses]) => (
         <Section key={clan}>
           <Section.Header>{clan}</Section.Header>
           {statuses.map((status) => (

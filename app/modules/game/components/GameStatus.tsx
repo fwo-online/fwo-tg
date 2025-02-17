@@ -1,13 +1,25 @@
-import { Cell, List } from '@telegram-apps/telegram-ui';
+import { Accordion, Section } from '@telegram-apps/telegram-ui';
 import { useGameStore } from '@/modules/game/store/useGameStore';
+import { Description } from '@/components/Description';
+import { useCallback, useState } from 'react';
 
 export function GameStatus() {
   const status = useGameStore((state) => state.status);
+  const statusByClan = useGameStore((state) => state.statusByClan);
+  const [visibleClan, setVisibleClan] = useState<string[]>([]);
+
+  const handleChange = useCallback((clan: string) => {
+    return (expanded: boolean) => {
+      setVisibleClan((visibleClan) =>
+        expanded ? visibleClan.concat([clan]) : visibleClan.filter((c) => c !== clan),
+      );
+    };
+  }, []);
 
   return (
-    <List>
+    <Description>
       {status.map((status) => (
-        <Cell
+        <Description.Item
           key={status.name}
           after={
             <>
@@ -18,8 +30,22 @@ export function GameStatus() {
           }
         >
           {status.name}
-        </Cell>
+        </Description.Item>
       ))}
-    </List>
+      {Object.entries(statusByClan).map(([clan, statuses]) => (
+        <Accordion key={clan} expanded={visibleClan.includes(clan)} onChange={handleChange(clan)}>
+          <Accordion.Summary style={{ '--tgui--cell--middle--padding': 0 }}>
+            <Section.Header>{clan}</Section.Header>
+          </Accordion.Summary>
+          <Accordion.Content>
+            {statuses.map((status) => (
+              <Description.Item key={status.id} after={<>❤️ {status.hp}</>}>
+                {status.name}
+              </Description.Item>
+            ))}
+          </Accordion.Content>
+        </Accordion>
+      ))}
+    </Description>
   );
 }

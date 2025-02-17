@@ -6,11 +6,11 @@ import type { BotContext } from '../fwo';
 export const lobby = new Scenes.BaseScene<BotContext>('lobby');
 
 lobby.enter(async (ctx) => {
-  const {
-    nickname, prof, lvl, exp, nextLvlExp, gold, bonus,
-  } = ctx.session.character;
+  const { nickname, prof, lvl, exp, nextLvlExp, gold, bonus } = ctx.session.character;
 
-  await ctx.sendSticker(MARKET_STICKER_ID);
+  ctx.session.character.bonus = 100;
+  ctx.session.character.saveToDb();
+  // await ctx.sendSticker(MARKET_STICKER_ID);
   await ctx.replyWithMarkdown(
     `*Лобби*
 Так-так, значит ты *${nickname}* ${Profs.profsData[prof].icon}${lvl}

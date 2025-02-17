@@ -11,6 +11,8 @@ import { assignWithSum } from '@/utils/assignWithSum';
 import { calculateDynamicAttributes } from './utils/calculate-dynamic-attributes';
 import { sum } from 'es-toolkit';
 import ValidationError from '@/arena/errors/ValidationError';
+import { Game } from '@/models/game';
+import GameService from '../GameService';
 
 /**
  * Конструктор персонажа

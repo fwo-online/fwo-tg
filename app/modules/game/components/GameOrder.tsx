@@ -4,6 +4,7 @@ import { GameAction } from '@/modules/game//components/GameAction';
 import type { Action, ServerToClientMessage } from '@fwo/schemas';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { useGameStore } from '../store/useGameStore';
+import { popup } from '@telegram-apps/sdk-react';
 
 export const GameOrder = () => {
   const socket = useWebSocket();
@@ -19,14 +20,15 @@ export const GameOrder = () => {
       return null;
     }
 
-    await new Promise((r) => setTimeout(r, 1000));
     const res = await socket.emitWithAck('game:order', {
       power,
       target,
       action: selectedAction?.name,
     });
 
-    if (res.success) {
+    if (res.error) {
+      popup.open({ message: res.message });
+    } else {
       setSelectedAction(undefined);
       setOrders(res.orders);
       setRemainPower(res.power);

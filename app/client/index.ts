@@ -8,7 +8,7 @@ const { initDataRaw } = retrieveLaunchParams();
 export const token = `tma ${initDataRaw}`;
 
 export const createWebSocket = async () => {
-  const socket = io('http://192.168.10.56:4000', { extraHeaders: { authorization: token } });
+  const socket = io('http://192.168.10.64:4000', { extraHeaders: { authorization: token } });
   return new Promise<Socket>((resolve) => {
     socket.io.on('open', () => {
       resolve(socket);
@@ -16,7 +16,7 @@ export const createWebSocket = async () => {
   });
 };
 
-export const client = hc<Server>('http://192.168.10.56:3000', {
+export const client = hc<Server>('http://192.168.10.64:3000', {
   headers: {
     Authorization: token,
   },

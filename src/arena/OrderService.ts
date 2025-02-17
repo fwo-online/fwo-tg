@@ -47,9 +47,10 @@ export default class Orders {
    *  proc: 10,
    *  action: 'handsHeal',
    * }
+   * @returns заказы игрока
    * @throws {OrderError}
    */
-  orderAction(order: Order): void {
+  orderAction(order: Order) {
     console.log('orderAction >', order.initiator);
 
     const initiator = this.playersService.getById(order.initiator);
@@ -63,7 +64,13 @@ export default class Orders {
 
     initiator.setProc(initiator.proc - order.proc);
     console.log('order :::: ', order);
+
     this.ordersList.push(order);
+
+    return {
+      orders: this.ordersList.filter(({ initiator }) => initiator === order.initiator),
+      proc: initiator.proc,
+    };
   }
 
   /**

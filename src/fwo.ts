@@ -27,10 +27,12 @@ interface BotSession extends Scenes.SceneSession {
 }
 export interface BotContext extends Context {
   session: BotSession;
-  scene: Scenes.SceneContextScene<BotContext>
+  scene: Scenes.SceneContextScene<BotContext>;
 }
 
-export const bot = new Telegraf<BotContext>(process.env.BOT_TOKEN ?? '', { telegram: { testEnv: process.env.NODE_ENV === 'development' } });
+export const bot = new Telegraf<BotContext>(process.env.BOT_TOKEN ?? '', {
+  telegram: { testEnv: process.env.NODE_ENV === 'development' },
+});
 // DB connection
 void connect(async () => {
   console.log('db online');
@@ -51,7 +53,9 @@ bot.use(stage.middleware());
 bot.use(middlewares.chatMiddleware());
 bot.use(middlewares.authMiddleware());
 
-bot.start(async ({ scene }) => { await scene.enter('greeter'); });
+bot.start(async ({ scene }) => {
+  await scene.enter('greeter');
+});
 bot.command('greeter', (ctx) => ctx.scene.enter('greeter'));
 
 bot.use(middlewares.restartMiddleware());
@@ -74,7 +78,7 @@ serve({
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
-  cors: { origin: ['http://192.168.10.56:5173'] },
+  cors: { origin: ['http://192.168.10.64:5173'] },
 });
 
 onCreate(io);

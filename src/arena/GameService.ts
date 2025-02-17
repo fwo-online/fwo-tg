@@ -13,7 +13,7 @@ import arena from '@/arena';
 import { mapValues } from 'es-toolkit';
 import EventEmitter from 'node:events';
 import { noClanName } from './ClanService';
-import type { ServerToClientMessage } from '@fwo/schemas';
+import type { GameStatus, PublicGameStatus } from '@fwo/schemas';
 
 export type KickReason = 'afk' | 'run';
 
@@ -31,17 +31,26 @@ export interface GlobalFlags {
  * переподключился к игре после disconnect(разрыв соединения)
  */
 
-type GameMessageMap = {
-  [K in keyof ServerToClientMessage as K extends `game:${infer T}` ? T : never]: [
-    Parameters<ServerToClientMessage[K]>[0],
-    scope?: string,
-  ];
-};
-
 /**
  * Класс для объекта игры
  */
-export default class GameService extends EventEmitter<GameMessageMap> {
+export default class GameService extends EventEmitter<{
+  end: [
+    {
+      reason: string | undefined;
+      statistic: Partial<Record<string, { exp: number; gold: number }[]>>;
+    },
+  ];
+  startOrders: [];
+  endOrders: [];
+  preKick: [{ reason: string; player: Player }];
+  kick: [{ reason: string; player: Player }];
+  startRound: [
+    { round: number; status: GameStatus[]; statusByClan: Record<string, PublicGameStatus[]> },
+    scope: string,
+  ];
+  endRound: [{ dead: Player[]; log: HistoryItem[] }];
+}> {
   players: PlayersService;
   orders: OrderService;
   round = new RoundService();
@@ -143,7 +152,7 @@ export default class GameService extends EventEmitter<GameMessageMap> {
       return;
     }
     player.preKick(reason);
-    this.emit('preKick', { reason });
+    this.emit('preKick', { reason, player });
   }
 
   /**
@@ -158,7 +167,7 @@ export default class GameService extends EventEmitter<GameMessageMap> {
       return;
     }
 
-    this.emit('kick', { reason, player: player.toPublicObject() });
+    this.emit('kick', { reason, player });
 
     const char = arena.characters[id];
     char.addGameStat({ runs: 1 });
@@ -226,11 +235,10 @@ export default class GameService extends EventEmitter<GameMessageMap> {
     // Отправляем статистику
     setTimeout(() => {
       this.emit('end', { reason: this.getEndGameReason(), statistic: this.statistic() });
-
+      this.removeAllListeners();
       this.saveGame();
       // }, 5000);
       // setTimeout(() => {
-      // this.chat.sendToAll({ type: 'game', action: 'end' });
       arena.mm.cancel();
 
       this.forAllPlayers((player: Player) => {
@@ -308,11 +316,11 @@ export default class GameService extends EventEmitter<GameMessageMap> {
           break;
         }
         case RoundStatus.START_ORDERS: {
-          this.emit('startOrders', undefined);
+          this.emit('startOrders');
           break;
         }
         case RoundStatus.END_ORDERS: {
-          this.emit('endOrders', undefined);
+          this.emit('endOrders');
           // Debug Game Hack
           if (process.env.NODE_ENV === 'development') {
             this.orders.ordersList = this.orders.ordersList.concat(testGame.orders);
@@ -400,7 +408,7 @@ export default class GameService extends EventEmitter<GameMessageMap> {
    * чтобы выводило от чего и от кого умер игрок
    */
   sortDead() {
-    const dead = this.players.sortDead().map((p) => p.toPublicObject());
+    const dead = this.players.sortDead();
     this.cleanLongMagics();
     return dead;
   }

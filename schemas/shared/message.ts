@@ -1,8 +1,9 @@
 import type { CharacterPublic } from '@/character/characterPublic';
 import type { Character } from '@/character';
-import type { PublicPlayer } from './playerSchema';
+import type { Player } from './player';
 import type { GameStatus, PublicGameStatus } from '@/game';
 import type { Action } from './action';
+import type { RPC } from './rpc';
 
 export type ClientToServerMessage = Message<{
   character: [callback: (character: Character) => void];
@@ -17,20 +18,20 @@ export type ClientToServerMessage = Message<{
       target: string;
     },
     callback: (
-      payload:
-        | {
-            success: true;
-            actions: Action[];
-            magics: Action[];
-            skills: Action[];
+      payload: RPC<
+        {
+          actions: Action[];
+          magics: Action[];
+          skills: Action[];
+          power: number;
+          orders: {
             power: number;
-            orders: {
-              power: number;
-              action: string;
-              target: string;
-            }[];
-          }
-        | { success: false; message: string },
+            action: string;
+            target: string;
+          }[];
+        },
+        { message: string }
+      >,
     ) => void,
   ];
 }>;
@@ -46,28 +47,18 @@ export type ServerToClientMessage = Message<{
   'lobby:list': [characters: CharacterPublic[]];
   'lobby:start': [character: CharacterPublic];
   'lobby:stop': [character: CharacterPublic];
-  'game:start': [gameID: string];
-  'game:end': [{ reason?: string; statisitic: unknown }];
+  'game:start': [gameID: string, players: Player[]];
+  'game:end': [{ reason?: string; statistic: Record<string, { exp: number; gold: number }> }];
   'game:startOrders': [actions: { actions: Action[]; magics: Action[]; skills: Action[] }];
   'game:endOrders': [];
   'game:startRound': [
     {
       round: number;
       status: GameStatus[];
-      statusByClan: Record<string, PublicGameStatus[]>;
+      statusByClan: Partial<Record<string, PublicGameStatus[]>>;
     },
   ];
-  'game:endRound': [
-    {
-      dead: PublicPlayer[];
-      log: unknown[];
-    },
-  ];
-  'game:kick': [
-    {
-      reason: string;
-      player: PublicPlayer;
-    },
-  ];
-  'game:preKick': [{ reason: string }];
+  'game:endRound': [{ dead: Player[]; log: string[] }];
+  'game:kick': [{ reason: string; player: Player }];
+  'game:preKick': [{ reason: string; player: Player }];
 }>;
