@@ -12,8 +12,7 @@ import testGame from '@/arena/testGame';
 import arena from '@/arena';
 import { mapValues } from 'es-toolkit';
 import EventEmitter from 'node:events';
-import { noClanName } from './ClanService';
-import type { GameStatus, PublicGameStatus } from '@fwo/schemas';
+import { reserverClanName, type GameStatus, type PublicGameStatus } from '@fwo/schemas';
 
 export type KickReason = 'afk' | 'run';
 
@@ -91,7 +90,7 @@ export default class GameService extends EventEmitter<{
   }
 
   get isTeamWin(): boolean {
-    const { [noClanName]: noClan, ...groupByClan } = this.players.groupByClan(
+    const { [reserverClanName]: noClan, ...groupByClan } = this.players.groupByClan(
       this.players.alivePlayers,
     );
     if (!noClan?.length) {
@@ -444,8 +443,7 @@ export default class GameService extends EventEmitter<{
 
     for (const clan in playersByClan) {
       const players = playersByClan[clan] ?? [];
-      if (clan === noClanName) {
-        /** @todo find another way to send status */
+      if (clan === reserverClanName) {
         players.forEach((player) => {
           const status = [player.getStatus()];
 

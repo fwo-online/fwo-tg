@@ -3,7 +3,6 @@ import { character } from './character';
 import { inventory } from './inventory';
 import { magic } from './magic';
 import { skill } from './skill';
-import { game } from './game';
 import { shop } from './shop';
 import { cors } from 'hono/cors';
 
@@ -13,8 +12,7 @@ export const app = new Hono()
   .route('/inventory', inventory)
   .route('/shop', shop)
   .route('/magic', magic)
-  .route('/skill', skill)
-  .route('/game', game);
+  .route('/skill', skill);
 
 export default app;
 

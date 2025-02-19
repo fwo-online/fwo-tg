@@ -1,6 +1,6 @@
 import { keyBy } from 'lodash';
 import Player from './PlayerService';
-import { noClanName } from '@/arena/ClanService';
+import { reserverClanName } from '@fwo/schemas';
 
 export default class PlayersService {
   init: string[];
@@ -61,7 +61,7 @@ export default class PlayersService {
   }
 
   groupByClan(players = this.players) {
-    return Object.groupBy(players, ({ clan }) => clan?.name || noClanName);
+    return Object.groupBy(players, ({ clan }) => clan?.name || reserverClanName);
   }
 
   /**

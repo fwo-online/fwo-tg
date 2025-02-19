@@ -1,79 +1,51 @@
-import {
-  Button,
-  Cell,
-  Info,
-  Input,
-  Section,
-  Selectable,
-  Slider,
-  VisuallyHidden,
-} from '@telegram-apps/telegram-ui';
+import { Button, Placeholder, Section, Slider } from '@telegram-apps/telegram-ui';
 import { useGameStore } from '@/modules/game/store/useGameStore';
-import { type FC, useCallback, useMemo, useState } from 'react';
-import type { Action, PublicGameStatus } from '@fwo/schemas';
-import { useCharacter } from '@/hooks/useCharacter';
-import { omit, pick } from 'es-toolkit';
-import { useFormStatus } from 'react-dom';
+import { type FC, useState } from 'react';
+import type { Action } from '@fwo/schemas';
+import { useGameActionTargets } from '../hooks/useGameActionTargets';
+import { GameActionTarget } from './GameActionTarget';
+import { useGameActionOrder } from '../hooks/useGameActionOrder';
 
 export const GameAction: FC<{
   action: Action;
-}> = ({ action }) => {
-  const { character } = useCharacter();
+  onReset: () => void;
+}> = ({ action, onReset }) => {
   const remainPower = useGameStore((state) => state.power);
-  const statusByClan = useGameStore((state) => state.statusByClan);
   const [power, setPower] = useState(0);
+  const { hasTargets, availableTargets } = useGameActionTargets({ action });
+  const [target, setTarget] = useState<string | null>(null);
+  const { isPending, handleOrder } = useGameActionOrder(action, onReset);
 
-  const handleSliderChange = useCallback(
-    (value: number) => {
-      setPower(Math.min(remainPower, value));
-    },
-    [remainPower],
-  );
+  const handleSliderChange = (value: number) => {
+    setPower(Math.min(remainPower, value));
+  };
 
-  const availableTargets: Record<string, PublicGameStatus[]> = useMemo(() => {
-    switch (action.orderType) {
-      case 'all':
-      case 'any':
-        return statusByClan;
-      case 'enemy':
-        return omit(statusByClan, [character.clan?.id ?? '__clan']);
-      case 'self':
-        return {
-          [character.clan?.id ?? '__clan']: statusByClan[character.clan?.id ?? '__clan']?.filter(
-            ({ id }) => id === character.id,
-          ),
-        };
-      case 'team':
-        return pick(statusByClan, [character.clan?.id ?? '__clan']);
-      default:
-        return statusByClan;
+  const handleTargetChange = (target: string) => {
+    setTarget(target);
+  };
+
+  const handleClick = () => {
+    if (!target) {
+      return;
     }
-  }, [action.orderType, statusByClan, character.id, character.clan?.id]);
-
-  const { pending } = useFormStatus();
+    handleOrder(target, power);
+  };
 
   return (
     <Section>
       <Section.Header>Выбери цель для {action.displayName}</Section.Header>
-      {Object.entries(availableTargets).map(([clan, statuses]) => (
-        <Section key={clan}>
-          <Section.Header>{clan}</Section.Header>
-          {statuses.map((status) => (
-            <Cell
-              Component="label"
-              before={<Selectable name="target" value={status.id} />}
-              key={status.id}
-              after={
-                <Info type="text" style={{ marginLeft: 'auto' }}>
-                  ❤️ {status.hp}
-                </Info>
-              }
-            >
-              {status.name} ({status.hp})
-            </Cell>
-          ))}
-        </Section>
-      ))}
+      {hasTargets ? (
+        <Placeholder description="Нет доступных целей" />
+      ) : (
+        Object.entries(availableTargets).map(([clan, statuses]) => (
+          <Section key={clan}>
+            <Section.Header>{clan}</Section.Header>
+            {statuses.map((status) => (
+              <GameActionTarget key={status.id} status={status} onChange={handleTargetChange} />
+            ))}
+          </Section>
+        ))
+      )}
       <Slider
         before={0}
         after={remainPower}
@@ -82,13 +54,22 @@ export const GameAction: FC<{
         max={remainPower}
         onChange={handleSliderChange}
       />
-      <VisuallyHidden>
-        <Input name="power" value={power} readOnly />
-      </VisuallyHidden>
 
-      <Button stretched type="submit" disabled={pending} loading={pending}>
-        Заказать {action.displayName} на {power}%
-      </Button>
+      {target ? (
+        <Button
+          stretched
+          type="submit"
+          disabled={isPending}
+          loading={isPending}
+          onClick={handleClick}
+        >
+          Заказать {action.displayName} на {power}%
+        </Button>
+      ) : (
+        <Button stretched disabled>
+          Выбери цель
+        </Button>
+      )}
     </Section>
   );
 };

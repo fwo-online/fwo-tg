@@ -1,4 +1,3 @@
-import { noClanName } from '@/arena/ClanService';
 import OrderError from '@/arena/errors/OrderError';
 import type GameService from '@/arena/GameService';
 import { formatMessage } from '@/arena/LogService/utils';
@@ -6,6 +5,7 @@ import MatchMakingService from '@/arena/MatchMakingService';
 import { getAvailableActions } from '@/helpers/actionsHelper';
 
 import type { Server, Socket } from '@/server/ws';
+import { reserverClanName } from '@fwo/schemas';
 
 const getRoom = (game: GameService, scope?: string) => {
   if (scope) {
@@ -110,7 +110,7 @@ export const onConnection = (_io: Server, socket: Socket) => {
       round: 2,
       status: [{ id: character.id, name: character.nickname, mp: 10, en: 10, hp: 6 }],
       statusByClan: {
-        [noClanName]: [{ id: character.id, name: character.nickname, hp: 6 }],
+        [reserverClanName]: [{ id: character.id, name: character.nickname, hp: 6 }],
       },
     });
     socket.emit('game:startOrders', getAvailableActions(character));

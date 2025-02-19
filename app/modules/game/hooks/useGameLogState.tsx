@@ -1,15 +1,11 @@
-import { useCharacter } from '@/hooks/useCharacter';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import type { ServerToClientMessage } from '@fwo/schemas';
 import { useCallback, useEffect } from 'react';
-import { useParams } from 'react-router';
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import { useGameKickState } from './useGameKickState';
 
 export function useGameLogState() {
   const socket = useWebSocket();
-  const { gameID } = useParams();
-  const { character } = useCharacter();
   const pushLog = useGameStore((state) => state.pushLog);
 
   useGameKickState();
@@ -32,6 +28,10 @@ export function useGameLogState() {
   const handleEndRound = useCallback(
     ({ dead, log }: Parameters<ServerToClientMessage['game:endRound']>[0]) => {
       pushLog(log);
+
+      if (dead.length) {
+        pushLog(`Погибшие в этом раунде: ${dead.map(({ name }) => name).join(', ')}`);
+      }
     },
     [pushLog],
   );

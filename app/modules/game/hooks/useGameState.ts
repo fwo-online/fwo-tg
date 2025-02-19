@@ -1,15 +1,11 @@
-import { useCharacter } from '@/hooks/useCharacter';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import type { ServerToClientMessage } from '@fwo/schemas';
 import { useCallback, useEffect } from 'react';
-import { useParams } from 'react-router';
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import { useGameKickState } from './useGameKickState';
 
 export function useGameState() {
   const socket = useWebSocket();
-  const { gameID } = useParams();
-  const { character } = useCharacter();
   const setOrders = useGameStore((state) => state.setOrders);
   const setRemainPower = useGameStore((state) => state.setPower);
   const setActions = useGameStore((state) => state.setActions);

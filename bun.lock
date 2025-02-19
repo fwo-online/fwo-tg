@@ -3,7 +3,7 @@
   "workspaces": {
     "": {
       "dependencies": {
-        "valibot": "^1.0.0-rc.0",
+        "valibot": "^1.0.0-rc.1",
       },
       "devDependencies": {
         "@biomejs/biome": "^1.9.4",

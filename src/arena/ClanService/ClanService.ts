@@ -11,7 +11,7 @@ import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
 import ValidationError from '@/arena/errors/ValidationError';
 import type { Clan } from '@/models/clan';
-import { noClanName } from './constants';
+import { reserverClanName } from '@fwo/schemas';
 
 /**
  * Clan Service
@@ -54,7 +54,7 @@ export class ClanService {
    */
   static async createClan(charId: string, name: string) {
     const char: CharacterService = arena.characters[charId];
-    if (name === noClanName) {
+    if (name === reserverClanName) {
       throw new ValidationError('Недопустимое название клана');
     }
     if (char.gold < this.lvlCost[0]) {
