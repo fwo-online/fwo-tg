@@ -1,6 +1,5 @@
 import { Navigate, Outlet, useNavigate } from 'react-router';
 import { useCharacterContext } from '@/hooks/useCharacterContext';
-import { WebSocketProvider } from '@/contexts/webSocket';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { useEffect } from 'react';
 

@@ -9,12 +9,10 @@ import { init } from './init';
 import '@telegram-apps/telegram-ui/dist/styles.css';
 import './index.css';
 
-import './mockEnv';
-
 const root = createRoot(document.getElementById('root')!);
 
 try {
-  init(retrieveLaunchParams().startParam === 'debug' || import.meta.env.DEV);
+  await init(retrieveLaunchParams().startParam === 'debug' || import.meta.env.DEV);
 
   root.render(
     <StrictMode>

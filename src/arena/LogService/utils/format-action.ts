@@ -1,6 +1,7 @@
 import type { SuccessArgs } from '@/arena/Constuructors/types';
 import MiscService from '@/arena/MiscService';
 import { floatNumber } from '@/utils/floatNumber';
+import { bold, italic } from '@/utils/formatString';
 
 export function formatAction(msgObj: SuccessArgs): string {
   if (msgObj.msg) {
@@ -19,27 +20,27 @@ export function formatAction(msgObj: SuccessArgs): string {
 
   switch (msgObj.actionType) {
     case 'heal':
-      return `Игрок *${msgObj.target.nick}* был вылечен 🤲 на *💖${msgObj.effect}*`;
+      return `Игрок ${bold`${msgObj.target.nick}`} был вылечен 🤲 на ${bold`💖${msgObj.effect}`}`;
     case 'phys': {
-      return `*${msgObj.initiator.nick}* ${MiscService.getWeaponAction(msgObj.target, msgObj.weapon)} и нанёс *${msgObj.effect}* урона`;
+      return `${bold(msgObj.initiator.nick)} ${MiscService.getWeaponAction(msgObj.target, msgObj.weapon)} и нанёс ${bold(msgObj.effect.toString())} урона`;
     }
     case 'dmg-magic':
     case 'dmg-magic-long':
     case 'aoe-dmg-magic':
-      return `*${msgObj.initiator.nick}* сотворил _${msgObj.action}_ на *${msgObj.target.nick}* нанеся ${calculateEffect()} урона`;
+      return `${bold(msgObj.initiator.nick)} сотворил ${italic(msgObj.action)} на ${bold(msgObj.target.nick)} нанеся ${calculateEffect()} урона`;
     case 'magic':
     case 'magic-long':
       return !msgObj.effect
-        ? `*${msgObj.initiator.nick}* использовал _${msgObj.action}_ на *${msgObj.target.nick}*`
-        : `*${msgObj.initiator.nick}* использовал _${msgObj.action}_ на *${msgObj.target.nick}* с эффектом ${msgObj.effect}`;
+        ? `${bold(msgObj.initiator.nick)} использовал ${italic(msgObj.action)} на ${bold(msgObj.target.nick)}`
+        : `${bold(msgObj.initiator.nick)} использовал ${italic(msgObj.action)} на ${bold(msgObj.target.nick)} с эффектом ${msgObj.effect}`;
     case 'skill':
     case 'dodge':
       return msgObj.orderType === 'self'
-        ? `*${msgObj.initiator.nick}* использовал _${msgObj.action}_`
-        : `*${msgObj.initiator.nick}* использовал _${msgObj.action}_ на *${msgObj.target.nick}*`;
+        ? `${bold(msgObj.initiator.nick)} использовал ${italic(msgObj.action)}`
+        : `${bold(msgObj.initiator.nick)} использовал ${italic(msgObj.action)} на ${bold(msgObj.target.nick)}`;
     case 'passive':
-      return `_${msgObj.action}_`;
+      return `${italic(msgObj.action)}`;
     default:
-      return `*${msgObj.initiator.nick}* использовал _${msgObj.action}_ на *${msgObj.target.nick}*`;
+      return `${bold(msgObj.initiator.nick)} использовал ${italic(msgObj.action)} на ${bold(msgObj.target.nick)}`;
   }
 }

@@ -1,6 +1,7 @@
 import type { BreaksMessage, FailArgs } from '@/arena/Constuructors/types';
 import { normalizeToArray } from '@/utils/array';
 import { formatCause } from './format-cause';
+import { bold, italic } from '@/utils/formatString';
 /**
  * msg
  * @todo WIP, функция должна будет принимать как значения урона т.п так и
@@ -9,50 +10,48 @@ import { formatCause } from './format-cause';
  * если это не BattleLog выброс, его нужно прокидывать дальше вверх
  */
 export function formatError(msgObj: FailArgs): string {
-  const {
-    action, actionType, reason, target, initiator,
-  } = msgObj;
+  const { action, actionType, reason, target, initiator } = msgObj;
 
   if (typeof reason === 'string') {
     const TEXT: Record<BreaksMessage | 'default', Record<'en' | 'ru', string>> = {
       NO_INITIATOR: {
-        ru: `Некто хотел использовать _${action}_ на игрока *${target.nick}*, но исчез`,
+        ru: `Некто хотел использовать ${italic(action)} на игрока ${bold(target.nick)}, но исчез`,
         en: '',
       },
       NO_TARGET: {
-        ru: `Цель для заклинания _${action}_ игрока *${initiator.nick}* не была найдена`,
+        ru: `Цель для заклинания ${italic(action)} игрока ${bold(initiator.nick)} не была найдена`,
         en: '',
       },
       NO_MANA: {
-        ru: `*${initiator.nick}* пытался использовать _${action}_ на *${target.nick}, но не хватило маны`,
+        ru: `${bold(initiator.nick)} пытался использовать ${italic(action)} на ${bold(target.nick)}, но не хватило маны`,
         en: '',
       },
       NO_ENERGY: {
-        ru: `*${initiator.nick}* пытался применить  _${action}_, но не хватило энергии`,
+        ru: `${bold(initiator.nick)} пытался применить  ${italic(action)}, но не хватило энергии`,
         en: '',
       },
       CHANCE_FAIL: {
-        ru: `*${initiator.nick}* пытался сотворить _${action}_, но у него не вышло`,
+        ru: `${bold(initiator.nick)} пытался сотворить ${italic(action)}, но у него не вышло`,
         en: '',
       },
       GOD_FAIL: {
-        ru: `Заклинание _${action}_ *${initiator.nick}* провалилось по воле богов`,
+        ru: `Заклинание ${italic(action)} ${bold(initiator.nick)} провалилось по воле богов`,
         en: '',
       },
       HEAL_FAIL: {
-        ru: `*${initiator.nick}* пытался _вылечить_ *${target.nick}*, но тот был атакован`,
+        ru: `${bold(initiator.nick)} пытался ${italic`вылечить`} ${bold(target.nick)}, но тот был атакован`,
         en: '',
       },
       SKILL_FAIL: {
-        ru: `*${initiator.nick}* пытался использовать умение _${action}_, но у него не вышло`,
+        ru: `${bold(initiator.nick)} пытался использовать умение ${italic(action)}, но у него не вышло`,
         en: '',
       },
       PHYS_FAIL: {
-        ru: `*${initiator.nick}* пытался _атаковать_ *${target.nick}*, но не пробил`,
+        ru: `${bold(initiator.nick)} пытался ${italic`атаковать`} ${bold(target.nick)}, но не пробил`,
         en: '',
       },
       NO_WEAPON: {
-        ru: `*${initiator.nick}* пытался атаковать *${target.nick}*, но у него не оказалось оружия в руках`,
+        ru: `${bold(initiator.nick)} пытался атаковать ${bold(target.nick)}, но у него не оказалось оружия в руках`,
         en: '',
       },
       default: {
@@ -77,8 +76,8 @@ export function formatError(msgObj: FailArgs): string {
 
   switch (actionType) {
     case 'phys':
-      return `*${initiator.nick}* пытался атаковать *${target.nick}*, но у него не получилось\n${formattedReason}`;
+      return `${bold(initiator.nick)} пытался атаковать ${bold(target.nick)}, но у него не получилось\n${formattedReason}`;
     default:
-      return `*${initiator.nick}* пытался использовать _${action}_ на *${target.nick}*, но у него не получилось\n${formattedReason}`;
+      return `${bold(initiator.nick)} пытался использовать ${italic(action)} на ${bold(target.nick)}, но у него не получилось\n${formattedReason}`;
   }
 }

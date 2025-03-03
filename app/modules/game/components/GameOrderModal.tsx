@@ -5,17 +5,17 @@ import { GameOrderList } from '@/modules/game//components/GameOrderList';
 import { GameOrder } from './GameOrder';
 
 export function GameOrderModal() {
-  const [visible, setVisible] = useState(true);
+  const [open, setOpen] = useState(true);
   const canOrder = useGameStore((state) => state.canOrder);
 
   return (
     <Modal
-      open={canOrder && visible}
-      onOpenChange={(open) => setVisible(open)}
+      open={canOrder && open}
+      onOpenChange={setOpen}
       trigger={
         <FixedLayout vertical="bottom">
           <List>
-            <Button stretched disabled={!canOrder} onClick={() => setVisible(!visible)}>
+            <Button stretched disabled={!canOrder} onClick={() => setOpen(!open)}>
               {canOrder ? 'Сделать заказ' : 'Ожидание стадии заказов'}
             </Button>
           </List>

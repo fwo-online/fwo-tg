@@ -4,7 +4,7 @@ import type { Player } from '@/arena/PlayersService';
 import { normalizeToArray } from '@/utils/array';
 import { floatNumber } from '@/utils/floatNumber';
 import type { ActionType, BreaksMessage, ExpArr, FailArgs, SuccessArgs } from './types';
-import type { EffectType, FailMessage, OrderType, SuccessMessage } from '@fwo/schemas';
+import type { EffectType, OrderType } from '@fwo/schemas';
 
 export type BaseActionParams = {
   initiator: Player;
@@ -35,7 +35,7 @@ export abstract class BaseAction {
   params: BaseActionParams;
 
   status: BaseActionStatus = { effect: 0, exp: 0, expArr: [] };
-  results: SuccessMessage;
+  results: SuccessArgs;
 
   abstract cast(initiator: Player, target: Player, game: GameService);
 
@@ -76,16 +76,16 @@ export abstract class BaseAction {
     };
   }
 
-  getSuccessResult({ initiator, target } = this.params): SuccessMessage {
+  getSuccessResult({ initiator, target } = this.params): SuccessArgs {
     return {
       exp: this.status.exp,
       action: this.displayName,
       actionType: this.actionType,
-      target: target.toObject(),
-      initiator: initiator.toObject(),
+      target,
+      initiator,
       effect: floatNumber(this.status.effect),
       hp: target.stats.val('hp'),
-      weapon: initiator.weapon.item?.info,
+      weapon: initiator.weapon.item,
       effectType: this.effectType,
       orderType: this.orderType,
       expArr: this.status.expArr,

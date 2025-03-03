@@ -12,6 +12,14 @@ div {
   font-family: var(--tgui--font-family);
 }
 
+code {
+  font-family: 'PixeloidMono', monospace;
+}
+
+blockquote {
+  margin-inline: 16px;
+}
+
 @font-face {
   font-family: 'Pixeloid';
   src: url('fonts/PixeloidSans.woff2') format('woff2');

@@ -4,16 +4,16 @@ import {
   themeParams,
   miniApp,
   initData,
-  $debug,
+  setDebug,
   init as initSDK,
 } from '@telegram-apps/sdk-react';
 
 /**
  * Initializes the application and configures its dependencies.
  */
-export function init(debug: boolean): void {
+export async function init(debug: boolean) {
   // Set @telegram-apps/sdk-react debug mode.
-  $debug.set(debug);
+  setDebug(debug);
 
   // Initialize special event handlers for Telegram Desktop, Android, iOS, etc.
   // Also, configure the package.
@@ -25,9 +25,14 @@ export function init(debug: boolean): void {
   }
 
   // Mount all components used in the project.
+  // console.log(miniApp.isSupported());
+  miniApp.mount().then(() => {
+    // Define components-related CSS variables.
+    miniApp.bindCssVars();
+    themeParams.bindCssVars();
+  });
+
   backButton.mount();
-  miniApp.mount();
-  themeParams.mount();
   initData.restore();
   void viewport
     .mount()
@@ -37,8 +42,4 @@ export function init(debug: boolean): void {
     .then(() => {
       viewport.bindCssVars();
     });
-
-  // Define components-related CSS variables.
-  miniApp.bindCssVars();
-  themeParams.bindCssVars();
 }

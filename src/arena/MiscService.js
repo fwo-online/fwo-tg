@@ -7,43 +7,46 @@
  * @property {string} name
  * @property {function} action
  */
+
+import { bold, italic } from "@/utils/formatString"
+
 /** @type {Object.<string, weaponType>} */
 const WEAPON_TYPES = {
   thrust: {
     name: 'колющее',
-    action: (target, weapon) => `вонзил _${weapon.info.name}_ в *${target.nick}*`,
+    action: (target, weapon) => `вонзил ${italic(weapon.info.name)} в ${bold(target.nick)}`,
   },
   cut: {
     name: 'режущее',
-    action: (target, weapon) => `пустил кровь *${target.nick}* с помощью _${weapon.info.name}_`,
+    action: (target, weapon) => `пустил кровь ${bold(target.nick)} с помощью ${italic(weapon.info.name)}`,
   },
   chop: {
     name: 'рубящее',
-    action: (target, weapon) => `рубанул *${target.nick}* _${weapon.info.case}_`,
+    action: (target, weapon) => `рубанул ${bold(target.nick)} ${italic(weapon.info.case)}`,
   },
   heal: {
     name: 'лечащее',
-    action: (target, weapon) => `вонзил _${weapon.info.name}_ в *${target.nick}*`,
+    action: (target, weapon) => `вонзил ${italic(weapon.info.name)} в ${bold(target.nick)}`,
   },
   range: {
     name: 'метательное',
-    action: (target, weapon) => `швырнул в *${target.nick}* _${weapon.info.case}_`,
+    action: (target, weapon) => `швырнул в ${bold(target.nick)} ${italic(weapon.info.case)}`,
   },
   m: {
     name: 'дальнобойное',
-    action: (target, weapon) => `стрельнул в *${target.nick}* _${weapon.info.case}_`,
+    action: (target, weapon) => `стрельнул в ${bold(target.nick)} ${italic(weapon.info.case)}`,
   },
   f: {
     name: 'зажигательное',
-    action: (target, weapon) => `обжег *${target.nick}* с помощью _${weapon.info.case}_`,
+    action: (target, weapon) => `обжег ${bold(target.nick)} с помощью ${italic(weapon.info.case)}`,
   },
   stun: {
     name: 'оглушающее',
-    action: (target, weapon) => `дал по башке *${target.nick}* _${weapon.info.case}_`,
+    action: (target, weapon) => `дал по башке ${bold(target.nick)} ${italic(weapon.info.case)}`,
   },
   r: {
     name: 'спецоружие',
-    action: (target, weapon) => `атаковал *${target.nick}* _${weapon.info.case}_`,
+    action: (target, weapon) => `атаковал ${bold(target.nick)} ${italic(weapon.info.case)}`,
   },
 };
 /**

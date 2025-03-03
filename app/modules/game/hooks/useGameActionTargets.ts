@@ -14,7 +14,6 @@ export const useGameActionTargets = ({
   const statusByClan = useGameStore((state) => state.statusByClan);
 
   const clanID = character.clan?.id ?? reserverClanName;
-  action.orderType = 'teamExceptSelf';
 
   const availableTargets: Record<string, PublicGameStatus[]> = useMemo(() => {
     switch (action.orderType) {

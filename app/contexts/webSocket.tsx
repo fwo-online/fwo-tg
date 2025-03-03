@@ -8,9 +8,12 @@ export const WebSocketContext = createContext<
   Socket<ServerToClientMessage, ClientToServerMessage> | undefined
 >(undefined);
 
-export const socket = createWebSocket();
-
-export const WebSocketProvider = ({ children }: PropsWithChildren) => {
+export const WebSocketProvider = ({
+  socket,
+  children,
+}: PropsWithChildren<{
+  socket: Promise<Socket<ServerToClientMessage, ClientToServerMessage>>;
+}>) => {
   const [ws] = useState(use(socket));
 
   return <WebSocketContext value={ws}>{children}</WebSocketContext>;
