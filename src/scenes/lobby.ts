@@ -8,19 +8,15 @@ export const lobby = new Scenes.BaseScene<BotContext>('lobby');
 lobby.enter(async (ctx) => {
   const { nickname, prof, lvl, exp, nextLvlExp, gold, bonus } = ctx.session.character;
 
-  ctx.session.character.bonus = 100;
-  ctx.session.character.saveToDb();
-  // await ctx.sendSticker(MARKET_STICKER_ID);
+  try {
+    await ctx.sendSticker(MARKET_STICKER_ID);
+  } catch {}
+
   await ctx.replyWithMarkdown(
     `*Лобби*
 Так-так, значит ты *${nickname}* ${Profs.profsData[prof].icon}${lvl}
 Exp: (📖${exp}/${nextLvlExp}) Gold: 💰 ${gold} Bonus: ${bonus}`,
-    Markup.keyboard([
-      ['⚔ В бой'],
-      ['🏰 Клан'],
-      ['😎 Профиль', '🏪 Магазин'],
-      ['☸ Настройки', '❓ Помощь'],
-    ]).resize(),
+    Markup.keyboard([['⚔ В бой'], ['🏰 Клан'], ['☸ Настройки', '❓ Помощь']]).resize(),
   );
 
   if (ctx.session.character.wasLvlUp) {
@@ -29,16 +25,8 @@ Exp: (📖${exp}/${nextLvlExp}) Gold: 💰 ${gold} Bonus: ${bonus}`,
   }
 });
 
-lobby.hears('😎 Профиль', async (ctx) => {
-  await ctx.scene.enter('profile');
-});
-
 lobby.hears('⚔ В бой', async (ctx) => {
   await ctx.scene.enter('battleScene');
-});
-
-lobby.hears('🏪 Магазин', async (ctx) => {
-  await ctx.scene.enter('shopScene');
 });
 
 lobby.hears('☸ Настройки', async (ctx) => {

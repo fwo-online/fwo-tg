@@ -11,7 +11,7 @@ import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
 import ValidationError from '@/arena/errors/ValidationError';
 import type { Clan } from '@/models/clan';
-import { reserverClanName } from '@fwo/schemas';
+import { reservedClanName } from '@fwo/schemas';
 
 /**
  * Clan Service
@@ -54,7 +54,7 @@ export class ClanService {
    */
   static async createClan(charId: string, name: string) {
     const char: CharacterService = arena.characters[charId];
-    if (name === reserverClanName) {
+    if (name === reservedClanName) {
       throw new ValidationError('Недопустимое название клана');
     }
     if (char.gold < this.lvlCost[0]) {
@@ -203,7 +203,11 @@ export class ClanService {
    */
   static async acceptRequest(clanId: string, requesterID: string) {
     const clan = await this.getClanById(clanId);
-    if (clan.requests.find(({ id }) => id === requesterID)) {
+    if (!clan.requests.some(({ id }) => id === requesterID)) {
+      throw new ValidationError('Такой заявки не существует');
+    }
+
+    if (clan.players.find(({ id }) => id === requesterID)) {
       throw new ValidationError('Заявка уже принята');
     }
 

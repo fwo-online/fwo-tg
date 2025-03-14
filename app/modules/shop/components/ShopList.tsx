@@ -1,14 +1,14 @@
 import type { Item } from '@fwo/schemas';
 import { Button, ButtonCell, Navigation, Placeholder } from '@telegram-apps/telegram-ui';
-import { use, useState, type FC } from 'react';
+import { use, type FC } from 'react';
 import { buyItem } from '@/client/character';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 import { ItemModal } from '@/modules/items/components/ItemsModal';
-import { useCharacter } from '@/hooks/useCharacter';
+import { useCharacter } from '@/contexts/character';
 import { useRequest } from '@/hooks/useRequest';
 
 export const ShopList: FC<{ shopPromise: Promise<Item[]> }> = ({ shopPromise }) => {
-  const [items] = useState(use(shopPromise));
+  const items = use(shopPromise);
   const { character } = useCharacter();
   const { updateCharacter } = useUpdateCharacter();
   const [_, makeRequest] = useRequest();

@@ -24,7 +24,7 @@ export abstract class ActionsHelper {
   }
 
   static hasSkillOrder(player: Player, game: GameService, skillName: string) {
-    return !game.orders.checkPlayerOrder(player.id, skillName);
+    return game.orders.checkPlayerOrder(player.id, skillName);
   }
 
   static canProtect(player: Player, game: GameService) {
@@ -79,12 +79,14 @@ export abstract class ActionsHelper {
       (skill) => !ActionsHelper.hasSkillOrder(player, game, skill),
     );
 
-    return skills.map(ActionsHelper.formatAction).filter((action) => !!action);
+    return skills
+      .map((skill) => ActionsHelper.formatAction(skill, player.getSkillLevel(skill)))
+      .filter((action) => !!action);
   }
 
-  static formatAction(action: string) {
+  static formatAction(action: string, lvl: number) {
     if (ActionService.isAction(action)) {
-      return ActionService.toObject(action);
+      return ActionService.toObject(action, lvl);
     }
   }
 

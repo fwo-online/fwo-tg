@@ -16,15 +16,17 @@ export class ActionService {
     return false;
   }
 
-  static toObject(action: ActionKey): Action {
+  static toObject(action: ActionKey, lvl: number): Action {
     const c = arena.actions[action];
 
     if ('cost' in c && 'costType' in c) {
+      const cost = Array.isArray(c.cost) ? c.cost[lvl] : c.cost;
+
       return {
         name: c.name,
         displayName: c.displayName,
         costType: c.costType,
-        cost: c.cost,
+        cost,
         orderType: c.orderType,
       };
     }

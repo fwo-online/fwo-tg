@@ -1,5 +1,5 @@
-export type RPC<Success extends object, Error extends object> =
+export type RPC<Success extends object, Error extends object = { message: string }> =
   | (Success & {
-      error: false;
+      error?: false;
     })
   | (Error & { error: true });

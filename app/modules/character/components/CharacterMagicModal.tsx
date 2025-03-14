@@ -12,12 +12,11 @@ export const CharacterMagicModal: FC<{ magic: Magic; trigger?: ReactNode }> = ({
       <List>
         <Banner
           header={magic.displayName}
-          subheader={magic.desc}
+          subheader={magic.description}
           description={
             <Description>
               <Description.Item after={magic.lvl}>Уровень</Description.Item>
               <Description.Item after={`💧${magic.cost}`}>Стоимость</Description.Item>
-              <Description.Item after={`${magic.effect}`}>Эффект</Description.Item>
             </Description>
           }
         />

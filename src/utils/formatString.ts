@@ -11,9 +11,9 @@ export function bold(str: string): string;
 export function bold(strings: TemplateStringsArray, ...values: unknown[]): string;
 export function bold(stringsOrStr: TemplateStringsArray | string, ...values: unknown[]): string {
   if (typeof stringsOrStr === 'string') {
-    return `**${stringsOrStr}**`;
+    return `*${stringsOrStr}*`;
   }
-  return `**${String.raw({ raw: stringsOrStr }, ...values)}**`;
+  return `*${String.raw({ raw: stringsOrStr }, ...values)}*`;
 }
 
 export function italic(str: string): string;
@@ -41,7 +41,7 @@ export function brackets(
   ...values: unknown[]
 ): string {
   if (typeof stringsOrStr === 'string') {
-    return `> ${stringsOrStr}`;
+    return `\\[ ${stringsOrStr} ]`;
   }
-  return `> ${String.raw({ raw: stringsOrStr }, ...values)}`;
+  return `\\[ ${String.raw({ raw: stringsOrStr }, ...values)} ]`;
 }

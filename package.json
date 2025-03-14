@@ -36,7 +36,7 @@
   },
   "homepage": "https://github.com/catHD/fwo-tg#readme",
   "dependencies": {
-    "valibot": "^1.0.0-rc.3"
+    "valibot": "^1.0.0-rc.4"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

@@ -10,13 +10,15 @@ export function withBackButton(Component: ComponentType) {
     const back = useCallback(() => navigate(-1), [navigate]);
 
     useEffect(() => {
-      backButton.show();
-      backButton.onClick(back);
+      if (backButton.isSupported()) {
+        backButton.show();
+        backButton.onClick(back);
 
-      return () => {
-        backButton.hide();
-        backButton.offClick(back);
-      };
+        return () => {
+          backButton.hide();
+          backButton.offClick(back);
+        };
+      }
     }, [back]);
 
     return <Component />;

@@ -18,7 +18,11 @@ export const middleware = async (socket: Socket, next: (err?: Error) => void) =>
     socket.data.character = character;
     next();
   } catch (e) {
-    return next(e);
+    if (e instanceof Error) {
+      return next(e);
+    }
+
+    console.log(e);
   }
 };
 

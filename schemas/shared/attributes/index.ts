@@ -21,6 +21,8 @@ export const attributesSchema = v.object({
   heal: v.optional(minMaxSchema, { min: 0, max: 0 }),
   hit: v.optional(minMaxSchema, { min: 0, max: 0 }),
   resists: v.optional(elementAttributesSchema, { fire: 0, frost: 0, acid: 0, lightning: 0 }),
+  maxTarget: v.optional(v.number()),
+  spellLength: v.optional(v.number()),
 });
 
 export type AttributesInput = v.InferInput<typeof attributesSchema>;

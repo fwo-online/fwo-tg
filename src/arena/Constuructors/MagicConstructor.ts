@@ -5,9 +5,7 @@ import type * as magics from '../magics';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import { AffectableAction } from './AffectableAction';
-import type {
-  ActionType, CustomMessage, OrderType,
-} from './types';
+import type { ActionType, CustomMessage, OrderType } from './types';
 
 export interface MagicArgs {
   name: keyof typeof magics;
@@ -28,8 +26,7 @@ export interface MagicArgs {
 /**
  * Конструктор магии
  */
-export interface Magic extends MagicArgs, CustomMessage {
-}
+export interface Magic extends MagicArgs, CustomMessage {}
 
 export abstract class Magic extends AffectableAction {
   declare name: keyof typeof magics;
@@ -71,7 +68,7 @@ export abstract class Magic extends AffectableAction {
       this.next();
     } catch (e) {
       // @fixme прокидываем ошибку выше для длительных кастов
-      if (this.isLong) throw (e);
+      if (this.isLong) throw e;
 
       this.handleCastError(e);
     } finally {
@@ -217,11 +214,11 @@ export abstract class Magic extends AffectableAction {
     return {
       name: this.name,
       displayName: this.displayName,
-      desc: this.desc,
+      description: this.desc,
       cost: this.cost,
       effect: this.effect,
       effectType: this.effectType,
       lvl: this.lvl,
-    }
+    };
   }
 }

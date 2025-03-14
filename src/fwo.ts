@@ -19,6 +19,11 @@ import { createBunWebSocket } from 'hono/bun';
 import { Server } from 'socket.io';
 import { createServer } from 'node:http';
 import { middleware, onConnection, onCreate } from '@/server/ws';
+import { LogService } from './arena/LogService';
+import { broadcast } from './helpers/channelHelper';
+import { bold } from './utils/formatString';
+import { reservedClanName } from '@fwo/schemas';
+import { isString } from 'es-toolkit';
 
 const { websocket } = createBunWebSocket();
 
@@ -30,6 +35,7 @@ export interface BotContext extends Context {
   scene: Scenes.SceneContextScene<BotContext>;
 }
 
+// console.l;
 export const bot = new Telegraf<BotContext>(process.env.BOT_TOKEN ?? '', {
   telegram: { testEnv: process.env.NODE_ENV === 'development' },
 });
@@ -46,25 +52,38 @@ arena.magics = magics;
 arena.skills = skills;
 arena.actions = { ...actions, ...magics, ...skills, ...passiveSkills, ...weaponMastery };
 
+MM.on('start', (game) => {
+  const log = new LogService();
+  broadcast('Игра начинается');
+  game.on('startOrders', () => {
+    broadcast('Пришло время делать заказы');
+  });
+  game.on('startRound', (e) => {
+    broadcast(`⚡️ Раунд ${e.round} начинается ⚡`);
+  });
+  game.on('endRound', (e) => {
+    log.sendBattleLog(e.log);
+    broadcast(`Погибшие в этом раунде: ${e.dead.map(({ nick }) => nick).join(', ')}`);
+  });
+
+  game.on('end', (e) => {
+    const getStatusString = (p: { exp: number; gold: number; nick: string }) =>
+      `\t👤 ${p.nick} получает ${p.exp}📖 и ${p.gold}💰`;
+    broadcast('Игра завершена');
+    broadcast(`${bold`Статистика игры`}
+${Object.entries(e.statistic).map(([clan, players]) => `${clan === reservedClanName ? 'Без клана' : clan}\n ${players?.map(getStatusString)}`)}`);
+  });
+});
+
 registerAffects();
 
 bot.use(session());
 bot.use(stage.middleware());
 bot.use(middlewares.chatMiddleware());
-bot.use(middlewares.authMiddleware());
 
-bot.start(async ({ scene }) => {
-  await scene.enter('greeter');
+bot.start(async (ctx) => {
+  await ctx.scene.enter('greeter');
 });
-bot.command('greeter', (ctx) => ctx.scene.enter('greeter'));
-
-bot.use(middlewares.restartMiddleware());
-bot.use(middlewares.protectedMiddleware());
-
-// далее идут роуты для которых необходимо что бы персонаж был создан
-
-bot.command('profile', (ctx) => ctx.scene.enter('profile'));
-bot.command('inventory', (ctx) => ctx.scene.enter('inventory'));
 
 // нужно поставить условие, что бы это поднималось только в деве
 // bot.startWebhook('/test', null, 3000);
@@ -78,7 +97,7 @@ serve({
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
-  cors: { origin: ['http://192.168.10.64:5173'] },
+  cors: { origin: [process.env.APP_URL].filter(isString) },
 });
 
 onCreate(io);

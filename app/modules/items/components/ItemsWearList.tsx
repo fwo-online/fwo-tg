@@ -15,7 +15,7 @@ export const ItemsWearList: FC<{
           style={{ justifyContent: 'space-between' }}
           onClick={() => onClick(wear)}
         >
-          <Navigation>{wearListTranslations[wear]}</Navigation>
+          <Navigation style={{ background: 'red' }}>{wearListTranslations[wear]}</Navigation>
         </ButtonCell>
       ))}
     </>

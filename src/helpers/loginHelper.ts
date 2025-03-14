@@ -1,6 +1,4 @@
-import {
-  findCharacter, createCharacter, removeCharacter,
-} from '@/api/character';
+import { findCharacter, createCharacter, removeCharacter } from '@/api/character';
 import type { Profs } from '@/data';
 import { CharacterService } from '../arena/CharacterService';
 import { profsData } from '../data/profs';
@@ -23,11 +21,9 @@ type RegCharParams = {
   prof: Profs.Prof;
   nickname: string;
   sex: 'm' | 'f';
-}
+};
 
-export async function regChar({
-  tgId, prof, nickname, sex,
-}: RegCharParams) {
+export async function regChar({ tgId, prof, nickname, sex }: RegCharParams) {
   if (!profsData[prof]) {
     throw new Error('prof error');
   }

@@ -19,7 +19,3 @@
   min-width: calc(100% - 64px);
   transform: translateX(calc(var(--slide, 0) * 100% * -1 + 32px));
 }
-
-.button {
-  cursor: pointer;
-}

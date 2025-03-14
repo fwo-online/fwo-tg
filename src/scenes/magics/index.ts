@@ -1,1 +1,0 @@
-export { magicScene } from './magics';

@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useNavigate } from 'react-router';
-import { useCharacterContext } from '@/hooks/useCharacterContext';
-import { useWebSocket } from '@/hooks/useWebSocket';
+import { useCharacterContext } from '@/contexts/character';
+import { useWebSocket } from '@/contexts/webSocket';
 import { useEffect } from 'react';
 
 export const ProtectedRoute = () => {

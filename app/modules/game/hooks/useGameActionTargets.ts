@@ -1,7 +1,7 @@
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import { useMemo } from 'react';
-import { reserverClanName, type Action, type PublicGameStatus } from '@fwo/schemas';
-import { useCharacter } from '@/hooks/useCharacter';
+import { reservedClanName, type Action, type PublicGameStatus } from '@fwo/schemas';
+import { useCharacter } from '@/contexts/character';
 import { omit, pick } from 'es-toolkit';
 import { isEmpty } from 'es-toolkit/compat';
 
@@ -13,7 +13,7 @@ export const useGameActionTargets = ({
   const { character } = useCharacter();
   const statusByClan = useGameStore((state) => state.statusByClan);
 
-  const clanID = character.clan?.id ?? reserverClanName;
+  const clanID = character.clan?.id ?? reservedClanName;
 
   const availableTargets: Record<string, PublicGameStatus[]> = useMemo(() => {
     switch (action.orderType) {

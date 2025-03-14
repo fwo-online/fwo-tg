@@ -8,6 +8,7 @@ import { Router } from '@/router';
 
 import { WebSocketProvider } from '@/contexts/webSocket';
 import { createWebSocket } from '@/client';
+import { getCharacter } from '@/client/character';
 
 export function App() {
   const { tgWebAppPlatform } = retrieveLaunchParams();
@@ -24,7 +25,7 @@ export function App() {
       <HashRouter>
         <Suspense fallback={<Placeholder description="Ищем вашего персонажа..." />}>
           <WebSocketProvider socket={createWebSocket()}>
-            <CharacterProvider>
+            <CharacterProvider character={getCharacter()}>
               <Router />
             </CharacterProvider>
           </WebSocketProvider>

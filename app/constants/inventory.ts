@@ -7,7 +7,6 @@ export const wearList = [
   'shoes',
   'rightHand',
   'leftHand',
-  'twoHand',
 ] as const;
 
 export const wearListTranslations: Record<(typeof wearList)[number], string> = {
@@ -19,5 +18,4 @@ export const wearListTranslations: Record<(typeof wearList)[number], string> = {
   shoes: 'Обувь',
   rightHand: 'Правая рука',
   leftHand: 'Левая рука',
-  twoHand: 'Две руки',
 };

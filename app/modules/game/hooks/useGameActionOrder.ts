@@ -1,4 +1,4 @@
-import { useWebSocket } from '@/hooks/useWebSocket';
+import { useWebSocket } from '@/contexts/webSocket';
 import type { Action } from '@fwo/schemas';
 import { popup } from '@telegram-apps/sdk-react';
 import { useGameStore } from '../store/useGameStore';

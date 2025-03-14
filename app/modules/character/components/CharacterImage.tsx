@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useCharacter } from '@/hooks/useCharacter';
+import { useCharacter } from '@/contexts/character';
 import { drawCharacter } from '@/modules/character/hooks/useDrawCharacter';
 
 export const CharacterImage = () => {

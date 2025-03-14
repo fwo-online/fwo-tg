@@ -2,16 +2,17 @@ import type { Skill } from '@fwo/schemas';
 import { ButtonCell, Info, Navigation } from '@telegram-apps/telegram-ui';
 import { type FC, use, useState } from 'react';
 import { CharacterSkillModal } from '@/modules/character/components/CharacterSkillModal';
-import { useCharacter } from '@/hooks/useCharacter';
+import { useCharacter } from '@/contexts/character';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 import { learnSkill } from '@/client/skill';
 import { useRequest } from '@/hooks/useRequest';
+import { client, createRequest } from '@/client';
 
 export const CharacterSkillList: FC<{
   skillsPromise: Promise<Skill[]>;
 }> = ({ skillsPromise }) => {
   const { character } = useCharacter();
-  const [skills] = useState(use(skillsPromise));
+  const skills = use(skillsPromise);
   const { updateCharacter } = useUpdateCharacter();
   const [isPending, makeRequest] = useRequest();
 

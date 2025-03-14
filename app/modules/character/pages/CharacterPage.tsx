@@ -1,7 +1,6 @@
 import {
   ButtonCell,
   Card,
-  Cell,
   InlineButtons,
   List,
   Navigation,
@@ -9,7 +8,7 @@ import {
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 
-import { useCharacter } from '@/hooks/useCharacter';
+import { useCharacter } from '@/contexts/character';
 import { CharacterImage } from '@/modules/character/components/CharacterImage';
 import { characterClassNameMap } from '@/constants/character';
 import { useNavigate } from 'react-router';
@@ -29,9 +28,9 @@ export const CharacterPage: FC = () => {
       </Card>
       <Section>
         <InlineButtons>
-          <InlineButtons.Item text={character.gold.toString()}>💰</InlineButtons.Item>
-          <InlineButtons.Item text={character.exp.toString()}>📖</InlineButtons.Item>
-          <InlineButtons.Item text={character.bonus.toString()}>💡</InlineButtons.Item>
+          <InlineButtons.Item text={character.gold.toString()}>Золото</InlineButtons.Item>
+          <InlineButtons.Item text={character.exp.toString()}>Опыт</InlineButtons.Item>
+          <InlineButtons.Item text={character.bonus.toString()}>Бонусы</InlineButtons.Item>
         </InlineButtons>
       </Section>
       <Section>
@@ -41,7 +40,7 @@ export const CharacterPage: FC = () => {
 
         {character.class === CharacterClass.Archer || character.class === CharacterClass.Warrior ? (
           <ButtonCell onClick={() => navigate('/character/skills')}>
-            <Navigation>⚡️ Умения</Navigation>
+            <Navigation>Умения</Navigation>
           </ButtonCell>
         ) : (
           <ButtonCell onClick={() => navigate('/character/magics')}>

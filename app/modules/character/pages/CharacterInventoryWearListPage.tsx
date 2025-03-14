@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router';
-import { Info } from '@telegram-apps/telegram-ui';
+import { Info, List, Section } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { ItemsWearList } from '@/modules/items/components/ItemsWearList';
-import { useCharacter } from '@/hooks/useCharacter';
+import { useCharacter } from '@/contexts/character';
 
-export const CharacterInventoryWearList: FC = () => {
+export const CharacterInventoryWearListPage: FC = () => {
   const { character } = useCharacter();
   const navigate = useNavigate();
 
@@ -17,9 +17,14 @@ export const CharacterInventoryWearList: FC = () => {
   };
 
   return (
-    <ItemsWearList
-      onClick={handleClick}
-      after={(wear) => <Info type="text">{getEquippedItem(wear)}</Info>}
-    />
+    <List>
+      <Section>
+        <Section.Header>Инвентарь</Section.Header>
+        <ItemsWearList
+          onClick={handleClick}
+          after={(wear) => <Info type="text">{getEquippedItem(wear)}</Info>}
+        />
+      </Section>
+    </List>
   );
 };

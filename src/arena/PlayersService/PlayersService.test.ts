@@ -8,6 +8,7 @@ import TestUtils from '@/utils/testUtils';
 import { CharacterService } from '../CharacterService';
 import Player from './PlayerService';
 import PlayersService from './PlayersService';
+import { reservedClanName } from '@fwo/schemas';
 
 // npm t src/arena/PlayersService/PlayersService.test.ts
 
@@ -42,8 +43,10 @@ describe('PlayerService', () => {
   });
 
   it('should participate by clan', () => {
-    expect(players.groupByClan()).toHaveLength(6);
-    expect(players.groupByClan()).toMatchObject({
+    const {[reservedClanName]: withoutClan, ...withClan} = players.groupByClan()
+
+    expect(withoutClan).toHaveLength(3);
+    expect(withClan).toMatchObject({
       [clans[0].name]: [
         { id: characters[0].id }, { id: characters[1].id }, { id: characters[2].id },
       ],
@@ -62,8 +65,10 @@ describe('PlayerService', () => {
     players.players[3].setDead();
     players.players[1].setDead();
 
-    expect(players.groupByClan(players.alivePlayers)).toHaveLength(3);
-    expect(players.groupByClan(players.alivePlayers)).toMatchObject({
+    const {[reservedClanName]: withoutClan, ...withClan} = players.groupByClan(players.alivePlayers)
+
+    expect(withoutClan).toHaveLength(2);
+    expect(withClan).toMatchObject({
       [clans[0].name]: [{ id: characters[0].id }, { id: characters[2].id }],
       [clans[1].name]: [{ id: characters[4].id }],
     });

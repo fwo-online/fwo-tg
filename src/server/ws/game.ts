@@ -1,11 +1,10 @@
 import OrderError from '@/arena/errors/OrderError';
 import type GameService from '@/arena/GameService';
-import { formatMessage } from '@/arena/LogService/utils';
 import MatchMakingService from '@/arena/MatchMakingService';
 import { getAvailableActions } from '@/helpers/actionsHelper';
 
 import type { Server, Socket } from '@/server/ws';
-import { reserverClanName } from '@fwo/schemas';
+import { keyBy } from 'es-toolkit';
 
 const getRoom = (game: GameService, scope?: string) => {
   if (scope) {
@@ -25,10 +24,9 @@ export const onCreate = (io: Server) => {
       io.to(getRoom(game, scope)).emit('game:startRound', e);
     });
 
-    game.on('endRound', ({ dead, log }) => {
+    game.on('endRound', ({ dead }) => {
       io.to(getRoom(game)).emit('game:endRound', {
         dead: dead.map((player) => player.toObject()),
-        log: log.map((message) => formatMessage(message)),
       });
     });
 
@@ -45,11 +43,7 @@ export const onConnection = (_io: Server, socket: Socket) => {
     await socket.join(getRoom(game));
     await socket.join(getRoom(game, character.clan?.id ?? character.id));
 
-    await socket.emit(
-      'game:start',
-      game.info.id,
-      game.players.players.map((player) => player.toObject()),
-    );
+    await socket.emit('game:start', game.info.id);
 
     game.on('startOrders', () => {
       socket.emit('game:startOrders', getAvailableActions(character));
@@ -70,6 +64,22 @@ export const onConnection = (_io: Server, socket: Socket) => {
   };
 
   MatchMakingService.prependListener('start', onGameStart);
+
+  socket.on('game:connected', (callback) => {
+    const game = character.currentGame;
+    const player = game?.players.getById(character.id);
+
+    if (!game || !player) {
+      return callback({ error: true, message: 'Вы не в игре' });
+    }
+    // todo нужно проверять, что все игроки подключились
+    callback({
+      players: keyBy(
+        game.players.players.map((player) => player.toObject()),
+        ({ id }) => id,
+      ),
+    });
+  });
 
   socket.on('game:order', (order, callback) => {
     const game = character.currentGame;
@@ -104,24 +114,6 @@ export const onConnection = (_io: Server, socket: Socket) => {
       }
     }
   });
-
-  setTimeout(() => {
-    socket.emit('game:startRound', {
-      round: 2,
-      status: [{ id: character.id, name: character.nickname, mp: 10, en: 10, hp: 6 }],
-      statusByClan: {
-        [reserverClanName]: [{ id: character.id, name: character.nickname, hp: 6 }],
-      },
-    });
-    socket.emit('game:startOrders', getAvailableActions(character));
-    socket.emit('game:endRound', {
-      dead: [],
-      log: [
-        '*Test 2* пытался атаковать *Воен*, но у него не оказалось оружия в руках',
-        '*Воен* пытался атаковать *Test 2*, но у него не оказалось оружия в руках',
-      ],
-    });
-  }, 1000);
 
   socket.on('disconnect', () => {
     MatchMakingService.off('start', onGameStart);

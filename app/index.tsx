@@ -16,7 +16,7 @@ try {
 
   root.render(
     <StrictMode>
-      <Root />
+      <Root />,
     </StrictMode>,
   );
 } catch {

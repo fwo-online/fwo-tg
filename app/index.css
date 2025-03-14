@@ -20,6 +20,10 @@ blockquote {
   margin-inline: 16px;
 }
 
+h6 {
+  min-width: max-content;
+}
+
 @font-face {
   font-family: 'Pixeloid';
   src: url('fonts/PixeloidSans.woff2') format('woff2');

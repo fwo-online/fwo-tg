@@ -47,7 +47,7 @@ export const drawCharacter = (canvas: HTMLCanvasElement, character: Character) =
   };
 
   drawBody();
-  if (character.inventory.length) {
-    drawWeapon();
-  }
+  // if (character.inventory.length) {
+  //   drawWeapon();
+  // }
 };

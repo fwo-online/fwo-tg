@@ -1,6 +1,6 @@
 import { Description } from '@/components/Description';
 import type { Item, MinMax } from '@fwo/schemas';
-import { Banner, Caption, Cell, Info, Modal, Section } from '@telegram-apps/telegram-ui';
+import { Banner, Modal, Section } from '@telegram-apps/telegram-ui';
 import { get, isNumber } from 'es-toolkit/compat';
 import type { ReactNode, FC } from 'react';
 
@@ -61,23 +61,25 @@ export const ItemModal: FC<{
     <Modal trigger={trigger}>
       <Banner
         header={item.info.name}
-        subheader={item.info.description}
         description={
-          <Section>
-            {attributeSections.map(({ key, label, attributes }) => (
-              <Description key={key} header={label}>
-                {attributes.map(({ name, key }) => (
-                  <Description.Item
-                    key={key}
-                    after={normalizeValue(get(item, key))}
-                    disabled={isDisabled(get(item, key))}
-                  >
-                    {name}
-                  </Description.Item>
-                ))}
-              </Description>
-            ))}
-          </Section>
+          <>
+            {item.info.description}
+            <Section>
+              {attributeSections.map(({ key, label, attributes }) => (
+                <Description key={key} header={label}>
+                  {attributes.map(({ name, key }) => (
+                    <Description.Item
+                      key={key}
+                      after={normalizeValue(get(item, key))}
+                      disabled={isDisabled(get(item, key))}
+                    >
+                      {name}
+                    </Description.Item>
+                  ))}
+                </Description>
+              ))}
+            </Section>
+          </>
         }
       >
         {footer}

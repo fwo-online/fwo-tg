@@ -1,9 +1,9 @@
-import { LobbyMessageComponent } from '@/components/Lobby/LobbyMessage';
-import { useCharacter } from '@/hooks/useCharacter';
-import { useWebSocket } from '@/hooks/useWebSocket';
-import type { CharacterPublic, ServerToClientMessage } from '@fwo/schemas';
-import { ButtonCell, Text, List, Section, Info, Cell } from '@telegram-apps/telegram-ui';
-import { type ReactNode, use, useCallback, useEffect, useState } from 'react';
+import { characterClassNameMap } from '@/constants/character';
+import { useCharacter } from '@/contexts/character';
+import { useWebSocket } from '@/contexts/webSocket';
+import type { CharacterPublic } from '@fwo/schemas';
+import { ButtonCell, List, Section, Info, Cell, Placeholder } from '@telegram-apps/telegram-ui';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 export function LobbyPage() {
@@ -11,47 +11,16 @@ export function LobbyPage() {
   const { character } = useCharacter();
 
   const [characters, setCharacters] = useState<CharacterPublic[]>([]);
-  const [messages, setMessages] = useState<ReactNode[]>([]);
-  const navigate = useNavigate();
 
   const isSearching = characters.some(({ id }) => id === character.id);
 
-  const handleStartMatchMaking = useCallback((character: CharacterPublic) => {
-    setMessages((messages) =>
-      messages.concat(
-        <Text>
-          <Text weight="3">
-            {character.name} ({character.lvl})
-          </Text>{' '}
-          начал поиск игры
-        </Text>,
-      ),
-    );
-  }, []);
-
-  const handleStopMatchMaking = useCallback((character: CharacterPublic) => {
-    setMessages((messages) =>
-      messages.concat(
-        <Text>
-          <Text weight="3">
-            {character.name} ({character.lvl})
-          </Text>{' '}
-          покидает лобби
-        </Text>,
-      ),
-    );
-  }, []);
-
   useEffect(() => {
     socket.on('lobby:list', setCharacters);
-    socket.on('lobby:start', handleStartMatchMaking);
-    socket.on('lobby:stop', handleStopMatchMaking);
 
     return () => {
-      socket.off('lobby:start', handleStartMatchMaking);
-      socket.off('lobby:start', handleStopMatchMaking);
+      socket.off('lobby:list', setCharacters);
     };
-  }, [socket, handleStartMatchMaking, handleStopMatchMaking]);
+  }, [socket]);
 
   useEffect(() => {
     socket.emitWithAck('lobby:enter').then(setCharacters);
@@ -74,17 +43,20 @@ export function LobbyPage() {
   return (
     <List>
       <Section>
-        {characters.map((character) => (
-          <Cell key={character.name}>
-            <Info type="text">
-              {character.name}({character.lvl})
-            </Info>
-          </Cell>
-        ))}
+        <Section.Header>Ищут игру</Section.Header>
+        {characters.length ? (
+          characters.map((character) => (
+            <Cell key={character.name}>
+              <Info type="text">
+                {character.name} ({characterClassNameMap[character.class]} {character.lvl})
+              </Info>
+            </Cell>
+          ))
+        ) : (
+          <Placeholder description="Никого нет" />
+        )}
       </Section>
-      {messages.map((message, index) => message)}
 
-      <ButtonCell onClick={() => navigate('/game/123')}>Debug</ButtonCell>
       {isSearching ? (
         <ButtonCell mode="destructive" onClick={() => handleClick()}>
           Остановить поиск игры

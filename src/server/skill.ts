@@ -3,7 +3,7 @@ import SkillService from '@/arena/SkillService';
 import { characterMiddleware, userMiddleware } from '@/server/middlewares';
 import * as v from 'valibot';
 import { vValidator } from '@hono/valibot-validator';
-import { HTTPException } from 'hono/http-exception';
+import { withValidation } from './utils/withValidation';
 
 export const skill = new Hono()
   .use(userMiddleware, characterMiddleware)
@@ -35,11 +35,7 @@ export const skill = new Hono()
     const character = c.get('character');
     const { id } = c.req.param();
 
-    try {
-      await SkillService.learnSkill(character, id);
+    await withValidation(SkillService.learnSkill(character, id));
 
-      return c.json({}, 200);
-    } catch (e) {
-      throw new HTTPException(400, { message: e.message, cause: e });
-    }
+    return c.json({}, 200);
   });

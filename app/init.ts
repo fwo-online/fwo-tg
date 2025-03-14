@@ -34,12 +34,8 @@ export async function init(debug: boolean) {
 
   backButton.mount();
   initData.restore();
-  void viewport
-    .mount()
-    .catch((e) => {
-      console.error('Something went wrong mounting the viewport', e);
-    })
-    .then(() => {
-      viewport.bindCssVars();
-    });
+
+  viewport.mount().then(() => {
+    viewport.bindCssVars();
+  });
 }

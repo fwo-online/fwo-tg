@@ -1,5 +1,5 @@
 import { getCharacterDynamicAttributes } from '@/client/character';
-import { useCharacter } from '@/hooks/useCharacter';
+import { useCharacter } from '@/contexts/character';
 import type { CharacterAttributes } from '@fwo/schemas';
 import { useEffect, useState } from 'react';
 

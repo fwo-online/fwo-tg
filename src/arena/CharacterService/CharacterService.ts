@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import type { UpdateQuery } from 'mongoose';
-import { findCharacter, updateCharacter } from '@/api/character';
+import { findCharacter, removeCharacter, updateCharacter } from '@/api/character';
 import arena from '@/arena';
 import config from '@/arena/config';
 import { InventoryService } from '@/arena/InventoryService';
@@ -11,8 +11,6 @@ import { assignWithSum } from '@/utils/assignWithSum';
 import { calculateDynamicAttributes } from './utils/calculate-dynamic-attributes';
 import { sum } from 'es-toolkit';
 import ValidationError from '@/arena/errors/ValidationError';
-import { Game } from '@/models/game';
-import GameService from '../GameService';
 
 /**
  * Конструктор персонажа
@@ -448,6 +446,11 @@ export class CharacterService {
     } catch (e) {
       console.error('Fail on CharSave:', e);
     }
+  }
+
+  async remove() {
+    await removeCharacter(this.owner);
+    delete arena.characters[this.id];
   }
 
   toObject(): Character {

@@ -5,22 +5,14 @@ const tabs = [
   {
     path: '/character',
     text: 'Персонаж',
-    icon: '👤',
-  },
-  {
-    path: '/shop',
-    text: 'Магазин',
-    icon: '🛒',
   },
   {
     path: '/lobby',
     text: 'Лобби',
-    icon: '',
   },
   {
-    path: '/clan',
-    text: 'Клан',
-    icon: '🏰',
+    path: '/shop',
+    text: 'Магазин',
   },
 ];
 
@@ -31,16 +23,14 @@ export function AppLayout() {
   return (
     <>
       <Outlet />
-      <Tabbar>
+      <Tabbar style={{ height: '64px' }}>
         {tabs.map(({ path, icon, text }) => (
           <Tabbar.Item
             key={path}
             text={text}
             selected={location.pathname.startsWith(path)}
             onClick={() => navigate(path)}
-          >
-            {icon}
-          </Tabbar.Item>
+          />
         ))}
       </Tabbar>
     </>

@@ -1,1 +1,1 @@
-export const reserverClanName = '__clan';
+export const reservedClanName = '__clan';

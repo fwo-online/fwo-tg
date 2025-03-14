@@ -1,5 +1,5 @@
 import { getCharacter } from '@/client/character';
-import { useCharacter } from './useCharacter';
+import { useCharacter } from '@/contexts/character';
 
 export const useUpdateCharacter = () => {
   const { setCharacter } = useCharacter();

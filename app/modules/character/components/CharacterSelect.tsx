@@ -1,23 +1,32 @@
 import type { CreateCharacterDto, CharacterClass } from '@fwo/schemas';
 import {
-  Button, CompactPagination, Headline, Input, List, Section,
+  Button,
+  CompactPagination,
+  Headline,
+  Input,
+  List,
+  Section,
 } from '@telegram-apps/telegram-ui';
-import { useEffect, useRef, useState } from 'react';
-import { characterClassImageMap, characterClassList, characterClassNameMap } from '@/constants/character';
+import { type FC, useEffect, useRef, useState } from 'react';
+import {
+  characterClassImageMap,
+  characterClassList,
+  characterClassNameMap,
+} from '@/constants/character';
 import styles from './CharacterSelect.module.css';
 
 const Slide = ({ value }: { value: CharacterClass }) => {
   return (
     <div className={styles.slide}>
       <img src={characterClassImageMap[value]} alt={characterClassImageMap[value]} />
-      <Headline weight='2'>{characterClassNameMap[value]}</Headline>
+      <Headline weight="2">{characterClassNameMap[value]}</Headline>
     </div>
   );
 };
 
-type SelectCharacterClassProps = { onSelect: (createCharacter: CreateCharacterDto) => void}
-
-export const SelectCharacter = ({ onSelect }: SelectCharacterClassProps) => {
+export const SelectCharacter: FC<{ onSelect: (createCharacter: CreateCharacterDto) => void }> = ({
+  onSelect,
+}) => {
   const [selected, setSelected] = useState(0);
   const [name, setName] = useState('');
   const slider = useRef<HTMLDivElement>(null);
@@ -43,21 +52,32 @@ export const SelectCharacter = ({ onSelect }: SelectCharacterClassProps) => {
 
   return (
     <List>
-      <Section header={<Section.Header large>Создайте вашего персонажа</Section.Header>}>
-        <CompactPagination>
+      <Section>
+        <Section.Header large>Создайте вашего персонажа</Section.Header>
+        <CompactPagination style={{ width: '100%', justifyContent: 'center' }}>
           {characterClassList.map((value, index) => (
             <CompactPagination.Item key={value} selected={selected === index} />
           ))}
         </CompactPagination>
         <div className={styles.slider}>
-          <Button onClick={prev} className={styles.button}>{'◄'}</Button>
+          <Button onClick={prev}>◄</Button>
           <div className={styles.slides} data-selected={selected} ref={slider}>
-            {characterClassList.map((value) => <Slide key={value} value={value}/>)}
-            </div>
-          <Button onClick={next} className={styles.button}>{'►'}</Button>
+            {characterClassList.map((value) => (
+              <Slide key={value} value={value} />
+            ))}
+          </div>
+          <Button onClick={next}>►</Button>
         </div>
-        <Input header='Имя персонажа' value={name} placeholder='Введите имя персонажа' onChange={(e) => setName(e.target.value)} />
-        <Button stretched disabled={!name} onClick={handleSelectCharacter}>Создать</Button>
+        <Input
+          header="Имя персонажа"
+          value={name}
+          placeholder="Введите имя персонажа"
+          onChange={(e) => setName(e.target.value)}
+        />
+
+        <Button stretched disabled={!name} onClick={handleSelectCharacter}>
+          Создать
+        </Button>
       </Section>
     </List>
   );

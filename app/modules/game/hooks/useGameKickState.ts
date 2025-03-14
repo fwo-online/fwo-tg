@@ -1,5 +1,5 @@
-import { useCharacter } from '@/hooks/useCharacter';
-import { useWebSocket } from '@/hooks/useWebSocket';
+import { useCharacter } from '@/contexts/character';
+import { useWebSocket } from '@/contexts/webSocket';
 import type { ServerToClientMessage } from '@fwo/schemas';
 import { popup } from '@telegram-apps/sdk-react';
 import { useCallback, useEffect } from 'react';

@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { useCharacter } from '@/hooks/useCharacter';
+import { useCharacter } from '@/contexts/character';
 import type { Skill } from '@fwo/schemas';
 import { Banner, Button, List, Modal } from '@telegram-apps/telegram-ui';
 
@@ -17,10 +17,10 @@ export const CharacterSkillModal: FC<{
   return (
     <Modal trigger={trigger}>
       <List>
-        <Banner header={skill.displayName} subheader={skill.description}>
+        <Banner header={skill.displayName} description={skill.description}>
           {hasMaxSkillLvl ? (
             <Button stretched disabled>
-              Достигнут максимальный уровень
+              Максимальный уровень
             </Button>
           ) : hasRequiredLvl ? (
             <>
@@ -28,7 +28,7 @@ export const CharacterSkillModal: FC<{
                 stretched
                 loading={loading}
                 onClick={() => onLearn(skill)}
-                disabled={!hasRequiredBonus}
+                disabled={!hasRequiredBonus || loading}
               >
                 Изучить за {skill.bonusCost[character.skills[skill.name] || 0]}💡
               </Button>

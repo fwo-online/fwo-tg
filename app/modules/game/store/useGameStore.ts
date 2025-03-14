@@ -8,7 +8,7 @@ export type GameStoreState = {
     action: string;
     power: number;
   }[];
-  players: Player[];
+  players: Record<string, Player>;
   canOrder: boolean;
   status: GameStatus[];
   statusByClan: Partial<Record<string, PublicGameStatus[]>>;
@@ -16,7 +16,6 @@ export type GameStoreState = {
   actions: Action[];
   magics: Action[];
   skills: Action[];
-  log: string[];
 };
 
 export type GameStoreActions = {
@@ -27,16 +26,14 @@ export type GameStoreActions = {
   setStatus: (status: GameStatus[]) => void;
   setStatusByClan: (statusByClan: Partial<Record<string, PublicGameStatus[]>>) => void;
   setActions: (action: { actions: Action[]; magics: Action[]; skills: Action[] }) => void;
-  pushLog: (log: string | string[]) => void;
-  setPlayers: (players: Player[]) => void;
+  setPlayers: (players: Record<string, Player>) => void;
 };
 
 export type GameStore = GameStoreState & GameStoreActions;
 
 export const useGameStore = create<GameStore>()((set, get) => ({
   round: 0,
-  log: [],
-  players: [],
+  players: {},
   canOrder: false,
   actions: [],
   magics: [],
@@ -53,5 +50,4 @@ export const useGameStore = create<GameStore>()((set, get) => ({
   setStatusByClan: (statusByClan) => set({ statusByClan }),
   setActions: (actions) => set(actions),
   setPlayers: (players) => set({ players }),
-  pushLog: (log) => set((state) => ({ log: state.log.concat(Array.isArray(log) ? log : [log]) })),
 }));

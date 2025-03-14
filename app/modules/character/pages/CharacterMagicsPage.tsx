@@ -1,5 +1,5 @@
 import { getMagicList, learnMagic } from '@/client/magic';
-import { useCharacter } from '@/hooks/useCharacter';
+import { useCharacter } from '@/contexts/character';
 import {
   Banner,
   Button,

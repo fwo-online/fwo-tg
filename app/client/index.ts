@@ -8,7 +8,7 @@ const getToken = () => {
 };
 
 export const createWebSocket = async () => {
-  const socket = io('http://192.168.10.64:4000', { extraHeaders: { authorization: getToken() } });
+  const socket = io(import.meta.env.VITE_WS_URL, { extraHeaders: { authorization: getToken() } });
   return new Promise<Socket>((resolve) => {
     socket.io.on('open', () => {
       resolve(socket);
@@ -16,7 +16,7 @@ export const createWebSocket = async () => {
   });
 };
 
-export const client = hc<Server>('http://192.168.10.64:3000', {
+export const client = hc<Server>(import.meta.env.VITE_API_URL, {
   headers: () => ({
     Authorization: getToken(),
   }),
@@ -25,7 +25,7 @@ export const client = hc<Server>('http://192.168.10.64:3000', {
 export const createRequest =
   <T extends (args: any) => any>(method: T) =>
   async (args: InferRequestType<T>): Promise<InferResponseType<T>> => {
-    const res = method(args);
+    const res = await method(args);
     if (res.ok) {
       return await res.json();
     }

@@ -5,9 +5,12 @@ import { magic } from './magic';
 import { skill } from './skill';
 import { shop } from './shop';
 import { cors } from 'hono/cors';
+import { isString } from 'es-toolkit';
+
+const origin = [process.env.APP_URL].filter(isString);
 
 export const app = new Hono()
-  .use(cors({ origin: ['http://192.168.10.64:5173'] }))
+  .use(cors({ origin }))
   .route('/character', character)
   .route('/inventory', inventory)
   .route('/shop', shop)

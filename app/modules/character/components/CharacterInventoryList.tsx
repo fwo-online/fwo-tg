@@ -1,19 +1,23 @@
 import { useParams } from 'react-router';
-import { Button, ButtonCell, Info, Navigation } from '@telegram-apps/telegram-ui';
+import {
+  Button,
+  ButtonCell,
+  Info,
+  Navigation,
+  Placeholder,
+  Section,
+} from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
-import { useCharacter } from '@/hooks/useCharacter';
+import { useCharacter } from '@/contexts/character';
 import { ItemModal } from '@/modules/items/components/ItemsModal';
 import { equipItem, sellItem, unEquipItem } from '@/client/inventory';
 import { useRequest } from '@/hooks/useRequest';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
+import type { Inventory } from '@fwo/schemas';
 
-export const CharacterInventoryList: FC = () => {
-  const { character } = useCharacter();
+export const CharacterInventoryList: FC<{ inventory: Inventory[] }> = ({ inventory }) => {
   const { updateCharacter } = useUpdateCharacter();
-  const { wear } = useParams();
   const [_, makeRequest] = useRequest();
-
-  const inventory = character.inventory.filter((item) => item.wear === wear);
 
   const handleEquip = async (id: string) => {
     makeRequest(async () => {
@@ -36,7 +40,7 @@ export const CharacterInventoryList: FC = () => {
     });
   };
 
-  return (
+  return inventory.length ? (
     <>
       {inventory.map((inventory) => (
         <ItemModal
@@ -69,5 +73,7 @@ export const CharacterInventoryList: FC = () => {
         />
       ))}
     </>
+  ) : (
+    <Placeholder description="Ничего не найдено" />
   );
 };

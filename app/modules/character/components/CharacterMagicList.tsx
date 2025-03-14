@@ -1,4 +1,4 @@
-import { useCharacter } from '@/hooks/useCharacter';
+import { useCharacter } from '@/contexts/character';
 import { ButtonCell, Info, Navigation } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import type { Magic } from '@fwo/schemas';

@@ -1,5 +1,5 @@
 import { changeCharacterAttributes } from '@/client/character';
-import { useCharacter } from '@/hooks/useCharacter';
+import { useCharacter } from '@/contexts/character';
 import type { CharacterAttributes } from '@fwo/schemas';
 import { useState } from 'react';
 

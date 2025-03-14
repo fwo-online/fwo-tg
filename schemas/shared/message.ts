@@ -11,6 +11,7 @@ export type ClientToServerMessage = Message<{
   'lobby:leave': [];
   'lobby:start': [];
   'lobby:stop': [];
+  'game:connected': [callback: (payload: RPC<{ players: Record<string, Player> }>) => void];
   'game:order': [
     order: {
       power: number;
@@ -18,20 +19,17 @@ export type ClientToServerMessage = Message<{
       target: string;
     },
     callback: (
-      payload: RPC<
-        {
-          actions: Action[];
-          magics: Action[];
-          skills: Action[];
+      payload: RPC<{
+        actions: Action[];
+        magics: Action[];
+        skills: Action[];
+        power: number;
+        orders: {
           power: number;
-          orders: {
-            power: number;
-            action: string;
-            target: string;
-          }[];
-        },
-        { message: string }
-      >,
+          action: string;
+          target: string;
+        }[];
+      }>,
     ) => void,
   ];
 }>;
@@ -47,7 +45,7 @@ export type ServerToClientMessage = Message<{
   'lobby:list': [characters: CharacterPublic[]];
   'lobby:start': [character: CharacterPublic];
   'lobby:stop': [character: CharacterPublic];
-  'game:start': [gameID: string, players: Player[]];
+  'game:start': [gameID: string];
   'game:end': [{ reason?: string; statistic: Record<string, { exp: number; gold: number }> }];
   'game:startOrders': [actions: { actions: Action[]; magics: Action[]; skills: Action[] }];
   'game:endOrders': [];
@@ -58,7 +56,7 @@ export type ServerToClientMessage = Message<{
       statusByClan: Partial<Record<string, PublicGameStatus[]>>;
     },
   ];
-  'game:endRound': [{ dead: Player[]; log: string[] }];
+  'game:endRound': [{ dead: Player[] }];
   'game:kick': [{ reason: string; player: Player }];
   'game:preKick': [{ reason: string; player: Player }];
 }>;
