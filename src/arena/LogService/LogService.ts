@@ -40,22 +40,6 @@ export class LogService {
     }
   }
 
-  getBattleLog(history: HistoryItem[]) {
-    try {
-      history.forEach((item) => {
-        if (isSuccessResult(item)) {
-          this.success(item);
-        } else {
-          this.fail(item);
-        }
-      });
-
-      return this.messages;
-    } finally {
-      this.reset();
-    }
-  }
-
   /**
    * Удачный проход action
    * @param message сообщение
