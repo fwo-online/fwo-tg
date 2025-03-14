@@ -11,7 +11,7 @@ export type GameStoreState = {
   players: Record<string, Player>;
   canOrder: boolean;
   status: GameStatus[];
-  statusByClan: Partial<Record<string, PublicGameStatus[]>>;
+  statusByClan: Partial<Record<string, GameStatus[]>>;
   power: number;
   actions: Action[];
   magics: Action[];
@@ -24,7 +24,7 @@ export type GameStoreActions = {
   setPower: (power: number) => void;
   setOrders: (orders: GameStoreState['orders']) => void;
   setStatus: (status: GameStatus[]) => void;
-  setStatusByClan: (statusByClan: Partial<Record<string, PublicGameStatus[]>>) => void;
+  setStatusByClan: (statusByClan: Partial<Record<string, GameStatus[]>>) => void;
   setActions: (action: { actions: Action[]; magics: Action[]; skills: Action[] }) => void;
   setPlayers: (players: Record<string, Player>) => void;
 };

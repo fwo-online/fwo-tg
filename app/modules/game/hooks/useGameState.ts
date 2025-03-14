@@ -14,7 +14,6 @@ export function useGameState() {
   const setRemainPower = useGameStore((state) => state.setPower);
   const setActions = useGameStore((state) => state.setActions);
   const setCanOrder = useGameStore((state) => state.setCanOrder);
-  const setStatus = useGameStore((state) => state.setStatus);
   const setStatusByClan = useGameStore((state) => state.setStatusByClan);
   const setRound = useGameStore((state) => state.setRound);
   const setPlayers = useGameStore((state) => state.setPlayers);
@@ -22,12 +21,11 @@ export function useGameState() {
   useGameKickState();
 
   const handleStartRound = useCallback(
-    ({ round, status, statusByClan }: Parameters<ServerToClientMessage['game:startRound']>[0]) => {
+    ({ round, status }: Parameters<ServerToClientMessage['game:startRound']>[0]) => {
       setRound(round);
-      setStatus(status);
-      setStatusByClan(statusByClan);
+      setStatusByClan(status);
     },
-    [setRound, setStatus, setStatusByClan],
+    [setRound, setStatusByClan],
   );
 
   const handleStartOrders = useCallback(

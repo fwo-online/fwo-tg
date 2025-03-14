@@ -61,9 +61,11 @@ MM.on('start', (game) => {
   game.on('startRound', (e) => {
     broadcast(`⚡️ Раунд ${e.round} начинается ⚡`);
   });
-  game.on('endRound', (e) => {
-    log.sendBattleLog(e.log);
-    broadcast(`Погибшие в этом раунде: ${e.dead.map(({ nick }) => nick).join(', ')}`);
+  game.on('endRound', async (e) => {
+    await log.sendBattleLog(e.log);
+    if (e.dead.length) {
+      await broadcast(`Погибшие в этом раунде: ${e.dead.map(({ nick }) => nick).join(', ')}`);
+    }
   });
 
   game.on('end', (e) => {
@@ -82,6 +84,7 @@ bot.use(stage.middleware());
 bot.use(middlewares.chatMiddleware());
 
 bot.start(async (ctx) => {
+  console.log(ctx.chat.id);
   await ctx.scene.enter('greeter');
 });
 

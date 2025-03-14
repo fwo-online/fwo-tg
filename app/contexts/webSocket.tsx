@@ -13,7 +13,7 @@ export const WebSocketProvider = ({
 }: PropsWithChildren<{
   socket: Promise<Socket<ServerToClientMessage, ClientToServerMessage>>;
 }>) => {
-  const [ws] = useState(use(socket));
+  const ws = use(socket);
 
   return <WebSocketContext value={ws}>{children}</WebSocketContext>;
 };

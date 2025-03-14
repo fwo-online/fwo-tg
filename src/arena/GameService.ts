@@ -12,7 +12,7 @@ import testGame from '@/arena/testGame';
 import arena from '@/arena';
 import { mapValues } from 'es-toolkit';
 import EventEmitter from 'node:events';
-import { reservedClanName, type GameStatus, type PublicGameStatus } from '@fwo/schemas';
+import { type GameStatus, reservedClanName } from '@fwo/schemas';
 
 export type KickReason = 'afk' | 'run';
 
@@ -44,10 +44,7 @@ export default class GameService extends EventEmitter<{
   endOrders: [];
   preKick: [{ reason: string; player: Player }];
   kick: [{ reason: string; player: Player }];
-  startRound: [
-    { round: number; status: GameStatus[]; statusByClan: Record<string, PublicGameStatus[]> },
-    scope: string,
-  ];
+  startRound: [{ round: number; status: Record<string, GameStatus[]> }];
   endRound: [{ dead: Player[]; log: HistoryItem[] }];
 }> {
   players: PlayersService;
@@ -437,23 +434,10 @@ export default class GameService extends EventEmitter<{
   sendStatus(round: number): void {
     const playersByClan = this.players.groupByClan();
 
-    const statusByClan = mapValues(playersByClan, (players = []) => {
-      return players?.map((p) => p.getShortStatus());
+    const status = mapValues(playersByClan, (players = []) => {
+      return players?.map((p) => p.getStatus());
     });
 
-    for (const clan in playersByClan) {
-      const players = playersByClan[clan] ?? [];
-      if (clan === reservedClanName) {
-        players.forEach((player) => {
-          const status = [player.getStatus()];
-
-          this.emit('startRound', { round, status, statusByClan }, player.id);
-        });
-      } else {
-        const status = players.map((p) => p.getStatus());
-
-        this.emit('startRound', { round, status, statusByClan }, clan);
-      }
-    }
+    this.emit('startRound', { round, status });
   }
 }

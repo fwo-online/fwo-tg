@@ -20,8 +20,9 @@ export const onCreate = (io: Server) => {
       io.to(getRoom(game)).emit('game:endOrders');
     });
 
-    game.on('startRound', (e, scope) => {
-      io.to(getRoom(game, scope)).emit('game:startRound', e);
+    game.on('startRound', (e) => {
+      // fixme отправлять полный статус только союзникам
+      io.to(getRoom(game)).emit('game:startRound', e);
     });
 
     game.on('endRound', ({ dead }) => {

@@ -1,7 +1,7 @@
 import type { CharacterPublic } from '@/character/characterPublic';
 import type { Character } from '@/character';
 import type { Player } from './player';
-import type { GameStatus, PublicGameStatus } from '@/game';
+import type { GameStatus } from '@/game';
 import type { Action } from './action';
 import type { RPC } from './rpc';
 
@@ -52,8 +52,7 @@ export type ServerToClientMessage = Message<{
   'game:startRound': [
     {
       round: number;
-      status: GameStatus[];
-      statusByClan: Partial<Record<string, PublicGameStatus[]>>;
+      status: Partial<Record<string, GameStatus[]>>;
     },
   ];
   'game:endRound': [{ dead: Player[] }];

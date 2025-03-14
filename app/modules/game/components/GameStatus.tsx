@@ -1,24 +1,18 @@
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import { Description } from '@/components/Description';
-import { useState } from 'react';
 import { reservedClanName } from '@fwo/schemas';
+import { useCharacter } from '@/contexts/character';
 
 export function GameStatus() {
-  const status = useGameStore((state) => state.status);
+  const { character } = useCharacter();
   const statusByClan = useGameStore((state) => state.statusByClan);
-  const [visibleClan, setVisibleClan] = useState<string[]>([]);
-
-  const handleChange = (clan: string) => {
-    return (expanded: boolean) => {
-      setVisibleClan((visibleClan) =>
-        expanded ? visibleClan.concat([clan]) : visibleClan.filter((c) => c !== clan),
-      );
-    };
-  };
+  const status = character.clan?.id
+    ? statusByClan[character.clan?.id]
+    : statusByClan[reservedClanName]?.filter(({ id }) => id === character.id);
 
   return (
     <Description>
-      {status.map((status) => (
+      {status?.map((status) => (
         <Description.Item
           key={status.name}
           after={
