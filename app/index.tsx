@@ -9,6 +9,7 @@ import { init } from './init';
 import '@telegram-apps/telegram-ui/dist/styles.css';
 import './index.css';
 
+// biome-ignore lint/style/noNonNullAssertion: <explanation>
 const root = createRoot(document.getElementById('root')!);
 
 try {

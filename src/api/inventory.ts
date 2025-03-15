@@ -1,6 +1,6 @@
-import { InventoryModel } from "@/models/inventory";
+import { InventoryModel } from '@/models/inventory';
 
-function dbErr(e) {
+function dbErr(e: unknown) {
   throw new Error(`Fail in inventory: ${e}`);
 }
 

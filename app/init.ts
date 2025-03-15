@@ -6,6 +6,7 @@ import {
   initData,
   setDebug,
   init as initSDK,
+  closingBehavior,
 } from '@telegram-apps/sdk-react';
 
 /**
@@ -34,6 +35,10 @@ export async function init(debug: boolean) {
 
   backButton.mount();
   initData.restore();
+
+  if (closingBehavior.mount.isAvailable()) {
+    closingBehavior.mount();
+  }
 
   viewport.mount().then(() => {
     viewport.bindCssVars();

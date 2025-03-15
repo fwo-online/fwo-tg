@@ -12,7 +12,6 @@ export default defineConfig({
     target: 'esnext',
   },
   plugins: [react(), tsconfigPaths({ projects: ['./tsconfig.json'] })],
-  // publicDir: './assets',
   server: {
     host: true,
   },
