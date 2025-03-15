@@ -28,7 +28,8 @@
         "noThisInStatic": "off"
       },
       "suspicious": {
-        "noUnsafeDeclarationMerging": "off"
+        "noUnsafeDeclarationMerging": "off",
+        "noExplicitAny": "off"
       },
       "style": {
         "noParameterAssign": "off"
