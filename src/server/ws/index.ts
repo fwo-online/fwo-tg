@@ -1,6 +1,6 @@
 import type { CharacterService } from '@/arena/CharacterService';
 import type { ClientToServerMessage, ServerToClientMessage } from '@fwo/schemas';
-import type { Server as IOServer, Socket as IOSocket } from 'socket.io';
+import type { DefaultEventsMap, Server as IOServer, Socket as IOSocket } from 'socket.io';
 import * as game from './game';
 import * as lobby from './lobby';
 import * as character from './character';
@@ -8,13 +8,13 @@ import * as character from './character';
 export type Server = IOServer<
   ClientToServerMessage,
   ServerToClientMessage,
-  {},
+  DefaultEventsMap,
   { character: CharacterService }
 >;
 export type Socket = IOSocket<
   ClientToServerMessage,
   ServerToClientMessage,
-  {},
+  DefaultEventsMap,
   { character: CharacterService }
 >;
 
