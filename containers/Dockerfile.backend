@@ -4,6 +4,6 @@ FROM oven/bun:1
 RUN ls -lah
 WORKDIR /fwo
 COPY . ./
-RUN bun install
+RUN ls -lah
 
 CMD ["bun", "run", "start:server"]
