@@ -4,7 +4,7 @@ FROM oven/bun:1 as builder
 
 WORKDIR /fwo
 COPY . ./
-RUN bun install && npm run buld
+RUN bun install && bun run build
 
 FROM nginx:latest
 COPY --from=builder /fwo/app/dist /usr/share/nginx/html/
