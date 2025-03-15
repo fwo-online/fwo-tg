@@ -23,7 +23,9 @@ export const GameOrderList: FC = () => {
       <Section.Header>Заказы</Section.Header>
 
       {orders.length ? (
-        orders.map((order, index) => <GameOrderListItem key={index} order={order} />)
+        orders.map((order, index) => (
+          <GameOrderListItem key={`${order.action.name}:${index}`} order={order} />
+        ))
       ) : (
         <Placeholder description="Сделайте заказ" />
       )}
