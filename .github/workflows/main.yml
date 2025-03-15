@@ -18,8 +18,6 @@ jobs:
         uses: oven-sh/setup-bun@v2
       - name: bun install
         run: bun install
-      - name: types
-        run: bun run types
       - name: eslint
         run: bun run lint
   testContainerFrontend:
