@@ -3,12 +3,10 @@ import type { Game } from '@/models/game';
 import type { LongItem } from '@/arena/Constuructors/LongMagicConstructor';
 import { engine } from '@/arena/EngineService';
 import { HistoryService, type HistoryItem } from '@/arena/HistoryService';
-import { LogService } from '@/arena/LogService';
 import type * as magics from '@/arena/magics';
 import OrderService from '@/arena/OrderService';
 import PlayersService, { type Player } from '@/arena/PlayersService';
 import { RoundService, RoundStatus } from '@/arena/RoundService';
-import testGame from '@/arena/testGame';
 import arena from '@/arena';
 import { mapValues } from 'es-toolkit';
 import EventEmitter from 'node:events';
@@ -50,7 +48,6 @@ export default class GameService extends EventEmitter<{
   players: PlayersService;
   orders: OrderService;
   round = new RoundService();
-  logger = new LogService();
   history = new HistoryService();
   longActions: Partial<Record<keyof typeof magics, LongItem[]>> = {};
   info!: Game;
@@ -317,10 +314,6 @@ export default class GameService extends EventEmitter<{
         }
         case RoundStatus.END_ORDERS: {
           this.emit('endOrders');
-          // Debug Game Hack
-          if (process.env.NODE_ENV === 'development') {
-            this.orders.ordersList = this.orders.ordersList.concat(testGame.orders);
-          }
           break;
         }
         default: {
@@ -435,7 +428,7 @@ export default class GameService extends EventEmitter<{
     const playersByClan = this.players.groupByClan();
 
     const status = mapValues(playersByClan, (players = []) => {
-      return players?.map((p) => p.getStatus());
+      return players.map((p) => p.getStatus());
     });
 
     this.emit('startRound', { round, status });

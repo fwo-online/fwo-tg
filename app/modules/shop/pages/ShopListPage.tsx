@@ -1,8 +1,8 @@
-import type { FC } from 'react';
+import { Suspense, type FC } from 'react';
 import { useParams } from 'react-router';
 import { ShopList } from '@/modules/shop/components/ShopList';
 import { getShopItems } from '@/client/shop';
-import { List, Section } from '@telegram-apps/telegram-ui';
+import { List, Placeholder, Section } from '@telegram-apps/telegram-ui';
 import { wearListTranslations } from '@/constants/inventory';
 
 export const ShopListPage: FC = () => {
@@ -12,7 +12,9 @@ export const ShopListPage: FC = () => {
     <List>
       <Section>
         <Section.Header>{wearListTranslations[wear]}</Section.Header>
-        <ShopList shopPromise={getShopItems({ wear })} />
+        <Suspense fallback={<Placeholder description="Ищем предметы..." />}>
+          <ShopList shopPromise={getShopItems({ wear })} />
+        </Suspense>
       </Section>
     </List>
   );

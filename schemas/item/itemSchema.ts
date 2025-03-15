@@ -9,7 +9,7 @@ export const itemSchema = v.object({
   price: v.number(),
   type: v.optional(v.string()),
   wear: v.string(),
-  weight: v.number(),
+  weight: v.optional(v.number()),
   class: v.array(characterClassSchema),
   requiredAttributes: v.optional(characterAttributesSchema, {
     str: 0,

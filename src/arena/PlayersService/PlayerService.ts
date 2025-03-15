@@ -7,7 +7,7 @@ import StatsService from '@/arena/StatsService';
 import type { Clan } from '@/models/clan';
 import { PlayerWeapon } from './PlayerWeapon';
 import { convertItemModifiers } from './utils';
-import type { CharacterClass, GameStatus, Player, PublicGameStatus } from '@fwo/schemas';
+import type { CharacterClass, GameStatus, Player } from '@fwo/schemas';
 
 export type Resists = Record<DamageType, number>;
 
@@ -82,17 +82,6 @@ export default class PlayerService {
   }
 
   /**
-   * Функция вернет объект состояния Player
-   */
-  getShortStatus(): PublicGameStatus {
-    return {
-      id: this.id,
-      name: this.nick,
-      hp: this.stats.val('hp'),
-    };
-  }
-
-  /**
    * Функция вернет объект состояния Player для отображения команде
    */
   getStatus(): GameStatus {
@@ -102,6 +91,9 @@ export default class PlayerService {
       hp: this.stats.val('hp'),
       mp: this.stats.val('mp'),
       en: this.stats.val('en'),
+      maxHP: this.stats.val('base.hp'),
+      maxMP: this.stats.val('base.mp'),
+      maxEN: this.stats.val('base.en'),
     };
   }
 

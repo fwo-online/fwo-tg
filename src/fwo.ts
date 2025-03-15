@@ -10,14 +10,11 @@ import { stage } from './scenes/stage';
 import { registerAffects } from './utils/registerAffects';
 import { registerGlobals } from './utils/registerGlobals';
 import { serve } from 'bun';
-import { createBunWebSocket } from 'hono/bun';
 import { Server } from 'socket.io';
 import { createServer } from 'node:http';
 import { middleware, onConnection, onCreate } from '@/server/ws';
 import { isString } from 'es-toolkit';
 import { initGameChannel } from './helpers/channelHelper';
-
-const { websocket } = createBunWebSocket();
 
 interface BotSession extends Scenes.SceneSession {
   character: CharacterService;
@@ -57,7 +54,6 @@ arena.bot = bot;
 
 serve({
   fetch: app.fetch,
-  websocket,
   port: 3000,
 });
 

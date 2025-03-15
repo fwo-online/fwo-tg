@@ -3,8 +3,8 @@ node_modules/
 .tg-token
 .env
 .DS_Store
-item-sets.csv
-src/item-sets.json
+items-sets.csv
+src/items-sets.json
 items.csv
 src/items.json
 out

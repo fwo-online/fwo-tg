@@ -9,26 +9,26 @@ async function generate() {
       save: {
         type: 'boolean',
         short: 's',
-        default: false
-      }
+        default: false,
+      },
     },
     allowPositionals: true,
-  })
+  });
 
   try {
-    const items = await generateItems()
-    console.log('Items generated!')
+    const items = await generateItems();
+    console.log('Items generated!');
     if (values.save) {
-      await writeFile('./items.json', JSON.stringify(items, null, 2))
-      console.log('Items saved!')
+      await writeFile('./src/items.json', JSON.stringify(items, null, 2));
+      console.log('Items saved!');
     }
 
-    const itemsSets = await generateItemsSets()
-    console.log('Items sets generated!')
-      
+    const itemsSets = await generateItemsSets();
+    console.log('Items sets generated!');
+
     if (values.save) {
-      await writeFile('./items-sets.json', JSON.stringify(itemsSets, null, 2))
-      console.log('Items sets saved!')
+      await writeFile('./src/items-sets.json', JSON.stringify(itemsSets, null, 2));
+      console.log('Items sets saved!');
     }
 
     process.exit(0);

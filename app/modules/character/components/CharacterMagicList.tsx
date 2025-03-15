@@ -1,11 +1,12 @@
 import { useCharacter } from '@/contexts/character';
 import { ButtonCell, Info, Navigation } from '@telegram-apps/telegram-ui';
-import type { FC } from 'react';
+import { use, type FC } from 'react';
 import type { Magic } from '@fwo/schemas';
 import { CharacterMagicModal } from './CharacterMagicModal';
 
-export const CharacterMagicList: FC<{ magics: Magic[] }> = ({ magics }) => {
+export const CharacterMagicList: FC<{ magicsSource: Promise<Magic[]> }> = ({ magicsSource }) => {
   const { character } = useCharacter();
+  const magics = use(magicsSource);
 
   return (
     <>
