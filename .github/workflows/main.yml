@@ -42,7 +42,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          context: containers
+          context: "{{defaultContext}}:containers"
           file: Dockerfile.frontend
           tags: |
             ghcr.io/cathd/fwo-ui-test:latest
@@ -68,7 +68,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          context: containers
+          context: "{{defaultContext}}:containers"
           file: Dockerfile.backend
           tags: |
             ghcr.io/cathd/fwo-backend-test:latest
