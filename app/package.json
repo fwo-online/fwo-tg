@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "bunx --bun vite",
+    "build": "bunx --bun vite build",
     "test": "bun src/cli/test.ts -i",
     "reset-harks": "bun src/cli/resetHarks.ts",
     "format": "biome format --fix",

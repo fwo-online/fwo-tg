@@ -8,6 +8,9 @@ export default defineConfig({
       localsConvention: 'camelCaseOnly',
     },
   },
+  build: {
+    target: 'esnext',
+  },
   plugins: [react(), tsconfigPaths({ projects: ['./tsconfig.json'] })],
   // publicDir: './assets',
   server: {

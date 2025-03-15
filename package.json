@@ -17,7 +17,8 @@
     "reset-harks": "bun src/cli/resetHarks.ts",
     "lint": "bun run --filter '@fwo/*' lint",
     "format": "bun run --filter '@fwo/*' format",
-    "types": "bun run --filter '@fwo/*' types"
+    "types": "bun run --filter '@fwo/*' types",
+    "build": "bun run --filter '@fwo/app' build"
   },
   "repository": {
     "type": "git",

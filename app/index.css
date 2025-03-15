@@ -26,18 +26,18 @@ h6 {
 
 @font-face {
   font-family: 'Pixeloid';
-  src: url('fonts/PixeloidSans.woff2') format('woff2');
+  src: url('/fonts/PixeloidSans.woff2') format('woff2');
   font-weight: normal;
 }
 
 
 @font-face {
   font-family: 'Pixeloid';
-  src: url('fonts/PixeloidSans-Bold.woff2') format('woff2');
+  src: url('/fonts/PixeloidSans-Bold.woff2') format('woff2');
   font-weight: bold;
 }
 
 @font-face {
   font-family: 'PixeloidMono';
-  src: url('fonts/PixeloidMono.woff2') format('woff2');
+  src: url('/fonts/PixeloidMono.woff2') format('woff2');
 }
