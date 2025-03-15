@@ -1,0 +1,10 @@
+FROM oven/bun:1 as builder
+
+# Create app directory
+
+WORKDIR /fwo
+COPY . ./
+RUN bun install && npm run buld
+
+FROM nginx:latest
+COPY --from=builder /fwo/app/dist /usr/share/nginx/html/

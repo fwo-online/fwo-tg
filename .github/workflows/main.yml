@@ -22,54 +22,55 @@ jobs:
         run: bun run types
       - name: eslint
         run: bun run lint
-  testContainer:
+  testContainerFrontend:
     environment: test
     needs: buildAndLint
     if: github.ref != 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       
       - name: Login to Github Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: catHD
           password: ${{ secrets.ghcr_token }}
-
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
           push: true
+          context: conteiners
+          file: Dockerfile.frontend
           tags: |
-            ghcr.io/cathd/${{ secrets.IMAGE_NAME }}:latest
-  prodContainer:
-    environment: prod
+            ghcr.io/cathd/fwo-ui-test:latest
+  testContainerBackend:
+    environment: test
     needs: buildAndLint
-    if: github.ref == 'refs/heads/master'
+    if: github.ref != 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       
       - name: Login to Github Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: catHD
           password: ${{ secrets.ghcr_token }}
-
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
           push: true
+          context: conteiners
+          file: Dockerfile.backend
           tags: |
-            ghcr.io/cathd/${{ secrets.IMAGE_NAME }}:latest
-  
+            ghcr.io/cathd/fwo-backend-test:latest
