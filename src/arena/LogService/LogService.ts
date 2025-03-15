@@ -1,7 +1,6 @@
 import type { SuccessArgs, FailArgs } from '@/arena/Constuructors/types';
 import { isSuccessResult } from '@/arena/Constuructors/utils';
 import type { HistoryItem } from '@/arena/HistoryService';
-import { sendBattleLogMessages } from '@/helpers/channelHelper';
 import { joinLongDmgMessages, joinLongMessages, formatMessage, joinHealMessages } from './utils';
 
 export type Message = SuccessArgs | FailArgs;
@@ -18,7 +17,7 @@ export class LogService {
   private messages: Message[] = [];
 
   constructor(
-    private writer: Writer = sendBattleLogMessages,
+    private writer: Writer,
     private formatter: Formatter = formatMessage,
   ) {}
 
