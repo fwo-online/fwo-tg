@@ -26,7 +26,7 @@ export async function init(debug: boolean) {
   }
 
   // Mount all components used in the project.
-  // console.log(miniApp.isSupported());
+
   miniApp.mount().then(() => {
     // Define components-related CSS variables.
     miniApp.bindCssVars();

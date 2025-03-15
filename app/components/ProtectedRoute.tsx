@@ -13,9 +13,5 @@ export const ProtectedRoute = () => {
     return <Navigate to="/" />;
   }
 
-  if (character.game) {
-    return <Navigate to={`game/${character.game}`} />;
-  }
-
   return <Outlet />;
 };

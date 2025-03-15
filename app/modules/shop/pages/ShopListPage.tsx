@@ -1,12 +1,17 @@
 import { Suspense, type FC } from 'react';
-import { useParams } from 'react-router';
+import { Navigate, useParams } from 'react-router';
 import { ShopList } from '@/modules/shop/components/ShopList';
 import { getShopItems } from '@/client/shop';
 import { List, Placeholder, Section } from '@telegram-apps/telegram-ui';
 import { wearListTranslations } from '@/constants/inventory';
+import { validateWear } from '@/utils/inventory';
 
 export const ShopListPage: FC = () => {
   const { wear } = useParams();
+
+  if (!validateWear(wear)) {
+    return <Navigate to="/error" />;
+  }
 
   return (
     <List>

@@ -6,6 +6,7 @@ import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 import { ItemModal } from '@/modules/items/components/ItemsModal';
 import { useCharacter } from '@/contexts/character';
 import { useRequest } from '@/hooks/useRequest';
+import { popup } from '@telegram-apps/sdk-react';
 
 export const ShopList: FC<{ shopPromise: Promise<Item[]> }> = ({ shopPromise }) => {
   const items = use(shopPromise);
@@ -18,6 +19,7 @@ export const ShopList: FC<{ shopPromise: Promise<Item[]> }> = ({ shopPromise }) 
   const handleBuy = async (item: Item) => {
     makeRequest(async () => {
       await buyItem(item.code);
+      popup.open({ message: `Ты купил ${item.info.name}` });
       await updateCharacter();
     });
   };

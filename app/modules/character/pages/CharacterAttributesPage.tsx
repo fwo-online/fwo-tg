@@ -7,8 +7,15 @@ import { useCharacterDynamicAttributes } from '@/modules/character/hooks/useChar
 import { CharacterAttributes } from '@/modules/character/components/CharacterDynamicAttributes';
 
 export const CharacterAttributesPage: FC = () => {
-  const { attributes, free, handleSave, handleChangeAttribute, handleReset } =
-    useCharacterAttributes();
+  const {
+    attributes,
+    free,
+    isPending,
+    hasChanges,
+    handleSave,
+    handleChangeAttribute,
+    handleReset,
+  } = useCharacterAttributes();
   const { dynamicAttributes, loading } = useCharacterDynamicAttributes(attributes);
 
   return (
@@ -21,10 +28,15 @@ export const CharacterAttributesPage: FC = () => {
       />
 
       <CharacterAttributes dynamicAttributes={dynamicAttributes} />
-      <Button stretched onClick={handleReset}>
+      <Button stretched onClick={handleReset} disabled={!hasChanges || isPending}>
         Сбросить
       </Button>
-      <Button stretched onClick={handleSave}>
+      <Button
+        stretched
+        onClick={handleSave}
+        disabled={!hasChanges || isPending}
+        loading={isPending}
+      >
         Применить
       </Button>
     </List>
