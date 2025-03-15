@@ -46,7 +46,7 @@ export type ServerToClientMessage = Message<{
   'lobby:start': [character: CharacterPublic];
   'lobby:stop': [character: CharacterPublic];
   'game:start': [gameID: string];
-  'game:end': [{ reason?: string; statistic: Record<string, { exp: number; gold: number }> }];
+  'game:end': [];
   'game:startOrders': [actions: { actions: Action[]; magics: Action[]; skills: Action[] }];
   'game:endOrders': [];
   'game:startRound': [

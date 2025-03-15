@@ -2,12 +2,24 @@ import { CharacterService } from '@/arena/CharacterService';
 import type { Server, Socket } from '@/server/ws';
 import { validateToken } from '@/server/utils/validateToken';
 
+const activeConnections = new Set<string>();
+
 export const middleware = async (socket: Socket, next: (err?: Error) => void) => {
   const [type, value] = socket.handshake.headers.authorization?.split(' ') ?? [];
   try {
     const user = validateToken(type, value);
     if (!user) {
       return next(new Error('User not found'));
+    }
+
+    if (!activeConnections.has(user.id.toString())) {
+      activeConnections.add(user.id.toString());
+
+      socket.on('disconnect', () => {
+        activeConnections.delete(user.id.toString());
+      });
+    } else {
+      return next(new Error('No multiple connections'));
     }
 
     const character = await CharacterService.getCharacter(user.id.toString());

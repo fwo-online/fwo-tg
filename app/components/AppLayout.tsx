@@ -24,7 +24,7 @@ export function AppLayout() {
     <>
       <Outlet />
       <Tabbar style={{ height: '64px' }}>
-        {tabs.map(({ path, icon, text }) => (
+        {tabs.map(({ path, text }) => (
           <Tabbar.Item
             key={path}
             text={text}

@@ -57,8 +57,8 @@ export const onConnection = (_io: Server, socket: Socket) => {
       });
     });
 
-    game.on('end', async (e) => {
-      socket.emit('game:end', e);
+    game.on('end', async () => {
+      socket.emit('game:end');
       await socket.leave(getRoom(game));
       await socket.leave(getRoom(game, character.clan?.id ?? character.id));
     });

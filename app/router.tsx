@@ -17,6 +17,7 @@ import { LobbyPage } from '@/modules/lobby/pages/LobbyPage';
 import { CharacterInventoryListPage } from '@/modules/character/pages/CharacterInventoryListPage';
 import { CharacterInventoryWearListPage } from '@/modules/character/pages/CharacterInventoryWearListPage';
 import { GamePage } from '@/modules/game/pages/GamePage';
+import { ErrorConnectionPage } from './modules/error/pages/ErrorConnectionPage';
 
 export function Router() {
   return (
@@ -43,6 +44,7 @@ export function Router() {
         </Route>
         <Route path="/game/:gameID" element={<GamePage />} />
       </Route>
+      <Route path="/connection-error" element={<ErrorConnectionPage />} />
       <Route path="/error" element={<ErrorPage />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
