@@ -1,9 +1,7 @@
 FROM oven/bun:1
 
-# Create app directory
-RUN ls -lah
 WORKDIR /fwo
 COPY . ./
-RUN ls -lah
+RUN bun install
 
 CMD ["bun", "run", "start:server"]
