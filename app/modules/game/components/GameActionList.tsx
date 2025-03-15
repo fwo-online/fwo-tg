@@ -1,6 +1,6 @@
 import { ButtonCell, Info, Section } from '@telegram-apps/telegram-ui';
 import { useGameStore } from '@/modules/game/store/useGameStore';
-import { type FC, useCallback, useState } from 'react';
+import type { FC } from 'react';
 import type { Action } from '@fwo/schemas';
 
 export const GameActionList: FC<{ onSelect: (action: Action) => void }> = ({ onSelect }) => {

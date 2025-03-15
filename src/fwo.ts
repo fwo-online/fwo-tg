@@ -15,6 +15,7 @@ import { Server } from 'socket.io';
 import { createServer } from 'node:http';
 import { middleware, onConnection, onCreate } from '@/server/ws';
 import { isString } from 'es-toolkit';
+import { initGameChannel } from './helpers/channelHelper';
 
 const { websocket } = createBunWebSocket();
 
@@ -40,6 +41,7 @@ void connect(async () => {
 
 registerGlobals();
 registerAffects();
+initGameChannel();
 
 bot.use(session());
 bot.use(stage.middleware());

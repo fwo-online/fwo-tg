@@ -1,14 +1,5 @@
-import { useParams } from 'react-router';
-import {
-  Button,
-  ButtonCell,
-  Info,
-  Navigation,
-  Placeholder,
-  Section,
-} from '@telegram-apps/telegram-ui';
+import { Button, ButtonCell, Info, Navigation, Placeholder } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
-import { useCharacter } from '@/contexts/character';
 import { ItemModal } from '@/modules/items/components/ItemsModal';
 import { equipItem, sellItem, unEquipItem } from '@/client/inventory';
 import { useRequest } from '@/hooks/useRequest';

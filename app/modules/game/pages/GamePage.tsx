@@ -1,5 +1,5 @@
 import { GameStatus } from '@/modules/game/components/GameStatus';
-import { List, Section } from '@telegram-apps/telegram-ui';
+import { List, Placeholder, Section } from '@telegram-apps/telegram-ui';
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import { GameOrderModal } from '../components/GameOrderModal';
 import { useGameState } from '../hooks/useGameState';
@@ -13,9 +13,15 @@ export function GamePage() {
     <List>
       <GameOrderModal />
       <Section>
-        <Section.Header>Раунд {round}</Section.Header>
-        <Section.Header>Статус</Section.Header>
-        <GameStatus />
+        {round ? (
+          <>
+            <Section.Header>Раунд {round}</Section.Header>
+            <Section.Header>Статус</Section.Header>
+            <GameStatus />
+          </>
+        ) : (
+          <Placeholder header="Игра начинается" />
+        )}
       </Section>
     </List>
   );

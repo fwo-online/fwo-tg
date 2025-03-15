@@ -1,3 +1,4 @@
+import { ActionService } from '@/arena/ActionService';
 import OrderError from '@/arena/errors/OrderError';
 import type GameService from '@/arena/GameService';
 import MatchMakingService from '@/arena/MatchMakingService';
@@ -101,7 +102,7 @@ export const onConnection = (_io: Server, socket: Socket) => {
         error: false,
         power: proc,
         orders: orders.map(({ target, proc, action }) => ({
-          action,
+          action: ActionService.toObject(action),
           target,
           power: proc,
         })),

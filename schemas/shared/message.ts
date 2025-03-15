@@ -4,6 +4,7 @@ import type { Player } from './player';
 import type { GameStatus } from '@/game';
 import type { Action } from './action';
 import type { RPC } from './rpc';
+import type { Order } from './orderSchema';
 
 export type ClientToServerMessage = Message<{
   character: [callback: (character: Character) => void];
@@ -24,11 +25,7 @@ export type ClientToServerMessage = Message<{
         magics: Action[];
         skills: Action[];
         power: number;
-        orders: {
-          power: number;
-          action: string;
-          target: string;
-        }[];
+        orders: Order[];
       }>,
     ) => void,
   ];

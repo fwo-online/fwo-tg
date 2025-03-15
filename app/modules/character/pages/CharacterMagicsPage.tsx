@@ -1,4 +1,4 @@
-import { getMagicList, learnMagic } from '@/client/magic';
+import { getMagicList } from '@/client/magic';
 import { useCharacter } from '@/contexts/character';
 import {
   Banner,
@@ -11,14 +11,13 @@ import {
 } from '@telegram-apps/telegram-ui';
 import { useEffect, useState } from 'react';
 import type { Magic } from '@fwo/schemas';
-import { popup } from '@telegram-apps/sdk-react';
 import { CharacterMagicList } from '../components/CharacterMagicList';
 import { times } from 'es-toolkit/compat';
-import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
+import { useCharacterLearnMagic } from '../hooks/useCharacterLearnMagic';
 
 export const CharacterMagicsPage = () => {
   const { character } = useCharacter();
-  const { updateCharacter } = useUpdateCharacter();
+  const { isLearning, handleLearn } = useCharacterLearnMagic();
 
   const [magics, setMagics] = useState<Magic[]>([]);
 
@@ -27,35 +26,6 @@ export const CharacterMagicsPage = () => {
       setMagics(magics ?? []);
     });
   }, [character.magics]);
-
-  const handleLearn = async (lvl: number) => {
-    const id = await popup.open({
-      message: `Стоимость изучения ${lvl}💡`,
-      buttons: [
-        {
-          id: 'close',
-          type: 'close',
-        },
-        {
-          id: 'ok',
-          type: 'ok',
-        },
-      ],
-    });
-
-    if (id === 'ok') {
-      try {
-        const magic = await learnMagic(lvl);
-        await popup.open({
-          title: 'Успешное изучение',
-          message: `${magic.displayName}`,
-        });
-        await updateCharacter();
-      } catch (e) {
-        await popup.open(e);
-      }
-    }
-  };
 
   if (!magics.length) {
     return <Spinner size="l" />;
@@ -77,8 +47,9 @@ export const CharacterMagicsPage = () => {
             {times(4, (i) => i + 1).map((lvl) => (
               <Button
                 key={lvl}
+                loading={isLearning}
                 stretched
-                disabled={lvl > character.bonus || lvl > character.lvl}
+                disabled={lvl > character.bonus || lvl > character.lvl || isLearning}
                 onClick={() => handleLearn(lvl)}
               >
                 {lvl}💡

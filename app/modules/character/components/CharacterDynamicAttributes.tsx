@@ -1,4 +1,4 @@
-import { Cell, List, Section } from '@telegram-apps/telegram-ui';
+import { Section } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 
 import { CharacterClass, type Attributes } from '@fwo/schemas';

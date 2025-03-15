@@ -1,4 +1,4 @@
-import { ActionService } from '@/arena/ActionService';
+import { ActionService, type ActionKey } from '@/arena/ActionService';
 import { type RoundService, RoundStatus } from '@/arena/RoundService';
 import OrderError from '@/arena/errors/OrderError';
 import type PlayersService from '@/arena/PlayersService';
@@ -11,6 +11,9 @@ export interface Order {
   proc: number;
 }
 
+export interface OrderOutput extends Order {
+  action: ActionKey;
+}
 /**
  * OrderService
  *
@@ -21,9 +24,9 @@ export interface Order {
  */
 export default class Orders {
   /** Текущий список заказов */
-  ordersList: Order[] = [];
+  ordersList: OrderOutput[] = [];
   /** История заказов */
-  hist: Order[][] = [];
+  hist: OrderOutput[][] = [];
 
   playersService: PlayersService;
   roundService: RoundService;
@@ -65,7 +68,7 @@ export default class Orders {
     initiator.setProc(initiator.proc - order.proc);
     console.log('order :::: ', order);
 
-    this.ordersList.push(order);
+    this.ordersList.push(order as OrderOutput);
 
     return {
       orders: this.ordersList.filter(({ initiator }) => initiator === order.initiator),

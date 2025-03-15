@@ -78,29 +78,31 @@ export async function sendExitButton(player: Player): Promise<void> {
   }
 }
 
-arena.mm.on('start', (game) => {
-  const log = new LogService(sendBattleLogMessages);
-  broadcast('Игра начинается');
+export const initGameChannel = () => {
+  arena.mm.on('start', (game) => {
+    const log = new LogService(sendBattleLogMessages);
+    broadcast('Игра начинается');
 
-  game.on('startOrders', () => {
-    broadcast('Пришло время делать заказы');
-  });
-  game.on('startRound', (e) => {
-    broadcast(`⚡️ Раунд ${e.round} начинается ⚡`);
-  });
-  game.on('endRound', async (e) => {
-    await log.sendBattleLog(e.log);
-    if (e.dead.length) {
-      await broadcast(`Погибшие в этом раунде: ${e.dead.map(({ nick }) => nick).join(', ')}`);
-    }
-  });
+    game.on('startOrders', () => {
+      broadcast('Пришло время делать заказы');
+    });
+    game.on('startRound', (e) => {
+      broadcast(`⚡️ Раунд ${e.round} начинается ⚡`);
+    });
+    game.on('endRound', async (e) => {
+      await log.sendBattleLog(e.log);
+      if (e.dead.length) {
+        await broadcast(`Погибшие в этом раунде: ${e.dead.map(({ nick }) => nick).join(', ')}`);
+      }
+    });
 
-  game.on('end', (e) => {
-    const getStatusString = (p: { exp: number; gold: number; nick: string }) =>
-      `\t👤 ${p.nick} получает ${p.exp}📖 и ${p.gold}💰`;
+    game.on('end', (e) => {
+      const getStatusString = (p: { exp: number; gold: number; nick: string }) =>
+        `\t👤 ${p.nick} получает ${p.exp}📖 и ${p.gold}💰`;
 
-    broadcast('Игра завершена');
-    broadcast(`${bold`Статистика игры`}
-${Object.entries(e.statistic).map(([clan, players]) => `${clan === reservedClanName ? 'Без клана' : clan}:\n ${players?.map(getStatusString).join('\n')}`)}`);
+      broadcast('Игра завершена');
+      broadcast(`${bold`Статистика игры`}
+  ${Object.entries(e.statistic).map(([clan, players]) => `${clan === reservedClanName ? 'Без клана' : clan}:\n ${players?.map(getStatusString).join('\n')}`)}`);
+    });
   });
-});
+};

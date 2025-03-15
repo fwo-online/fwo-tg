@@ -16,11 +16,11 @@ export class ActionService {
     return false;
   }
 
-  static toObject(action: ActionKey, lvl: number): Action {
+  static toObject(action: ActionKey, lvl = 0): Action {
     const c = arena.actions[action];
 
     if ('cost' in c && 'costType' in c) {
-      const cost = Array.isArray(c.cost) ? c.cost[lvl] : c.cost;
+      const cost = Array.isArray(c.cost) ? c.cost[lvl - 1] : c.cost;
 
       return {
         name: c.name,

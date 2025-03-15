@@ -1,13 +1,9 @@
-import type { Action, GameStatus, Player, PublicGameStatus } from '@fwo/schemas';
+import type { Action, GameStatus, Order, Player } from '@fwo/schemas';
 import { create } from 'zustand';
 
 export type GameStoreState = {
   round: number;
-  orders: {
-    target: string;
-    action: string;
-    power: number;
-  }[];
+  orders: Order[];
   players: Record<string, Player>;
   canOrder: boolean;
   status: GameStatus[];

@@ -1,9 +1,7 @@
-import * as v from 'valibot';
+import type { Action } from './action';
 
-export const orderSchema = v.object({
-  target: v.string(),
-  action: v.string(),
-  proc: v.number(),
-});
-
-export type Order = v.InferOutput<typeof orderSchema>;
+export type Order = {
+  target: string;
+  action: Action;
+  power: number;
+};
