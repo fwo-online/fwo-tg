@@ -3,9 +3,5 @@ node_modules/
 .tg-token
 .env
 .DS_Store
-items-sets.csv
-src/items-sets.json
-items.csv
-src/items.json
 out
 dist

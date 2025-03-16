@@ -34,10 +34,7 @@
         "vite-tsconfig-paths": "^5.1.4",
       },
     },
-    "shared": {
-      "name": "@fwo/shared",
-    },
-    "src": {
+    "server": {
       "name": "@fwo/server",
       "dependencies": {
         "@fwo/shared": "workspace:*",
@@ -58,6 +55,9 @@
         "casual": "^1.6.2",
         "csvtojson": "^2.0.10",
       },
+    },
+    "shared": {
+      "name": "@fwo/shared",
     },
   },
   "packages": {
@@ -177,7 +177,7 @@
 
     "@fwo/client": ["@fwo/client@workspace:client"],
 
-    "@fwo/server": ["@fwo/server@workspace:src"],
+    "@fwo/server": ["@fwo/server@workspace:server"],
 
     "@fwo/shared": ["@fwo/shared@workspace:shared"],
 

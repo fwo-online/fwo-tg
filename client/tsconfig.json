@@ -1,6 +1,6 @@
 {
   "references": [{
-    "path": "../src/tsconfig.json"
+    "path": "../server/tsconfig.json"
   }, {
     "path": "../shared/tsconfig.json"
   }],
