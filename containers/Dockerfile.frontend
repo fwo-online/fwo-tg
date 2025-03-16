@@ -7,4 +7,4 @@ COPY . ./
 RUN bun install && bun run build
 
 FROM nginx:latest
-COPY --from=builder /fwo/app/dist /usr/share/nginx/html/
+COPY --from=builder /fwo/client/dist /usr/share/nginx/html/

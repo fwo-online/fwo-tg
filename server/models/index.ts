@@ -13,7 +13,6 @@ export async function connect(onConnect?: () => void): Promise<void> {
       authSource: 'admin',
     };
 
-    console.log(process.env.NODE_ENV);
     switch (process.env.NODE_ENV) {
       case 'production':
         await mongoose.connect(
