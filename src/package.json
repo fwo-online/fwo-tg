@@ -1,7 +1,5 @@
 {
   "name": "@fwo/server",
-  "version": "0.4.0",
-  "description": "FightWorld Telegram",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -14,23 +12,6 @@
     "format": "biome format --fix",
     "types": "tsc"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/catHD/fwo-tg.git"
-  },
-  "keywords": ["fwo", "game", "nodejs", "mmorpg"],
-  "author": "FWO Team",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/catHD/fwo-tg/issues"
-  },
-  "exports": {
-    ".": {
-      "default": "./server/index.ts",
-      "types": "./server/index.ts"
-    }
-  },
-  "homepage": "https://github.com/catHD/fwo-tg#readme",
   "dependencies": {
     "@fwo/schemas": "workspace:*",
     "@hono/valibot-validator": "^0.5.2",
@@ -48,5 +29,11 @@
     "@types/node": "^22.13.10",
     "casual": "^1.6.2",
     "csvtojson": "^2.0.10"
+  },
+  "exports": {
+    ".": {
+      "default": "./server/index.ts",
+      "types": "./server/index.ts"
+    }
   }
 }

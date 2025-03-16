@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/catHD/fwo-tg.git"
+    "url": "git+ssh://git@github.com/fwo-online/fwo-tg.git"
   },
   "keywords": [
     "fwo",
@@ -33,9 +33,9 @@
   "author": "FWO Team",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/catHD/fwo-tg/issues"
+    "url": "https://github.com/fwo-online/fwo-tg/issues"
   },
-  "homepage": "https://github.com/catHD/fwo-tg#readme",
+  "homepage": "https://github.com/fwo-online/fwo-tg#readme",
   "dependencies": {
     "valibot": "^1.0.0-rc.4"
   },
