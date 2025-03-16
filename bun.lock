@@ -12,7 +12,6 @@
     },
     "app": {
       "name": "@fwo/app",
-      "version": "0.3.1",
       "dependencies": {
         "@fwo/schemas": "workspace:^",
         "@fwo/server": "workspace:^",
@@ -40,9 +39,9 @@
     },
     "src": {
       "name": "@fwo/server",
-      "version": "0.4.0",
       "dependencies": {
         "@fwo/schemas": "workspace:*",
+        "@hono/node-server": "^1.13.8",
         "@hono/valibot-validator": "^0.5.2",
         "@telegram-apps/init-data-node": "^2.0.3",
         "es-toolkit": "^1.33.0",
@@ -181,6 +180,8 @@
     "@fwo/schemas": ["@fwo/schemas@workspace:schemas"],
 
     "@fwo/server": ["@fwo/server@workspace:src"],
+
+    "@hono/node-server": ["@hono/node-server@1.13.8", "", { "peerDependencies": { "hono": "^4" } }, "sha512-fsn8ucecsAXUoVxrUil0m13kOEq4mkX4/4QozCqmY+HpGfKl74OYSn8JcMA8GnG0ClfdRI4/ZSeG7zhFaVg+wg=="],
 
     "@hono/valibot-validator": ["@hono/valibot-validator@0.5.2", "", { "peerDependencies": { "hono": ">=3.9.0", "valibot": "^1.0.0 || ^1.0.0-beta.4 || ^1.0.0-rc" } }, "sha512-WbTr8PCFNAME0ale62rmmq+E8bGp5a7VPiVNmNT+Ue12GJE3Ax+CWBGtHhR0TzAEiloPvJND3IbjHIgtNtsqhw=="],
 
