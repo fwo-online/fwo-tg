@@ -8,7 +8,7 @@ const getToken = () => {
 };
 
 export const createWebSocket = async () => {
-  const socket = io(import.meta.env.VITE_WS_URL, { extraHeaders: { authorization: getToken() } });
+  const socket = io(import.meta.env.VITE_API_URL, { extraHeaders: { authorization: getToken() } });
   return new Promise<Socket>((resolve) => {
     socket.io.on('open', () => {
       resolve(socket);

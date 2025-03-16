@@ -9,9 +9,8 @@ import { ItemModel } from './models/item';
 import { stage } from './scenes/stage';
 import { registerAffects } from './utils/registerAffects';
 import { registerGlobals } from './utils/registerGlobals';
-import { serve } from 'bun';
+import { serve } from '@hono/node-server';
 import { Server } from 'socket.io';
-import { createServer } from 'node:http';
 import { middleware, onConnection, onCreate } from '@/server/ws';
 import { isString } from 'es-toolkit';
 import { initGameChannel } from './helpers/channelHelper';
@@ -54,19 +53,16 @@ bot.start(async (ctx) => {
 // bot.startWebhook('/test', null, 3000);
 arena.bot = bot;
 
-serve({
+const server = serve({
   fetch: app.fetch,
   port: 3000,
 });
 
-const httpServer = createServer();
-const io = new Server(httpServer, {
+const io = new Server(server, {
   cors: { origin: [process.env.APP_URL].filter(isString) },
 });
 
 onCreate(io);
-
-httpServer.listen(4000);
 
 io.use(middleware);
 io.on('connection', (socket) => {

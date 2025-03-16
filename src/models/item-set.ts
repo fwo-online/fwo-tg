@@ -46,6 +46,7 @@ const itemSet = new Schema<ItemSet, ItemSetModel>(
       unique: true,
       required: true,
     },
+    items: [{ type: String }],
     info: { type: Object },
     attributes: { type: Object },
     base: { type: Object },

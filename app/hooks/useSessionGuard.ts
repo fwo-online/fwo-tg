@@ -18,9 +18,11 @@ export const useSessionReconnect = () => {
   const navigate = useNavigate();
 
   return () => {
-    socket.connect();
-    socket.on('connect', () => {
+    if (!socket.connected) {
+      socket.connect();
+      socket.on('connect', () => {});
+    } else {
       navigate('/');
-    });
+    }
   };
 };

@@ -17,7 +17,7 @@ export class ItemDocument extends Document<Item> {
       if (items.length) {
         arena.items = _.keyBy(items, ({ code }) => code);
       } else {
-        console.log('ItemsSets not found. Generating...');
+        console.log('Items not found. Generating...');
         const items = await generateItems();
         console.log('Items file Loaded: ', Date.now() - timer, 'ms');
 
