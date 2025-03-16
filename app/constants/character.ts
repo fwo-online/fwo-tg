@@ -5,7 +5,7 @@ export const characterClassList = Object.values(CharacterClass);
 export const characterClassNameMap: Record<CharacterClass, string> = {
   [CharacterClass.Archer]: 'Лучник',
   [CharacterClass.Mage]: 'Маг',
-  [CharacterClass.Priest]: 'Лекарь',
+  [CharacterClass.Priest]: 'Жрец',
   [CharacterClass.Warrior]: 'Воин',
 };
 

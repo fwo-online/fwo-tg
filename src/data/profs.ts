@@ -50,7 +50,7 @@ export const profsData: Record<Prof, ProfItem> = {
       lightHeal: 1,
     },
     descr: 'хилит',
-    name: 'Лекарь',
+    name: 'Жрец',
     icon: '♱',
   },
 };
