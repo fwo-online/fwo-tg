@@ -10,14 +10,15 @@ import { type Char, CharModel } from '@/models/character';
 import { type Clan, ClanModel } from '@/models/clan';
 import { InventoryModel } from '@/models/inventory';
 import { ItemModel } from '@/models/item';
-import type { Item } from '@fwo/schemas';
+import type { Item } from '@fwo/shared';
 
 const functions = casual.functions();
 
 export default class TestUtils {
-  static async createCharacter(params?: Partial<Char>, {
-    withWeapon = false,
-  }: { withWeapon?: boolean | string } = {}) {
+  static async createCharacter(
+    params?: Partial<Char>,
+    { withWeapon = false }: { withWeapon?: boolean | string } = {},
+  ) {
     const prof: Prof = params?.prof ?? casual.random_element([...profsList]);
     const char = await CharModel.create({
       owner: casual.integer(1_000_000, 9_999_999).toString(),
@@ -32,12 +33,14 @@ export default class TestUtils {
     if (withWeapon) {
       const weapon = await this.getWeapon(withWeapon);
 
-      char.inventory = await InventoryModel.create([{
-        wear: weapon.wear,
-        code: weapon.code,
-        owner: char.id,
-        putOn: true,
-      }]);
+      char.inventory = await InventoryModel.create([
+        {
+          wear: weapon.wear,
+          code: weapon.code,
+          owner: char.id,
+          putOn: true,
+        },
+      ]);
 
       await char.save();
     }
@@ -69,7 +72,10 @@ export default class TestUtils {
   }
 
   static async getClan(id: string) {
-    const clan = await ClanModel.findById(id).populate('owner').populate('players').populate('requests');
+    const clan = await ClanModel.findById(id)
+      .populate('owner')
+      .populate('players')
+      .populate('requests');
     return clan?.toObject();
   }
 
@@ -85,8 +91,10 @@ export default class TestUtils {
   }
 
   static normalizeRoundHistory(history: HistoryItem[]) {
-    return history.map((item) => {
-      return formatMessage(item);
-    }).join('\n');
+    return history
+      .map((item) => {
+        return formatMessage(item);
+      })
+      .join('\n');
   }
 }

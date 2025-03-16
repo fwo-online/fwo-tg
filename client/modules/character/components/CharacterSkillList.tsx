@@ -1,4 +1,4 @@
-import type { Skill } from '@fwo/schemas';
+import type { Skill } from '@fwo/shared';
 import { ButtonCell, Info, Navigation } from '@telegram-apps/telegram-ui';
 import { type FC, use, useState } from 'react';
 import { CharacterSkillModal } from '@/modules/character/components/CharacterSkillModal';

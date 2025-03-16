@@ -10,7 +10,7 @@ import { RoundService, RoundStatus } from '@/arena/RoundService';
 import arena from '@/arena';
 import { mapValues } from 'es-toolkit';
 import EventEmitter from 'node:events';
-import { type GameStatus, reservedClanName } from '@fwo/schemas';
+import { type GameStatus, reservedClanName } from '@fwo/shared';
 
 export type KickReason = 'afk' | 'run';
 

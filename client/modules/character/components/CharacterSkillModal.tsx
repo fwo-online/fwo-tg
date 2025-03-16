@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from 'react';
 import { useCharacter } from '@/contexts/character';
-import type { Skill } from '@fwo/schemas';
+import type { Skill } from '@fwo/shared';
 import { Banner, Button, List, Modal } from '@telegram-apps/telegram-ui';
 
 export const CharacterSkillModal: FC<{

@@ -1,7 +1,7 @@
 import { get, set } from 'lodash';
 import { floatNumber } from '@/utils/floatNumber';
-import type { CharacterDynamicAttributes } from '@fwo/schemas';
-import type { PhysAttributes } from '@fwo/schemas';
+import type { CharacterDynamicAttributes } from '@fwo/shared';
+import type { PhysAttributes } from '@fwo/shared';
 
 type CombineAll<T> = T extends { [name in keyof T]: infer Type } ? Type : never;
 

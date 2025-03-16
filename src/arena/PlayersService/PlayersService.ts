@@ -1,6 +1,6 @@
 import { keyBy } from 'lodash';
 import Player from './PlayerService';
-import { reservedClanName } from '@fwo/schemas';
+import { reservedClanName } from '@fwo/shared';
 
 export default class PlayersService {
   init: string[];

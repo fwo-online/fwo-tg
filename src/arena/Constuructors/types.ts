@@ -1,4 +1,4 @@
-import type { Item } from '@fwo/schemas';
+import type { Item } from '@fwo/shared';
 import type GameService from '../GameService';
 import type { Player } from '../PlayersService';
 

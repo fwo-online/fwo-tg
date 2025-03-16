@@ -1,5 +1,5 @@
 import type { Chance } from '@/arena/PlayersService';
-import type { Modifiers } from '@fwo/schemas';
+import type { Modifiers } from '@fwo/shared';
 
 export function convertItemModifiers(modifiers: Modifiers[]): Chance {
   return modifiers.reduce<Chance>(

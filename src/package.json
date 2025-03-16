@@ -13,7 +13,7 @@
     "types": "tsc"
   },
   "dependencies": {
-    "@fwo/schemas": "workspace:*",
+    "@fwo/shared": "workspace:*",
     "@hono/node-server": "^1.13.8",
     "@hono/valibot-validator": "^0.5.2",
     "@telegram-apps/init-data-node": "^2.0.3",

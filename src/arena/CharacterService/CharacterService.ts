@@ -6,7 +6,7 @@ import config from '@/arena/config';
 import { InventoryService } from '@/arena/InventoryService';
 import type { HarksLvl } from '@/data/harks';
 import type { Char } from '@/models/character';
-import type { Character, CharacterClass, CharacterPublic } from '@fwo/schemas';
+import type { Character, CharacterClass, CharacterPublic } from '@fwo/shared';
 import { assignWithSum } from '@/utils/assignWithSum';
 import { calculateDynamicAttributes } from './utils/calculate-dynamic-attributes';
 import { sum } from 'es-toolkit';

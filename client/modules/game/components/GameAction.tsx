@@ -1,7 +1,7 @@
 import { Button, Placeholder, Section, Slider } from '@telegram-apps/telegram-ui';
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import { type FC, useState } from 'react';
-import { reservedClanName, type Action } from '@fwo/schemas';
+import { reservedClanName, type Action } from '@fwo/shared';
 import { useGameActionTargets } from '../hooks/useGameActionTargets';
 import { GameActionTarget } from './GameActionTarget';
 import { useGameActionOrder } from '../hooks/useGameActionOrder';

@@ -3,7 +3,7 @@ import {
   type CharacterAttributes,
   CharacterClass,
   type CharacterDynamicAttributes,
-} from '@fwo/schemas';
+} from '@fwo/shared';
 import type { CharacterService } from '../CharacterService';
 
 const calculateBaseAttributes = (

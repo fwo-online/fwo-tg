@@ -1,4 +1,4 @@
-import { CharacterClass } from '@fwo/schemas';
+import { CharacterClass } from '@fwo/shared';
 
 export const characterClassList = Object.values(CharacterClass);
 

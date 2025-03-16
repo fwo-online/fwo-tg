@@ -1,6 +1,6 @@
 import { Cell, Info, Selectable } from '@telegram-apps/telegram-ui';
 import { type FC, useCallback } from 'react';
-import type { PublicGameStatus } from '@fwo/schemas';
+import type { PublicGameStatus } from '@fwo/shared';
 import styles from './GameAction.module.css';
 
 export const GameActionTarget: FC<{

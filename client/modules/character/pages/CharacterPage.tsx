@@ -12,7 +12,7 @@ import { useCharacter } from '@/contexts/character';
 import { CharacterImage } from '@/modules/character/components/CharacterImage';
 import { characterClassNameMap } from '@/constants/character';
 import { useNavigate } from 'react-router';
-import { CharacterClass } from '@fwo/schemas';
+import { CharacterClass } from '@fwo/shared';
 
 export const CharacterPage: FC = () => {
   const navigate = useNavigate();

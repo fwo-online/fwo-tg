@@ -12,7 +12,7 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@fwo/schemas": "workspace:^",
+    "@fwo/shared": "workspace:^",
     "@fwo/server": "workspace:^",
     "@telegram-apps/react-router-integration": "^1.0.1",
     "@telegram-apps/sdk-react": "^3.1.2",

@@ -1,6 +1,6 @@
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import { useMemo } from 'react';
-import { reservedClanName, type Action, type PublicGameStatus } from '@fwo/schemas';
+import { reservedClanName, type Action, type PublicGameStatus } from '@fwo/shared';
 import { useCharacter } from '@/contexts/character';
 import { omit, pick } from 'es-toolkit';
 import { isEmpty } from 'es-toolkit/compat';

@@ -1,4 +1,4 @@
-import type { CharacterAttributes } from '@fwo/schemas';
+import type { CharacterAttributes } from '@fwo/shared';
 import { InlineButtons, Section } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 

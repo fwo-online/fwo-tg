@@ -1,5 +1,5 @@
 import { Description } from '@/components/Description';
-import type { Magic } from '@fwo/schemas';
+import type { Magic } from '@fwo/shared';
 import { Modal, List, Banner, Section } from '@telegram-apps/telegram-ui';
 import type { FC, ReactNode } from 'react';
 

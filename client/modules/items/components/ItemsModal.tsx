@@ -1,5 +1,5 @@
 import { Description } from '@/components/Description';
-import type { Item, MinMax } from '@fwo/schemas';
+import type { Item, MinMax } from '@fwo/shared';
 import { Banner, Modal, Section } from '@telegram-apps/telegram-ui';
 import { get, isNumber } from 'es-toolkit/compat';
 import type { ReactNode, FC } from 'react';

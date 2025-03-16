@@ -1,5 +1,5 @@
 {
-  "name": "@fwo/schemas",
+  "name": "@fwo/shared",
   "type": "module",
   "scripts": {
     "dev": "tsc",

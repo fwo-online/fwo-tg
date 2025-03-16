@@ -7,7 +7,7 @@ import StatsService from '@/arena/StatsService';
 import type { Clan } from '@/models/clan';
 import { PlayerWeapon } from './PlayerWeapon';
 import { convertItemModifiers } from './utils';
-import type { CharacterClass, GameStatus, Player } from '@fwo/schemas';
+import type { CharacterClass, GameStatus, Player } from '@fwo/shared';
 
 export type Resists = Record<DamageType, number>;
 

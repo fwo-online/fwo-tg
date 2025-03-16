@@ -1,6 +1,6 @@
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import { Description } from '@/components/Description';
-import { reservedClanName } from '@fwo/schemas';
+import { reservedClanName } from '@fwo/shared';
 import { useCharacter } from '@/contexts/character';
 
 export function GameStatus() {

@@ -4,7 +4,7 @@ import { ItemModal } from '@/modules/items/components/ItemsModal';
 import { equipItem, sellItem, unEquipItem } from '@/api/inventory';
 import { useRequest } from '@/hooks/useRequest';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
-import type { Inventory } from '@fwo/schemas';
+import type { Inventory } from '@fwo/shared';
 
 export const CharacterInventoryList: FC<{ inventory: Inventory[] }> = ({ inventory }) => {
   const { updateCharacter } = useUpdateCharacter();

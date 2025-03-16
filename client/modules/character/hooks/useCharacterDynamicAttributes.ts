@@ -1,6 +1,6 @@
 import { getCharacterDynamicAttributes } from '@/api/character';
 import { useCharacter } from '@/contexts/character';
-import type { CharacterAttributes } from '@fwo/schemas';
+import type { CharacterAttributes } from '@fwo/shared';
 import { useEffect, useState, useTransition } from 'react';
 
 export const useCharacterDynamicAttributes = (attributes: CharacterAttributes) => {

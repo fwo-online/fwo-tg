@@ -1,4 +1,4 @@
-import type { Action, GameStatus, Order, Player } from '@fwo/schemas';
+import type { Action, GameStatus, Order, Player } from '@fwo/shared';
 import { create } from 'zustand';
 
 export type GameStoreState = {

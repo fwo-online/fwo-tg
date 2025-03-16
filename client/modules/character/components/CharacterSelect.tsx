@@ -1,4 +1,4 @@
-import type { CreateCharacterDto, CharacterClass } from '@fwo/schemas';
+import type { CreateCharacterDto, CharacterClass } from '@fwo/shared';
 import {
   Button,
   CompactPagination,

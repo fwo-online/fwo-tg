@@ -1,8 +1,8 @@
 import type { Model } from 'mongoose';
 import mongoose, { Document, Schema } from 'mongoose';
 import arena from '@/arena';
-import type { Item } from '@fwo/schemas';
-import { attributesSchema } from '@fwo/schemas';
+import type { Item } from '@fwo/shared';
+import { attributesSchema } from '@fwo/shared';
 import _ from 'lodash';
 import { generateItems } from '@/helpers/itemHelper';
 import { parse } from 'valibot';

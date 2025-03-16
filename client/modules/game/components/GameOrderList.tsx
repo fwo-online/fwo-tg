@@ -1,7 +1,7 @@
 import { ButtonCell, Placeholder, Section } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { useGameStore } from '@/modules/game/store/useGameStore';
-import type { Action, Order } from '@fwo/schemas';
+import type { Action, Order } from '@fwo/shared';
 
 const GameOrderListItem: FC<{
   order: Order;

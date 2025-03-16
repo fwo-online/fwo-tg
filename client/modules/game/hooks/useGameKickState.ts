@@ -1,6 +1,6 @@
 import { useCharacter } from '@/contexts/character';
 import { useWebSocket } from '@/contexts/webSocket';
-import type { ServerToClientMessage } from '@fwo/schemas';
+import type { ServerToClientMessage } from '@fwo/shared';
 import { popup } from '@telegram-apps/sdk-react';
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router';

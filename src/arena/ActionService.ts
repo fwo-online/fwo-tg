@@ -1,5 +1,5 @@
 import arena from '@/arena';
-import type { Action } from '@fwo/schemas';
+import type { Action } from '@fwo/shared';
 
 export type ActionKey = keyof typeof arena.actions;
 

@@ -10,11 +10,11 @@
         "typescript": "^5.8.2",
       },
     },
-    "app": {
-      "name": "@fwo/app",
+    "client": {
+      "name": "@fwo/client",
       "dependencies": {
-        "@fwo/schemas": "workspace:^",
         "@fwo/server": "workspace:^",
+        "@fwo/shared": "workspace:^",
         "@telegram-apps/react-router-integration": "^1.0.1",
         "@telegram-apps/sdk-react": "^3.1.2",
         "@telegram-apps/telegram-ui": "^2.1.8",
@@ -34,13 +34,13 @@
         "vite-tsconfig-paths": "^5.1.4",
       },
     },
-    "schemas": {
-      "name": "@fwo/schemas",
+    "shared": {
+      "name": "@fwo/shared",
     },
     "src": {
       "name": "@fwo/server",
       "dependencies": {
-        "@fwo/schemas": "workspace:*",
+        "@fwo/shared": "workspace:*",
         "@hono/node-server": "^1.13.8",
         "@hono/valibot-validator": "^0.5.2",
         "@telegram-apps/init-data-node": "^2.0.3",
@@ -175,11 +175,11 @@
 
     "@floating-ui/utils": ["@floating-ui/utils@0.2.8", "", {}, "sha512-kym7SodPp8/wloecOpcmSnWJsK7M0E5Wg8UcFA+uO4B9s5d0ywXOEro/8HM9x0rW+TljRzul/14UYz3TleT3ig=="],
 
-    "@fwo/app": ["@fwo/app@workspace:app"],
-
-    "@fwo/schemas": ["@fwo/schemas@workspace:schemas"],
+    "@fwo/client": ["@fwo/client@workspace:client"],
 
     "@fwo/server": ["@fwo/server@workspace:src"],
+
+    "@fwo/shared": ["@fwo/shared@workspace:shared"],
 
     "@hono/node-server": ["@hono/node-server@1.13.8", "", { "peerDependencies": { "hono": "^4" } }, "sha512-fsn8ucecsAXUoVxrUil0m13kOEq4mkX4/4QozCqmY+HpGfKl74OYSn8JcMA8GnG0ClfdRI4/ZSeG7zhFaVg+wg=="],
 

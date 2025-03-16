@@ -1,6 +1,6 @@
 import { useCharacter } from '@/contexts/character';
 import { useWebSocket } from '@/contexts/webSocket';
-import type { CharacterPublic } from '@fwo/schemas';
+import type { CharacterPublic } from '@fwo/shared';
 import { useEffect, useState } from 'react';
 
 export const useLobby = () => {

@@ -1,5 +1,5 @@
 import type { CharacterService } from '@/arena/CharacterService';
-import type { ClientToServerMessage, ServerToClientMessage } from '@fwo/schemas';
+import type { ClientToServerMessage, ServerToClientMessage } from '@fwo/shared';
 import type { DefaultEventsMap, Server as IOServer, Socket as IOSocket } from 'socket.io';
 import * as game from './game';
 import * as lobby from './lobby';

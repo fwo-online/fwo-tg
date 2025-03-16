@@ -8,7 +8,7 @@ import TestUtils from '@/utils/testUtils';
 import { CharacterService } from '../CharacterService';
 import Player from './PlayerService';
 import PlayersService from './PlayersService';
-import { reservedClanName } from '@fwo/schemas';
+import { reservedClanName } from '@fwo/shared';
 
 // npm t src/arena/PlayersService/PlayersService.test.ts
 

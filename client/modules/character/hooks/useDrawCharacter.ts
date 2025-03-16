@@ -1,4 +1,4 @@
-import { CharacterClass, type Character } from '@fwo/schemas';
+import { CharacterClass, type Character } from '@fwo/shared';
 
 export const drawCharacter = (canvas: HTMLCanvasElement, character: Character) => {
   const ctx = canvas.getContext('2d');

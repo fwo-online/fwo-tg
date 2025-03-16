@@ -1,6 +1,6 @@
 {
   "references": [{
-    "path": "../schemas/tsconfig.json"
+    "path": "../shared/tsconfig.json"
   }],
   "compilerOptions": {
     "composite": true,

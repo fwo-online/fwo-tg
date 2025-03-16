@@ -1,4 +1,4 @@
-import type { ClientToServerMessage, ServerToClientMessage } from '@fwo/schemas';
+import type { ClientToServerMessage, ServerToClientMessage } from '@fwo/shared';
 import type { PropsWithChildren } from 'react';
 import { createContext, use } from 'react';
 import type { Socket } from 'socket.io-client';

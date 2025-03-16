@@ -1,5 +1,5 @@
 import { useWebSocket } from '@/contexts/webSocket';
-import type { Action } from '@fwo/schemas';
+import type { Action } from '@fwo/shared';
 import { popup } from '@telegram-apps/sdk-react';
 import { useGameStore } from '../store/useGameStore';
 import { useTransition } from 'react';

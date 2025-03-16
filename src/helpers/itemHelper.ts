@@ -1,5 +1,5 @@
-import { itemSchema } from '@fwo/schemas';
-import { itemSetSchema } from '@fwo/schemas';
+import { itemSchema } from '@fwo/shared';
+import { itemSetSchema } from '@fwo/shared';
 import assert from 'node:assert';
 import csv from 'csvtojson';
 import { parse, array } from 'valibot';

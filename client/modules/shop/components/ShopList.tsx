@@ -1,4 +1,4 @@
-import type { Item } from '@fwo/schemas';
+import type { Item } from '@fwo/shared';
 import { Button, ButtonCell, Navigation, Placeholder } from '@telegram-apps/telegram-ui';
 import { use, type FC } from 'react';
 import { buyItem } from '@/api/character';

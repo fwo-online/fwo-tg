@@ -4,7 +4,7 @@ import type { Player } from '@/arena/PlayersService';
 import { normalizeToArray } from '@/utils/array';
 import { floatNumber } from '@/utils/floatNumber';
 import type { ActionType, BreaksMessage, ExpArr, FailArgs, SuccessArgs } from './types';
-import type { EffectType, OrderType } from '@fwo/schemas';
+import type { EffectType, OrderType } from '@fwo/shared';
 
 export type BaseActionParams = {
   initiator: Player;

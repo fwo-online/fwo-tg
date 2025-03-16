@@ -1,5 +1,5 @@
 import { useWebSocket } from '@/contexts/webSocket';
-import type { ServerToClientMessage } from '@fwo/schemas';
+import type { ServerToClientMessage } from '@fwo/shared';
 import { useCallback, useEffect } from 'react';
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import { useGameKickState } from './useGameKickState';

@@ -1,6 +1,6 @@
 import { vValidator } from '@hono/valibot-validator';
 import { Hono } from 'hono';
-import { idSchema } from '@fwo/schemas';
+import { idSchema } from '@fwo/shared';
 import { characterMiddleware, userMiddleware } from '@/server/middlewares';
 import { withValidation } from '@/server/utils/withValidation';
 import { object, string } from 'valibot';

@@ -1,7 +1,7 @@
 import { changeCharacterAttributes } from '@/api/character';
 import { useCharacter } from '@/contexts/character';
 import { useRequest } from '@/hooks/useRequest';
-import type { CharacterAttributes } from '@fwo/schemas';
+import type { CharacterAttributes } from '@fwo/shared';
 import { popup } from '@telegram-apps/sdk-react';
 import { useState } from 'react';
 

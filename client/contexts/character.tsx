@@ -1,4 +1,4 @@
-import type { Character } from '@fwo/schemas';
+import type { Character } from '@fwo/shared';
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react';
 import { createContext, use, useState } from 'react';
 

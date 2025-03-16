@@ -1,7 +1,7 @@
 import arena from '@/arena';
 import { generateItemsSets } from '@/helpers/itemHelper';
-import type { Item } from '@fwo/schemas';
-import type { ItemSet } from '@fwo/schemas';
+import type { Item } from '@fwo/shared';
+import type { ItemSet } from '@fwo/shared';
 import _ from 'lodash';
 import type { Model } from 'mongoose';
 import mongoose, { Document, Schema } from 'mongoose';

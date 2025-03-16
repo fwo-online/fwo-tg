@@ -1,7 +1,7 @@
 import { Section } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 
-import { CharacterClass, type Attributes } from '@fwo/schemas';
+import { CharacterClass, type Attributes } from '@fwo/shared';
 import { Description } from '@/components/Description';
 import { useCharacter } from '@/contexts/character';
 

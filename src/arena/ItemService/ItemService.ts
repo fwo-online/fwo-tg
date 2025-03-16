@@ -1,5 +1,5 @@
 import arena from '@/arena';
-import type { CharacterClass } from '@fwo/schemas';
+import type { CharacterClass } from '@fwo/shared';
 import { filterByClass, filterByWear } from './utils';
 
 export class ItemService {

@@ -1,5 +1,5 @@
 import { client, createRequest } from '@/api';
-import type { CharacterAttributes, CreateCharacterDto } from '@fwo/schemas';
+import type { CharacterAttributes, CreateCharacterDto } from '@fwo/shared';
 import { mapValues } from 'es-toolkit';
 
 export const getCharacter = async () => {

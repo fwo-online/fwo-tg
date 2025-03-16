@@ -1,4 +1,4 @@
-import type { CreateCharacterDto } from '@fwo/schemas';
+import type { CreateCharacterDto } from '@fwo/shared';
 import { Navigate } from 'react-router';
 import { createCharacter } from '@/api/character';
 import { SelectCharacter } from '@/modules/character/components/CharacterSelect';

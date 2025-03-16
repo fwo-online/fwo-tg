@@ -3,7 +3,7 @@ import arena from '@/arena';
 import type { Player } from '../arena/PlayersService';
 import { Profs } from '../data';
 import { LogService } from '@/arena/LogService';
-import { reservedClanName } from '@fwo/schemas';
+import { reservedClanName } from '@fwo/shared';
 import { bold } from '@/utils/formatString';
 
 const MAX_MESSAGE_LENGTH = 2 ** 12;

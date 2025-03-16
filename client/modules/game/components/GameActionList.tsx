@@ -1,7 +1,7 @@
 import { ButtonCell, Info, Section } from '@telegram-apps/telegram-ui';
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import type { FC } from 'react';
-import type { Action } from '@fwo/schemas';
+import type { Action } from '@fwo/shared';
 
 export const GameActionList: FC<{ onSelect: (action: Action) => void }> = ({ onSelect }) => {
   const actions = useGameStore((state) => state.actions);
