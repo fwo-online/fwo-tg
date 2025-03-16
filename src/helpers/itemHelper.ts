@@ -1,32 +1,37 @@
 import { itemSchema } from '@fwo/schemas';
 import { itemSetSchema } from '@fwo/schemas';
+import assert from 'node:assert';
 import csv from 'csvtojson';
 import { parse, array } from 'valibot';
 
 export const generateItems = async () => {
+  assert(process.env.SHOP_SPREADSHEET_URL, 'SHOP_SPREADSHEET_URL is not defined');
+  const csvItems = await fetch(process.env.SHOP_SPREADSHEET_URL).then((res) => res.text());
+
   const rawItems = await csv({
     checkType: true,
     ignoreEmpty: true,
     colParser: {
       class: (value) => value.split(', '),
     },
-  }).fromFile('./items.csv');
+  }).fromString(csvItems);
 
-  const items = parse(array(itemSchema), rawItems);
-
-  return items;
+  return parse(array(itemSchema), rawItems);
 };
 
 export const generateItemsSets = async () => {
+  assert(process.env.SETS_SPREADSHEET_URL, 'SETS_SPREADSHEET_URL is not defined');
+  const csvItemsSets = await fetch(process.env.SETS_SPREADSHEET_URL).then((res) => res.text());
+
   const rawItemsSets = await csv({
     checkType: true,
     ignoreEmpty: true,
     colParser: {
       items: (value) => value.split(', '),
     },
-  }).fromFile('./items-sets.csv');
+  }).fromString(csvItemsSets);
 
-  const mergeModifiers = (acc, curr) => {
+  const mergeModifiers = (acc: any, curr: any) => {
     const prev = acc.at(-1);
     if (prev?.code === curr.code) {
       prev.modifiers ??= [];

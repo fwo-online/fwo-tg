@@ -13,13 +13,20 @@ export async function connect(onConnect?: () => void): Promise<void> {
       authSource: 'admin',
     };
 
+    console.log(process.env.NODE_ENV);
     switch (process.env.NODE_ENV) {
       case 'production':
-        await mongoose.connect(process.env.MONGO ?? 'mongodb://root:fworootpassword@db:27017/fwo', options);
+        await mongoose.connect(
+          process.env.MONGO ?? 'mongodb://root:fworootpassword@db:27017/fwo',
+          options,
+        );
         break;
       case 'development':
       case 'test':
-        await mongoose.connect(process.env.MONGO ?? 'mongodb://root:fworootpassword@localhost:27017/fwo', options);
+        await mongoose.connect(
+          process.env.MONGO ?? 'mongodb://root:fworootpassword@localhost:27017/fwo',
+          options,
+        );
         break;
       default:
         console.log('unknown env', process.env.NODE_ENV);

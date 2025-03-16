@@ -15,6 +15,7 @@ import { createServer } from 'node:http';
 import { middleware, onConnection, onCreate } from '@/server/ws';
 import { isString } from 'es-toolkit';
 import { initGameChannel } from './helpers/channelHelper';
+import { ItemSetModel } from './models/item-set';
 
 interface BotSession extends Scenes.SceneSession {
   character: CharacterService;
@@ -32,6 +33,7 @@ export const bot = new Telegraf<BotContext>(process.env.BOT_TOKEN ?? '', {
 void connect(async () => {
   console.log('db online');
   await ItemModel.load();
+  await ItemSetModel.load();
 
   await bot.launch();
 });

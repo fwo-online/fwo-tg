@@ -17,7 +17,9 @@ export class ItemSetDocument extends Document<Item> {
       if (items.length) {
         arena.itemsSets = _.keyBy(items, ({ code }) => code);
       } else {
+        console.log('ItemsSets not found. Generating...');
         const itemsSets = await generateItemsSets();
+        console.log('ItemsSets file Loaded: ', Date.now() - timer, 'ms');
 
         const createdItems = await ItemSetModel.create(itemsSets);
         arena.itemsSets = _.keyBy(createdItems, ({ code }) => code);
@@ -25,7 +27,7 @@ export class ItemSetDocument extends Document<Item> {
     } catch (e) {
       console.error(e);
     } finally {
-      console.log('Items loaded.T:', Date.now() - timer, 'ms');
+      console.log('ItemsSets loaded.T:', Date.now() - timer, 'ms');
     }
   }
 }
