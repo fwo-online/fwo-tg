@@ -16,6 +16,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: calc(100% - 64px);
+  min-width: calc(100% - 44px);
   transform: translateX(calc(var(--slide, 0) * 100% * -1 + 32px));
 }
