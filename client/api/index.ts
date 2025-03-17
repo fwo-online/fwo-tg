@@ -16,7 +16,7 @@ export const createWebSocket = async () => {
   });
 };
 
-export const client = hc<Server>(import.meta.env.VITE_API_URL, {
+export const client = hc<Server>(import.meta.env.VITE_API_URL ?? '/api', {
   headers: () => ({
     Authorization: getToken(),
   }),

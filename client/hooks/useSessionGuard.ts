@@ -8,7 +8,7 @@ export const useSessionGuard = () => {
 
   useMount(() => {
     if (!socket.active) {
-      navigate('connection-error');
+      navigate('/connection-error');
     }
   });
 };
