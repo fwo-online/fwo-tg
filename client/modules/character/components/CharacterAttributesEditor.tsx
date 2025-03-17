@@ -17,7 +17,10 @@ export const CharacterAttributesEditor: FC<{
       onChange(attribute);
     };
     return (
-      <Button className="flex flex-col justify-center items-center" onClick={handleClick}>
+      <Button
+        className="flex flex-col justify-center items-center is-primary"
+        onClick={handleClick}
+      >
         {attribute.toUpperCase()}
         <span className="font-semibold"> {attributes[attribute].toString()}</span>
       </Button>

@@ -23,13 +23,15 @@ export function LobbyPage() {
         )}
       </Card>
 
-      {isSearching ? (
-        <Button className="text-(--tg-theme-destructive-text-color)!" onClick={toggleSearch}>
-          Остановить поиск игры
-        </Button>
-      ) : (
-        <Button onClick={toggleSearch}>Начать поиск игры</Button>
-      )}
+      <div className="flex flex-col fixed bottom-24 left-2 right-2">
+        {isSearching ? (
+          <Button className="is-warning" onClick={toggleSearch}>
+            Остановить поиск игры
+          </Button>
+        ) : (
+          <Button onClick={toggleSearch}>Начать поиск игры</Button>
+        )}
+      </div>
     </div>
   );
 }

@@ -36,7 +36,11 @@ export const CharacterAttributesPage: FC = () => {
         <Button className="flex-1" onClick={handleReset} disabled={!hasChanges || isPending}>
           Сбросить
         </Button>
-        <Button className="flex-1" onClick={handleSave} disabled={!hasChanges || isPending}>
+        <Button
+          className="flex-1 is-primary"
+          onClick={handleSave}
+          disabled={!hasChanges || isPending}
+        >
           Применить
         </Button>
       </div>

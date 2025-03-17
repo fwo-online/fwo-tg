@@ -91,7 +91,7 @@ export const onConnection = (_io: Server, socket: Socket) => {
     }
 
     try {
-      const { orders, proc } = character.currentGame.orders.orderAction({
+      const { orders, proc } = game.orders.orderAction({
         action: order.action,
         target: order.target,
         proc: order.power,

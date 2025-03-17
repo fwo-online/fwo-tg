@@ -1,18 +1,18 @@
 import arena from '@/arena';
 import { ActionService } from '@/arena/ActionService';
 import type { CharacterService } from '@/arena/CharacterService';
-import GameService from '@/arena/GameService';
+import type GameService from '@/arena/GameService';
 import type { Player } from '@/arena/PlayersService';
 
 export const getAvailableActions = (character: CharacterService) => {
-  const game = new GameService([character.id]);
+  const game = character.currentGame;
   if (!game) {
     throw new Error('game not found');
   }
 
   const player = game.players.getById(character.id);
   if (!player) {
-    throw new Error('game not found');
+    throw new Error('player not found');
   }
 
   return ActionsHelper.buildActions(player, game);
@@ -39,7 +39,7 @@ export abstract class ActionsHelper {
 
   static getBasicActions(player: Player, game: GameService) {
     const actions: string[] = [];
-    if (ActionsHelper.canAttack(player, game)) {
+    if (this.canAttack(player, game)) {
       actions.push(arena.actions.attack.name);
     }
 

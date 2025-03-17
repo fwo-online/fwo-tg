@@ -5,6 +5,7 @@ export const drawCharacter = (canvas: HTMLCanvasElement, character: Character) =
   if (!ctx) {
     return;
   }
+  ctx.imageSmoothingEnabled = false;
 
   const layers: HTMLImageElement[] = [];
 
