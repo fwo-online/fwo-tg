@@ -1,10 +1,12 @@
-import { Button, Placeholder, Section, Slider } from '@telegram-apps/telegram-ui';
+import { Placeholder, Slider } from '@telegram-apps/telegram-ui';
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import { type FC, useState } from 'react';
 import { reservedClanName, type Action } from '@fwo/shared';
 import { useGameActionTargets } from '../hooks/useGameActionTargets';
 import { GameActionTarget } from './GameActionTarget';
 import { useGameActionOrder } from '../hooks/useGameActionOrder';
+import { Card } from '@/components/Card';
+import { Button } from '@/components/Button';
 
 export const GameAction: FC<{
   action: Action;
@@ -32,48 +34,39 @@ export const GameAction: FC<{
   };
 
   return (
-    <Section>
-      <Section.Header>Выбери цель для {action.displayName}</Section.Header>
+    <Card header={<>Выбери цель для {action.displayName}</>}>
       {hasTargets ? (
         <Placeholder description="Нет доступных целей" />
       ) : (
         Object.entries(availableTargets).map(([clan, statuses]) => (
-          <Section key={clan}>
-            <Section.Header>{clan === reservedClanName ? 'Без клана' : clan}</Section.Header>
+          <div key={clan}>
+            <h6 className="font-semibold">{clan === reservedClanName ? 'Без клана' : clan}</h6>
             {statuses.map((status) => (
               <GameActionTarget key={status.id} status={status} onChange={handleTargetChange} />
             ))}
-          </Section>
+          </div>
         ))
       )}
-      <Slider
-        before={0}
-        after={remainPower}
-        value={power}
-        min={0}
-        max={remainPower}
-        onChange={handleSliderChange}
-      />
+      <div className="flex flex-col ga-2">
+        <Slider
+          before={0}
+          after={remainPower}
+          value={power}
+          min={0}
+          max={remainPower}
+          onChange={handleSliderChange}
+        />
 
-      {!target ? (
-        <Button stretched disabled>
-          Выбери цель
-        </Button>
-      ) : !power ? (
-        <Button stretched disabled>
-          Выбери силу
-        </Button>
-      ) : (
-        <Button
-          stretched
-          type="submit"
-          disabled={isPending}
-          loading={isPending}
-          onClick={handleClick}
-        >
-          Заказать {action.displayName} на {power}%
-        </Button>
-      )}
-    </Section>
+        {!target ? (
+          <Button disabled>Выбери цель</Button>
+        ) : !power ? (
+          <Button disabled>Выбери силу</Button>
+        ) : (
+          <Button className="is-primary" type="submit" disabled={isPending} onClick={handleClick}>
+            Заказать {action.displayName} на {power}%
+          </Button>
+        )}
+      </div>
+    </Card>
   );
 };

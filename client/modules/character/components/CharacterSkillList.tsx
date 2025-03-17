@@ -1,11 +1,11 @@
 import type { Skill } from '@fwo/shared';
-import { ButtonCell, Info, Navigation } from '@telegram-apps/telegram-ui';
-import { type FC, use, useState } from 'react';
+import { type FC, use } from 'react';
 import { CharacterSkillModal } from '@/modules/character/components/CharacterSkillModal';
 import { useCharacter } from '@/contexts/character';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 import { learnSkill } from '@/api/skill';
 import { useRequest } from '@/hooks/useRequest';
+import { Button } from '@/components/Button';
 
 export const CharacterSkillList: FC<{
   skillsSource: Promise<Skill[]>;
@@ -23,7 +23,7 @@ export const CharacterSkillList: FC<{
   };
 
   return (
-    <>
+    <div className="flex flex-col gap-2">
       {skills.map((skill) => (
         <CharacterSkillModal
           key={skill.name}
@@ -31,18 +31,15 @@ export const CharacterSkillList: FC<{
           loading={isPending}
           onLearn={handleLearn}
           trigger={
-            <ButtonCell
-              after={
-                <Info style={{ marginLeft: 'auto' }} type="text">
-                  {character.skills[skill.name]}
-                </Info>
-              }
-            >
-              <Navigation>{skill.displayName}</Navigation>
-            </ButtonCell>
+            <Button>
+              <div className="flex justify-between">
+                {skill.displayName}
+                <div className="opacity-50">{character.skills[skill.name]}</div>
+              </div>
+            </Button>
           }
         />
       ))}
-    </>
+    </div>
   );
 };

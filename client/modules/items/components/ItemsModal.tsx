@@ -1,6 +1,7 @@
+import { Card } from '@/components/Card';
 import { Description } from '@/components/Description';
 import type { Item, MinMax } from '@fwo/shared';
-import { Banner, Modal, Section } from '@telegram-apps/telegram-ui';
+import { Modal } from '@telegram-apps/telegram-ui';
 import { get, isNumber } from 'es-toolkit/compat';
 import type { ReactNode, FC } from 'react';
 
@@ -59,31 +60,27 @@ export const ItemModal: FC<{
 }> = ({ item, trigger, footer }) => {
   return (
     <Modal trigger={trigger}>
-      <Banner
-        header={item.info.name}
-        description={
-          <>
-            {item.info.description}
-            <Section>
-              {attributeSections.map(({ key, label, attributes }) => (
-                <Description key={key} header={label}>
-                  {attributes.map(({ name, key }) => (
-                    <Description.Item
-                      key={key}
-                      after={normalizeValue(get(item, key))}
-                      disabled={isDisabled(get(item, key))}
-                    >
-                      {name}
-                    </Description.Item>
-                  ))}
-                </Description>
+      <Card className="p-4" header={item.info.name}>
+        <div className="flex flex-col">
+          <span className="text-sm">{item.info.description}</span>
+          <span className="text-sm">{item.info.description}</span>
+
+          {attributeSections.map(({ key, label, attributes }) => (
+            <Description key={key} header={label}>
+              {attributes.map(({ name, key }) => (
+                <Description.Item
+                  key={key}
+                  after={normalizeValue(get(item, key))}
+                  disabled={isDisabled(get(item, key))}
+                >
+                  {name}
+                </Description.Item>
               ))}
-            </Section>
-          </>
-        }
-      >
-        {footer}
-      </Banner>
+            </Description>
+          ))}
+          {footer}
+        </div>
+      </Card>
     </Modal>
   );
 };

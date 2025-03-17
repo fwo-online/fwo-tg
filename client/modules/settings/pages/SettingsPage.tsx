@@ -1,7 +1,8 @@
 import { deleteCharacter } from '@/api/character';
+import { Button } from '@/components/Button';
+import { Card } from '@/components/Card';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 import { popup } from '@telegram-apps/sdk-react';
-import { ButtonCell, List, Navigation, Section } from '@telegram-apps/telegram-ui';
 
 export function SettingsPage() {
   const { updateCharacter } = useUpdateCharacter();
@@ -19,13 +20,8 @@ export function SettingsPage() {
   };
 
   return (
-    <List>
-      <Section>
-        <Section.Header>Настройки</Section.Header>
-        <ButtonCell onClick={handleClick}>
-          <Navigation> Удалить персонажа</Navigation>
-        </ButtonCell>
-      </Section>
-    </List>
+    <Card header="Настройки" className="m-4!">
+      <Button onClick={handleClick}>Удалить персонажа</Button>
+    </Card>
   );
 }

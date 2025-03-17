@@ -4,6 +4,7 @@ import { useGameStore } from '@/modules/game/store/useGameStore';
 import { GameOrderModal } from '../components/GameOrderModal';
 import { useGameState } from '../hooks/useGameState';
 import { useGameClosingConfirmation } from '../hooks/useGameClosingConfirmation';
+import { Card } from '@/components/Card';
 
 export function GamePage() {
   const round = useGameStore((state) => state.round);
@@ -12,19 +13,11 @@ export function GamePage() {
   useGameClosingConfirmation();
 
   return (
-    <List>
+    <>
       <GameOrderModal />
-      <Section>
-        {round ? (
-          <>
-            <Section.Header>Раунд {round}</Section.Header>
-            <Section.Header>Статус</Section.Header>
-            <GameStatus />
-          </>
-        ) : (
-          <Placeholder header="Игра начинается" />
-        )}
-      </Section>
-    </List>
+      <Card className="m-4" header={<>Раунд {round}</>}>
+        {round ? <GameStatus /> : <Placeholder header="Игра начинается" />}
+      </Card>
+    </>
   );
 }

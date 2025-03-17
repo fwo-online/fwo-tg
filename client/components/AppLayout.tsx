@@ -1,5 +1,6 @@
-import { Tabbar } from '@telegram-apps/telegram-ui';
 import { Outlet, useLocation, useNavigate } from 'react-router';
+import { Button } from './Button';
+import cn from 'classnames';
 
 const tabs = [
   {
@@ -23,16 +24,19 @@ export function AppLayout() {
   return (
     <>
       <Outlet />
-      <Tabbar style={{ height: '64px' }}>
+      <div className="fixed gap-2 px-2 h-16 bottom-4 w-full flex">
         {tabs.map(({ path, text }) => (
-          <Tabbar.Item
+          <Button
+            className={cn('flex-1', {
+              'is-primary': location.pathname.startsWith(path),
+            })}
             key={path}
-            text={text}
-            selected={location.pathname.startsWith(path)}
             onClick={() => navigate(path)}
-          />
+          >
+            {text}
+          </Button>
         ))}
-      </Tabbar>
+      </div>
     </>
   );
 }

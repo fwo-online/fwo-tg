@@ -1,14 +1,11 @@
-import { List, Section } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { ShopWearList } from '../components/ShopWearList';
+import { Card } from '@/components/Card';
 
 export const ShopPage: FC = () => {
   return (
-    <List>
-      <Section>
-        <Section.Header>Магазин</Section.Header>
-        <ShopWearList />
-      </Section>
-    </List>
+    <Card header="Магазин" className="m-4!">
+      <ShopWearList />
+    </Card>
   );
 };

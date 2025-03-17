@@ -1,6 +1,7 @@
+import { Card } from '@/components/Card';
 import { Description } from '@/components/Description';
 import type { Magic } from '@fwo/shared';
-import { Modal, List, Banner, Section } from '@telegram-apps/telegram-ui';
+import { Modal } from '@telegram-apps/telegram-ui';
 import type { FC, ReactNode } from 'react';
 
 export const CharacterMagicModal: FC<{ magic: Magic; trigger?: ReactNode }> = ({
@@ -9,22 +10,13 @@ export const CharacterMagicModal: FC<{ magic: Magic; trigger?: ReactNode }> = ({
 }) => {
   return (
     <Modal trigger={trigger}>
-      <List>
-        <Banner
-          header={magic.displayName}
-          description={
-            <>
-              {magic.description}
-              <Section>
-                <Description>
-                  <Description.Item after={magic.lvl}>Уровень</Description.Item>
-                  <Description.Item after={`💧${magic.cost}`}>Стоимость</Description.Item>
-                </Description>
-              </Section>
-            </>
-          }
-        />
-      </List>
+      <Card header={magic.displayName}>
+        <span className="text-sm">{magic.description}</span>
+        <Description>
+          <Description.Item after={magic.lvl}>Уровень</Description.Item>
+          <Description.Item after={`💧${magic.cost}`}>Стоимость</Description.Item>
+        </Description>
+      </Card>
     </Modal>
   );
 };

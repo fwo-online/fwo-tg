@@ -1,8 +1,10 @@
-import { Button, FixedLayout, List, Modal } from '@telegram-apps/telegram-ui';
+import { Modal } from '@telegram-apps/telegram-ui';
 import { useState } from 'react';
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import { GameOrderList } from '@/modules/game//components/GameOrderList';
 import { GameOrder } from './GameOrder';
+import { Button } from '@/components/Button';
+import { Card } from '@/components/Card';
 
 export function GameOrderModal() {
   const [open, setOpen] = useState(true);
@@ -13,19 +15,19 @@ export function GameOrderModal() {
       open={canOrder && open}
       onOpenChange={setOpen}
       trigger={
-        <FixedLayout vertical="bottom">
-          <List>
-            <Button stretched disabled={!canOrder} onClick={() => setOpen(!open)}>
-              {canOrder ? 'Сделать заказ' : 'Ожидание стадии заказов'}
-            </Button>
-          </List>
-        </FixedLayout>
+        <Button
+          className="fixed bottom-4 left-2 right-2 is-primary"
+          disabled={!canOrder}
+          onClick={() => setOpen(!open)}
+        >
+          {canOrder ? 'Сделать заказ' : 'Ожидание стадии заказов'}
+        </Button>
       }
     >
-      <List>
+      <Card>
         <GameOrderList />
         <GameOrder />
-      </List>
+      </Card>
     </Modal>
   );
 }

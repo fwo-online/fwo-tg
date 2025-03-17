@@ -1,5 +1,5 @@
+import { Button } from '@/components/Button';
 import { wearList, wearListTranslations } from '@/constants/inventory';
-import { ButtonCell, Navigation } from '@telegram-apps/telegram-ui';
 import type { FC, ReactNode } from 'react';
 
 export const ItemsWearList: FC<{
@@ -7,17 +7,13 @@ export const ItemsWearList: FC<{
   onClick: (wear: string) => void;
 }> = ({ after, onClick }) => {
   return (
-    <>
+    <div className="flex flex-col gap-2">
       {wearList.map((wear) => (
-        <ButtonCell
-          key={wear}
-          after={after?.(wear)}
-          style={{ justifyContent: 'space-between' }}
-          onClick={() => onClick(wear)}
-        >
-          <Navigation style={{ background: 'red' }}>{wearListTranslations[wear]}</Navigation>
-        </ButtonCell>
+        <Button key={wear} className="flex justify-between" onClick={() => onClick(wear)}>
+          {wearListTranslations[wear]}
+          {after?.(wear)}
+        </Button>
       ))}
-    </>
+    </div>
   );
 };

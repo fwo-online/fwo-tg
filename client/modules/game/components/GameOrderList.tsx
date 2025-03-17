@@ -1,7 +1,8 @@
-import { ButtonCell, Placeholder, Section } from '@telegram-apps/telegram-ui';
+import { ButtonCell, Placeholder } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { useGameStore } from '@/modules/game/store/useGameStore';
-import type { Action, Order } from '@fwo/shared';
+import type { Order } from '@fwo/shared';
+import { Card } from '@/components/Card';
 
 const GameOrderListItem: FC<{
   order: Order;
@@ -19,9 +20,7 @@ export const GameOrderList: FC = () => {
   const orders = useGameStore((state) => state.orders);
 
   return (
-    <Section>
-      <Section.Header>Заказы</Section.Header>
-
+    <Card header="Заказы">
       {orders.length ? (
         orders.map((order, index) => (
           <GameOrderListItem key={`${order.action.name}:${index}`} order={order} />
@@ -29,6 +28,6 @@ export const GameOrderList: FC = () => {
       ) : (
         <Placeholder description="Сделайте заказ" />
       )}
-    </Section>
+    </Card>
   );
 };

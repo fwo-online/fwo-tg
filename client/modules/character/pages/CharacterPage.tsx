@@ -1,11 +1,3 @@
-import {
-  ButtonCell,
-  Card,
-  InlineButtons,
-  List,
-  Navigation,
-  Section,
-} from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 
 import { useCharacter } from '@/contexts/character';
@@ -13,44 +5,51 @@ import { CharacterImage } from '@/modules/character/components/CharacterImage';
 import { characterClassNameMap } from '@/constants/character';
 import { useNavigate } from 'react-router';
 import { CharacterClass } from '@fwo/shared';
+import { Card } from '@/components/Card';
+import { Button } from '@/components/Button';
 
 export const CharacterPage: FC = () => {
   const navigate = useNavigate();
   const { character } = useCharacter();
   return (
-    <List>
-      <Card style={{ display: 'block', marginRight: 'auto', marginLeft: 'auto' }}>
-        <Card.Chip>
+    <div className="flex flex-col gap-2 m-4!">
+      <Card className="relative">
+        <div className="mt-12">
+          <CharacterImage />
+        </div>
+
+        <Card className="absolute top-2 left-2 font-bold">{character.name}</Card>
+        <Card className="absolute top-2 right-2">
           {characterClassNameMap[character.class]} {character.lvl}
-        </Card.Chip>
-        <CharacterImage />
-        <Card.Cell>{character.name}</Card.Cell>
+        </Card>
+        <div className="flex gap-2">
+          <Card className="flex flex-1 flex-col justify-center items-center p-1">
+            Опыт
+            <span>{character.gold}</span>
+          </Card>
+
+          <Card className="flex flex-1 flex-col justify-center items-center">
+            Опыт
+            <span>{character.exp}</span>
+          </Card>
+
+          <Card className="flex flex-1 flex-col justify-center items-center">
+            Бонусы
+            <span>{character.bonus}</span>
+          </Card>
+        </div>
       </Card>
-      <Section>
-        <InlineButtons>
-          <InlineButtons.Item text={character.gold.toString()}>Золото</InlineButtons.Item>
-          <InlineButtons.Item text={character.exp.toString()}>Опыт</InlineButtons.Item>
-          <InlineButtons.Item text={character.bonus.toString()}>Бонусы</InlineButtons.Item>
-        </InlineButtons>
-      </Section>
-      <Section>
-        <ButtonCell onClick={() => navigate('/character/attributes')}>
-          <Navigation>Характеристики</Navigation>
-        </ButtonCell>
+
+      <div className="flex gap-2 flex-col">
+        <Button onClick={() => navigate('/character/attributes')}>Характеристики</Button>
 
         {character.class === CharacterClass.Archer || character.class === CharacterClass.Warrior ? (
-          <ButtonCell onClick={() => navigate('/character/skills')}>
-            <Navigation>Умения</Navigation>
-          </ButtonCell>
+          <Button onClick={() => navigate('/character/skills')}>Умения</Button>
         ) : (
-          <ButtonCell onClick={() => navigate('/character/magics')}>
-            <Navigation>Магии</Navigation>
-          </ButtonCell>
+          <Button onClick={() => navigate('/character/magics')}>Магии</Button>
         )}
-        <ButtonCell onClick={() => navigate('/character/inventory')}>
-          <Navigation>Инвентарь</Navigation>
-        </ButtonCell>
-      </Section>
-    </List>
+        <Button onClick={() => navigate('/character/inventory')}>Инвентарь</Button>
+      </div>
+    </div>
   );
 };

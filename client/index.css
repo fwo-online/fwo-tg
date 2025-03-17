@@ -1,11 +1,14 @@
+@import "tailwindcss";
+
+@layer components {
+  @import "nes.css/css/nes-core.css";
+
+}
+
 body {
   background: var(--tg-theme-secondary-bg-color, white);
   padding: 0;
   margin: 0;
-}
-
-button {
-  font-family: var(--tgui--font-family);
 }
 
 div {

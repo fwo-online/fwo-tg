@@ -10,17 +10,21 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@fwo/shared": "workspace:^",
     "@fwo/server": "workspace:^",
+    "@fwo/shared": "workspace:^",
+    "@tailwindcss/vite": "^4.0.14",
     "@telegram-apps/react-router-integration": "^1.0.1",
     "@telegram-apps/sdk-react": "^3.1.2",
     "@telegram-apps/telegram-ui": "^2.1.8",
     "@tonconnect/ui-react": "^2.0.12",
+    "classnames": "^2.5.1",
     "es-toolkit": "^1.33.0",
+    "nes.css": "^2.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.3.0",
     "socket.io-client": "^4.8.1",
+    "tailwindcss": "^4.0.14",
     "zustand": "^5.0.3"
   },
   "devDependencies": {

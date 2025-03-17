@@ -1,14 +1,15 @@
 import { characterClassNameMap } from '@/constants/character';
-import { ButtonCell, List, Section, Info, Cell, Placeholder } from '@telegram-apps/telegram-ui';
+import { Info, Cell, Placeholder } from '@telegram-apps/telegram-ui';
 import { useLobby } from '@/modules/lobby/hooks/useLobby';
+import { Card } from '@/components/Card';
+import { Button } from '@/components/Button';
 
 export function LobbyPage() {
   const { toggleSearch, isSearching, searchers } = useLobby();
 
   return (
-    <List>
-      <Section>
-        <Section.Header>Ищут игру</Section.Header>
+    <div className="m-4!">
+      <Card header="Ищут игру">
         {searchers.length ? (
           searchers.map((searcher) => (
             <Cell key={searcher.name}>
@@ -20,15 +21,15 @@ export function LobbyPage() {
         ) : (
           <Placeholder description="Никого нет" />
         )}
-      </Section>
+      </Card>
 
       {isSearching ? (
-        <ButtonCell mode="destructive" onClick={toggleSearch}>
+        <Button className="text-(--tg-theme-destructive-text-color)!" onClick={toggleSearch}>
           Остановить поиск игры
-        </ButtonCell>
+        </Button>
       ) : (
-        <ButtonCell onClick={toggleSearch}>Начать поиск игры</ButtonCell>
+        <Button onClick={toggleSearch}>Начать поиск игры</Button>
       )}
-    </List>
+    </div>
   );
 }

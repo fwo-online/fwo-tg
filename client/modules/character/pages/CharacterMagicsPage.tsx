@@ -1,23 +1,23 @@
 import { getMagicList } from '@/api/magic';
 import { useCharacter } from '@/contexts/character';
-import { List, Placeholder, Section } from '@telegram-apps/telegram-ui';
+import { Placeholder } from '@telegram-apps/telegram-ui';
 import { Suspense } from 'react';
 import { CharacterMagicList } from '../components/CharacterMagicList';
 import { CharacterMagicsLearnModal } from '../components/CharacterMagicLearnModal';
+import { Card } from '@/components/Card';
 
 export const CharacterMagicsPage = () => {
   const { character } = useCharacter();
 
   return (
-    <List>
-      <Section>
-        <Section.Header>Магии</Section.Header>
+    <div className="flex flex-col gap-2 m-4!">
+      <Card header="Магии">
         <Suspense fallback={<Placeholder description="Ищем магии..." />}>
           <CharacterMagicList magicsSource={getMagicList(Object.keys(character.magics))} />
         </Suspense>
-      </Section>
+      </Card>
 
       <CharacterMagicsLearnModal />
-    </List>
+    </div>
   );
 };

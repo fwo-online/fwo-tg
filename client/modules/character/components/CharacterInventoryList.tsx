@@ -1,10 +1,11 @@
-import { Button, ButtonCell, Info, Navigation, Placeholder } from '@telegram-apps/telegram-ui';
+import { Info, Placeholder } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { ItemModal } from '@/modules/items/components/ItemsModal';
 import { equipItem, sellItem, unEquipItem } from '@/api/inventory';
 import { useRequest } from '@/hooks/useRequest';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 import type { Inventory } from '@fwo/shared';
+import { Button } from '@/components/Button';
 
 export const CharacterInventoryList: FC<{ inventory: Inventory[] }> = ({ inventory }) => {
   const { updateCharacter } = useUpdateCharacter();
@@ -32,38 +33,36 @@ export const CharacterInventoryList: FC<{ inventory: Inventory[] }> = ({ invento
   };
 
   return inventory.length ? (
-    <>
+    <div className="flex flex-col gap-2">
       {inventory.map((inventory) => (
         <ItemModal
           key={inventory.id}
           item={inventory.item}
           trigger={
-            <ButtonCell
-              style={{ justifyContent: 'space-between' }}
-              after={<Info type="text">{inventory.putOn && 'Надето'}</Info>}
-            >
-              <Navigation>{inventory.item.info.name}</Navigation>
-            </ButtonCell>
+            <Button>
+              <div className="flex justify-between">
+                {inventory.item.info.name}
+                <Info type="text">{inventory.putOn && 'Надето'}</Info>
+              </div>
+            </Button>
           }
           footer={
             inventory.putOn ? (
-              <Button stretched onClick={() => handleUnEquip(inventory.id)}>
-                Снять
-              </Button>
+              <Button onClick={() => handleUnEquip(inventory.id)}>Снять</Button>
             ) : (
-              <>
-                <Button stretched onClick={() => handleEquip(inventory.id)}>
+              <div className="flex gap-2">
+                <Button className="flex-1" onClick={() => handleEquip(inventory.id)}>
                   Надеть
                 </Button>
-                <Button stretched mode="bezeled" onClick={() => handleSell(inventory.id)}>
+                <Button className="flex-1" onClick={() => handleSell(inventory.id)}>
                   Продать {inventory.item.price / 2}💰
                 </Button>
-              </>
+              </div>
             )
           }
         />
       ))}
-    </>
+    </div>
   ) : (
     <Placeholder description="Ничего не найдено" />
   );

@@ -2,9 +2,10 @@ import { Suspense, type FC } from 'react';
 import { Navigate, useParams } from 'react-router';
 import { ShopList } from '@/modules/shop/components/ShopList';
 import { getShopItems } from '@/api/shop';
-import { List, Placeholder, Section } from '@telegram-apps/telegram-ui';
+import { Placeholder } from '@telegram-apps/telegram-ui';
 import { wearListTranslations } from '@/constants/inventory';
 import { validateWear } from '@/utils/inventory';
+import { Card } from '@/components/Card';
 
 export const ShopListPage: FC = () => {
   const { wear } = useParams();
@@ -14,13 +15,10 @@ export const ShopListPage: FC = () => {
   }
 
   return (
-    <List>
-      <Section>
-        <Section.Header>{wearListTranslations[wear]}</Section.Header>
-        <Suspense fallback={<Placeholder description="Ищем предметы..." />}>
-          <ShopList shopPromise={getShopItems({ wear })} />
-        </Suspense>
-      </Section>
-    </List>
+    <Card header={wearListTranslations[wear]} className="m-4!">
+      <Suspense fallback={<Placeholder description="Ищем предметы..." />}>
+        <ShopList shopPromise={getShopItems({ wear })} />
+      </Suspense>
+    </Card>
   );
 };

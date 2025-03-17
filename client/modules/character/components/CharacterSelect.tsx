@@ -1,12 +1,5 @@
 import type { CreateCharacterDto, CharacterClass } from '@fwo/shared';
-import {
-  Button,
-  CompactPagination,
-  Headline,
-  Input,
-  List,
-  Section,
-} from '@telegram-apps/telegram-ui';
+import { Headline } from '@telegram-apps/telegram-ui';
 import { type FC, useEffect, useRef, useState } from 'react';
 import {
   characterClassImageMap,
@@ -14,6 +7,9 @@ import {
   characterClassNameMap,
 } from '@/constants/character';
 import styles from './CharacterSelect.module.css';
+import { Card } from '@/components/Card';
+import { Button } from '@/components/Button';
+import cn from 'classnames';
 
 const Slide = ({ value }: { value: CharacterClass }) => {
   return (
@@ -51,14 +47,19 @@ export const SelectCharacter: FC<{ onSelect: (createCharacter: CreateCharacterDt
   };
 
   return (
-    <List>
-      <Section>
-        <Section.Header large>Создайте вашего персонажа</Section.Header>
-        <CompactPagination style={{ width: '100%', justifyContent: 'center' }}>
-          {characterClassList.map((value, index) => (
-            <CompactPagination.Item key={value} selected={selected === index} />
-          ))}
-        </CompactPagination>
+    <Card header="Создание персонажа" className="m-4!">
+      <div className="flex justify-center gap-4">
+        {characterClassList.map((value, index) => (
+          <div
+            key={value}
+            className={cn('w-2 h-2', {
+              'bg-(--tg-theme-text-color)': index !== selected,
+              'bg-(--tg-theme-accent-text-color)': index === selected,
+            })}
+          />
+        ))}
+      </div>
+      <div className="flex flex-col gap-2">
         <div className={styles.slider}>
           <Button onClick={prev}>◄</Button>
           <div className={styles.slides} data-selected={selected} ref={slider}>
@@ -68,17 +69,17 @@ export const SelectCharacter: FC<{ onSelect: (createCharacter: CreateCharacterDt
           </div>
           <Button onClick={next}>►</Button>
         </div>
-        <Input
-          header="Имя персонажа"
+        <input
+          className="nes-input"
           value={name}
           placeholder="Введите имя персонажа"
           onChange={(e) => setName(e.target.value)}
         />
 
-        <Button stretched disabled={!name} onClick={handleSelectCharacter}>
+        <Button className="is-primary" disabled={!name} onClick={handleSelectCharacter}>
           Создать
         </Button>
-      </Section>
-    </List>
+      </div>
+    </Card>
   );
 };

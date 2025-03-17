@@ -1,7 +1,9 @@
 import type { FC, ReactNode } from 'react';
 import { useCharacter } from '@/contexts/character';
 import type { Skill } from '@fwo/shared';
-import { Banner, Button, List, Modal } from '@telegram-apps/telegram-ui';
+import { Modal } from '@telegram-apps/telegram-ui';
+import { Button } from '@/components/Button';
+import { Card } from '@/components/Card';
 
 export const CharacterSkillModal: FC<{
   skill: Skill;
@@ -16,34 +18,32 @@ export const CharacterSkillModal: FC<{
 
   return (
     <Modal trigger={trigger}>
-      <List>
-        <Banner header={skill.displayName} description={skill.description}>
+      <Card header={skill.displayName}>
+        <div className="flex flex-col gap-2">
+          <span className="text-sm">{skill.description}</span>
           {hasMaxSkillLvl ? (
-            <Button stretched disabled>
+            <Button className="flex-1" disabled>
               Максимальный уровень
             </Button>
           ) : hasRequiredLvl ? (
-            <>
+            <div className="flex gap-4 items-center">
               <Button
-                stretched
-                loading={loading}
+                className="flex-1"
                 onClick={() => onLearn(skill)}
                 disabled={!hasRequiredBonus || loading}
               >
                 Изучить за {skill.bonusCost[character.skills[skill.name] || 0]}💡
               </Button>
 
-              <Button stretched mode="plain">
-                У тебя {character.bonus}💡
-              </Button>
-            </>
+              <div>У тебя {character.bonus}💡</div>
+            </div>
           ) : (
-            <Button stretched disabled>
+            <Button className="flex-1" disabled>
               Откроется на уровне {skill.classList[character.class]}
             </Button>
           )}
-        </Banner>
-      </List>
+        </div>
+      </Card>
     </Modal>
   );
 };

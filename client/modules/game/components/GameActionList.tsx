@@ -1,7 +1,8 @@
-import { ButtonCell, Info, Section } from '@telegram-apps/telegram-ui';
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import type { FC } from 'react';
 import type { Action } from '@fwo/shared';
+import { Card } from '@/components/Card';
+import { Button } from '@/components/Button';
 
 export const GameActionList: FC<{ onSelect: (action: Action) => void }> = ({ onSelect }) => {
   const actions = useGameStore((state) => state.actions);
@@ -9,50 +10,41 @@ export const GameActionList: FC<{ onSelect: (action: Action) => void }> = ({ onS
   const skills = useGameStore((state) => state.skills);
 
   return (
-    <Section>
-      <Section.Header>Действия</Section.Header>
-      {actions.map((action) => (
-        <ButtonCell key={action.name} onClick={() => onSelect(action)}>
-          {action.displayName}
-        </ButtonCell>
-      ))}
-      {magics.length ? (
-        <>
-          <Section.Header>Магии</Section.Header>
-          {magics.map((action) => (
-            <ButtonCell
-              key={action.name}
-              after={
-                <Info style={{ marginLeft: 'auto' }} type="text">
-                  {action.cost}💧
-                </Info>
-              }
-              onClick={() => onSelect(action)}
-            >
-              {action.displayName}
-            </ButtonCell>
-          ))}
-        </>
-      ) : null}
+    <Card header="Действия">
+      <div className="flex flex-col gap-1">
+        {actions.map((action) => (
+          <Button className="p-0 is-primary" key={action.name} onClick={() => onSelect(action)}>
+            {action.displayName}
+          </Button>
+        ))}
+        {magics.length ? (
+          <>
+            <h6>Магии</h6>
+            {magics.map((action) => (
+              <Button key={action.name} className="p-0 is-primary" onClick={() => onSelect(action)}>
+                <div className="flex w-full justify-between">
+                  <span>{action.displayName}</span>
+                  <span>{action.cost}💧</span>
+                </div>
+              </Button>
+            ))}
+          </>
+        ) : null}
 
-      {skills.length ? (
-        <>
-          <Section.Header>Умения</Section.Header>
-          {skills.map((action) => (
-            <ButtonCell
-              key={action.name}
-              after={
-                <Info style={{ marginLeft: 'auto' }} type="text">
-                  {action.cost}🔋
-                </Info>
-              }
-              onClick={() => onSelect(action)}
-            >
-              {action.displayName}
-            </ButtonCell>
-          ))}
-        </>
-      ) : null}
-    </Section>
+        {skills.length ? (
+          <>
+            <h6>Умения</h6>
+            {skills.map((action) => (
+              <Button key={action.name} className="p-0 is-primary" onClick={() => onSelect(action)}>
+                <div className="flex w-full justify-between">
+                  <span>{action.displayName}</span>
+                  <span>{action.cost}🔋</span>
+                </div>
+              </Button>
+            ))}
+          </>
+        ) : null}
+      </div>
+    </Card>
   );
 };

@@ -1,7 +1,7 @@
-import { Button } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { ErrorPage } from './ErrorPage';
 import { useSessionReconnect } from '@/hooks/useSessionGuard';
+import { Button } from '@/components/Button';
 
 export const ErrorConnectionPage: FC = () => {
   const reconnect = useSessionReconnect();
@@ -9,11 +9,7 @@ export const ErrorConnectionPage: FC = () => {
   return (
     <ErrorPage
       error="Обнаружена активная сессия. Продолжите предыдущую сессию или завершите её и обновите страницу"
-      action={
-        <Button onClick={reconnect} stretched>
-          Перезагрузить
-        </Button>
-      }
+      action={<Button onClick={reconnect}>Перезагрузить</Button>}
     />
   );
 };

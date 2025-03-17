@@ -1,5 +1,6 @@
+import { Button } from '@/components/Button';
 import type { CharacterAttributes } from '@fwo/shared';
-import { InlineButtons, Section } from '@telegram-apps/telegram-ui';
+
 import type { FC } from 'react';
 
 export const CharacterAttributesEditor: FC<{
@@ -16,21 +17,20 @@ export const CharacterAttributesEditor: FC<{
       onChange(attribute);
     };
     return (
-      <InlineButtons.Item text={attributes[attribute].toString()} onClick={handleClick}>
+      <Button className="flex flex-col justify-center items-center" onClick={handleClick}>
         {attribute.toUpperCase()}
-      </InlineButtons.Item>
+        <span className="font-semibold"> {attributes[attribute].toString()}</span>
+      </Button>
     );
   };
 
   return (
-    <Section>
-      <InlineButtons style={{ gap: 0 }}>
-        <AttributeButton attribute="str" />
-        <AttributeButton attribute="dex" />
-        <AttributeButton attribute="con" />
-        <AttributeButton attribute="int" />
-        <AttributeButton attribute="wis" />
-      </InlineButtons>
-    </Section>
+    <div className="flex gap-2">
+      <AttributeButton attribute="str" />
+      <AttributeButton attribute="dex" />
+      <AttributeButton attribute="con" />
+      <AttributeButton attribute="int" />
+      <AttributeButton attribute="wis" />
+    </div>
   );
 };

@@ -1,12 +1,13 @@
-import { Caption, Cell, type CellProps, Info, Section } from '@telegram-apps/telegram-ui';
+import { Caption, Cell, type CellProps, Info } from '@telegram-apps/telegram-ui';
 import type { FC, ReactNode } from 'react';
+import { Card } from './Card';
 
 const DescriptionRoot: FC<{ header?: ReactNode; children: ReactNode }> = ({ children, header }) => {
   return (
-    <Section>
-      {header && <Section.Header>{header}</Section.Header>}
+    <div>
+      <div className="font-semibold">{header}</div>
       {children}
-    </Section>
+    </div>
   );
 };
 

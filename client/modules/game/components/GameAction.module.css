@@ -1,3 +1,0 @@
-.target:has(input:checked) {
-  background-color: var(--tgui--secondary_bg_color) !important; 
-}
