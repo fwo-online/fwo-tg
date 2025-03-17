@@ -4,4 +4,4 @@ WORKDIR /fwo
 COPY . ./
 RUN bun install
 
-CMD ["bun", "run", "start:server"]
+CMD ["bun", "run", "start"]

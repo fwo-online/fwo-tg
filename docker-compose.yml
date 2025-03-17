@@ -4,10 +4,14 @@ volumes:
   db:
     driver: local
 services:
+  ui:
+    build: ./container/Dockerfile.frontend
+    env_file:
+    - .env
   server:
     build: ./container/Dockerfile.backend
     env_file:
-      - .tg-token
+      - .env
     restart: always
     links:
       - "db"
