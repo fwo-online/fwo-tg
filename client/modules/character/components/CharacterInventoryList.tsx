@@ -1,4 +1,3 @@
-import { Info, Placeholder } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { ItemModal } from '@/modules/items/components/ItemsModal';
 import { equipItem, sellItem, unEquipItem } from '@/api/inventory';
@@ -6,6 +5,7 @@ import { useRequest } from '@/hooks/useRequest';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 import type { Inventory } from '@fwo/shared';
 import { Button } from '@/components/Button';
+import { Placeholder } from '@/components/Placeholder';
 
 export const CharacterInventoryList: FC<{ inventory: Inventory[] }> = ({ inventory }) => {
   const { updateCharacter } = useUpdateCharacter();
@@ -42,7 +42,7 @@ export const CharacterInventoryList: FC<{ inventory: Inventory[] }> = ({ invento
             <Button>
               <div className="flex justify-between">
                 {inventory.item.info.name}
-                <Info type="text">{inventory.putOn && 'Надето'}</Info>
+                <div className="opacity-50">{inventory.putOn && 'Надето'}</div>
               </div>
             </Button>
           }

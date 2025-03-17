@@ -1,4 +1,4 @@
-import { Placeholder, Slider } from '@telegram-apps/telegram-ui';
+import { Slider } from '@telegram-apps/telegram-ui';
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import { type FC, useState } from 'react';
 import { reservedClanName, type Action } from '@fwo/shared';
@@ -7,6 +7,7 @@ import { GameActionTarget } from './GameActionTarget';
 import { useGameActionOrder } from '../hooks/useGameActionOrder';
 import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
+import { Placeholder } from '@/components/Placeholder';
 
 export const GameAction: FC<{
   action: Action;

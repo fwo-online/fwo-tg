@@ -1,9 +1,9 @@
 import { getAvailableSkillList } from '@/api/skill';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { Placeholder } from '@telegram-apps/telegram-ui';
 import { CharacterSkillList } from '@/modules/character/components/CharacterSkillList';
 import { Suspense } from 'react';
 import { Card } from '@/components/Card';
+import { Placeholder } from '@/components/Placeholder';
 
 export const CharacterSkillPage = () => {
   return (

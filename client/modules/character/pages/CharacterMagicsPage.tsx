@@ -1,10 +1,10 @@
 import { getMagicList } from '@/api/magic';
 import { useCharacter } from '@/contexts/character';
-import { Placeholder } from '@telegram-apps/telegram-ui';
 import { Suspense } from 'react';
 import { CharacterMagicList } from '../components/CharacterMagicList';
 import { CharacterMagicsLearnModal } from '../components/CharacterMagicLearnModal';
 import { Card } from '@/components/Card';
+import { Placeholder } from '@/components/Placeholder';
 
 export const CharacterMagicsPage = () => {
   const { character } = useCharacter();

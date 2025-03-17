@@ -18,6 +18,10 @@ export const middleware = async (socket: Socket, next: (err?: Error) => void) =>
       socket.on('disconnect', () => {
         activeConnections.delete(user.id.toString());
       });
+
+      socket.on('error', () => {
+        activeConnections.delete(user.id.toString());
+      });
     } else {
       return next(new Error('No multiple connections'));
     }

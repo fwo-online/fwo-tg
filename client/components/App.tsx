@@ -1,5 +1,5 @@
 import { miniApp, useSignal, retrieveLaunchParams } from '@telegram-apps/sdk-react';
-import { AppRoot, Placeholder } from '@telegram-apps/telegram-ui';
+import { AppRoot } from '@telegram-apps/telegram-ui';
 import { Suspense } from 'react';
 import { HashRouter } from 'react-router';
 
@@ -9,6 +9,7 @@ import { Router } from '@/router';
 import { WebSocketProvider } from '@/contexts/webSocket';
 import { createWebSocket } from '@/api';
 import { getCharacter } from '@/api/character';
+import { Placeholder } from '@/components/Placeholder';
 
 export function App() {
   const { tgWebAppPlatform } = retrieveLaunchParams();

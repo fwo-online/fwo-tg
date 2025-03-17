@@ -1,4 +1,4 @@
-import { FixedLayout, Placeholder } from '@telegram-apps/telegram-ui';
+import { Placeholder } from '@telegram-apps/telegram-ui';
 import type { FC, ReactNode } from 'react';
 
 export const ErrorPage: FC<{ error?: string | Error; action?: ReactNode }> = ({
@@ -11,11 +11,7 @@ export const ErrorPage: FC<{ error?: string | Error; action?: ReactNode }> = ({
     <Placeholder
       header="Ошибка"
       description={desctiption}
-      action={
-        <FixedLayout style={{ padding: '16px' }} vertical="bottom">
-          {action}
-        </FixedLayout>
-      }
+      action={<div className="fixed bottom-4 left-2 right-2 flex flex-col">{action}</div>}
     />
   );
 };

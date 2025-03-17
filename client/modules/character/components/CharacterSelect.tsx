@@ -1,5 +1,4 @@
 import type { CreateCharacterDto, CharacterClass } from '@fwo/shared';
-import { Headline } from '@telegram-apps/telegram-ui';
 import { type FC, useEffect, useRef, useState } from 'react';
 import {
   characterClassImageMap,
@@ -15,7 +14,7 @@ const Slide = ({ value }: { value: CharacterClass }) => {
   return (
     <div className={styles.slide}>
       <img src={characterClassImageMap[value]} alt={characterClassImageMap[value]} />
-      <Headline weight="2">{characterClassNameMap[value]}</Headline>
+      <h2 className="text-xl font-semibold">{characterClassNameMap[value]}</h2>
     </div>
   );
 };

@@ -1,5 +1,4 @@
 import type { Item } from '@fwo/shared';
-import { Placeholder } from '@telegram-apps/telegram-ui';
 import { use, type FC } from 'react';
 import { buyItem } from '@/api/character';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
@@ -8,6 +7,7 @@ import { useCharacter } from '@/contexts/character';
 import { useRequest } from '@/hooks/useRequest';
 import { popup } from '@telegram-apps/sdk-react';
 import { Button } from '@/components/Button';
+import { Placeholder } from '@/components/Placeholder';
 
 export const ShopList: FC<{ shopPromise: Promise<Item[]> }> = ({ shopPromise }) => {
   const items = use(shopPromise);

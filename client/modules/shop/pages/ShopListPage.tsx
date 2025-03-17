@@ -2,10 +2,10 @@ import { Suspense, type FC } from 'react';
 import { Navigate, useParams } from 'react-router';
 import { ShopList } from '@/modules/shop/components/ShopList';
 import { getShopItems } from '@/api/shop';
-import { Placeholder } from '@telegram-apps/telegram-ui';
 import { wearListTranslations } from '@/constants/inventory';
 import { validateWear } from '@/utils/inventory';
 import { Card } from '@/components/Card';
+import { Placeholder } from '@/components/Placeholder';
 
 export const ShopListPage: FC = () => {
   const { wear } = useParams();

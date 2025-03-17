@@ -1,6 +1,4 @@
-import { Caption, Cell, type CellProps, Info } from '@telegram-apps/telegram-ui';
-import type { FC, ReactNode } from 'react';
-import { Card } from './Card';
+import type { FC, PropsWithChildren, ReactNode } from 'react';
 
 const DescriptionRoot: FC<{ header?: ReactNode; children: ReactNode }> = ({ children, header }) => {
   return (
@@ -11,19 +9,12 @@ const DescriptionRoot: FC<{ header?: ReactNode; children: ReactNode }> = ({ chil
   );
 };
 
-const DescriptionItem: FC<CellProps> = ({ after, children, ...props }) => {
+const DescriptionItem: FC<PropsWithChildren<{ after: ReactNode }>> = ({ after, children }) => {
   return (
-    <Cell
-      {...props}
-      style={{ '--tgui--cell--middle--padding': 0 }}
-      after={
-        <Info type="text">
-          <Caption> {after}</Caption>
-        </Info>
-      }
-    >
-      <Caption>{children}</Caption>
-    </Cell>
+    <div className="flex items-center justify-between text-sm">
+      <span>{children}</span>
+      <div>{after}</div>
+    </div>
   );
 };
 

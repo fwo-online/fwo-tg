@@ -11,9 +11,10 @@ import { Button } from '@/components/Button';
 export const CharacterPage: FC = () => {
   const navigate = useNavigate();
   const { character } = useCharacter();
+
   return (
-    <div className="flex flex-col gap-2 m-4!">
-      <Card className="relative">
+    <div className="flex flex-col gap-2 m-3!">
+      <Card header="Персонаж" className="relative">
         <div className="mt-12">
           <CharacterImage />
         </div>
