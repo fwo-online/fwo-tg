@@ -2,7 +2,7 @@ import type { FilterQuery, UpdateQuery } from 'mongoose';
 import type { Char } from '@/models/character';
 import { CharModel } from '@/models/character';
 import type { Clan } from '@/models/clan';
-import type { InventoryDocument } from '@/models/inventory';
+import { InventoryModel, type InventoryDocument } from '@/models/inventory';
 
 export async function findCharacter(query: FilterQuery<Char>) {
   const character = await CharModel.findOne({ ...query, deleted: false })
@@ -26,8 +26,8 @@ export async function createCharacter(
   charObj: Pick<Char, 'nickname' | 'prof' | 'sex' | 'owner' | 'harks' | 'magics'>,
 ) {
   const character = await CharModel.create(charObj);
-  // const item = await InventoryModel.firstCreate(character);
-  // await updateCharacter(character.id, { inventory: [item] });
+  const item = await InventoryModel.firstCreate(character);
+  await updateCharacter(character.id, { inventory: [item] });
 
   return findCharacter({ _id: character.id });
 }
