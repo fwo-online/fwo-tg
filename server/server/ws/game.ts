@@ -2,7 +2,8 @@ import { ActionService } from '@/arena/ActionService';
 import OrderError from '@/arena/errors/OrderError';
 import type GameService from '@/arena/GameService';
 import MatchMakingService from '@/arena/MatchMakingService';
-import { getAvailableActions } from '@/helpers/actionsHelper';
+import type { Player } from '@/arena/PlayersService';
+import ActionsHelper from '@/helpers/actionsHelper';
 
 import type { Server, Socket } from '@/server/ws';
 import { keyBy } from 'es-toolkit';
@@ -46,22 +47,41 @@ export const onConnection = (_io: Server, socket: Socket) => {
     await socket.join(getRoom(game, character.clan?.id ?? character.id));
 
     await socket.emit('game:start', game.info.id);
+    const player = game.players.getById(character.id);
 
-    game.on('startOrders', () => {
-      socket.emit('game:startOrders', getAvailableActions(character));
-    });
+    if (!player) {
+      return;
+    }
 
-    game.on('preKick', ({ reason, player }) => {
+    const startOrders = () => {
+      socket.emit('game:startOrders', ActionsHelper.buildActions(player, game));
+    };
+
+    const preKick = ({ player, reason }: { reason: string; player: Player }) => {
+      if (player.id !== character.id) {
+        return;
+      }
+
       socket.emit('game:preKick', {
         reason,
         player: player.toObject(),
       });
-    });
+    };
 
-    game.on('end', async () => {
+    const end = async () => {
       socket.emit('game:end');
       await socket.leave(getRoom(game));
       await socket.leave(getRoom(game, character.clan?.id ?? character.id));
+    };
+
+    game.on('startOrders', startOrders);
+    game.on('preKick', preKick);
+    game.on('end', end);
+
+    socket.on('disconnect', () => {
+      game.off('startOrders', startOrders);
+      game.off('preKick', preKick);
+      game.off('end', end);
     });
   };
 
@@ -106,7 +126,7 @@ export const onConnection = (_io: Server, socket: Socket) => {
           target,
           power: proc,
         })),
-        ...getAvailableActions(character),
+        ...ActionsHelper.buildActions(player, game),
       });
     } catch (e) {
       if (e instanceof OrderError) {
@@ -121,7 +141,7 @@ export const onConnection = (_io: Server, socket: Socket) => {
     MatchMakingService.off('start', onGameStart);
 
     if (character.gameId) {
-      character.currentGame?.kick(character.id, 'run');
+      character.currentGame?.preKick(character.id, 'run');
     }
   });
 };

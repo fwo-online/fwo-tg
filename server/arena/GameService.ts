@@ -170,17 +170,19 @@ export default class GameService extends EventEmitter<{
     this.info.players.splice(this.info.players.indexOf(id), 1);
   }
 
+  checkRun(player: Player) {
+    if (player.flags.isKicked === 'run') {
+      this.kick(player.id, player.flags.isKicked);
+      return;
+    }
+  }
+
   /**
    * Проверяем делал ли игрок заказ. Помечает isKicked, если нет
    * @param player
    */
   checkOrders(player: Player): void {
     if (!player.alive || this.round.count === 1) {
-      return;
-    }
-
-    if (player.flags.isKicked === 'run') {
-      this.kick(player.id, player.flags.isKicked);
       return;
     }
 
@@ -292,6 +294,7 @@ export default class GameService extends EventEmitter<{
         }
         case RoundStatus.END_ROUND: {
           this.emit('endRound', { dead: this.sortDead(), log: this.getRoundResults() });
+          this.forAllPlayers(this.checkRun);
           this.players.reset();
           this.orders.reset();
           this.handleEndGameFlags();
