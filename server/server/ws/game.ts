@@ -2,7 +2,6 @@ import { ActionService } from '@/arena/ActionService';
 import OrderError from '@/arena/errors/OrderError';
 import type GameService from '@/arena/GameService';
 import MatchMakingService from '@/arena/MatchMakingService';
-import type { Player } from '@/arena/PlayersService';
 import ActionsHelper from '@/helpers/actionsHelper';
 
 import type { Server, Socket } from '@/server/ws';
@@ -28,13 +27,37 @@ export const onCreate = (io: Server) => {
     });
 
     game.on('endRound', ({ dead }) => {
-      io.to(getRoom(game)).emit('game:endRound', {
-        dead: dead.map((player) => player.toObject()),
+      dead.forEach((player) => {
+        io.in(getRoom(game, player.id)).emit('game:end');
+
+        io.in(getRoom(game, player.id)).socketsLeave([getRoom(game), getRoom(game, player.id)]);
       });
     });
 
     game.on('kick', ({ reason, player }) => {
       io.to(getRoom(game)).emit('game:kick', { reason, player: player.toObject() });
+    });
+
+    game.on('startOrders', () => {
+      game.players.alivePlayers.forEach((player) => {
+        io.to(getRoom(game, player.id)).emit(
+          'game:startOrders',
+          ActionsHelper.buildActions(player, game),
+        );
+      });
+    });
+
+    game.on('preKick', ({ reason, player }) => {
+      io.to(getRoom(game, player.id)).emit('game:preKick', { reason, player: player.toObject() });
+    });
+
+    game.on('end', () => {
+      io.to(getRoom(game)).emit('game:end');
+
+      game.players.alivePlayers.forEach((player) => {
+        io.in(getRoom(game)).socketsLeave(getRoom(game, player.id));
+      });
+      io.socketsLeave(getRoom(game));
     });
   });
 };
@@ -50,47 +73,19 @@ export const onConnection = (_io: Server, socket: Socket) => {
     }
 
     await socket.join(getRoom(game));
-    await socket.join(getRoom(game, character.clan?.id ?? character.id));
+    await socket.join(getRoom(game, player.clan?.id));
+    await socket.join(getRoom(game, player.id));
 
     await socket.emit('game:start', game.info.id);
-
-    const startOrders = () => {
-      socket.emit('game:startOrders', ActionsHelper.buildActions(player, game));
-    };
-
-    const preKick = ({ player, reason }: { reason: string; player: Player }) => {
-      if (player.id !== character.id) {
-        return;
-      }
-
-      socket.emit('game:preKick', {
-        reason,
-        player: player.toObject(),
-      });
-    };
-
-    const end = async () => {
-      socket.emit('game:end');
-      await socket.leave(getRoom(game));
-      await socket.leave(getRoom(game, character.clan?.id ?? character.id));
-
-      game.off('startOrders', startOrders);
-      game.off('preKick', preKick);
-      game.off('end', end);
-    };
-
-    game.on('startOrders', startOrders);
-    game.on('preKick', preKick);
-    game.on('end', end);
   };
 
-  MatchMakingService.prependListener('start', onGameStart);
+  // @FIXME memory leak
+  MatchMakingService.on('start', onGameStart);
 
   socket.on('game:connected', (callback) => {
     const game = character.currentGame;
 
     if (!game) {
-      console.log('GAME::: ', character.mm.status);
       return callback({ error: true, message: 'Вы не в игре' });
     }
     // todo нужно проверять, что все игроки подключились
@@ -161,7 +156,6 @@ export const onConnection = (_io: Server, socket: Socket) => {
     const game = character.currentGame;
     const player = game?.players.getById(character.id);
     if (!game || !player) {
-      console.log('GAME:ORDER:::: ', game?.info.id, player?.id, character.id);
       return callback({ error: true, message: 'Вы не в игре' });
     }
 
@@ -191,4 +185,8 @@ export const onConnection = (_io: Server, socket: Socket) => {
       }
     }
   });
+
+  // socket.on('disconnect', () => {
+  //   MatchMakingService.off('start', onGameStart);
+  // });
 };

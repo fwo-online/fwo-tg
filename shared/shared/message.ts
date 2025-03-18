@@ -74,7 +74,6 @@ export type ServerToClientMessage = Message<{
       status: Partial<Record<string, GameStatus[]>>;
     },
   ];
-  'game:endRound': [{ dead: Player[] }];
   'game:kick': [{ reason: string; player: Player }];
   'game:preKick': [{ reason: string; player: Player }];
 }>;
