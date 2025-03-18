@@ -25,7 +25,7 @@ export const CharacterPage: FC = () => {
         </Card>
         <div className="flex gap-2">
           <Card className="flex flex-1 flex-col justify-center items-center p-1">
-            Опыт
+            Золото
             <span>{character.gold}</span>
           </Card>
 

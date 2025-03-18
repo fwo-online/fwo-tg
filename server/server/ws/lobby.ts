@@ -35,8 +35,4 @@ export const onConnection = (_io: Server, socket: Socket) => {
   socket.on('lobby:stop', () => {
     MatchMakingService.pull(character.id);
   });
-
-  socket.on('disconnect', () => {
-    MatchMakingService.pull(character.id);
-  });
 };

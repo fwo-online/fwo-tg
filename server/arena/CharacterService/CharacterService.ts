@@ -349,6 +349,11 @@ export class CharacterService {
   static async getCharacter(owner: string) {
     const charFromDb = await findCharacter({ owner });
 
+    const cachedChar = arena.characters[charFromDb.id];
+    if (cachedChar) {
+      return cachedChar;
+    }
+
     const char = new CharacterService(charFromDb);
     arena.characters[char.id] = char;
     return char;

@@ -73,26 +73,24 @@ export const onConnection = (_io: Server, socket: Socket) => {
       socket.emit('game:end');
       await socket.leave(getRoom(game));
       await socket.leave(getRoom(game, character.clan?.id ?? character.id));
+
+      game.off('startOrders', startOrders);
+      game.off('preKick', preKick);
+      game.off('end', end);
     };
 
     game.on('startOrders', startOrders);
     game.on('preKick', preKick);
     game.on('end', end);
-
-    socket.on('disconnect', () => {
-      game.off('startOrders', startOrders);
-      game.off('preKick', preKick);
-      game.off('end', end);
-    });
   };
 
   MatchMakingService.prependListener('start', onGameStart);
 
   socket.on('game:connected', (callback) => {
     const game = character.currentGame;
-    const player = game?.players.getById(character.id);
 
-    if (!game || !player) {
+    if (!game) {
+      console.log('GAME::: ', character.mm.status);
       return callback({ error: true, message: 'Вы не в игре' });
     }
     // todo нужно проверять, что все игроки подключились
@@ -163,6 +161,7 @@ export const onConnection = (_io: Server, socket: Socket) => {
     const game = character.currentGame;
     const player = game?.players.getById(character.id);
     if (!game || !player) {
+      console.log('GAME:ORDER:::: ', game?.info.id, player?.id, character.id);
       return callback({ error: true, message: 'Вы не в игре' });
     }
 
@@ -190,14 +189,6 @@ export const onConnection = (_io: Server, socket: Socket) => {
       } else {
         console.log('game:order', e);
       }
-    }
-  });
-
-  socket.on('disconnect', () => {
-    MatchMakingService.off('start', onGameStart);
-
-    if (character.gameId) {
-      character.currentGame?.preKick(character.id, 'run');
     }
   });
 };

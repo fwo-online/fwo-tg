@@ -59,6 +59,7 @@ const server = serve({
 });
 
 const io = new Server(server, {
+  connectionStateRecovery: {},
   pingInterval: 10000,
   cors: { origin: [process.env.APP_URL].filter(isString) },
 });
