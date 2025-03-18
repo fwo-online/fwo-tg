@@ -21,7 +21,12 @@ export const useGameActionTargets = ({
       case 'any':
         return statusByClan;
       case 'enemy':
-        return omit(statusByClan, [clanID]);
+        return clanID === reservedClanName
+          ? {
+              ...statusByClan,
+              [clanID]: statusByClan[clanID]?.filter(({ id }) => id !== character.id),
+            }
+          : omit(statusByClan, [clanID]);
       case 'self':
         return {
           [clanID]: statusByClan[clanID]?.filter(({ id }) => id === character.id),
@@ -31,7 +36,11 @@ export const useGameActionTargets = ({
           [clanID]: statusByClan[clanID]?.filter(({ id }) => id !== character.id),
         };
       case 'team':
-        return pick(statusByClan, [clanID]);
+        return clanID === reservedClanName
+          ? {
+              [clanID]: statusByClan[clanID]?.filter(({ id }) => id === character.id),
+            }
+          : pick(statusByClan, [clanID]);
       default:
         return statusByClan;
     }
