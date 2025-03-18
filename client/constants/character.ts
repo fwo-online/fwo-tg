@@ -10,8 +10,8 @@ export const characterClassNameMap: Record<CharacterClass, string> = {
 };
 
 export const characterClassImageMap: Record<CharacterClass, string> = {
-  [CharacterClass.Archer]: '/images/warrior.png',
-  [CharacterClass.Mage]: '/images/mage.png',
-  [CharacterClass.Priest]: '/images/mage.png',
-  [CharacterClass.Warrior]: '/images/warrior.png',
+  [CharacterClass.Archer]: '/character/Archer.png',
+  [CharacterClass.Mage]: '/character/Mage.png',
+  [CharacterClass.Priest]: '/character/Priest.png',
+  [CharacterClass.Warrior]: '/character/Warrior.png',
 };

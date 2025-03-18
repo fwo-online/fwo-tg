@@ -1,18 +1,17 @@
-import { useEffect, useRef } from 'react';
-import { useCharacter } from '@/contexts/character';
+import { type FC, useEffect, useRef } from 'react';
 import { drawCharacter } from '@/modules/character/hooks/useDrawCharacter';
+import type { CharacterClass } from '@fwo/shared';
 
-export const CharacterImage = () => {
-  const { character } = useCharacter();
+export const CharacterImage: FC<{ characterClass: CharacterClass }> = ({ characterClass }) => {
   const canvas = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     if (canvas.current) {
-      drawCharacter(canvas.current, character);
+      drawCharacter(canvas.current, characterClass);
     }
-  }, [character]);
+  }, [characterClass]);
 
   return (
-    <canvas ref={canvas} style={{ display: 'block', margin: 'auto' }} width={200} height={200} />
+    <canvas ref={canvas} style={{ display: 'block', margin: 'auto' }} width={200} height={125} />
   );
 };

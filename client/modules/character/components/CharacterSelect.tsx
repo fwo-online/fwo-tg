@@ -1,19 +1,17 @@
 import type { CreateCharacterDto, CharacterClass } from '@fwo/shared';
 import { type FC, useEffect, useRef, useState } from 'react';
-import {
-  characterClassImageMap,
-  characterClassList,
-  characterClassNameMap,
-} from '@/constants/character';
+import { characterClassList, characterClassNameMap } from '@/constants/character';
 import styles from './CharacterSelect.module.css';
 import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
 import cn from 'classnames';
+import { CharacterImage } from './CharacterImage';
 
 const Slide = ({ value }: { value: CharacterClass }) => {
   return (
     <div className={styles.slide}>
-      <img src={characterClassImageMap[value]} alt={characterClassImageMap[value]} />
+      <CharacterImage characterClass={value} />
+
       <h2 className="text-xl font-semibold">{characterClassNameMap[value]}</h2>
     </div>
   );

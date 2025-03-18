@@ -1,6 +1,6 @@
-import { CharacterClass, type Character } from '@fwo/shared';
+import { CharacterClass } from '@fwo/shared';
 
-export const drawCharacter = (canvas: HTMLCanvasElement, character: Character) => {
+export const drawCharacter = (canvas: HTMLCanvasElement, characterClass: CharacterClass) => {
   const ctx = canvas.getContext('2d');
   if (!ctx) {
     return;
@@ -12,21 +12,27 @@ export const drawCharacter = (canvas: HTMLCanvasElement, character: Character) =
   const draw = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     layers.forEach((layer) => {
-      ctx.drawImage(layer, 0, 0);
+      ctx.drawImage(layer, 50, 10, 100, 100);
     });
   };
 
   const drawBody = () => {
     const body = new Image();
-    switch (character.class) {
+    switch (characterClass) {
       case CharacterClass.Warrior:
-        body.src = new URL('/images/warrior.png', import.meta.url).href;
+        body.src = new URL('/character/Warrior.png', import.meta.url).href;
         break;
       case CharacterClass.Mage:
-        body.src = new URL('/images/mage.png', import.meta.url).href;
+        body.src = new URL('/character/Mage.png', import.meta.url).href;
+        break;
+      case CharacterClass.Priest:
+        body.src = new URL('/character/Priest.png', import.meta.url).href;
+        break;
+      case CharacterClass.Archer:
+        body.src = new URL('/character/Archer.png', import.meta.url).href;
         break;
       default:
-        body.src = new URL('/character/male.png', import.meta.url).href;
+        body.src = new URL('/character/Warrior.png', import.meta.url).href;
     }
 
     body.onload = () => {
