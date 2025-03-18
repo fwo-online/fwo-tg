@@ -1,6 +1,7 @@
 import { useCharacter } from '@/contexts/character';
 import { useWebSocket } from '@/contexts/webSocket';
 import type { CharacterPublic } from '@fwo/shared';
+import { popup } from '@telegram-apps/sdk-react';
 import { useEffect, useState } from 'react';
 
 export const useLobby = () => {
@@ -33,7 +34,10 @@ export const useLobby = () => {
     if (isSearching) {
       socket.emit('lobby:stop');
     } else {
-      socket.emit('lobby:start');
+      const res = await socket.emitWithAck('lobby:start');
+      if (res.error) {
+        popup.open({ message: res.message });
+      }
     }
   };
 

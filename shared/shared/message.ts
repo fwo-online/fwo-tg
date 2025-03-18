@@ -10,7 +10,7 @@ export type ClientToServerMessage = Message<{
   character: [callback: (character: Character) => void];
   'lobby:enter': [callback: (characters: CharacterPublic[]) => void];
   'lobby:leave': [];
-  'lobby:start': [];
+  'lobby:start': [callback: (payload: RPC<{ success?: boolean }>) => void];
   'lobby:stop': [];
   'game:connected': [callback: (payload: RPC<{ players: Record<string, Player> }>) => void];
   'game:order': [

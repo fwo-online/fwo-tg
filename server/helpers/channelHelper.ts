@@ -5,6 +5,7 @@ import { Profs } from '../data';
 import { LogService } from '@/arena/LogService';
 import { reservedClanName } from '@fwo/shared';
 import { bold } from '@/utils/formatString';
+import { profsData } from '@/data/profs';
 
 const MAX_MESSAGE_LENGTH = 2 ** 12;
 const chatId = process.env.BOT_CHATID || -1001483444452;
@@ -79,6 +80,24 @@ export async function sendExitButton(player: Player): Promise<void> {
 }
 
 export const initGameChannel = () => {
+  arena.mm.on('push', ({ id }) => {
+    const character = arena.characters[id];
+    if (character) {
+      broadcast(
+        `Игрок ${bold(character.nickname)} (${profsData[character.prof].icon}${character.lvl}) начал поиск игры!`,
+      );
+    }
+  });
+
+  arena.mm.on('pull', ({ id }) => {
+    const character = arena.characters[id];
+    if (character) {
+      broadcast(
+        `Игрок ${bold(character.nickname)} (${profsData[character.prof].icon}${character.lvl}) передумал...`,
+      );
+    }
+  });
+
   arena.mm.on('start', (game) => {
     const log = new LogService(sendBattleLogMessages);
     broadcast('Игра начинается');

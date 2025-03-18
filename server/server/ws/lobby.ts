@@ -21,8 +21,15 @@ export const onConnection = (_io: Server, socket: Socket) => {
     socket.leave('lobby');
   });
 
-  socket.on('lobby:start', () => {
-    MatchMakingService.push({ id: character.id, psr: 1000, startTime: Date.now() });
+  socket.on('lobby:start', (callback) => {
+    try {
+      MatchMakingService.push({ id: character.id, psr: 1000, startTime: Date.now() });
+      callback({});
+    } catch (e) {
+      if (e instanceof Error) {
+        callback({ error: true, message: e.message });
+      }
+    }
   });
 
   socket.on('lobby:stop', () => {

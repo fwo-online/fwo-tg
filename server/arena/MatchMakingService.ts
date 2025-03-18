@@ -22,10 +22,13 @@ export type MatchMakingItem = {
 class MatchMaking extends EventEmitter<{
   start: [game: GameService];
   list: [players: MatchMakingItem[]];
+  push: [player: MatchMakingItem];
+  pull: [player: MatchMakingItem];
 }> {
   allQueue: QueueConstructor[] = [];
   mmQueue: MatchMakingItem[] = [];
   timerId?: NodeJS.Timer;
+  playerAttempts: Record<string, number[]> = {};
 
   checkStatus() {
     const [withClans] = _.partition(this.mmQueue, (mmObj) => arena.characters[mmObj.id].clan);
@@ -43,6 +46,7 @@ class MatchMaking extends EventEmitter<{
     if (obj) {
       this.mmQueue.splice(this.mmQueue.indexOf(obj), 1);
       this.main();
+      this.emit('pull', obj);
       this.emit('list', this.mmQueue);
     }
     // @todo убрать после дебага
@@ -58,7 +62,24 @@ class MatchMaking extends EventEmitter<{
       return;
     }
 
+    const now = Date.now();
+
+    this.playerAttempts[obj.id] = (this.playerAttempts[obj.id] || []).filter(
+      (timestamp) => now - timestamp < 5 * 60 * 1000,
+    );
+
+    if (this.playerAttempts[obj.id].length >= 5) {
+      throw new Error('Слишком много попыток, попобуй позднее');
+    }
+
+    this.playerAttempts[obj.id].push(now);
+
+    if (this.mmQueue.some((el) => el.id === obj.id)) {
+      return;
+    }
+
     this.mmQueue.push(obj);
+    this.emit('push', obj);
     this.emit('list', this.mmQueue);
     this.main();
   }
