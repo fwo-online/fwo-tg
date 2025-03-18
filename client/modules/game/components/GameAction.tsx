@@ -4,7 +4,6 @@ import { type FC, useState } from 'react';
 import { reservedClanName, type Action } from '@fwo/shared';
 import { useGameActionTargets } from '../hooks/useGameActionTargets';
 import { GameActionTarget } from './GameActionTarget';
-import { useGameActionOrder } from '../hooks/useGameActionOrder';
 import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
 import { Placeholder } from '@/components/Placeholder';
@@ -12,13 +11,13 @@ import { useMount } from '@/hooks/useMount';
 
 export const GameAction: FC<{
   action: Action;
-  onReset: () => void;
-}> = ({ action, onReset }) => {
+  isPending: boolean;
+  onOrder: (action: string, target: string, power: number) => void;
+}> = ({ action, onOrder, isPending }) => {
   const remainPower = useGameStore((state) => state.power);
   const [power, setPower] = useState(0);
   const { hasTargets, availableTargets } = useGameActionTargets({ action });
   const [target, setTarget] = useState<string | null>(null);
-  const { isPending, handleOrder } = useGameActionOrder(action, onReset);
 
   const handleSliderChange = (value: number) => {
     if (action.power) {
@@ -35,12 +34,14 @@ export const GameAction: FC<{
     if (!target) {
       return;
     }
-    handleOrder(target, power);
+    onOrder(action.name, target, power);
   };
 
   useMount(() => {
     if (action.power) {
       setPower(action.power);
+    } else {
+      setPower(remainPower);
     }
   });
 

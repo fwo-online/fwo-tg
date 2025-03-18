@@ -4,7 +4,13 @@ import type { Action } from '@fwo/shared';
 import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
 
-export const GameActionList: FC<{ onSelect: (action: Action) => void }> = ({ onSelect }) => {
+export const GameActionList: FC<{
+  isPending: boolean;
+  onSelect: (action: Action) => void;
+  onRepeat: () => void;
+  onReset: () => void;
+}> = ({ isPending, onSelect, onRepeat, onReset }) => {
+  const round = useGameStore((state) => state.round);
   const actions = useGameStore((state) => state.actions);
   const magics = useGameStore((state) => state.magics);
   const skills = useGameStore((state) => state.skills);
@@ -58,6 +64,17 @@ export const GameActionList: FC<{ onSelect: (action: Action) => void }> = ({ onS
             ))}
           </>
         ) : null}
+
+        {power === 100 && round > 1 && (
+          <Button className="p-0 is-primary" onClick={onRepeat} disabled={isPending}>
+            Повторить
+          </Button>
+        )}
+        {power !== 100 && (
+          <Button className="p-0 is-primary" onClick={onReset} disabled={isPending}>
+            Очистить
+          </Button>
+        )}
       </div>
     </Card>
   );

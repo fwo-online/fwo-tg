@@ -3,6 +3,7 @@ import { type RoundService, RoundStatus } from '@/arena/RoundService';
 import OrderError from '@/arena/errors/OrderError';
 import type PlayersService from '@/arena/PlayersService';
 import type { Player } from '@/arena/PlayersService';
+import ValidationError from './errors/ValidationError';
 
 export interface Order {
   initiator: string;
@@ -13,6 +14,11 @@ export interface Order {
 
 export interface OrderOutput extends Order {
   action: ActionKey;
+}
+
+interface OrderResult {
+  orders: OrderOutput[];
+  proc: number;
 }
 /**
  * OrderService
@@ -53,7 +59,7 @@ export default class Orders {
    * @returns заказы игрока
    * @throws {OrderError}
    */
-  orderAction(order: Order) {
+  orderAction(order: Order): OrderResult {
     console.log('orderAction >', order.initiator);
 
     const initiator = this.playersService.getById(order.initiator);
@@ -182,24 +188,30 @@ export default class Orders {
    * Повторяет заказ для игрока
    * @param charId идентификатор персонажа
    */
-  repeatLastOrder(charId: string): void {
-    this.lastOrders?.forEach((order) => {
-      if (order.initiator === charId) {
-        try {
-          this.orderAction(order);
-        } catch (e) {
-          console.log('Error in orders:', e);
+  repeatLastOrder(charId: string): OrderResult {
+    if (!this.lastOrders) {
+      throw new ValidationError('Нельзя повторить заказ');
+    }
+
+    return this.lastOrders.reduce<{ orders: OrderOutput[]; proc: number }>(
+      (prev, order) => {
+        if (order.initiator === charId) {
+          return this.orderAction(order);
         }
-      }
-    });
+        return prev;
+      },
+      { orders: [], proc: 100 },
+    );
   }
 
   /**
    * Сбрасывает заказ для игрока
    * @param charId идентификатор персонажа
    */
-  resetOrdersForPlayer(charId: string): void {
+  resetOrdersForPlayer(charId: string): OrderResult {
     this.ordersList = this.ordersList.filter((o) => o.initiator !== charId);
     this.playersService.getById(charId)?.setProc(100);
+
+    return { orders: [], proc: 100 };
   }
 }

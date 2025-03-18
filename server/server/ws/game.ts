@@ -104,6 +104,61 @@ export const onConnection = (_io: Server, socket: Socket) => {
     });
   });
 
+  socket.on('game:orderRepeat', (callback) => {
+    const game = character.currentGame;
+    const player = game?.players.getById(character.id);
+    if (!game || !player) {
+      return callback({ error: true, message: 'Вы не в игре' });
+    }
+    try {
+      const { orders, proc } = game.orders.repeatLastOrder(player.id);
+      return callback({
+        error: false,
+        power: proc,
+        orders: orders.map(({ target, proc, action }) => ({
+          action: ActionService.toObject(action),
+          target,
+          power: proc,
+        })),
+        ...ActionsHelper.buildActions(player, game),
+      });
+    } catch (e) {
+      if (e instanceof OrderError) {
+        callback({ error: true, message: e.message });
+      } else {
+        console.log('game:order', e);
+      }
+    }
+  });
+
+  socket.on('game:orderReset', (callback) => {
+    const game = character.currentGame;
+    const player = game?.players.getById(character.id);
+    if (!game || !player) {
+      return callback({ error: true, message: 'Вы не в игре' });
+    }
+
+    try {
+      const { orders, proc } = game.orders.resetOrdersForPlayer(player.id);
+      return callback({
+        error: false,
+        power: proc,
+        orders: orders.map(({ target, proc, action }) => ({
+          action: ActionService.toObject(action),
+          target,
+          power: proc,
+        })),
+        ...ActionsHelper.buildActions(player, game),
+      });
+    } catch (e) {
+      if (e instanceof OrderError) {
+        callback({ error: true, message: e.message });
+      } else {
+        console.log('game:order', e);
+      }
+    }
+  });
+
   socket.on('game:order', (order, callback) => {
     const game = character.currentGame;
     const player = game?.players.getById(character.id);

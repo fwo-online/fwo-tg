@@ -19,9 +19,13 @@ export function GamePage() {
   return (
     <>
       <GameOrderModal />
-      <Card className="m-4" header={<>Раунд {round}</>}>
-        {round ? <GameStatus /> : <Placeholder header="Игра начинается" />}
-      </Card>
+      {round ? (
+        <Card className="m-4" header={<>Раунд {round}</>}>
+          <GameStatus />
+        </Card>
+      ) : (
+        <Placeholder description="Игра начинается..." />
+      )}
     </>
   );
 }

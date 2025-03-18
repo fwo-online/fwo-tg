@@ -5,9 +5,11 @@ import { useGameStore } from '@/modules/game/store/useGameStore';
 import { useGameKickState } from './useGameKickState';
 import { useMount } from '@/hooks/useMount';
 import { useNavigate } from 'react-router';
+import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 
 export function useGameState() {
   const socket = useWebSocket();
+  const { updateCharacter } = useUpdateCharacter();
 
   const navigate = useNavigate();
   const setOrders = useGameStore((state) => state.setOrders);
@@ -42,9 +44,10 @@ export function useGameState() {
     setOrders([]);
   }, [setOrders, setCanOrder]);
 
-  const handleEndGame = useCallback(() => {
+  const handleEndGame = useCallback(async () => {
+    await updateCharacter();
     navigate('/');
-  }, [navigate]);
+  }, [navigate, updateCharacter]);
 
   const connect = () => {
     socket.emitWithAck('game:connected').then((res) => {

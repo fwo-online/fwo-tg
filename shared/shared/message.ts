@@ -29,6 +29,28 @@ export type ClientToServerMessage = Message<{
       }>,
     ) => void,
   ];
+  'game:orderRepeat': [
+    callback: (
+      payload: RPC<{
+        actions: Action[];
+        magics: Action[];
+        skills: Action[];
+        power: number;
+        orders: Order[];
+      }>,
+    ) => void,
+  ];
+  'game:orderReset': [
+    callback: (
+      payload: RPC<{
+        actions: Action[];
+        magics: Action[];
+        skills: Action[];
+        power: number;
+        orders: Order[];
+      }>,
+    ) => void,
+  ];
 }>;
 
 type Message<T extends Record<string, unknown[]>> = {

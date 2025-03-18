@@ -55,7 +55,11 @@ export class InventoryDocument {
     itemCode: string,
   ): Promise<InventoryDocument> {
     const item = await this.create({
-      owner: charId, code: itemCode, wear: arena.items[itemCode].wear, putOn: false, durable: 10,
+      owner: charId,
+      code: itemCode,
+      wear: arena.items[itemCode].wear,
+      putOn: false,
+      durable: 10,
     });
     return item;
   }

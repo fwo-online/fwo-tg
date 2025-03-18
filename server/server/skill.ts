@@ -12,7 +12,6 @@ export const skill = new Hono()
     vValidator('query', v.object({ ids: v.union([v.array(v.string()), v.string()]) })),
     async (c) => {
       const { ids } = c.req.valid('query');
-      console.log(ids);
       const skills = SkillService.getSkillList(Array.isArray(ids) ? ids : [ids]);
 
       return c.json(skills);
