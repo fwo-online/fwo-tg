@@ -9,6 +9,8 @@ class ThrustWeapon extends CounterEvasionSkill {
     super({
       name: 'thrustWeapon',
       displayName: 'Навык владения колющим оружием',
+      description:
+        'Дает бонусы колящему оружию, снижая вероятность промаха при использовании оружия такого типа.',
       chance: [55, 60, 65, 70, 75, 80],
       effect: [3, 6, 9, 12, 15, 18],
       bonusCost: [30, 60, 90, 120, 150, 180],

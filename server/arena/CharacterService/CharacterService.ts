@@ -137,6 +137,10 @@ export class CharacterService {
     return this.charObj.skills || {};
   }
 
+  get passiveSkills() {
+    return this.charObj.passiveSkills || {};
+  }
+
   get bonus() {
     return this.charObj.bonus;
   }
@@ -411,6 +415,11 @@ export class CharacterService {
     await this.saveToDb();
   }
 
+  async learnPassiveSkill(skillId: string, lvl: number) {
+    this.passiveSkills[skillId] = lvl;
+    await this.saveToDb();
+  }
+
   /**
    * Сохраняет состояние чара в базу
    * @param {import('mongoose').UpdateQuery<import ('@/models/character').Char>} [query]
@@ -432,7 +441,7 @@ export class CharacterService {
   async saveToDb() {
     try {
       console.log('Saving char :: id', this.id);
-      const { gold, exp, magics, bonus, skills, lvl, clan, free } = this;
+      const { gold, exp, magics, bonus, skills, passiveSkills, lvl, clan, free } = this;
       return await updateCharacter(this.id, {
         gold,
         exp,
@@ -441,6 +450,7 @@ export class CharacterService {
         skills,
         lvl,
         clan,
+        passiveSkills,
         penalty: this.charObj.penalty,
         free,
         expLimit: this.charObj.expLimit,
@@ -467,6 +477,7 @@ export class CharacterService {
       attributes: this.attributes,
       magics: this.magics,
       skills: this.skills,
+      passiveSkills: this.passiveSkills,
       clan: this.clan,
       inventory: this.inventory.toObject(),
       free: this.charObj.free,

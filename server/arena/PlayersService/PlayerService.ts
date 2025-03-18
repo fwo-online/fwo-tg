@@ -38,6 +38,7 @@ export default class PlayerService {
   resists: Partial<Resists>;
   skills: Record<string, number>;
   magics: Record<string, number>;
+  passiveSkills: Record<string, number>;
   favoriteMagics: string[];
   alive: boolean;
   proc: number;
@@ -60,6 +61,7 @@ export default class PlayerService {
     this.resists = {}; // Объект резистов
     this.skills = params.skills || {}; // Обькт доступных скилов
     this.magics = params.magics || {}; // объект изученых магий
+    this.passiveSkills = params.passiveSkills || {};
     this.alive = true;
     this.proc = 100;
     this.weapon = new PlayerWeapon(params.inventory.getEquippedWeapon());
@@ -146,6 +148,10 @@ export default class PlayerService {
 
   getSkillLevel(skill: string) {
     return this.skills[skill] ?? 0;
+  }
+
+  getPassiveSkillLevel(passiveSkill: string) {
+    return this.passiveSkills[passiveSkill] ?? 0;
   }
 
   isAlly(player: PlayerService, includeSelf = true) {

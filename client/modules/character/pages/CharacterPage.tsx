@@ -49,6 +49,7 @@ export const CharacterPage: FC = () => {
         ) : (
           <Button onClick={() => navigate('/character/magics')}>Магии</Button>
         )}
+        <Button onClick={() => navigate('/character/passiveSkills')}>Пассивные навыки</Button>
         <Button onClick={() => navigate('/character/inventory')}>Инвентарь</Button>
       </div>
     </div>

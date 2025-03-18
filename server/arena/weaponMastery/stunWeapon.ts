@@ -9,6 +9,7 @@ class StunWeapon extends CounterEvasionSkill {
     super({
       name: 'stunWeapon',
       displayName: 'Навык владения оглушающим оружием',
+      description: 'Дает бонусы оглушающему оружию, повышая урон при атаке оглушающим оружием',
       chance: [5, 10, 15, 20, 25, 30],
       effect: [3, 6, 9, 12, 15, 18],
       bonusCost: [30, 60, 90, 120, 150, 180],

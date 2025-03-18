@@ -10,11 +10,13 @@ export interface PassiveSkillAttributes {
   effect: number[];
   bonusCost: number[];
   displayName: string;
+  description: string;
 }
 
 export abstract class PassiveSkillConstructor extends AffectableAction {
   name: string;
   displayName: string;
+  description: string;
   chance: number[];
   effect: number[];
   bonusCost: number[];
@@ -28,6 +30,7 @@ export abstract class PassiveSkillConstructor extends AffectableAction {
     this.effect = attributes.effect;
     this.bonusCost = attributes.bonusCost;
     this.displayName = attributes.displayName;
+    this.description = attributes.description;
   }
 
   cast(initiator: Player, target: Player, game: GameService) {
@@ -38,7 +41,7 @@ export abstract class PassiveSkillConstructor extends AffectableAction {
 
   isActive() {
     const { initiator } = this.params;
-    return Boolean(initiator.getSkillLevel(this.name));
+    return Boolean(initiator.getPassiveSkillLevel(this.name));
   }
 
   checkChance({ initiator, target, game } = this.params) {
@@ -46,13 +49,13 @@ export abstract class PassiveSkillConstructor extends AffectableAction {
   }
 
   getChance({ initiator } = this.params) {
-    const initiatorSkillLvl = initiator.getSkillLevel(this.name);
+    const initiatorSkillLvl = initiator.getPassiveSkillLevel(this.name);
     return this.chance[initiatorSkillLvl - 1];
   }
 
   getEffect() {
     const { initiator } = this.params;
-    const initiatorSkillLvl = initiator.getSkillLevel(this.name);
+    const initiatorSkillLvl = initiator.getPassiveSkillLevel(this.name);
     return this.effect[initiatorSkillLvl - 1];
   }
 }

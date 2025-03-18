@@ -23,6 +23,15 @@ export type Skill = {
   costType: CostType;
 };
 
+export type PassiveSkill = {
+  name: string;
+  displayName: string;
+  description: string;
+  chance: number[];
+  effect: number[];
+  bonusCost: number[];
+};
+
 export enum CostType {
   MP = 'mp',
   EN = 'en',

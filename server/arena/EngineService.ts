@@ -26,11 +26,8 @@ function runStage(stages: Stages, game: Game) {
     }
     const action = arena.actions[stage];
     const orders = ordersByAction[stage];
-    if (!orders) {
-      return;
-    }
 
-    orders.forEach((order) => {
+    orders?.forEach((order) => {
       const initiator = game.players.getById(order.initiator);
       const target = game.players.getById(order.target);
       if (initiator && target) {

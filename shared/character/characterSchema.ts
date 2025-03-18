@@ -15,6 +15,7 @@ export type Character = {
   inventory: Inventory[];
   magics: Record<string, number>;
   skills: Record<string, number>;
+  passiveSkills: Record<string, number>;
   attributes: CharacterAttributes;
   class: CharacterClass;
   dynamicAttributes: Attributes;

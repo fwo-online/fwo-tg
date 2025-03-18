@@ -28,8 +28,9 @@ export interface Char {
   lastFight: Date | null;
   inventory?: InventoryDocument[];
   psr: number;
-  magics?: Record<string, number>
-  skills?: Record<string, number>
+  magics?: Record<string, number>;
+  skills?: Record<string, number>;
+  passiveSkills?: Record<string, number>;
   bonus: number;
   clan?: Clan;
   penalty: [{
@@ -92,6 +93,7 @@ const character = new Schema<Char, CharModel>({
   magics: { type: Object, default: {} },
   bonus: { type: Number, default: 0 },
   skills: { type: Object, default: {} },
+  passiveSkills: { type: Object, default: {} },
   clan: { type: Schema.Types.ObjectId, ref: 'Clan' },
   penalty: [{
     type: new Schema({

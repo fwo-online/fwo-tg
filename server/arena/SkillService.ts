@@ -26,28 +26,10 @@ export default class SkillService {
     if (charSkillLvl + 1 > skill.bonusCost.length) {
       throw new ValidationError(`Умение ${skill.displayName} имеет максимальный уровень`);
     }
+
     char.bonus -= skill.bonusCost[charSkillLvl];
     await char.learnSkill(id, charSkillLvl + 1);
     return char;
-  }
-
-  /**
-   * @todo remove after movign to MiniApp
-   */
-  static skillDescription(skillId: SkillsNames, char: CharacterService): string {
-    const { displayName, desc, profList, bonusCost } = SkillService.skills[skillId];
-    const charSkillLvl = char.skills[skillId] ?? 0;
-    const skillLvl = profList[char.prof] ?? 0;
-
-    return `${displayName} (${charSkillLvl === 0 ? 'Не изучено' : charSkillLvl})
-
-${desc} ${char.lvl < skillLvl ? '\n\n❗️Твой уровень ниже уровня умения' : ''}
-
-${
-  charSkillLvl >= bonusCost.length
-    ? 'Изучен максимальный уровень умения'
-    : `Стоимость изучения: ${bonusCost[charSkillLvl]}💡 (${char.bonus}💡) ${bonusCost[charSkillLvl] > char.bonus ? '❗️' : '✅'}`
-}`;
   }
 
   static isSkill(id: string): id is keyof typeof skills {
