@@ -30,10 +30,10 @@ export default {
     learnChance: 60,
   },
   defaultItems: {
-    w: 'waa',
-    l: 'wab',
-    p: 'wac',
-    m: 'wac',
+    w: 'machete',
+    l: 'rocks',
+    p: 'staff',
+    m: 'staff',
   }, // Порядок выполнения магия (ОЧЕНЬ ОПАСНО!)
   stages: [
     'silence',
