@@ -2,12 +2,13 @@ import { equipItem, unEquipItem, sellItem } from '@/api/inventory';
 import { useCharacter } from '@/contexts/character';
 import { useRequest } from '@/hooks/useRequest';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
+import { groupBy } from 'es-toolkit';
 
 export const useCharacterInventory = () => {
   const { character } = useCharacter();
   const { updateCharacter } = useUpdateCharacter();
 
-  const inventoryByWear = Object.groupBy(character.inventory, (item) => item.wear);
+  const inventoryByWear = groupBy(character.inventory, (item) => item.wear);
 
   const [_, makeRequest] = useRequest();
 
