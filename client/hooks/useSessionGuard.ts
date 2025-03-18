@@ -20,7 +20,9 @@ export const useSessionReconnect = () => {
   return () => {
     if (!socket.connected) {
       socket.connect();
-      socket.on('connect', () => {});
+      socket.on('connect', () => {
+        navigate('/');
+      });
     } else {
       navigate('/');
     }

@@ -59,12 +59,12 @@ const server = serve({
 });
 
 const io = new Server(server, {
+  pingInterval: 10000,
   cors: { origin: [process.env.APP_URL].filter(isString) },
 });
 
 onCreate(io);
-
-io.use(middleware);
+io.use(middleware(io));
 io.on('connection', (socket) => {
   onConnection(io, socket);
 });

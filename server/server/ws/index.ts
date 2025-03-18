@@ -18,8 +18,8 @@ export type Socket = IOSocket<
   { character: CharacterService }
 >;
 
-export const middleware = (socket: Socket, next: (error?: Error) => void) => {
-  character.middleware(socket, next);
+export const middleware = (io: Server) => (socket: Socket, next: (error?: Error) => void) => {
+  character.middleware(io, socket, next);
 };
 
 export const onCreate = (io: Server) => {
