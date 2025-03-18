@@ -43,15 +43,16 @@ export const onConnection = (_io: Server, socket: Socket) => {
   const { character } = socket.data;
 
   const onGameStart = async (game: GameService) => {
-    await socket.join(getRoom(game));
-    await socket.join(getRoom(game, character.clan?.id ?? character.id));
-
-    await socket.emit('game:start', game.info.id);
     const player = game.players.getById(character.id);
 
     if (!player) {
       return;
     }
+
+    await socket.join(getRoom(game));
+    await socket.join(getRoom(game, character.clan?.id ?? character.id));
+
+    await socket.emit('game:start', game.info.id);
 
     const startOrders = () => {
       socket.emit('game:startOrders', ActionsHelper.buildActions(player, game));
