@@ -8,6 +8,7 @@ import { useGameActionOrder } from '../hooks/useGameActionOrder';
 import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
 import { Placeholder } from '@/components/Placeholder';
+import { useMount } from '@/hooks/useMount';
 
 export const GameAction: FC<{
   action: Action;
@@ -20,6 +21,9 @@ export const GameAction: FC<{
   const { isPending, handleOrder } = useGameActionOrder(action, onReset);
 
   const handleSliderChange = (value: number) => {
+    if (action.power) {
+      return;
+    }
     setPower(Math.min(remainPower, value));
   };
 
@@ -33,6 +37,12 @@ export const GameAction: FC<{
     }
     handleOrder(target, power);
   };
+
+  useMount(() => {
+    if (action.power) {
+      setPower(action.power);
+    }
+  });
 
   return (
     <Card header={<>Выбери цель для {action.displayName}</>}>

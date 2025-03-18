@@ -8,6 +8,15 @@ export const GameActionList: FC<{ onSelect: (action: Action) => void }> = ({ onS
   const actions = useGameStore((state) => state.actions);
   const magics = useGameStore((state) => state.magics);
   const skills = useGameStore((state) => state.skills);
+  const power = useGameStore((state) => state.power);
+
+  const isActionDisabled = (action: Action) => {
+    if (action.power) {
+      return action.power > power;
+    }
+
+    return false;
+  };
 
   return (
     <Card header="Действия">
@@ -35,7 +44,12 @@ export const GameActionList: FC<{ onSelect: (action: Action) => void }> = ({ onS
           <>
             <h6>Умения</h6>
             {skills.map((action) => (
-              <Button key={action.name} className="p-0 is-primary" onClick={() => onSelect(action)}>
+              <Button
+                key={action.name}
+                className="p-0 is-primary"
+                disabled={isActionDisabled(action)}
+                onClick={() => onSelect(action)}
+              >
                 <div className="flex w-full justify-between">
                   <span>{action.displayName}</span>
                   <span>{action.cost}🔋</span>

@@ -16,25 +16,27 @@ export class ActionService {
     return false;
   }
 
-  static toObject(action: ActionKey, lvl = 0): Action {
-    const c = arena.actions[action];
+  static toObject(actionKey: ActionKey, lvl = 1): Action {
+    const action = arena.actions[actionKey];
 
-    if ('cost' in c && 'costType' in c) {
-      const cost = Array.isArray(c.cost) ? c.cost[lvl - 1] : c.cost;
+    const actionObject: Action = {
+      name: action.name,
+      displayName: action.displayName,
+      orderType: action.orderType,
+    };
 
-      return {
-        name: c.name,
-        displayName: c.displayName,
-        costType: c.costType,
-        cost,
-        orderType: c.orderType,
-      };
+    if ('cost' in action) {
+      actionObject.cost = Array.isArray(action.cost) ? action.cost[lvl - 1] : action.cost;
     }
 
-    return {
-      name: c.name,
-      displayName: c.displayName,
-      orderType: c.orderType,
-    };
+    if ('costType' in action) {
+      actionObject.costType = action.costType;
+    }
+
+    if ('proc' in action) {
+      actionObject.power = action.proc;
+    }
+
+    return actionObject;
   }
 }
