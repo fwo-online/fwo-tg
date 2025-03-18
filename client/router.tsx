@@ -14,8 +14,6 @@ import { SettingsPage } from '@/modules/settings/pages/SettingsPage';
 import { CharacterMagicsPage } from '@/modules/character/pages/CharacterMagicsPage';
 import { ErrorPage } from '@/modules/error/pages/ErrorPage';
 import { LobbyPage } from '@/modules/lobby/pages/LobbyPage';
-import { CharacterInventoryListPage } from '@/modules/character/pages/CharacterInventoryListPage';
-import { CharacterInventoryWearListPage } from '@/modules/character/pages/CharacterInventoryWearListPage';
 import { GamePage } from '@/modules/game/pages/GamePage';
 import { ErrorConnectionPage } from './modules/error/pages/ErrorConnectionPage';
 
@@ -30,10 +28,7 @@ export function Router() {
             <Route path="attributes" Component={withBackButton(CharacterAttributesPage)} />
             <Route path="magics" Component={withBackButton(CharacterMagicsPage)} />
             <Route path="skills" Component={withBackButton(CharacterSkillPage)} />
-            <Route path="inventory" Component={withBackButton(CharacterInventoryPage)}>
-              <Route path="" Component={withBackButton(CharacterInventoryWearListPage)} />
-              <Route path=":wear" Component={withBackButton(CharacterInventoryListPage)} />
-            </Route>
+            <Route path="inventory" Component={withBackButton(CharacterInventoryPage)} />
           </Route>
           <Route path="/lobby" element={<LobbyPage />} />
           <Route path="/settings" Component={withBackButton(SettingsPage)} />

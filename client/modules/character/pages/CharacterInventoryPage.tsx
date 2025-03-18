@@ -1,9 +1,14 @@
-import { Outlet } from 'react-router';
+import type { FC } from 'react';
+import { useCharacter } from '@/contexts/character';
+import { Card } from '@/components/Card';
+import { CharacterInventoryList } from '../components/CharacterInventoryList';
 
-export const CharacterInventoryPage = () => {
+export const CharacterInventoryPage: FC = () => {
+  const { character } = useCharacter();
+
   return (
-    <>
-      <Outlet />
-    </>
+    <Card header="Инвентарь" className="m-4!">
+      <CharacterInventoryList inventory={character.inventory} />
+    </Card>
   );
 };
