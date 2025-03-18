@@ -134,9 +134,13 @@ export default class Orders {
 
   /**
    * Проверка достижения максимального кол-ва целей при атаке
+   * @todo нужно проверять отдельно атаку и остальные умения
    */
   isMaxTargets({ initiator, action }: Order, player: Player): boolean {
-    return this.getNumberOfOrder(initiator, action) >= player.stats.val('maxTarget');
+    if (action === 'attack') {
+      return this.getNumberOfOrder(initiator, action) >= player.stats.val('maxTarget');
+    }
+    return false;
   }
 
   /**
