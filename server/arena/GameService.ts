@@ -293,8 +293,8 @@ export default class GameService extends EventEmitter<{
           break;
         }
         case RoundStatus.END_ROUND: {
-          this.emit('endRound', { dead: this.sortDead(), log: this.getRoundResults() });
           this.forAllPlayers(this.checkRun);
+          this.emit('endRound', { dead: this.sortDead(), log: this.getRoundResults() });
           this.players.reset();
           this.orders.reset();
           this.handleEndGameFlags();

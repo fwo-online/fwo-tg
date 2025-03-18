@@ -6,6 +6,7 @@ import ActionsHelper from '@/helpers/actionsHelper';
 
 import type { Server, Socket } from '@/server/ws';
 import { keyBy } from 'es-toolkit';
+import { activeConnections } from '@/server/utils/activeConnectons';
 
 const getRoom = (game: GameService, scope?: string) => {
   if (scope) {
@@ -17,6 +18,17 @@ const getRoom = (game: GameService, scope?: string) => {
 
 export const onCreate = (io: Server) => {
   MatchMakingService.on('start', (game) => {
+    game.players.players.forEach((player) => {
+      const connection = activeConnections.get(player.owner);
+      console.log(...activeConnections.entries());
+      if (connection) {
+        console.log(connection);
+        io.in(connection).socketsJoin([getRoom(game), getRoom(game, player.id)]);
+      }
+    });
+
+    io.in(getRoom(game)).emit('game:start', game.info.id);
+
     game.on('endOrders', () => {
       io.to(getRoom(game)).emit('game:endOrders');
     });
@@ -64,23 +76,6 @@ export const onCreate = (io: Server) => {
 
 export const onConnection = (_io: Server, socket: Socket) => {
   const { character } = socket.data;
-
-  const onGameStart = async (game: GameService) => {
-    const player = game.players.getById(character.id);
-
-    if (!player) {
-      return;
-    }
-
-    await socket.join(getRoom(game));
-    await socket.join(getRoom(game, player.clan?.id));
-    await socket.join(getRoom(game, player.id));
-
-    await socket.emit('game:start', game.info.id);
-  };
-
-  // @FIXME memory leak
-  MatchMakingService.on('start', onGameStart);
 
   socket.on('game:connected', (callback) => {
     const game = character.currentGame;
@@ -185,8 +180,4 @@ export const onConnection = (_io: Server, socket: Socket) => {
       }
     }
   });
-
-  // socket.on('disconnect', () => {
-  //   MatchMakingService.off('start', onGameStart);
-  // });
 };

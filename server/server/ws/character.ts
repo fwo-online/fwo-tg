@@ -1,8 +1,7 @@
 import { CharacterService } from '@/arena/CharacterService';
 import type { Server, Socket } from '@/server/ws';
 import { validateToken } from '@/server/utils/validateToken';
-
-const activeConnections = new Map<string, string>();
+import { checkActiveConnection } from '@/server/utils/activeConnectons';
 
 export const middleware = async (io: Server, socket: Socket, next: (err?: Error) => void) => {
   const [type, value] = socket.handshake.headers.authorization?.split(' ') ?? [];
@@ -12,17 +11,7 @@ export const middleware = async (io: Server, socket: Socket, next: (err?: Error)
       return next(new Error('User not found'));
     }
 
-    const activeConnection = activeConnections.get(user.id.toString());
-
-    if (activeConnection) {
-      const socketConnection = io.sockets.sockets.get(activeConnection);
-
-      if (socketConnection?.connected) {
-        return next(new Error('No multiple connections'));
-      }
-    }
-
-    activeConnections.set(user.id.toString(), socket.id);
+    checkActiveConnection(io, socket, user);
 
     const character = await CharacterService.getCharacter(user.id.toString());
     if (!character) {
