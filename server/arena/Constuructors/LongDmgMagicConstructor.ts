@@ -3,12 +3,9 @@ import type Game from '../GameService';
 import type { Player } from '../PlayersService';
 import { DmgMagic } from './DmgMagicConstructor';
 import type { LongItem } from './LongMagicConstructor';
-import type {
-  ActionType, LongCustomMessage, SuccessArgs,
-} from './types';
+import type { ActionType, LongCustomMessage, SuccessArgs } from './types';
 
-export interface LongDmgMagic extends DmgMagic, LongCustomMessage {
-}
+export interface LongDmgMagic extends DmgMagic, LongCustomMessage {}
 /**
  * Общий конструктор не длительных магий
  */
@@ -88,7 +85,7 @@ export abstract class LongDmgMagic extends DmgMagic {
     game.longActions[this.name] = filteredLongArray;
   }
 
-  abstract runLong(initiator: Player, target: Player, game: Game): void
+  abstract runLong(initiator: Player, target: Player, game: Game): void;
 
   /**
    * Функция формирует объект параметров длительной магии внутри Game, для
@@ -102,8 +99,8 @@ export abstract class LongDmgMagic extends DmgMagic {
     game.longActions[this.name]?.push({
       initiator: this.params.initiator.id || initiator.id,
       target: this.params.target.id || target.id,
-      duration: this.params.initiator.stats.val('spellLength')
-          || initiator.stats.val('spellLength'),
+      duration:
+        this.params.initiator.stats.val('spellLength') || initiator.stats.val('spellLength'),
       round: this.params.game.round.count || game.round.count,
       proc: this.params.initiator.proc || initiator.proc,
     });
@@ -118,6 +115,6 @@ export abstract class LongDmgMagic extends DmgMagic {
       actionType: 'dmg-magic-long',
     };
 
-    game.recordOrderResult(result);
+    this.giveExp(result);
   }
 }

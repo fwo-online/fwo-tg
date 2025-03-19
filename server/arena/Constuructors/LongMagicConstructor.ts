@@ -2,9 +2,7 @@ import CastError from '../errors/CastError';
 import type Game from '../GameService';
 import type { Player } from '../PlayersService';
 import { CommonMagic } from './CommonMagicConstructor';
-import type {
-  ActionType, LongCustomMessage, SuccessArgs,
-} from './types';
+import type { ActionType, LongCustomMessage, SuccessArgs } from './types';
 
 export type LongItem = {
   initiator: string;
@@ -12,10 +10,9 @@ export type LongItem = {
   duration: number;
   proc: number;
   round: number;
-}
+};
 
-export interface LongMagic extends CommonMagic, LongCustomMessage {
-}
+export interface LongMagic extends CommonMagic, LongCustomMessage {}
 
 /**
  * Общий конструктор не длительных магий
@@ -92,7 +89,7 @@ export abstract class LongMagic extends CommonMagic {
     game.longActions[this.name] = filteredLongArray;
   }
 
-  abstract runLong(initiator: Player, target: Player, game: Game): void
+  abstract runLong(initiator: Player, target: Player, game: Game): void;
 
   /**
    * Функция формирует объект параметров длительной магии внутри Game, для
@@ -107,8 +104,8 @@ export abstract class LongMagic extends CommonMagic {
     game.longActions[this.name]?.push({
       initiator: this.params.initiator.id || initiator.id,
       target: this.params.target.id || target.id,
-      duration: this.params.initiator.stats.val('spellLength')
-          || initiator.stats.val('spellLength'),
+      duration:
+        this.params.initiator.stats.val('spellLength') || initiator.stats.val('spellLength'),
       round: this.params.game.round.count || game.round.count,
       proc: this.params.initiator.proc || initiator.proc,
     });
@@ -125,7 +122,7 @@ export abstract class LongMagic extends CommonMagic {
       actionType: 'magic-long',
     };
 
-    game.recordOrderResult(result);
+    this.giveExp(result);
   }
 }
 
