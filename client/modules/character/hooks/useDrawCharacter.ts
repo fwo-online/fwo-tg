@@ -12,7 +12,7 @@ export const drawCharacter = (canvas: HTMLCanvasElement, characterClass: Charact
   const draw = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     layers.forEach((layer) => {
-      ctx.drawImage(layer, 50, 10, 100, 100);
+      ctx.drawImage(layer, 0, 0, canvas.width, canvas.height);
     });
   };
 

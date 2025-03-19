@@ -15,7 +15,7 @@ export const CharacterPage: FC = () => {
   return (
     <div className="flex flex-col gap-2 m-3!">
       <Card header="Персонаж" className="relative">
-        <div className="mt-12">
+        <div className="mt-12 mb-2">
           <CharacterImage characterClass={character.class} />
         </div>
 
