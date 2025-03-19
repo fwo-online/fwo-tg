@@ -1,0 +1,40 @@
+{
+  "name": "@fwo/server",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "NODE_ENV=production bun fwo.ts",
+    "dev": "bun cli/dev.ts",
+    "test": "bun cli/test.ts -i",
+    "generate:items": "bun cli/generateItems.ts",
+    "reset-harks": "bun cli/resetHarks.ts",
+    "lint": "biome lint",
+    "format": "biome format --fix",
+    "types": "tsc"
+  },
+  "dependencies": {
+    "@fwo/shared": "workspace:*",
+    "@hono/node-server": "^1.13.8",
+    "@hono/valibot-validator": "^0.5.2",
+    "@telegram-apps/init-data-node": "^2.0.3",
+    "es-toolkit": "^1.33.0",
+    "hono": "^4.7.4",
+    "lodash": "^4.17.21",
+    "mongoose": "^8.12.1",
+    "socket.io": "^4.8.1",
+    "telegraf": "^4.16.3"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.5",
+    "@types/lodash": "^4.17.16",
+    "@types/node": "^22.13.10",
+    "casual": "^1.6.2",
+    "csvtojson": "^2.0.10"
+  },
+  "exports": {
+    ".": {
+      "default": "./server/index.ts",
+      "types": "./server/index.ts"
+    }
+  }
+}

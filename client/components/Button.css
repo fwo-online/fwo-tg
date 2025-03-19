@@ -1,0 +1,9 @@
+.nes-btn {
+  border-image-repeat: stretch !important;
+}
+
+.nes-btn.is-dark:not(.is-primary) {
+  color: var(--tg-theme-text);
+  background-color: var(--tg-theme-bg-color);
+}
+

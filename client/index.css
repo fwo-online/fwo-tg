@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+@layer components {
+  @import "nes.css/css/nes-core.css";
+
+}
+
+body {
+  background: var(--tg-theme-secondary-bg-color, white);
+  padding: 0;
+  margin: 0;
+}
+
+div {
+  font-family: var(--tgui--font-family);
+}
+
+code {
+  font-family: 'PixeloidMono', monospace;
+}
+
+blockquote {
+  margin-inline: 16px;
+}
+
+h6 {
+  min-width: max-content;
+}
+
+@font-face {
+  font-family: 'Pixeloid';
+  src: url('/fonts/PixeloidSans.woff2') format('woff2');
+  font-weight: normal;
+}
+
+
+@font-face {
+  font-family: 'Pixeloid';
+  src: url('/fonts/PixeloidSans-Bold.woff2') format('woff2');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'PixeloidMono';
+  src: url('/fonts/PixeloidMono.woff2') format('woff2');
+}

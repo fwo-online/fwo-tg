@@ -1,0 +1,9 @@
+.nes-container {
+  border-image-outset: 2 !important;
+  border-image-repeat: stretch !important;
+  background-color: var(--tg-theme-secondary-bg-color);
+}
+
+.nes-container.with-title > .title {
+  background-color: var(--tg-theme-secondary-bg-color);
+}

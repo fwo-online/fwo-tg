@@ -1,0 +1,16 @@
+{
+  "name": "@fwo/shared",
+  "type": "module",
+  "scripts": {
+    "dev": "tsc",
+    "lint": "biome lint",
+    "format": "biome format --fix",
+    "types": "tsc"
+  },
+  "types": "./out/index.d.ts",
+  "exports": {
+    ".": {
+      "default": "./index.ts"
+    }
+  }
+}

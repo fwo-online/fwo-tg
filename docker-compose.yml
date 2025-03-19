@@ -4,10 +4,14 @@ volumes:
   db:
     driver: local
 services:
-  server:
-    build: .
+  ui:
+    build: ./container/Dockerfile.frontend
     env_file:
-      - .tg-token
+    - .env
+  server:
+    build: ./container/Dockerfile.backend
+    env_file:
+      - .env
     restart: always
     links:
       - "db"
@@ -23,15 +27,3 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: fworootpassword
     volumes:
     - db:/data/db
-  test_db:
-    image: mongo:4.4
-    mem_limit: 512M
-    cpu_percent: 60
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: fworootpassword
-    volumes:
-    - db:/data/test_db
-    ports:
-      - 27017:27017
