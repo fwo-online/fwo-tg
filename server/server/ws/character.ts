@@ -11,7 +11,9 @@ export const middleware = async (io: Server, socket: Socket, next: (err?: Error)
       return next(new Error('User not found'));
     }
 
-    checkActiveConnection(io, socket, user);
+    if (!checkActiveConnection(io, socket, user)) {
+      return next(new Error('No multiple connections'));
+    }
 
     const character = await CharacterService.getCharacter(user.id.toString());
     if (!character) {
