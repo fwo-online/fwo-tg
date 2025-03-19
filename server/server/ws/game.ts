@@ -7,6 +7,9 @@ import ActionsHelper from '@/helpers/actionsHelper';
 import type { Server, Socket } from '@/server/ws';
 import { keyBy } from 'es-toolkit';
 import { activeConnections } from '@/server/utils/activeConnectons';
+import type { OrderResult } from '@/arena/OrderService';
+import type { Player } from '@/arena/PlayersService';
+import type { OrderResponse } from '@fwo/shared';
 
 const getRoom = (game: GameService, scope?: string) => {
   if (scope) {
@@ -20,10 +23,10 @@ export const onCreate = (io: Server) => {
   MatchMakingService.on('start', (game) => {
     game.players.players.forEach((player) => {
       const connection = activeConnections.get(player.owner);
-      console.log(...activeConnections.entries());
       if (connection) {
-        console.log(connection);
         io.in(connection).socketsJoin([getRoom(game), getRoom(game, player.id)]);
+      } else {
+        console.log('no connections found: ', player.id);
       }
     });
 
@@ -92,15 +95,16 @@ export const onConnection = (_io: Server, socket: Socket) => {
     });
   });
 
-  socket.on('game:orderRepeat', (callback) => {
+  const handleOrder = (fn: (game: GameService, player: Player) => OrderResult): OrderResponse => {
     const game = character.currentGame;
     const player = game?.players.getById(character.id);
     if (!game || !player) {
-      return callback({ error: true, message: 'Вы не в игре' });
+      return { error: true, message: 'Вы не в игре' };
     }
+
     try {
-      const { orders, proc } = game.orders.repeatLastOrder(player.id);
-      return callback({
+      const { orders, proc } = fn(game, player);
+      return {
         error: false,
         power: proc,
         orders: orders.map(({ target, proc, action }) => ({
@@ -109,75 +113,34 @@ export const onConnection = (_io: Server, socket: Socket) => {
           power: proc,
         })),
         ...ActionsHelper.buildActions(player, game),
-      });
+      } as const;
     } catch (e) {
       if (e instanceof OrderError) {
-        callback({ error: true, message: e.message });
-      } else {
-        console.log('game:order', e);
+        return { error: true, message: e.message };
       }
+      console.log('game:order', e);
+      return { error: true, message: 'Неизвестная ошибка' };
     }
+  };
+
+  socket.on('game:orderRepeat', (callback) => {
+    callback(handleOrder((game, player) => game.orders.repeatLastOrder(player.id)));
   });
 
   socket.on('game:orderReset', (callback) => {
-    const game = character.currentGame;
-    const player = game?.players.getById(character.id);
-    if (!game || !player) {
-      return callback({ error: true, message: 'Вы не в игре' });
-    }
-
-    try {
-      const { orders, proc } = game.orders.resetOrdersForPlayer(player.id);
-      return callback({
-        error: false,
-        power: proc,
-        orders: orders.map(({ target, proc, action }) => ({
-          action: ActionService.toObject(action),
-          target,
-          power: proc,
-        })),
-        ...ActionsHelper.buildActions(player, game),
-      });
-    } catch (e) {
-      if (e instanceof OrderError) {
-        callback({ error: true, message: e.message });
-      } else {
-        console.log('game:order', e);
-      }
-    }
+    callback(handleOrder((game, player) => game.orders.resetOrdersForPlayer(player.id)));
   });
 
   socket.on('game:order', (order, callback) => {
-    const game = character.currentGame;
-    const player = game?.players.getById(character.id);
-    if (!game || !player) {
-      return callback({ error: true, message: 'Вы не в игре' });
-    }
-
-    try {
-      const { orders, proc } = game.orders.orderAction({
-        action: order.action,
-        target: order.target,
-        proc: order.power,
-        initiator: character.id,
-      });
-
-      callback({
-        error: false,
-        power: proc,
-        orders: orders.map(({ target, proc, action }) => ({
-          action: ActionService.toObject(action),
-          target,
-          power: proc,
-        })),
-        ...ActionsHelper.buildActions(player, game),
-      });
-    } catch (e) {
-      if (e instanceof OrderError) {
-        callback({ error: true, message: e.message });
-      } else {
-        console.log('game:order', e);
-      }
-    }
+    callback(
+      handleOrder((game, player) =>
+        game.orders.orderAction({
+          action: order.action,
+          target: order.target,
+          proc: order.power,
+          initiator: player.id,
+        }),
+      ),
+    );
   });
 };

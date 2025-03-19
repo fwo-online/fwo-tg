@@ -16,7 +16,7 @@ export interface OrderOutput extends Order {
   action: ActionKey;
 }
 
-interface OrderResult {
+export interface OrderResult {
   orders: OrderOutput[];
   proc: number;
 }

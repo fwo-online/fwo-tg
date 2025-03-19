@@ -6,6 +6,7 @@ import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import { AffectableAction } from './AffectableAction';
 import type { ActionType, CustomMessage, OrderType } from './types';
+import type { CostType, Magic as MagicSchema } from '@fwo/shared';
 
 export interface MagicArgs {
   name: keyof typeof magics;
@@ -210,15 +211,17 @@ export abstract class Magic extends AffectableAction {
     }
   }
 
-  toObject() {
+  toObject(): MagicSchema {
     return {
       name: this.name,
       displayName: this.displayName,
       description: this.desc,
+      costType: this.costType as CostType,
       cost: this.cost,
       effect: this.effect,
       effectType: this.effectType,
       lvl: this.lvl,
+      orderType: this.orderType,
     };
   }
 }

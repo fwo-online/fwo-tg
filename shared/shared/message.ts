@@ -6,6 +6,14 @@ import type { Action } from './action';
 import type { RPC } from './rpc';
 import type { Order } from './orderSchema';
 
+export type OrderResponse = RPC<{
+  actions: Action[];
+  magics: Action[];
+  skills: Action[];
+  power: number;
+  orders: Order[];
+}>;
+
 export type ClientToServerMessage = Message<{
   character: [callback: (character: Character) => void];
   'lobby:enter': [callback: (characters: CharacterPublic[]) => void];
@@ -19,38 +27,10 @@ export type ClientToServerMessage = Message<{
       action: string;
       target: string;
     },
-    callback: (
-      payload: RPC<{
-        actions: Action[];
-        magics: Action[];
-        skills: Action[];
-        power: number;
-        orders: Order[];
-      }>,
-    ) => void,
+    callback: (payload: OrderResponse) => void,
   ];
-  'game:orderRepeat': [
-    callback: (
-      payload: RPC<{
-        actions: Action[];
-        magics: Action[];
-        skills: Action[];
-        power: number;
-        orders: Order[];
-      }>,
-    ) => void,
-  ];
-  'game:orderReset': [
-    callback: (
-      payload: RPC<{
-        actions: Action[];
-        magics: Action[];
-        skills: Action[];
-        power: number;
-        orders: Order[];
-      }>,
-    ) => void,
-  ];
+  'game:orderRepeat': [callback: (payload: OrderResponse) => void];
+  'game:orderReset': [callback: (payload: OrderResponse) => void];
 }>;
 
 type Message<T extends Record<string, unknown[]>> = {

@@ -2,6 +2,7 @@ import type { Prof } from '@/data/profs';
 import type { CharacterService } from './CharacterService';
 import ValidationError from './errors/ValidationError';
 import * as skills from './skills';
+import type { CostType, Skill } from '@fwo/shared';
 
 export type SkillsNames = keyof typeof skills;
 
@@ -36,13 +37,16 @@ export default class SkillService {
     return id in skills;
   }
 
-  static toObject(skill: (typeof skills)[keyof typeof skills]) {
+  static toObject(skill: (typeof skills)[keyof typeof skills]): Skill {
     return {
       name: skill.name,
       displayName: skill.displayName,
       description: skill.desc,
       classList: skill.profList,
       bonusCost: skill.bonusCost,
+      cost: skill.cost[0],
+      costType: skill.costType as CostType,
+      orderType: skill.orderType,
     };
   }
 
