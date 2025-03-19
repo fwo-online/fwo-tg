@@ -1,9 +1,7 @@
-import type { PassiveSkill, Skill } from '@fwo/shared';
+import type { PassiveSkill } from '@fwo/shared';
 import { type FC, use } from 'react';
-import { CharacterSkillModal } from '@/modules/character/components/CharacterSkillModal';
 import { useCharacter } from '@/contexts/character';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
-import { learnSkill } from '@/api/skill';
 import { useRequest } from '@/hooks/useRequest';
 import { Button } from '@/components/Button';
 import { PassiveSkillModal } from './PassiveSkillModal';

@@ -41,7 +41,7 @@ const initialState: GameStoreState = {
   statusByClan: {},
 };
 
-export const useGameStore = create<GameStore>()((set, get) => ({
+export const useGameStore = create<GameStore>()((set) => ({
   ...initialState,
   setRound: (round) => set({ round }),
   setCanOrder: (canOrder) => set({ canOrder }),

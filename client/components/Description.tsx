@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import type { FC, PropsWithChildren, ReactNode } from 'react';
 
 const DescriptionRoot: FC<{ header?: ReactNode; children: ReactNode }> = ({ children, header }) => {
@@ -9,9 +10,17 @@ const DescriptionRoot: FC<{ header?: ReactNode; children: ReactNode }> = ({ chil
   );
 };
 
-const DescriptionItem: FC<PropsWithChildren<{ after: ReactNode }>> = ({ after, children }) => {
+const DescriptionItem: FC<PropsWithChildren<{ after: ReactNode; disabled?: boolean }>> = ({
+  after,
+  disabled,
+  children,
+}) => {
   return (
-    <div className="flex items-center justify-between text-sm">
+    <div
+      className={classNames('flex items-center justify-between text-sm', {
+        'opacity-50': disabled,
+      })}
+    >
       <span>{children}</span>
       <div>{after}</div>
     </div>

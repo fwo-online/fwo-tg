@@ -41,17 +41,17 @@ export const drawCharacter = (canvas: HTMLCanvasElement, characterClass: Charact
     };
   };
 
-  const drawWeapon = () => {
-    const body = new Image();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    // const { code } = character.inventory[0];
-    // fixme fix vite dynamic import
-    body.src = new URL('/items/wac.png', import.meta.url).href;
-    body.onload = () => {
-      layers.push(body);
-      draw();
-    };
-  };
+  // const drawWeapon = () => {
+  //   const body = new Image();
+  //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  //   // const { code } = character.inventory[0];
+  //   // fixme fix vite dynamic import
+  //   body.src = new URL('/items/wac.png', import.meta.url).href;
+  //   body.onload = () => {
+  //     layers.push(body);
+  //     draw();
+  //   };
+  // };
 
   drawBody();
   // if (character.inventory.length) {

@@ -63,7 +63,6 @@ export const ItemModal: FC<{
       <Card className="p-4" header={item.info.name}>
         <div className="flex flex-col">
           <span className="text-sm">{item.info.description}</span>
-          <span className="text-sm">{item.info.description}</span>
 
           {attributeSections.map(({ key, label, attributes }) => (
             <Description key={key} header={label}>
