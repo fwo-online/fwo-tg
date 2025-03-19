@@ -23,7 +23,6 @@ import ValidationError from '@/arena/errors/ValidationError';
  * Класс описывающий персонажа внутри игры
  */
 export class CharacterService {
-  tempHarks: HarksLvl & { free: number };
   mm: { status?: string; time?: number };
   inventory: InventoryService;
 
@@ -33,10 +32,6 @@ export class CharacterService {
   constructor(public charObj: Char) {
     this.inventory = new InventoryService(charObj, charObj.inventory ?? []);
     this.charObj = charObj;
-    this.tempHarks = {
-      ...charObj.harks,
-      free: charObj.free,
-    };
     this.mm = {};
     this.resetExpLimit();
   }
@@ -80,6 +75,7 @@ export class CharacterService {
     return this.charObj.exp;
   }
 
+  /** @todo тут надо сделать метод addExp асинхронный, а не вот это вот */
   set exp(value) {
     this.resetExpLimit();
     this.bonus += Math.round(value / 100) - Math.round(this.charObj.exp / 100);
@@ -116,12 +112,11 @@ export class CharacterService {
   }
 
   get free() {
-    return this.tempHarks.free;
+    return this.charObj.free;
   }
 
   set free(value) {
     this.charObj.free = value;
-    this.tempHarks.free = value;
   }
 
   // Базовые harks без учёта надетых вещей
@@ -241,28 +236,6 @@ export class CharacterService {
     }
   }
 
-  // В функциях прокачки харок следует использоваться this.charObj.harks
-  getIncreaseHarkCount(hark) {
-    const count = this.tempHarks[hark] - this.charObj.harks[hark];
-    return count || '';
-  }
-
-  increaseHark(harkName) {
-    if (this.tempHarks.free < 1) {
-      throw Error('Недостаточно очков');
-    }
-
-    this.tempHarks[harkName] += 1;
-    this.tempHarks.free -= 1;
-  }
-
-  resetHarks() {
-    this.tempHarks = {
-      ...this.charObj.harks,
-      free: this.charObj.free,
-    };
-  }
-
   async increaseHarks(harks: HarksLvl) {
     const isValid = Object.entries(harks).every(([key, value]) => value >= this.charObj.harks[key]);
     if (!isValid) {
@@ -278,14 +251,6 @@ export class CharacterService {
     this.charObj.free = free;
 
     await this.save({ harks, free });
-  }
-
-  async submitIncreaseHarks({ free, ...harks } = this.tempHarks) {
-    this.charObj.harks = harks;
-    this.charObj.free = free;
-
-    // @todo сюда нужно будет предусмотреть проверки на корректность сохраняемых данных
-    return this.save({ harks, free });
   }
 
   async buyItem(itemCode: string) {
