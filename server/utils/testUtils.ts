@@ -10,14 +10,15 @@ import { type Char, CharModel } from '@/models/character';
 import { type Clan, ClanModel } from '@/models/clan';
 import { InventoryModel } from '@/models/inventory';
 import { ItemModel } from '@/models/item';
-import type { Item } from '@fwo/shared';
+import { itemSchema, type Item } from '@fwo/shared';
+import { parse } from 'valibot';
 
 const functions = casual.functions();
 
 export default class TestUtils {
   static async createCharacter(
     params?: Partial<Char>,
-    { withWeapon = false }: { withWeapon?: boolean | string } = {},
+    { weapon }: { weapon?: { type?: string } } = {},
   ) {
     const prof: Prof = params?.prof ?? casual.random_element([...profsList]);
     const char = await CharModel.create({
@@ -30,13 +31,13 @@ export default class TestUtils {
       ...params,
     });
 
-    if (withWeapon) {
-      const weapon = await this.getWeapon(withWeapon);
+    if (weapon) {
+      const { wear, code } = await this.getWeapon(weapon);
 
       char.inventory = await InventoryModel.create([
         {
-          wear: weapon.wear,
-          code: weapon.code,
+          wear,
+          code,
           owner: char.id,
           putOn: true,
         },
@@ -84,10 +85,21 @@ export default class TestUtils {
     return clans.map((clan) => clan.toObject());
   }
 
-  static async getWeapon(mayBeCode: true | string): Promise<Item> {
-    const code = typeof mayBeCode === 'string' ? mayBeCode : 'epicSword';
-    await ItemModel.load();
-    return ItemModel.findOne({ code }).orFail();
+  static async getWeapon({ type }: { type?: string }): Promise<Item> {
+    const item = await ItemModel.create(
+      parse(itemSchema, {
+        class: [],
+        price: 0,
+        info: { name: functions.word(), case: functions.word() },
+        code: functions.word(),
+        type: type || 'chop',
+        wear: 'rightHand',
+        hit: { min: 1, max: 12 },
+      }),
+    );
+
+    arena.items[item.code] = item;
+    return item;
   }
 
   static normalizeRoundHistory(history: HistoryItem[]) {

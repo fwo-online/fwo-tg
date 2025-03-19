@@ -1,12 +1,12 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`rangeWeapon should hit through dodge 1`] = `
-"*corporis* использовал _🐍 Увертка_
+"*labore* использовал _🐍 Увертка_
 
-*quisquam* пытался атаковать *corporis*, но у него не получилось
-_🐍 Увертка_ *corporis*: 📖50
-*quisquam* швырнул в *corporis* _Камнями_ и нанёс *0.95* урона
-\\[ corporis 💥 💔-0.95/7.05 📖8 ]
+*quisquam* пытался атаковать *labore*, но у него не получилось
+_🐍 Увертка_ *labore*: 📖50
+*quisquam* швырнул в *labore* _magni_ и нанёс *4.45* урона
+\\[ labore 💥 💔-4.45/3.55 📖36 ]
 
 _Навык владения метательным оружием_ *quisquam*"
 `;

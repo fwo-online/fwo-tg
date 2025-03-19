@@ -32,12 +32,12 @@ export abstract class ProtectConstructor extends AffectableAction implements Aff
     }
   }
 
-  abstract run(initiator: Player, target: Player, game: Game): void
+  abstract run(initiator: Player, target: Player, game: Game): void;
 
   abstract getTargetProtectors(params: BaseActionParams): {
-    initiator: string;
+    initiator: Player;
     val: number;
-  }[]
+  }[];
 
   getProtectChance({ initiator, target } = this.params) {
     const attack = initiator.stats.val('phys.attack') * initiator.proc;
@@ -47,21 +47,12 @@ export abstract class ProtectConstructor extends AffectableAction implements Aff
     return Math.round((1 - Math.exp(-0.33 * ratio)) * 100);
   }
 
-  calculateExp(
-    { initiator, target, game } = this.params,
-    hit = 1,
-  ) {
+  calculateExp({ initiator, target, game } = this.params, hit = 1) {
     const defence = target.stats.val('phys.defence'); // общий показатель защиты цели
-
     const defenderFlags = this.getTargetProtectors({ initiator, target, game });
 
-    defenderFlags.forEach((flag) => {
-      const defender = game.players.getById(flag.initiator);
-      if (!defender) {
-        return;
-      }
-
-      const protect = Math.floor(flag.val * 100) / defence;
+    defenderFlags.forEach(({ initiator: defender, val }) => {
+      const protect = Math.floor(val * 100) / defence;
       const exp = defender.isAlly(target) ? Math.round(hit * 0.4 * protect) : 0;
 
       this.status.expArr.push({

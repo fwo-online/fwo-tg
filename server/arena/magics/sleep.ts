@@ -26,18 +26,26 @@ class Sleep extends LongMagic implements Affect {
   }
 
   run() {
-    const { target } = this.params;
-    target.flags.isSleeping = true;
+    const { initiator, target } = this.params;
+    target.flags.isSleeping.push({ initiator, val: 0 });
   }
 
   runLong() {
-    const { target } = this.params;
-    target.flags.isSleeping = true;
+    const { initiator, target } = this.params;
+    target.flags.isSleeping.push({ initiator, val: 0 });
   }
 
-  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }): undefined => {
-    if (initiator.flags.isSleeping) {
-      throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
+  preAffect: Affect['preAffect'] = ({ params: { initiator: target, game } }): undefined => {
+    if (target.flags.isSleeping.length) {
+      throw new CastError(
+        target.flags.isSleeping.map(({ initiator }) =>
+          this.getSuccessResult({
+            initiator,
+            target,
+            game,
+          }),
+        ),
+      );
     }
   };
 }

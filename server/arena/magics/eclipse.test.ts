@@ -1,6 +1,4 @@
-import {
-  describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
-} from 'bun:test';
+import { describe, beforeAll, beforeEach, afterEach, it, spyOn, expect } from 'bun:test';
 import casual from 'casual';
 import { CharacterService } from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
@@ -19,15 +17,16 @@ describe('eclipse', () => {
   });
 
   beforeEach(async () => {
-    const initiator = await TestUtils.createCharacter({ prof: 'm', magics: { eclipse: 1 } });
-    const target = await TestUtils.createCharacter({ prof: 'w' }, { withWeapon: true });
+    const initiator1 = await TestUtils.createCharacter({ prof: 'm', magics: { eclipse: 1 } });
+    const initiator2 = await TestUtils.createCharacter({ prof: 'm', magics: { eclipse: 1 } });
+    const target = await TestUtils.createCharacter({ prof: 'w' }, { weapon: {} });
 
-    await Promise.all([initiator.id, target.id].map(CharacterService.getCharacterById));
+    await Promise.all(
+      [initiator1.id, initiator2.id, target.id].map(CharacterService.getCharacterById),
+    );
 
-    game = new GameService([initiator.id, target.id]);
-  });
+    game = new GameService([initiator1.id, initiator2.id, target.id]);
 
-  beforeEach(() => {
     spyOn(global.Math, 'random').mockReturnValue(0.1);
   });
 
@@ -37,13 +36,27 @@ describe('eclipse', () => {
 
   it('initiator should be blinded by eclipse', async () => {
     game.players.players[0].proc = 1;
-    game.players.players[0].stats.set('base.hp', 99);
     game.players.players[0].stats.set('mp', 99);
-    game.players.players[1].proc = 1;
+    game.players.players[2].proc = 1;
 
     eclipse.cast(game.players.players[0], game.players.players[0], game);
 
     attack.cast(game.players.players[1], game.players.players[0], game);
+
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
+  });
+
+  it('should handle several casters', async () => {
+    game.players.players[0].proc = 1;
+    game.players.players[0].stats.set('mp', 99);
+    game.players.players[1].proc = 1;
+    game.players.players[1].stats.set('mp', 99);
+    game.players.players[2].proc = 1;
+
+    eclipse.cast(game.players.players[0], game.players.players[0], game);
+    eclipse.cast(game.players.players[1], game.players.players[1], game);
+
+    attack.cast(game.players.players[2], game.players.players[0], game);
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });

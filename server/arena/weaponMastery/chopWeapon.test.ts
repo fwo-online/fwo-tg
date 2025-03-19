@@ -1,10 +1,8 @@
-import {
-  describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
-} from 'bun:test';
+import { describe, beforeAll, beforeEach, afterEach, it, spyOn, expect } from 'bun:test';
 import casual from 'casual';
 import attack from '@/arena/actions/attack';
 import GameService from '@/arena/GameService';
-import { type Char } from '@/models/character';
+import type { Char } from '@/models/character';
 import TestUtils from '@/utils/testUtils';
 import chopWeapon from './chopWeapon';
 
@@ -20,19 +18,20 @@ describe('chopWeapon', () => {
 
     attack.registerPreAffects([chopWeapon]);
 
-    initiator = await TestUtils.createCharacter({
-      skills: {
-        chopWeapon: 1,
+    initiator = await TestUtils.createCharacter(
+      {
+        passiveSkills: {
+          chopWeapon: 1,
+        },
       },
-    }, { withWeapon: 'epicSword' });
+      { weapon: { type: 'chop' } },
+    );
     target = await TestUtils.createCharacter();
   });
 
   beforeEach(async () => {
     game = new GameService([initiator.id, target.id]);
-  });
 
-  beforeEach(() => {
     spyOn(global.Math, 'random').mockReturnValue(0.01);
   });
 

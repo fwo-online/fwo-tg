@@ -25,14 +25,20 @@ class Madness extends CommonMagic implements Affect {
   }
 
   run() {
-    const { target } = this.params;
-    target.flags.isMad = true;
+    const { initiator, target } = this.params;
+    target.flags.isMad.push({ initiator, val: 0 });
   }
 
   preAffect: Affect['preAffect'] = ({ params }) => {
-    if (params.initiator.flags.isMad) {
+    if (params.initiator.flags.isMad.length) {
       params.target = params.initiator;
-      return this.getSuccessResult(params);
+
+      return params.initiator.flags.isMad.map(({ initiator }) =>
+        this.getSuccessResult({
+          ...params,
+          initiator,
+        }),
+      );
     }
   };
 }

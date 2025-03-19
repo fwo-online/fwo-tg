@@ -1,12 +1,12 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`thrustWeapon should hit through dodge 1`] = `
-"*corporis* использовал _🐍 Увертка_
+"*labore* использовал _🐍 Увертка_
 
-*quisquam* пытался атаковать *corporis*, но у него не получилось
-_🐍 Увертка_ *corporis*: 📖50
-*quisquam* вонзил _Стилет_ в *corporis* и нанёс *4.2* урона
-\\[ corporis 💥 💔-4.2/3.8 📖34 ]
+*quisquam* пытался атаковать *labore*, но у него не получилось
+_🐍 Увертка_ *labore*: 📖50
+*quisquam* вонзил _alias_ в *labore* и нанёс *4.45* урона
+\\[ labore 💥 💔-4.45/3.55 📖36 ]
 
 _Навык владения колющим оружием_ *quisquam*"
 `;

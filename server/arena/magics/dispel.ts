@@ -30,7 +30,7 @@ class Dispel extends CommonMagic {
     const entries = Object.entries(game.longActions);
 
     entries.forEach(([key, items]) => {
-      game.longActions[key] = items.filter((item) => item.target !== target.id);
+      game.longActions[key] = items?.filter((item) => item.target !== target.id);
     });
   }
 

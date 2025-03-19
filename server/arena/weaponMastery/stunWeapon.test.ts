@@ -1,11 +1,9 @@
-import {
-  describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
-} from 'bun:test';
+import { describe, beforeAll, beforeEach, afterEach, it, spyOn, expect } from 'bun:test';
 import casual from 'casual';
 import { protect } from '@/arena/actions';
 import attack from '@/arena/actions/attack';
 import GameService from '@/arena/GameService';
-import { type Char } from '@/models/character';
+import type { Char } from '@/models/character';
 import TestUtils from '@/utils/testUtils';
 import stunWeapon from './stunWeapon';
 
@@ -21,11 +19,14 @@ describe('stunWeapon', () => {
     attack.registerPreAffects([protect]);
     attack.registerAffectHandlers([stunWeapon]);
 
-    initiator = await TestUtils.createCharacter({
-      skills: {
-        stunWeapon: 1,
+    initiator = await TestUtils.createCharacter(
+      {
+        passiveSkills: {
+          stunWeapon: 1,
+        },
       },
-    }, { withWeapon: 'staff' });
+      { weapon: { type: 'stun' } },
+    );
     target = await TestUtils.createCharacter({
       skills: {
         dodge: 1,
@@ -35,9 +36,7 @@ describe('stunWeapon', () => {
 
   beforeEach(async () => {
     game = new GameService([initiator.id, target.id]);
-  });
 
-  beforeEach(() => {
     spyOn(global.Math, 'random').mockReturnValue(0.25);
   });
 

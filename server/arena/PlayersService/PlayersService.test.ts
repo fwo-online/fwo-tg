@@ -1,6 +1,4 @@
-import {
-  describe, beforeEach, it, expect,
-} from 'bun:test';
+import { describe, beforeEach, it, expect } from 'bun:test';
 import { times } from 'lodash';
 import arena from '@/arena';
 import type { Clan } from '@/models/clan';
@@ -43,19 +41,17 @@ describe('PlayerService', () => {
   });
 
   it('should participate by clan', () => {
-    const {[reservedClanName]: withoutClan, ...withClan} = players.groupByClan()
+    const { [reservedClanName]: withoutClan, ...withClan } = players.groupByClan();
 
     expect(withoutClan).toHaveLength(3);
     expect(withClan).toMatchObject({
       [clans[0].name]: [
-        { id: characters[0].id }, { id: characters[1].id }, { id: characters[2].id },
+        { id: characters[0].id },
+        { id: characters[1].id },
+        { id: characters[2].id },
       ],
-      [clans[1].name]: [
-        { id: characters[3].id }, { id: characters[4].id },
-      ],
-      [clans[2].name]: [
-        { id: characters[5].id },
-      ],
+      [clans[1].name]: [{ id: characters[3].id }, { id: characters[4].id }],
+      [clans[2].name]: [{ id: characters[5].id }],
     });
   });
 
@@ -65,7 +61,9 @@ describe('PlayerService', () => {
     players.players[3].setDead();
     players.players[1].setDead();
 
-    const {[reservedClanName]: withoutClan, ...withClan} = players.groupByClan(players.alivePlayers)
+    const { [reservedClanName]: withoutClan, ...withClan } = players.groupByClan(
+      players.alivePlayers,
+    );
 
     expect(withoutClan).toHaveLength(2);
     expect(withClan).toMatchObject({
@@ -78,7 +76,7 @@ describe('PlayerService', () => {
     const player = players.randomAlive;
     player.setProc(10);
     player.stats.set('exp', 10);
-    player.flags.isMad = true;
+    player.flags.isMad = [{ initiator: player, val: 0 }];
 
     expect(player.proc).toBe(10);
     expect(player.stats.val('exp')).toBe(10);
@@ -86,7 +84,7 @@ describe('PlayerService', () => {
     players.reset();
     expect(player.proc).toBe(100);
     expect(player.stats.val('exp')).toBe(0);
-    expect(player.flags.isMad).toBe(false);
+    expect(player.flags.isMad).toHaveLength(0);
   });
 
   it('should kill player', () => {
