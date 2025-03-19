@@ -108,6 +108,7 @@ export abstract class LongDmgMagic extends DmgMagic {
 
   /**
    * Функция формирующая специальный формат вывода для длительной магии
+   * * @todo использовать super.next()
    */
   longNext({ initiator, target, game } = this.params): void {
     const result: SuccessArgs = {
@@ -116,5 +117,6 @@ export abstract class LongDmgMagic extends DmgMagic {
     };
 
     this.giveExp(result);
+    game.recordOrderResult(result);
   }
 }

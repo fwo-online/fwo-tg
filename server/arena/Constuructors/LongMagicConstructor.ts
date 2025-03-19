@@ -115,6 +115,7 @@ export abstract class LongMagic extends CommonMagic {
    * Вызов логгера для длительных магий
    * @param initiator
    * @param target
+   * @todo использовать super.next()
    */
   longNext({ initiator, target, game } = this.params): void {
     const result: SuccessArgs = {
@@ -123,6 +124,7 @@ export abstract class LongMagic extends CommonMagic {
     };
 
     this.giveExp(result);
+    game.recordOrderResult(result);
   }
 }
 
