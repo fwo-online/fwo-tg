@@ -27,6 +27,16 @@ export const GameActionList: FC<{
   return (
     <Card header="Действия">
       <div className="flex flex-col gap-1">
+        {power === 100 && round > 1 && (
+          <Button className="p-0  mb-4" onClick={onRepeat} disabled={isPending}>
+            Повторить
+          </Button>
+        )}
+        {power !== 100 && (
+          <Button className="p-0 mb-4" onClick={onReset} disabled={isPending}>
+            Очистить
+          </Button>
+        )}
         {actions.map((action) => (
           <Button className="p-0 is-primary" key={action.name} onClick={() => onSelect(action)}>
             {action.displayName}
@@ -64,17 +74,6 @@ export const GameActionList: FC<{
             ))}
           </>
         ) : null}
-
-        {power === 100 && round > 1 && (
-          <Button className="p-0 is-primary" onClick={onRepeat} disabled={isPending}>
-            Повторить
-          </Button>
-        )}
-        {power !== 100 && (
-          <Button className="p-0 is-primary" onClick={onReset} disabled={isPending}>
-            Очистить
-          </Button>
-        )}
       </div>
     </Card>
   );
