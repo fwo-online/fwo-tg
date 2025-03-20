@@ -1,22 +1,20 @@
 import { deleteCharacter } from '@/api/character';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
+import { useModal } from '@/contexts/modal';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
-import { popup } from '@telegram-apps/sdk-react';
 
 export function SettingsPage() {
   const { updateCharacter } = useUpdateCharacter();
+  const { showConfirmModal, closeModal } = useModal();
 
   const handleClick = async () => {
-    const buttonId = await popup.open({
-      title: 'Удаление персонажа',
+    showConfirmModal({
       message: 'Персонаж будет удалён навсегда',
-      buttons: [{ text: 'Удалить', type: 'destructive', id: 'delete' }, { type: 'cancel' }],
+      onConfirm: async () => {
+        await deleteCharacter().then(updateCharacter).finally(closeModal);
+      },
     });
-
-    if (buttonId === 'delete') {
-      await deleteCharacter().then(updateCharacter);
-    }
   };
 
   return (

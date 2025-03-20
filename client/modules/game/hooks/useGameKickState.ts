@@ -1,8 +1,8 @@
 import { useCharacter } from '@/contexts/character';
+import { useModal } from '@/contexts/modal';
 import { useWebSocket } from '@/contexts/webSocket';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 import type { ServerToClientMessage } from '@fwo/shared';
-import { popup } from '@telegram-apps/sdk-react';
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
@@ -11,22 +11,23 @@ export function useGameKickState() {
   const navigate = useNavigate();
   const { character } = useCharacter();
   const { updateCharacter } = useUpdateCharacter();
+  const { showInfoModal } = useModal();
 
   const handlePreKick = useCallback(() => {
-    popup.open({
+    showInfoModal({
       message: 'Вы будете выброшены из игры в следующем раунде, если не сделаете заказ',
     });
-  }, []);
+  }, [showInfoModal]);
 
   const handleKick = useCallback(
     async ({ player }: Parameters<ServerToClientMessage['game:kick']>[0]) => {
       if (player.id === character.id) {
         await updateCharacter();
         navigate('/');
-        popup.open({ message: 'Вы были выброшены из игры' });
+        showInfoModal({ message: 'Вы были выброшены из игры' });
       }
     },
-    [navigate, character, updateCharacter],
+    [navigate, character, updateCharacter, showInfoModal],
   );
 
   useEffect(() => {

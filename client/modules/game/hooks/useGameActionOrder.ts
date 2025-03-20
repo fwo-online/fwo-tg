@@ -1,8 +1,8 @@
 import { useWebSocket } from '@/contexts/webSocket';
-import { popup } from '@telegram-apps/sdk-react';
 import { useGameStore } from '../store/useGameStore';
 import { useTransition } from 'react';
 import { pick } from 'es-toolkit';
+import { useModal } from '@/contexts/modal';
 
 export const useGameActionOrder = (onSuccess: () => void) => {
   const socket = useWebSocket();
@@ -10,6 +10,7 @@ export const useGameActionOrder = (onSuccess: () => void) => {
   const setRemainPower = useGameStore((state) => state.setPower);
   const setActions = useGameStore((state) => state.setActions);
   const [isPending, startTransition] = useTransition();
+  const { showInfoModal } = useModal();
 
   const handleOrder = async (action: string, target: string, power: number) => {
     if (!action) {
@@ -24,7 +25,7 @@ export const useGameActionOrder = (onSuccess: () => void) => {
       });
 
       if (res.error) {
-        popup.open({ message: res.message });
+        showInfoModal({ message: res.message });
       } else {
         setOrders(res.orders);
         setRemainPower(res.power);
@@ -39,7 +40,7 @@ export const useGameActionOrder = (onSuccess: () => void) => {
       const res = await socket.emitWithAck('game:orderRepeat');
 
       if (res.error) {
-        popup.open({ message: res.message });
+        showInfoModal({ message: res.message });
       } else {
         setOrders(res.orders);
         setRemainPower(res.power);
@@ -54,7 +55,7 @@ export const useGameActionOrder = (onSuccess: () => void) => {
       const res = await socket.emitWithAck('game:orderReset');
 
       if (res.error) {
-        popup.open({ message: res.message });
+        showInfoModal({ message: res.message });
       } else {
         setOrders(res.orders);
         setRemainPower(res.power);

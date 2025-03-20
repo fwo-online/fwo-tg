@@ -1,12 +1,13 @@
 import { useCharacter } from '@/contexts/character';
+import { useModal } from '@/contexts/modal';
 import { useWebSocket } from '@/contexts/webSocket';
 import type { CharacterPublic } from '@fwo/shared';
-import { popup } from '@telegram-apps/sdk-react';
 import { useEffect, useState } from 'react';
 
 export const useLobby = () => {
   const socket = useWebSocket();
   const { character } = useCharacter();
+  const { showInfoModal } = useModal();
 
   const [searchers, setSearchers] = useState<CharacterPublic[]>([]);
 
@@ -36,7 +37,7 @@ export const useLobby = () => {
     } else {
       const res = await socket.emitWithAck('lobby:start');
       if (res.error) {
-        popup.open({ message: res.message });
+        showInfoModal({ message: res.message });
       }
     }
   };

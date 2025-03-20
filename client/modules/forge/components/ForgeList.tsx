@@ -5,16 +5,17 @@ import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 import { ItemModal } from '@/modules/items/components/ItemModal';
 import { useCharacter } from '@/contexts/character';
 import { useRequest } from '@/hooks/useRequest';
-import { popup } from '@telegram-apps/sdk-react';
 import { Button } from '@/components/Button';
 import { Placeholder } from '@/components/Placeholder';
 import { every } from 'es-toolkit/compat';
+import { useModal } from '@/contexts/modal';
 
 export const ForgeList: FC<{ shopPromise: Promise<Item[]> }> = ({ shopPromise }) => {
   const items = use(shopPromise);
   const { character } = useCharacter();
   const { updateCharacter } = useUpdateCharacter();
   const [_, makeRequest] = useRequest();
+  const { showInfoModal } = useModal();
 
   const canForge = (item: Item) => {
     if (character.gold < item.price * 0.2) {
@@ -30,7 +31,7 @@ export const ForgeList: FC<{ shopPromise: Promise<Item[]> }> = ({ shopPromise })
   const handleForge = async (item: Item) => {
     makeRequest(async () => {
       await forgeItem(item.code);
-      popup.open({ message: `Ты создал ${item.info.name}` });
+      showInfoModal({ message: `Ты создал ${item.info.name}` });
       await updateCharacter();
     });
   };
