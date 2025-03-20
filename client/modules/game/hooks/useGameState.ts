@@ -7,10 +7,12 @@ import { useMountEffect } from '@/hooks/useMountEffect';
 import { useNavigate } from 'react-router';
 import { popup } from '@telegram-apps/sdk-react';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
+import { useModal } from '@/contexts/modal';
 
 export function useGameState() {
   const socket = useWebSocket();
   const { updateCharacter } = useUpdateCharacter();
+  const { showInfoModal } = useModal();
 
   const navigate = useNavigate();
   const setOrders = useGameStore((state) => state.setOrders);
@@ -55,8 +57,8 @@ export function useGameState() {
 
   const handleEndGame = useCallback(() => {
     navigate('/');
-    popup.open({ message: 'Игра завершена' });
-  }, [navigate]);
+    showInfoModal({ message: 'Игра завершена' });
+  }, [navigate, showInfoModal]);
 
   const handleStartGame = () => {
     socket.emitWithAck('game:connected').then(async (res) => {

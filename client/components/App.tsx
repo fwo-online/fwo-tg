@@ -11,6 +11,7 @@ import { createWebSocket } from '@/api';
 import { getCharacter } from '@/api/character';
 import { Placeholder } from '@/components/Placeholder';
 import { Card } from '@/components/Card';
+import { ModalProvider } from '@/contexts/modal';
 
 export function App() {
   const { tgWebAppPlatform } = retrieveLaunchParams();
@@ -24,21 +25,23 @@ export function App() {
         '--tgui--font-family': '"Pixeloid", sans-serif',
       }}
     >
-      <HashRouter>
-        <Suspense
-          fallback={
-            <Card className="m-4" header="Загрузка">
-              <Placeholder description="Ищем вашего персонажа..." />
-            </Card>
-          }
-        >
-          <WebSocketProvider socket={createWebSocket()}>
-            <CharacterProvider character={getCharacter()}>
-              <Router />
-            </CharacterProvider>
-          </WebSocketProvider>
-        </Suspense>
-      </HashRouter>
+      <ModalProvider>
+        <HashRouter>
+          <Suspense
+            fallback={
+              <Card className="m-4" header="Загрузка">
+                <Placeholder description="Ищем вашего персонажа..." />
+              </Card>
+            }
+          >
+            <WebSocketProvider socket={createWebSocket()}>
+              <CharacterProvider character={getCharacter()}>
+                <Router />
+              </CharacterProvider>
+            </WebSocketProvider>
+          </Suspense>
+        </HashRouter>
+      </ModalProvider>
     </AppRoot>
   );
 }

@@ -1,8 +1,8 @@
 import { changeCharacterAttributes } from '@/api/character';
 import { useCharacter } from '@/contexts/character';
+import { useModal } from '@/contexts/modal';
 import { useRequest } from '@/hooks/useRequest';
 import type { CharacterAttributes } from '@fwo/shared';
-import { popup } from '@telegram-apps/sdk-react';
 import { useState } from 'react';
 
 export const useCharacterAttributes = () => {
@@ -11,6 +11,7 @@ export const useCharacterAttributes = () => {
   const [attributes, setAttributes] = useState(structuredClone(character.attributes));
   const hasChanges = free !== character.free;
   const [isPending, makeRequest] = useRequest();
+  const { showInfoModal } = useModal();
 
   const handleChangeAttribute = (attribute: keyof CharacterAttributes) => {
     setAttributes(() => {
@@ -32,7 +33,8 @@ export const useCharacterAttributes = () => {
       const updatedCharacter = await changeCharacterAttributes(attributes);
       if (updatedCharacter) {
         setCharacter(updatedCharacter);
-        popup.open({ message: 'Изменения сохранены' });
+
+        showInfoModal({ message: 'Изменения сохранены' });
       }
     });
   };

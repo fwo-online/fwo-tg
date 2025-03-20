@@ -1,42 +1,29 @@
 import { learnMagic } from '@/api/magic';
+import { useModal } from '@/contexts/modal';
 import { useRequest } from '@/hooks/useRequest';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
-import { popup } from '@telegram-apps/sdk-react';
 
 export const useCharacterLearnMagic = () => {
   const { updateCharacter } = useUpdateCharacter();
   const [isLearning, makeRequest] = useRequest();
+  const { showConfirmModal, showInfoModal, closeModal } = useModal();
 
   const handleLearn = async (lvl: number) => {
-    if (!popup.isSupported()) {
-      return;
-    }
-
-    const id = await popup.open({
+    showConfirmModal({
       message: `Стоимость изучения ${lvl}💡`,
-      buttons: [
-        {
-          id: 'close',
-          type: 'close',
-        },
-        {
-          id: 'ok',
-          type: 'ok',
-        },
-      ],
-    });
+      onConfirm: () => {
+        makeRequest(async () => {
+          const magic = await learnMagic(lvl);
+          await updateCharacter();
 
-    if (id === 'ok') {
-      makeRequest(async () => {
-        const magic = await learnMagic(lvl);
-        await updateCharacter();
+          closeModal();
 
-        await popup.open({
-          title: 'Успешное изучение',
-          message: `${magic.displayName}`,
+          showInfoModal({
+            message: `Ты выучил ${magic.displayName}`,
+          });
         });
-      });
-    }
+      },
+    });
   };
 
   return {
