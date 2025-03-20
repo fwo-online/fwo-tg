@@ -17,14 +17,17 @@ export const useSessionReconnect = () => {
   const socket = useWebSocket();
   const navigate = useNavigate();
 
+  const onConnect = () => {
+    navigate('/');
+    socket.off('connect', onConnect);
+  };
+
   return () => {
     if (!socket.connected) {
+      socket.on('connect', onConnect);
       socket.connect();
-      socket.on('connect', () => {
-        navigate('/');
-      });
     } else {
-      navigate('/');
+      onConnect();
     }
   };
 };

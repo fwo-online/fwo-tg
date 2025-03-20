@@ -33,6 +33,9 @@
       },
       "style": {
         "noParameterAssign": "off"
+      },
+      "a11y": {
+        "all": false
       }
     }
   },

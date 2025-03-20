@@ -6,10 +6,12 @@ import { useGameKickState } from './useGameKickState';
 import { useMount } from '@/hooks/useMount';
 import { useNavigate } from 'react-router';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
+import { useModal } from '@/contexts/modal';
 
 export function useGameState() {
   const socket = useWebSocket();
   const { updateCharacter } = useUpdateCharacter();
+  const { showInfoModal } = useModal();
 
   const navigate = useNavigate();
   const setOrders = useGameStore((state) => state.setOrders);
@@ -47,7 +49,9 @@ export function useGameState() {
   const handleEndGame = useCallback(async () => {
     await updateCharacter();
     navigate('/');
-  }, [navigate, updateCharacter]);
+
+    showInfoModal({ message: 'Игра завершена' });
+  }, [navigate, updateCharacter, showInfoModal]);
 
   const connect = () => {
     socket.emitWithAck('game:connected').then((res) => {
