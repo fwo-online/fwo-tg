@@ -158,7 +158,7 @@ export default class Orders {
    * Возвращает все заказы игрока в текущем раунда
    * @param charId идентификатор персонажа
    */
-  getPlayerOrders(charId: string): Order[] {
+  getPlayerOrders(charId: string): OrderOutput[] {
     return this.ordersList.filter((o) => o.initiator === charId);
   }
 

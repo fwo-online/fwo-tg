@@ -10,6 +10,7 @@ import { activeConnections } from '@/server/utils/activeConnectons';
 import type { OrderResult } from '@/arena/OrderService';
 import type { Player } from '@/arena/PlayersService';
 import type { OrderResponse } from '@fwo/shared';
+import { RoundStatus } from '@/arena/RoundService';
 
 const getRoom = (game: GameService, scope?: string) => {
   if (scope) {
@@ -55,10 +56,11 @@ export const onCreate = (io: Server) => {
 
     game.on('startOrders', () => {
       game.players.alivePlayers.forEach((player) => {
-        io.to(getRoom(game, player.id)).emit(
-          'game:startOrders',
-          ActionsHelper.buildActions(player, game),
-        );
+        io.to(getRoom(game, player.id)).emit('game:startOrders', {
+          ...ActionsHelper.buildActions(player, game),
+          orders: [],
+          power: player.proc,
+        });
       });
     });
 
@@ -82,10 +84,12 @@ export const onConnection = (_io: Server, socket: Socket) => {
 
   socket.on('game:connected', (callback) => {
     const game = character.currentGame;
+    const player = game?.players.getById(character.id);
 
-    if (!game) {
+    if (!game || !player) {
       return callback({ error: true, message: 'Вы не в игре' });
     }
+
     // todo нужно проверять, что все игроки подключились
     callback({
       players: keyBy(
@@ -93,6 +97,20 @@ export const onConnection = (_io: Server, socket: Socket) => {
         ({ id }) => id,
       ),
     });
+
+    socket.emit('game:startRound', { status: game.getStatus(), round: game.round.count });
+
+    if (game.round.status === RoundStatus.START_ORDERS && player.alive) {
+      socket.emit('game:startOrders', {
+        ...ActionsHelper.buildActions(player, game),
+        orders: game.orders.getPlayerOrders(player.id).map(({ target, proc, action }) => ({
+          action: ActionService.toObject(action),
+          target,
+          power: proc,
+        })),
+        power: player.proc,
+      });
+    }
   });
 
   const handleOrder = (fn: (game: GameService, player: Player) => OrderResult): OrderResponse => {
@@ -143,4 +161,11 @@ export const onConnection = (_io: Server, socket: Socket) => {
       ),
     );
   });
+
+  if (character.currentGame) {
+    const player = character.currentGame.players.getById(character.id);
+    if (player) {
+      socket.join([getRoom(character.currentGame), getRoom(character.currentGame, player.id)]);
+    }
+  }
 };

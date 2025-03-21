@@ -427,15 +427,19 @@ export default class GameService extends EventEmitter<{
     this.players.players.forEach((p) => f.call(this, p));
   }
 
+  getStatus() {
+    const playersByClan = this.players.groupByClan();
+
+    return mapValues(playersByClan, (players = []) => {
+      return players.map((p) => p.getStatus());
+    });
+  }
+
   /**
    * Рассылка состояний живым игрокам
    */
   sendStatus(round: number): void {
-    const playersByClan = this.players.groupByClan();
-
-    const status = mapValues(playersByClan, (players = []) => {
-      return players.map((p) => p.getStatus());
-    });
+    const status = this.getStatus();
 
     this.emit('startRound', { round, status });
   }

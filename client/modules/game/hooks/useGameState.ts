@@ -32,12 +32,19 @@ export function useGameState() {
   );
 
   const handleStartOrders = useCallback(
-    ({ actions, magics, skills }: Parameters<ServerToClientMessage['game:startOrders']>[0]) => {
+    ({
+      actions,
+      magics,
+      skills,
+      orders,
+      power,
+    }: Parameters<ServerToClientMessage['game:startOrders']>[0]) => {
       setActions({ actions, magics, skills });
       setCanOrder(true);
-      setRemainPower(100);
+      setOrders(orders);
+      setRemainPower(power);
     },
-    [setActions, setCanOrder, setRemainPower],
+    [setActions, setCanOrder, setRemainPower, setOrders],
   );
 
   const handleEndOrders = useCallback(() => {
@@ -57,6 +64,7 @@ export function useGameState() {
         setPlayers(res.players);
       } else {
         popup.open({ title: 'Не удалось подключиться к игре', message: res.message });
+        navigate('/');
       }
     });
   };
