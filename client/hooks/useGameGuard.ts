@@ -26,14 +26,12 @@ export const useGameGuard = () => {
   }, [socket.on, socket.off, navigateToGame]);
 
   useMountEffect(() => {
+    if (character.game) {
+      navigateToGame(character.game);
+    }
+
     if (!character.game && location.pathname.startsWith('/game')) {
       navigate('/');
     }
   });
-
-  useEffect(() => {
-    if (character.game) {
-      navigateToGame(character.game);
-    }
-  }, [character.game, navigateToGame]);
 };

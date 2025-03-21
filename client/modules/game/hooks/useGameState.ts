@@ -55,7 +55,6 @@ export function useGameState() {
   const handleEndGame = useCallback(async () => {
     await updateCharacter();
     navigate('/');
-    popup.open({ message: 'Игра завершена' });
   }, [navigate, updateCharacter]);
 
   const handleStartGame = () => {
