@@ -171,6 +171,7 @@ export default class GameService extends EventEmitter<{
     this.players.kick(id);
     this.info.players.splice(this.info.players.indexOf(id), 1);
     this.cleanLongMagics();
+    char.gameId = '';
   }
 
   checkRun(player: Player) {
@@ -231,17 +232,18 @@ export default class GameService extends EventEmitter<{
   endGame(): void {
     console.log('GC debug:: endGame', this.info.id);
     // Отправляем статистику
-    setTimeout(() => {
-      this.emit('end', { reason: this.getEndGameReason(), statistic: this.statistic() });
-      this.removeAllListeners();
-      this.saveGame();
-      // }, 5000);
-      // setTimeout(() => {
-      arena.mm.cancel();
-
+    setTimeout(async () => {
+      const statistic = this.statistic();
+      await this.saveGame();
       this.forAllPlayers((player: Player) => {
         arena.characters[player.id].gameId = '';
       });
+
+      this.emit('end', { reason: this.getEndGameReason(), statistic });
+      this.removeAllListeners();
+
+      arena.mm.cancel();
+
       // FIXME move to client side
       this.forAllPlayers((player: Player) => {
         const char = arena.characters[player.id];
@@ -333,9 +335,9 @@ export default class GameService extends EventEmitter<{
    * Метод сохраняющий накопленную статистику игроков в базу и сharObj
    * @todo нужен общий метод сохраняющий всю статистику
    */
-  saveGame(): void {
+  async saveGame() {
     try {
-      this.info.players.forEach(async (id) => {
+      const promises = this.info.players.map(async (id) => {
         const player = this.players.getById(id);
         if (!player) {
           return;
@@ -352,8 +354,10 @@ export default class GameService extends EventEmitter<{
           death,
           kills,
         });
-        await arena.characters[id].saveToDb();
+        return arena.characters[id].saveToDb();
       });
+
+      await Promise.all(promises);
     } catch (e) {
       console.log('Game:', e);
     }
@@ -427,15 +431,19 @@ export default class GameService extends EventEmitter<{
     this.players.players.forEach((p) => f.call(this, p));
   }
 
+  getStatus() {
+    const playersByClan = this.players.groupByClan();
+
+    return mapValues(playersByClan, (players = []) => {
+      return players.map((p) => p.getStatus());
+    });
+  }
+
   /**
    * Рассылка состояний живым игрокам
    */
   sendStatus(round: number): void {
-    const playersByClan = this.players.groupByClan();
-
-    const status = mapValues(playersByClan, (players = []) => {
-      return players.map((p) => p.getStatus());
-    });
+    const status = this.getStatus();
 
     this.emit('startRound', { round, status });
   }

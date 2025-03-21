@@ -20,7 +20,13 @@ export type ClientToServerMessage = Message<{
   'lobby:leave': [];
   'lobby:start': [callback: (payload: RPC<{ success?: boolean }>) => void];
   'lobby:stop': [];
-  'game:connected': [callback: (payload: RPC<{ players: Record<string, Player> }>) => void];
+  'game:connected': [
+    callback: (
+      payload: RPC<{
+        players: Record<string, Player>;
+      }>,
+    ) => void,
+  ];
   'game:order': [
     order: {
       power: number;
@@ -46,7 +52,15 @@ export type ServerToClientMessage = Message<{
   'lobby:stop': [character: CharacterPublic];
   'game:start': [gameID: string];
   'game:end': [];
-  'game:startOrders': [actions: { actions: Action[]; magics: Action[]; skills: Action[] }];
+  'game:startOrders': [
+    actions: {
+      actions: Action[];
+      magics: Action[];
+      skills: Action[];
+      power: number;
+      orders: Order[];
+    },
+  ];
   'game:endOrders': [];
   'game:startRound': [
     {

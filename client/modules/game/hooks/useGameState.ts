@@ -3,9 +3,10 @@ import type { ServerToClientMessage } from '@fwo/shared';
 import { useCallback, useEffect } from 'react';
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import { useGameKickState } from './useGameKickState';
-import { useMount } from '@/hooks/useMount';
+import { useMountEffect } from '@/hooks/useMountEffect';
 import { useNavigate } from 'react-router';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
+import { popup } from '@telegram-apps/sdk-react';
 
 export function useGameState() {
   const socket = useWebSocket();
@@ -31,12 +32,19 @@ export function useGameState() {
   );
 
   const handleStartOrders = useCallback(
-    ({ actions, magics, skills }: Parameters<ServerToClientMessage['game:startOrders']>[0]) => {
+    ({
+      actions,
+      magics,
+      skills,
+      orders,
+      power,
+    }: Parameters<ServerToClientMessage['game:startOrders']>[0]) => {
       setActions({ actions, magics, skills });
       setCanOrder(true);
-      setRemainPower(100);
+      setOrders(orders);
+      setRemainPower(power);
     },
-    [setActions, setCanOrder, setRemainPower],
+    [setActions, setCanOrder, setRemainPower, setOrders],
   );
 
   const handleEndOrders = useCallback(() => {
@@ -47,17 +55,27 @@ export function useGameState() {
   const handleEndGame = useCallback(async () => {
     await updateCharacter();
     navigate('/');
+    popup.open({ message: 'Игра завершена' });
   }, [navigate, updateCharacter]);
 
-  const connect = () => {
+  const handleStartGame = () => {
     socket.emitWithAck('game:connected').then((res) => {
       if (!res.error) {
         setPlayers(res.players);
+      } else {
+        navigate('/');
+        popup.open({ title: 'Не удалось подключиться к игре', message: res.message });
       }
     });
   };
 
-  useMount(connect);
+  useMountEffect(() => {
+    if (socket.connected) {
+      handleStartGame();
+    } else {
+      socket.once('connect', handleStartGame);
+    }
+  });
 
   useEffect(() => {
     socket.on('game:startRound', handleStartRound);
