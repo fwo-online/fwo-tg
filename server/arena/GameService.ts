@@ -171,6 +171,7 @@ export default class GameService extends EventEmitter<{
     this.players.kick(id);
     this.info.players.splice(this.info.players.indexOf(id), 1);
     this.cleanLongMagics();
+    char.gameId = '';
   }
 
   checkRun(player: Player) {
@@ -232,7 +233,6 @@ export default class GameService extends EventEmitter<{
     console.log('GC debug:: endGame', this.info.id);
     // Отправляем статистику
     setTimeout(() => {
-      this.emit('end', { reason: this.getEndGameReason(), statistic: this.statistic() });
       this.removeAllListeners();
       this.saveGame();
       // }, 5000);
@@ -242,6 +242,9 @@ export default class GameService extends EventEmitter<{
       this.forAllPlayers((player: Player) => {
         arena.characters[player.id].gameId = '';
       });
+
+      this.emit('end', { reason: this.getEndGameReason(), statistic: this.statistic() });
+
       // FIXME move to client side
       this.forAllPlayers((player: Player) => {
         const char = arena.characters[player.id];
