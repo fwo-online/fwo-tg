@@ -55,6 +55,7 @@ export function useGameState() {
   const handleEndGame = useCallback(async () => {
     await updateCharacter();
     navigate('/');
+    popup.open({ message: 'Игра завершена' });
   }, [navigate, updateCharacter]);
 
   const handleStartGame = () => {
@@ -62,8 +63,8 @@ export function useGameState() {
       if (!res.error) {
         setPlayers(res.players);
       } else {
-        popup.open({ title: 'Не удалось подключиться к игре', message: res.message });
         navigate('/');
+        popup.open({ title: 'Не удалось подключиться к игре', message: res.message });
       }
     });
   };

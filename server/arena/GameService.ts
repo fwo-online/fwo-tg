@@ -233,7 +233,6 @@ export default class GameService extends EventEmitter<{
     console.log('GC debug:: endGame', this.info.id);
     // Отправляем статистику
     setTimeout(() => {
-      this.removeAllListeners();
       this.saveGame();
       // }, 5000);
       // setTimeout(() => {
@@ -244,6 +243,7 @@ export default class GameService extends EventEmitter<{
       });
 
       this.emit('end', { reason: this.getEndGameReason(), statistic: this.statistic() });
+      this.removeAllListeners();
 
       // FIXME move to client side
       this.forAllPlayers((player: Player) => {
