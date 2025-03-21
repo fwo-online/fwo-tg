@@ -45,24 +45,22 @@ class LightShield extends DmgMagic {
 class LightShieldBuff extends LongMagic implements Affect {
   run() {
     const { target, initiator } = this.params;
-    target.flags.isLightShielded.push({ initiator: initiator.id, val: initiator.proc });
+    target.flags.isLightShielded.push({ initiator, val: initiator.proc });
   }
 
   runLong(): void {
     const { target, initiator } = this.params;
-    target.flags.isLightShielded.push({ initiator: initiator.id, val: initiator.proc });
+    target.flags.isLightShielded.push({ initiator, val: initiator.proc });
   }
 
-  postAffect: Affect['postAffect'] = ({ params: { initiator, target, game }, status: { effect } }) => {
+  postAffect: Affect['postAffect'] = ({
+    params: { initiator, target, game },
+    status: { effect },
+  }) => {
     const results: SuccessArgs[] = [];
 
-    target.flags.isLightShielded.forEach((flag) => {
-      const shielder = game.players.getById(flag.initiator);
-      if (!shielder) {
-        return;
-      }
-
-      shielder.setProc(effect * flag.val * 0.01);
+    target.flags.isLightShielded.forEach(({ initiator: shielder, val }) => {
+      shielder.setProc(effect * val * 0.01);
       lightShield.cast(shielder, initiator, game);
       results.push(lightShield.getSuccessResult({ initiator: shielder, target: initiator, game }));
     });

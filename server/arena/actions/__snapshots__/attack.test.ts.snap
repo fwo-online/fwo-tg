@@ -1,8 +1,8 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`attack should reduce damage by target resists 1`] = `
-"*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *5.2* урона
-\\[ corporis 💥 💔-5.2/2.8 📖42 ]
-*quisquam* рубанул *corporis* _Эпическим Мечом_ и нанёс *2.6* урона
-\\[ corporis 💥 💔-2.6/0.2 📖21 ]"
+"*quisquam* рубанул *labore* _magni_ и нанёс *7.2* урона
+\\[ labore 💥 💔-7.2/0.8 📖58 ]
+*quisquam* рубанул *labore* _magni_ и нанёс *3.6* урона
+\\[ labore 💥 💔-3.6/-2.8 📖29 ]"
 `;

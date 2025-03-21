@@ -1,13 +1,15 @@
+import type { Player } from '../PlayersService';
+
 type Flag = {
-  initiator: string;
+  initiator: Player;
   val: number;
-}
+};
 /**
  * Класс флагов
  */
 export default class FlagsConstructor {
   isProtected: Flag[] = [];
-  isGlitched = false;
+  isGlitched: Flag[] = [];
   isSilenced: Flag[] = [];
   isDead = '';
   isHealed: Flag[] = [];
@@ -15,11 +17,11 @@ export default class FlagsConstructor {
   isKicked?: 'run' | 'afk' = undefined;
   isDodging = 0;
   isParry = 0;
-  isMad = false;
+  isMad: Flag[] = [];
   isShielded = 0;
-  isParalysed = false;
-  isDisarmed = false;
-  isSleeping = false;
+  isParalysed: Flag[] = [];
+  isDisarmed: Flag[] = [];
+  isSleeping: Flag[] = [];
   isLightShielded: Flag[] = [];
   isBehindWall: Flag[] = [];
 
@@ -28,16 +30,16 @@ export default class FlagsConstructor {
    */
   refresh(): void {
     this.isProtected = [];
-    this.isGlitched = false;
+    this.isGlitched = [];
     this.isSilenced = [];
     this.isHealed = [];
     this.isHited = undefined;
     this.isDodging = 0;
-    this.isMad = false;
-    this.isParalysed = false;
-    this.isSleeping = false;
+    this.isMad = [];
+    this.isParalysed = [];
+    this.isSleeping = [];
     this.isParry = 0;
-    this.isDisarmed = false;
+    this.isDisarmed = [];
     this.isShielded = 0;
     this.isLightShielded = [];
     this.isBehindWall = [];

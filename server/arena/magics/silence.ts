@@ -27,17 +27,16 @@ class Silence extends CommonMagic implements Affect {
 
   run() {
     const { initiator, target } = this.params;
-    target.flags.isSilenced.push({
-      initiator: initiator.nick,
-      val: 0,
-    });
+    target.flags.isSilenced.push({ initiator, val: 0 });
   }
 
-  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }): undefined => {
-    const { isSilenced } = initiator.flags;
-    if (isSilenced.some((e) => e.initiator !== this.name)) {
-      // если кастер находится под безмолвием/бунтом богов
-      throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
+  preAffect: Affect['preAffect'] = ({ params: { initiator: target, game } }): undefined => {
+    if (target.flags.isSilenced.length) {
+      throw new CastError(
+        target.flags.isBehindWall.map(({ initiator }) =>
+          this.getSuccessResult({ initiator, target: initiator, game }),
+        ),
+      );
     }
   };
 }

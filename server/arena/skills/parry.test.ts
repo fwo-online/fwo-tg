@@ -1,8 +1,4 @@
-import {
-  describe, beforeEach, it, expect, beforeAll,
-  spyOn,
-  afterEach,
-} from 'bun:test';
+import { describe, beforeEach, it, expect, beforeAll, spyOn, afterEach } from 'bun:test';
 import casual from 'casual';
 import { CharacterService } from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
@@ -21,15 +17,13 @@ describe('parry', () => {
   });
 
   beforeEach(async () => {
-    const initiator = await TestUtils.createCharacter({ prof: 'w' }, { withWeapon: true });
+    const initiator = await TestUtils.createCharacter({ prof: 'w' }, { weapon: { type: 'chop' } });
     const target = await TestUtils.createCharacter({ prof: 'l', skills: { parry: 1 } });
 
     await Promise.all([initiator.id, target.id].map(CharacterService.getCharacterById));
 
     game = new GameService([initiator.id, target.id]);
-  });
 
-  beforeEach(() => {
     spyOn(global.Math, 'random').mockReturnValue(0.15);
   });
 

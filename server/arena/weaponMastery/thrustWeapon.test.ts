@@ -1,11 +1,9 @@
-import {
-  describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
-} from 'bun:test';
+import { describe, beforeAll, beforeEach, afterEach, it, spyOn, expect } from 'bun:test';
 import casual from 'casual';
 import attack from '@/arena/actions/attack';
 import GameService from '@/arena/GameService';
 import { dodge } from '@/arena/skills';
-import { type Char } from '@/models/character';
+import type { Char } from '@/models/character';
 import TestUtils from '@/utils/testUtils';
 import thrustWeapon from './thrustWeapon';
 
@@ -19,11 +17,14 @@ describe('thrustWeapon', () => {
   beforeAll(async () => {
     casual.seed(1);
 
-    initiator = await TestUtils.createCharacter({
-      skills: {
-        thrustWeapon: 1,
+    initiator = await TestUtils.createCharacter(
+      {
+        passiveSkills: {
+          thrustWeapon: 1,
+        },
       },
-    }, { withWeapon: 'stiletto' });
+      { weapon: { type: 'thrust' } },
+    );
     target = await TestUtils.createCharacter({
       skills: {
         dodge: 1,
@@ -33,9 +34,7 @@ describe('thrustWeapon', () => {
 
   beforeEach(async () => {
     game = new GameService([initiator.id, target.id]);
-  });
 
-  beforeEach(() => {
     spyOn(global.Math, 'random').mockReturnValue(0.25);
   });
 

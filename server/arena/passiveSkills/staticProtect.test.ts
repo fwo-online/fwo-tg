@@ -1,10 +1,8 @@
-import {
-  describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
-} from 'bun:test';
+import { describe, beforeAll, beforeEach, afterEach, it, spyOn, expect } from 'bun:test';
 import casual from 'casual';
 import { attack } from '@/arena/actions';
 import GameService from '@/arena/GameService';
-import { type Char } from '@/models/character';
+import type { Char } from '@/models/character';
 import TestUtils from '@/utils/testUtils';
 import staticProtect from './staticProtect';
 
@@ -19,15 +17,12 @@ describe('staticProtect', () => {
     casual.seed(1);
     attack.registerPreAffects([staticProtect]);
 
-    initiator = await TestUtils.createCharacter({}, { withWeapon: true });
+    initiator = await TestUtils.createCharacter({ passiveSkills: { staticProtect: 1 }}, { weapon: {}, });
     target = await TestUtils.createCharacter();
   });
 
   beforeEach(async () => {
     game = new GameService([initiator.id, target.id]);
-  });
-
-  beforeEach(() => {
     spyOn(global.Math, 'random').mockReturnValue(0.5);
   });
 

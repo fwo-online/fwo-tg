@@ -3,7 +3,7 @@ import CastError from '@/arena/errors/CastError';
 import type { Affect } from '../Constuructors/interfaces/Affect';
 import { LongMagic } from '../Constuructors/LongMagicConstructor';
 import { ProtectConstructor } from '../Constuructors/ProtectConstructor';
-import type { OrderType } from '../Constuructors/types';
+import { OrderType } from '@fwo/shared';
 
 /**
  * Магическая стена
@@ -13,7 +13,7 @@ import type { OrderType } from '../Constuructors/types';
 class MagicWall extends ProtectConstructor {
   name = 'magicWall';
   displayName = 'Магическая стена';
-  orderType: OrderType = 'teamExceptSelf';
+  orderType = OrderType.TeamExceptSelf;
 
   getTargetProtectors({ target } = this.params) {
     return target.flags.isBehindWall;
@@ -48,29 +48,27 @@ class MagicWallBuff extends LongMagic {
   run() {
     const { target, initiator } = this.params;
     target.stats.up('phys.defence', this.effectVal());
-    target.flags.isBehindWall.push({ initiator: initiator.id, val: this.status.effect });
+    target.flags.isBehindWall.push({ initiator, val: this.status.effect });
   }
 
   runLong() {
     const { target, initiator } = this.params;
     target.stats.up('phys.defence', this.effectVal());
-    target.flags.isBehindWall.push({ initiator: initiator.id, val: this.status.effect });
+    target.flags.isBehindWall.push({ initiator, val: this.status.effect });
   }
 
   preAffect: Affect['preAffect'] = (context): undefined => {
     const { initiator, target, game } = context.params;
 
     if (initiator.flags.isBehindWall.length) {
-      initiator.flags.isBehindWall.forEach((flag) => {
-        const wallCaster = game.players.getById(flag.initiator);
-        if (wallCaster) {
-          // eslint-disable-next-line max-len
-          throw new CastError(this.getSuccessResult({ initiator: wallCaster, target: initiator, game }));
-        }
-      });
+      throw new CastError(
+        initiator.flags.isBehindWall.map(({ initiator: wallCaster }) =>
+          this.getSuccessResult({ initiator: wallCaster, target: initiator, game }),
+        ),
+      );
     }
 
-    if (target.flags.isBehindWall) {
+    if (target.flags.isBehindWall.length) {
       magicWall.reset();
       magicWall.preAffect?.(context);
     }

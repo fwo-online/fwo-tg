@@ -1,13 +1,13 @@
 import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
 import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConstructor';
 import CastError from '@/arena/errors/CastError';
-import MiscService from '@/arena/MiscService';
 
 class StaticProtect extends PassiveSkillConstructor implements Affect {
   constructor() {
     super({
       name: 'staticProtect',
       displayName: 'Статичная защита',
+      description: 'Пассивный шанс заблокировать атаку',
       chance: [0],
       effect: [0],
       bonusCost: [0],
@@ -31,8 +31,12 @@ class StaticProtect extends PassiveSkillConstructor implements Affect {
   preAffect: Affect['preAffect'] = (context): undefined => {
     this.applyContext(context);
 
+    if (!this.isActive()) {
+      return;
+    }
+
     const { initiator, target, game } = context.params;
-    if (MiscService.rndm('1d100') > this.getChance()) {
+    if (!this.checkChance()) {
       throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
     }
   };

@@ -26,14 +26,18 @@ class Eclipse extends CommonMagic implements Affect {
   }
 
   run() {
-    const { game } = this.params;
+    const { initiator, game } = this.params;
     // выставляем глобальный флаг затмения
-    game.flags.global.isEclipsed = true;
+    game.flags.global.isEclipsed.push({ initiator });
   }
 
-  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }): undefined => {
-    if (game.flags.global.isEclipsed) {
-      throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
+  preAffect: Affect['preAffect'] = ({ params: { initiator: target, game } }): undefined => {
+    if (game.flags.global.isEclipsed.length) {
+      throw new CastError(
+        game.flags.global.isEclipsed.map(({ initiator }) =>
+          this.getSuccessResult({ initiator, target, game }),
+        ),
+      );
     }
   };
 }

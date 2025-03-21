@@ -21,7 +21,8 @@ class HandsHeal extends Heal {
     this.status.effect = this.effectVal();
     target.stats.up('hp', this.status.effect);
     target.flags.isHealed.push({
-      initiator: initiator.id, val: this.status.effect,
+      initiator,
+      val: this.status.effect,
     });
   }
 }

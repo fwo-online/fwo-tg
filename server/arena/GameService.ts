@@ -15,7 +15,7 @@ import { type GameStatus, reservedClanName } from '@fwo/shared';
 export type KickReason = 'afk' | 'run';
 
 export interface GlobalFlags {
-  isEclipsed?: boolean;
+  isEclipsed: { initiator: Player }[];
 }
 
 /**
@@ -67,7 +67,9 @@ export default class GameService extends EventEmitter<{
     this.orders = new OrderService(this.players, this.round);
     this.flags = {
       noDamageRound: 0,
-      global: {},
+      global: {
+        isEclipsed: [],
+      },
     };
   }
 
@@ -168,6 +170,7 @@ export default class GameService extends EventEmitter<{
     char.autoreg = false;
     this.players.kick(id);
     this.info.players.splice(this.info.players.indexOf(id), 1);
+    this.cleanLongMagics();
   }
 
   checkRun(player: Player) {
@@ -277,7 +280,7 @@ export default class GameService extends EventEmitter<{
    * затмение, бунт богов, и т.п
    */
   refreshRoundFlags(): void {
-    this.flags.global = {};
+    this.flags.global.isEclipsed = [];
   }
 
   /**

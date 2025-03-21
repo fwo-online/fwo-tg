@@ -16,8 +16,8 @@ class Attack extends PhysConstructor implements Affect {
   }
 
   /**
- * Кастомный обработчик атаки
- */
+   * Кастомный обработчик атаки
+   */
   run() {
     if (!this.params) {
       return;
@@ -25,15 +25,18 @@ class Attack extends PhysConstructor implements Affect {
     const { initiator, target } = this.params;
 
     target.flags.isHited = {
-      initiator: initiator.nick, val: this.status.effect,
+      initiator,
+      val: this.status.effect,
     };
 
     target.stats.down('hp', this.status.effect);
   }
 
-  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }): undefined => {
+  preAffect: Affect['preAffect'] = ({ params: { initiator: target, game } }): undefined => {
     if (target.flags.isHited) {
-      throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
+      throw new CastError(
+        this.getSuccessResult({ initiator: target.flags.isHited.initiator, target, game }),
+      );
     }
   };
 }

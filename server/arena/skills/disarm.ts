@@ -32,7 +32,7 @@ class Disarm extends Skill implements Affect {
     const iDex = initiator.stats.val('attributes.dex') * effect;
     const tDex = target.stats.val('attributes.dex');
     if (iDex >= tDex) {
-      target.flags.isDisarmed = true;
+      target.flags.isDisarmed.push({ initiator, val: 0 });
 
       this.calculateExp();
     } else {
@@ -40,9 +40,13 @@ class Disarm extends Skill implements Affect {
     }
   }
 
-  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }): undefined => {
-    if (initiator.flags.isDisarmed) {
-      throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
+  preAffect: Affect['preAffect'] = ({ params: { initiator: target, game } }): undefined => {
+    if (target.flags.isDisarmed.length) {
+      throw new CastError(
+        target.flags.isDisarmed.map(({ initiator }) =>
+          this.getSuccessResult({ initiator, target, game }),
+        ),
+      );
     }
   };
 }

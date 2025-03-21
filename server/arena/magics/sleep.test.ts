@@ -1,6 +1,4 @@
-import {
-  describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
-} from 'bun:test';
+import { describe, beforeAll, beforeEach, afterEach, it, spyOn, expect } from 'bun:test';
 import casual from 'casual';
 import { CharacterService } from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
@@ -25,15 +23,19 @@ describe('paralysis', () => {
   });
 
   beforeEach(async () => {
-    const initiator = await TestUtils.createCharacter({ prof: 'm', magics: { sleep: 1 } });
-    const target = await TestUtils.createCharacter({ prof: 'w', skills: { berserk: 1 } }, { withWeapon: true });
+    const initiator1 = await TestUtils.createCharacter({ prof: 'm', magics: { sleep: 1 } });
+    const initiator2 = await TestUtils.createCharacter({ prof: 'm', magics: { sleep: 1 } });
+    const target = await TestUtils.createCharacter(
+      { prof: 'w', skills: { berserk: 1 } },
+      { weapon: {} },
+    );
 
-    await Promise.all([initiator.id, target.id].map(CharacterService.getCharacterById));
+    await Promise.all(
+      [initiator1.id, target.id, initiator2.id].map(CharacterService.getCharacterById),
+    );
 
-    game = new GameService([initiator.id, target.id]);
-  });
+    game = new GameService([initiator1.id, target.id, initiator2.id]);
 
-  beforeEach(() => {
     spyOn(global.Math, 'random').mockReturnValue(0.05);
   });
 
@@ -43,7 +45,6 @@ describe('paralysis', () => {
 
   it('target should sleep and not be able to attack', async () => {
     game.players.players[0].proc = 1;
-    game.players.players[0].stats.set('base.mp', 99);
     game.players.players[0].stats.set('mp', 99);
     game.players.players[1].proc = 0.25;
 
@@ -51,8 +52,26 @@ describe('paralysis', () => {
 
     attack.cast(game.players.players[1], game.players.players[0], game);
     protect.cast(game.players.players[1], game.players.players[0], game);
-    handsHeal.cast(game.players.players[1], game.players.players[0], game);
-    berserk.cast(game.players.players[1], game.players.players[0], game);
+    handsHeal.cast(game.players.players[1], game.players.players[1], game);
+    berserk.cast(game.players.players[1], game.players.players[1], game);
+
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
+  });
+
+  it('should handle several casters', async () => {
+    game.players.players[0].proc = 1;
+    game.players.players[0].stats.set('mp', 99);
+    game.players.players[2].proc = 1;
+    game.players.players[2].stats.set('mp', 99);
+    game.players.players[1].proc = 0.25;
+
+    sleep.cast(game.players.players[0], game.players.players[1], game);
+    sleep.cast(game.players.players[2], game.players.players[1], game);
+
+    attack.cast(game.players.players[1], game.players.players[0], game);
+    protect.cast(game.players.players[1], game.players.players[0], game);
+    handsHeal.cast(game.players.players[1], game.players.players[1], game);
+    berserk.cast(game.players.players[1], game.players.players[1], game);
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
