@@ -1,12 +1,12 @@
 import { useNavigate } from 'react-router';
 import { useWebSocket } from '@/contexts/webSocket';
-import { useMount } from '@/hooks/useMount';
+import { useMountEffect } from '@/hooks/useMountEffect';
 
 export const useSessionGuard = () => {
   const socket = useWebSocket();
   const navigate = useNavigate();
 
-  useMount(() => {
+  useMountEffect(() => {
     if (!socket.active) {
       navigate('/connection-error');
     }
@@ -19,10 +19,10 @@ export const useSessionReconnect = () => {
 
   return () => {
     if (!socket.connected) {
-      socket.connect();
-      socket.on('connect', () => {
+      socket.once('connect', () => {
         navigate('/');
       });
+      socket.connect();
     } else {
       navigate('/');
     }

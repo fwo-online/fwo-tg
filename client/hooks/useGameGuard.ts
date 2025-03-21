@@ -8,7 +8,7 @@ export const useGameGuard = () => {
 
   const navigateToGame = useCallback(
     (gameID: string) => {
-      navigate(`game/${gameID}`);
+      navigate(`/game/${gameID}`);
     },
     [navigate],
   );

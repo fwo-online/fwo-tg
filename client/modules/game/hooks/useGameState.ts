@@ -3,9 +3,10 @@ import type { ServerToClientMessage } from '@fwo/shared';
 import { useCallback, useEffect } from 'react';
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import { useGameKickState } from './useGameKickState';
-import { useMount } from '@/hooks/useMount';
+import { useMountEffect } from '@/hooks/useMountEffect';
 import { useNavigate } from 'react-router';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
+import { popup } from '@telegram-apps/sdk-react';
 
 export function useGameState() {
   const socket = useWebSocket();
@@ -46,10 +47,11 @@ export function useGameState() {
 
   const handleEndGame = useCallback(async () => {
     await updateCharacter();
+    popup.open({ message: 'Игра завершена ' });
     navigate('/');
   }, [navigate, updateCharacter]);
 
-  const connect = () => {
+  const handleStartGame = () => {
     socket.emitWithAck('game:connected').then((res) => {
       if (!res.error) {
         setPlayers(res.players);
@@ -57,7 +59,13 @@ export function useGameState() {
     });
   };
 
-  useMount(connect);
+  useMountEffect(() => {
+    if (socket.connected) {
+      handleStartGame();
+    } else {
+      socket.once('connect', handleStartGame);
+    }
+  });
 
   useEffect(() => {
     socket.on('game:startRound', handleStartRound);

@@ -19,8 +19,8 @@ export function useGameKickState() {
   const handleKick = useCallback(
     async ({ player }: Parameters<ServerToClientMessage['game:kick']>[0]) => {
       if (player.id === character.id) {
+        popup.open({ message: 'Вы были выброшены из игры' });
         navigate('/');
-        await popup.open({ message: 'Вы были выброшены из игры' });
       }
     },
     [navigate, character],

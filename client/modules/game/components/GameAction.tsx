@@ -7,7 +7,7 @@ import { GameActionTarget } from './GameActionTarget';
 import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
 import { Placeholder } from '@/components/Placeholder';
-import { useMount } from '@/hooks/useMount';
+import { useMountEffect } from '@/hooks/useMountEffect';
 
 export const GameAction: FC<{
   action: Action;
@@ -37,7 +37,7 @@ export const GameAction: FC<{
     onOrder(action.name, target, power);
   };
 
-  useMount(() => {
+  useMountEffect(() => {
     if (action.power) {
       setPower(action.power);
     } else {
