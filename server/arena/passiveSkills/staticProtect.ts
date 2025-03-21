@@ -31,6 +31,10 @@ class StaticProtect extends PassiveSkillConstructor implements Affect {
   preAffect: Affect['preAffect'] = (context): undefined => {
     this.applyContext(context);
 
+    if (!this.isActive()) {
+      return;
+    }
+
     const { initiator, target, game } = context.params;
     if (!this.checkChance()) {
       throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));

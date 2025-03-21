@@ -17,7 +17,7 @@ describe('staticProtect', () => {
     casual.seed(1);
     attack.registerPreAffects([staticProtect]);
 
-    initiator = await TestUtils.createCharacter({}, { weapon: {} });
+    initiator = await TestUtils.createCharacter({ passiveSkills: { staticProtect: 1 }}, { weapon: {}, });
     target = await TestUtils.createCharacter();
   });
 
