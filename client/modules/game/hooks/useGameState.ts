@@ -55,6 +55,8 @@ export function useGameState() {
     socket.emitWithAck('game:connected').then((res) => {
       if (!res.error) {
         setPlayers(res.players);
+      } else {
+        popup.open({ title: 'Не удалось подключиться к игре', message: res.message });
       }
     });
   };
