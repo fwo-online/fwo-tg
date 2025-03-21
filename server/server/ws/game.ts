@@ -22,9 +22,9 @@ const getRoom = (game: GameService, scope?: string) => {
 export const onCreate = (io: Server) => {
   MatchMakingService.on('start', (game) => {
     game.players.players.forEach((player) => {
-      const connection = activeConnections.get(player.owner);
-      if (connection) {
-        io.in(connection).socketsJoin([getRoom(game), getRoom(game, player.id)]);
+      const socket = activeConnections.get(player.owner);
+      if (socket) {
+        socket.join([getRoom(game), getRoom(game, player.id)]);
       } else {
         console.log('no connections found: ', player.id);
       }

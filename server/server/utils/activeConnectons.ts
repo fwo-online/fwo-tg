@@ -1,20 +1,18 @@
 import type { Server, Socket } from '@/server/ws';
 import type { User } from '@telegram-apps/init-data-node';
 
-export const activeConnections = new Map<string, string>();
+export const activeConnections = new Map<string, Socket>();
 
-export const checkActiveConnection = (io: Server, socket: Socket, user: User) => {
-  const activeConnection = activeConnections.get(user.id.toString());
+export const checkActiveConnection = (_io: Server, socket: Socket, user: User) => {
+  const activeSocket = activeConnections.get(user.id.toString());
 
-  if (activeConnection) {
-    const socketConnection = io.sockets.sockets.get(activeConnection);
-
-    if (socketConnection?.connected) {
+  if (activeSocket) {
+    if (activeSocket?.connected) {
       return false;
     }
   }
 
-  activeConnections.set(user.id.toString(), socket.id);
+  activeConnections.set(user.id.toString(), socket);
 
   return true;
 };
