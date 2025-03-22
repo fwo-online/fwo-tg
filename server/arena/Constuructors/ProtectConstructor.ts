@@ -53,7 +53,7 @@ export abstract class ProtectConstructor extends AffectableAction implements Aff
 
     defenderFlags.forEach(({ initiator: defender, val }) => {
       const protect = Math.floor(val * 100) / defence;
-      const exp = defender.isAlly(target) ? Math.round(hit * 0.2 * protect) : 0;
+      const exp = defender.isAlly(target) && !defender.isAlly(initiator) ? Math.round(hit * 0.2 * protect) : 0;
 
       this.status.expArr.push({
         initiator: defender,
