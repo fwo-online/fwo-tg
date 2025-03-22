@@ -94,7 +94,7 @@ export default abstract class PhysConstructor extends AffectableAction {
    * Рассчитываем полученный exp
    */
   calculateExp({ initiator, target } = this.params) {
-    if (initiator.isAlly(target) && !initiator.flags.isGlitched.length) {
+    if ((initiator.isAlly(target) || initiator == target) && !initiator.flags.isGlitched.length) {
       this.status.exp = 0;
     } else {
       this.status.exp = Math.round(this.status.effect * 8);
