@@ -4,15 +4,15 @@ const registerAttackAffects = () => {
   arena.actions.attack.registerPreAffects([
     arena.magics.glitch,
     arena.magics.madness,
-    arena.actions.protect,
-    arena.skills.dodge,
-    arena.skills.parry,
-    arena.skills.disarm,
     arena.magics.paralysis,
     arena.magics.eclipse,
     arena.magics.sleep,
     arena.magics.magicWall,
+    arena.skills.dodge,
+    arena.skills.parry,
+    arena.skills.disarm,
     arena.actions.staticProtect,
+    arena.actions.protect,
     arena.actions.chopWeapon,
     arena.actions.healingWeapon,
   ]);
@@ -41,9 +41,9 @@ const registerSkillAffects = () => {
 
 const registerHealAffects = () => {
   arena.actions.handsHeal.registerPreAffects([
-    arena.actions.attack,
     arena.magics.sleep,
     arena.actions.paralysis,
+    arena.actions.attack,
   ]);
 };
 
