@@ -344,7 +344,7 @@ export class CharacterService {
         free,
         expLimit: this.charObj.expLimit,
         statistics: this.charObj.statistics,
-        favoriteMagicList: this.charObj.favoriteMagicList,
+        harks: this.charObj.harks,
         items,
         equipment,
       });
