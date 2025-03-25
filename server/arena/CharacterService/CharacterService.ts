@@ -34,7 +34,7 @@ export class CharacterService {
    * Конструктор игрока
    */
   constructor(public charObj: Char) {
-    this.inventory = new CharacterInventory(charObj);
+    this.inventory = new CharacterInventory(this);
     this.resources = new CharacterResources(this);
     this.charObj = charObj;
     this.mm = {};

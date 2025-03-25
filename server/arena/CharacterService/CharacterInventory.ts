@@ -9,17 +9,25 @@ import { assignWithSum } from '@/utils/assignWithSum';
 import { array, parse } from 'valibot';
 import { every } from 'es-toolkit/compat';
 import type { Item } from '@/models/item';
-import { updateCharacter } from '@/api/character';
+import type { CharacterService } from '@/arena/CharacterService/CharacterService';
 
 export class CharacterInventory {
   harksFromItems: Attributes;
-  items: Item[];
-  equipment: Map<ItemWear, Item>;
+  charObj: Char;
 
-  constructor(private readonly character: Char) {
-    this.items = character.items;
-    this.equipment = character.equipment;
+  constructor(private character: CharacterService) {
+    this.character = character;
+    this.charObj = character.charObj;
+
     this.harksFromItems = this.updateHarkFromItems();
+  }
+
+  get items() {
+    return this.charObj.items;
+  }
+
+  get equipment() {
+    return this.charObj.equipment;
   }
 
   static getItemsSetsByInventory(inventory: Item[], full = true): ItemSet[] {
@@ -52,7 +60,7 @@ export class CharacterInventory {
   }
 
   get attributes() {
-    return this.harksFromItems.attributes;
+    return structuredClone(this.harksFromItems.attributes);
   }
 
   get modifiers() {
@@ -60,7 +68,7 @@ export class CharacterInventory {
   }
 
   getItem(itemId: string) {
-    return this.items.find((item) => item._id.equals(itemId));
+    return this.charObj.items.find((item) => item._id.equals(itemId));
   }
 
   getEquippedWeapon() {
@@ -72,11 +80,11 @@ export class CharacterInventory {
       return false;
     }
 
-    if (itemToEquip.wear === ItemWear.MainHand && this.equipment.has(ItemWear.TwoHands)) {
+    if (itemToEquip.wear === ItemWear.MainHand && this.getEquippedWeapon()) {
       return false;
     }
 
-    if (itemToEquip.wear === ItemWear.TwoHands && this.equipment.has(ItemWear.MainHand)) {
+    if (itemToEquip.wear === ItemWear.TwoHands && this.getEquippedWeapon()) {
       return false;
     }
 
@@ -88,9 +96,9 @@ export class CharacterInventory {
   }
 
   async addItem(item: Item) {
-    this.items.push(item);
+    this.charObj.items.push(item);
 
-    await this.save();
+    await this.character.saveToDb();
   }
 
   async removeItem(itemId: string) {
@@ -102,10 +110,10 @@ export class CharacterInventory {
       throw new ValidationError('Нельзя продать надетый предмет');
     }
 
-    this.items = this.items.filter(({ id }) => item.id !== id);
+    this.charObj.items = this.charObj.items.filter(({ id }) => item.id !== id);
     this.unEquipNonEquippableItems();
 
-    await this.save();
+    await this.character.saveToDb();
 
     return item;
   }
@@ -127,7 +135,7 @@ export class CharacterInventory {
     this.equipment.set(item.wear, item);
     this.updateHarkFromItems();
 
-    await this.save();
+    await this.character.saveToDb();
   }
 
   async unEquipItem(itemId: string) {
@@ -139,7 +147,7 @@ export class CharacterInventory {
     this.equipment.delete(item.wear);
     await this.unEquipNonEquippableItems();
 
-    await this.save();
+    await this.character.saveToDb();
   }
 
   async unEquipNonEquippableItems() {
@@ -155,7 +163,10 @@ export class CharacterInventory {
   }
 
   hasRequiredAttributes(item: Item) {
-    return every(item.requiredAttributes, (value, attr) => value <= this.character.harks[attr]);
+    return every(
+      item.requiredAttributes,
+      (value, attr) => value <= this.character.attributes[attr],
+    );
   }
 
   /**
@@ -164,7 +175,6 @@ export class CharacterInventory {
    */
   updateHarkFromItems() {
     const equippedItems = Object.values(this.equipment);
-    console.log(equippedItems);
     const itemAttriributes = parse(array(attributesSchema), equippedItems);
     const harksFromItems = itemAttriributes.reduce(assignWithSum, parse(attributesSchema, {}));
 
@@ -179,18 +189,7 @@ export class CharacterInventory {
   toObject() {
     return {
       items: this.items,
-      equipment: Array.from(this.equipment.values().map((item) => item.id)),
+      equipment: Array.from(this.equipment.values()).map((item) => item.id),
     };
-  }
-
-  private async save() {
-    try {
-      updateCharacter(this.character.id, {
-        items: this.items,
-        equipment: this.items,
-      });
-    } catch (e) {
-      console.log('Fail on Inventory Save: ', e);
-    }
   }
 }
