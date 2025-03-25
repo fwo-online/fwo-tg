@@ -4,6 +4,7 @@ import { CharModel } from '@/models/character';
 import type { Clan } from '@/models/clan';
 import { ItemModel, type Item } from '@/models/item';
 import { ItemWear } from '@fwo/shared';
+import ValidationError from '@/arena/errors/ValidationError';
 
 export async function findCharacter(query: FilterQuery<Char>) {
   const character = await CharModel.findOne({ ...query, deleted: false })
@@ -29,6 +30,9 @@ export async function removeCharacter(_id?: string) {
 export async function createCharacter(
   charObj: Pick<Char, 'nickname' | 'prof' | 'sex' | 'owner' | 'harks' | 'magics'>,
 ) {
+  if (await CharModel.exists({ owner: charObj.owner, deleted: false })) {
+    throw new ValidationError('Для этого пользователя уже существует персонаж');
+  }
   const character = await CharModel.create(charObj);
   const item = await ItemModel.firstCreate(character);
   await updateCharacter(character.id, { items: [item], equipment: { [ItemWear.MainHand]: item } });
