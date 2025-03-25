@@ -44,7 +44,7 @@ export const ItemModal: FC<{
 
           {showComponents && (
             <div>
-              <h5 className="text-sm">Требуемые ресурсы</h5>
+              <h5 className="text-sm">Требуемые компоненты</h5>
               <ItemComponents item={item} />
             </div>
           )}
