@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 const attributeSections = [
   {
     key: 'base',
-    label: 'Базовые характеристики',
     attributes: [
       { name: 'Урон', key: 'hit' },
       { name: 'Здоровье', key: 'base.hp' },
@@ -15,7 +14,6 @@ const attributeSections = [
   },
   {
     key: 'phys',
-    label: 'Физические характеристики',
     attributes: [
       { name: 'Атака', key: 'phys.attack' },
       { name: 'Защита', key: 'phys.defence' },
@@ -23,11 +21,14 @@ const attributeSections = [
   },
   {
     key: 'magic',
-    label: 'Магические характеристики',
     attributes: [
       { name: 'Магическая атака', key: 'magic.attack' },
       { name: 'Магическая защита', key: 'magic.defence' },
     ],
+  },
+  {
+    key: 'heal',
+    attributes: [{ name: 'Лечение', key: 'heal' }],
   },
 ];
 
