@@ -1,9 +1,9 @@
-import _ from "lodash";
-import mongoose, { Schema, type Model, type Query, type Types } from "mongoose";
-import arena from "../arena";
-import config from "../arena/config";
-import type { Profs } from "../data";
-import { CharModel, type Char } from "./character";
+import _ from 'lodash';
+import mongoose, { Schema, type Model, type Query, type Types } from 'mongoose';
+import arena from '../arena';
+import config from '../arena/config';
+import type { Profs } from '../data';
+import { CharModel, type Char } from './character';
 
 /**
  * getDefaultItem
@@ -16,8 +16,8 @@ function getDefaultItem(prof: Profs.Prof) {
   return config.defaultItems[prof] || console.log('no prof in getDefaultItem');
 }
 export interface InventoryDocument {
-  _id: Types.ObjectId
-  id: string
+  _id: Types.ObjectId;
+  id: string;
 
   code: string;
   wear: string;
@@ -33,10 +33,7 @@ export class InventoryDocument {
    * Возвращает массив одетых вещей в инвентаре
    * @param charId
    */
-  static async getPutOned(
-    this: InventoryModel,
-    charId: string,
-  ): Promise<InventoryDocument[]> {
+  static async getPutOned(this: InventoryModel, charId: string): Promise<InventoryDocument[]> {
     const invObj = await this.find({ owner: charId });
     return _.filter(invObj, { putOn: true });
   }
@@ -116,18 +113,17 @@ export class InventoryDocument {
    * @param itemId Идентификатор итема внутри инвенторя пользователя
    * @return Массив нового инвентаря
    */
-  static async putOnItem(
-    this: InventoryModel,
-    charId: string,
-    itemId: string,
-  ): Promise<unknown> {
+  static async putOnItem(this: InventoryModel, charId: string, itemId: string): Promise<unknown> {
     console.log('PUT ON ITEM', charId, itemId);
-    return this.updateOne({
-      owner: charId,
-      _id: itemId,
-    }, {
-      putOn: true,
-    });
+    return this.updateOne(
+      {
+        owner: charId,
+        _id: itemId,
+      },
+      {
+        putOn: true,
+      },
+    );
   }
 
   /**
@@ -137,17 +133,16 @@ export class InventoryDocument {
    * @param itemId Идентификатор итема внутри инвенторя пользователя
    * @return ItemObject после изменения его в базе
    */
-  static async putOffItem(
-    this: InventoryModel,
-    charId: string,
-    itemId: string,
-  ): Promise<unknown> {
-    return this.updateOne({
-      owner: charId,
-      _id: itemId,
-    }, {
-      putOn: false,
-    });
+  static async putOffItem(this: InventoryModel, charId: string, itemId: string): Promise<unknown> {
+    return this.updateOne(
+      {
+        owner: charId,
+        _id: itemId,
+      },
+      {
+        putOn: false,
+      },
+    );
   }
 
   /**
@@ -160,11 +155,14 @@ export class InventoryDocument {
     itemId: string,
     charId: string,
   ): Promise<InventoryDocument | null> {
-    return this.findOne({
-      owner: charId,
-    }, {
-      _id: itemId,
-    });
+    return this.findOne(
+      {
+        owner: charId,
+      },
+      {
+        _id: itemId,
+      },
+    );
   }
 
   /**
@@ -187,10 +185,7 @@ export class InventoryDocument {
    * @param charId
    * @return массив обтектов персонажа
    */
-  static async getItems(
-    this: InventoryModel,
-    charId: string,
-  ): Promise<InventoryDocument[]> {
+  static async getItems(this: InventoryModel, charId: string): Promise<InventoryDocument[]> {
     return this.find({ owner: charId });
   }
 
@@ -199,10 +194,7 @@ export class InventoryDocument {
    * @param itemCode
    * @return displayName вещи
    */
-  static getItemName(
-    this: InventoryModel,
-    itemCode: string,
-  ): string {
+  static getItemName(this: InventoryModel, itemCode: string): string {
     return arena.items[itemCode].info.name;
   }
 }
@@ -229,4 +221,7 @@ const inventory = new Schema<InventoryDocument, InventoryModel>({
 
 inventory.loadClass(InventoryDocument);
 
-export const InventoryModel = mongoose.model<InventoryDocument, InventoryModel>('Inventory', inventory);
+export const InventoryModel = mongoose.model<InventoryDocument, InventoryModel>(
+  'Inventory',
+  inventory,
+);

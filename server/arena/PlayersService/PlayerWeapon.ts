@@ -1,32 +1,21 @@
-import arena from '@/arena';
-import type { InventoryDocument } from '@/models/inventory';
+import type { Item } from '@/models/item';
 
 export class PlayerWeapon {
-  protected inventory?: InventoryDocument;
+  item?: Item;
 
-  constructor(inventory?: InventoryDocument) {
-    this.inventory = inventory;
-  }
-
-  get item() {
-    if (!this.inventory) {
-      return undefined;
-    }
-
-    return arena.items[this.inventory.code];
+  constructor(item?: Item) {
+    this.item = item;
   }
 
   hasWeapon() {
-    return !!this.inventory;
+    return !!this.item;
   }
 
   isOfType(types: string[]) {
-    if (!this.inventory) {
+    if (!this.item) {
       return false;
     }
 
-    const item = arena.items[this.inventory.code];
-
-    return types.includes((item).type ?? '');
+    return types.includes(this.item.type ?? '');
   }
 }

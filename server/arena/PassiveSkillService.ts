@@ -15,14 +15,11 @@ export default class PassiveSkillService {
     const passiveSkill = PassiveSkillService.passiveSkills[id];
     const charPassiveSkillLvl = char.passiveSkills[id] ?? 0;
 
-    if (passiveSkill.bonusCost[charPassiveSkillLvl] > char.bonus) {
-      throw new ValidationError('Не хватает бонусов');
-    }
     if (charPassiveSkillLvl + 1 > passiveSkill.bonusCost.length) {
       throw new ValidationError(`Умение ${passiveSkill.displayName} имеет максимальный уровень`);
     }
+    await char.resources.takeResources({ bonus: passiveSkill.bonusCost[charPassiveSkillLvl] });
 
-    char.bonus -= passiveSkill.bonusCost[charPassiveSkillLvl];
     await char.learnPassiveSkill(id, charPassiveSkillLvl + 1);
     return char;
   }

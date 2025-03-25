@@ -10,7 +10,8 @@ import { RoundService, RoundStatus } from '@/arena/RoundService';
 import arena from '@/arena';
 import { mapValues } from 'es-toolkit';
 import EventEmitter from 'node:events';
-import { type GameStatus, reservedClanName } from '@fwo/shared';
+import { type GameStatus, type ItemComponent, reservedClanName } from '@fwo/shared';
+import { getRandomComponent } from '@/utils/getRandomComponent';
 
 export type KickReason = 'afk' | 'run';
 
@@ -35,7 +36,9 @@ export default class GameService extends EventEmitter<{
   end: [
     {
       reason: string | undefined;
-      statistic: Partial<Record<string, { exp: number; gold: number; nick: string }[]>>;
+      statistic: Partial<
+        Record<string, { exp: number; gold: number; nick: string; component?: ItemComponent }[]>
+      >;
     },
   ];
   startOrders: [];
@@ -342,12 +345,18 @@ export default class GameService extends EventEmitter<{
         if (!player) {
           return;
         }
-        arena.characters[id].exp += player.stats.collect.exp;
-        arena.characters[id].expEarnedToday += player.stats.collect.exp;
-        arena.characters[id].gold += player.stats.collect.gold;
+        const isWinner = player.alive;
+
+        await arena.characters[id].resources.addResources({
+          gold: player.stats.collect.gold,
+          exp: player.stats.collect.exp,
+          components: player.stats.collect.component
+            ? { [player.stats.collect.component]: 1 }
+            : undefined,
+        });
 
         const kills = this.players.getKills(id).length;
-        const death = player.alive ? 0 : 1;
+        const death = isWinner ? 0 : 1;
 
         arena.characters[id].addGameStat({
           games: 1,
@@ -365,13 +374,21 @@ export default class GameService extends EventEmitter<{
 
   /**
    * Функция послематчевой статистики
+   * @todo надо как-то переделать функцию, потому что непонятно, что она мутирует данные
    * @return возвращает строку статистики по всем игрокам
    */
   statistic() {
     this.giveGoldforKill();
     const winners = this.players.alivePlayers;
     const gold = this.players.deadPlayers.length ? 5 : 1;
-    winners.forEach((p) => p.stats.addGold(gold));
+    winners.forEach((p) => {
+      p.stats.addGold(gold);
+      p.stats.addComponent(getRandomComponent(60));
+    });
+
+    this.players.deadPlayers.forEach((p) => {
+      p.stats.addComponent(getRandomComponent(20));
+    });
 
     const playersByClan = this.players.groupByClan();
 
@@ -379,6 +396,7 @@ export default class GameService extends EventEmitter<{
       nick: p.nick,
       exp: p.stats.collect.exp,
       gold: p.stats.collect.gold,
+      component: p.stats.collect.component,
     });
 
     const statisticByClan = mapValues(playersByClan, (players) => {

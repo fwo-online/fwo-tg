@@ -1,4 +1,4 @@
-import { equipItem, unEquipItem, sellItem } from '@/api/inventory';
+import { equipItem, unEquipItem } from '@/api/inventory';
 import { useCharacter } from '@/contexts/character';
 import { useRequest } from '@/hooks/useRequest';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
@@ -8,7 +8,7 @@ export const useCharacterInventory = () => {
   const { character } = useCharacter();
   const { updateCharacter } = useUpdateCharacter();
 
-  const inventoryByWear = groupBy(character.inventory, (item) => item.wear);
+  const inventoryByWear = groupBy(character.items, (item) => item.wear);
 
   const [_, makeRequest] = useRequest();
 
@@ -26,17 +26,11 @@ export const useCharacterInventory = () => {
     });
   };
 
-  const handleSell = async (id: string) => {
-    makeRequest(async () => {
-      await sellItem(id);
-      await updateCharacter();
-    });
-  };
-
   return {
     handleEquip,
     handleUnEquip,
-    handleSell,
     inventoryByWear,
+    items: character.items,
+    equipment: character.equipment,
   };
 };

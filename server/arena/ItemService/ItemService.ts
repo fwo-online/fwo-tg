@@ -1,10 +1,14 @@
 import arena from '@/arena';
-import type { CharacterClass } from '@fwo/shared';
-import { filterByClass, filterByWear } from './utils';
+import type { CharacterClass, ItemOutput } from '@fwo/shared';
+import { ItemModel } from '@/models/item';
+import type { Char } from '@/models/character';
+import { filterByClass, filterByWear } from '@/arena/ItemService/utils';
 
 export class ItemService {
   static getItemsByClass(characterClass: CharacterClass, filter?: { wear: string }) {
-    const itemsByClass = Object.values(arena.items).filter(filterByClass(characterClass));
+    const itemsByClass = Object.values(arena.items)
+      .filter(({ tier }) => Boolean(tier))
+      .filter(filterByClass(characterClass));
 
     if (filter?.wear) {
       return itemsByClass.filter(filterByWear(filter.wear));
@@ -13,7 +17,14 @@ export class ItemService {
     return itemsByClass;
   }
 
-  static getItemsByCodes(codes: string[]) {
-    return codes.map((code) => arena.items[code]).filter(Boolean);
+  static getItemByCode(code: string) {
+    return arena.items[code];
+  }
+
+  static async createItem(item: ItemOutput, createdBy: Char) {
+    return ItemModel.create({
+      ...item,
+      createdBy,
+    });
   }
 }

@@ -5,7 +5,7 @@ exports[`physicalSadness should hit target with single hit 1`] = `2.7`;
 exports[`physicalSadness should hit target with single hit 2`] = `50`;
 
 exports[`physicalSadness should hit target with single hit 3`] = `
-"*magni* рубанул *asperiores* _ratione_ и нанёс *3.25* урона
+"*magni* рубанул *asperiores* _Оружием_ и нанёс *3.25* урона
 \\[ asperiores 💥 💔-3.25/4.75 📖26 ]
 *asperiores* сотворил _Вселенская скорбь_ на *magni* нанеся 5.3 урона
 \\[ magni 💥 💔-5.3/2.7 📖50 ]"
@@ -16,13 +16,13 @@ exports[`physicalSadness should hit targets with multiple hit 1`] = `5.14`;
 exports[`physicalSadness should hit targets with multiple hit 2`] = `31`;
 
 exports[`physicalSadness should hit targets with multiple hit 3`] = `
-"*magni* рубанул *asperiores* _ratione_ и нанёс *0.81* урона
+"*magni* рубанул *asperiores* _Оружием_ и нанёс *0.81* урона
 \\[ asperiores 💥 💔-0.81/7.19 📖6 ]
-*magni* рубанул *asperiores* _ratione_ и нанёс *0.81* урона
+*magni* рубанул *asperiores* _Оружием_ и нанёс *0.81* урона
 \\[ asperiores 💥 💔-0.81/6.38 📖6 ]
-*magni* рубанул *asperiores* _ratione_ и нанёс *0.81* урона
+*magni* рубанул *asperiores* _Оружием_ и нанёс *0.81* урона
 \\[ asperiores 💥 💔-0.81/5.57 📖6 ]
-*magni* рубанул *asperiores* _ratione_ и нанёс *0.81* урона
+*magni* рубанул *asperiores* _Оружием_ и нанёс *0.81* урона
 \\[ asperiores 💥 💔-0.81/4.76 📖6 ]
 *asperiores* сотворил _Вселенская скорбь_ на *magni* нанеся 2.86 урона
 \\[ magni 💥 💔-2.86/5.14 📖31 ]"

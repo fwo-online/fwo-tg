@@ -21,14 +21,14 @@ export default class SkillService {
     if (skillLvl > char.lvl) {
       throw new ValidationError('Твой уровень ниже уровня умения');
     }
-    if (skill.bonusCost[charSkillLvl] > char.bonus) {
+    if (skill.bonusCost[charSkillLvl] > char.resources.bonus) {
       throw new ValidationError('Не хватает бонусов');
     }
     if (charSkillLvl + 1 > skill.bonusCost.length) {
       throw new ValidationError(`Умение ${skill.displayName} имеет максимальный уровень`);
     }
 
-    char.bonus -= skill.bonusCost[charSkillLvl];
+    await char.resources.takeResources({ bonus: skill.bonusCost[charSkillLvl] });
     await char.learnSkill(id, charSkillLvl + 1);
     return char;
   }

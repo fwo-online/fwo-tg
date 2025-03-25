@@ -10,6 +10,7 @@ import { WebSocketProvider } from '@/contexts/webSocket';
 import { createWebSocket } from '@/api';
 import { getCharacter } from '@/api/character';
 import { Placeholder } from '@/components/Placeholder';
+import { Card } from '@/components/Card';
 
 export function App() {
   const { tgWebAppPlatform } = retrieveLaunchParams();
@@ -24,7 +25,13 @@ export function App() {
       }}
     >
       <HashRouter>
-        <Suspense fallback={<Placeholder description="Ищем вашего персонажа..." />}>
+        <Suspense
+          fallback={
+            <Card className="m-4" header="Загрузка">
+              <Placeholder description="Ищем вашего персонажа..." />
+            </Card>
+          }
+        >
           <WebSocketProvider socket={createWebSocket()}>
             <CharacterProvider character={getCharacter()}>
               <Router />

@@ -1,6 +1,6 @@
 import type { BotContext } from '@/fwo';
 import type { Clan } from '@/models/clan';
-import type { Item } from '@fwo/shared';
+import type { ItemOutput } from '@fwo/shared';
 import type { ItemSet } from '@fwo/shared';
 import type { Telegraf } from 'telegraf';
 import type { CharacterService } from './CharacterService';
@@ -16,7 +16,7 @@ export default {
   mm: null as unknown as typeof MatchMaking,
   characters: {} as Record<string, CharacterService>,
   games: {} as Partial<Record<string, GameService>>,
-  items: {} as unknown as Record<string, Item>,
+  items: {} as unknown as Record<string, ItemOutput>,
   itemsSets: {} as unknown as Record<string, ItemSet>,
   magics: {} as unknown as typeof magics,
   skills: {} as unknown as typeof skills,

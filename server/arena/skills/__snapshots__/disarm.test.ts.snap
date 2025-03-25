@@ -9,7 +9,7 @@ _🥊 Обезоруживание_ *repellat*: 📖0"
 
 exports[`disarm target should not be disarmed if initiator has less dex 1`] = `
 "*nulla* пытался использовать умение _🥊 Обезоруживание_, но у него не вышло
-*iure* рубанул *nulla* _qui_ и нанёс *3.35* урона
+*iure* рубанул *nulla* _Оружием_ и нанёс *3.35* урона
 \\[ nulla 💥 💔-3.35/4.65 📖27 ]"
 `;
 

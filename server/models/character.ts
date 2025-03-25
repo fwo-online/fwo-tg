@@ -1,57 +1,57 @@
-import mongoose, { Schema, type Model, type Types } from 'mongoose';
-import type { Profs, Harks } from '../data';
-import type { Clan } from './clan';
-import type { InventoryDocument } from './inventory';
-// import type { Hark } from '../data/harks';
+import mongoose, { Schema, type Types, type Model } from 'mongoose';
+import type { Clan } from '@/models/clan';
+import type { CharacterAttributes, CharacterClass, ItemComponent, ItemWear } from '@fwo/shared';
+import type { Item } from '@/models/item';
 
 export interface Char {
-  _id: Types.ObjectId
-  id: string
+  _id: Types.ObjectId;
+  id: string;
 
   owner: string;
   nickname: string;
   birthday: Date;
-  prof: Profs.Prof;
+  prof: CharacterClass;
   exp: number;
-  harks: Harks.HarksLvl;
+  harks: CharacterAttributes;
   statistics: {
     games: number;
     kills: number;
     death: number;
     runs: number;
-  },
+  };
   gold: number;
   free: number;
-  weapon?: InventoryDocument;
-  lvl: number;
   sex: 'm' | 'f';
   lastFight: Date | null;
-  inventory?: InventoryDocument[];
   psr: number;
   magics?: Record<string, number>;
   skills?: Record<string, number>;
   passiveSkills?: Record<string, number>;
   bonus: number;
   clan?: Clan;
-  penalty: [{
-    reason: string;
-    date: Date;
-  }];
+  penalty: [
+    {
+      reason: string;
+      date: Date;
+    },
+  ];
   modifiers?: {
-    crit: number,
-    agile: number,
-    block: number,
-    luck: number,
-  },
+    crit: number;
+    agile: number;
+    block: number;
+    luck: number;
+  };
   expLimit: {
     earn: number;
     expiresAt: Date;
-  }
+  };
   deleted: boolean;
-  favoriteMagicList: string[]
+  items: Item[];
+  equipment: Map<ItemWear, Item>;
+  components: Map<ItemComponent, number>;
 }
 
-export type CharModel = Model<Char> & typeof Char
+export type CharModel = Model<Char> & typeof Char;
 
 export class Char {
   //
@@ -59,10 +59,12 @@ export class Char {
 
 const character = new Schema<Char, CharModel>({
   owner: {
-    type: String, required: true,
+    type: String,
+    required: true,
   },
   nickname: {
-    type: String, required: true,
+    type: String,
+    required: true,
   },
   birthday: { type: Date, default: Date.now },
   prof: { type: String, default: 'w' },
@@ -70,7 +72,11 @@ const character = new Schema<Char, CharModel>({
   harks: {
     type: Object,
     default: {
-      str: 0, dex: 0, wis: 0, int: 0, con: 6,
+      str: 0,
+      dex: 0,
+      wis: 0,
+      int: 0,
+      con: 6,
     },
   },
   statistics: {
@@ -84,23 +90,22 @@ const character = new Schema<Char, CharModel>({
   },
   gold: { type: Number, default: 100 },
   free: { type: Number, default: 10 },
-  weapon: { type: Object, default: {} },
-  lvl: { type: Number, default: 1 },
   sex: { type: String, default: 'm' },
   lastFight: { type: Date, default: null },
-  inventory: [{ type: Schema.Types.ObjectId, ref: 'Inventory' }],
   psr: { type: Number, default: 1500 },
   magics: { type: Object, default: {} },
   bonus: { type: Number, default: 0 },
   skills: { type: Object, default: {} },
   passiveSkills: { type: Object, default: {} },
   clan: { type: Schema.Types.ObjectId, ref: 'Clan' },
-  penalty: [{
-    type: new Schema({
-      reason: String,
-      date: Date,
-    }),
-  }],
+  penalty: [
+    {
+      type: new Schema({
+        reason: String,
+        date: Date,
+      }),
+    },
+  ],
   modifiers: {
     type: Object,
     default: {
@@ -120,8 +125,19 @@ const character = new Schema<Char, CharModel>({
       expiresAt: new Date(),
     },
   },
+  items: [{ type: Schema.Types.ObjectId, ref: 'Item' }],
+  equipment: {
+    type: Schema.Types.Map,
+    of: { type: Schema.Types.ObjectId, ref: 'Item' },
+    default: {},
+  },
   deleted: { type: Boolean, default: false },
   favoriteMagicList: [{ type: String }],
+  components: {
+    type: Schema.Types.Map,
+    of: Number,
+    default: {},
+  },
 });
 
 character.loadClass(Char);

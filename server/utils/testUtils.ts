@@ -8,10 +8,9 @@ import { formatMessage } from '@/arena/LogService/utils';
 import { profsList, profsData, type Prof } from '@/data/profs';
 import { type Char, CharModel } from '@/models/character';
 import { type Clan, ClanModel } from '@/models/clan';
-import { InventoryModel } from '@/models/inventory';
-import { ItemModel } from '@/models/item';
-import { itemSchema, type Item } from '@fwo/shared';
+import { CharacterClass, itemSchema, ItemWear, type Item } from '@fwo/shared';
 import { parse } from 'valibot';
+import { ItemModel } from '@/models/item';
 
 const functions = casual.functions();
 
@@ -32,16 +31,10 @@ export default class TestUtils {
     });
 
     if (weapon) {
-      const { wear, code } = await this.getWeapon(weapon);
+      const item = await this.getWeapon(weapon);
 
-      char.inventory = await InventoryModel.create([
-        {
-          wear,
-          code,
-          owner: char.id,
-          putOn: true,
-        },
-      ]);
+      char.items.push(item);
+      char.equipment.set(ItemWear.MainHand, item);
 
       await char.save();
     }
@@ -85,21 +78,39 @@ export default class TestUtils {
     return clans.map((clan) => clan.toObject());
   }
 
-  static async getWeapon({ type }: { type?: string }): Promise<Item> {
-    const item = await ItemModel.create(
+  static async generateItems() {
+    arena;
+  }
+
+  static async createItem(item: DeepPartial<Item>) {
+    const createdItem = await ItemModel.create(
       parse(itemSchema, {
-        class: [],
-        price: 0,
-        info: { name: functions.word(), case: functions.word() },
         code: functions.word(),
-        type: type || 'chop',
-        wear: 'rightHand',
-        hit: { min: 1, max: 12 },
+        info: { name: functions.word(), case: functions.word() },
+        class: [
+          CharacterClass.Archer,
+          CharacterClass.Mage,
+          CharacterClass.Priest,
+          CharacterClass.Warrior,
+        ],
+        price: 1000,
+        wear: 'any',
+        tier: 0,
+        ...item,
       }),
     );
 
-    arena.items[item.code] = item;
-    return item;
+    arena.items[createdItem.code] = createdItem;
+    return createdItem;
+  }
+
+  static async getWeapon({ type }: { type?: string }) {
+    return this.createItem({
+      info: { name: 'Оружие', case: 'Оружием' },
+      type: type || 'chop',
+      wear: ItemWear.MainHand,
+      hit: { min: 1, max: 12 },
+    });
   }
 
   static normalizeRoundHistory(history: HistoryItem[]) {

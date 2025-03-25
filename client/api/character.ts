@@ -27,7 +27,3 @@ export const getCharacterDynamicAttributes = async (attributes: CharacterAttribu
     query: mapValues(attributes, (n) => n.toString()),
   });
 };
-
-export const buyItem = async (code: string) => {
-  return createRequest(client.inventory[':code'].$post)({ param: { code } });
-};

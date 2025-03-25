@@ -57,11 +57,7 @@ export class ClanService {
     if (name === reservedClanName) {
       throw new ValidationError('Недопустимое название клана');
     }
-    if (char.gold < this.lvlCost[0]) {
-      throw new ValidationError('Нужно больше золота');
-    }
-    char.gold -= this.lvlCost[0];
-    await char.saveToDb();
+    await char.resources.takeResources({ gold: this.lvlCost[0] });
 
     const clan = await createClan(charId, name);
     await char.joinClan(clan);
@@ -124,11 +120,7 @@ export class ClanService {
    */
   static async addGold(clanId: string, charId: string, gold: number) {
     const char: CharacterService = arena.characters[charId];
-    if (char.gold < gold) {
-      throw new ValidationError('Недостаточно золота');
-    }
-    char.gold -= gold;
-    await char.saveToDb();
+    await char.resources.takeResources({ gold });
 
     const clan = await this.updateClan(clanId, { $inc: { gold } });
 

@@ -5,20 +5,23 @@ import { CharacterService } from '@/arena/CharacterService';
 import { profsData } from '@/data/profs';
 import { characterAttributesSchema, createCharacterSchema } from '@fwo/shared';
 import { characterMiddleware, userMiddleware } from './middlewares';
+import { withValidation } from '@/server/utils/withValidation';
 
 export const character = new Hono()
   .use(userMiddleware)
   .post('/', vValidator('json', createCharacterSchema), async (c) => {
     const createCharacterDto = await c.req.valid('json');
     const user = c.get('user');
-    await createCharacter({
-      owner: user.id.toString(),
-      nickname: createCharacterDto.name,
-      prof: createCharacterDto.class,
-      harks: profsData[createCharacterDto.class].hark,
-      magics: profsData[createCharacterDto.class].mag,
-      sex: 'm',
-    });
+    await withValidation(
+      createCharacter({
+        owner: user.id.toString(),
+        nickname: createCharacterDto.name,
+        prof: createCharacterDto.class,
+        harks: profsData[createCharacterDto.class].hark,
+        magics: profsData[createCharacterDto.class].mag,
+        sex: 'm',
+      }),
+    );
 
     const character = await CharacterService.getCharacter(user.id.toString());
     return c.json(character.toObject(), 200);

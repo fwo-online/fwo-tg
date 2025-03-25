@@ -12,8 +12,8 @@ const tabs = [
     text: 'Лобби',
   },
   {
-    path: '/shop',
-    text: 'Магазин',
+    path: '/forge',
+    text: 'Кузница',
   },
 ];
 
