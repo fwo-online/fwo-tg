@@ -44,7 +44,7 @@ export class CharacterResources {
   private addExp(value: number) {
     const oldLvl = this.character.lvl;
 
-    this.charObj.bonus += Math.round(value / 100) - Math.round(this.charObj.exp / 100);
+    this.charObj.bonus += Math.round(value / 100);
     this.charObj.exp += value;
     this.charObj.free += (this.character.lvl - oldLvl) * 10;
   }
