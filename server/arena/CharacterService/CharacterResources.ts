@@ -11,7 +11,7 @@ export interface Resources {
   bonus: number;
 }
 
-export class CharacterRecources {
+export class CharacterResources {
   private character: CharacterService;
   private charObj: Char;
 

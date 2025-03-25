@@ -13,7 +13,7 @@ import { sum } from 'es-toolkit';
 import ValidationError from '@/arena/errors/ValidationError';
 import { every } from 'es-toolkit/compat';
 import type { Item } from '@/models/item';
-import { CharacterRecources } from './CharacterRecources';
+import { CharacterResources } from './CharacterResources';
 
 /**
  * Конструктор персонажа
@@ -28,14 +28,14 @@ import { CharacterRecources } from './CharacterRecources';
 export class CharacterService {
   mm: { status?: string; time?: number };
   inventory: CharacterInventory;
-  resources: CharacterRecources;
+  resources: CharacterResources;
 
   /**
    * Конструктор игрока
    */
   constructor(public charObj: Char) {
     this.inventory = new CharacterInventory(charObj);
-    this.resources = new CharacterRecources(this);
+    this.resources = new CharacterResources(this);
     this.charObj = charObj;
     this.mm = {};
     this.resetExpLimit();
