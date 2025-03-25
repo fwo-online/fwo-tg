@@ -95,6 +95,7 @@ export default class TestUtils {
         ],
         price: 1000,
         wear: 'any',
+        tier: 0,
         ...item,
       }),
     );
@@ -105,6 +106,7 @@ export default class TestUtils {
 
   static async getWeapon({ type }: { type?: string }) {
     return this.createItem({
+      info: { name: 'Оружие', case: 'Оружием' },
       type: type || 'chop',
       wear: ItemWear.MainHand,
       hit: { min: 1, max: 12 },

@@ -16,7 +16,7 @@ exports[`handsHeal should not get exp if players are not allies 1`] = `
 `;
 
 exports[`handsHeal should be stopped by attack 1`] = `
-"*quisquam* рубанул *labore* _magni_ и нанёс *5* урона
+"*quisquam* рубанул *labore* _Оружием_ и нанёс *5* урона
 \\[ labore 💥 💔-5/3 📖40 ]
 *labore* пытался использовать _Лечение руками_ на *labore*, но у него не получилось
 _Атака_ *quisquam*"

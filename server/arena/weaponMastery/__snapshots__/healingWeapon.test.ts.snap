@@ -1,9 +1,9 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`healingWeapon should increase damage with chance 1`] = `
-"*quisquam* вонзил _alias_ в *labore* и нанёс *2.25* урона
+"*quisquam* вонзил _Оружие_ в *labore* и нанёс *2.25* урона
 \\[ labore 💥 💔-2.25/5.75 📖18 ]
-*quisquam* вонзил _alias_ в *labore* и нанёс *2.2* урона
+*quisquam* вонзил _Оружие_ в *labore* и нанёс *2.2* урона
 \\[ labore 💥 💔-2.2/3.55 📖18 ]
 
 _Навык владения лечащим оружием_ *quisquam*"
