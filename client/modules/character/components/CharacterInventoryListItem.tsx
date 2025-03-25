@@ -22,9 +22,9 @@ export const CharacterInventoryListItem: FC<{ item: Item }> = ({ item }) => {
       }
       footer={
         isEquipped ? (
-          <Button onClick={() => handleUnEquip(item.id)}>Снять</Button>
+          <Button onClick={() => handleUnEquip(item.id || item._id)}>Снять</Button>
         ) : (
-          <Button onClick={() => handleEquip(item.id)}>Надеть</Button>
+          <Button onClick={() => handleEquip(item.id || item._id)}>Надеть</Button>
         )
       }
     />

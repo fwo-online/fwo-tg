@@ -8,6 +8,7 @@ import { ItemCharacterAttributes } from '@/modules/items/components/ItemCharacte
 import { ItemAttributes } from '@/modules/items/components/ItemAttributes';
 import { ItemComponents } from '@/modules/items/components/ItemComponents';
 import { useItemType } from '@/modules/items/hooks/useItemType';
+import { sum } from 'es-toolkit/compat';
 
 export const ItemModal: FC<{
   item: Item;
@@ -17,6 +18,8 @@ export const ItemModal: FC<{
 }> = ({ item, trigger, footer, showComponents }) => {
   const { character } = useCharacter();
   const types = useItemType(item);
+
+  const showCharacterAttributes = sum(Object.values(item.attributes)) > 0;
 
   return (
     <Modal trigger={trigger}>
@@ -37,10 +40,12 @@ export const ItemModal: FC<{
             <ItemAttributes item={item} />
           </div>
 
-          <div>
-            <h5 className="text-sm">Характеристики персонажа</h5>
-            <ItemCharacterAttributes itemAttributes={item.attributes} />
-          </div>
+          {showCharacterAttributes ? (
+            <div>
+              <h5 className="text-sm">Характеристики персонажа</h5>
+              <ItemCharacterAttributes itemAttributes={item.attributes} />
+            </div>
+          ) : null}
 
           {showComponents && (
             <div>
