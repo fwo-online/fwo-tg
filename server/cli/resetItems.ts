@@ -1,7 +1,6 @@
 import { connect } from '@/models';
 import { CharModel } from '@/models/character';
 import { InventoryModel } from '@/models/inventory';
-import arena from '@/arena';
 import mongoose from 'mongoose';
 import { ItemModel } from '@/models/item';
 import { keyBy } from 'es-toolkit';
@@ -15,8 +14,8 @@ const main = async () => {
 
   await CharModel.bulkWrite(
     inventories.map(({ code, owner }) => ({
-      updateMany: {
-        filter: { id: owner },
+      updateOne: {
+        filter: { _id: owner },
         update: { $inc: { gold: itemsByCode[code].price } },
       },
     })),
