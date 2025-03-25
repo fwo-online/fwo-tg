@@ -17,7 +17,7 @@ export const ForgeList: FC<{ shopPromise: Promise<Item[]> }> = ({ shopPromise })
   const [_, makeRequest] = useRequest();
 
   const canForge = (item: Item) => {
-    if (character.gold < item.price) {
+    if (character.gold < item.price * 0.2) {
       return false;
     }
 
