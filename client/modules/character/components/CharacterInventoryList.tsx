@@ -1,43 +1,26 @@
 import type { FC } from 'react';
-import { ItemModal } from '@/modules/items/components/ItemModal';
-
-import { Button } from '@/components/Button';
 import { Placeholder } from '@/components/Placeholder';
 import { useCharacterInventory } from '../hooks/useCharacterInventory';
 import { wearList, wearListTranslations } from '@/constants/inventory';
+import { CharacterInventoryListItem } from '@/modules/character/components/CharacterInventoryListItem';
+import { CharacterInventoryComponents } from '@/modules/character/components/CharacterInventoryComponents';
 
 export const CharacterInventoryList: FC = () => {
-  const { items, equipment, inventoryByWear, handleEquip, handleUnEquip } = useCharacterInventory();
+  const { items, inventoryByWear } = useCharacterInventory();
 
   return items.length ? (
     <div className="flex flex-col gap-2">
+      <div>
+        <h5>Компоненты</h5>
+        <CharacterInventoryComponents />
+      </div>
       {wearList.map(
         (wear) =>
           inventoryByWear[wear] && (
             <>
-              <h6 key={wear}>{wearListTranslations[wear]}</h6>
+              <h5 key={wear}>{wearListTranslations[wear]}</h5>
               {inventoryByWear[wear]?.map((item) => (
-                <ItemModal
-                  key={item.id}
-                  item={item}
-                  trigger={
-                    <Button>
-                      <div className="flex justify-between">
-                        {item.info.name}
-                        <div className="opacity-50">
-                          {equipment[wear]?.id === item.id && 'Надето'}
-                        </div>
-                      </div>
-                    </Button>
-                  }
-                  footer={
-                    equipment[wear]?.id === item.id ? (
-                      <Button onClick={() => handleUnEquip(item.id)}>Снять</Button>
-                    ) : (
-                      <Button onClick={() => handleEquip(item.id)}>Надеть</Button>
-                    )
-                  }
-                />
+                <CharacterInventoryListItem key={item.id} item={item} />
               ))}
             </>
           ),

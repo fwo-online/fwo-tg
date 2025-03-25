@@ -10,7 +10,7 @@ import { RoundService, RoundStatus } from '@/arena/RoundService';
 import arena from '@/arena';
 import { mapValues } from 'es-toolkit';
 import EventEmitter from 'node:events';
-import { type GameStatus, reservedClanName } from '@fwo/shared';
+import { type GameStatus, type ItemComponent, reservedClanName } from '@fwo/shared';
 import { getRandomComponent } from '@/utils/getRandomComponent';
 
 export type KickReason = 'afk' | 'run';
@@ -36,7 +36,9 @@ export default class GameService extends EventEmitter<{
   end: [
     {
       reason: string | undefined;
-      statistic: Partial<Record<string, { exp: number; gold: number; nick: string }[]>>;
+      statistic: Partial<
+        Record<string, { exp: number; gold: number; nick: string; component?: ItemComponent }[]>
+      >;
     },
   ];
   startOrders: [];

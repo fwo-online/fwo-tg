@@ -2,6 +2,7 @@ import type { Char } from '@/models/character';
 import ValidationError from '@/arena/errors/ValidationError';
 import type { ItemComponent } from '@fwo/shared';
 import type { CharacterService } from '@/arena/CharacterService/CharacterService';
+import { forEach } from 'es-toolkit/compat';
 
 export interface Resources {
   exp: number;
@@ -49,10 +50,9 @@ export class CharacterResources {
   }
 
   private addComponents(components: Partial<Record<ItemComponent, number>>) {
-    this.charObj.components.forEach((oldValue, key) => {
-      if (components[key]) {
-        this.charObj.components.set(key, oldValue + components[key]);
-      }
+    forEach(components, (value, key) => {
+      const oldValue = this.charObj.components.get(key) ?? 0;
+      this.charObj.components.set(key, oldValue + (value ?? 0));
     });
   }
 
@@ -125,8 +125,8 @@ export class CharacterResources {
 
   /** @throws {ValidationError} */
   private validateComponents(components: Partial<Record<ItemComponent, number>>) {
-    this.components.forEach((value, key) => {
-      if (components[key] && value < components[key]) {
+    forEach(components, (value, key) => {
+      if ((this.components.get(key) ?? 0) < (value ?? 0)) {
         throw new ValidationError('Недостаточно компонентов');
       }
     });

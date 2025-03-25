@@ -3,6 +3,10 @@
 @layer components {
   @import "nes.css/css/nes-core.css";
 
+  h5 {
+    color: var(--tg-theme-subtitle-text-color);
+    margin-bottom: 4px;
+  }
 }
 
 body {

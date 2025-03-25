@@ -12,12 +12,14 @@ export async function findCharacter(query: FilterQuery<Char>) {
     .populate<{ equipment: Map<ItemWear, Item> }>('equipment')
     .populate<{ clan: Clan }>('clan');
 
-  return character.toObject({ minimize: false });
+  const char = character.toObject({ minimize: false });
+
+  return char;
 }
 
-export async function removeCharacter(owner?: string | number) {
+export async function removeCharacter(_id?: string) {
   const character = await CharModel.findOneAndUpdate(
-    { owner, deleted: false },
+    { _id, deleted: false },
     { deleted: true },
   ).orFail(new Error('Персонаж не найден'));
 

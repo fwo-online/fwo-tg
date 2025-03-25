@@ -1,4 +1,4 @@
-import { ItemComponent } from '@fwo/shared';
+import { type Item, ItemComponent } from '@fwo/shared';
 
 const components = [
   ItemComponent.Fabric,
@@ -10,12 +10,12 @@ const components = [
 ];
 
 const componentsMap = {
-  [ItemComponent.Fabric]: '/components/Fabric.png',
-  [ItemComponent.Leather]: '/components/Leather.png',
-  [ItemComponent.Wood]: '/components/Wood.png',
-  [ItemComponent.Iron]: '/components/Iron.png',
-  [ItemComponent.Steel]: '/components/Steel.png',
-  [ItemComponent.Arcanite]: '/components/Arcanit.png',
+  [ItemComponent.Fabric]: '/components/fabric.png',
+  [ItemComponent.Leather]: '/components/leather.png',
+  [ItemComponent.Wood]: '/components/wood.png',
+  [ItemComponent.Iron]: '/components/iron.png',
+  [ItemComponent.Steel]: '/components/steel.png',
+  [ItemComponent.Arcanite]: '/components/arcanite.png',
 };
 
 export const useItemComponents = () => {
@@ -23,8 +23,13 @@ export const useItemComponents = () => {
     return componentsMap[component];
   };
 
+  const getComponents = (item: Item) => {
+    return components.filter((component) => Boolean(item.craft?.components[component]));
+  };
+
   return {
     components,
+    getComponents,
     getComponentImage,
   };
 };

@@ -41,7 +41,7 @@ export class CraftService {
 
     const item = await ItemService.createItem(baseItem, character.charObj);
 
-    await character.inventory.addItem(item);
+    await character.inventory.addItem(item.toObject());
 
     return item.toObject();
   }

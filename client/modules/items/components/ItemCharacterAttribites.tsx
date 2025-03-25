@@ -4,7 +4,7 @@ import type { FC } from 'react';
 
 const attributes: (keyof CharacterAttributes)[] = ['str', 'dex', 'con', 'int', 'wis'];
 
-const ItemAttribute: FC<{
+const ItemCharacterAttribute: FC<{
   name: string;
   value: number;
   isRequired: boolean;
@@ -13,7 +13,7 @@ const ItemAttribute: FC<{
   return (
     <div
       className={classNames('flex gap-1', {
-        'text-red-700': isRequired,
+        'text-red-500': isRequired,
       })}
     >
       <span>{name.toUpperCase()}</span>
@@ -25,7 +25,7 @@ const ItemAttribute: FC<{
   );
 };
 
-export const ItemAttributes: FC<{
+export const ItemCharacterAttributes: FC<{
   itemAttributes: CharacterAttributes;
   characterAttributes?: CharacterAttributes;
 }> = ({ itemAttributes, characterAttributes }) => {
@@ -40,7 +40,7 @@ export const ItemAttributes: FC<{
   return (
     <div className="flex gap-4">
       {attributes.map((attribute) => (
-        <ItemAttribute
+        <ItemCharacterAttribute
           key={attribute}
           name={attribute}
           value={itemAttributes[attribute]}

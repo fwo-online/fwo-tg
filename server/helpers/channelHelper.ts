@@ -1,6 +1,6 @@
 import arena from '@/arena';
 import { LogService } from '@/arena/LogService';
-import { reservedClanName } from '@fwo/shared';
+import { type ItemComponent, itemComponentName, reservedClanName } from '@fwo/shared';
 import { bold } from '@/utils/formatString';
 import { profsData } from '@/data/profs';
 
@@ -71,12 +71,17 @@ export const initGameChannel = () => {
     });
 
     game.on('end', (e) => {
-      const getStatusString = (p: { exp: number; gold: number; nick: string }) =>
-        `\t👤 ${p.nick} получает ${p.exp}📖 и ${p.gold}💰`;
+      const getStatusString = (p: {
+        exp: number;
+        gold: number;
+        nick: string;
+        component?: ItemComponent;
+      }) =>
+        `\t👤 ${p.nick} получает ${p.exp}📖, ${p.gold}💰${p.component ? `, 1 ${itemComponentName[p.component]}` : ''}`;
 
       broadcast('Игра завершена');
       broadcast(`${bold`Статистика игры`}
-  ${Object.entries(e.statistic).map(([clan, players]) => `${clan === reservedClanName ? 'Без клана' : clan}:\n ${players?.map(getStatusString).join('\n')}`)}`);
+  ${Object.entries(e.statistic).map(([clan, players]) => `${clan === reservedClanName ? 'Без клана' : clan}:\n${players?.map(getStatusString).join('\n')}`)}`);
     });
   });
 };

@@ -6,7 +6,7 @@ import config from '@/arena/config';
 import { CharacterInventory } from './CharacterInventory';
 import type { HarksLvl } from '@/data/harks';
 import type { Char } from '@/models/character';
-import type { Character, CharacterClass, CharacterPublic } from '@fwo/shared';
+import type { Character, CharacterClass, CharacterPublic, ItemComponent } from '@fwo/shared';
 import { assignWithSum } from '@/utils/assignWithSum';
 import { calculateDynamicAttributes } from './utils/calculateDynamicAttributes';
 import { sum } from 'es-toolkit';
@@ -354,7 +354,7 @@ export class CharacterService {
   }
 
   async remove() {
-    await removeCharacter(this.owner);
+    await removeCharacter(this.id);
     delete arena.characters[this.id];
   }
 
@@ -376,6 +376,10 @@ export class CharacterService {
       exp: this.resources.exp,
       dynamicAttributes: this.getDynamicAttributes(),
       game: this.currentGame?.info.id,
+      components: Object.fromEntries(this.resources.components.entries()) as Record<
+        ItemComponent,
+        number
+      >,
       ...this.inventory.toObject(),
     };
   }

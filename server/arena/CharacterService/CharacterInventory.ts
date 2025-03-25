@@ -179,11 +179,7 @@ export class CharacterInventory {
   toObject() {
     return {
       items: this.items,
-      equipment: Object.fromEntries(
-        this.equipment
-          .entries()
-          .map(([wear, item]) => [wear, { ...item, id: item._id.toString() }]),
-      ) as Record<ItemWear, Item>,
+      equipment: Array.from(this.equipment.values().map((item) => item.id)),
     };
   }
 

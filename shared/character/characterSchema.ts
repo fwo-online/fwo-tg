@@ -1,4 +1,4 @@
-import type { Item, ItemWear } from '@/item';
+import type { Item, ItemComponent, ItemWear } from '@/item';
 import type { CharacterAttributes } from './characterAttributesSchema';
 import type { CharacterClass } from './characterClassSchema';
 import type { Attributes } from '@/shared/attributes';
@@ -21,5 +21,6 @@ export type Character = {
   game?: string;
   clan?: { id: string; name: string };
   items: Item[];
-  equipment: Record<ItemWear, Item>;
+  equipment: string[];
+  components: Record<ItemComponent, number>;
 };
