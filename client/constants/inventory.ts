@@ -1,21 +1,23 @@
-export const wearList = [
-  'head',
-  'neck',
-  'body',
-  'hands',
-  'leggings',
-  'shoes',
-  'rightHand',
-  'leftHand',
-] as const;
+import { ItemWear } from '@fwo/shared';
 
-export const wearListTranslations: Record<(typeof wearList)[number], string> = {
-  head: 'Голова',
-  neck: 'Шея',
-  body: 'Тело',
-  hands: 'Руки',
-  leggings: 'Ноги',
-  shoes: 'Обувь',
-  rightHand: 'Правая рука',
-  leftHand: 'Левая рука',
+export const wearList = [
+  ItemWear.Head,
+  ItemWear.Neck,
+  ItemWear.Body,
+  ItemWear.Arms,
+  ItemWear.Legs,
+  ItemWear.Boots,
+  ItemWear.MainHand,
+  ItemWear.OffHand,
+];
+
+export const wearListTranslations: Partial<Record<ItemWear, string>> = {
+  [ItemWear.Head]: 'Голова',
+  [ItemWear.Neck]: 'Шея',
+  [ItemWear.Body]: 'Тело',
+  [ItemWear.Arms]: 'Руки',
+  [ItemWear.Legs]: 'Ноги',
+  [ItemWear.Boots]: 'Обувь',
+  [ItemWear.MainHand]: 'Правая рука',
+  [ItemWear.OffHand]: 'Левая рука',
 };

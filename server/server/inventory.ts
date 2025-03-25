@@ -3,7 +3,7 @@ import { Hono } from 'hono';
 import { idSchema } from '@fwo/shared';
 import { characterMiddleware, userMiddleware } from '@/server/middlewares';
 import { withValidation } from '@/server/utils/withValidation';
-import { object, string } from 'valibot';
+import { CraftService } from '@/arena/CraftService/CraftService';
 
 export const inventory = new Hono()
   .use(userMiddleware, characterMiddleware)
@@ -19,20 +19,15 @@ export const inventory = new Hono()
     const character = c.get('character');
     const { id } = c.req.valid('param');
 
-    await character.inventory.unEquipItem(id);
+    await withValidation(character.inventory.unEquipItem(id));
+
     return c.json({}, 200);
   })
-  .post('/:code', vValidator('param', object({ code: string() })), async (c) => {
+  .post('/forge/:code', async (c) => {
     const character = c.get('character');
-    const { code } = c.req.valid('param');
+    const code = c.req.param('code');
 
-    await withValidation(character.buyItem(code));
-    return c.json({}, 200);
-  })
-  .delete('/:id', vValidator('param', idSchema), async (c) => {
-    const character = c.get('character');
-    const { id } = c.req.valid('param');
+    const item = await withValidation(CraftService.craftItem(character, code));
 
-    await withValidation(character.sellItem(id));
-    return c.json({}, 200);
+    return c.json(item, 200);
   });

@@ -1,8 +1,12 @@
-import mongoose, { Schema, type Model, type Types } from 'mongoose';
-import type { Profs, Harks } from '../data';
-import type { Clan } from './clan';
-import type { InventoryDocument } from './inventory';
-// import type { Hark } from '../data/harks';
+import mongoose, { Schema, type Types, type Model } from 'mongoose';
+import type { Clan } from '@/models/clan';
+import {
+  type CharacterAttributes,
+  CharacterClass,
+  type ItemComponent,
+  type ItemWear,
+} from '@fwo/shared';
+import type { Item } from '@/models/item';
 
 export interface Char {
   _id: Types.ObjectId
@@ -11,9 +15,9 @@ export interface Char {
   owner: string;
   nickname: string;
   birthday: Date;
-  prof: Profs.Prof;
+  prof: CharacterClass;
   exp: number;
-  harks: Harks.HarksLvl;
+  harks: CharacterAttributes;
   statistics: {
     games: number;
     kills: number;
@@ -22,11 +26,8 @@ export interface Char {
   },
   gold: number;
   free: number;
-  weapon?: InventoryDocument;
-  lvl: number;
   sex: 'm' | 'f';
   lastFight: Date | null;
-  inventory?: InventoryDocument[];
   psr: number;
   magics?: Record<string, number>;
   skills?: Record<string, number>;
@@ -48,7 +49,9 @@ export interface Char {
     expiresAt: Date;
   }
   deleted: boolean;
-  favoriteMagicList: string[]
+  items: Item[];
+  equipment: Map<ItemWear, Item>;
+  components: Map<ItemComponent, number>;
 }
 
 export type CharModel = Model<Char> & typeof Char
@@ -84,11 +87,8 @@ const character = new Schema<Char, CharModel>({
   },
   gold: { type: Number, default: 100 },
   free: { type: Number, default: 10 },
-  weapon: { type: Object, default: {} },
-  lvl: { type: Number, default: 1 },
   sex: { type: String, default: 'm' },
   lastFight: { type: Date, default: null },
-  inventory: [{ type: Schema.Types.ObjectId, ref: 'Inventory' }],
   psr: { type: Number, default: 1500 },
   magics: { type: Object, default: {} },
   bonus: { type: Number, default: 0 },
@@ -120,8 +120,19 @@ const character = new Schema<Char, CharModel>({
       expiresAt: new Date(),
     },
   },
+  items: [{ type: Schema.Types.ObjectId, ref: 'Item' }],
+  equipment: {
+    type: Schema.Types.Map,
+    of: { type: Schema.Types.ObjectId, ref: 'Item' },
+    default: {},
+  },
   deleted: { type: Boolean, default: false },
   favoriteMagicList: [{ type: String }],
+  components: {
+    type: Schema.Types.Map,
+    of: Number,
+    default: {},
+  },
 });
 
 character.loadClass(Char);

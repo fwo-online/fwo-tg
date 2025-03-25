@@ -7,13 +7,13 @@ import { useCharacterGuard } from '@/hooks/useCharacterGuard';
 export const ProtectedRoute = () => {
   const { character } = useCharacterContext();
 
-  useSessionGuard();
-  useCharacterGuard();
-  useGameGuard();
-
   if (!character) {
     return <Navigate to="/" />;
   }
+
+  useSessionGuard();
+  useCharacterGuard();
+  useGameGuard();
 
   return <Outlet />;
 };

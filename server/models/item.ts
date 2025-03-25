@@ -1,42 +1,44 @@
-import type { Model } from 'mongoose';
-import mongoose, { Document, Schema } from 'mongoose';
+import type { Model, Types } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import arena from '@/arena';
-import type { Item } from '@fwo/shared';
-import { attributesSchema } from '@fwo/shared';
+import type { CharacterClass, ItemOutput } from '@fwo/shared';
 import _ from 'lodash';
 import { generateItems } from '@/helpers/itemHelper';
-import { parse } from 'valibot';
+import type { Char } from '@/models/character';
+import config from '@/arena/config';
 
-export type ItemModel = Model<Item> & typeof ItemDocument;
+export interface Item extends ItemOutput {
+  _id: Types.ObjectId;
+  id: string;
 
-export class ItemDocument extends Document<Item> {
+  createdBy: Char;
+}
+
+export type ItemModel = Model<Item> & typeof Item;
+
+export class Item {
   static async load(this: ItemModel) {
     const timer = Date.now();
     try {
-      const items = await this.find({});
-      if (items.length) {
-        arena.items = _.keyBy(items, ({ code }) => code);
-      } else {
-        console.log('Items not found. Generating...');
-        const items = await generateItems();
-        console.log('Items file Loaded: ', Date.now() - timer, 'ms');
-
-        const createdItems = await ItemModel.create(items);
-        arena.items = _.keyBy(createdItems, ({ code }) => code);
-      }
+      console.log('Generate items...');
+      const items = await generateItems();
+      console.log('Items loaded: ', Date.now() - timer, 'ms');
+      arena.items = _.keyBy(items, ({ code }) => code);
+      Bun.write('./test.json', JSON.stringify(items, null, 2));
     } catch (e) {
       console.error(e);
     } finally {
-      console.log('Items loaded.T:', Date.now() - timer, 'ms');
+      console.log('Items loaded. Total:', Date.now() - timer, 'ms');
     }
   }
 
-  /**
-   * @description Собираем все харки со шмотки
-   * @param itemCode код вещи
-   */
-  static getAttributes(this: ItemModel, itemCode: string) {
-    return parse(attributesSchema, arena.items[itemCode]);
+  static async firstCreate(this: ItemModel, char: Char) {
+    const defItemCode = getDefaultItem(char.prof);
+
+    if (!defItemCode) return;
+    const item = arena.items[defItemCode];
+
+    return await this.create({ ...item, createdBy: char });
   }
 }
 
@@ -49,11 +51,7 @@ export class ItemDocument extends Document<Item> {
 
 const item = new Schema<Item, ItemModel>(
   {
-    code: {
-      type: String,
-      unique: true,
-      required: true,
-    },
+    code: { type: String, required: true },
     type: { type: String },
     info: { type: Object },
     price: { type: Number },
@@ -67,12 +65,27 @@ const item = new Schema<Item, ItemModel>(
     magic: { type: Object },
     heal: { type: Object },
     hit: { type: Object },
+    craft: { type: Object },
+    modifiers: { type: Object },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'Character' },
   },
   {
     versionKey: false,
+    id: true,
   },
 );
 
-item.loadClass(ItemDocument);
+item.loadClass(Item);
+
+/**
+ * getDefaultItem
+ * @param prof ID профы w/l/m/p
+ * @return itemCode код дефолтного итема для данной профы
+ * @description Получаем код дефолтного итема для данной профы
+ *
+ */
+function getDefaultItem(characterClass: CharacterClass) {
+  return config.defaultItems[characterClass] || console.log('no prof in getDefaultItem');
+}
 
 export const ItemModel = mongoose.model<Item, ItemModel>('Item', item);

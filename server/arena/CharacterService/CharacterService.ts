@@ -3,14 +3,17 @@ import type { UpdateQuery } from 'mongoose';
 import { findCharacter, removeCharacter, updateCharacter } from '@/api/character';
 import arena from '@/arena';
 import config from '@/arena/config';
-import { InventoryService } from '@/arena/InventoryService';
+import { CharacterInventory } from './CharacterInventory';
 import type { HarksLvl } from '@/data/harks';
 import type { Char } from '@/models/character';
 import type { Character, CharacterClass, CharacterPublic } from '@fwo/shared';
 import { assignWithSum } from '@/utils/assignWithSum';
-import { calculateDynamicAttributes } from './utils/calculate-dynamic-attributes';
+import { calculateDynamicAttributes } from './utils/calculateDynamicAttributes';
 import { sum } from 'es-toolkit';
 import ValidationError from '@/arena/errors/ValidationError';
+import { every } from 'es-toolkit/compat';
+import type { Item } from '@/models/item';
+import { CharacterRecources } from './CharacterRecources';
 
 /**
  * Конструктор персонажа
@@ -24,13 +27,15 @@ import ValidationError from '@/arena/errors/ValidationError';
  */
 export class CharacterService {
   mm: { status?: string; time?: number };
-  inventory: InventoryService;
+  inventory: CharacterInventory;
+  resources: CharacterRecources;
 
   /**
    * Конструктор игрока
    */
   constructor(public charObj: Char) {
-    this.inventory = new InventoryService(charObj, charObj.inventory ?? []);
+    this.inventory = new CharacterInventory(charObj);
+    this.resources = new CharacterRecources(this);
     this.charObj = charObj;
     this.mm = {};
     this.resetExpLimit();
@@ -40,7 +45,7 @@ export class CharacterService {
   autoreg = false;
 
   get id() {
-    return this.charObj.id;
+    return this.charObj.id.toString();
   }
 
   get prof() {
@@ -51,36 +56,16 @@ export class CharacterService {
     return this.charObj.prof as CharacterClass;
   }
 
-  get lvl() {
-    return this.charObj.lvl;
+  get lvl(): number {
+    const k = 1000 * config.lvlRatio;
+    return Math.max(1, Math.floor(Math.log2(this.charObj.exp / k) + 2));
   }
-
   get owner() {
     return this.charObj.owner;
   }
 
   get nickname() {
     return this.charObj.nickname;
-  }
-
-  get gold() {
-    return this.charObj.gold;
-  }
-
-  set gold(value) {
-    this.charObj.gold = value;
-  }
-
-  get exp() {
-    return this.charObj.exp;
-  }
-
-  /** @todo тут надо сделать метод addExp асинхронный, а не вот это вот */
-  set exp(value) {
-    this.resetExpLimit();
-    this.bonus += Math.round(value / 100) - Math.round(this.charObj.exp / 100);
-    this.charObj.exp = value;
-    void this.addLvl();
   }
 
   set expEarnedToday(value) {
@@ -95,33 +80,13 @@ export class CharacterService {
     return this.lvl * config.lvlRatio * 2000;
   }
 
-  get games() {
-    return this.charObj.statistics.games;
-  }
-
-  get kills() {
-    return this.charObj.statistics.kills;
-  }
-
-  get runs() {
-    return this.charObj.statistics.runs;
-  }
-
-  get death() {
-    return this.charObj.statistics.death;
-  }
-
-  get free() {
-    return this.charObj.free;
-  }
-
-  set free(value) {
-    this.charObj.free = value;
+  get statistics() {
+    return this.charObj.statistics;
   }
 
   // Базовые harks без учёта надетых вещей
   get attributes() {
-    return this.charObj.harks;
+    return structuredClone(this.charObj.harks);
   }
 
   get magics() {
@@ -136,16 +101,12 @@ export class CharacterService {
     return this.charObj.passiveSkills || {};
   }
 
-  get bonus() {
-    return this.charObj.bonus;
-  }
-
-  set bonus(value) {
-    this.charObj.bonus = value;
-  }
-
   get clan() {
     return this.charObj.clan;
+  }
+
+  get items(): Item[] {
+    return this.inventory.items;
   }
 
   /** Суммарное количество опыта, требуемое для следующего уровня */
@@ -164,11 +125,10 @@ export class CharacterService {
 
   // Суммарный объект характеристик + вещей.
   getDynamicAttributes(attributes = this.attributes) {
-    const characterAttributes = structuredClone(attributes);
     const inventoryAttributes = this.inventory.attributes;
 
-    assignWithSum(characterAttributes, inventoryAttributes);
-    const dynamicHarks = calculateDynamicAttributes(this, characterAttributes);
+    assignWithSum(attributes, inventoryAttributes);
+    const dynamicHarks = calculateDynamicAttributes(this, attributes);
     assignWithSum(dynamicHarks, this.inventory.harksFromItems);
     return dynamicHarks;
   }
@@ -185,16 +145,18 @@ export class CharacterService {
   /**
    * @param {Partial<Statistics>} stat
    */
-  addGameStat(stat) {
+  addGameStat(stat: Record<string, number>) {
     _.forEach(stat, (val, key) => {
       this.charObj.statistics[key] += val;
     });
+
+    this.saveToDb();
   }
 
   /**
    * @param {string} reason
    */
-  getPenaltyDate(reason) {
+  getPenaltyDate(reason: string) {
     const penalty = this.charObj.penalty.find((p) => p.reason === reason);
     if (penalty && penalty.date.valueOf() > Date.now()) {
       return penalty.date;
@@ -206,7 +168,7 @@ export class CharacterService {
    * @param {string} reason
    * @param {number} minutes
    */
-  async updatePenalty(reason, minutes) {
+  async updatePenalty(reason: string, minutes: number) {
     const date = new Date();
     date.setHours(date.getHours(), date.getMinutes() + minutes);
 
@@ -221,58 +183,17 @@ export class CharacterService {
     await this.saveToDb();
   }
 
-  /**
-   * Проверяет количество опыта для следующего уровня. Добавляет уровень, если опыта достаточно
-   * @returns {void}
-   */
-  async addLvl() {
-    if (this.exp >= this.nextLvlExp) {
-      this.charObj.lvl += 1;
-      this.free += 10;
-      await this.addLvl();
-      this.wasLvlUp = true;
-    } else {
-      await this.saveToDb();
-    }
-  }
-
   async increaseHarks(harks: HarksLvl) {
-    const isValid = Object.entries(harks).every(([key, value]) => value >= this.charObj.harks[key]);
+    const isValid = every(harks, (value, key) => value >= this.charObj.harks[key]);
     if (!isValid) {
       throw new ValidationError('Аттрибут не может быть уменьшен');
     }
 
-    const free = this.free - (sum(Object.values(harks)) - sum(Object.values(this.charObj.harks)));
-    if (free < 0) {
-      throw new ValidationError('Недостаточно очков');
-    }
+    const free = sum(Object.values(harks)) - sum(Object.values(this.charObj.harks));
 
+    await this.resources.takeResources({ free });
     this.charObj.harks = harks;
-    this.charObj.free = free;
 
-    await this.save({ harks, free });
-  }
-
-  async buyItem(itemCode: string) {
-    const item = arena.items[itemCode];
-
-    if (this.gold < item.price) {
-      throw new ValidationError('Недостаточно золота');
-    }
-
-    this.gold -= item.price;
-    await this.inventory.addItem(itemCode);
-    return this.saveToDb();
-  }
-
-  /**
-   * Продажа предмета.
-   */
-  async sellItem(inventoryID: string) {
-    const inventory = await this.inventory.removeItem(inventoryID);
-    const item = arena.items[inventory.code];
-
-    this.gold += item.price / 2;
     await this.saveToDb();
   }
 
@@ -351,7 +272,7 @@ export class CharacterService {
    * @return {this} Объект игры
    * @todo нужно перенести это не в static а во внутрь экземпляра класса
    */
-  static getGameFromCharId(charId) {
+  static getGameFromCharId(charId: string) {
     const { gameId } = arena.characters[charId];
     if (arena.games[gameId]) {
       return arena.games[gameId];
@@ -375,7 +296,7 @@ export class CharacterService {
    * @param {string} skillId идентификатор умения
    * @param {number} lvl уровень проученного умения
    */
-  async learnSkill(skillId, lvl) {
+  async learnSkill(skillId: string, lvl: number) {
     this.skills[skillId] = lvl;
     await this.saveToDb();
   }
@@ -406,22 +327,26 @@ export class CharacterService {
   async saveToDb() {
     try {
       console.log('Saving char :: id', this.id);
-      const { gold, exp, magics, bonus, skills, passiveSkills, lvl, clan, free } = this;
+      const { magics, skills, passiveSkills, clan } = this;
+      const { gold, components, exp, free, bonus } = this.resources;
+      const { items, equipment } = this.inventory;
+
       return await updateCharacter(this.id, {
         gold,
         exp,
         magics,
         bonus,
         skills,
-        lvl,
         clan,
         passiveSkills,
+        components,
         penalty: this.charObj.penalty,
         free,
         expLimit: this.charObj.expLimit,
         statistics: this.charObj.statistics,
         favoriteMagicList: this.charObj.favoriteMagicList,
-        inventory: this.inventory.inventory,
+        items,
+        equipment,
       });
     } catch (e) {
       console.error('Fail on CharSave:', e);
@@ -444,14 +369,14 @@ export class CharacterService {
       skills: this.skills,
       passiveSkills: this.passiveSkills,
       clan: this.clan,
-      inventory: this.inventory.toObject(),
       free: this.charObj.free,
-      bonus: this.bonus,
-      gold: this.gold,
+      bonus: this.resources.bonus,
+      gold: this.resources.gold,
       lvl: this.lvl,
-      exp: this.exp,
+      exp: this.resources.exp,
       dynamicAttributes: this.getDynamicAttributes(),
       game: this.currentGame?.info.id,
+      ...this.inventory.toObject(),
     };
   }
 

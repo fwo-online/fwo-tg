@@ -1,6 +1,6 @@
 import { get, set } from 'lodash';
 import { floatNumber } from '@/utils/floatNumber';
-import type { CharacterDynamicAttributes } from '@fwo/shared';
+import type { CharacterDynamicAttributes, ItemComponent } from '@fwo/shared';
 import type { PhysAttributes } from '@fwo/shared';
 
 type CombineAll<T> = T extends { [name in keyof T]: infer Type } ? Type : never;
@@ -37,7 +37,7 @@ type StatsPathPartial = PathsOf<Stats, true>;
  */
 export default class StatsService {
   private inRound!: Stats;
-  public readonly collect = { exp: 0, gold: 0 };
+  public readonly collect = { exp: 0, gold: 0, component: undefined as ItemComponent | undefined };
   /**
    * Конструктор класса stats
    * @param defStat объект параметров
@@ -123,5 +123,11 @@ export default class StatsService {
    */
   addGold(n = 0): void {
     this.collect.gold += +n;
+  }
+
+  addComponent(component: ItemComponent | undefined) {
+    if (component) {
+      this.collect.component = component;
+    }
   }
 }

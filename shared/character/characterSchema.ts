@@ -1,7 +1,7 @@
+import type { Item, ItemWear } from '@/item';
 import type { CharacterAttributes } from './characterAttributesSchema';
 import type { CharacterClass } from './characterClassSchema';
 import type { Attributes } from '@/shared/attributes';
-import type { Inventory } from '@/inventory/inventorySchema';
 
 export type Character = {
   id: string;
@@ -12,7 +12,6 @@ export type Character = {
   bonus: number;
   lvl: number;
   exp: number;
-  inventory: Inventory[];
   magics: Record<string, number>;
   skills: Record<string, number>;
   passiveSkills: Record<string, number>;
@@ -21,4 +20,6 @@ export type Character = {
   dynamicAttributes: Attributes;
   game?: string;
   clan?: { id: string; name: string };
+  items: Item[];
+  equipment: Record<ItemWear, Item>;
 };

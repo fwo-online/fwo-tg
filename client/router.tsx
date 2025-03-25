@@ -7,8 +7,6 @@ import { CharacterAttributesPage } from '@/modules/character/pages/CharacterAttr
 import { CharacterPage } from '@/modules/character/pages/CharacterPage';
 import { CharacterCreatePage } from '@/modules/character/pages/CharacterCreatePage';
 import { CharacterSkillPage } from '@/modules/character/pages/CharacterSkillsPage';
-import { ShopPage } from '@/modules/shop/pages/ShopPage';
-import { ShopListPage } from '@/modules/shop/pages/ShopListPage';
 import { CharacterInventoryPage } from '@/modules/character/pages/CharacterInventoryPage';
 import { SettingsPage } from '@/modules/settings/pages/SettingsPage';
 import { CharacterMagicsPage } from '@/modules/character/pages/CharacterMagicsPage';
@@ -17,6 +15,8 @@ import { LobbyPage } from '@/modules/lobby/pages/LobbyPage';
 import { GamePage } from '@/modules/game/pages/GamePage';
 import { ErrorConnectionPage } from './modules/error/pages/ErrorConnectionPage';
 import { PassiveSkillsPage } from './modules/passiveSkills/pages/PassiveSkillsPage';
+import { ForgePage } from './modules/forge/pages/ForgePage';
+import { ForgeListPage } from './modules/forge/pages/ForgeListPage';
 
 export function Router() {
   return (
@@ -34,9 +34,9 @@ export function Router() {
           </Route>
           <Route path="/lobby" element={<LobbyPage />} />
           <Route path="/settings" Component={withBackButton(SettingsPage)} />
-          <Route path="/shop">
-            <Route path="" Component={withBackButton(ShopPage)} />
-            <Route path=":wear" Component={withBackButton(ShopListPage)} />
+          <Route path="/forge">
+            <Route path="" Component={withBackButton(ForgePage)} />
+            <Route path=":wear" Component={withBackButton(ForgeListPage)} />
           </Route>
         </Route>
         <Route path="/game/:gameID" element={<GamePage />} />

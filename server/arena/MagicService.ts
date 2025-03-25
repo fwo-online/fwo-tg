@@ -25,9 +25,6 @@ export default class MagicService {
     if (lvl > character.lvl) {
       throw new ValidationError('Слишком низкий уровень персонажа');
     }
-    if (lvl > character.bonus) {
-      throw new ValidationError('Не хватает бонусов');
-    }
 
     const magicsToLearn = MagicService.getMagicsToLearn(character, lvl);
     if (!magicsToLearn.length) {
@@ -36,8 +33,7 @@ export default class MagicService {
 
     const magic = magicsToLearn[MiscService.randInt(0, magicsToLearn.length)];
 
-    character.bonus -= lvl;
-    await character.save({ bonus: character.bonus });
+    await character.resources.takeResources({ bonus: lvl });
 
     if (!learnChance()) {
       throw new ValidationError('Не удалось выучить. Удача не на твоей стороне');
