@@ -24,7 +24,6 @@ export class Item {
       const items = await generateItems();
       console.log('Items loaded: ', Date.now() - timer, 'ms');
       arena.items = _.keyBy(items, ({ code }) => code);
-      Bun.write('./test.json', JSON.stringify(items, null, 2));
     } catch (e) {
       console.error(e);
     } finally {
