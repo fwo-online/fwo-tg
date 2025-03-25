@@ -21,3 +21,8 @@ exports[`handsHeal should be stopped by attack 1`] = `
 *labore* пытался использовать _Лечение руками_ на *labore*, но у него не получилось
 _Атака_ *quisquam*"
 `;
+
+exports[`handsHeal should heal 0 if target has more than 100% HP 1`] = `
+"Игрок *quisquam* был вылечен 🤲 на *💖0*
+\\[ quisquam: 💖0/9 📖0 ]"
+`;
