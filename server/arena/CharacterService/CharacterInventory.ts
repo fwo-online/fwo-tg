@@ -174,7 +174,7 @@ export class CharacterInventory {
    * которые были получены от надетых вещей в инвентаре персонажа
    */
   updateHarkFromItems() {
-    const equippedItems = Object.values(this.equipment);
+    const equippedItems = Array.from(this.equipment.values());
     const itemAttriributes = parse(array(attributesSchema), equippedItems);
     const harksFromItems = itemAttriributes.reduce(assignWithSum, parse(attributesSchema, {}));
 
