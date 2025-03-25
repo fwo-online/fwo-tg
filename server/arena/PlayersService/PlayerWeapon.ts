@@ -1,5 +1,3 @@
-import arena from '@/arena';
-
 import type { Item } from '@/models/item';
 
 export class PlayerWeapon {
@@ -18,8 +16,6 @@ export class PlayerWeapon {
       return false;
     }
 
-    const item = arena.items[this.item.code];
-
-    return types.includes(item.type ?? '');
+    return types.includes(this.item.type ?? '');
   }
 }
