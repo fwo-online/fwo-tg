@@ -1,11 +1,10 @@
+import type { OrderType } from '@fwo/shared';
 import { floatNumber } from '../../utils/floatNumber';
 import type Game from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import { AffectableAction } from './AffectableAction';
-import type {
-  ActionType, CustomMessage, OrderType,
-} from './types';
+import type { ActionType, CustomMessage } from './types';
 
 export interface HealArgs {
   name: string;
@@ -15,8 +14,7 @@ export interface HealArgs {
   orderType: OrderType;
 }
 
-export interface Heal extends HealArgs, CustomMessage {
-}
+export interface Heal extends HealArgs, CustomMessage {}
 /**
  * Heal Class
  */
@@ -72,7 +70,7 @@ export abstract class Heal extends AffectableAction {
     const curHp = target.stats.val('hp');
 
     const allHeal = MiscService.randFloat(min, max) * proc;
-    const maxHeal = maxHp - curHp;
+    const maxHeal = Math.max(maxHp - curHp, 0); // при вампиризме может быть больше 100% здоровья
     const healEffect = Math.min(maxHeal, allHeal);
 
     return floatNumber(healEffect);
@@ -87,12 +85,14 @@ export abstract class Heal extends AffectableAction {
       this.status.exp = 0;
     }
 
-    this.status.expArr = [{
-      initiator,
-      target,
-      exp: this.status.exp,
-      val: this.status.effect,
-    }];
+    this.status.expArr = [
+      {
+        initiator,
+        target,
+        exp: this.status.exp,
+        val: this.status.effect,
+      },
+    ];
   }
 
   checkTargetIsDead({ target } = this.params) {
