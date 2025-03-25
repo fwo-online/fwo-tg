@@ -1,5 +1,6 @@
 import { useCharacter } from '@/contexts/character';
 import { useWebSocket } from '@/contexts/webSocket';
+import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 import type { ServerToClientMessage } from '@fwo/shared';
 import { popup } from '@telegram-apps/sdk-react';
 import { useCallback, useEffect } from 'react';
@@ -9,6 +10,7 @@ export function useGameKickState() {
   const socket = useWebSocket();
   const navigate = useNavigate();
   const { character } = useCharacter();
+  const { updateCharacter } = useUpdateCharacter();
 
   const handlePreKick = useCallback(() => {
     popup.open({
@@ -19,11 +21,12 @@ export function useGameKickState() {
   const handleKick = useCallback(
     async ({ player }: Parameters<ServerToClientMessage['game:kick']>[0]) => {
       if (player.id === character.id) {
-        popup.open({ message: 'Вы были выброшены из игры' });
+        await updateCharacter();
         navigate('/');
+        popup.open({ message: 'Вы были выброшены из игры' });
       }
     },
-    [navigate, character],
+    [navigate, character, updateCharacter],
   );
 
   useEffect(() => {
