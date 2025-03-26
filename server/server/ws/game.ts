@@ -71,9 +71,8 @@ export const onCreate = (io: Server) => {
     });
 
     game.on('end', () => {
-      io.to(getRoom(game)).emit('game:end');
-
-      game.players.alivePlayers.forEach((player) => {
+      game.players.players.forEach((player) => {
+        io.emit('game:end');
         io.in(getRoom(game)).socketsLeave(getRoom(game, player.id));
       });
       io.socketsLeave(getRoom(game));
