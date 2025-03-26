@@ -66,4 +66,13 @@ describe('handsHeal', () => {
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
+
+  it('should heal 0 if target has more than 100% HP', async () => {
+    game.players.players[0].proc = 1;
+    game.players.players[0].stats.set('hp', game.players.players[0].stats.val('hp') + 1);
+
+    handsHeal.cast(game.players.players[0], game.players.players[0], game);
+
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
+  });
 });

@@ -9,9 +9,9 @@ export class HealMagic extends CommonMagic {
     const { target } = this.params;
     const maxHP = target.stats.val('base.hp'); // показатель максимального HP
     const realHP = target.stats.val('hp'); // показатель текущего HP
-    const maxHeal = maxHP - realHP;
+    const maxHeal = Math.max(maxHP - realHP, 0); // при вампиризме может быть больше 100% здоровья
     this.status.effect = floatNumber(Math.min(this.effectVal(), maxHeal));
-    target.stats.mode('up', 'hp', this.status.effect);
+    target.stats.up('hp', this.status.effect);
   }
 
   /**
