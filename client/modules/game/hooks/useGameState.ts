@@ -5,12 +5,10 @@ import { useGameStore } from '@/modules/game/store/useGameStore';
 import { useGameKickState } from './useGameKickState';
 import { useMountEffect } from '@/hooks/useMountEffect';
 import { useNavigate } from 'react-router';
-import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 import { popup } from '@telegram-apps/sdk-react';
 
 export function useGameState() {
   const socket = useWebSocket();
-  const { updateCharacter } = useUpdateCharacter();
 
   const navigate = useNavigate();
   const setOrders = useGameStore((state) => state.setOrders);
@@ -52,11 +50,10 @@ export function useGameState() {
     setOrders([]);
   }, [setOrders, setCanOrder]);
 
-  const handleEndGame = useCallback(async () => {
-    await updateCharacter();
+  const handleEndGame = useCallback(() => {
     navigate('/');
     popup.open({ message: 'Игра завершена' });
-  }, [navigate, updateCharacter]);
+  }, [navigate]);
 
   const handleStartGame = () => {
     socket.emitWithAck('game:connected').then((res) => {
@@ -89,5 +86,5 @@ export function useGameState() {
       socket.off('game:endOrders', handleEndOrders);
       socket.off('game:end', handleEndGame);
     };
-  }, [socket.on, socket.off, handleStartRound, handleStartOrders, handleEndOrders, handleEndGame]);
+  }, [socket, handleStartRound, handleStartOrders, handleEndOrders, handleEndGame]);
 }

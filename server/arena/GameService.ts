@@ -174,7 +174,7 @@ export default class GameService extends EventEmitter<{
     this.players.kick(id);
     this.info.players.splice(this.info.players.indexOf(id), 1);
     this.cleanLongMagics();
-    char.gameId = '';
+    this.resetGameIds([player]);
   }
 
   checkRun(player: Player) {
@@ -238,9 +238,7 @@ export default class GameService extends EventEmitter<{
     setTimeout(async () => {
       const statistic = this.statistic();
       await this.saveGame();
-      this.forAllPlayers((player: Player) => {
-        arena.characters[player.id].gameId = '';
-      });
+      this.resetGameIds(this.players.players);
 
       this.emit('end', { reason: this.getEndGameReason(), statistic });
       this.removeAllListeners();
@@ -418,6 +416,12 @@ export default class GameService extends EventEmitter<{
     });
   }
 
+  resetGameIds(players: Player[]) {
+    players.forEach(({ id }) => {
+      arena.characters[id].gameId = '';
+    });
+  }
+
   /**
    * Функция выставляет "смерть" для игроков имеющих hp < 0;
    * Отсылает сообщение о смерти игрока в последнем раунде
@@ -426,6 +430,7 @@ export default class GameService extends EventEmitter<{
    */
   sortDead() {
     const dead = this.players.sortDead();
+    this.resetGameIds(dead);
     this.cleanLongMagics();
     return dead;
   }
