@@ -18,7 +18,7 @@ class Vampirism extends DmgMagic {
       aoeType: 'target',
       magType: 'bad',
       chance: [92, 94, 95],
-      effect: ['1d2+4', '1d3+4', '1d4+4'],
+      effect: ['1d2+1', '1d2+2', '1d2+3'],
       dmgType: 'clear',
       profList: ['m'],
     });
