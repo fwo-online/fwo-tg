@@ -12,9 +12,10 @@ export const useGameGuard = () => {
 
   const navigateToGame = useCallback(
     (gameID: string) => {
+      character.game = gameID;
       navigate(`/game/${gameID}`);
     },
-    [navigate],
+    [navigate, character],
   );
 
   useEffect(() => {

@@ -21,15 +21,17 @@ const getRoom = (game: GameService, scope?: string) => {
 };
 
 export const onCreate = (io: Server) => {
-  MatchMakingService.on('start', (game) => {
-    game.players.players.forEach((player) => {
-      const socket = activeConnections.get(player.owner);
-      if (socket) {
-        socket.join([getRoom(game), getRoom(game, player.id)]);
-      } else {
-        console.log('no connections found: ', player.id);
-      }
-    });
+  MatchMakingService.on('start', async (game) => {
+    await Promise.all(
+      game.players.players.map(async (player) => {
+        const socket = activeConnections.get(player.owner);
+        if (socket) {
+          await socket.join([getRoom(game), getRoom(game, player.id)]);
+        } else {
+          console.log('no connections found: ', player.id);
+        }
+      }),
+    ).catch((e) => console.log('MM start fail:: ', e));
 
     io.in(getRoom(game)).emit('game:start', game.info.id);
 
