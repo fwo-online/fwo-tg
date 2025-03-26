@@ -75,6 +75,7 @@ export abstract class LongMagic extends CommonMagic {
         }
         this.createContext(initiator, target, game);
         this.params.initiator.proc = item.proc;
+        this.checkChance();
         this.runLong(initiator, target, game); // вызов кастомного обработчика
         this.calculateExp();
         this.checkTargetIsDead(); // проверка трупов в длительных магиях
