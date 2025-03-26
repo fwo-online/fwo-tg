@@ -75,7 +75,6 @@ export abstract class LongMagic extends CommonMagic {
         }
         this.createContext(initiator, target, game);
         this.params.initiator.proc = item.proc;
-        this.checkPreAffects();
         this.checkChance();
         this.runLong(initiator, target, game); // вызов кастомного обработчика
         this.calculateExp();
