@@ -413,7 +413,7 @@ export default class GameService extends EventEmitter<{
     this.players.deadPlayers.forEach((p) => {
       const killer = this.players.getById(p.getKiller());
       if (killer && killer.id !== p.id) {
-        killer.stats.addGold(5 * p.lvl);
+        killer.stats.addGold(3 * p.lvl);
       }
     });
   }
