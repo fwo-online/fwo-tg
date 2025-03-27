@@ -17,6 +17,9 @@ import { ErrorConnectionPage } from './modules/error/pages/ErrorConnectionPage';
 import { PassiveSkillsPage } from './modules/passiveSkills/pages/PassiveSkillsPage';
 import { ForgePage } from './modules/forge/pages/ForgePage';
 import { ForgeListPage } from './modules/forge/pages/ForgeListPage';
+import { ClanListPage } from '@/modules/clan/pages/ClanListPage';
+import { ClanCreatePage } from '@/modules/clan/pages/ClanCreatePage';
+import { ClanPage } from '@/modules/clan/pages/ClanPage';
 
 export function Router() {
   return (
@@ -37,6 +40,11 @@ export function Router() {
           <Route path="/forge">
             <Route path="" Component={withBackButton(ForgePage)} />
             <Route path=":wear" Component={withBackButton(ForgeListPage)} />
+          </Route>
+          <Route path="/clan">
+            <Route path="" Component={withBackButton(ClanPage)} />
+            <Route path="list" Component={withBackButton(ClanListPage)} />
+            <Route path="create" Component={withBackButton(ClanCreatePage)} />
           </Route>
         </Route>
         <Route path="/game/:gameID" element={<GamePage />} />
