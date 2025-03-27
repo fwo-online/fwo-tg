@@ -3,15 +3,15 @@ import { useTransition } from 'react';
 
 export const useRequest = () => {
   const [isPending, startTransition] = useTransition();
-  const { showInfoModal } = useModal();
+  const modal = useModal();
 
-  const makeRequest = (fn: () => unknown) => {
+  const makeRequest = async (fn: () => unknown) => {
     startTransition(async () => {
       try {
         await fn();
       } catch (e) {
         if (e instanceof Error) {
-          showInfoModal({ message: e.message });
+          modal.info({ message: e.message });
         }
       }
     });

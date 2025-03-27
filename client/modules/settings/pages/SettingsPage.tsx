@@ -6,13 +6,13 @@ import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 
 export function SettingsPage() {
   const { updateCharacter } = useUpdateCharacter();
-  const { showConfirmModal, closeModal } = useModal();
+  const modal = useModal();
 
   const handleClick = async () => {
-    showConfirmModal({
+    modal.confirm({
       message: 'Персонаж будет удалён навсегда',
-      onConfirm: async () => {
-        await deleteCharacter().then(updateCharacter).finally(closeModal);
+      onConfirm: async (done) => {
+        await deleteCharacter().then(updateCharacter).finally(done);
       },
     });
   };

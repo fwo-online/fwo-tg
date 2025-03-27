@@ -6,21 +6,23 @@ import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 export const useCharacterLearnMagic = () => {
   const { updateCharacter } = useUpdateCharacter();
   const [isLearning, makeRequest] = useRequest();
-  const { showConfirmModal, showInfoModal, closeModal } = useModal();
+  const modal = useModal();
 
   const handleLearn = async (lvl: number) => {
-    showConfirmModal({
+    modal.confirm({
       message: `Стоимость изучения ${lvl}💡`,
-      onConfirm: () => {
+      onConfirm: (done) => {
         makeRequest(async () => {
-          const magic = await learnMagic(lvl);
-          await updateCharacter();
-
-          closeModal();
-
-          showInfoModal({
-            message: `Ты выучил ${magic.displayName}`,
-          });
+          await learnMagic(lvl)
+            .then((magic) => {
+              done();
+              if (magic) {
+                modal.info({
+                  message: `Ты выучил ${magic.displayName}`,
+                });
+              }
+            })
+            .finally(updateCharacter);
         });
       },
     });

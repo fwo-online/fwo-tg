@@ -11,23 +11,23 @@ export function useGameKickState() {
   const navigate = useNavigate();
   const { character } = useCharacter();
   const { updateCharacter } = useUpdateCharacter();
-  const { showInfoModal } = useModal();
+  const modal = useModal();
 
   const handlePreKick = useCallback(() => {
-    showInfoModal({
+    modal.info({
       message: 'Вы будете выброшены из игры в следующем раунде, если не сделаете заказ',
     });
-  }, [showInfoModal]);
+  }, [modal]);
 
   const handleKick = useCallback(
     async ({ player }: Parameters<ServerToClientMessage['game:kick']>[0]) => {
       if (player.id === character.id) {
         await updateCharacter();
         navigate('/');
-        showInfoModal({ message: 'Вы были выброшены из игры' });
+        modal.info({ message: 'Вы были выброшены из игры' });
       }
     },
-    [navigate, character, updateCharacter, showInfoModal],
+    [navigate, character, updateCharacter, modal],
   );
 
   useEffect(() => {

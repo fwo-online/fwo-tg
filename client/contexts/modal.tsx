@@ -1,86 +1,91 @@
-import { ModalConfirmOverlay, ModalInfoOverlay } from '@/components/Modal';
+import { Button } from '@/components/Button';
+import type { ModalHandle } from '@/components/Modal';
+import { ModalOverlay } from '@/components/Modal/Modal';
 import {
   createContext,
   type FC,
-  type MouseEvent,
   type PropsWithChildren,
   type ReactNode,
   use,
-  useEffect,
+  useCallback,
+  useDeferredValue,
   useRef,
   useState,
 } from 'react';
 
 type ModalOptions = {
   message: ReactNode;
-  type?: 'confirm' | 'info' | undefined;
-  onConfirm?: () => void;
+  onConfirm?: (done: () => void) => void;
   onCancel?: () => void;
+  type?: 'confirm' | 'info';
 };
 
 type ModalContextType = {
-  showConfirmModal: (options: Omit<ModalOptions, 'type'>) => void;
-  showInfoModal: (options: Omit<ModalOptions, 'type' | 'onConfirm'>) => void;
-  closeModal: () => void;
+  info: (options: Omit<ModalOptions, 'type'>) => void;
+  confirm: (options: Omit<ModalOptions, 'type'>) => void;
+  show: (options: ModalOptions) => void;
+  close: () => void;
+  visible: boolean;
 };
 
-export const ModalContext = createContext<ModalContextType | undefined>(undefined);
+const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
 export const ModalProvider: FC<PropsWithChildren> = ({ children }) => {
-  const confirm = useRef<HTMLDialogElement>(null);
-  const info = useRef<HTMLDialogElement>(null);
-  const [options, setOptions] = useState<ModalOptions | null>(null);
+  const modalRef = useRef<ModalHandle>(null);
+  const [modalState, setModalState] = useState<{
+    type: 'confirm' | 'info';
+    options: ModalOptions;
+  } | null>(null);
+  const visible = useDeferredValue(!!modalState?.type, false);
 
-  const showConfirmModal = (options: Omit<ModalOptions, 'type'>) => {
-    setOptions({ ...options, type: 'confirm' });
+  const show = (options: ModalOptions) => {
+    setModalState({ type: options.type ?? 'info', options });
+    modalRef.current?.open();
   };
 
-  const showInfoModal = (options: Omit<ModalOptions, 'type' | 'onConfirm'>) => {
-    setOptions({ ...options, type: 'info' });
-  };
+  const info = (options: Omit<ModalOptions, 'type'>) => show({ ...options, type: 'info' });
+  const confirm = (options: Omit<ModalOptions, 'type'>) => show({ ...options, type: 'confirm' });
 
-  const handleClose = (e: MouseEvent<HTMLDialogElement>) => {
-    if (e.target === info.current || e.target === confirm.current) {
+  const closeModal = useCallback(() => {
+    modalRef.current?.close();
+    setModalState(null);
+  }, []);
+
+  const handleConfirm = async () => {
+    if (modalState?.options.onConfirm) {
+      await modalState?.options.onConfirm(closeModal);
+    } else {
       closeModal();
     }
   };
 
-  const closeModal = () => {
-    setOptions(null);
-  };
-
-  useEffect(() => {
-    if (!options) {
-      info.current?.close();
-      confirm.current?.close();
-      return;
-    }
-
-    if (options.type === 'confirm') {
-      confirm.current?.showModal();
-    }
-    if (options.type === 'info') {
-      info.current?.showModal();
-    }
-  }, [options]);
-
   return (
-    <ModalContext value={{ showConfirmModal, showInfoModal, closeModal }}>
-      <ModalConfirmOverlay
-        ref={confirm}
-        onClick={handleClose}
-        onConfirm={options?.onConfirm}
-        onCancel={closeModal}
-      >
-        {options?.message}
-      </ModalConfirmOverlay>
-
-      <ModalInfoOverlay ref={info} onClick={handleClose} onCancel={closeModal}>
-        {options?.message}
-      </ModalInfoOverlay>
-
+    <ModalContext.Provider value={{ show, close, info, confirm, visible }}>
       {children}
-    </ModalContext>
+
+      <ModalOverlay ref={modalRef} onClose={closeModal}>
+        <div className="flex flex-col p-4 gap-4">
+          {modalState?.options.message}
+          {modalState?.type === 'confirm' ? (
+            <div className="flex gap-2">
+              <Button className="flex-1" onClick={closeModal}>
+                Отмена
+              </Button>
+              <Button className="flex-1 is-primary" onClick={handleConfirm}>
+                Ок
+              </Button>
+            </div>
+          ) : null}
+          {modalState?.type === 'info' ? (
+            <div className="flex gap-2">
+              <Button className="flex-1 is-primary" onClick={handleConfirm}>
+                Ок
+              </Button>
+            </div>
+          ) : null}
+        </div>
+      </ModalOverlay>
+    </ModalContext.Provider>
   );
 };
 
@@ -88,7 +93,7 @@ export const useModal = () => {
   const context = use(ModalContext);
 
   if (!context) {
-    throw new Error('Modal must be within ModalContext');
+    throw new Error('useModal must be used within a ModalProvider');
   }
 
   return context;

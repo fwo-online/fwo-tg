@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 export const useLobby = () => {
   const socket = useWebSocket();
   const { character } = useCharacter();
-  const { showInfoModal } = useModal();
+  const modal = useModal();
 
   const [searchers, setSearchers] = useState<CharacterPublic[]>([]);
 
@@ -37,7 +37,7 @@ export const useLobby = () => {
     } else {
       const res = await socket.emitWithAck('lobby:start');
       if (res.error) {
-        showInfoModal({ message: res.message });
+        modal.info({ message: res.message });
       }
     }
   };

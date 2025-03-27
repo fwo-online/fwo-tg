@@ -11,7 +11,7 @@ export const useCharacterAttributes = () => {
   const [attributes, setAttributes] = useState(structuredClone(character.attributes));
   const hasChanges = free !== character.free;
   const [isPending, makeRequest] = useRequest();
-  const { showInfoModal } = useModal();
+  const modal = useModal();
 
   const handleChangeAttribute = (attribute: keyof CharacterAttributes) => {
     setAttributes(() => {
@@ -34,7 +34,7 @@ export const useCharacterAttributes = () => {
       if (updatedCharacter) {
         setCharacter(updatedCharacter);
 
-        showInfoModal({ message: 'Изменения сохранены' });
+        modal.info({ message: 'Изменения сохранены' });
       }
     });
   };
