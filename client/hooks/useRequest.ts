@@ -1,16 +1,17 @@
-import { popup } from '@telegram-apps/sdk-react';
+import { useModal } from '@/contexts/modal';
 import { useTransition } from 'react';
 
 export const useRequest = () => {
   const [isPending, startTransition] = useTransition();
+  const modal = useModal();
 
-  const makeRequest = (fn: () => unknown) => {
+  const makeRequest = async (fn: () => unknown) => {
     startTransition(async () => {
       try {
         await fn();
       } catch (e) {
         if (e instanceof Error) {
-          popup.open({ message: e.message });
+          modal.info({ message: e.message });
         }
       }
     });
