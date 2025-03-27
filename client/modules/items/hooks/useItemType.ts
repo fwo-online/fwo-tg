@@ -11,7 +11,7 @@ const getWeaponType = (item: Item) => {
     case 'range':
       return 'дальнобойное';
     case 'stun':
-      return 'огрушающее';
+      return 'оглушающее';
     default:
       return item.type ?? '';
   }
