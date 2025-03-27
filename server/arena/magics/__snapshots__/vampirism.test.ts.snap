@@ -1,0 +1,11 @@
+// Bun Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`vampirism should take dmg and heal on same amount 1`] = `
+"*asperiores* сотворил _Вампиризм_ на *magni* нанеся 3.63 урона
+\\[ magni ✨ 💔-3.63/4.37 📖39 ]"
+`;
+
+exports[`vampirism should heal only above target\`s 0 hp 1`] = `
+"*ratione* сотворил _Вампиризм_ на *amet* нанеся 3.63 урона
+\\[ amet ✨ 💔-3.63/-2.63 📖39 ]"
+`;

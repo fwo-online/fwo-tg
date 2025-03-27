@@ -29,8 +29,10 @@ class Vampirism extends DmgMagic {
    */
   run(): void {
     const { target, initiator } = this.params;
-    target.stats.mode('down', 'hp', this.effectVal());
-    initiator.stats.mode('up', 'hp', this.status.effect);
+    const effect = this.effectVal();
+
+    target.stats.down('hp', effect);
+    initiator.stats.up('hp', effect + Math.min(0, target.stats.val('hp'))); // хилим только на урон до 0 хп
   }
 }
 
