@@ -1,7 +1,8 @@
-import type { Item, ItemComponent, ItemWear } from '@/item';
+import type { Item, ItemComponent } from '@/item';
 import type { CharacterAttributes } from './characterAttributesSchema';
 import type { CharacterClass } from './characterClassSchema';
 import type { Attributes } from '@/shared/attributes';
+import type { Clan } from '@/clan';
 
 export type Character = {
   id: string;
@@ -19,7 +20,7 @@ export type Character = {
   class: CharacterClass;
   dynamicAttributes: Attributes;
   game?: string;
-  clan?: { id: string; name: string };
+  clan?: Clan;
   items: Item[];
   equipment: string[];
   components: Record<ItemComponent, number>;

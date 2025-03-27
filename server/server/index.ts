@@ -8,6 +8,7 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { isString } from 'es-toolkit';
 import { passiveSkill } from './passiveSkill';
+import { clan } from './clan';
 
 const origin = [process.env.APP_URL].filter(isString);
 
@@ -19,6 +20,7 @@ export const app = new Hono()
   .route('/shop', shop)
   .route('/magic', magic)
   .route('/skill', skill)
+  .route('/clan', clan)
   .route('/passiveSkill', passiveSkill);
 
 export default app;

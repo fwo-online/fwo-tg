@@ -14,6 +14,7 @@ import ValidationError from '@/arena/errors/ValidationError';
 import { every } from 'es-toolkit/compat';
 import type { Item } from '@/models/item';
 import { CharacterResources } from './CharacterResources';
+import { ClanService } from '@/arena/ClanService';
 
 /**
  * Конструктор персонажа
@@ -368,7 +369,7 @@ export class CharacterService {
       magics: this.magics,
       skills: this.skills,
       passiveSkills: this.passiveSkills,
-      clan: this.clan,
+      clan: this.clan ? ClanService.toObject(this.clan) : undefined,
       free: this.charObj.free,
       bonus: this.resources.bonus,
       gold: this.resources.gold,

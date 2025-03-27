@@ -11,7 +11,7 @@ import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
 import ValidationError from '@/arena/errors/ValidationError';
 import type { Clan } from '@/models/clan';
-import { reservedClanName } from '@fwo/shared';
+import { reservedClanName, type Clan as ClanSchema } from '@fwo/shared';
 
 /**
  * Clan Service
@@ -244,5 +244,18 @@ export class ClanService {
     });
     const char = await CharacterService.getCharacterById(charId);
     await char?.leaveClan();
+  }
+
+  static toObject(clan: Clan): ClanSchema {
+    return {
+      id: clan._id.toString(),
+      name: clan.name,
+      gold: clan.gold,
+      lvl: clan.lvl,
+      canRequest: clan.hasEmptySlot,
+      requests: clan.requests.map(({ _id }) => _id.toString()),
+      players: clan.players.map(({ _id }) => _id.toString()),
+      owner: clan.owner._id.toString(),
+    };
   }
 }

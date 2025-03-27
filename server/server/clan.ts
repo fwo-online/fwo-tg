@@ -1,12 +1,12 @@
 import { vValidator } from '@hono/valibot-validator';
 import { Hono } from 'hono';
 import { characterMiddleware, userMiddleware } from '@/server/middlewares';
-import * as v from 'valibot';
 import { ClanService } from '@/arena/ClanService';
-import { idSchema } from '@fwo/shared';
+import { createClanSchema, idSchema } from '@fwo/shared';
 import { withValidation } from './utils/withValidation';
+import { handleValidationError } from '@/server/utils/handleValidationError';
 
-export const shop = new Hono()
+export const clan = new Hono()
   .use(userMiddleware, characterMiddleware)
   .get('/', async (c) => {
     const clans = await ClanService.getClanList();
@@ -20,14 +20,7 @@ export const shop = new Hono()
 
     return c.json(clan, 200);
   })
-  .get('/:id', vValidator('param', idSchema), async (c) => {
-    const { id } = c.req.valid('param');
-
-    const clan = await ClanService.getClanById(id);
-
-    return c.json(clan, 200);
-  })
-  .post('/', vValidator('json', v.object({ name: v.string() })), async (c) => {
+  .post('/', vValidator('json', createClanSchema, handleValidationError), async (c) => {
     const character = c.get('character');
     const { name } = c.req.valid('json');
 
