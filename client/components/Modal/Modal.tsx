@@ -5,17 +5,23 @@ import {
   isValidElement,
   type PropsWithChildren,
   type DialogHTMLAttributes,
-  type Ref,
   useRef,
   type ReactElement,
+  useImperativeHandle,
+  type RefObject,
+  type MouseEvent,
 } from 'react';
 import classNames from 'classnames';
 import './Modal.css';
-import { Button } from '@/components/Button';
+
+export type ModalHandle = {
+  open: () => void;
+  close: () => void;
+};
 
 export type ModalOverlayProps = PropsWithChildren<
   DialogHTMLAttributes<HTMLDialogElement> & {
-    ref?: Ref<HTMLDialogElement>;
+    ref?: RefObject<ModalHandle | null>;
   }
 >;
 
@@ -32,81 +38,57 @@ export type ModalInfoProps = ModalOverlayProps & {
   onCancel?: () => void;
 };
 
-export const ModalOverlay: FC<ModalOverlayProps> = ({ children, onClick, ref }) => {
+const useModalHandle = (
+  ref: RefObject<ModalHandle | null> | undefined,
+  dialogRef: RefObject<HTMLDialogElement | null>,
+) => {
+  return useImperativeHandle<ModalHandle | null, ModalHandle>(ref, () => ({
+    open: () => dialogRef.current?.showModal(),
+    close: () => dialogRef.current?.close(),
+  }));
+};
+
+export const ModalOverlay: FC<ModalOverlayProps> = ({ children, onClick, ref, ...restProps }) => {
   const isDark = useSignal(themeParams.isDark);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  useModalHandle(ref, dialogRef);
+
+  const handleClick = (e: MouseEvent<HTMLDialogElement>) => {
+    if (e.target === dialogRef.current) {
+      dialogRef.current.close();
+    } else {
+      onClick?.(e);
+    }
+  };
 
   return (
     <dialog
-      ref={ref}
+      ref={dialogRef}
       className={classNames('nes-dialog is-rounded', {
         'is-dark': isDark,
       })}
-      onClick={onClick}
+      onClick={handleClick}
+      {...restProps}
     >
       {children}
     </dialog>
   );
 };
 
-export const ModalConfirmOverlay: FC<ModalConfirmProps> = ({
-  onCancel,
-  onConfirm,
-  children,
-  ...props
-}) => {
-  return (
-    <ModalOverlay {...props}>
-      <div className="flex flex-col p-4 gap-4">
-        {children}
-        <div className="flex gap-2">
-          <Button className="flex-1" onClick={onCancel}>
-            Отмена
-          </Button>
-          <Button className="flex-1 is-primary" onClick={onConfirm}>
-            Ок
-          </Button>
-        </div>
-      </div>
-    </ModalOverlay>
-  );
-};
-
-export const ModalInfoOverlay: FC<ModalInfoProps> = ({ onCancel, children, ...props }) => {
-  return (
-    <ModalOverlay {...props}>
-      <div className="flex flex-col p-4 gap-4">
-        {children}
-        <div className="flex gap-2">
-          <Button className="flex-1" onClick={onCancel}>
-            Понятно
-          </Button>
-        </div>
-      </div>
-    </ModalOverlay>
-  );
-};
-
 export const ModalComponent: FC<ModalProps> = ({ trigger, children }) => {
-  const ref = useRef<HTMLDialogElement>(null);
-
-  const handleOpen = () => {
-    ref.current?.showModal();
-  };
-
-  const handleClose = () => {
-    ref.current?.close();
-  };
+  const modalRef = useRef<ModalHandle>(null);
 
   const triggerElement = isValidElement(trigger)
     ? cloneElement(trigger, {
-        onClick: handleOpen,
+        onClick: () => modalRef.current?.open(),
       })
     : trigger;
 
   return (
     <>
       {triggerElement}
-      <ModalOverlay ref={ref} onClick={handleClose}>
+      <ModalOverlay ref={modalRef} onClick={() => modalRef.current?.close()}>
         {children}
       </ModalOverlay>
     </>
@@ -116,5 +98,3 @@ export const ModalComponent: FC<ModalProps> = ({ trigger, children }) => {
 export const Modal = ModalComponent as typeof ModalComponent & {
   Overlay: typeof ModalOverlay;
 };
-
-Modal.Overlay = ModalOverlay;

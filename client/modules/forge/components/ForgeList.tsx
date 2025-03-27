@@ -15,7 +15,7 @@ export const ForgeList: FC<{ shopPromise: Promise<Item[]> }> = ({ shopPromise })
   const { character } = useCharacter();
   const { updateCharacter } = useUpdateCharacter();
   const [_, makeRequest] = useRequest();
-  const { showInfoModal } = useModal();
+  const modal = useModal();
 
   const canForge = (item: Item) => {
     if (character.gold < item.price * 0.2) {
@@ -31,7 +31,7 @@ export const ForgeList: FC<{ shopPromise: Promise<Item[]> }> = ({ shopPromise })
   const handleForge = async (item: Item) => {
     makeRequest(async () => {
       await forgeItem(item.code);
-      showInfoModal({ message: `Ты создал ${item.info.name}` });
+      modal.show({ message: `Ты создал ${item.info.name}` });
       await updateCharacter();
     });
   };

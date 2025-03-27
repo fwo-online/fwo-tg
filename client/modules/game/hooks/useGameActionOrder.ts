@@ -10,7 +10,7 @@ export const useGameActionOrder = (onSuccess: () => void) => {
   const setRemainPower = useGameStore((state) => state.setPower);
   const setActions = useGameStore((state) => state.setActions);
   const [isPending, startTransition] = useTransition();
-  const { showInfoModal } = useModal();
+  const modal = useModal();
 
   const handleOrder = async (action: string, target: string, power: number) => {
     if (!action) {
@@ -25,7 +25,7 @@ export const useGameActionOrder = (onSuccess: () => void) => {
       });
 
       if (res.error) {
-        showInfoModal({ message: res.message });
+        modal.show({ message: res.message });
       } else {
         setOrders(res.orders);
         setRemainPower(res.power);
@@ -40,7 +40,7 @@ export const useGameActionOrder = (onSuccess: () => void) => {
       const res = await socket.emitWithAck('game:orderRepeat');
 
       if (res.error) {
-        showInfoModal({ message: res.message });
+        modal.show({ message: res.message });
       } else {
         setOrders(res.orders);
         setRemainPower(res.power);
@@ -55,7 +55,7 @@ export const useGameActionOrder = (onSuccess: () => void) => {
       const res = await socket.emitWithAck('game:orderReset');
 
       if (res.error) {
-        showInfoModal({ message: res.message });
+        modal.info({ message: res.message });
       } else {
         setOrders(res.orders);
         setRemainPower(res.power);

@@ -12,7 +12,7 @@ import { useModal } from '@/contexts/modal';
 export function useGameState() {
   const socket = useWebSocket();
   const { updateCharacter } = useUpdateCharacter();
-  const { showInfoModal } = useModal();
+  const modal = useModal();
 
   const navigate = useNavigate();
   const setOrders = useGameStore((state) => state.setOrders);
@@ -57,8 +57,8 @@ export function useGameState() {
 
   const handleEndGame = useCallback(() => {
     navigate('/');
-    showInfoModal({ message: 'Игра завершена' });
-  }, [navigate, showInfoModal]);
+    modal.info({ message: 'Игра завершена' });
+  }, [navigate, modal]);
 
   const handleStartGame = () => {
     socket.emitWithAck('game:connected').then(async (res) => {
