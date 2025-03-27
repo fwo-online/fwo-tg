@@ -99,6 +99,7 @@ export default {
       'physicalSadness',
     ],
     // 'magic_sadness',
+    'vampirism',
     [
       'lightHeal',
       // 'mass_heal',
@@ -108,7 +109,6 @@ export default {
     'handsHeal',
     // 'postHeal',
     // 'life_force',
-    'vampirism',
     // 'spirit_unity',
     'secondLife',
   ] as const,
