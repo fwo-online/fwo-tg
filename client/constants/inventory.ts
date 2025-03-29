@@ -9,6 +9,7 @@ export const wearList = [
   ItemWear.Boots,
   ItemWear.MainHand,
   ItemWear.OffHand,
+  ItemWear.TwoHands,
 ];
 
 export const wearListTranslations: Partial<Record<ItemWear, string>> = {
@@ -20,4 +21,5 @@ export const wearListTranslations: Partial<Record<ItemWear, string>> = {
   [ItemWear.Boots]: 'Обувь',
   [ItemWear.MainHand]: 'Правая рука',
   [ItemWear.OffHand]: 'Левая рука',
+  [ItemWear.TwoHands]: 'Обе руки',
 };

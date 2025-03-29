@@ -88,6 +88,14 @@ export class CharacterInventory {
       return false;
     }
 
+    if (itemToEquip.wear === ItemWear.TwoHands && this.equipment.has(ItemWear.OffHand)) {
+      return false;
+    }
+
+    if (itemToEquip.wear === ItemWear.OffHand && this.equipment.has(ItemWear.TwoHands)) {
+      return false;
+    }
+
     return true;
   }
 
