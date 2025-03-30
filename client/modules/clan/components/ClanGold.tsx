@@ -27,7 +27,7 @@ export const ClanGold: FC<{
       {adding ? (
         <>
           <input
-            className="nes-input w-24 h-11"
+            className="nes-input w-26 h-11"
             type="number"
             inputMode="numeric"
             min={0}

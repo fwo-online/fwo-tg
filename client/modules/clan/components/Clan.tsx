@@ -16,8 +16,9 @@ export const ClanComponent: FC<{
 }> = ({ clan, isOwner, isLoading, onAddGold, onAcceptRequest, onRejectRequest, onUpgradeLvl }) => {
   return (
     <div className="flex flex-col gap-4">
-      <div>
+      <div className="flex justify-between items-center">
         <h5>Уровень {clan.lvl}</h5>
+        {isOwner && <Button onClick={onUpgradeLvl}>Повысить уровень</Button>}
       </div>
       <div>
         <h5 className="-mb-3">Казна</h5>
@@ -28,13 +29,10 @@ export const ClanComponent: FC<{
       </div>
 
       <div>
-        <div className="flex justify-between items-center">
-          <h5>
-            Игроки {clan.players.length}/{clan.maxPlayers}
-          </h5>
+        <h5>
+          Игроки {clan.players.length}/{clan.maxPlayers}
+        </h5>
 
-          {isOwner && <Button onClick={onUpgradeLvl}>Повысить уровень</Button>}
-        </div>
         <ErrorBoundary fallback={'Что-то пошло не так'}>
           <Suspense fallback={'Ищем игроков...'}>
             <ClanPlayers players={clan.players} />

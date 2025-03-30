@@ -1,6 +1,6 @@
 import { getCharacterList } from '@/api/character';
 import { Description } from '@/components/Description';
-import { characterClassNameMap } from '@/constants/character';
+import { CharacterImage } from '@/modules/character/components/CharacterImage';
 import type { CharacterPublic } from '@fwo/shared';
 import type { FC, ReactNode } from 'react';
 import { suspend } from 'suspend-react';
@@ -15,7 +15,10 @@ export const ClanPlayers: FC<{
     <Description>
       {characters.map((character) => (
         <Description.Item key={character.id} after={after?.(character)}>
-          {character.name} ({characterClassNameMap[character.class]} {character.lvl})
+          <div className="flex gap-2">
+            <CharacterImage characterClass={character.class} small /> {character.name} (
+            {character.lvl})
+          </div>
         </Description.Item>
       ))}
     </Description>

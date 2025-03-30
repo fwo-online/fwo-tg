@@ -357,7 +357,10 @@ export class CharacterService {
   async remove() {
     if (this.clan?.owner._id.equals(this.id)) {
       await ClanService.removeClan(this.clan.id, this.id);
+    } else if (this.clan) {
+      await ClanService.leaveClan(this.clan.id, this.id);
     }
+
     await removeCharacter(this.id);
     delete arena.characters[this.id];
   }

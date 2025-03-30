@@ -5,7 +5,7 @@ import { ClanList } from '@/modules/clan/components/ClanList';
 import { useClans } from '@/modules/clan/hooks/useClans';
 import type { Clan } from '@fwo/shared';
 import { Suspense, type FC } from 'react';
-import { useNavigate } from 'react-router';
+import { Navigate, useNavigate } from 'react-router';
 
 const ClanListLoader = () => {
   const { clans, isLoading, createRequest, cancelRequest } = useClans();
@@ -32,6 +32,11 @@ const ClanListLoader = () => {
 
 export const ClanListPage: FC = () => {
   const navigate = useNavigate();
+  const { character } = useCharacter();
+
+  if (character.clan) {
+    return <Navigate to="/clan" />;
+  }
 
   return (
     <Card header="Кланы" className="m-4">
