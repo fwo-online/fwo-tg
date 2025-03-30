@@ -69,6 +69,9 @@ export const initGameChannel = () => {
         await broadcast(`Погибшие в этом раунде: ${e.dead.map(({ nick }) => nick).join(', ')}`);
       }
     });
+    game.on('kick', ({ player }) => {
+      broadcast(`Игрок ${bold(player.nick)} был выброшен из игры`);
+    });
 
     game.on('end', (e) => {
       const getStatusString = (p: {
