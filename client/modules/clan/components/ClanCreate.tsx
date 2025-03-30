@@ -9,11 +9,15 @@ export const ClanCreate: FC<{ onCreate: (name: string) => void }> = ({ onCreate 
       <input
         className="nes-input"
         value={name}
-        placeholder="Введите имя персонажа"
+        placeholder="Введите название клана"
         onChange={(e) => setName(e.target.value)}
       />
 
-      <Button onClick={() => onCreate(name)}>Создать клан</Button>
+      <div className="mt-4 flex flex-col">
+        <Button className="is-primary" onClick={() => onCreate(name)}>
+          Создать клан за 100💰
+        </Button>
+      </div>
     </>
   );
 };

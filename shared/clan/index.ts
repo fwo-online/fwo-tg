@@ -11,7 +11,7 @@ export type Clan = {
   owner: string;
   players: string[];
   requests: string[];
-  canRequest: boolean;
+  hasEmptySlot: boolean;
 };
 
 export const createClanSchema = v.object({

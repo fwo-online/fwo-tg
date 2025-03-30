@@ -7,6 +7,8 @@ import { characterAttributesSchema, createCharacterSchema } from '@fwo/shared';
 import { characterMiddleware, userMiddleware } from './middlewares';
 import { withValidation } from '@/server/utils/withValidation';
 import { handleValidationError } from '@/server/utils/handleValidationError';
+import * as v from 'valibot';
+import { normalizeToArray } from '@/utils/array';
 
 export const character = new Hono()
   .use(userMiddleware)
@@ -53,4 +55,22 @@ export const character = new Hono()
     const dynamicAttributes = character.getDynamicAttributes(attributes);
 
     return c.json(dynamicAttributes, 200);
-  });
+  })
+  .get(
+    '/list',
+    vValidator('query', v.object({ ids: v.union([v.array(v.string()), v.string()]) })),
+    async (c) => {
+      const { ids } = c.req.valid('query');
+
+      const characters = await withValidation(
+        Promise.all(
+          normalizeToArray(ids).map(async (id) => {
+            const character = await CharacterService.getCharacterById(id);
+            return character.toPublicObject();
+          }),
+        ),
+      );
+
+      return c.json(characters, 200);
+    },
+  );

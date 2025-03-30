@@ -10,6 +10,9 @@ export const getCharacter = async () => {
   }
 };
 
+export const getCharacterList = async (ids: string[]) =>
+  createRequest(client.character.list.$get)({ query: { ids } });
+
 export const createCharacter = async (json: CreateCharacterDto) => {
   return createRequest(client.character.$post)({ json });
 };

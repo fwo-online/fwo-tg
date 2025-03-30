@@ -109,9 +109,9 @@ describe('ClanService', () => {
   it('should add user to requesters', async () => {
     const requester = await TestUtils.createCharacter();
 
-    const message = await ClanService.handleRequest(clan.id, requester.id);
+    const updatedClan = await ClanService.createRequest(clan.id, requester.id);
 
-    expect(message).toBe('Заявка на вступление отправлена');
+    expect(updatedClan.requests).toContain(requester.id);
 
     const requestedClan = await TestUtils.getClan(clan.id);
     expect(requestedClan?.requests).toHaveLength(1);
@@ -125,9 +125,9 @@ describe('ClanService', () => {
 
     expect(clan.requests).toHaveLength(1);
 
-    const message = await ClanService.handleRequest(clan.id, requester.id);
+    const updatedClan = await ClanService.removeRequest(clan.id, requester.id);
 
-    expect(message).toBe('Заявка на вступление отменена');
+    expect(updatedClan.requests).not.toContain(requester.id);
 
     const requestedClan = await TestUtils.getClan(clan.id);
     expect(requestedClan?.requests).toHaveLength(0);
@@ -144,7 +144,7 @@ describe('ClanService', () => {
 
     expect(clan.requests).toHaveLength(0);
 
-    await expect(ClanService.handleRequest(clan.id, requester.id)).rejects.toMatchObject(new Error('Определись и возвращайся через 1 мин.'));
+    await expect(ClanService.createRequest(clan.id, requester.id)).rejects.toMatchObject(new Error('Определись и возвращайся через 1 мин.'));
 
     const requestedClan = await TestUtils.getClan(clan.id);
     expect(requestedClan?.requests).toHaveLength(0);
@@ -173,7 +173,7 @@ describe('ClanService', () => {
       TestUtils.createCharacter(),
       TestUtils.createCharacter(),
     ]);
-    const clan = await TestUtils.createClan(owner.id, { requests: [player.id] });
+    const clan = await TestUtils.createClan(owner.id, { requests: [player.id], gold: 1000 });
 
     await ClanService.acceptRequest(clan.id, player.id);
 

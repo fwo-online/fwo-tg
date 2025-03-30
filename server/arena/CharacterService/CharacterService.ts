@@ -355,6 +355,9 @@ export class CharacterService {
   }
 
   async remove() {
+    if (this.clan?.owner._id.equals(this.id)) {
+      await ClanService.removeClan(this.clan.id, this.id);
+    }
     await removeCharacter(this.id);
     delete arena.characters[this.id];
   }
@@ -369,7 +372,7 @@ export class CharacterService {
       magics: this.magics,
       skills: this.skills,
       passiveSkills: this.passiveSkills,
-      clan: this.clan ? ClanService.toObject(this.clan) : undefined,
+      clan: this.clan?._id.toString(),
       free: this.charObj.free,
       bonus: this.resources.bonus,
       gold: this.resources.gold,
@@ -391,7 +394,7 @@ export class CharacterService {
       name: this.nickname,
       class: this.prof as CharacterClass,
       lvl: this.lvl,
-      clan: this.clan,
+      clan: this.clan?._id.toString(),
     };
   }
 }
