@@ -1,7 +1,7 @@
 import { acceptClanRequest, rejectClanRequest } from '@/api/clan';
 import { useCharacter } from '@/contexts/character';
 import { useRequest } from '@/hooks/useRequest';
-import type { CharacterPublic } from '@fwo/shared';
+import { clanAcceptCostPerLvl, type CharacterPublic } from '@fwo/shared';
 import { popup } from '@telegram-apps/sdk-react';
 import { clear } from 'suspend-react';
 
@@ -11,7 +11,7 @@ export const useClanRequest = () => {
 
   const acceptRequest = async (requester: CharacterPublic) => {
     const id = await popup.open({
-      message: `Стоимость принятия заявки ${requester.lvl * 50}💰`,
+      message: `Стоимость принятия заявки ${requester.lvl * clanAcceptCostPerLvl}💰`,
       buttons: [
         {
           id: 'close',
@@ -30,7 +30,7 @@ export const useClanRequest = () => {
         popup.open({
           message: 'Заявка принята',
         });
-        clear([character.clan]);
+        clear([character.clan?.id]);
       });
     }
   };
@@ -38,7 +38,7 @@ export const useClanRequest = () => {
   const rejectRequest = (requester: CharacterPublic) => {
     makeRequest(async () => {
       await rejectClanRequest(requester.id);
-      clear([character.clan]);
+      clear([character.clan?.id]);
     });
   };
 

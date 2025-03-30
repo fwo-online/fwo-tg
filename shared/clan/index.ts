@@ -12,8 +12,14 @@ export type Clan = {
   players: string[];
   requests: string[];
   hasEmptySlot: boolean;
+  maxPlayers: number;
 };
+
+export type ClanPublic = Pick<Clan, 'id' | 'name'>;
 
 export const createClanSchema = v.object({
   name: nameSchema,
 });
+
+export const clanLvlCost = [100, 250, 750, 1500];
+export const clanAcceptCostPerLvl = 50;

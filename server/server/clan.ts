@@ -21,7 +21,7 @@ export const clan = new Hono()
 
     const clan = await withValidation(ClanService.createClan(character.id, name));
 
-    return c.json(ClanService.toObject(clan), 200);
+    return c.json(clan, 200);
   })
   .post('/:id/create-request', vValidator('param', idSchema), async (c) => {
     const character = c.get('character');
@@ -69,6 +69,13 @@ export const clan = new Hono()
     const { id } = c.req.valid('param');
 
     await withValidation(ClanService.rejectRequest(character.clan.id, id));
+
+    return c.json({}, 200);
+  })
+  .post('/upgrade-lvl', async (c) => {
+    const character = c.get('character');
+
+    await withValidation(ClanService.levelUp(character.clan.id));
 
     return c.json({}, 200);
   });

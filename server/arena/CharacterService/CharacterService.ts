@@ -372,7 +372,7 @@ export class CharacterService {
       magics: this.magics,
       skills: this.skills,
       passiveSkills: this.passiveSkills,
-      clan: this.clan?._id.toString(),
+      clan: this.clan ? ClanService.toPublicObject(this.clan) : undefined,
       free: this.charObj.free,
       bonus: this.resources.bonus,
       gold: this.resources.gold,
@@ -394,7 +394,7 @@ export class CharacterService {
       name: this.nickname,
       class: this.prof as CharacterClass,
       lvl: this.lvl,
-      clan: this.clan?._id.toString(),
+      clan: this.clan ? ClanService.toPublicObject(this.clan) : undefined,
     };
   }
 }

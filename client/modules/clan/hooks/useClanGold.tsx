@@ -13,7 +13,7 @@ export const useClanGold = () => {
     makeRequest(async () => {
       await addGold(gold);
       await updateCharacter();
-      clear([character.clan]);
+      clear([character.clan?.id]);
     });
   };
 

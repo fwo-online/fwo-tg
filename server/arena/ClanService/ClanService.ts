@@ -11,7 +11,13 @@ import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
 import ValidationError from '@/arena/errors/ValidationError';
 import type { Clan } from '@/models/clan';
-import { reservedClanName, type Clan as ClanSchema } from '@fwo/shared';
+import {
+  type ClanPublic,
+  reservedClanName,
+  type Clan as ClanSchema,
+  clanLvlCost,
+  clanAcceptCostPerLvl,
+} from '@fwo/shared';
 
 /**
  * Clan Service
@@ -20,9 +26,6 @@ import { reservedClanName, type Clan as ClanSchema } from '@fwo/shared';
  * @module Service/Clan
  */
 export class ClanService {
-  static readonly lvlCost = [100, 250, 750, 1500];
-  static readonly acceptCostPerLvl = 50;
-
   static async getClanById(id: string) {
     const cachedClan = arena.clans.get(id);
     if (cachedClan) {
@@ -58,13 +61,13 @@ export class ClanService {
     if (name === reservedClanName) {
       throw new ValidationError('Недопустимое название клана');
     }
-    await char.resources.takeResources({ gold: this.lvlCost[0] });
+    await char.resources.takeResources({ gold: clanLvlCost[0] });
 
     const clan = await createClan(charId, name);
     await char.joinClan(clan);
 
     arena.clans.set(clan.id, clan);
-    return clan;
+    return ClanService.toObject(clan);
   }
 
   private static async updateClan(id: string, query: UpdateQuery<Clan>) {
@@ -102,10 +105,10 @@ export class ClanService {
    */
   static async levelUp(clanId: string) {
     const clan = await this.getClanById(clanId);
-    if (clan.lvl >= this.lvlCost.length) {
+    if (clan.lvl >= clanLvlCost.length) {
       throw new ValidationError('Клан имеет максимальный уровень');
     }
-    const cost = this.lvlCost[clan.lvl];
+    const cost = clanLvlCost[clan.lvl];
     if (clan.gold < cost) {
       throw new ValidationError('В казне недостаточно золота');
     }
@@ -200,7 +203,7 @@ export class ClanService {
     }
 
     const char = await CharacterService.getCharacterById(requesterID);
-    const cost = char.lvl * this.acceptCostPerLvl;
+    const cost = char.lvl * clanAcceptCostPerLvl;
 
     if (clan.gold < cost) {
       throw new ValidationError('В казне недостаточно золота');
@@ -247,7 +250,7 @@ export class ClanService {
 
   static toObject(clan: Clan): ClanSchema {
     return {
-      id: clan._id.toString(),
+      id: clan._id?.toString(),
       name: clan.name,
       gold: clan.gold,
       lvl: clan.lvl,
@@ -255,6 +258,14 @@ export class ClanService {
       requests: clan.requests.map(({ _id }) => _id.toString()),
       players: clan.players.map(({ _id }) => _id.toString()),
       owner: clan.owner._id.toString(),
+      maxPlayers: clan.maxPlayers,
+    };
+  }
+
+  static toPublicObject(clan: Clan): ClanPublic {
+    return {
+      id: clan._id.toString(),
+      name: clan.name,
     };
   }
 }

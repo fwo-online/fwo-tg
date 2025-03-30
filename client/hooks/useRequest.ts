@@ -4,7 +4,7 @@ import { useState } from 'react';
 export const useRequest = () => {
   const [isLoading, setLoading] = useState(false);
 
-  const makeRequest = async (fn: () => unknown) => {
+  const makeRequest = async <T>(fn: () => T) => {
     setLoading(true);
 
     try {

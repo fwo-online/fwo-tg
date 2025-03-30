@@ -2,24 +2,23 @@ import type { UpdateQuery } from 'mongoose';
 import type { Char } from '@/models/character';
 import type { Clan } from '@/models/clan';
 import { ClanModel } from '@/models/clan';
+import ValidationError from '@/arena/errors/ValidationError';
 
 export async function getClans(): Promise<Clan[]> {
-  const clans = await ClanModel
-    .find()
-    .populate<{players: Char[]}>('players')
-    .populate<{requests: Char[]}>('requests')
-    .populate<{owner: Char}>('owner');
+  const clans = await ClanModel.find()
+    .populate<{ players: Char[] }>('players')
+    .populate<{ requests: Char[] }>('requests')
+    .populate<{ owner: Char }>('owner');
 
   return clans.map((clan) => clan.toObject());
 }
 
 export async function updateClan(id: string, query: UpdateQuery<Clan>): Promise<Clan> {
-  const clan = await ClanModel
-    .findByIdAndUpdate(id, query, { new: true })
+  const clan = await ClanModel.findByIdAndUpdate(id, query, { new: true })
     .orFail(new Error('Клан не найден'))
-    .populate<{players: Char[]}>('players')
-    .populate<{requests: Char[]}>('requests')
-    .populate<{owner: Char}>('owner');
+    .populate<{ players: Char[] }>('players')
+    .populate<{ requests: Char[] }>('requests')
+    .populate<{ owner: Char }>('owner');
 
   return clan.toObject();
 }
@@ -30,12 +29,11 @@ export async function getClanByPlayerRequest(id: string): Promise<Clan | undefin
 }
 
 export async function getClanById(id: string): Promise<Clan> {
-  const clan = await ClanModel
-    .findById(id)
-    .orFail(new Error('Клан не найден'))
-    .populate<{players: Char[]}>('players')
-    .populate<{requests: Char[]}>('requests')
-    .populate<{owner: Char}>('owner');
+  const clan = await ClanModel.findById(id)
+    .orFail(new ValidationError('Клан не найден'))
+    .populate<{ players: Char[] }>('players')
+    .populate<{ requests: Char[] }>('requests')
+    .populate<{ owner: Char }>('owner');
 
   return clan.toObject();
 }
@@ -57,5 +55,5 @@ export async function createClan(owner: string, name: string): Promise<Clan> {
   });
   await createdClan.save();
 
-  return getClanById(createdClan.id);
+  return getClanById(createdClan._id.toString());
 }

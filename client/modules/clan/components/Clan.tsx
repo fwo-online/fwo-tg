@@ -12,9 +12,13 @@ export const ClanComponent: FC<{
   onAddGold: (gold: number) => void;
   onAcceptRequest: (character: CharacterPublic) => void;
   onRejectRequest: (character: CharacterPublic) => void;
-}> = ({ clan, isOwner, isLoading, onAddGold, onAcceptRequest, onRejectRequest }) => {
+  onUpgradeLvl: () => void;
+}> = ({ clan, isOwner, isLoading, onAddGold, onAcceptRequest, onRejectRequest, onUpgradeLvl }) => {
   return (
     <div className="flex flex-col gap-4">
+      <div>
+        <h5>Уровень {clan.lvl}</h5>
+      </div>
       <div>
         <h5 className="-mb-3">Казна</h5>
         <div className="flex justify-between items-center">
@@ -24,7 +28,13 @@ export const ClanComponent: FC<{
       </div>
 
       <div>
-        <h5>Игроки</h5>
+        <div className="flex justify-between items-center">
+          <h5>
+            Игроки {clan.players.length}/{clan.maxPlayers}
+          </h5>
+
+          {isOwner && <Button onClick={onUpgradeLvl}>Повысить уровень</Button>}
+        </div>
         <ErrorBoundary fallback={'Что-то пошло не так'}>
           <Suspense fallback={'Ищем игроков...'}>
             <ClanPlayers players={clan.players} />

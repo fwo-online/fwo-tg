@@ -4,6 +4,7 @@ import { Placeholder } from '@/components/Placeholder';
 import { useCharacter } from '@/contexts/character';
 import { ClanComponent } from '@/modules/clan/components/Clan';
 import { useClanGold } from '@/modules/clan/hooks/useClanGold';
+import { useClanLvl } from '@/modules/clan/hooks/useClanLvl';
 import { useClanRequest } from '@/modules/clan/hooks/useClanRequest';
 import type { FC } from 'react';
 import { suspend } from 'suspend-react';
@@ -12,6 +13,7 @@ export const ClanPage: FC = () => {
   const { character } = useCharacter();
   const { isLoading, handleAddGold } = useClanGold();
   const { acceptRequest, rejectRequest } = useClanRequest();
+  const { upgradeLvl } = useClanLvl();
 
   if (!character.clan) {
     return (
@@ -21,7 +23,7 @@ export const ClanPage: FC = () => {
     );
   }
 
-  const clan = suspend((id) => getClanByID(id), [character.clan]);
+  const clan = suspend((id) => getClanByID(id), [character.clan.id]);
   const isOwner = clan.owner === character.id;
 
   return (
@@ -33,6 +35,7 @@ export const ClanPage: FC = () => {
         onAddGold={handleAddGold}
         onAcceptRequest={acceptRequest}
         onRejectRequest={rejectRequest}
+        onUpgradeLvl={() => upgradeLvl(clan)}
       />
     </Card>
   );
