@@ -30,7 +30,7 @@ const WEAPON_TYPES = {
   },
   range: {
     name: 'метательное',
-    action: (target, weapon) => `швырнул в ${bold(target.nick)} ${italic(weapon.info.case)}`,
+    action: (target, weapon) => `атаковал ${bold(target.nick)} ${italic(weapon.info.case)}`,
   },
   m: {
     name: 'дальнобойное',
