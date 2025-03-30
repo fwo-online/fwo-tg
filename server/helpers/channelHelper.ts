@@ -79,8 +79,9 @@ export const initGameChannel = () => {
         gold: number;
         nick: string;
         component?: ItemComponent;
+        winner?: boolean;
       }) =>
-        `\t👤 ${p.nick} получает ${p.exp}📖, ${p.gold}💰${p.component ? `, 1 ${itemComponentName[p.component]}` : ''}`;
+        `\t${p.winner ? '🏆' : '👤'} ${p.nick} получает ${p.exp}📖, ${p.gold}💰${p.component ? `, 1 ${itemComponentName[p.component]}` : ''}`;
 
       broadcast('Игра завершена');
       broadcast(`${bold`Статистика игры`}

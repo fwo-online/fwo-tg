@@ -3,6 +3,7 @@ import { differenceBy, mapValues } from 'es-toolkit';
 import { reservedClanName } from '@fwo/shared';
 import { getRandomComponent } from '@/utils/getRandomComponent';
 import { CharacterService } from '@/arena/CharacterService';
+import type { Player } from '@/arena/PlayersService';
 
 export class StatisticsService {
   players: PlayersService;
@@ -19,7 +20,7 @@ export class StatisticsService {
     const aliveByClan = this.players.groupByClan(this.players.alivePlayers);
     const winnersByClan = mapValues(aliveByClan, (players, clan) => {
       if (clan !== reservedClanName) {
-        return this.players.getPlayersByClan(clan);
+        return this.players.getPlayersByClan(players?.[0].clan?.id); // все союзники считаются победителями
       }
       return players ?? [];
     });
@@ -27,12 +28,11 @@ export class StatisticsService {
     return Object.values(winnersByClan).flat();
   }
 
-  private getLosers() {
-    return differenceBy(this.players.players, this.getWinners(), ({ id }) => id);
+  private getLosers(winners: Player[]) {
+    return differenceBy(this.players.players, winners, ({ id }) => id);
   }
 
-  private giveWinnerRewards() {
-    const winners = this.getWinners();
+  private giveWinnerRewards(winners: Player[]) {
     const goldForGame = this.getGoldForGame();
 
     winners.forEach((winner) => {
@@ -41,9 +41,7 @@ export class StatisticsService {
     });
   }
 
-  private giveLoserRewards() {
-    const losers = this.getLosers();
-
+  private giveLoserRewards(losers: Player[]) {
     losers.forEach((loser) => {
       loser.stats.addComponent(getRandomComponent(20));
     });
@@ -59,11 +57,14 @@ export class StatisticsService {
   }
 
   giveRewards() {
+    const winners = this.getWinners();
+    const losers = this.getLosers(winners);
     this.giveGoldForKill();
-    this.giveWinnerRewards();
-    this.giveLoserRewards();
+    this.giveWinnerRewards(winners);
+    this.giveLoserRewards(losers);
 
     const playersByClan = this.players.groupByClan();
+    const winnerIDs = new Set(winners.map(({ id }) => id));
 
     return mapValues(playersByClan, (players) =>
       players?.map((player) => ({
@@ -71,6 +72,7 @@ export class StatisticsService {
         exp: player.stats.collect.exp,
         gold: player.stats.collect.gold,
         component: player.stats.collect.component,
+        winner: winnerIDs.has(player.id),
       })),
     );
   }
