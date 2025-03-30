@@ -39,7 +39,7 @@ export const initGameChannel = () => {
     const character = arena.characters[id];
     if (character) {
       broadcast(
-        `Игрок ${bold(character.nickname)} (${profsData[character.prof].icon}${character.lvl}) начал поиск игры!`,
+        `Игрок ${character.clan ? `\\[${character.clan.name}\] ` : ''}${bold(character.nickname)} (${profsData[character.prof].icon}${character.lvl}) начал поиск игры!`,
       );
     }
   });
@@ -48,7 +48,7 @@ export const initGameChannel = () => {
     const character = arena.characters[id];
     if (character) {
       broadcast(
-        `Игрок ${bold(character.nickname)} (${profsData[character.prof].icon}${character.lvl}) передумал...`,
+        `Игрок  ${character.clan ? `\\[${character.clan.name}\] ` : ''}${bold(character.nickname)} (${profsData[character.prof].icon}${character.lvl}) передумал...`,
       );
     }
   });
@@ -81,7 +81,12 @@ export const initGameChannel = () => {
 
       broadcast('Игра завершена');
       broadcast(`${bold`Статистика игры`}
-  ${Object.entries(e.statistic).map(([clan, players]) => `${clan === reservedClanName ? 'Без клана' : clan}:\n${players?.map(getStatusString).join('\n')}`)}`);
+  ${Object.entries(e.statistic)
+    .map(
+      ([clan, players]) =>
+        `${bold(clan === reservedClanName ? 'Без клана' : clan)}:\n${players?.map(getStatusString).join('\n')}`,
+    )
+    .join('\n\n')}`);
     });
   });
 };
