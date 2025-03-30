@@ -1,6 +1,6 @@
 import { ActionService } from '@/arena/ActionService';
 import OrderError from '@/arena/errors/OrderError';
-import GameService from '@/arena/GameService';
+import type GameService from '@/arena/GameService';
 import MatchMakingService from '@/arena/MatchMakingService';
 import ActionsHelper from '@/helpers/actionsHelper';
 

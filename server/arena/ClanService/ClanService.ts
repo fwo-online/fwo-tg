@@ -266,6 +266,8 @@ export class ClanService {
     return {
       id: clan._id.toString(),
       name: clan.name,
+      owner: clan.owner._id.toString(),
+      players: clan.players.map(({ _id }) => _id.toString()),
     };
   }
 }

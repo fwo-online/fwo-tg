@@ -22,9 +22,9 @@ describe('ClanService', () => {
     const clan = await ClanService.createClan(char.id, 'some name');
 
     expect(clan.name).toBe('some name');
-    expect(clan.owner.id).toEqual(char.id);
+    expect(clan.owner).toEqual(char.id);
     expect(clan.players).toHaveLength(1);
-    expect(clan.players[0].id).toEqual(char.id);
+    expect(clan.players[0]).toEqual(char.id);
 
     const clans = await TestUtils.getClans();
     expect(clans).toHaveLength(2);
