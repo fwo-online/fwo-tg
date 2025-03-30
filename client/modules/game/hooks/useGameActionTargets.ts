@@ -12,7 +12,10 @@ export const useGameActionTargets = ({
 }) => {
   const { character } = useCharacter();
   const players = useGameStore((state) => state.players);
-  const playersByClan = groupBy(Object.values(players), ({ clan }) => clan?.id || reservedClanName);
+  const playersByClan = groupBy(
+    Object.values(players),
+    ({ clan }) => clan?.name || reservedClanName,
+  );
 
   const clanID = character.clan?.id ?? reservedClanName;
 
