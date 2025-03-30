@@ -15,6 +15,7 @@ export const GameAction: FC<{
   onOrder: (action: string, target: string, power: number) => void;
 }> = ({ action, onOrder, isPending }) => {
   const remainPower = useGameStore((state) => state.power);
+  const clans = useGameStore((state) => state.clans);
   const [power, setPower] = useState(0);
   const { hasTargets, availableTargets } = useGameActionTargets({ action });
   const [target, setTarget] = useState<string | null>(null);
@@ -52,7 +53,9 @@ export const GameAction: FC<{
       ) : (
         Object.entries(availableTargets).map(([clan, statuses]) => (
           <div key={clan} className="flex flex-col">
-            <h6 className="font-semibold">{clan === reservedClanName ? 'Без клана' : clan}</h6>
+            <h6 className="font-semibold">
+              {clan === reservedClanName ? 'Без клана' : clans[clan].name}
+            </h6>
             {statuses.map((status) => (
               <GameActionTarget key={status.id} status={status} onChange={handleTargetChange} />
             ))}

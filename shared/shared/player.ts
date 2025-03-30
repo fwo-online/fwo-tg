@@ -1,4 +1,5 @@
 import type { CharacterClass } from '@/character/characterClassSchema';
+import type { ClanPublic } from '@/clan';
 import type { ItemInfo } from '@/item/itemInfoSchema';
 
 export type Player = {
@@ -6,7 +7,7 @@ export type Player = {
   name: string;
   class: CharacterClass;
   lvl: number;
-  clan?: string;
+  clan?: ClanPublic;
   alive: boolean;
   weapon?: ItemInfo;
 };

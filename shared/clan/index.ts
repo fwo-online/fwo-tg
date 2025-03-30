@@ -15,7 +15,7 @@ export type Clan = {
   maxPlayers: number;
 };
 
-export type ClanPublic = Pick<Clan, 'id' | 'name'>;
+export type ClanPublic = Pick<Clan, 'id' | 'name' | 'players' | 'owner'>;
 
 export const createClanSchema = v.object({
   name: nameSchema,

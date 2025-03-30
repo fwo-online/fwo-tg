@@ -5,6 +5,7 @@ import type { GameStatus } from '@/game';
 import type { Action } from './action';
 import type { RPC } from './rpc';
 import type { Order } from './orderSchema';
+import type { ClanPublic } from '@/clan';
 
 export type OrderResponse = RPC<{
   actions: Action[];
@@ -24,6 +25,7 @@ export type ClientToServerMessage = Message<{
     callback: (
       payload: RPC<{
         players: Record<string, Player>;
+        clans: Record<string, ClanPublic>;
       }>,
     ) => void,
   ];
