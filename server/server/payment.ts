@@ -1,4 +1,4 @@
-import { createInvoice } from '@/api/payment';
+import { createInvoice } from '@/api/invoice';
 import { characterMiddleware, userMiddleware } from '@/server/middlewares';
 import { Hono } from 'hono';
 import * as v from 'valibot';
