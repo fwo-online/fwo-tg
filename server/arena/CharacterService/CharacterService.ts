@@ -14,6 +14,7 @@ import ValidationError from '@/arena/errors/ValidationError';
 import { every } from 'es-toolkit/compat';
 import type { Item } from '@/models/item';
 import { CharacterResources } from './CharacterResources';
+import { ClanService } from '@/arena/ClanService';
 
 /**
  * Конструктор персонажа
@@ -354,6 +355,12 @@ export class CharacterService {
   }
 
   async remove() {
+    if (this.clan?.owner._id.equals(this.id)) {
+      await ClanService.removeClan(this.clan.id, this.id);
+    } else if (this.clan) {
+      await ClanService.leaveClan(this.clan.id, this.id);
+    }
+
     await removeCharacter(this.id);
     delete arena.characters[this.id];
   }
@@ -368,7 +375,7 @@ export class CharacterService {
       magics: this.magics,
       skills: this.skills,
       passiveSkills: this.passiveSkills,
-      clan: this.clan,
+      clan: this.clan ? ClanService.toPublicObject(this.clan) : undefined,
       free: this.charObj.free,
       bonus: this.resources.bonus,
       gold: this.resources.gold,
@@ -390,7 +397,7 @@ export class CharacterService {
       name: this.nickname,
       class: this.prof as CharacterClass,
       lvl: this.lvl,
-      clan: this.clan,
+      clan: this.clan ? ClanService.toPublicObject(this.clan) : undefined,
     };
   }
 }

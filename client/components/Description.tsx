@@ -10,7 +10,7 @@ const DescriptionRoot: FC<{ header?: ReactNode; children: ReactNode }> = ({ chil
   );
 };
 
-const DescriptionItem: FC<PropsWithChildren<{ after: ReactNode; disabled?: boolean }>> = ({
+const DescriptionItem: FC<PropsWithChildren<{ after?: ReactNode; disabled?: boolean }>> = ({
   after,
   disabled,
   children,
@@ -22,7 +22,7 @@ const DescriptionItem: FC<PropsWithChildren<{ after: ReactNode; disabled?: boole
       })}
     >
       <span>{children}</span>
-      <div>{after}</div>
+      {after && <div>{after}</div>}
     </div>
   );
 };

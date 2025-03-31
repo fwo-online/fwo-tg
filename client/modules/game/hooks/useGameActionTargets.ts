@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { reservedClanName, type Action, type PublicGameStatus } from '@fwo/shared';
 import { useCharacter } from '@/contexts/character';
 import { omit, pick } from 'es-toolkit';
-import { isEmpty } from 'es-toolkit/compat';
+import { groupBy, isEmpty } from 'es-toolkit/compat';
 
 export const useGameActionTargets = ({
   action,
@@ -11,40 +11,44 @@ export const useGameActionTargets = ({
   action: Action;
 }) => {
   const { character } = useCharacter();
-  const statusByClan = useGameStore((state) => state.statusByClan);
+  const players = useGameStore((state) => state.players);
+  const playersByClan = groupBy(
+    Object.values(players),
+    ({ clan }) => clan?.name || reservedClanName,
+  );
 
-  const clanID = character.clan?.id ?? reservedClanName;
+  const clanID = character.clan?.name ?? reservedClanName;
 
   const availableTargets: Record<string, PublicGameStatus[]> = useMemo(() => {
     switch (action.orderType) {
       case 'all':
       case 'any':
-        return statusByClan;
+        return playersByClan;
       case 'enemy':
         return clanID === reservedClanName
           ? {
-              ...statusByClan,
-              [clanID]: statusByClan[clanID]?.filter(({ id }) => id !== character.id),
+              ...playersByClan,
+              [clanID]: playersByClan[clanID]?.filter(({ id }) => id !== character.id),
             }
-          : omit(statusByClan, [clanID]);
+          : omit(playersByClan, [clanID]);
       case 'self':
         return {
-          [clanID]: statusByClan[clanID]?.filter(({ id }) => id === character.id),
+          [clanID]: playersByClan[clanID]?.filter(({ id }) => id === character.id),
         };
       case 'teamExceptSelf':
         return {
-          [clanID]: statusByClan[clanID]?.filter(({ id }) => id !== character.id),
+          [clanID]: playersByClan[clanID]?.filter(({ id }) => id !== character.id),
         };
       case 'team':
         return clanID === reservedClanName
           ? {
-              [clanID]: statusByClan[clanID]?.filter(({ id }) => id === character.id),
+              [clanID]: playersByClan[clanID]?.filter(({ id }) => id === character.id),
             }
-          : pick(statusByClan, [clanID]);
+          : pick(playersByClan, [clanID]);
       default:
-        return statusByClan;
+        return playersByClan;
     }
-  }, [action.orderType, statusByClan, character.id, clanID]);
+  }, [action.orderType, playersByClan, character.id, clanID]);
 
   const hasTargets = Object.values(availableTargets).every(isEmpty);
 

@@ -6,9 +6,11 @@ import { useGameKickState } from './useGameKickState';
 import { useMountEffect } from '@/hooks/useMountEffect';
 import { useNavigate } from 'react-router';
 import { popup } from '@telegram-apps/sdk-react';
+import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 
 export function useGameState() {
   const socket = useWebSocket();
+  const { updateCharacter } = useUpdateCharacter();
 
   const navigate = useNavigate();
   const setOrders = useGameStore((state) => state.setOrders);
@@ -18,6 +20,7 @@ export function useGameState() {
   const setStatusByClan = useGameStore((state) => state.setStatusByClan);
   const setRound = useGameStore((state) => state.setRound);
   const setPlayers = useGameStore((state) => state.setPlayers);
+  const setClans = useGameStore((state) => state.setClans);
 
   useGameKickState();
 
@@ -56,10 +59,12 @@ export function useGameState() {
   }, [navigate]);
 
   const handleStartGame = () => {
-    socket.emitWithAck('game:connected').then((res) => {
+    socket.emitWithAck('game:connected').then(async (res) => {
       if (!res.error) {
         setPlayers(res.players);
+        setClans(res.clans);
       } else {
+        await updateCharacter();
         navigate('/');
         popup.open({ title: 'Не удалось подключиться к игре', message: res.message });
       }

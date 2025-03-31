@@ -9,7 +9,7 @@ import { keyBy } from 'es-toolkit';
 import { activeConnections } from '@/server/utils/activeConnectons';
 import type { OrderResult } from '@/arena/OrderService';
 import type { Player } from '@/arena/PlayersService';
-import type { OrderResponse } from '@fwo/shared';
+import type { ClanPublic, OrderResponse } from '@fwo/shared';
 import { RoundStatus } from '@/arena/RoundService';
 
 const getRoom = (game: GameService, scope?: string) => {
@@ -91,13 +91,19 @@ export const onConnection = (_io: Server, socket: Socket) => {
       return callback({ error: true, message: 'Вы не в игре' });
     }
 
+    const players = keyBy(
+      game.players.players.map((player) => player.toObject()),
+      ({ id }) => id,
+    );
+    const clans = Object.values(players).reduce<Record<string, ClanPublic>>((acc, { clan }) => {
+      if (clan) {
+        acc[clan.id] = clan;
+      }
+      return acc;
+    }, {});
+
     // todo нужно проверять, что все игроки подключились
-    callback({
-      players: keyBy(
-        game.players.players.map((player) => player.toObject()),
-        ({ id }) => id,
-      ),
-    });
+    callback({ players, clans });
 
     socket.emit('game:startRound', { status: game.getStatus(), round: game.round.count });
 

@@ -8,6 +8,7 @@ import type { Clan } from '@/models/clan';
 import { PlayerWeapon } from './PlayerWeapon';
 import { convertItemModifiers } from './utils';
 import type { CharacterClass, GameStatus, Player } from '@fwo/shared';
+import { ClanService } from '@/arena/ClanService';
 
 export type Resists = Record<DamageType, number>;
 
@@ -172,7 +173,7 @@ export default class PlayerService {
       name: this.nick,
       class: this.prof,
       lvl: this.lvl,
-      clan: this.clan?.id,
+      clan: this.clan ? ClanService.toPublicObject(this.clan) : undefined,
       alive: this.alive,
       weapon: this.weapon.item?.info,
     };

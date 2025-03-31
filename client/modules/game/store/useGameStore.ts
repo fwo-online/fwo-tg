@@ -1,10 +1,11 @@
-import type { Action, GameStatus, Order, Player } from '@fwo/shared';
+import type { Action, ClanPublic, GameStatus, Order, Player } from '@fwo/shared';
 import { create } from 'zustand';
 
 export type GameStoreState = {
   round: number;
   orders: Order[];
   players: Record<string, Player>;
+  clans: Record<string, ClanPublic>;
   canOrder: boolean;
   status: GameStatus[];
   statusByClan: Partial<Record<string, GameStatus[]>>;
@@ -23,6 +24,7 @@ export type GameStoreActions = {
   setStatusByClan: (statusByClan: Partial<Record<string, GameStatus[]>>) => void;
   setActions: (action: { actions: Action[]; magics: Action[]; skills: Action[] }) => void;
   setPlayers: (players: Record<string, Player>) => void;
+  setClans: (clans: Record<string, ClanPublic>) => void;
   reset: () => void;
 };
 
@@ -31,6 +33,7 @@ export type GameStore = GameStoreState & GameStoreActions;
 const initialState: GameStoreState = {
   round: 0,
   players: {},
+  clans: {},
   canOrder: false,
   actions: [],
   magics: [],
@@ -51,5 +54,6 @@ export const useGameStore = create<GameStore>()((set) => ({
   setStatusByClan: (statusByClan) => set({ statusByClan }),
   setActions: (actions) => set(actions),
   setPlayers: (players) => set({ players }),
+  setClans: (clans) => set({ clans }),
   reset: () => set(initialState),
 }));

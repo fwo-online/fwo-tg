@@ -4,7 +4,7 @@ import { GameOrderModal } from '../components/GameOrderModal';
 import { useGameState } from '../hooks/useGameState';
 import { useGameClosingConfirmation } from '../hooks/useGameClosingConfirmation';
 import { Card } from '@/components/Card';
-import { useUnmount } from '@/hooks/useUnmount';
+import { useUnmountEffect } from '@/hooks/useUnmountEffect';
 import { Placeholder } from '@/components/Placeholder';
 
 export function GamePage() {
@@ -14,7 +14,7 @@ export function GamePage() {
   useGameState();
   useGameClosingConfirmation();
 
-  useUnmount(reset);
+  useUnmountEffect(reset);
 
   return (
     <>

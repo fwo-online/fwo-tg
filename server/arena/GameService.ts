@@ -11,7 +11,7 @@ import arena from '@/arena';
 import { mapValues } from 'es-toolkit';
 import EventEmitter from 'node:events';
 import { type GameStatus, type ItemComponent, reservedClanName } from '@fwo/shared';
-import { getRandomComponent } from '@/utils/getRandomComponent';
+import { StatisticsService } from '@/arena/StatisticsService';
 
 export type KickReason = 'afk' | 'run';
 
@@ -50,6 +50,7 @@ export default class GameService extends EventEmitter<{
 }> {
   players: PlayersService;
   orders: OrderService;
+  statistic: StatisticsService;
   round = new RoundService();
   history = new HistoryService();
   longActions: Partial<Record<keyof typeof magics, LongItem[]>> = {};
@@ -68,6 +69,7 @@ export default class GameService extends EventEmitter<{
 
     this.players = new PlayersService(players);
     this.orders = new OrderService(this.players, this.round);
+    this.statistic = new StatisticsService(this.players);
     this.flags = {
       noDamageRound: 0,
       global: {
@@ -236,8 +238,9 @@ export default class GameService extends EventEmitter<{
     console.log('GC debug:: endGame', this.info.id);
     // Отправляем статистику
     setTimeout(async () => {
-      const statistic = this.statistic();
-      await this.saveGame();
+      const statistic = this.statistic.giveRewards();
+      await this.statistic.saveRewards();
+
       this.resetGameIds(this.players.players);
 
       this.emit('end', { reason: this.getEndGameReason(), statistic });
@@ -328,90 +331,6 @@ export default class GameService extends EventEmitter<{
         default: {
           console.log('InitHandler:', state, 'undef event');
         }
-      }
-    });
-  }
-
-  /**
-   * Метод сохраняющий накопленную статистику игроков в базу и сharObj
-   * @todo нужен общий метод сохраняющий всю статистику
-   */
-  async saveGame() {
-    try {
-      const promises = this.info.players.map(async (id) => {
-        const player = this.players.getById(id);
-        if (!player) {
-          return;
-        }
-        const isWinner = player.alive;
-
-        await arena.characters[id].resources.addResources({
-          gold: player.stats.collect.gold,
-          exp: player.stats.collect.exp,
-          components: player.stats.collect.component
-            ? { [player.stats.collect.component]: 1 }
-            : undefined,
-        });
-
-        const kills = this.players.getKills(id).length;
-        const death = isWinner ? 0 : 1;
-
-        arena.characters[id].addGameStat({
-          games: 1,
-          death,
-          kills,
-        });
-        return arena.characters[id].saveToDb();
-      });
-
-      await Promise.all(promises);
-    } catch (e) {
-      console.log('Game:', e);
-    }
-  }
-
-  /**
-   * Функция послематчевой статистики
-   * @todo надо как-то переделать функцию, потому что непонятно, что она мутирует данные
-   * @return возвращает строку статистики по всем игрокам
-   */
-  statistic() {
-    this.giveGoldforKill();
-    const winners = this.players.alivePlayers;
-    const gold = this.players.deadPlayers.length ? 5 : 1;
-    winners.forEach((p) => {
-      p.stats.addGold(gold);
-      p.stats.addComponent(getRandomComponent(60));
-    });
-
-    this.players.deadPlayers.forEach((p) => {
-      p.stats.addComponent(getRandomComponent(20));
-    });
-
-    const playersByClan = this.players.groupByClan();
-
-    const getStatisticString = (p: Player) => ({
-      nick: p.nick,
-      exp: p.stats.collect.exp,
-      gold: p.stats.collect.gold,
-      component: p.stats.collect.component,
-    });
-
-    const statisticByClan = mapValues(playersByClan, (players) => {
-      return players?.map(getStatisticString);
-    });
-
-    return statisticByClan;
-  }
-
-  /**
-   * Функция пробегает всех убитых и раздает золото убийцам
-   */
-  giveGoldforKill(): void {
-    this.players.deadPlayers.forEach((p) => {
-      const killer = this.players.getById(p.getKiller());
-      if (killer && killer.id !== p.id) {
-        killer.stats.addGold(3 * p.lvl);
       }
     });
   }
