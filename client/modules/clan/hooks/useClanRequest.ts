@@ -24,15 +24,7 @@ export const useClanRequest = () => {
     });
 
     if (id === 'ok') {
-      updateClan(
-        makeRequest(async () => {
-          const clan = await acceptClanRequest(requester.id);
-          popup.open({
-            message: 'Заявка принята',
-          });
-          return clan;
-        }),
-      );
+      updateClan(makeRequest(async () => acceptClanRequest(requester.id)));
     }
   };
 

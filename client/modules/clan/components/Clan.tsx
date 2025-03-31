@@ -12,6 +12,7 @@ export const Clan: FC = () => {
   const players = useClanStore((state) => state.clan.players);
   const maxPlayers = useClanStore((state) => state.clan.maxPlayers);
   const requests = useClanStore((state) => state.clan.requests);
+  const owner = useClanStore((state) => state.clan.owner);
   const { isOwner } = useClanOwner();
 
   return (
@@ -38,11 +39,22 @@ export const Clan: FC = () => {
         </ErrorBoundary>
       </div>
 
+      {!isOwner && (
+        <div>
+          <h5>Владелец</h5>
+          <ErrorBoundary fallback={'Что-то пошло не так'}>
+            <Suspense fallback={'Загружаем владельца...'}>
+              <ClanPlayers players={[owner]} />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
+
       {isOwner && requests.length > 0 && (
         <div>
           <h5 className="-mb-3">Заявки</h5>
           <ErrorBoundary fallback={'Что-то пошло не так'}>
-            <Suspense fallback={'Загружаем игроков...'}>
+            <Suspense fallback={'Загружаем заявки...'}>
               <ClanPlayers
                 players={requests}
                 after={(character) => <ClanRequests character={character} />}

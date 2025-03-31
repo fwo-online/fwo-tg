@@ -24,15 +24,7 @@ export const useClanLvl = () => {
     });
 
     if (id === 'ok') {
-      updateClan(
-        makeRequest(async () => {
-          const clan = await upgradeClanLvl();
-          popup.open({
-            message: 'Уровень клана повышен',
-          });
-          return clan;
-        }),
-      );
+      updateClan(makeRequest(async () => await upgradeClanLvl()));
     }
   };
 

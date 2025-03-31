@@ -18,11 +18,18 @@ export const createClanStore = (initProps: ClanProps) =>
     loading: false,
     setClan: (clan) => set({ clan }),
     updateClan: async (clanSource) => {
-      set({ loading: true });
-      const clan = await clanSource;
-      if (clan) {
-        set({ clan });
+      const loadingTimeout = setTimeout(() => {
+        set({ loading: true });
+      }, 250);
+
+      try {
+        const clan = await clanSource;
+        if (clan) {
+          set({ clan });
+        }
+      } finally {
+        clearTimeout(loadingTimeout);
+        set({ loading: false });
       }
-      set({ loading: false });
     },
   }));

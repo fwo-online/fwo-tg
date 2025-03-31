@@ -33,9 +33,14 @@ export const ClanListItem: FC<{
       }
     >
       <Card header={clan.name}>
-        <h5>Игроки</h5>
+        <h5>Уровень {clan.lvl}</h5>
         <ErrorBoundary fallback={'Что-то пошло не так'}>
-          <Suspense fallback={'Ищем игроков...'}>
+          <h5>Владелец</h5>
+          <Suspense fallback={'Загружаем владельца...'}>
+            <ClanPlayers players={[clan.owner]} />
+          </Suspense>
+          <h5>Игроки</h5>
+          <Suspense fallback={'Загружаем игроков...'}>
             <ClanPlayers players={clan.players} />
           </Suspense>
         </ErrorBoundary>
