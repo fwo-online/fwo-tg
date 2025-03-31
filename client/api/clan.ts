@@ -13,7 +13,7 @@ export const createClanRequest = (id: string) =>
 export const cancelClanRequest = (id: string) =>
   createRequest(client.clan[':id']['cancel-request'].$post)({ param: { id } });
 
-export const addGold = (gold: number) =>
+export const addClanGold = (gold: number) =>
   createRequest(client.clan['add-gold'].$post)({ json: { gold } });
 
 export const acceptClanRequest = (id: string) =>

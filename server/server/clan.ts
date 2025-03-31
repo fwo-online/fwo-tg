@@ -51,9 +51,9 @@ export const clan = new Hono()
     const character = c.get('character');
     const { gold } = c.req.valid('json');
 
-    await withValidation(ClanService.addGold(character.clan.id, character.id, gold));
+    const clan = await withValidation(ClanService.addGold(character.clan.id, character.id, gold));
 
-    return c.json({}, 200);
+    return c.json(clan, 200);
   })
   .post('/leave', async (c) => {
     const character = c.get('character');
@@ -74,22 +74,22 @@ export const clan = new Hono()
     const character = c.get('character');
     const { id } = c.req.valid('param');
 
-    await withValidation(ClanService.acceptRequest(character.clan.id, id));
+    const clan = await withValidation(ClanService.acceptRequest(character.clan.id, id));
 
-    return c.json({}, 200);
+    return c.json(clan, 200);
   })
   .post('/reject/:id', vValidator('param', idSchema), async (c) => {
     const character = c.get('character');
     const { id } = c.req.valid('param');
 
-    await withValidation(ClanService.rejectRequest(character.clan.id, id));
+    const clan = await withValidation(ClanService.rejectRequest(character.clan.id, id));
 
-    return c.json({}, 200);
+    return c.json(clan, 200);
   })
   .post('/upgrade-lvl', async (c) => {
     const character = c.get('character');
 
-    await withValidation(ClanService.levelUp(character.clan.id));
+    const clan = await withValidation(ClanService.levelUp(character.clan.id));
 
-    return c.json({}, 200);
+    return c.json(clan, 200);
   });

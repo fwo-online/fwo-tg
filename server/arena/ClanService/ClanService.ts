@@ -116,7 +116,7 @@ export class ClanService {
       throw new ValidationError('В казне недостаточно золота');
     }
     const updated = await this.updateClan(clan.id, { $inc: { gold: -cost, lvl: 1 } });
-    return updated;
+    return ClanService.toObject(updated);
   }
 
   /**
@@ -131,7 +131,7 @@ export class ClanService {
 
     const clan = await this.updateClan(clanId, { $inc: { gold } });
 
-    return clan;
+    return ClanService.toObject(clan);
   }
 
   /**
@@ -212,13 +212,15 @@ export class ClanService {
       throw new ValidationError('В казне недостаточно золота');
     }
 
-    await this.updateClan(clan.id, {
+    const updatedClan = await this.updateClan(clan.id, {
       $push: { players: requesterID },
       $pull: { requests: { $in: [requesterID] } },
       $inc: { gold: -cost },
     });
 
     await char?.joinClan(clan);
+
+    return ClanService.toObject(updatedClan);
   }
 
   /**
@@ -229,9 +231,11 @@ export class ClanService {
   static async rejectRequest(clanId: string, charId: string) {
     const clan = await this.getClanById(clanId);
 
-    await this.updateClan(clan.id, {
+    const updatedClan = await this.updateClan(clan.id, {
       $pull: { requests: { $in: [charId] } },
     });
+
+    return ClanService.toObject(updatedClan);
   }
 
   /**

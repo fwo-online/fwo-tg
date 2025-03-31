@@ -1,11 +1,12 @@
 import { upgradeClanLvl } from '@/api/clan';
 import { useRequest } from '@/hooks/useRequest';
+import { useClanStore } from '@/modules/clan/contexts/useClan';
 import { type Clan, clanLvlCost } from '@fwo/shared';
 import { popup } from '@telegram-apps/sdk-react';
-import { clear } from 'suspend-react';
 
 export const useClanLvl = () => {
   const [_, makeRequest] = useRequest();
+  const updateClan = useClanStore((state) => state.updateClan);
 
   const upgradeLvl = async (clan: Clan) => {
     const id = await popup.open({
@@ -23,13 +24,15 @@ export const useClanLvl = () => {
     });
 
     if (id === 'ok') {
-      makeRequest(async () => {
-        await upgradeClanLvl();
-        popup.open({
-          message: 'Уровень клана повышен',
-        });
-        clear([clan.id]);
-      });
+      updateClan(
+        makeRequest(async () => {
+          const clan = await upgradeClanLvl();
+          popup.open({
+            message: 'Уровень клана повышен',
+          });
+          return clan;
+        }),
+      );
     }
   };
 

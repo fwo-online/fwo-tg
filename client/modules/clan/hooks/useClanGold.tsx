@@ -1,24 +1,19 @@
-import { addGold } from '@/api/clan';
-import { useCharacter } from '@/contexts/character';
+import { addClanGold } from '@/api/clan';
 import { useRequest } from '@/hooks/useRequest';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
-import { clear } from 'suspend-react';
+import { useClanStore } from '@/modules/clan/contexts/useClan';
 
 export const useClanGold = () => {
-  const { character } = useCharacter();
   const { updateCharacter } = useUpdateCharacter();
-  const [isLoading, makeRequest] = useRequest();
+  const updateClan = useClanStore((state) => state.updateClan);
+  const [_, makeRequest] = useRequest();
 
-  const handleAddGold = (gold: number) => {
-    makeRequest(async () => {
-      await addGold(gold);
-      await updateCharacter();
-      clear([character.clan?.id]);
-    });
+  const addGold = async (gold: number) => {
+    await updateClan(makeRequest(() => addClanGold(gold)));
+    updateCharacter();
   };
 
   return {
-    isLoading,
-    handleAddGold,
+    addGold,
   };
 };

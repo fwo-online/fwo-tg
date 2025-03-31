@@ -1,70 +1,51 @@
-import { Button } from '@/components/Button';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { ClanPlayers } from '@/modules/clan/components/ClanPlayers';
-import type { CharacterPublic, Clan as ClanSchema } from '@fwo/shared';
 import { Suspense, type FC } from 'react';
 import { ClanGold } from '@/modules/clan/components/ClanGold';
+import { ClanLevel } from '@/modules/clan/components/ClanLevel';
+import { useClanStore } from '@/modules/clan/contexts/useClan';
+import { ClanPlayers } from '@/modules/clan/components/ClanPlayers';
+import { ClanRequests } from '@/modules/clan/components/ClanRequests';
+import { useClanOwner } from '@/modules/clan/hooks/useClanOwner';
 
-export const ClanComponent: FC<{
-  clan: ClanSchema;
-  isOwner: boolean;
-  isLoading: boolean;
-  onAddGold: (gold: number) => void;
-  onAcceptRequest: (character: CharacterPublic) => void;
-  onRejectRequest: (character: CharacterPublic) => void;
-  onUpgradeLvl: () => void;
-}> = ({ clan, isOwner, isLoading, onAddGold, onAcceptRequest, onRejectRequest, onUpgradeLvl }) => {
+export const Clan: FC = () => {
+  const lvl = useClanStore((state) => state.clan.lvl);
+  const players = useClanStore((state) => state.clan.players);
+  const maxPlayers = useClanStore((state) => state.clan.maxPlayers);
+  const requests = useClanStore((state) => state.clan.requests);
+  const { isOwner } = useClanOwner();
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center">
-        <h5>Уровень {clan.lvl}</h5>
-        {isOwner && <Button onClick={onUpgradeLvl}>Повысить уровень</Button>}
+        <h5>Уровень {lvl}</h5>
+        <ClanLevel />
       </div>
+
       <div>
         <h5 className="-mb-3">Казна</h5>
-        <div className="flex justify-between items-center">
-          {clan.gold}💰
-          <ClanGold onAddGold={onAddGold} />
-        </div>
+        <ClanGold />
       </div>
 
       <div>
         <h5>
-          Игроки {clan.players.length}/{clan.maxPlayers}
+          Игроки {players.length}/{maxPlayers}
         </h5>
 
         <ErrorBoundary fallback={'Что-то пошло не так'}>
-          <Suspense fallback={'Ищем игроков...'}>
-            <ClanPlayers players={clan.players} />
+          <Suspense fallback={'Загружаем игроков...'}>
+            <ClanPlayers players={players} />
           </Suspense>
         </ErrorBoundary>
       </div>
 
-      {isOwner && clan.requests.length > 0 && (
+      {isOwner && requests.length > 0 && (
         <div>
           <h5 className="-mb-3">Заявки</h5>
           <ErrorBoundary fallback={'Что-то пошло не так'}>
-            <Suspense fallback={'Ищем игроков...'}>
+            <Suspense fallback={'Загружаем игроков...'}>
               <ClanPlayers
-                players={clan.requests}
-                after={(character) => (
-                  <div className="flex gap-4 mb-4">
-                    <Button
-                      className="is-success"
-                      disabled={isLoading}
-                      onClick={() => onAcceptRequest(character)}
-                    >
-                      ✔
-                    </Button>
-                    <Button
-                      className="is-error"
-                      disabled={isLoading}
-                      onClick={() => onRejectRequest(character)}
-                    >
-                      ✖
-                    </Button>
-                  </div>
-                )}
+                players={requests}
+                after={(character) => <ClanRequests character={character} />}
               />
             </Suspense>
           </ErrorBoundary>
