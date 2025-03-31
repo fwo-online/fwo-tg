@@ -9,3 +9,8 @@ exports[`vampirism should heal only above target\`s 0 hp 1`] = `
 "*ratione* сотворил _Вампиризм_ на *amet* нанеся 3.63 урона
 \\[ amet ✨ 💔-3.63/-2.63 📖39 ]"
 `;
+
+exports[`vampirism should not heal whet target\`s hp less than 0 1`] = `
+"*libero* сотворил _Вампиризм_ на *nulla* нанеся 3.63 урона
+\\[ nulla ✨ 💔-3.63/-4.63 📖39 ]"
+`;

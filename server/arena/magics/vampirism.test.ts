@@ -40,8 +40,6 @@ describe('vampirism', () => {
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
 
-
-
   it('should heal only above target`s 0 hp', () => {
     game.players.players[0].proc = 1;
     game.players.players[1].stats.set('hp', 1);
@@ -54,4 +52,15 @@ describe('vampirism', () => {
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
 
+  it('should not heal whet target`s hp less than 0', () => {
+    game.players.players[0].proc = 1;
+    game.players.players[1].stats.set('hp', -1);
+
+    vampirism.cast(game.players.players[0], game.players.players[1], game);
+
+    expect(game.players.players[0].stats.val('hp')).toBe(8)
+    expect(game.players.players[1].stats.val('hp')).toBe(-4.63)
+
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
+  });
 });
