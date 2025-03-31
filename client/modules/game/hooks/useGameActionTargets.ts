@@ -17,7 +17,7 @@ export const useGameActionTargets = ({
     ({ clan }) => clan?.name || reservedClanName,
   );
 
-  const clanID = character.clan?.id ?? reservedClanName;
+  const clanID = character.clan?.name ?? reservedClanName;
 
   const availableTargets: Record<string, PublicGameStatus[]> = useMemo(() => {
     switch (action.orderType) {
