@@ -83,6 +83,9 @@ export class ClanService {
    */
   static async removeClan(clanId: string, ownerId: string) {
     const clan = await this.getClanById(clanId);
+    if (!clan.owner._id.equals(ownerId)) {
+      throw new Error('Вы не являетесь владельцем клана');
+    }
 
     const promises = clan.players.map(async (player) => {
       const char = await CharacterService.getCharacterById(player.id);

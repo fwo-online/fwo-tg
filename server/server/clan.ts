@@ -55,7 +55,21 @@ export const clan = new Hono()
 
     return c.json({}, 200);
   })
+  .post('/leave', async (c) => {
+    const character = c.get('character');
+
+    await withValidation(ClanService.leaveClan(character.clan.id, character.id));
+
+    return c.json({}, 200);
+  })
   .use(clanMiddleware({ owner: true }))
+  .delete('', async (c) => {
+    const character = c.get('character');
+
+    await withValidation(ClanService.removeClan(character.clan.id, character.id));
+
+    return c.json({}, 200);
+  })
   .post('/accept/:id', vValidator('param', idSchema), async (c) => {
     const character = c.get('character');
     const { id } = c.req.valid('param');

@@ -1,27 +1,23 @@
-import { deleteCharacter } from '@/api/character';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
-import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
-import { popup } from '@telegram-apps/sdk-react';
+import { useCharacter } from '@/contexts/character';
+import { useSettingsCharacter } from '@/modules/settings/hooks/useSettingsCharacter';
+import { useSettingsClan } from '@/modules/settings/hooks/useSettingsClan';
 
 export function SettingsPage() {
-  const { updateCharacter } = useUpdateCharacter();
+  const { character } = useCharacter();
+  const { removeCharacter } = useSettingsCharacter();
+  const { removeClan, leaveClan } = useSettingsClan();
 
-  const handleClick = async () => {
-    const buttonId = await popup.open({
-      title: 'Удаление персонажа',
-      message: 'Персонаж будет удалён навсегда',
-      buttons: [{ text: 'Удалить', type: 'destructive', id: 'delete' }, { type: 'cancel' }],
-    });
-
-    if (buttonId === 'delete') {
-      await deleteCharacter().then(updateCharacter);
-    }
-  };
+  const isClanOwner = character.clan?.owner === character.id;
 
   return (
     <Card header="Настройки" className="m-4!">
-      <Button onClick={handleClick}>Удалить персонажа</Button>
+      <div className="flex flex-col gap-2">
+        <Button onClick={removeCharacter}>Удалить персонажа</Button>
+        {isClanOwner && <Button onClick={removeClan}>Удалить клан</Button>}
+        {character.clan && !isClanOwner && <Button onClick={leaveClan}>Покинуть клан</Button>}
+      </div>
     </Card>
   );
 }

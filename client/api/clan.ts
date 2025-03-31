@@ -23,3 +23,7 @@ export const rejectClanRequest = (id: string) =>
   createRequest(client.clan.reject[':id'].$post)({ param: { id } });
 
 export const upgradeClanLvl = () => createRequest(client.clan['upgrade-lvl'].$post)({});
+
+export const deleteClan = () => createRequest(client.clan.$delete)({});
+
+export const leaveClan = () => createRequest(client.clan.leave.$post)({});
