@@ -1,16 +1,14 @@
-import { chatMiddleware } from '@/middlewares';
 import { Bot, InlineKeyboard } from 'grammy';
 import * as loginHelper from '@/helpers/loginHelper';
-import { createPreOrder } from '@/api/preOrder';
+import { getInvoice } from '@/api/invoice';
+import { createPayment } from '@/api/payment';
 
 const bot = new Bot(process.env.BOT_TOKEN ?? '', {
   client: { environment: process.env.NODE_ENV === 'development' ? 'test' : 'prod' },
 });
 
-bot.use(chatMiddleware);
-
 bot.command('start', async (ctx) => {
-  if (!ctx.from) {
+  if (!ctx.from && ctx.chat?.type !== 'private') {
     return;
   }
 
@@ -32,24 +30,34 @@ bot.command('start', async (ctx) => {
 });
 
 bot.command('help', async (ctx) => {
+  if (!ctx.from && ctx.chat?.type !== 'private') {
+    return;
+  }
+
   ctx.reply('https://telegra.ph/Fight-Wold-Online-Help-11-05');
 });
 
 bot.on('pre_checkout_query', async (ctx) => {
-  console.log('pre_checkout_query:: ', ctx.preCheckoutQuery);
+  console.log('pre_checkout_query');
   try {
-    await createPreOrder({
-      orderID: ctx.preCheckoutQuery.id,
-      amount: ctx.preCheckoutQuery.total_amount,
-      currency: ctx.preCheckoutQuery.currency,
-      user: ctx.preCheckoutQuery.from.id,
-      payload: ctx.preCheckoutQuery.invoice_payload,
-    });
-
+    await getInvoice(ctx.preCheckoutQuery.invoice_payload);
     await ctx.answerPreCheckoutQuery(true);
   } catch {
     await ctx.answerPreCheckoutQuery(false, { error_message: 'Что-то пошло не так' });
   }
+});
+
+bot.on(':successful_payment', async (ctx) => {
+  console.log('successful_payment');
+  const invoice = await getInvoice(ctx.message?.successful_payment.invoice_payload);
+
+  await createPayment({
+    invoice,
+    amount: ctx.message?.successful_payment.total_amount,
+    currency: ctx.message?.successful_payment.currency,
+    payload: ctx.message?.successful_payment.invoice_payload,
+    user: ctx.from?.id,
+  });
 });
 
 export const initBot = () => {
