@@ -20,6 +20,7 @@ import { ForgeListPage } from './modules/forge/pages/ForgeListPage';
 import { ClanListPage } from '@/modules/clan/pages/ClanListPage';
 import { ClanCreatePage } from '@/modules/clan/pages/ClanCreatePage';
 import { ClanPage } from '@/modules/clan/pages/ClanPage';
+import { ServiceShopPage } from '@/modules/serviceShop/pages/ServiceShopPage';
 
 export function Router() {
   return (
@@ -48,6 +49,7 @@ export function Router() {
           </Route>
         </Route>
         <Route path="/game/:gameID" element={<GamePage />} />
+        <Route path="/serviceShop" Component={withBackButton(ServiceShopPage)} />
       </Route>
       <Route path="/connection-error" element={<ErrorConnectionPage />} />
       <Route path="/error" element={<ErrorPage />} />
