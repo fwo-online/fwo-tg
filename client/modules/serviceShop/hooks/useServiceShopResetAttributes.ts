@@ -7,21 +7,23 @@ export const useServiceShopResetAttributes = () => {
   const { updateCharacter } = useUpdateCharacter();
   const [loading, makeRequest] = useRequest();
 
-  const resetAttributesByStars = async () => {
-    const { url } = await getResetAttributesInvoice();
+  const resetAttributesByStars = () => {
+    makeRequest(async () => {
+      const { url } = await getResetAttributesInvoice();
 
-    invoice.open(url, 'url').then((status) => {
-      if (status === 'paid') {
-        updateCharacter();
-        popup.open({ message: 'Характеристики успешно сброшены' });
-      }
-      if (status === 'cancelled' || status === 'failed') {
-        popup.open({ message: 'Что-то пошло не так' });
-      }
+      invoice.open(url, 'url').then((status) => {
+        if (status === 'paid') {
+          updateCharacter();
+          popup.open({ message: 'Характеристики успешно сброшены' });
+        }
+        if (status === 'cancelled' || status === 'failed') {
+          popup.open({ message: 'Что-то пошло не так' });
+        }
+      });
     });
   };
 
-  const resetAttributesByComponents = async () => {
+  const resetAttributesByComponents = () => {
     makeRequest(async () => {
       const id = await popup.open({
         message: 'Вы уверены, что хотите сбросить характеристики?',
