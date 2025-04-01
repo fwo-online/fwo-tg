@@ -74,6 +74,19 @@ bot.on(':successful_payment', async (ctx) => {
   }
 });
 
+bot.on(':refunded_payment', async (ctx) => {
+  console.log(
+    'refunded_payment:: ',
+    ctx.message?.successful_payment?.invoice_payload,
+    ' from: ',
+    ctx.message?.from.id,
+  );
+  const invoice = await getInvoice(ctx.message?.refunded_payment.invoice_payload);
+
+  const character = await CharacterService.getCharacter(invoice.user.toString());
+  await character.remove();
+});
+
 export const initBot = () => {
   return bot.start();
 };
