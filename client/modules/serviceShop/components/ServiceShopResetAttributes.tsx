@@ -25,6 +25,9 @@ export const ServiceShopResetAttributes: FC = () => {
         updateCharacter();
         popup.open({ message: 'Характеристики успешно сброшены' });
       }
+      if (status === 'cancelled' || status === 'failed') {
+        popup.open({ message: 'Что-то пошло не так' });
+      }
     });
   };
 
