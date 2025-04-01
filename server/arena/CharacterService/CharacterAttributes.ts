@@ -6,7 +6,6 @@ import ValidationError from '@/arena/errors/ValidationError';
 import { every } from 'es-toolkit/compat';
 import type { CharacterService } from '@/arena/CharacterService';
 import { profsData } from '@/data/profs';
-import type { Resources } from '@/arena/CharacterService/CharacterResources';
 import { assignWithSum } from '@/utils/assignWithSum';
 import { calculateDynamicAttributes } from '@fwo/shared';
 
