@@ -1,25 +1,18 @@
-import { createInvoiceLink } from '@/api/payment';
-import { Button } from '@/components/Button';
-import { InvoiceType } from '@fwo/shared';
-import { invoice } from '@telegram-apps/sdk-react';
+import { useCharacter } from '@/contexts/character';
+import { ServiceShopResetAttributes } from '@/modules/serviceShop/components/ServiceShopResetAttributes';
 
-import { useState, type FC } from 'react';
+import type { FC } from 'react';
 
 export const ServiceShop: FC = () => {
-  const [status, setStatus] = useState('');
+  const { character } = useCharacter();
 
-  const handleClick = async () => {
-    const link = await createInvoiceLink(InvoiceType.ResetAttributes);
-
-    invoice.open(link.url, 'url').then((status) => {
-      setStatus(status);
-    });
-  };
+  if (character.name !== 'Evgewa') {
+    return null;
+  }
 
   return (
-    <>
-      <Button onClick={handleClick}>Задонать</Button>
-      {status}
-    </>
+    <div className="flex flex-col">
+      <ServiceShopResetAttributes />
+    </div>
   );
 };

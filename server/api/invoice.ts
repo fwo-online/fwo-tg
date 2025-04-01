@@ -5,16 +5,16 @@ import type { User } from '@telegram-apps/init-data-node';
 
 export const createInvoice = async (user: User, invoiceType: InvoiceType) => {
   try {
-    const { amount, title } = invoiceTypes[invoiceType];
+    const { stars, title, desctiption } = invoiceTypes[invoiceType];
 
     const invoice = await InvoiceModel.create({
       user: user.id,
-      amount,
+      amount: stars,
       invoiceType,
     });
 
-    const res = await bot.api.createInvoiceLink(title, 'Exclusive Access', invoice.id, '', 'XTR', [
-      { label: 'Telegram Stars', amount },
+    const res = await bot.api.createInvoiceLink(title, desctiption, invoice.id, '', 'XTR', [
+      { label: 'Telegram Stars', amount: stars },
     ]);
 
     if (res) {
@@ -23,7 +23,7 @@ export const createInvoice = async (user: User, invoiceType: InvoiceType) => {
     }
     throw new Error('Invoice creation failed.');
   } catch (error) {
-    console.error('Error creating invoice:', error.message);
+    console.error('Error creating invoice:', error);
     throw error;
   }
 };

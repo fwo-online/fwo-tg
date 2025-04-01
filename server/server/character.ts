@@ -45,7 +45,7 @@ export const character = new Hono()
     const character = c.get('character');
     const attributes = c.req.valid('json');
 
-    await withValidation(character.increaseHarks(attributes));
+    await withValidation(character.attributes.increaseAttributes(attributes));
 
     return c.json(character.toObject(), 200);
   })

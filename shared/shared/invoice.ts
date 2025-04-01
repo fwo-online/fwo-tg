@@ -3,7 +3,9 @@ export enum InvoiceType {
 }
 export const invoiceTypes = {
   [InvoiceType.ResetAttributes]: {
-    amount: 1,
+    components: { arcanite: 7 },
+    stars: 1,
     title: 'Сброс характеристик',
+    desctiption: 'Сброс характеристик персонажа',
   },
 };

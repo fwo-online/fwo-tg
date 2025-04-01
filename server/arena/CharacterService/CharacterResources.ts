@@ -46,7 +46,7 @@ export class CharacterResources {
 
     this.charObj.bonus += Math.round(value / 100);
     this.charObj.exp += value;
-    this.charObj.free += (this.character.lvl - oldLvl) * 10;
+    this.addFree(Math.round(this.character.lvl - oldLvl) * 10);
   }
 
   private addComponents(components: Partial<Record<ItemComponent, number>>) {
@@ -60,7 +60,11 @@ export class CharacterResources {
     this.charObj.gold += gold;
   }
 
-  async addResources({ components, gold, exp }: Partial<Resources>) {
+  private addFree(free: number) {
+    this.charObj.free += free;
+  }
+
+  async addResources({ components, gold, exp, free }: Partial<Resources>) {
     if (components) {
       this.addComponents(components);
     }
@@ -71,6 +75,10 @@ export class CharacterResources {
 
     if (exp) {
       this.addExp(exp);
+    }
+
+    if (free) {
+      this.addFree(free);
     }
 
     await this.character.saveToDb();
