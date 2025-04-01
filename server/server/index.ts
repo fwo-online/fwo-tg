@@ -9,7 +9,6 @@ import { logger } from 'hono/logger';
 import { isString } from 'es-toolkit';
 import { passiveSkill } from './passiveSkill';
 import { clan } from './clan';
-import { payment } from '@/server/payment';
 import { serviceShop } from '@/server/serviceShop';
 
 const origin = [process.env.APP_URL].filter(isString);
@@ -24,7 +23,6 @@ export const app = new Hono()
   .route('/skill', skill)
   .route('/clan', clan)
   .route('/passiveSkill', passiveSkill)
-  .route('/payment', payment)
   .route('/serviceShop', serviceShop);
 
 export default app;

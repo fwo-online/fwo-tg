@@ -3,17 +3,18 @@ import { InvoiceModel } from '@/models/invoice';
 import { type InvoiceType, invoiceTypes } from '@fwo/shared';
 import type { User } from '@telegram-apps/init-data-node';
 
-export const createInvoice = async (user: User, invoiceType: InvoiceType) => {
+export const createInvoice = async (user: User, invoiceType: InvoiceType, payload?: string) => {
   try {
-    const { stars, title, desctiption } = invoiceTypes[invoiceType];
+    const { stars, title } = invoiceTypes[invoiceType];
 
     const invoice = await InvoiceModel.create({
       user: user.id,
       amount: stars,
       invoiceType,
+      payload: payload ?? title,
     });
 
-    const res = await bot.api.createInvoiceLink(title, desctiption, invoice.id, '', 'XTR', [
+    const res = await bot.api.createInvoiceLink(title, payload ?? title, invoice.id, '', 'XTR', [
       { label: 'Telegram Stars', amount: stars },
     ]);
 

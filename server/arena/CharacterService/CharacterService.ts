@@ -116,6 +116,11 @@ export class CharacterService {
     this.charObj.favoriteMagicList = value;
   }
 
+  async changeNickname(newNickname: string) {
+    this.charObj.nickname = newNickname;
+    await this.saveToDb();
+  }
+
   resetExpLimit() {
     const date = new Date();
     if (date > this.charObj.expLimit.expiresAt) {
@@ -301,6 +306,7 @@ export class CharacterService {
       const { items, equipment } = this.inventory;
 
       return await updateCharacter(this.id, {
+        nickname: this.charObj.nickname,
         gold,
         exp,
         magics,

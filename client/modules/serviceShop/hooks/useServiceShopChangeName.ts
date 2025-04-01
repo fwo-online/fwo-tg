@@ -1,19 +1,19 @@
-import { getResetAttributesInvoice, resetAttributes } from '@/api/serviceShop';
+import { changeName, getChangeNameInvoice } from '@/api/serviceShop';
 import { useRequest } from '@/hooks/useRequest';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 import { invoice, popup } from '@telegram-apps/sdk-react';
 
-export const useServiceShopResetAttributes = () => {
+export const useServiceShopChangeName = () => {
   const { updateCharacter } = useUpdateCharacter();
   const [loading, makeRequest] = useRequest();
 
-  const resetAttributesByStars = async () => {
-    const { url } = await getResetAttributesInvoice();
+  const changeNameByStars = async (name: string) => {
+    const link = await getChangeNameInvoice(name);
 
-    invoice.open(url, 'url').then((status) => {
+    invoice.open(link.url, 'url').then((status) => {
       if (status === 'paid') {
         updateCharacter();
-        popup.open({ message: 'Характеристики успешно сброшены' });
+        popup.open({ message: 'Имя успешно изменено' });
       }
       if (status === 'cancelled' || status === 'failed') {
         popup.open({ message: 'Что-то пошло не так' });
@@ -21,10 +21,10 @@ export const useServiceShopResetAttributes = () => {
     });
   };
 
-  const resetAttributesByComponents = async () => {
+  const changeNameByComponents = async (name: string) => {
     makeRequest(async () => {
       const id = await popup.open({
-        message: 'Вы уверены, что хотите сбросить характеристики?',
+        message: 'Вы уверены, что изменить имя?',
         buttons: [
           {
             id: 'close',
@@ -37,16 +37,16 @@ export const useServiceShopResetAttributes = () => {
         ],
       });
       if (id === 'ok') {
-        await resetAttributes();
+        await changeName(name);
         updateCharacter();
-        popup.open({ message: 'Характеристики успешно сброшены' });
+        popup.open({ message: 'Имя успешно изменено' });
       }
     });
   };
 
   return {
-    resetAttributesByStars,
-    resetAttributesByComponents,
+    changeNameByStars,
+    changeNameByComponents,
     loading,
   };
 };

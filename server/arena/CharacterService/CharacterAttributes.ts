@@ -56,14 +56,11 @@ export class CharacterAttributes {
     await this.character.saveToDb();
   }
 
-  async resetAttributes(cost: Partial<Resources>) {
+  async resetAttributes() {
     const defaultAttributes = profsData[this.character.class].hark;
-
     const free = sum(Object.values(this.charObj.harks)) - sum(Object.values(defaultAttributes));
 
-    await this.character.resources.takeResources(cost);
     this.charObj.harks = defaultAttributes;
-
     await this.character.resources.addResources({ free });
   }
 }

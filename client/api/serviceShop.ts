@@ -1,7 +1,13 @@
 import { client, createRequest } from '@/api';
-import { InvoiceType } from '@fwo/shared';
 
 export const resetAttributes = () =>
-  createRequest(client.serviceShop.purchase[':type'].$post)({
-    param: { type: InvoiceType.ResetAttributes },
-  });
+  createRequest(client.serviceShop['reset-attributes'].$post)({});
+
+export const getResetAttributesInvoice = () =>
+  createRequest(client.serviceShop['reset-attributes'].invoice.$post)({});
+
+export const changeName = (name: string) =>
+  createRequest(client.serviceShop['change-name'].$post)({ json: { name } });
+
+export const getChangeNameInvoice = (name: string) =>
+  createRequest(client.serviceShop['change-name'].invoice.$post)({ json: { name } });

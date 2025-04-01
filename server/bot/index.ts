@@ -4,6 +4,7 @@ import { getInvoice } from '@/api/invoice';
 import { createPayment } from '@/api/payment';
 import { InvoiceType } from '@fwo/shared';
 import { CharacterService } from '@/arena/CharacterService';
+import { ServiceShop } from '@/arena/ServiceShop';
 
 const bot = new Bot(process.env.BOT_TOKEN ?? '', {
   client: { environment: process.env.NODE_ENV === 'development' ? 'test' : 'prod' },
@@ -65,7 +66,11 @@ bot.on(':successful_payment', async (ctx) => {
 
   switch (invoice.invoiceType) {
     case InvoiceType.ResetAttributes:
-      await character.attributes.resetAttributes({});
+      await ServiceShop.resetAttributes(character);
+      return;
+    case InvoiceType.ChangeName:
+      await ServiceShop.changeName(character, invoice.payload);
+      return;
   }
 });
 

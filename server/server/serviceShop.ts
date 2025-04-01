@@ -2,25 +2,50 @@ import { characterMiddleware, userMiddleware } from '@/server/middlewares';
 import { vValidator } from '@hono/valibot-validator';
 import * as v from 'valibot';
 import { Hono } from 'hono';
-import { InvoiceType, invoiceTypes } from '@fwo/shared';
+import { InvoiceType, invoiceTypes, nameSchema } from '@fwo/shared';
 import { withValidation } from '@/server/utils/withValidation';
+import { handleValidationError } from '@/server/utils/handleValidationError';
+import { ServiceShop } from '@/arena/ServiceShop';
 
 export const serviceShop = new Hono()
   .use(userMiddleware, characterMiddleware)
+  .post('/reset-attributes', async (c) => {
+    const character = c.get('character');
+    const { components } = invoiceTypes[InvoiceType.ResetAttributes];
+
+    await withValidation(ServiceShop.resetAttributes(character, { components }));
+
+    return c.json({}, 200);
+  })
+  .post('/reset-attributes/invoice', async (c) => {
+    const user = c.get('user');
+
+    const url = await withValidation(ServiceShop.getResetAttributesInvoice(user));
+
+    return c.json({ url }, 200);
+  })
   .post(
-    '/purchase/:type',
-    vValidator('param', v.object({ type: v.enum(InvoiceType) })),
+    '/change-name',
+    vValidator('json', v.object({ name: nameSchema }), handleValidationError),
     async (c) => {
       const character = c.get('character');
-      const { type } = c.req.valid('param');
+      const { name } = c.req.valid('json');
+      const { components } = invoiceTypes[InvoiceType.ChangeName];
 
-      const { components } = invoiceTypes[type];
-
-      switch (type) {
-        case InvoiceType.ResetAttributes:
-          await withValidation(character.attributes.resetAttributes({ components }));
-      }
+      await withValidation(ServiceShop.changeName(character, name, { components }));
 
       return c.json({}, 200);
+    },
+  )
+  .post(
+    '/change-name/invoice',
+    vValidator('json', v.object({ name: nameSchema }), handleValidationError),
+    async (c) => {
+      const user = c.get('user');
+      const { name } = c.req.valid('json');
+
+      const url = await withValidation(ServiceShop.getChangeNimeInvoice(user, name));
+
+      return c.json({ url }, 200);
     },
   );

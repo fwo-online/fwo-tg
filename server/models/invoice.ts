@@ -8,6 +8,7 @@ export interface Invoice {
   user: number;
   amount: number;
   invoiceType: InvoiceType;
+  payload: string;
 }
 
 export type InvoiceModel = Model<Invoice> & typeof Invoice;
@@ -20,6 +21,7 @@ const schema = new Schema<Invoice, InvoiceModel>({
   user: { type: Number },
   amount: { type: Number },
   invoiceType: { type: String },
+  payload: { type: String },
 });
 
 schema.loadClass(Invoice);
