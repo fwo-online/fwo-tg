@@ -2,7 +2,6 @@ import type { ActionType } from '@/arena/Constuructors/types';
 import type Game from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
 import type { Player } from '@/arena/PlayersService';
-import { floatNumber } from '@/utils/floatNumber';
 import CastError from '../errors/CastError';
 import { AffectableAction } from './AffectableAction';
 import type { BaseActionParams } from './BaseAction';
@@ -42,7 +41,7 @@ export abstract class ProtectConstructor extends AffectableAction implements Aff
   getProtectChance({ initiator, target } = this.params) {
     const attack = initiator.stats.val('phys.attack') * initiator.proc;
     const protect = target.stats.val('phys.defence');
-    const ratio = floatNumber(Math.round(attack / protect));
+    const ratio = attack / protect;
 
     return Math.round((1 - Math.exp(-0.33 * ratio)) * 100);
   }
@@ -53,7 +52,10 @@ export abstract class ProtectConstructor extends AffectableAction implements Aff
 
     defenderFlags.forEach(({ initiator: defender, val }) => {
       const protect = Math.floor(val * 100) / defence;
-      const exp = defender.isAlly(target) && !defender.isAlly(initiator) ? Math.round(hit * 0.2 * protect) : 0;
+      const exp =
+        defender.isAlly(target) && !defender.isAlly(initiator)
+          ? Math.round(hit * 0.2 * protect)
+          : 0;
 
       this.status.expArr.push({
         initiator: defender,
@@ -73,6 +75,7 @@ export abstract class ProtectConstructor extends AffectableAction implements Aff
     }
 
     const chance = this.getProtectChance(params);
+    console.log('protect chance::', chance);
 
     if (chance < MiscService.rndm('1d100')) {
       this.calculateExp({ initiator, target, game }, status.effect);
