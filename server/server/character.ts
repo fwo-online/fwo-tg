@@ -52,7 +52,7 @@ export const character = new Hono()
   .get('/dynamic-attributes', vValidator('query', characterAttributesSchema), async (c) => {
     const character = c.get('character');
     const attributes = c.req.valid('query');
-    const dynamicAttributes = character.getDynamicAttributes(attributes);
+    const dynamicAttributes = character.attributes.getDynamicAttributes(attributes);
 
     return c.json(dynamicAttributes, 200);
   })

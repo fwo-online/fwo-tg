@@ -28,10 +28,10 @@ export class CharacterAttributes {
   }
 
   // Суммарный объект характеристик + вещей.
-  get dynamicAttributes() {
+  getDynamicAttributes(attributes = this.attributes) {
     const inventoryAttributes = this.character.inventory.attributes;
+    assignWithSum(attributes, inventoryAttributes);
 
-    const attributes = assignWithSum(this.attributes, inventoryAttributes);
     const dynamicHarks = calculateDynamicAttributes({
       class: this.charObj.prof,
       attributes,

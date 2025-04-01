@@ -349,7 +349,7 @@ export class CharacterService {
       gold: this.resources.gold,
       lvl: this.lvl,
       exp: this.resources.exp,
-      dynamicAttributes: this.attributes.dynamicAttributes,
+      dynamicAttributes: this.attributes.getDynamicAttributes(),
       game: this.currentGame?.info.id,
       components: Object.fromEntries(this.resources.components.entries()) as Record<
         ItemComponent,
