@@ -67,9 +67,8 @@ export const CharacterPage: FC = () => {
         ) : (
           <Button onClick={() => navigate('/clan/list')}>Кланы</Button>
         )}
-        {character.id === '67dd3bd7c271a11386a7e074' && (
-          <Button onClick={() => navigate('/serviceShop')}>Седой торговец</Button>
-        )}
+
+        <Button onClick={() => navigate('/serviceShop')}>Седой торговец</Button>
       </div>
     </div>
   );
