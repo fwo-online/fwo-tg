@@ -31,7 +31,7 @@ export function formatError(msgObj: FailArgs): string {
         en: '',
       },
       CHANCE_FAIL: {
-        ru: `${bold(initiator.nick)} пытался сотворить ${italic(action)}, но у него не вышло`,
+        ru: `${bold(initiator.nick)} пытался сотворить ${italic(action)} на ${bold(target.nick)}, но он защитился`,
         en: '',
       },
       GOD_FAIL: {
