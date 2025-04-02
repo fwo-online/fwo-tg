@@ -42,20 +42,33 @@ export const CharacterPage: FC = () => {
       </Card>
 
       <div className="flex gap-2 flex-col">
-        <Button onClick={() => navigate('/character/attributes')}>Характеристики</Button>
+        <div className="flex gap-2">
+          <Button className="flex-1" onClick={() => navigate('/character/attributes')}>
+            Характеристики
+          </Button>
 
-        {character.class === CharacterClass.Archer || character.class === CharacterClass.Warrior ? (
-          <Button onClick={() => navigate('/character/skills')}>Умения</Button>
-        ) : (
-          <Button onClick={() => navigate('/character/magics')}>Магии</Button>
-        )}
+          {character.class === CharacterClass.Archer ||
+          character.class === CharacterClass.Warrior ? (
+            <Button className="flex-1" onClick={() => navigate('/character/skills')}>
+              Умения
+            </Button>
+          ) : (
+            <Button className="flex-1" onClick={() => navigate('/character/magics')}>
+              Магии
+            </Button>
+          )}
+        </div>
+
         <Button onClick={() => navigate('/character/passiveSkills')}>Пассивные навыки</Button>
+
         <Button onClick={() => navigate('/character/inventory')}>Инвентарь</Button>
         {character.clan ? (
           <Button onClick={() => navigate('/clan')}>Клан</Button>
         ) : (
           <Button onClick={() => navigate('/clan/list')}>Кланы</Button>
         )}
+
+        <Button onClick={() => navigate('/serviceShop')}>Седой торговец</Button>
       </div>
     </div>
   );

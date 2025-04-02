@@ -45,14 +45,14 @@ export const character = new Hono()
     const character = c.get('character');
     const attributes = c.req.valid('json');
 
-    await withValidation(character.increaseHarks(attributes));
+    await withValidation(character.attributes.increaseAttributes(attributes));
 
     return c.json(character.toObject(), 200);
   })
   .get('/dynamic-attributes', vValidator('query', characterAttributesSchema), async (c) => {
     const character = c.get('character');
     const attributes = c.req.valid('query');
-    const dynamicAttributes = character.getDynamicAttributes(attributes);
+    const dynamicAttributes = character.attributes.getDynamicAttributes(attributes);
 
     return c.json(dynamicAttributes, 200);
   })

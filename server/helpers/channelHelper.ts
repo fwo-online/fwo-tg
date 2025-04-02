@@ -3,6 +3,7 @@ import { LogService } from '@/arena/LogService';
 import { type ItemComponent, itemComponentName, reservedClanName } from '@fwo/shared';
 import { bold } from '@/utils/formatString';
 import { profsData } from '@/data/profs';
+import { bot } from '@/bot';
 
 const MAX_MESSAGE_LENGTH = 2 ** 12;
 const chatId = process.env.BOT_CHATID || -1001483444452;
@@ -28,7 +29,7 @@ export async function sendBattleLogMessages(messages: string[]) {
  */
 export async function broadcast(data: string, id: number | string = chatId): Promise<void> {
   try {
-    await arena.bot.telegram.sendMessage(id, data, { parse_mode: 'Markdown' });
+    await bot.api.sendMessage(id, data, { parse_mode: 'Markdown' });
   } catch (e) {
     console.log(`error: broadcast: ${e.message} for ${id}`);
   }

@@ -4,17 +4,12 @@ import { findCharacter, removeCharacter, updateCharacter } from '@/api/character
 import arena from '@/arena';
 import config from '@/arena/config';
 import { CharacterInventory } from './CharacterInventory';
-import type { HarksLvl } from '@/data/harks';
 import type { Char } from '@/models/character';
 import type { Character, CharacterClass, CharacterPublic, ItemComponent } from '@fwo/shared';
-import { assignWithSum } from '@/utils/assignWithSum';
-import { calculateDynamicAttributes } from './utils/calculateDynamicAttributes';
-import { sum } from 'es-toolkit';
-import ValidationError from '@/arena/errors/ValidationError';
-import { every } from 'es-toolkit/compat';
 import type { Item } from '@/models/item';
 import { CharacterResources } from './CharacterResources';
 import { ClanService } from '@/arena/ClanService';
+import { CharacterAttributes } from '@/arena/CharacterService/CharacterAttributes';
 
 /**
  * Конструктор персонажа
@@ -30,6 +25,7 @@ export class CharacterService {
   mm: { status?: string; time?: number };
   inventory: CharacterInventory;
   resources: CharacterResources;
+  attributes: CharacterAttributes;
 
   /**
    * Конструктор игрока
@@ -37,6 +33,7 @@ export class CharacterService {
   constructor(public charObj: Char) {
     this.inventory = new CharacterInventory(this);
     this.resources = new CharacterResources(this);
+    this.attributes = new CharacterAttributes(this);
     this.charObj = charObj;
     this.mm = {};
     this.resetExpLimit();
@@ -85,11 +82,6 @@ export class CharacterService {
     return this.charObj.statistics;
   }
 
-  // Базовые harks без учёта надетых вещей
-  get attributes() {
-    return structuredClone(this.charObj.harks);
-  }
-
   get magics() {
     return this.charObj.magics || {};
   }
@@ -124,14 +116,9 @@ export class CharacterService {
     this.charObj.favoriteMagicList = value;
   }
 
-  // Суммарный объект характеристик + вещей.
-  getDynamicAttributes(attributes = this.attributes) {
-    const inventoryAttributes = this.inventory.attributes;
-
-    assignWithSum(attributes, inventoryAttributes);
-    const dynamicHarks = calculateDynamicAttributes(this, attributes);
-    assignWithSum(dynamicHarks, this.inventory.harksFromItems);
-    return dynamicHarks;
+  async changeNickname(newNickname: string) {
+    this.charObj.nickname = newNickname;
+    await this.saveToDb();
   }
 
   resetExpLimit() {
@@ -181,20 +168,6 @@ export class CharacterService {
     } else {
       this.charObj.penalty[index] = penalty;
     }
-    await this.saveToDb();
-  }
-
-  async increaseHarks(harks: HarksLvl) {
-    const isValid = every(harks, (value, key) => value >= this.charObj.harks[key]);
-    if (!isValid) {
-      throw new ValidationError('Аттрибут не может быть уменьшен');
-    }
-
-    const free = sum(Object.values(harks)) - sum(Object.values(this.charObj.harks));
-
-    await this.resources.takeResources({ free });
-    this.charObj.harks = harks;
-
     await this.saveToDb();
   }
 
@@ -333,6 +306,7 @@ export class CharacterService {
       const { items, equipment } = this.inventory;
 
       return await updateCharacter(this.id, {
+        nickname: this.charObj.nickname,
         gold,
         exp,
         magics,
@@ -371,7 +345,7 @@ export class CharacterService {
       owner: this.owner,
       name: this.nickname,
       class: this.prof as CharacterClass,
-      attributes: this.attributes,
+      attributes: this.attributes.attributes,
       magics: this.magics,
       skills: this.skills,
       passiveSkills: this.passiveSkills,
@@ -381,7 +355,7 @@ export class CharacterService {
       gold: this.resources.gold,
       lvl: this.lvl,
       exp: this.resources.exp,
-      dynamicAttributes: this.getDynamicAttributes(),
+      dynamicAttributes: this.attributes.getDynamicAttributes(),
       game: this.currentGame?.info.id,
       components: Object.fromEntries(this.resources.components.entries()) as Record<
         ItemComponent,

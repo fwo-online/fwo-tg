@@ -1,7 +1,6 @@
-import type { Middleware } from 'telegraf';
-import type { BotContext } from '../fwo';
+import type { Middleware } from 'grammy';
 
-export function chatMiddleware(): Middleware<BotContext> {
+export function chatMiddleware(): Middleware {
   return (ctx, next) => {
     if (ctx.chat && ctx.chat.type !== 'private') {
       return;

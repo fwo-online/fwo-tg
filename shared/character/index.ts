@@ -43,3 +43,4 @@ export * from './characterClassSchema';
 export * from './characterSchema';
 export * from './createCharacterSchema';
 export * from './characterPublic';
+export * from './calculateDynamicAttributes';

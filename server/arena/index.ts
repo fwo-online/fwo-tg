@@ -1,8 +1,6 @@
-import type { BotContext } from '@/fwo';
 import type { Clan } from '@/models/clan';
 import type { ItemOutput } from '@fwo/shared';
 import type { ItemSet } from '@fwo/shared';
-import type { Telegraf } from 'telegraf';
 import type { CharacterService } from './CharacterService';
 import type GameService from './GameService';
 import type MatchMaking from './MatchMakingService';
@@ -26,5 +24,4 @@ export default {
     typeof passiveSkills &
     typeof weaponMastery,
   clans: new Map<string, Clan>(),
-  bot: null as unknown as Telegraf<BotContext>,
 };

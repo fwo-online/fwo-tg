@@ -20,11 +20,11 @@
     "@hono/valibot-validator": "^0.5.2",
     "@telegram-apps/init-data-node": "^2.0.3",
     "es-toolkit": "^1.33.0",
+    "grammy": "^1.35.1",
     "hono": "^4.7.4",
     "lodash": "^4.17.21",
     "mongoose": "^8.12.1",
-    "socket.io": "^4.8.1",
-    "telegraf": "^4.16.3"
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "@types/bun": "^1.2.5",
