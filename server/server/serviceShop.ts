@@ -48,4 +48,26 @@ export const serviceShop = new Hono()
 
       return c.json({ url }, 200);
     },
+  )
+  .post(
+    '/donate/invoice',
+    vValidator(
+      'json',
+      v.object({
+        amount: v.pipe(
+          v.number(),
+          v.minValue(50, 'Минимум 50 звёзд'),
+          v.maxValue(100000, 'Максимум 10000 звёзд'),
+        ),
+      }),
+      handleValidationError,
+    ),
+    async (c) => {
+      const user = c.get('user');
+      const { amount } = c.req.valid('json');
+
+      const url = await withValidation(ServiceShop.getDonationInvoice(user, amount));
+
+      return c.json({ url }, 200);
+    },
   );
