@@ -56,8 +56,8 @@ export class StatisticsService {
     });
   }
 
-  giveRewards() {
-    const winners = this.getWinners();
+  giveRewards(draw: boolean) {
+    const winners = draw ? [] : this.getWinners();
     const losers = this.getLosers(winners);
     this.giveGoldForKill();
     this.giveWinnerRewards(winners);

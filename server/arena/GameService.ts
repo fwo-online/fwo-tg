@@ -238,7 +238,7 @@ export default class GameService extends EventEmitter<{
     console.log('GC debug:: endGame', this.info.id);
     // Отправляем статистику
     setTimeout(async () => {
-      const statistic = this.statistic.giveRewards();
+      const statistic = this.statistic.giveRewards(!this.isTeamWin);
       await this.statistic.saveRewards();
 
       this.resetGameIds(this.players.players);
