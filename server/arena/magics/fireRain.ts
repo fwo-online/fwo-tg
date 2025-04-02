@@ -1,3 +1,4 @@
+import { shuffle } from 'es-toolkit';
 import { AoeDmgMagic } from '../Constuructors/AoeDmgMagicConstructor';
 import type GameService from '../GameService';
 import type { Player } from '../PlayersService';
@@ -29,15 +30,7 @@ class FireRain extends AoeDmgMagic {
   getTargets(): Player[] {
     const { target, game } = this.params;
 
-    if (!target.clan) {
-      return [];
-    }
-
-    const targets = game.players.getPlayersByClan(target.clan?.id)
-      .filter(({ alive }) => alive)
-      .filter(({ id }) => id !== target.id);
-
-    return targets;
+    return shuffle(game.players.getAliveAllies(target));
   }
 
   /**

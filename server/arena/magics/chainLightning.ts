@@ -2,6 +2,7 @@ import { floatNumber } from '@/utils/floatNumber';
 import { AoeDmgMagic } from '../Constuructors/AoeDmgMagicConstructor';
 import type GameService from '../GameService';
 import type { Player } from '../PlayersService';
+import { shuffle } from 'lodash';
 
 /**
  * Цепь молний
@@ -34,11 +35,10 @@ class ChainLightning extends AoeDmgMagic {
     const magicLevel = initiator.getMagicLevel(this.name);
     const maxTargets = this.maxTargets[magicLevel - 1];
 
-    return game.players
-      .getPlayersByClan(target.clan?.id)
-      .filter(({ alive }) => alive)
-      .filter(({ id }) => id !== target.id)
-      .slice(0, maxTargets - 1);
+    const targetAllies = shuffle(game.players.getAliveAllies(target));
+    const targetEnemies = shuffle(game.players.getAliveEnemies(target));
+
+    return [...targetAllies, ...targetEnemies].slice(0, maxTargets - 1);
   }
 
   /**

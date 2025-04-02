@@ -1,15 +1,68 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`chainLightning should hit 5 targets 1`] = `
+[
+  8,
+  3.59,
+  4.03,
+  4.46,
+  8,
+  4.91,
+  8,
+  5.34,
+  8,
+  8,
+  8,
+]
+`;
+
+exports[`chainLightning should hit 5 targets 2`] = `153`;
+
+exports[`chainLightning should hit 5 targets 3`] = `
+"*asperiores* сотворил _Цепь молний_ на *magni* нанеся 17.69 урона
+\\[ magni ⚡ 💔-4.43/3.59 📖47
+labore ⚡ 💔-3.97/4.03 📖32
+iure ⚡ 💔-3.54/4.46 📖28
+ipsam ⚡ 💔-3.09/4.91 📖25
+sed ⚡ 💔-2.66/5.34 📖21 ]"
+`;
+
+exports[`chainLightning should hit 4 targets 1`] = `
+[
+  8,
+  4.64,
+  5.65,
+  8,
+  8,
+  5.31,
+  8,
+  8,
+  8,
+  4.98,
+  8,
+]
+`;
+
+exports[`chainLightning should hit 4 targets 2`] = `104`;
+
+exports[`chainLightning should hit 4 targets 3`] = `
+"*explicabo* сотворил _Цепь молний_ на *et* нанеся 11.42 урона
+\\[ et ⚡ 💔-3.36/4.64 📖39
+distinctio ⚡ 💔-3.02/4.98 📖24
+velit ⚡ 💔-2.69/5.31 📖22
+eum ⚡ 💔-2.35/5.65 📖19 ]"
+`;
 
 exports[`chainLightning should hit 3 targets 1`] = `
 [
-  5.89,
+  8,
   5.63,
+  8,
+  8,
+  8,
+  8,
+  5.89,
   6.11,
-  8,
-  8,
-  8,
-  8,
-  8,
   8,
   8,
   8,
@@ -21,23 +74,23 @@ exports[`chainLightning should hit 3 targets 2`] = `63`;
 exports[`chainLightning should hit 3 targets 3`] = `
 "*architecto* сотворил _Цепь молний_ на *aspernatur* нанеся 6.36 урона
 \\[ aspernatur ⚡ 💔-2.36/5.63 📖31
-architecto ⚡ 💔-2.11/5.89 📖17
-quia ⚡ 💔-1.89/6.11 📖15 ]"
+laborum ⚡ 💔-2.11/5.89 📖17
+voluptatem ⚡ 💔-1.89/6.11 📖15 ]"
 `;
 
 exports[`chainLightning should hit 3 targets without clan 1`] = `
 [
+  8,
+  8,
+  8,
+  8,
+  8,
   5.89,
-  6.13,
-  8,
-  8,
-  8,
-  8,
   8,
   8,
   5.66,
   8,
-  8,
+  6.13,
 ]
 `;
 
@@ -46,59 +99,6 @@ exports[`chainLightning should hit 3 targets without clan 2`] = `63`;
 exports[`chainLightning should hit 3 targets without clan 3`] = `
 "*qui* сотворил _Цепь молний_ на *ex* нанеся 6.32 урона
 \\[ ex ⚡ 💔-2.34/5.66 📖31
-qui ⚡ 💔-2.11/5.89 📖17
-doloremque ⚡ 💔-1.87/6.13 📖15 ]"
-`;
-
-exports[`chainLightning should hit 4 targets 1`] = `
-[
-  4.98,
-  4.64,
-  5.31,
-  5.62,
-  8,
-  8,
-  8,
-  8,
-  8,
-  8,
-  8,
-]
-`;
-
-exports[`chainLightning should hit 4 targets 2`] = `104`;
-
-exports[`chainLightning should hit 4 targets 3`] = `
-"*explicabo* сотворил _Цепь молний_ на *et* нанеся 11.49 урона
-\\[ et ⚡ 💔-3.4/4.64 📖39
-explicabo ⚡ 💔-3.02/4.98 📖24
-eum ⚡ 💔-2.69/5.31 📖22
-veritatis ⚡ 💔-2.38/5.62 📖19 ]"
-`;
-
-exports[`chainLightning should hit 5 targets 1`] = `
-[
-  4.06,
-  3.59,
-  4.47,
-  4.9,
-  5.37,
-  8,
-  8,
-  8,
-  8,
-  8,
-  8,
-]
-`;
-
-exports[`chainLightning should hit 5 targets 2`] = `153`;
-
-exports[`chainLightning should hit 5 targets 3`] = `
-"*asperiores* сотворил _Цепь молний_ на *magni* нанеся 17.58 урона
-\\[ magni ⚡ 💔-4.38/3.59 📖47
-asperiores ⚡ 💔-3.94/4.06 📖32
-labore ⚡ 💔-3.53/4.47 📖28
-iure ⚡ 💔-3.1/4.9 📖25
-recusandae ⚡ 💔-2.63/5.37 📖21 ]"
+commodi ⚡ 💔-2.11/5.89 📖17
+aut ⚡ 💔-1.87/6.13 📖15 ]"
 `;

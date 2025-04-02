@@ -44,6 +44,20 @@ export default class PlayersService {
     return this.players.filter((p) => p.clan?.id === player.clan?.id);
   }
 
+  getAliveAllies(player: Player) {
+    if (player.clan) {
+      return this.alivePlayers.filter((p) => p.clan?.id === player.clan?.id && p.id !== player.id);
+    }
+    return [];
+  }
+
+  getAliveEnemies(player: Player) {
+    if (player.clan) {
+      return this.alivePlayers.filter((p) => p.clan?.id !== player.clan?.id);
+    }
+    return this.alivePlayers.filter((p) => p.id !== player.id);
+  }
+
   getPlayersByClan(clanId: string | undefined): Player[] {
     if (!clanId) {
       return this.players.filter((player) => !player.clan);
