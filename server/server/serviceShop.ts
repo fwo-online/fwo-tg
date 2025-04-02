@@ -6,7 +6,6 @@ import { InvoiceType, invoiceTypes, nameSchema } from '@fwo/shared';
 import { withValidation } from '@/server/utils/withValidation';
 import { handleValidationError } from '@/server/utils/handleValidationError';
 import { ServiceShop } from '@/arena/ServiceShop';
-import { DonationHelper } from '@/helpers/donationHelper';
 
 export const serviceShop = new Hono()
   .use(userMiddleware, characterMiddleware)
@@ -57,8 +56,8 @@ export const serviceShop = new Hono()
       v.object({
         amount: v.pipe(
           v.number(),
-          // v.minValue(50, 'Минимум 50 звёзд'),
-          // v.maxValue(100000, 'Максимум 10000 звёзд'),
+          v.minValue(50, 'Минимум 50 звёзд'),
+          v.maxValue(100000, 'Максимум 10000 звёзд'),
         ),
       }),
       handleValidationError,
