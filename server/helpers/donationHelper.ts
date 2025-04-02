@@ -1,5 +1,6 @@
-import { getPayments } from '@/api/payment';
+import { getPaymentsByInvoiceType } from '@/api/payment';
 import { CharacterService } from '@/arena/CharacterService';
+import { InvoiceType } from '@fwo/shared';
 import { uniq } from 'es-toolkit';
 
 export const getDonators = async () => {};
@@ -19,7 +20,10 @@ export class DonationHelper {
 
   static async getDonators() {
     const fromDate = new Date(Date.now() - this.donationLivetime);
-    const payments = await getPayments({ createdAt: { $gte: fromDate } });
+    const payments = await getPaymentsByInvoiceType(
+      { createdAt: { $gte: fromDate } },
+      InvoiceType.Donation,
+    );
     const users = uniq(payments.map(({ user }) => user));
 
     return Promise.all(users.map((user) => CharacterService.getCharacter(user.toString())));
@@ -27,10 +31,13 @@ export class DonationHelper {
 
   static async isDonator(user: string | number) {
     const fromDate = new Date(Date.now() - this.donationLivetime);
-    const payments = await getPayments({
-      createdAt: { $gte: fromDate },
-      user,
-    });
+    const payments = await getPaymentsByInvoiceType(
+      {
+        createdAt: { $gte: fromDate },
+        user,
+      },
+      InvoiceType.Donation,
+    );
 
     return Boolean(payments.length);
   }
