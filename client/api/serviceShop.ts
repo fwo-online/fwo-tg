@@ -11,3 +11,6 @@ export const changeName = (name: string) =>
 
 export const getChangeNameInvoice = (name: string) =>
   createRequest(client.serviceShop['change-name'].invoice.$post)({ json: { name } });
+
+export const getDonationInvoice = (amount: number) =>
+  createRequest(client.serviceShop.donate.invoice.$post)({ json: { amount } });

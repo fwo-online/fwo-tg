@@ -4,6 +4,7 @@ import { type ItemComponent, itemComponentName, reservedClanName } from '@fwo/sh
 import { bold } from '@/utils/formatString';
 import { profsData } from '@/data/profs';
 import { bot } from '@/bot';
+import { DonationHelper } from '@/helpers/donationHelper';
 
 const MAX_MESSAGE_LENGTH = 2 ** 12;
 const chatId = process.env.BOT_CHATID || -1001483444452;
@@ -74,7 +75,7 @@ export const initGameChannel = () => {
       broadcast(`Игрок ${bold(player.nick)} был выброшен из игры`);
     });
 
-    game.on('end', (e) => {
+    game.on('end', async (e) => {
       const getStatusString = (p: {
         exp: number;
         gold: number;
@@ -84,14 +85,26 @@ export const initGameChannel = () => {
       }) =>
         `\t${p.winner ? '🏆' : '👤'} ${p.nick} получает ${p.exp}📖, ${p.gold}💰${p.component ? `, 1 ${itemComponentName[p.component]}` : ''}`;
 
-      broadcast('Игра завершена');
-      broadcast(`${bold`Статистика игры`}
+      await broadcast('Игра завершена');
+      await broadcast(`${bold`Статистика игры`}
 ${Object.entries(e.statistic)
   .map(
     ([clan, players]) =>
       `${bold(clan === reservedClanName ? 'Без клана' : clan)}:\n${players?.map(getStatusString).join('\n')}`,
   )
   .join('\n\n')}`);
+
+      if (DonationHelper.shouldAnnounce()) {
+        const donators = await DonationHelper.getDonators();
+
+        if (donators.length) {
+          await broadcast(`${bold('Поддержавшие проект:')}
+${donators.map((donator) => `⭐ ${bold(donator.nickname)}`).join('\n')}
+          
+Спасибо за поддержку!`);
+          DonationHelper.resetLastAnnouncement();
+        }
+      }
     });
   });
 };

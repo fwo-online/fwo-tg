@@ -10,6 +10,7 @@ export interface Payment {
   amount: number;
   currency: string;
   payload: string;
+  createdAt: string;
 }
 
 export type PaymentModel = Model<Payment> & typeof Payment;
@@ -18,12 +19,16 @@ export class Payment {
   //
 }
 
-const schema = new Schema<Payment, PaymentModel>({
-  invoice: { type: Schema.Types.ObjectId, ref: 'Invoice' },
-  currency: { type: String },
-  amount: { type: Number },
-  payload: { type: String },
-});
+const schema = new Schema<Payment, PaymentModel>(
+  {
+    invoice: { type: Schema.Types.ObjectId, ref: 'Invoice' },
+    currency: { type: String },
+    amount: { type: Number },
+    payload: { type: String },
+    user: { type: Number },
+  },
+  { timestamps: true },
+);
 
 schema.loadClass(Payment);
 

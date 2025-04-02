@@ -41,7 +41,7 @@ export class ServiceShop {
   static async getChangeNimeInvoice(user: User, name: string) {
     await this.validateNickName(name);
 
-    return createInvoice(user, InvoiceType.ChangeName, name);
+    return createInvoice(user, InvoiceType.ChangeName, { payload: name });
   }
 
   static async changeName(character: CharacterService, name: string, cost?: Partial<Resources>) {
@@ -51,5 +51,9 @@ export class ServiceShop {
       await character.resources.takeResources(cost);
     }
     await character.changeNickname(name);
+  }
+
+  static async getDonationInvoice(user: User, amount: number) {
+    return createInvoice(user, InvoiceType.Donation, { amount });
   }
 }
