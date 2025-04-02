@@ -16,16 +16,16 @@ exports[`fireRain should hit clan targets 1`] = `
 ]
 `;
 
-exports[`fireRain should hit clan targets 2`] = `234`;
+exports[`fireRain should hit clan targets 2`] = `245`;
 
 exports[`fireRain should hit clan targets 3`] = `
-"*asperiores* сотворил _Огненный дождь_ на *magni* нанеся 28.32 урона
-\\[ magni 🔥 💔-4.03/2.59 📖40
-labore 🔥 💔-5.41/2.59 📖43
+"*asperiores* сотворил _Огненный дождь_ на *magni* нанеся 29.7 урона
+\\[ magni 🔥 💔-5.41/2.59 📖51
 iure 🔥 💔-4.07/3.93 📖33
 recusandae 🔥 💔-5.37/2.63 📖43
 ipsam 🔥 💔-5.41/2.59 📖43
-dignissimos 🔥 💔-4.03/3.97 📖32 ]"
+dignissimos 🔥 💔-4.03/3.97 📖32
+labore 🔥 💔-5.41/2.59 📖43 ]"
 `;
 
 exports[`fireRain should hit single target if target has no clan 1`] = `

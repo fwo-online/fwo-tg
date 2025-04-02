@@ -1,4 +1,31 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`fireBall should hit 6 targets 1`] = `
+[
+  8,
+  -0.72,
+  8,
+  7.09,
+  6.8,
+  6.79,
+  7.1,
+  8,
+  8,
+  8,
+  8,
+]
+`;
+
+exports[`fireBall should hit 6 targets 2`] = `114`;
+
+exports[`fireBall should hit 6 targets 3`] = `
+"*asperiores* сотворил _Огненный шар_ на *magni* нанеся 12.94 урона
+\\[ magni 🔥 💔-8.72/-0.72 📖80
+iure 🔥 💔-0.91/7.09 📖7
+recusandae 🔥 💔-1.2/6.8 📖10
+ipsam 🔥 💔-1.21/6.79 📖10
+dignissimos 🔥 💔-0.9/7.1 📖7 ]"
+`;
 
 exports[`fireBall should hit 1 target 1`] = `
 [
@@ -25,31 +52,4 @@ aperiam 🔥 💔-1.21/-1.96 📖10
 aperiam 🔥 💔-1.21/-3.17 📖10
 aperiam 🔥 💔-1.21/-4.38 📖10
 aperiam 🔥 💔-1.21/-5.59 📖10 ]"
-`;
-
-exports[`fireBall should hit 6 targets 1`] = `
-[
-  8,
-  -0.72,
-  6.79,
-  7.09,
-  6.8,
-  6.79,
-  8,
-  8,
-  8,
-  8,
-  8,
-]
-`;
-
-exports[`fireBall should hit 6 targets 2`] = `117`;
-
-exports[`fireBall should hit 6 targets 3`] = `
-"*asperiores* сотворил _Огненный шар_ на *magni* нанеся 13.25 урона
-\\[ magni 🔥 💔-8.72/-0.72 📖80
-labore 🔥 💔-1.21/6.79 📖10
-iure 🔥 💔-0.91/7.09 📖7
-recusandae 🔥 💔-1.2/6.8 📖10
-ipsam 🔥 💔-1.21/6.79 📖10 ]"
 `;

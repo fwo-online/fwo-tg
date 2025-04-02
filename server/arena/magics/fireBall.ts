@@ -3,6 +3,7 @@ import { AoeDmgMagic } from '../Constuructors/AoeDmgMagicConstructor';
 import type GameService from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
+import { shuffle } from 'es-toolkit';
 
 class FireBall extends AoeDmgMagic {
   bounces = 4;
@@ -34,16 +35,13 @@ class FireBall extends AoeDmgMagic {
       return [target];
     }
 
-    const targets = game.players
-      .getPlayersByClan(target.clan?.id)
-      .filter(({ alive }) => alive)
-      .filter(({ id }) => id !== target.id);
+    const targetAllies = shuffle(game.players.getAliveAllies(target));
 
-    if (!targets.length) {
+    if (!targetAllies.length) {
       return [target];
     }
 
-    return targets;
+    return targetAllies;
   }
 
   run(initiator: Player, target: Player, game: GameService): void {
