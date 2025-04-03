@@ -9,6 +9,7 @@ import { PlayerWeapon } from './PlayerWeapon';
 import { convertItemModifiers } from './utils';
 import type { CharacterClass, GameStatus, Player } from '@fwo/shared';
 import { ClanService } from '@/arena/ClanService';
+import { PlayerOffHand } from '@/arena/PlayersService/PlayerOffHand';
 
 export type Resists = Record<DamageType, number>;
 
@@ -44,6 +45,7 @@ export default class PlayerService {
   alive: boolean;
   proc: number;
   weapon: PlayerWeapon;
+  offHand: PlayerOffHand;
 
   constructor(params: CharacterService) {
     this.nick = params.nickname;
@@ -66,6 +68,7 @@ export default class PlayerService {
     this.alive = true;
     this.proc = 100;
     this.weapon = new PlayerWeapon(params.inventory.getEquippedWeapon());
+    this.offHand = new PlayerOffHand(params.inventory.getEquippedOffHand());
   }
 
   /**

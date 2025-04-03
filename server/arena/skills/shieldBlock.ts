@@ -1,6 +1,10 @@
+import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
 import { bold, italic } from '../../utils/formatString';
 import { Skill } from '../Constuructors/SkillConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
+import CastError from '@/arena/errors/CastError';
+
+const shieldTypes = ['shield'];
 
 /**
  * Парирование
@@ -14,7 +18,7 @@ class ShieldBlock extends Skill {
     super({
       name: 'shieldBlock',
       displayName: 'Блок щитом',
-      desc: 'Умение позволяет заблокировать щитом одну физическую атаку (требуется наличие щита)',
+      desc: 'Позволяет блокировать атаки до тех пор, пока щит не будет пробит. Повышает магическую защиту пока умение активно (требуется наличие щита)',
       cost: [8, 9, 10, 11, 12, 13],
       proc: 10,
       baseExp: 8,
@@ -23,9 +27,7 @@ class ShieldBlock extends Skill {
       aoeType: 'target',
       chance: [70, 75, 80, 85, 90, 95],
       effect: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6],
-      profList: {
-        w: 2, l: 6, p: 5, m: 5,
-      },
+      profList: { w: 2 },
       bonusCost: [10, 20, 30, 40, 60, 80],
     });
   }
@@ -33,10 +35,38 @@ class ShieldBlock extends Skill {
   run() {
     const { initiator } = this.params;
     const initiatorSkillLvl = initiator.skills[this.name];
+    if (!initiator.offHand.isOfType(shieldTypes)) {
+      throw new CastError('NO_SHIELD');
+    }
+
     const effect = this.effect[initiatorSkillLvl - 1] || 1;
-    // изменяем
-    initiator.flags.isShielded = ((0.3 * initiator.stats.val('attributes.str')) + (0.7 * initiator.stats.val('attributes.con'))) * effect;
+    const str = initiator.stats.val('attributes.str');
+    const con = initiator.stats.val('attributes.con');
+    const value = (0.3 * str + 0.7 * con) * effect;
+
+    initiator.flags.isShielded = value;
+    initiator.stats.set('magic.defence', value);
   }
+
+  preAffect: Affect['postAffect'] = ({ params: { initiator, target, game } }): undefined => {
+    if (target.flags.isShielded) {
+      const str = initiator.stats.val('attributes.str');
+      const con = initiator.stats.val('attributes.con');
+      const value = (0.7 * str + 0.3 * con) * initiator.proc;
+
+      if (value < target.flags.isShielded) {
+        initiator.stats.down('magic.defence', value);
+        initiator.flags.isShielded -= value;
+
+        this.calculateExp();
+
+        throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
+      }
+
+      initiator.stats.down('magic.defence', initiator.flags.isShielded);
+      initiator.flags.isShielded = 0;
+    }
+  };
 
   customMessage(args: SuccessArgs) {
     return `${bold(args.initiator.nick)} использовал ${italic(this.displayName)}`;

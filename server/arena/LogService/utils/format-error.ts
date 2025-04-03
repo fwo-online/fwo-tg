@@ -50,6 +50,10 @@ export function formatError(msgObj: FailArgs): string {
         ru: `${bold(initiator.nick)} пытался ${italic`атаковать`} ${bold(target.nick)}, но не пробил`,
         en: '',
       },
+      NO_SHIELD: {
+        ru: `${bold(initiator.nick)} пытался использовать щит, но у него не окалось его в руках`,
+        en: '',
+      },
       NO_WEAPON: {
         ru: `${bold(initiator.nick)} пытался атаковать ${bold(target.nick)}, но у него не оказалось оружия в руках`,
         en: '',
