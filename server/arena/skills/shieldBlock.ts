@@ -3,6 +3,7 @@ import { bold, italic } from '../../utils/formatString';
 import { Skill } from '../Constuructors/SkillConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
 import CastError from '@/arena/errors/CastError';
+import { floatNumber } from '@/utils/floatNumber';
 
 const shieldTypes = ['shield'];
 
@@ -35,17 +36,19 @@ class ShieldBlock extends Skill {
   run() {
     const { initiator } = this.params;
     const initiatorSkillLvl = initiator.skills[this.name];
-    if (!initiator.offHand.isOfType(shieldTypes)) {
+    const shield = initiator.offHand.item;
+    if (!shield || !initiator.offHand.isOfType(shieldTypes)) {
       throw new CastError('NO_SHIELD');
     }
 
     const effect = this.effect[initiatorSkillLvl - 1] || 1;
     const str = initiator.stats.val('attributes.str');
     const con = initiator.stats.val('attributes.con');
-    const value = (0.3 * str + 0.7 * con) * effect;
+    const value = (0.3 * str + 0.7 * con + 0.25 * shield.phys.defence) * effect;
 
-    initiator.flags.isShielded = value;
-    initiator.stats.set('magic.defence', value);
+    this.status.effect = floatNumber(value);
+    initiator.flags.isShielded = this.status.effect;
+    initiator.stats.up('magic.defence', this.status.effect);
   }
 
   preAffect: Affect['postAffect'] = ({ params: { initiator, target, game } }): undefined => {
@@ -55,21 +58,21 @@ class ShieldBlock extends Skill {
       const value = (0.7 * str + 0.3 * con) * initiator.proc;
 
       if (value < target.flags.isShielded) {
-        initiator.stats.down('magic.defence', value);
-        initiator.flags.isShielded -= value;
+        target.stats.down('magic.defence', value);
+        target.flags.isShielded -= value;
 
         this.calculateExp();
 
         throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
       }
 
-      initiator.stats.down('magic.defence', initiator.flags.isShielded);
-      initiator.flags.isShielded = 0;
+      target.stats.down('magic.defence', target.flags.isShielded);
+      target.flags.isShielded = 0;
     }
   };
 
   customMessage(args: SuccessArgs) {
-    return `${bold(args.initiator.nick)} использовал ${italic(this.displayName)}`;
+    return `${bold(args.initiator.nick)} использовал ${italic(this.displayName)} с эффектом ${args.effect}`;
   }
 }
 
