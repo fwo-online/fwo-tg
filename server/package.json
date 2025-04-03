@@ -8,7 +8,7 @@
     "test": "bun cli/test.ts -i",
     "generate:items": "bun cli/generateItems.ts",
     "reset-harks": "bun cli/resetHarks.ts",
-    "reset-items": "bun cli/resetItems.ts",
+    "reset-items": "bun cli/updateItems.ts",
     "add-items": "bun cli/addItems.ts",
     "lint": "biome lint",
     "format": "biome format --fix",

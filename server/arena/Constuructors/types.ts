@@ -16,7 +16,8 @@ export type BreaksMessage =
   | 'HEAL_FAIL'
   | 'SKILL_FAIL'
   | 'PHYS_FAIL'
-  | 'NO_WEAPON';
+  | 'NO_WEAPON'
+  | 'NO_SHIELD';
 
 export type ExpArr = {
   initiator: Player;

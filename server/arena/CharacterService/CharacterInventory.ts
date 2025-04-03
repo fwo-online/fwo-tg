@@ -75,6 +75,10 @@ export class CharacterInventory {
     return this.equipment.get(ItemWear.MainHand) || this.equipment.get(ItemWear.TwoHands);
   }
 
+  getEquippedOffHand() {
+    return this.equipment.get(ItemWear.OffHand);
+  }
+
   canEquip(itemToEquip: Item) {
     if (this.equipment.has(itemToEquip.wear)) {
       return false;
