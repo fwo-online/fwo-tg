@@ -77,6 +77,7 @@ export default {
     'dodge',
     'parry',
     'disarm',
+    'shieldBlock',
     [
       'protect',
       // 'regen_energy',
