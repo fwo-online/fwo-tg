@@ -187,6 +187,9 @@ export abstract class Magic extends AffectableAction {
       const x = (initiator.stats.val('magic.attack') / target.stats.val('magic.defence')) * 3;
       result += x;
     }
+    console.log(
+      `${this.name} cast chance:: ${result * initiator.proc} (${result}), chance ${chance}, ratio (dmg): ${(initiator.stats.val('magic.attack') / target.stats.val('magic.defence')) * 3} initiator:: ${initiator.nick}, target:: ${target.nick}`,
+    );
     return result * initiator.proc;
   }
 
