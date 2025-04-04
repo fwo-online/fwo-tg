@@ -60,14 +60,14 @@ class ShieldBlock extends Skill {
       if (value < target.flags.isShielded) {
         target.stats.down('magic.defence', value);
         target.flags.isShielded -= value;
-
-        this.calculateExp();
-
-        throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
+      } else {
+        target.stats.down('magic.defence', target.flags.isShielded);
+        target.flags.isShielded = 0;
       }
 
-      target.stats.down('magic.defence', target.flags.isShielded);
-      target.flags.isShielded = 0;
+      this.calculateExp();
+
+      throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
     }
   };
 
