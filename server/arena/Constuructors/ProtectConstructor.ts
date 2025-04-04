@@ -38,9 +38,8 @@ export abstract class ProtectConstructor extends AffectableAction implements Aff
     val: number;
   }[];
 
-  getProtectChance({ initiator, target } = this.params) {
+  getProtectChance({ initiator, target } = this.params, protect = 0) {
     const attack = initiator.stats.val('phys.attack') * initiator.proc;
-    const protect = target.stats.val('phys.defence');
     const ratio = attack / protect;
 
     const chance = Math.round((1 - Math.exp(-0.33 * ratio)) * 100);
@@ -79,7 +78,8 @@ export abstract class ProtectConstructor extends AffectableAction implements Aff
       return;
     }
 
-    const chance = this.getProtectChance(params);
+    const protect = protectors.reduce((acc, { val }) => acc + val, 0);
+    const chance = this.getProtectChance(params, protect);
 
     if (chance < MiscService.rndm('1d100')) {
       this.calculateExp({ initiator, target, game }, status.effect);
