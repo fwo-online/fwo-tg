@@ -71,6 +71,7 @@ describe('shieldBlock', () => {
 
     attack.cast(game.players.players[0], game.players.players[1], game);
     attack.cast(game.players.players[0], game.players.players[1], game);
+    attack.cast(game.players.players[0], game.players.players[1], game);
 
     expect(game.players.players[1].stats.val('magic.defence')).toBe(3);
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();

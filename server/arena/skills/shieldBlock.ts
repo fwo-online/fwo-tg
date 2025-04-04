@@ -22,7 +22,7 @@ class ShieldBlock extends Skill {
       desc: 'Позволяет блокировать атаки до тех пор, пока щит не будет пробит. Повышает магическую защиту пока умение активно (требуется наличие щита)',
       cost: [8, 9, 10, 11, 12, 13],
       proc: 10,
-      baseExp: 8,
+      baseExp: 40,
       costType: 'en',
       orderType: 'self',
       aoeType: 'target',
@@ -60,14 +60,14 @@ class ShieldBlock extends Skill {
       if (value < target.flags.isShielded) {
         target.stats.down('magic.defence', value);
         target.flags.isShielded -= value;
-
-        this.calculateExp();
-
-        throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
+      } else {
+        target.stats.down('magic.defence', target.flags.isShielded);
+        target.flags.isShielded = 0;
       }
 
-      target.stats.down('magic.defence', target.flags.isShielded);
-      target.flags.isShielded = 0;
+      this.calculateExp();
+
+      throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
     }
   };
 
