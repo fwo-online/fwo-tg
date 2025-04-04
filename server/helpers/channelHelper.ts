@@ -98,7 +98,7 @@ ${Object.entries(e.statistic)
         const donators = await DonationHelper.getDonators();
 
         if (donators.length) {
-          await broadcast(`${bold('Поддержавшие проект:')}
+          await broadcast(`${bold('Поддержавшие проект в этом месяце:')}
 ${donators.map((donator) => `⭐ ${bold(donator.nickname)}`).join('\n')}
           
 Спасибо за поддержку!`);
