@@ -9,7 +9,7 @@ class Curse extends LongMagic {
     super({
       name: 'curse',
       displayName: 'Проклятие',
-      desc: 'Понижает вероятность атаки у цели и понижает ее защиту',
+      desc: 'Понижает атаку и защиту цели',
       cost: 3,
       baseExp: 8,
       costType: 'mp',
