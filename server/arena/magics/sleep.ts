@@ -21,7 +21,7 @@ class Sleep extends LongMagic implements Affect {
       magType: 'bad',
       chance: ['1d80', '1d90', '1d100'],
       profList: ['m'],
-      effect: [],
+      effect: ['1d1','1d1','1d1'],
     });
   }
 
