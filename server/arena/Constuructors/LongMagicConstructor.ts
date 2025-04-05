@@ -129,7 +129,7 @@ export abstract class LongMagic extends CommonMagic {
    * Для длителных бафов exp считаем по BaseExp*effect
    */
   getEffectExp(_effect: number, baseExp = 0) {
-    return Math.round(baseExp * this.params.initiator.proc *_effect);
+    return Math.round((baseExp * this.params.initiator.proc) * _effect);
   }
 }
 
