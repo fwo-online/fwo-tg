@@ -93,10 +93,7 @@ export abstract class Magic extends AffectableAction {
   }
 
   /**
-   * Функция списывающая с кастера требуемое
-   * кол-во единиц за использование магии
-   * Если кастеру хватило mp/en продолжаем,если нет, то возвращаем false
-   * @param initiator Объект кастера
+   * Функция расчитывает эксп за использование магии
    */
   calculateExp(): void {
     this.status.exp = this.getEffectExp(this.status.effect || 0, this.baseExp);

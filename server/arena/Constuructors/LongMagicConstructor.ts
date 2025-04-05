@@ -125,7 +125,14 @@ export abstract class LongMagic extends CommonMagic {
     this.giveExp(result);
     game.recordOrderResult(result);
   }
+  /**
+   * Для длителных бафов exp считаем по BaseExp*effect
+   */
+  getEffectExp(_effect: number, baseExp = 0) {
+    return Math.round(baseExp * this.params.initiator.proc *_effect);
+  }
 }
+
 
 /**
  * [2,3,4 из 6] Эридан окутался <Сильной аурой> и
