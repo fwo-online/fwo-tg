@@ -36,7 +36,7 @@ export class CraftService {
 
     await character.resources.takeResources({
       components: baseItem.craft.components,
-      gold: baseItem.price * 0.2,
+      gold: baseItem.price * 0.4,
     });
 
     const item = await ItemService.createItem(baseItem, character.charObj);

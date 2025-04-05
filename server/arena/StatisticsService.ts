@@ -37,13 +37,13 @@ export class StatisticsService {
 
     winners.forEach((winner) => {
       winner.stats.addGold(goldForGame);
-      winner.stats.addComponent(getRandomComponent(60));
+      winner.stats.addComponent(getRandomComponent(45));
     });
   }
 
   private giveLoserRewards(losers: Player[]) {
     losers.forEach((loser) => {
-      loser.stats.addComponent(getRandomComponent(20));
+      loser.stats.addComponent(getRandomComponent(15));
     });
   }
 
