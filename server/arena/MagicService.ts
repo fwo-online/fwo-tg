@@ -17,6 +17,10 @@ function learnChance() {
 export default class MagicService {
   static MAX_MAGIC_LVL = 3;
 
+  static isMagic(maybeMagic: string): maybeMagic is keyof (typeof arena)['magics'] {
+    return maybeMagic in arena.magics;
+  }
+
   /**
    * Изучение магии с шансом
    * @param lvl круг проучиваемой магии

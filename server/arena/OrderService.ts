@@ -4,6 +4,7 @@ import OrderError from '@/arena/errors/OrderError';
 import type PlayersService from '@/arena/PlayersService';
 import type { Player } from '@/arena/PlayersService';
 import ValidationError from './errors/ValidationError';
+import { isNumber } from 'es-toolkit/compat';
 
 export interface Order {
   initiator: string;
@@ -98,17 +99,18 @@ export default class Orders {
     }
     if (this.roundService.status !== RoundStatus.START_ORDERS) {
       throw new OrderError('Раунд ещё не начался', order);
-      // @todo тут надо выбирать из живых целей
     }
     if (!target || !target.alive) {
       throw new OrderError('Нет цели или цель мертва', order);
     }
     if (Number(order.proc) > Number(initiator.proc)) {
       throw new OrderError('Нет процентов', order);
-      // тут нужен геттер из Player
     }
     if (this.isMaxTargets(order, initiator)) {
       throw new OrderError('Слишком много целей', order);
+    }
+    if (this.isMaxActionOrders(order)) {
+      throw new OrderError('Действие больше нельзя повторить', order);
     }
     if (!this.isValidAction(order, initiator)) {
       throw new OrderError(`action spoof:${order.action}`);
@@ -134,7 +136,6 @@ export default class Orders {
 
   /**
    * Проверка достижения максимального кол-ва целей при атаке
-   * @todo нужно проверять отдельно атаку и остальные умения
    */
   isMaxTargets({ initiator, action }: Order, player: Player): boolean {
     if (action === 'attack') {
@@ -143,15 +144,36 @@ export default class Orders {
     return false;
   }
 
+  isMaxActionOrders(order: Order): boolean {
+    if (ActionService.isSkillAction(order.action) || ActionService.isMagicAction(order.action)) {
+      return this.checkPlayerOrder(order.initiator, order.action);
+    }
+
+    return false;
+  }
+
   /**
    * Проверка доступно ли действие для персонажа
    */
-  isValidAction({ action }: Order, player: Player): boolean {
+  isValidAction({ action, proc }: Order, player: Player): boolean {
     if (ActionService.isBaseAction(action)) {
       return true;
     }
 
-    return (player.getSkillLevel(action) || player.getMagicLevel(action)) > 0;
+    if (!ActionService.isAction(action)) {
+      return false;
+    }
+
+    if (!player.getSkillLevel(action) && !player.getMagicLevel(action)) {
+      return false;
+    }
+
+    const { power } = ActionService.toObject(action);
+    if (isNumber(power) && power !== proc) {
+      return false;
+    }
+
+    return true;
   }
 
   /**

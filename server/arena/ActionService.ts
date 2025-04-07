@@ -1,4 +1,6 @@
 import arena from '@/arena';
+import MagicService from '@/arena/MagicService';
+import SkillService from '@/arena/SkillService';
 import type { Action } from '@fwo/shared';
 
 export type ActionKey = keyof typeof arena.actions;
@@ -14,6 +16,14 @@ export class ActionService {
     }
 
     return false;
+  }
+
+  static isSkillAction(action: string) {
+    return SkillService.isSkill(action);
+  }
+
+  static isMagicAction(action: string) {
+    return MagicService.isMagic(action);
   }
 
   static toObject(actionKey: ActionKey, lvl = 1): Action {
