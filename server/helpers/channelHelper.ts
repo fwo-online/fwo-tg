@@ -22,6 +22,11 @@ export async function sendBattleLogMessages(messages: string[]) {
       messageToSend = nextMessageToSend;
     }
   }
+
+  if (!messageToSend.trim().length) {
+    return;
+  }
+
   await broadcast(messageToSend);
 }
 /**
