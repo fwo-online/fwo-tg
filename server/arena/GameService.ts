@@ -10,8 +10,15 @@ import { RoundService, RoundStatus } from '@/arena/RoundService';
 import arena from '@/arena';
 import { mapValues } from 'es-toolkit';
 import EventEmitter from 'node:events';
-import { type GameStatus, type ItemComponent, reservedClanName } from '@fwo/shared';
+import {
+  type GameStatus,
+  type ItemComponent,
+  type PlayerPerfomance,
+  reservedClanName,
+} from '@fwo/shared';
 import { StatisticsService } from '@/arena/StatisticsService';
+import LadderService from '@/arena/LadderService';
+import { reduce } from 'es-toolkit/compat';
 
 export type KickReason = 'afk' | 'run';
 
@@ -69,7 +76,7 @@ export default class GameService extends EventEmitter<{
 
     this.players = new PlayersService(players);
     this.orders = new OrderService(this.players, this.round);
-    this.statistic = new StatisticsService(this.players);
+    this.statistic = new StatisticsService(this.players, this.history);
     this.flags = {
       noDamageRound: 0,
       global: {
@@ -170,8 +177,7 @@ export default class GameService extends EventEmitter<{
     this.emit('kick', { reason, player });
 
     const char = arena.characters[id];
-    char.addGameStat({ runs: 1 });
-    void char.saveToDb();
+    void char.perfomance.addGameStat({ runs: 1 }, char.perfomance.psr - 25);
     char.autoreg = false;
     this.players.kick(id);
     this.info.players.splice(this.info.players.indexOf(id), 1);
@@ -238,8 +244,20 @@ export default class GameService extends EventEmitter<{
     console.log('GC debug:: endGame', this.info.id);
     // Отправляем статистику
     setTimeout(async () => {
-      const statistic = this.statistic.giveRewards(!this.isTeamWin);
-      await this.statistic.saveRewards();
+      await this.statistic.giveRewards(!this.isTeamWin);
+      const statistic = this.statistic.getStatistics(this.players.players);
+      const playersPerfomance = reduce(
+        statistic,
+        (acc, players) => {
+          players?.forEach(({ id, performance }) => {
+            acc[id] = performance;
+          });
+          return acc;
+        },
+        {} as Record<string, PlayerPerfomance>,
+      );
+
+      await LadderService.saveGameStats(playersPerfomance, this.players.players);
 
       this.resetGameIds(this.players.players);
 
@@ -257,11 +275,11 @@ export default class GameService extends EventEmitter<{
         if (!char.autoreg) return;
         arena.mm.push({
           id: player.id,
-          psr: 1000,
+          psr: char.perfomance.psr,
           startTime: Date.now(),
         });
       });
-    }, 5000);
+    }, 1000);
   }
 
   /**

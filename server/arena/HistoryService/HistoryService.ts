@@ -1,5 +1,6 @@
 import type { FailArgs, SuccessArgs } from '@/arena/Constuructors/types';
-import { isSuccessDamageResult } from '@/arena/Constuructors/utils';
+import { isSuccessDamageResult, isSuccessHealResult } from '@/arena/Constuructors/utils';
+import { calculateEffect } from '@/arena/HistoryService/utils/calculateEffect';
 
 export type HistoryItem = SuccessArgs | FailArgs;
 
@@ -23,5 +24,19 @@ export class HistoryService {
   hasDamageForRound(round: number) {
     const roundHistory = this.getHistoryForRound(round);
     return roundHistory.some(isSuccessDamageResult);
+  }
+
+  getPlayersPerfomance() {
+    const history = Array.from(this.roundsHistoryMap.values()).flat();
+    return history.reduce<Record<string, { damage: number; heal: number }>>((acc, item) => {
+      acc[item.initiator.id] ??= { damage: 0, heal: 0 };
+      if (isSuccessDamageResult(item)) {
+        acc[item.initiator.id].damage += calculateEffect(item);
+      }
+      if (isSuccessHealResult(item)) {
+        acc[item.initiator.id].heal += calculateEffect(item);
+      }
+      return acc;
+    }, {});
   }
 }

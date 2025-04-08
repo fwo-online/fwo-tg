@@ -32,6 +32,7 @@ export default class PlayerService {
   clan?: Clan;
   stats: StatsService;
   flags: FlagsConstructor;
+  psr: number;
   modifiers: {
     chance: Chance;
     castChance: number;
@@ -55,6 +56,7 @@ export default class PlayerService {
     this.lvl = params.lvl;
     this.clan = params.clan;
     this.favoriteMagics = params.favoriteMagicList;
+    this.psr = params.psr;
     this.stats = new StatsService(params.attributes.getDynamicAttributes());
     this.flags = new FlagsConstructor();
     this.modifiers = {

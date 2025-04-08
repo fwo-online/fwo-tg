@@ -11,3 +11,11 @@ export type Player = {
   alive: boolean;
   weapon?: ItemInfo;
 };
+
+export type PlayerPerfomance = {
+  winner: boolean;
+  alive: boolean;
+  kills: number;
+  damage: number;
+  heal: number;
+};

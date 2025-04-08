@@ -10,6 +10,7 @@ import type { Item } from '@/models/item';
 import { CharacterResources } from './CharacterResources';
 import { ClanService } from '@/arena/ClanService';
 import { CharacterAttributes } from '@/arena/CharacterService/CharacterAttributes';
+import { CharacterPerfomance } from '@/arena/CharacterService/CharacterPerfomance';
 
 /**
  * Конструктор персонажа
@@ -26,6 +27,7 @@ export class CharacterService {
   inventory: CharacterInventory;
   resources: CharacterResources;
   attributes: CharacterAttributes;
+  perfomance: CharacterPerfomance;
 
   /**
    * Конструктор игрока
@@ -34,6 +36,7 @@ export class CharacterService {
     this.inventory = new CharacterInventory(this);
     this.resources = new CharacterResources(this);
     this.attributes = new CharacterAttributes(this);
+    this.perfomance = new CharacterPerfomance(this);
     this.charObj = charObj;
     this.mm = {};
     this.resetExpLimit();
@@ -58,6 +61,7 @@ export class CharacterService {
     const k = 1000 * config.lvlRatio;
     return Math.max(1, Math.floor(Math.log2(this.charObj.exp / k) + 2));
   }
+
   get owner() {
     return this.charObj.owner;
   }
@@ -76,10 +80,6 @@ export class CharacterService {
 
   get expLimitToday() {
     return this.lvl * config.lvlRatio * 2000;
-  }
-
-  get statistics() {
-    return this.charObj.statistics;
   }
 
   get magics() {
@@ -128,17 +128,6 @@ export class CharacterService {
       this.charObj.expLimit.expiresAt = date;
       this.charObj.expLimit.earn = 0;
     }
-  }
-
-  /**
-   * @param {Partial<Statistics>} stat
-   */
-  addGameStat(stat: Record<string, number>) {
-    _.forEach(stat, (val, key) => {
-      this.charObj.statistics[key] += val;
-    });
-
-    this.saveToDb();
   }
 
   /**
@@ -319,6 +308,7 @@ export class CharacterService {
         free,
         expLimit: this.charObj.expLimit,
         statistics: this.charObj.statistics,
+        psr: this.charObj.psr,
         harks: this.charObj.harks,
         items,
         equipment,

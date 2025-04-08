@@ -1,22 +1,12 @@
 import type { SuccessArgs } from '@/arena/Constuructors/types';
+import { calculateEffect } from '@/arena/HistoryService/utils/calculateEffect';
 import MiscService from '@/arena/MiscService';
-import { floatNumber } from '@/utils/floatNumber';
 import { bold, italic } from '@/utils/formatString';
 
 export function formatAction(msgObj: SuccessArgs): string {
   if (msgObj.msg) {
     return msgObj.msg(msgObj);
   }
-
-  const calculateEffect = () => {
-    if (msgObj.expArr.length) {
-      return msgObj.expArr.reduce((effect, { val }) => {
-        return floatNumber(effect + (val || 0));
-      }, msgObj.effect);
-    }
-
-    return msgObj.effect;
-  };
 
   switch (msgObj.actionType) {
     case 'heal':
@@ -27,7 +17,7 @@ export function formatAction(msgObj: SuccessArgs): string {
     case 'dmg-magic':
     case 'dmg-magic-long':
     case 'aoe-dmg-magic':
-      return `${bold(msgObj.initiator.nick)} сотворил ${italic(msgObj.action)} на ${bold(msgObj.target.nick)} нанеся ${calculateEffect()} урона`;
+      return `${bold(msgObj.initiator.nick)} сотворил ${italic(msgObj.action)} на ${bold(msgObj.target.nick)} нанеся ${calculateEffect(msgObj)} урона`;
     case 'magic':
     case 'magic-long':
       return !msgObj.effect

@@ -38,6 +38,14 @@ export type CharacterDynamicAttributes = Attributes & {
   spellLength: number;
 };
 
+export type CharacterPerfomance = {
+  wins: boolean;
+  deaths: boolean;
+  kills: number;
+  damage: number;
+  heal: number;
+};
+
 export * from './characterAttributesSchema';
 export * from './characterClassSchema';
 export * from './characterSchema';
