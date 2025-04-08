@@ -345,6 +345,7 @@ export class CharacterService {
       gold: this.resources.gold,
       lvl: this.lvl,
       exp: this.resources.exp,
+      psr: this.charObj.psr,
       dynamicAttributes: this.attributes.getDynamicAttributes(),
       game: this.currentGame?.info.id,
       components: Object.fromEntries(this.resources.components.entries()) as Record<
@@ -360,6 +361,7 @@ export class CharacterService {
       id: this.id,
       name: this.nickname,
       class: this.prof as CharacterClass,
+      psr: this.charObj.psr,
       lvl: this.lvl,
       clan: this.clan ? ClanService.toPublicObject(this.clan) : undefined,
     };

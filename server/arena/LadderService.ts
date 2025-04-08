@@ -22,35 +22,44 @@ export default class LadderService {
     let basePSR = performance.winner ? 50 : -50;
     if (performance.alive) {
       basePSR += 5;
+    } else {
+      basePSR -= 10;
     }
 
     if (performance.kills) {
-      basePSR += Math.max((performance.kills - averagePerformance.kills) * 3, 0);
+      basePSR += (performance.kills - averagePerformance.kills) * 2;
     }
 
     if (performance.damage) {
-      basePSR += Math.max(performance.damage - averagePerformance.damage, 0);
+      basePSR += (performance.damage - averagePerformance.damage) * 0.5;
     }
 
     if (performance.heal) {
-      basePSR += Math.max(performance.heal - averagePerformance.heal, 0);
+      basePSR += (performance.heal - averagePerformance.heal) * 0.5;
     }
 
     if (!performance.alive) {
       basePSR = Math.min(basePSR, -25);
     }
 
+    if (performance.winner) {
+      basePSR *= Math.exp((1 - playerPSR / gamePSR) * 3);
+    } else {
+      basePSR *= Math.exp((1 - gamePSR / playerPSR) * 3);
+    }
+
     basePSR *= Math.max(1 - round * 0.05, 0.5);
+    basePSR = Math.min(Math.max(basePSR, -100), 100);
 
     console.log(
-      'PSR:: ',
+      'player PSR::',
+      Math.round(playerPSR),
+      'base PSR::',
       Math.round(basePSR),
       'game PSR::',
       Math.round(gamePSR),
-      'total PSR::',
-      Math.round(basePSR * (gamePSR / playerPSR)),
     );
-    return Math.round(playerPSR + basePSR * (gamePSR / playerPSR));
+    return Math.round(playerPSR + basePSR);
   }
 
   static async saveGameStats(
@@ -83,7 +92,7 @@ export default class LadderService {
           },
         ]);
 
-        await characters.perfomance.addGameStat(
+        await character.perfomance.addGameStat(
           {
             death: perfomance.alive ? 0 : 1,
             games: 1,
