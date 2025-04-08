@@ -257,7 +257,7 @@ export default class GameService extends EventEmitter<{
         {} as Record<string, PlayerPerfomance>,
       );
 
-      await LadderService.saveGameStats(playersPerfomance, this.players.players);
+      await LadderService.saveGameStats(playersPerfomance, this.players.players, this.round.count);
 
       this.resetGameIds(this.players.players);
 

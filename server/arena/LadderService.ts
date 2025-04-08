@@ -13,6 +13,7 @@ export default class LadderService {
     playerPSR: number,
     gamePSR: number,
     performance: PlayerPerfomance,
+    round: number,
   ): Promise<number> {
     const averagePerformance = await LadderModel.averagePerfomance(playerPSR);
 
@@ -37,6 +38,8 @@ export default class LadderService {
       basePSR = Math.max(basePSR, -25);
     }
 
+    basePSR *= Math.max(1 - round * 0.05, 0.5);
+
     console.log(
       'PSR:: ',
       basePSR,
@@ -51,13 +54,14 @@ export default class LadderService {
   static async saveGameStats(
     playersPerfomance: Record<string, PlayerPerfomance>,
     players: Player[],
+    round: number,
   ): Promise<void> {
     try {
       const gamePSR = this.calculateGamePSR(players);
 
       Object.entries(playersPerfomance).map(async ([id, perfomance]) => {
         const characters = await CharacterService.getCharacterById(id);
-        const psr = await this.calculatePSR(characters.perfomance.psr, gamePSR, perfomance);
+        const psr = await this.calculatePSR(characters.perfomance.psr, gamePSR, perfomance, round);
 
         await LadderModel.create([
           {
