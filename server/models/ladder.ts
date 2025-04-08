@@ -1,4 +1,4 @@
-import type { PlayerPerfomance } from '@fwo/shared';
+import type { CharacterClass, PlayerPerfomance } from '@fwo/shared';
 import mongoose, { Schema, type Model, type Types } from 'mongoose';
 
 export interface Ladder extends PlayerPerfomance {
@@ -6,6 +6,7 @@ export interface Ladder extends PlayerPerfomance {
   id: string;
 
   player: Types.ObjectId;
+  prof: CharacterClass;
 
   psr: number;
 }
@@ -13,9 +14,9 @@ export interface Ladder extends PlayerPerfomance {
 export type LadderModel = Model<Ladder> & typeof Ladder;
 
 export class Ladder {
-  static async averagePerfomance(this: LadderModel, psr: number) {
+  static async averagePerfomance(this: LadderModel, psr: number, prof: CharacterClass) {
     return this.aggregate([
-      { $match: { psr: { $gte: psr - 100, $lte: psr + 100 } } },
+      { $match: { psr: { $gte: psr - 100, $lte: psr + 100 }, prof } },
       {
         $group: {
           _id: null,
@@ -34,6 +35,7 @@ export class Ladder {
 
 const schema = new Schema<Ladder, LadderModel>({
   player: { type: Schema.Types.ObjectId, ref: 'Character' },
+  prof: { type: String },
   psr: { type: Number },
   winner: { type: Boolean },
   alive: { type: Boolean },

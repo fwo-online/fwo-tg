@@ -1,5 +1,5 @@
 import type { Player } from './PlayersService';
-import type { PlayerPerfomance } from '@fwo/shared';
+import type { CharacterClass, PlayerPerfomance } from '@fwo/shared';
 import { LadderModel } from '@/models/ladder';
 import { CharacterService } from '@/arena/CharacterService';
 import { sumBy } from 'es-toolkit';
@@ -12,11 +12,12 @@ export default class LadderService {
 
   static async calculatePSR(
     playerPSR: number,
+    prof: CharacterClass,
     gamePSR: number,
     performance: PlayerPerfomance,
     round: number,
   ): Promise<number> {
-    const averagePerformance = await LadderModel.averagePerfomance(playerPSR);
+    const averagePerformance = await LadderModel.averagePerfomance(playerPSR, prof);
 
     let basePSR = performance.winner ? 50 : -50;
     if (performance.alive) {
@@ -61,8 +62,14 @@ export default class LadderService {
       const gamePSR = this.calculateGamePSR(players);
 
       Object.entries(playersPerfomance).map(async ([id, perfomance]) => {
-        const characters = await CharacterService.getCharacterById(id);
-        const psr = await this.calculatePSR(characters.perfomance.psr, gamePSR, perfomance, round);
+        const character = await CharacterService.getCharacterById(id);
+        const psr = await this.calculatePSR(
+          character.perfomance.psr,
+          character.prof,
+          gamePSR,
+          perfomance,
+          round,
+        );
 
         await LadderModel.create([
           {
