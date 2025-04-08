@@ -25,9 +25,9 @@ export class Ladder {
         },
       },
     ]).then((result) => ({
-      kills: result[0].avgKills ?? 0,
-      damage: result[0].avgDamage ?? 0,
-      heal: result[0].avgHeal ?? 0,
+      kills: result[0]?.avgKills ?? 0,
+      damage: result[0]?.avgDamage ?? 0,
+      heal: result[0]?.avgHeal ?? 0,
     }));
   }
 }
