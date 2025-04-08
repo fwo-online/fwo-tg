@@ -56,7 +56,7 @@ export default class PlayerService {
     this.lvl = params.lvl;
     this.clan = params.clan;
     this.favoriteMagics = params.favoriteMagicList;
-    this.psr = params.psr;
+    this.psr = params.perfomance.psr;
     this.stats = new StatsService(params.attributes.getDynamicAttributes());
     this.flags = new FlagsConstructor();
     this.modifiers = {

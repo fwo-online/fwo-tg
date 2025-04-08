@@ -2,11 +2,12 @@ import type { Player } from './PlayersService';
 import type { PlayerPerfomance } from '@fwo/shared';
 import { LadderModel } from '@/models/ladder';
 import { CharacterService } from '@/arena/CharacterService';
+import { sumBy } from 'es-toolkit';
 
 export default class LadderService {
   static calculateGamePSR(players: Player[]): number {
-    const totalMMR = players.reduce((sum, player) => sum + player.psr, 0);
-    return totalMMR / players.length;
+    const totalMMR = sumBy(players, (player) => player.psr);
+    return Math.round(totalMMR / players.length);
   }
 
   static async calculatePSR(
@@ -23,32 +24,32 @@ export default class LadderService {
     }
 
     if (performance.kills) {
-      basePSR += Math.min((performance.kills - averagePerformance.kills) * 3, 0);
+      basePSR += Math.max((performance.kills - averagePerformance.kills) * 3, 0);
     }
 
     if (performance.damage) {
-      basePSR += Math.min(performance.damage - averagePerformance.damage, 0);
+      basePSR += Math.max(performance.damage - averagePerformance.damage, 0);
     }
 
     if (performance.heal) {
-      basePSR += Math.min(performance.heal - averagePerformance.heal, 0);
+      basePSR += Math.max(performance.heal - averagePerformance.heal, 0);
     }
 
     if (!performance.alive) {
-      basePSR = Math.max(basePSR, -25);
+      basePSR = Math.min(basePSR, -25);
     }
 
     basePSR *= Math.max(1 - round * 0.05, 0.5);
 
     console.log(
       'PSR:: ',
-      basePSR,
+      Math.round(basePSR),
       'game PSR::',
-      gamePSR,
+      Math.round(gamePSR),
       'total PSR::',
-      basePSR * (gamePSR / playerPSR),
+      Math.round(basePSR * (gamePSR / playerPSR)),
     );
-    return Math.round(basePSR * (gamePSR / playerPSR));
+    return Math.round(playerPSR + basePSR * (gamePSR / playerPSR));
   }
 
   static async saveGameStats(

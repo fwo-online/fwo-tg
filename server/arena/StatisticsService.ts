@@ -67,6 +67,8 @@ export class StatisticsService {
     this.giveLoserRewards(losers);
 
     await this.saveRewards();
+
+    return winners;
   }
 
   getStatistics(winners: Player[]) {
