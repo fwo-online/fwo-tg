@@ -68,10 +68,10 @@ export class StatisticsService {
 
     await this.saveRewards();
 
-    return winners;
+    return { winners, losers };
   }
 
-  getStatistics(winners: Player[]) {
+  getStatistics(winners: Player[], _losers: Player[]) {
     const playersByClan = this.players.groupByClan();
     const winnerIDs = new Set(winners.map(({ id }) => id));
     const playersPerfomance = this.history.getPlayersPerfomance();

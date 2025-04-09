@@ -18,7 +18,6 @@ import {
 } from '@fwo/shared';
 import { StatisticsService } from '@/arena/StatisticsService';
 import LadderService from '@/arena/LadderService';
-import { reduce } from 'es-toolkit/compat';
 
 export type KickReason = 'afk' | 'run';
 
@@ -58,6 +57,7 @@ export default class GameService extends EventEmitter<{
   players: PlayersService;
   orders: OrderService;
   statistic: StatisticsService;
+  ladder: LadderService;
   round = new RoundService();
   history = new HistoryService();
   longActions: Partial<Record<keyof typeof magics, LongItem[]>> = {};
@@ -77,6 +77,7 @@ export default class GameService extends EventEmitter<{
     this.players = new PlayersService(players);
     this.orders = new OrderService(this.players, this.round);
     this.statistic = new StatisticsService(this.players, this.history);
+    this.ladder = new LadderService(this.players, this.round);
     this.flags = {
       noDamageRound: 0,
       global: {
@@ -244,20 +245,17 @@ export default class GameService extends EventEmitter<{
     console.log('GC debug:: endGame', this.info.id);
     // Отправляем статистику
     setTimeout(async () => {
-      const winners = await this.statistic.giveRewards(!this.isTeamWin);
-      const statistic = this.statistic.getStatistics(winners);
-      const playersPerfomance = reduce(
-        statistic,
-        (acc, players) => {
-          players?.forEach(({ id, performance }) => {
-            acc[id] = performance;
-          });
-          return acc;
-        },
-        {} as Record<string, PlayerPerfomance>,
-      );
+      const { winners, losers } = await this.statistic.giveRewards(!this.isTeamWin);
+      const statistic = this.statistic.getStatistics(winners, losers);
+      const playersPerfomance = Object.values(statistic)
+        .flat()
+        .filter((item) => !!item)
+        .reduce<Record<string, PlayerPerfomance>>(
+          (acc, { id, performance }) => Object.assign(acc, { [id]: performance }),
+          {},
+        );
 
-      await LadderService.saveGameStats(playersPerfomance, this.players.players, this.round.count);
+      await this.ladder.saveGameStats(playersPerfomance);
 
       this.resetGameIds(this.players.players);
 

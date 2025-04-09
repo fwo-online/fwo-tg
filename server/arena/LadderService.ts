@@ -3,19 +3,29 @@ import type { CharacterClass, PlayerPerfomance } from '@fwo/shared';
 import { LadderModel } from '@/models/ladder';
 import { CharacterService } from '@/arena/CharacterService';
 import { sumBy } from 'es-toolkit';
+import type PlayersService from './PlayersService';
+import type { RoundService } from '@/arena/RoundService';
 
 export default class LadderService {
-  static calculateGamePSR(players: Player[]): number {
+  players: PlayersService;
+  round: RoundService;
+  gamePSR: number;
+
+  constructor(players: PlayersService, round: RoundService) {
+    this.players = players;
+    this.round = round;
+    this.gamePSR = this.calculateGamePSR(players.players);
+  }
+
+  calculateGamePSR(players: Player[]): number {
     const totalMMR = sumBy(players, (player) => player.psr);
     return Math.round(totalMMR / players.length);
   }
 
-  static async calculatePSR(
+  async calculatePSR(
     playerPSR: number,
     prof: CharacterClass,
-    gamePSR: number,
     performance: PlayerPerfomance,
-    round: number,
   ): Promise<number> {
     const averagePerformance = await LadderModel.averagePerfomance(playerPSR, prof);
 
@@ -43,42 +53,30 @@ export default class LadderService {
     }
 
     if (performance.winner) {
-      basePSR *= Math.exp((1 - playerPSR / gamePSR) * 3);
+      basePSR *= Math.exp((1 - playerPSR / this.gamePSR) * 3);
     } else {
-      basePSR *= Math.exp((1 - gamePSR / playerPSR) * 3);
+      basePSR *= Math.exp((1 - this.gamePSR / playerPSR) * 3);
     }
 
-    basePSR *= Math.max(1 - round * 0.05, 0.5);
+    basePSR *= Math.max(1 - this.round.count * 0.05, 0.5);
     basePSR = Math.min(Math.max(basePSR, -50), 50);
 
-    console.log(
+    console.debug(
       'player PSR::',
       Math.round(playerPSR),
       'base PSR::',
       Math.round(basePSR),
       'game PSR::',
-      Math.round(gamePSR),
+      Math.round(this.gamePSR),
     );
     return Math.max(Math.round(playerPSR + basePSR), 0);
   }
 
-  static async saveGameStats(
-    playersPerfomance: Record<string, PlayerPerfomance>,
-    players: Player[],
-    round: number,
-  ): Promise<void> {
+  async saveGameStats(playersPerfomance: Record<string, PlayerPerfomance>): Promise<void> {
     try {
-      const gamePSR = this.calculateGamePSR(players);
-
       Object.entries(playersPerfomance).map(async ([id, perfomance]) => {
         const character = await CharacterService.getCharacterById(id);
-        const psr = await this.calculatePSR(
-          character.perfomance.psr,
-          character.prof,
-          gamePSR,
-          perfomance,
-          round,
-        );
+        const psr = await this.calculatePSR(character.perfomance.psr, character.prof, perfomance);
 
         await LadderModel.create([
           {
