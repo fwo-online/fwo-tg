@@ -94,7 +94,6 @@ export default class Orders {
   ): asserts initiator {
     // @todo Нужны константы для i18n
     if (!initiator) {
-      console.log('VALIDATE::: ', initiator, target, order);
       throw new OrderError('Вы не в игре', order);
     }
     if (this.roundService.status !== RoundStatus.START_ORDERS) {

@@ -103,7 +103,7 @@ export default class LadderService {
         );
       });
     } catch (e) {
-      console.log('savePSR error:: ', e);
+      console.error('savePSR error:: ', e);
     }
   }
 }

@@ -113,7 +113,7 @@ export class StatisticsService {
         }),
       );
     } catch (e) {
-      console.log('save revards error:: ', e);
+      console.error('save revards error:: ', e);
     }
   }
 }
