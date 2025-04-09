@@ -33,7 +33,7 @@ export class LogService {
     try {
       await this.writer(this.format());
     } catch (e) {
-      console.log('sendBattleLog: ', e);
+      console.error('sendBattleLog: ', e);
     } finally {
       this.reset();
     }

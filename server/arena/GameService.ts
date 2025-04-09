@@ -156,7 +156,7 @@ export default class GameService extends EventEmitter<{
   preKick(id: string, reason: KickReason): void {
     const player = this.players.getById(id);
     if (!player) {
-      console.log('GC debug:: preKick', id, 'no player');
+      console.debug('GC debug:: preKick', id, 'no player');
       return;
     }
     player.preKick(reason);
@@ -171,7 +171,7 @@ export default class GameService extends EventEmitter<{
   kick(id: string, reason: KickReason): void {
     const player = this.players.getById(id);
     if (!player) {
-      console.log('GC debug:: kick', id, 'no player');
+      console.debug('GC debug:: kick', id, 'no player');
       return;
     }
 
@@ -242,7 +242,7 @@ export default class GameService extends EventEmitter<{
    *
    */
   endGame(): void {
-    console.log('GC debug:: endGame', this.info.id);
+    console.debug('GC debug:: endGame', this.info.id);
     // Отправляем статистику
     setTimeout(async () => {
       const { winners, losers } = await this.statistic.giveRewards(!this.isTeamWin);
@@ -291,7 +291,7 @@ export default class GameService extends EventEmitter<{
       this.info.id = this.info._id.toString();
       return this;
     } catch (e) {
-      console.log('GC debug:: createGame', e);
+      console.debug('GC debug:: createGame', e);
     } finally {
       this.preLoading();
     }
