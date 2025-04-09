@@ -21,7 +21,7 @@ export const CharacterPage: FC = () => {
 
         <Card className="absolute top-2 left-2 font-bold">{character.name}</Card>
         <Card className="absolute top-2 right-2">
-          {characterClassNameMap[character.class]} {character.lvl} ({character.psr})
+          {characterClassNameMap[character.class]} {character.lvl}
         </Card>
         <div className="flex gap-2">
           <Card className="flex flex-1 flex-col justify-center items-center p-1">
