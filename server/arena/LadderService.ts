@@ -29,11 +29,11 @@ export default class LadderService {
   ): Promise<number> {
     const averagePerformance = await LadderModel.averagePerfomance(playerPSR, prof);
 
-    let basePSR = performance.winner ? 10 : -10;
+    let basePSR = performance.winner ? 15 : -10;
     if (performance.alive) {
       basePSR += 1;
     } else {
-      basePSR -= 3;
+      basePSR -= 2;
     }
 
     if (performance.kills) {
