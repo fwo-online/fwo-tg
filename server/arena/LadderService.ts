@@ -59,7 +59,7 @@ export default class LadderService {
       'game PSR::',
       Math.round(gamePSR),
     );
-    return Math.round(playerPSR + basePSR);
+    return Math.max(Math.round(playerPSR + basePSR), 0);
   }
 
   static async saveGameStats(
