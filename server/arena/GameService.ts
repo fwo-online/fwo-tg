@@ -10,8 +10,14 @@ import { RoundService, RoundStatus } from '@/arena/RoundService';
 import arena from '@/arena';
 import { mapValues } from 'es-toolkit';
 import EventEmitter from 'node:events';
-import { type GameStatus, type ItemComponent, reservedClanName } from '@fwo/shared';
+import {
+  type GameStatus,
+  type ItemComponent,
+  type PlayerPerformance,
+  reservedClanName,
+} from '@fwo/shared';
 import { StatisticsService } from '@/arena/StatisticsService';
+import { LadderService } from '@/arena/LadderService';
 
 export type KickReason = 'afk' | 'run';
 
@@ -51,6 +57,7 @@ export default class GameService extends EventEmitter<{
   players: PlayersService;
   orders: OrderService;
   statistic: StatisticsService;
+  ladder: LadderService;
   round = new RoundService();
   history = new HistoryService();
   longActions: Partial<Record<keyof typeof magics, LongItem[]>> = {};
@@ -69,7 +76,8 @@ export default class GameService extends EventEmitter<{
 
     this.players = new PlayersService(players);
     this.orders = new OrderService(this.players, this.round);
-    this.statistic = new StatisticsService(this.players);
+    this.statistic = new StatisticsService(this.players, this.history);
+    this.ladder = new LadderService(this.players, this.round);
     this.flags = {
       noDamageRound: 0,
       global: {
@@ -148,7 +156,7 @@ export default class GameService extends EventEmitter<{
   preKick(id: string, reason: KickReason): void {
     const player = this.players.getById(id);
     if (!player) {
-      console.log('GC debug:: preKick', id, 'no player');
+      console.debug('GC debug:: preKick', id, 'no player');
       return;
     }
     player.preKick(reason);
@@ -163,15 +171,14 @@ export default class GameService extends EventEmitter<{
   kick(id: string, reason: KickReason): void {
     const player = this.players.getById(id);
     if (!player) {
-      console.log('GC debug:: kick', id, 'no player');
+      console.debug('GC debug:: kick', id, 'no player');
       return;
     }
 
     this.emit('kick', { reason, player });
 
     const char = arena.characters[id];
-    char.addGameStat({ runs: 1 });
-    void char.saveToDb();
+    void char.performance.addGameRun();
     char.autoreg = false;
     this.players.kick(id);
     this.info.players.splice(this.info.players.indexOf(id), 1);
@@ -235,11 +242,11 @@ export default class GameService extends EventEmitter<{
    *
    */
   endGame(): void {
-    console.log('GC debug:: endGame', this.info.id);
+    console.debug('GC debug:: endGame', this.info.id);
     // Отправляем статистику
     setTimeout(async () => {
-      const statistic = this.statistic.giveRewards(!this.isTeamWin);
-      await this.statistic.saveRewards();
+      const statistic = await this.statistic.giveRewards(!this.isTeamWin);
+      await this.ladder.saveGameStats();
 
       this.resetGameIds(this.players.players);
 
@@ -257,11 +264,11 @@ export default class GameService extends EventEmitter<{
         if (!char.autoreg) return;
         arena.mm.push({
           id: player.id,
-          psr: 1000,
+          psr: char.performance.psr,
           startTime: Date.now(),
         });
       });
-    }, 5000);
+    }, 1000);
   }
 
   /**
@@ -275,7 +282,7 @@ export default class GameService extends EventEmitter<{
       this.info.id = this.info._id.toString();
       return this;
     } catch (e) {
-      console.log('GC debug:: createGame', e);
+      console.debug('GC debug:: createGame', e);
     } finally {
       this.preLoading();
     }

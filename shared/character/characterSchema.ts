@@ -13,6 +13,7 @@ export type Character = {
   bonus: number;
   lvl: number;
   exp: number;
+  psr: number;
   magics: Record<string, number>;
   skills: Record<string, number>;
   passiveSkills: Record<string, number>;

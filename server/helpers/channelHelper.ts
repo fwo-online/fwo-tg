@@ -37,7 +37,7 @@ export async function broadcast(data: string, id: number | string = chatId): Pro
   try {
     await bot.api.sendMessage(id, data, { parse_mode: 'Markdown' });
   } catch (e) {
-    console.log(`error: broadcast: ${e.message} for ${id}`);
+    console.error(`error: broadcast: ${e.message} for ${id}`);
   }
 }
 

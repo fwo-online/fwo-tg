@@ -23,6 +23,14 @@ export const isPhysicalDamageResult = (result: Result): result is SuccessArgs =>
   return false;
 };
 
+export const isSuccessHealResult = (result: Result): result is SuccessArgs => {
+  if (isSuccessResult(result)) {
+    return result.actionType === 'heal' || result.actionType === 'heal-magic';
+  }
+
+  return false;
+};
+
 export const findByTarget = (target: string) => {
   return (result: { target: Player }) => {
     return result.target.nick === target;

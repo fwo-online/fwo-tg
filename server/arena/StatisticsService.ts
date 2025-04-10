@@ -4,12 +4,15 @@ import { reservedClanName } from '@fwo/shared';
 import { getRandomComponent } from '@/utils/getRandomComponent';
 import { CharacterService } from '@/arena/CharacterService';
 import type { Player } from '@/arena/PlayersService';
+import type { HistoryService } from '@/arena/HistoryService';
 
 export class StatisticsService {
   players: PlayersService;
+  history: HistoryService;
 
-  constructor(players: PlayersService) {
+  constructor(players: PlayersService, history: HistoryService) {
     this.players = players;
+    this.history = history;
   }
 
   private getGoldForGame() {
@@ -56,18 +59,40 @@ export class StatisticsService {
     });
   }
 
-  giveRewards(draw: boolean) {
+  async giveRewards(draw: boolean) {
     const winners = draw ? [] : this.getWinners();
     const losers = this.getLosers(winners);
     this.giveGoldForKill();
     this.giveWinnerRewards(winners);
     this.giveLoserRewards(losers);
+    this.setPerfomance(winners, losers);
 
+    await this.saveRewards();
+
+    return this.getStatistics(winners, losers);
+  }
+
+  async setPerfomance(winners: Player[], _losers: Player[]) {
+    const playersPerformance = this.history.getPlayersPerformance();
+    const winnerIDs = new Set(winners.map(({ id }) => id));
+
+    this.players.players.forEach((player) => {
+      player.stats.addPerformance({
+        ...(playersPerformance[player.id] ?? { damage: 0, heal: 0 }),
+        alive: player.alive,
+        kills: this.players.getKills(player.id).length,
+        winner: winnerIDs.has(player.id),
+      });
+    });
+  }
+
+  getStatistics(winners: Player[], _losers: Player[]) {
     const playersByClan = this.players.groupByClan();
     const winnerIDs = new Set(winners.map(({ id }) => id));
 
     return mapValues(playersByClan, (players) =>
       players?.map((player) => ({
+        id: player.id,
         nick: player.nick,
         exp: player.stats.collect.exp,
         gold: player.stats.collect.gold,
@@ -79,7 +104,6 @@ export class StatisticsService {
 
   /**
    * Метод сохраняющий накопленную статистику игроков в базу и сharObj
-   * @todo нужен общий метод сохраняющий всю статистику
    */
   async saveRewards() {
     try {
@@ -94,16 +118,10 @@ export class StatisticsService {
               ? { [player.stats.collect.component]: 1 }
               : undefined,
           });
-
-          await char.addGameStat({
-            games: 1,
-            death: player.alive ? 0 : 1,
-            kills: this.players.getKills(player.id).length,
-          });
         }),
       );
     } catch (e) {
-      console.log('Game:', e);
+      console.error('save revards error:: ', e);
     }
   }
 }

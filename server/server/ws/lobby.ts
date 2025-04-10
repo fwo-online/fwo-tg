@@ -23,7 +23,11 @@ export const onConnection = (_io: Server, socket: Socket) => {
 
   socket.on('lobby:start', (callback) => {
     try {
-      MatchMakingService.push({ id: character.id, psr: 1000, startTime: Date.now() });
+      MatchMakingService.push({
+        id: character.id,
+        psr: character.performance.psr,
+        startTime: Date.now(),
+      });
       callback({});
     } catch (e) {
       if (e instanceof Error) {
