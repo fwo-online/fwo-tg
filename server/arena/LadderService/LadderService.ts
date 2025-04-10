@@ -1,20 +1,43 @@
 import type { Player } from '@/arena/PlayersService';
-import type { CharacterClass, PlayerPerformance } from '@fwo/shared';
+import type { CharacterClass, CharacterPublic, PlayerPerformance } from '@fwo/shared';
 import { LadderModel } from '@/models/ladder';
 import { CharacterService } from '@/arena/CharacterService';
 import { sumBy } from 'es-toolkit';
 import type PlayersService from '@/arena/PlayersService';
 import type { RoundService } from '@/arena/RoundService';
+import { CharModel } from '@/models/character';
+import { toPublicObject } from '@/arena/CharacterService/utils/toPublicObject';
 
 export class LadderService {
   players: PlayersService;
   round: RoundService;
   gamePSR: number;
+  static cachedLadderList: CharacterPublic[] | null = null;
 
   constructor(players: PlayersService, round: RoundService) {
     this.players = players;
     this.round = round;
     this.gamePSR = this.calculateGamePSR(players.players);
+  }
+
+  static async getLadderList() {
+    if (this.cachedLadderList) {
+      return this.cachedLadderList;
+    }
+
+    const characters = await CharModel.find({
+      deleted: false,
+      'statistics.games': { $gte: 25 },
+    })
+      .populate('clan')
+      .sort({ psr: -1 })
+      .limit(25)
+      .exec();
+
+    const ladderList = characters.map(toPublicObject);
+    this.cachedLadderList = ladderList;
+
+    return ladderList;
   }
 
   calculateGamePSR(players: Player[]): number {
@@ -110,6 +133,8 @@ export class LadderService {
           await character.performance.addGameStat(player.performance, player.stats.collect.psr);
         }),
       );
+
+      LadderService.cachedLadderList = null;
     } catch (e) {
       console.error('saveGameStats error:: ', e);
     }
