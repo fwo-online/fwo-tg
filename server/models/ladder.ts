@@ -1,7 +1,7 @@
-import type { CharacterClass, PlayerPerfomance } from '@fwo/shared';
+import type { CharacterClass, PlayerPerformance } from '@fwo/shared';
 import mongoose, { Schema, type Model, type Types } from 'mongoose';
 
-export interface Ladder extends PlayerPerfomance {
+export interface Ladder extends PlayerPerformance {
   _id: Types.ObjectId;
   id: string;
 
@@ -41,17 +41,20 @@ export class Ladder {
   }
 }
 
-const schema = new Schema<Ladder, LadderModel>({
-  player: { type: Schema.Types.ObjectId, ref: 'Character' },
-  prof: { type: String },
-  psr: { type: Number },
-  winner: { type: Boolean },
-  alive: { type: Boolean },
-  kills: { type: Number },
-  damage: { type: Number },
-  heal: { type: Number },
-  rounds: { type: Number },
-});
+const schema = new Schema<Ladder, LadderModel>(
+  {
+    player: { type: Schema.Types.ObjectId, ref: 'Character' },
+    prof: { type: String },
+    psr: { type: Number },
+    winner: { type: Boolean },
+    alive: { type: Boolean },
+    kills: { type: Number },
+    damage: { type: Number },
+    heal: { type: Number },
+    rounds: { type: Number },
+  },
+  { timestamps: true },
+);
 
 schema.loadClass(Ladder);
 

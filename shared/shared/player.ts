@@ -12,7 +12,7 @@ export type Player = {
   weapon?: ItemInfo;
 };
 
-export type PlayerPerfomance = {
+export type PlayerPerformance = {
   winner: boolean;
   alive: boolean;
   kills: number;

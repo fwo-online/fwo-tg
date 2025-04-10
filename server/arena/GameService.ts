@@ -13,11 +13,11 @@ import EventEmitter from 'node:events';
 import {
   type GameStatus,
   type ItemComponent,
-  type PlayerPerfomance,
+  type PlayerPerformance,
   reservedClanName,
 } from '@fwo/shared';
 import { StatisticsService } from '@/arena/StatisticsService';
-import LadderService from '@/arena/LadderService';
+import { LadderService } from '@/arena/LadderService';
 
 export type KickReason = 'afk' | 'run';
 
@@ -250,7 +250,7 @@ export default class GameService extends EventEmitter<{
       const playersPerfomance = Object.values(statistic)
         .flat()
         .filter((item) => !!item)
-        .reduce<Record<string, PlayerPerfomance>>(
+        .reduce<Record<string, PlayerPerformance>>(
           (acc, { id, performance }) => Object.assign(acc, { [id]: performance }),
           {},
         );

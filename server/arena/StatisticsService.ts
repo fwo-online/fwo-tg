@@ -1,6 +1,6 @@
 import type PlayersService from '@/arena/PlayersService';
 import { differenceBy, mapValues } from 'es-toolkit';
-import { type PlayerPerfomance, reservedClanName } from '@fwo/shared';
+import { type PlayerPerformance, reservedClanName } from '@fwo/shared';
 import { getRandomComponent } from '@/utils/getRandomComponent';
 import { CharacterService } from '@/arena/CharacterService';
 import type { Player } from '@/arena/PlayersService';
@@ -89,7 +89,7 @@ export class StatisticsService {
           alive: player.alive,
           kills: this.players.getKills(player.id).length,
           winner: winnerIDs.has(player.id),
-        } satisfies PlayerPerfomance,
+        } satisfies PlayerPerformance,
       })),
     );
   }
