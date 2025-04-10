@@ -33,9 +33,9 @@ export class LadderService {
 
     let basePSR = performance.winner ? 15 : -10;
     if (performance.alive) {
-      basePSR += 1;
+      basePSR += 2;
     } else {
-      basePSR -= 2;
+      basePSR -= 5;
     }
 
     if (performance.kills) {
@@ -43,11 +43,11 @@ export class LadderService {
     }
 
     if (performance.damage) {
-      basePSR += (performance.damage / rounds - avgDamagePerRound) * 0.5;
+      basePSR += (performance.damage / rounds - avgDamagePerRound) * 0.33;
     }
 
     if (performance.heal) {
-      basePSR += (performance.heal / rounds - avgHealPerRound) * 0.5;
+      basePSR += (performance.heal / rounds - avgHealPerRound) * 0.33;
     }
 
     if (!performance.alive) {
