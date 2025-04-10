@@ -49,8 +49,8 @@ class MatchMaking extends EventEmitter<{
       this.emit('pull', obj);
       this.emit('list', this.mmQueue);
     }
-    // @todo убрать после дебага
-    console.log('MM pull debug', this.mmQueue);
+
+    console.debug('MM pull debug', this.mmQueue);
   }
 
   /**

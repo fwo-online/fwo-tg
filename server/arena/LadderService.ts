@@ -28,6 +28,7 @@ export default class LadderService {
     performance: PlayerPerfomance,
   ): Promise<number> {
     const averagePerformance = await LadderModel.averagePerfomance(playerPSR, prof);
+    const rounds = this.round.count;
 
     let basePSR = performance.winner ? 15 : -10;
     if (performance.alive) {
@@ -37,15 +38,15 @@ export default class LadderService {
     }
 
     if (performance.kills) {
-      basePSR += performance.kills - averagePerformance.kills;
+      basePSR += performance.kills / rounds - averagePerformance.avgKillsPerRound;
     }
 
     if (performance.damage) {
-      basePSR += (performance.damage - averagePerformance.damage) * 0.25;
+      basePSR += (performance.damage / rounds - averagePerformance.avgDamagePerRound) * 0.25;
     }
 
     if (performance.heal) {
-      basePSR += (performance.heal - averagePerformance.heal) * 0.25;
+      basePSR += (performance.heal / rounds - averagePerformance.avgHealPerRound) * 0.25;
     }
 
     if (!performance.alive) {
@@ -87,6 +88,7 @@ export default class LadderService {
             kills: perfomance.kills,
             damage: perfomance.damage,
             heal: perfomance.heal,
+            rounds: this.round.count,
           },
         ]);
 

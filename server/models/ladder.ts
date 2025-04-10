@@ -8,6 +8,7 @@ export interface Ladder extends PlayerPerfomance {
   player: Types.ObjectId;
   prof: CharacterClass;
 
+  rounds: number;
   psr: number;
 }
 
@@ -23,13 +24,20 @@ export class Ladder {
           avgDamage: { $avg: '$damage' },
           avgHeal: { $avg: '$heal' },
           avgKills: { $avg: '$kills' },
+          avgRounds: { $avg: '$rounds' },
         },
       },
-    ]).then((result) => ({
-      kills: result[0]?.avgKills ?? 0,
-      damage: result[0]?.avgDamage ?? 0,
-      heal: result[0]?.avgHeal ?? 0,
-    }));
+    ]).then((result) => {
+      const avgRounds = result[0]?.avgRounds ?? 1;
+      return {
+        avgKills: result[0]?.avgKills ?? 0,
+        avgDamage: result[0]?.avgDamage ?? 0,
+        avgHeal: result[0]?.avgHeal ?? 0,
+        avgDamagePerRound: (result[0]?.avgDamage ?? 0) / avgRounds,
+        avgHealPerRound: (result[0]?.avgHeal ?? 0) / avgRounds,
+        avgKillsPerRound: (result[0]?.avgKills ?? 0) / avgRounds,
+      };
+    });
   }
 }
 
@@ -42,6 +50,7 @@ const schema = new Schema<Ladder, LadderModel>({
   kills: { type: Number },
   damage: { type: Number },
   heal: { type: Number },
+  rounds: { type: Number },
 });
 
 schema.loadClass(Ladder);
