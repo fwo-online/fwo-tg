@@ -178,7 +178,7 @@ export default class GameService extends EventEmitter<{
     this.emit('kick', { reason, player });
 
     const char = arena.characters[id];
-    void char.perfomance.addGameStat({ runs: 1 }, char.perfomance.psr - 25);
+    void char.performance.addGameRun();
     char.autoreg = false;
     this.players.kick(id);
     this.info.players.splice(this.info.players.indexOf(id), 1);
@@ -245,17 +245,8 @@ export default class GameService extends EventEmitter<{
     console.debug('GC debug:: endGame', this.info.id);
     // Отправляем статистику
     setTimeout(async () => {
-      const { winners, losers } = await this.statistic.giveRewards(!this.isTeamWin);
-      const statistic = this.statistic.getStatistics(winners, losers);
-      const playersPerfomance = Object.values(statistic)
-        .flat()
-        .filter((item) => !!item)
-        .reduce<Record<string, PlayerPerformance>>(
-          (acc, { id, performance }) => Object.assign(acc, { [id]: performance }),
-          {},
-        );
-
-      await this.ladder.saveGameStats(playersPerfomance);
+      const statistic = await this.statistic.giveRewards(!this.isTeamWin);
+      await this.ladder.saveGameStats();
 
       this.resetGameIds(this.players.players);
 
@@ -273,7 +264,7 @@ export default class GameService extends EventEmitter<{
         if (!char.autoreg) return;
         arena.mm.push({
           id: player.id,
-          psr: char.perfomance.psr,
+          psr: char.performance.psr,
           startTime: Date.now(),
         });
       });

@@ -56,7 +56,7 @@ export default class PlayerService {
     this.lvl = params.lvl;
     this.clan = params.clan;
     this.favoriteMagics = params.favoriteMagicList;
-    this.psr = params.perfomance.psr;
+    this.psr = params.performance.psr;
     this.stats = new StatsService(params.attributes.getDynamicAttributes());
     this.flags = new FlagsConstructor();
     this.modifiers = {
@@ -79,6 +79,10 @@ export default class PlayerService {
    */
   static load(charId: string) {
     return new PlayerService(arena.characters[charId]);
+  }
+
+  get performance() {
+    return this.stats.collect.performance;
   }
 
   getFailChance(action: ActionKey) {

@@ -10,7 +10,7 @@ import type { Item } from '@/models/item';
 import { CharacterResources } from './CharacterResources';
 import { ClanService } from '@/arena/ClanService';
 import { CharacterAttributes } from '@/arena/CharacterService/CharacterAttributes';
-import { CharacterPerfomance } from '@/arena/CharacterService/CharacterPerfomance';
+import { CharacterPerformance } from '@/arena/CharacterService/CharacterPerformance';
 
 /**
  * Конструктор персонажа
@@ -27,7 +27,7 @@ export class CharacterService {
   inventory: CharacterInventory;
   resources: CharacterResources;
   attributes: CharacterAttributes;
-  perfomance: CharacterPerfomance;
+  performance: CharacterPerformance;
 
   /**
    * Конструктор игрока
@@ -36,7 +36,7 @@ export class CharacterService {
     this.inventory = new CharacterInventory(this);
     this.resources = new CharacterResources(this);
     this.attributes = new CharacterAttributes(this);
-    this.perfomance = new CharacterPerfomance(this);
+    this.performance = new CharacterPerformance(this);
     this.charObj = charObj;
     this.mm = {};
     this.resetExpLimit();

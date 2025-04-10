@@ -1,6 +1,6 @@
 import { get, set } from 'lodash';
 import { floatNumber } from '@/utils/floatNumber';
-import type { CharacterDynamicAttributes, ItemComponent } from '@fwo/shared';
+import type { CharacterDynamicAttributes, ItemComponent, PlayerPerformance } from '@fwo/shared';
 import type { PhysAttributes } from '@fwo/shared';
 
 type CombineAll<T> = T extends { [name in keyof T]: infer Type } ? Type : never;
@@ -37,7 +37,19 @@ type StatsPathPartial = PathsOf<Stats, true>;
  */
 export default class StatsService {
   private inRound!: Stats;
-  public readonly collect = { exp: 0, gold: 0, component: undefined as ItemComponent | undefined };
+  public readonly collect = {
+    exp: 0,
+    gold: 0,
+    component: undefined as ItemComponent | undefined,
+    performance: {
+      alive: true,
+      damage: 0,
+      heal: 0,
+      kills: 0,
+      winner: false,
+    } satisfies PlayerPerformance,
+    psr: 0,
+  };
   /**
    * Конструктор класса stats
    * @param defStat объект параметров
@@ -129,5 +141,13 @@ export default class StatsService {
     if (component) {
       this.collect.component = component;
     }
+  }
+
+  addPerformance(performance: PlayerPerformance) {
+    Object.assign(this.collect.performance, performance);
+  }
+
+  addPsr(psr: number) {
+    this.collect.psr = psr;
   }
 }

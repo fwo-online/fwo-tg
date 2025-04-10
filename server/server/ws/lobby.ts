@@ -25,7 +25,7 @@ export const onConnection = (_io: Server, socket: Socket) => {
     try {
       MatchMakingService.push({
         id: character.id,
-        psr: character.perfomance.psr,
+        psr: character.performance.psr,
         startTime: Date.now(),
       });
       callback({});

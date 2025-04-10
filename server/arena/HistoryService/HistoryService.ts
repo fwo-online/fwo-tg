@@ -26,7 +26,7 @@ export class HistoryService {
     return roundHistory.some(isSuccessDamageResult);
   }
 
-  getPlayersPerfomance() {
+  getPlayersPerformance() {
     const history = Array.from(this.roundsHistoryMap.values()).flat();
     return history.reduce<Record<string, { damage: number; heal: number }>>((acc, item) => {
       acc[item.initiator.id] ??= { damage: 0, heal: 0 };

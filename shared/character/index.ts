@@ -38,7 +38,7 @@ export type CharacterDynamicAttributes = Attributes & {
   spellLength: number;
 };
 
-export type CharacterPerfomance = {
+export type CharacterPerformance = {
   wins: boolean;
   deaths: boolean;
   kills: number;

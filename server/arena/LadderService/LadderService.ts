@@ -28,7 +28,7 @@ export class LadderService {
     performance: PlayerPerformance,
   ): Promise<number> {
     const { avgDamagePerRound, avgKillsPerRound, avgHealPerRound } =
-      await LadderModel.averagePerfomance(playerPSR, prof);
+      await LadderModel.averagePerformance(playerPSR, prof);
     const rounds = this.round.count;
 
     let basePSR = performance.winner ? 15 : -10;
@@ -74,39 +74,44 @@ export class LadderService {
     return Math.max(Math.round(playerPSR + basePSR), 0);
   }
 
-  async saveGameStats(playersPerfomance: Record<string, PlayerPerformance>): Promise<void> {
+  async setPSRForPlayers() {
+    await Promise.all(
+      this.players.players.map(async (player) => {
+        const psr = await this.calculatePSR(
+          player.psr,
+          player.prof,
+          player.stats.collect.performance,
+        );
+        player.stats.addPsr(psr);
+      }),
+    );
+  }
+
+  async saveGameStats(): Promise<void> {
     try {
+      await this.setPSRForPlayers();
+
+      await LadderModel.create(
+        this.players.players.map((player) => ({
+          player: player.id,
+          psr: player.stats.collect.psr,
+          winner: player.performance.winner,
+          alive: player.performance.alive,
+          kills: player.performance.kills,
+          damage: player.performance.damage,
+          heal: player.performance.heal,
+          rounds: this.round.count,
+        })),
+      );
+
       await Promise.all(
-        Object.entries(playersPerfomance).map(async ([id, perfomance]) => {
-          const character = await CharacterService.getCharacterById(id);
-          const psr = await this.calculatePSR(character.perfomance.psr, character.prof, perfomance);
-
-          await LadderModel.create([
-            {
-              player: id,
-              psr,
-              winner: perfomance.winner,
-              alive: perfomance.alive,
-              kills: perfomance.kills,
-              damage: perfomance.damage,
-              heal: perfomance.heal,
-              rounds: this.round.count,
-            },
-          ]);
-
-          await character.perfomance.addGameStat(
-            {
-              death: perfomance.alive ? 0 : 1,
-              games: 1,
-              kills: perfomance.kills,
-              runs: 0,
-            },
-            psr,
-          );
+        this.players.players.map(async (player) => {
+          const character = await CharacterService.getCharacterById(player.id);
+          await character.performance.addGameStat(player.performance, player.stats.collect.psr);
         }),
       );
     } catch (e) {
-      console.error('savePSR error:: ', e, { playersPerfomance });
+      console.error('saveGameStats error:: ', e);
     }
   }
 }

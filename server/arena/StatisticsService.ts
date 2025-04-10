@@ -1,6 +1,6 @@
 import type PlayersService from '@/arena/PlayersService';
 import { differenceBy, mapValues } from 'es-toolkit';
-import { type PlayerPerformance, reservedClanName } from '@fwo/shared';
+import { reservedClanName } from '@fwo/shared';
 import { getRandomComponent } from '@/utils/getRandomComponent';
 import { CharacterService } from '@/arena/CharacterService';
 import type { Player } from '@/arena/PlayersService';
@@ -65,16 +65,30 @@ export class StatisticsService {
     this.giveGoldForKill();
     this.giveWinnerRewards(winners);
     this.giveLoserRewards(losers);
+    this.setPerfomance(winners, losers);
 
     await this.saveRewards();
 
-    return { winners, losers };
+    return this.getStatistics(winners, losers);
+  }
+
+  async setPerfomance(winners: Player[], _losers: Player[]) {
+    const playersPerformance = this.history.getPlayersPerformance();
+    const winnerIDs = new Set(winners.map(({ id }) => id));
+
+    this.players.players.forEach((player) => {
+      player.stats.addPerformance({
+        ...(playersPerformance[player.id] ?? { damage: 0, heal: 0 }),
+        alive: player.alive,
+        kills: this.players.getKills(player.id).length,
+        winner: winnerIDs.has(player.id),
+      });
+    });
   }
 
   getStatistics(winners: Player[], _losers: Player[]) {
     const playersByClan = this.players.groupByClan();
     const winnerIDs = new Set(winners.map(({ id }) => id));
-    const playersPerfomance = this.history.getPlayersPerfomance();
 
     return mapValues(playersByClan, (players) =>
       players?.map((player) => ({
@@ -84,12 +98,6 @@ export class StatisticsService {
         gold: player.stats.collect.gold,
         component: player.stats.collect.component,
         winner: winnerIDs.has(player.id),
-        performance: {
-          ...(playersPerfomance[player.id] ?? { damage: 0, heal: 0 }),
-          alive: player.alive,
-          kills: this.players.getKills(player.id).length,
-          winner: winnerIDs.has(player.id),
-        } satisfies PlayerPerformance,
       })),
     );
   }

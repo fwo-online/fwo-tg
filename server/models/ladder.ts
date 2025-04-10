@@ -15,7 +15,7 @@ export interface Ladder extends PlayerPerformance {
 export type LadderModel = Model<Ladder> & typeof Ladder;
 
 export class Ladder {
-  static async averagePerfomance(this: LadderModel, psr: number, prof: CharacterClass) {
+  static async averagePerformance(this: LadderModel, psr: number, prof: CharacterClass) {
     return this.aggregate([
       { $match: { psr: { $gte: psr - 100, $lte: psr + 100 }, prof } },
       {
@@ -55,8 +55,8 @@ const schema = new Schema<Ladder, LadderModel>(
   },
   { timestamps: true },
 );
-schema.index({ prof: 1, psr: 1 });
 
+schema.index({ prof: 1, psr: 1 });
 schema.loadClass(Ladder);
 
 export const LadderModel = mongoose.model<Ladder, LadderModel>('Ladder', schema);
