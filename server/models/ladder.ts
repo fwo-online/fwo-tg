@@ -55,6 +55,7 @@ const schema = new Schema<Ladder, LadderModel>(
   },
   { timestamps: true },
 );
+schema.index({ prof: 1, psr: 1 });
 
 schema.loadClass(Ladder);
 
