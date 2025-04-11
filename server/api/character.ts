@@ -45,3 +45,14 @@ export async function updateCharacter(id: string, query: UpdateQuery<Char>) {
     new Error('Персонаж не найден'),
   );
 }
+
+export async function getCharactersByPSR({ limit = 25, games = 25 } = {}) {
+  return CharModel.find({
+    deleted: false,
+    'statistics.games': { $gte: games },
+  })
+    .populate<{ clan: Clan }>('clan')
+    .sort({ psr: -1 })
+    .limit(limit)
+    .exec();
+}

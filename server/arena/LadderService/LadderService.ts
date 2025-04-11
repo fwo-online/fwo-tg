@@ -5,8 +5,8 @@ import { CharacterService } from '@/arena/CharacterService';
 import { sumBy } from 'es-toolkit';
 import type PlayersService from '@/arena/PlayersService';
 import type { RoundService } from '@/arena/RoundService';
-import { CharModel } from '@/models/character';
 import { toPublicObject } from '@/arena/CharacterService/utils/toPublicObject';
+import { getCharactersByPSR } from '@/api/character';
 
 export class LadderService {
   players: PlayersService;
@@ -25,15 +25,7 @@ export class LadderService {
       return this.cachedLadderList;
     }
 
-    const characters = await CharModel.find({
-      deleted: false,
-      'statistics.games': { $gte: 25 },
-    })
-      .populate('clan')
-      .sort({ psr: -1 })
-      .limit(25)
-      .exec();
-
+    const characters = await getCharactersByPSR();
     const ladderList = characters.map(toPublicObject);
     this.cachedLadderList = ladderList;
 
