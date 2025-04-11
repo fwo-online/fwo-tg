@@ -59,11 +59,11 @@ export class LadderService {
     }
 
     if (performance.damage) {
-      basePSR += (performance.damage / rounds - avgDamagePerRound) * 0.5;
+      basePSR += (performance.damage / rounds - avgDamagePerRound) * 0.33;
     }
 
     if (performance.heal) {
-      basePSR += (performance.heal / rounds - avgHealPerRound) * 0.5;
+      basePSR += (performance.heal / rounds - avgHealPerRound) * 0.33;
     }
 
     if (!performance.alive) {

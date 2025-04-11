@@ -50,7 +50,7 @@ export async function getCharactersByPSR({ limit = 25, games = 25 } = {}) {
   return CharModel.find({
     deleted: false,
     'statistics.games': { $gte: games },
-    psr: { $gte: 250 },
+    psr: { $gte: 50 },
   })
     .populate<{ clan: Clan }>('clan')
     .sort({ psr: -1 })
