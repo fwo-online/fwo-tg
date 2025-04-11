@@ -8,12 +8,12 @@ const tabs = [
     text: 'Персонаж',
   },
   {
-    path: '/lobby',
-    text: 'Лобби',
+    path: '/arena',
+    text: 'Арена',
   },
   {
-    path: '/forge',
-    text: 'Кузница',
+    path: '/agora',
+    text: 'Рынок',
   },
 ];
 

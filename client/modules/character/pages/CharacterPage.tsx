@@ -63,12 +63,10 @@ export const CharacterPage: FC = () => {
 
         <Button onClick={() => navigate('/character/inventory')}>Инвентарь</Button>
         {character.clan ? (
-          <Button onClick={() => navigate('/clan')}>Клан</Button>
+          <Button onClick={() => navigate('/character/clan')}>Клан</Button>
         ) : (
-          <Button onClick={() => navigate('/clan/list')}>Кланы</Button>
+          <Button onClick={() => navigate('/character/clan/list')}>Кланы</Button>
         )}
-
-        <Button onClick={() => navigate('/serviceShop')}>Седой торговец</Button>
       </div>
     </div>
   );

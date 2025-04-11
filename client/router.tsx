@@ -22,6 +22,7 @@ import { ClanCreatePage } from '@/modules/clan/pages/ClanCreatePage';
 import { ClanPage } from '@/modules/clan/pages/ClanPage';
 import { ServiceShopPage } from '@/modules/serviceShop/pages/ServiceShopPage';
 import { LadderPage } from '@/modules/ladder/pages/LadderPage';
+import { AgoraPage } from '@/modules/agora/pages/AgoraPage';
 
 export function Router() {
   return (
@@ -36,24 +37,27 @@ export function Router() {
             <Route path="skills" Component={withBackButton(CharacterSkillPage)} />
             <Route path="passiveSkills" Component={withBackButton(PassiveSkillsPage)} />
             <Route path="inventory" Component={withBackButton(CharacterInventoryPage)} />
+            <Route path="clan">
+              <Route path="" Component={withBackButton(ClanPage)} />
+              <Route path="list" Component={withBackButton(ClanListPage)} />
+              <Route path="create" Component={withBackButton(ClanCreatePage)} />
+            </Route>
           </Route>
           <Route path="/arena">
+            <Route path="" element={<LobbyPage />} />
             <Route path="ladder" Component={withBackButton(LadderPage)} />
           </Route>
-          <Route path="/lobby" element={<LobbyPage />} />
           <Route path="/settings" Component={withBackButton(SettingsPage)} />
-          <Route path="/forge">
-            <Route path="" Component={withBackButton(ForgePage)} />
-            <Route path=":wear" Component={withBackButton(ForgeListPage)} />
-          </Route>
-          <Route path="/clan">
-            <Route path="" Component={withBackButton(ClanPage)} />
-            <Route path="list" Component={withBackButton(ClanListPage)} />
-            <Route path="create" Component={withBackButton(ClanCreatePage)} />
+          <Route path="/agora">
+            <Route path="" element={<AgoraPage />} />
+            <Route path="service" Component={withBackButton(ServiceShopPage)} />
+            <Route path="forge">
+              <Route path="" Component={withBackButton(ForgePage)} />
+              <Route path=":wear" Component={withBackButton(ForgeListPage)} />
+            </Route>
           </Route>
         </Route>
         <Route path="/game/:gameID" element={<GamePage />} />
-        <Route path="/serviceShop" Component={withBackButton(ServiceShopPage)} />
       </Route>
       <Route path="/connection-error" element={<ErrorConnectionPage />} />
       <Route path="/error" element={<ErrorPage />} />

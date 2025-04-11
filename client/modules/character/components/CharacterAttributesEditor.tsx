@@ -18,7 +18,7 @@ export const CharacterAttributesEditor: FC<{
     };
     return (
       <Button
-        className="flex flex-col justify-center items-center is-primary"
+        className="flex flex-col justify-center items-center is-primary text-sm"
         onClick={handleClick}
       >
         {attribute.toUpperCase()}
