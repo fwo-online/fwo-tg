@@ -14,8 +14,12 @@ export const CharacterPage: FC = () => {
 
   return (
     <div className="flex flex-col gap-2 m-3!">
-      <Card header="Персонаж" className="relative">
-        <div className="mt-12 mb-2">
+      <Card header="Персонаж" className="relative bg-transparent!">
+        <img
+          src="/images/characterBackground.png"
+          className="absolute top-0 left-0 right-0 bottom-0 w-full h-full object-cover object-bottom -z-10"
+        />
+        <div className="mt-20 mb-2">
           <CharacterImage characterClass={character.class} />
         </div>
 
@@ -24,17 +28,17 @@ export const CharacterPage: FC = () => {
           {characterClassNameMap[character.class]} {character.lvl}
         </Card>
         <div className="flex gap-2">
-          <Card className="flex flex-1 flex-col justify-center items-center p-1">
+          <Card className="flex flex-1 flex-col justify-center items-center p-0!">
             Золото
             <span>{character.gold}</span>
           </Card>
 
-          <Card className="flex flex-1 flex-col justify-center items-center">
+          <Card className="flex flex-1 flex-col justify-center items-center p-0!">
             Опыт
             <span>{character.exp}</span>
           </Card>
 
-          <Card className="flex flex-1 flex-col justify-center items-center">
+          <Card className="flex flex-1 flex-col justify-center items-center p-0!">
             Бонусы
             <span>{character.bonus}</span>
           </Card>
