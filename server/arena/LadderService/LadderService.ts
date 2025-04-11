@@ -48,9 +48,9 @@ export class LadderService {
 
     let basePSR = performance.winner ? 15 : -10;
     if (performance.alive) {
-      basePSR += 2;
+      basePSR += 2.5;
     } else {
-      basePSR -= 3;
+      basePSR -= 2.5;
     }
 
     if (performance.kills) {
