@@ -9,9 +9,10 @@ const main = async () => {
   CharModel.bulkWrite(
     characters.map((character) => ({
       updateOne: {
-        filter: { _id: character._id },
+        filter: { id: character._id },
         update: {
           $set: {
+            psr: 0,
             'statistics.wins':
               character.statistics.games - (character.statistics.death + character.statistics.runs),
           },

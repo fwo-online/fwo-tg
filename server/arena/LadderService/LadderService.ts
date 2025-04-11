@@ -41,12 +41,13 @@ export class LadderService {
     playerPSR: number,
     prof: CharacterClass,
     performance: PlayerPerformance,
+    winnersRatio: number,
   ): Promise<number> {
     const { avgDamagePerRound, avgKillsPerRound, avgHealPerRound } =
       await LadderModel.averagePerformance(playerPSR, prof);
     const rounds = this.round.count;
 
-    let basePSR = performance.winner ? 15 : -10;
+    let basePSR = performance.winner ? (1 / winnersRatio) * 7.5 : -(winnersRatio * 20);
     if (performance.alive) {
       basePSR += 2.5;
     } else {
@@ -58,11 +59,11 @@ export class LadderService {
     }
 
     if (performance.damage) {
-      basePSR += (performance.damage / rounds - avgDamagePerRound) * 0.33;
+      basePSR += (performance.damage / rounds - avgDamagePerRound) * 0.5;
     }
 
     if (performance.heal) {
-      basePSR += (performance.heal / rounds - avgHealPerRound) * 0.33;
+      basePSR += (performance.heal / rounds - avgHealPerRound) * 0.5;
     }
 
     if (!performance.alive) {
@@ -90,12 +91,18 @@ export class LadderService {
   }
 
   async setPSRForPlayers() {
+    const winnersCount = sumBy(this.players.players, (player) =>
+      player.performance.winner ? 1 : 0,
+    );
+    const winnersRatio = winnersCount / this.players.players.length;
+
     await Promise.all(
       this.players.players.map(async (player) => {
         const psr = await this.calculatePSR(
           player.psr,
           player.prof,
           player.stats.collect.performance,
+          winnersRatio,
         );
         player.stats.addPsr(psr);
       }),
