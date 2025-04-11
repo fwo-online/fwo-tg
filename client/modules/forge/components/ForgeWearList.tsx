@@ -6,7 +6,7 @@ export const ForgeWearList: FC = () => {
   const navigate = useNavigate();
 
   const onClick = (wear: string) => {
-    navigate(`/forge/${wear}`);
+    navigate(`/agora/forge/${wear}`);
   };
 
   return <ItemsWearList onClick={onClick} />;

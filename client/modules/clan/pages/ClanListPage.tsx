@@ -44,7 +44,7 @@ export const ClanListPage: FC = () => {
         <ClanListLoader />
 
         <div className="flex flex-col">
-          <Button className="mt-4" onClick={() => navigate('/clan/create')}>
+          <Button className="mt-4" onClick={() => navigate('/character/clan/create')}>
             Создать клан
           </Button>
         </div>

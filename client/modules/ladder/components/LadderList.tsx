@@ -10,7 +10,7 @@ export const LadderList: FC<{ ladderList: CharacterPublic[] }> = ({ ladderList }
 
   return (
     <>
-      <Card className="mb-4 mt-4 bg-white!">
+      <Card className="mb-4 mt-4 bg-(--tg-theme-bg-color)!">
         <LadderListItem character={character} position={characterPosition + 1} />
       </Card>
       <div className="flex flex-col gap-4 p-4">

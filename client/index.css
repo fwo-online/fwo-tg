@@ -31,6 +31,10 @@ h6 {
   min-width: max-content;
 }
 
+img {
+  image-rendering: pixelated;
+}
+
 @font-face {
   font-family: 'Pixeloid';
   src: url('/fonts/PixeloidSans.woff2') format('woff2');
