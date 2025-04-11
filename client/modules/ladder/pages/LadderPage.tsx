@@ -6,7 +6,7 @@ import { Suspense, type FC } from 'react';
 import { suspend } from 'suspend-react';
 
 const LadderListLoader = () => {
-  const ladderList = suspend(() => getLadderList(), ['ladder']);
+  const ladderList = suspend(() => getLadderList(), ['ladder'], { lifespan: 1 });
 
   return <LadderList ladderList={ladderList} />;
 };

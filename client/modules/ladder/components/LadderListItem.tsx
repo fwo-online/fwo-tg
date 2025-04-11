@@ -1,13 +1,15 @@
 import type { CharacterPublic } from '@fwo/shared';
+import classNames from 'classnames';
 import type { FC } from 'react';
 
-export const LadderListItem: FC<{ character: CharacterPublic; position: number }> = ({
-  character,
-  position,
-}) => {
+export const LadderListItem: FC<{
+  character: CharacterPublic;
+  position?: number;
+  className?: string;
+}> = ({ className, character, position }) => {
   return (
-    <div className="flex flex-1">
-      <div className="basis-8">{position}</div>
+    <div className={classNames('flex flex-1', className)}>
+      <div className="basis-8">{position || '-'}</div>
       <div className="flex flex-col flex-1">
         <div className="flex justify-between mb-2">
           <div>{character.name}</div>
