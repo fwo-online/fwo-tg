@@ -58,7 +58,7 @@ export class LadderService {
     if (performance.alive) {
       basePSR += 2;
     } else {
-      basePSR -= 5;
+      basePSR -= 3;
     }
 
     if (performance.kills) {
