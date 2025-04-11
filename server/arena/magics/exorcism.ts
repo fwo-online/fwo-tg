@@ -17,7 +17,7 @@ class Exorcism extends CommonMagic {
       baseExp: 80,
       costType: 'mp',
       lvl: 3,
-      orderType: 'enemy',
+      orderType: 'team',
       aoeType: 'target',
       magType: 'good',
       chance: ['1d60', '1d70', '1d80'],
