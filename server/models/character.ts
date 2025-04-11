@@ -94,7 +94,7 @@ const character = new Schema<Char, CharModel>({
   free: { type: Number, default: 10 },
   sex: { type: String, default: 'm' },
   lastFight: { type: Date, default: null },
-  psr: { type: Number, default: 1500 },
+  psr: { type: Number, default: 0 },
   magics: { type: Object, default: {} },
   bonus: { type: Number, default: 0 },
   skills: { type: Object, default: {} },
