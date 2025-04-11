@@ -26,8 +26,13 @@ export class CharacterPerformance {
     if (!performance.alive) {
       this.charObj.statistics.death += 1;
     }
+
     if (performance.kills) {
       this.charObj.statistics.kills += 1;
+    }
+
+    if (performance.winner) {
+      this.charObj.statistics.wins += 1;
     }
 
     this.charObj.psr = Math.max(0, psr);

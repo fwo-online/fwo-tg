@@ -14,6 +14,13 @@ export type Character = {
   lvl: number;
   exp: number;
   psr: number;
+  statistics: {
+    games: number;
+    kills: number;
+    death: number;
+    runs: number;
+    wins: number;
+  };
   magics: Record<string, number>;
   skills: Record<string, number>;
   passiveSkills: Record<string, number>;

@@ -21,6 +21,7 @@ import { ClanListPage } from '@/modules/clan/pages/ClanListPage';
 import { ClanCreatePage } from '@/modules/clan/pages/ClanCreatePage';
 import { ClanPage } from '@/modules/clan/pages/ClanPage';
 import { ServiceShopPage } from '@/modules/serviceShop/pages/ServiceShopPage';
+import { LadderPage } from '@/modules/ladder/pages/LadderPage';
 
 export function Router() {
   return (
@@ -35,6 +36,9 @@ export function Router() {
             <Route path="skills" Component={withBackButton(CharacterSkillPage)} />
             <Route path="passiveSkills" Component={withBackButton(PassiveSkillsPage)} />
             <Route path="inventory" Component={withBackButton(CharacterInventoryPage)} />
+          </Route>
+          <Route path="/arena">
+            <Route path="ladder" Component={withBackButton(LadderPage)} />
           </Route>
           <Route path="/lobby" element={<LobbyPage />} />
           <Route path="/settings" Component={withBackButton(SettingsPage)} />

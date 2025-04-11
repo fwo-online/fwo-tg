@@ -18,6 +18,7 @@ export interface Char {
     kills: number;
     death: number;
     runs: number;
+    wins: number;
   };
   gold: number;
   free: number;
@@ -86,6 +87,7 @@ const character = new Schema<Char, CharModel>({
       kills: 0,
       death: 0,
       runs: 0,
+      wins: 0,
     },
   },
   gold: { type: Number, default: 100 },

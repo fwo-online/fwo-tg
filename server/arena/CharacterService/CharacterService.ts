@@ -11,6 +11,8 @@ import { CharacterResources } from './CharacterResources';
 import { ClanService } from '@/arena/ClanService';
 import { CharacterAttributes } from '@/arena/CharacterService/CharacterAttributes';
 import { CharacterPerformance } from '@/arena/CharacterService/CharacterPerformance';
+import { calculateLvl } from '@/arena/CharacterService/utils/calculateLvl';
+import { toPublicObject } from '@/arena/CharacterService/utils/toPublicObject';
 
 /**
  * Конструктор персонажа
@@ -58,8 +60,7 @@ export class CharacterService {
   }
 
   get lvl(): number {
-    const k = 1000 * config.lvlRatio;
-    return Math.max(1, Math.floor(Math.log2(this.charObj.exp / k) + 2));
+    return calculateLvl(this.charObj.exp);
   }
 
   get owner() {
@@ -340,14 +341,15 @@ export class CharacterService {
       skills: this.skills,
       passiveSkills: this.passiveSkills,
       clan: this.clan ? ClanService.toPublicObject(this.clan) : undefined,
-      free: this.charObj.free,
+      free: this.resources.free,
       bonus: this.resources.bonus,
       gold: this.resources.gold,
       lvl: this.lvl,
       exp: this.resources.exp,
-      psr: this.charObj.psr,
+      psr: this.performance.psr,
       dynamicAttributes: this.attributes.getDynamicAttributes(),
       game: this.currentGame?.info.id,
+      statistics: this.performance.statistics,
       components: Object.fromEntries(this.resources.components.entries()) as Record<
         ItemComponent,
         number
@@ -357,13 +359,6 @@ export class CharacterService {
   }
 
   toPublicObject(): CharacterPublic {
-    return {
-      id: this.id,
-      name: this.nickname,
-      class: this.prof as CharacterClass,
-      psr: this.charObj.psr,
-      lvl: this.lvl,
-      clan: this.clan ? ClanService.toPublicObject(this.clan) : undefined,
-    };
+    return toPublicObject(this.charObj);
   }
 }
