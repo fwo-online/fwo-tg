@@ -26,7 +26,7 @@ export class CharacterResources {
   }
 
   get components() {
-    return structuredClone(this.charObj.components);
+    return this.charObj.components;
   }
 
   get exp() {
