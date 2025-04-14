@@ -37,6 +37,7 @@ class Sleep extends LongMagic implements Affect {
 
   preAffect: Affect['preAffect'] = ({ params: { initiator: target, game } }): undefined => {
     if (target.flags.isHited) {
+      /** @todo сделать метод в конструкторе для очистки длительных бафов */
       game.longActions.sleep = game.longActions.sleep?.filter((item) => item.target !== target.id);
       target.flags.isSleeping = [];
     }
