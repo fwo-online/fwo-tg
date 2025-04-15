@@ -19,7 +19,7 @@ export class MarketItemService {
       throw new Error('Цена слишком низкая');
     }
 
-    if (price > item.price) {
+    if (price > item.price * 2) {
       throw new Error('Цена слишком высокая');
     }
 
