@@ -31,7 +31,7 @@ export class MarketItemService {
       const marketItem = await MarketItemModel.create({
         seller: character.id,
         item,
-        price: item.price,
+        price,
       });
 
       return marketItem.toObject();
@@ -49,10 +49,13 @@ export class MarketItemService {
     if (marketItem.sold) {
       throw new Error('Лот уже продан');
     }
+    if (marketItem.seller.toString() === character.id) {
+      throw new Error('Вы не можете купить свой собственный лот');
+    }
 
     try {
-      await character.resources.takeResources({ gold: marketItem.price });
       await marketItem.updateOne({ sold: true });
+      await character.resources.takeResources({ gold: marketItem.price });
       await character.inventory.addItem(marketItem.item);
 
       const seller = await CharacterService.getCharacterById(marketItem.seller.toString());
