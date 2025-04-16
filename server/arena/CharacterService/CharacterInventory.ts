@@ -104,7 +104,7 @@ export class CharacterInventory {
   }
 
   isEquipped(item: Item) {
-    return Object.values(this.equipment).some((equippedItem) => equippedItem._id.equals(item.id));
+    return this.equipment.values().some((equippedItem) => equippedItem._id.equals(item.id));
   }
 
   async addItem(item: Item) {

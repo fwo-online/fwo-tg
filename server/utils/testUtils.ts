@@ -94,7 +94,7 @@ export default class TestUtils {
           CharacterClass.Warrior,
         ],
         price: 1000,
-        wear: 'any',
+        wear: 'body',
         tier: 0,
         ...item,
       }),
