@@ -28,10 +28,12 @@ export const Clan: FC = () => {
         <ClanGold />
       </div>
 
-      <div className="flex justify-between items-center">
-        <h5>Кузница</h5>
-        <ClanForge />
-      </div>
+      {false && (
+        <div className="flex justify-between items-center">
+          <h5>Кузница</h5>
+          <ClanForge />
+        </div>
+      )}
 
       <div>
         <h5>
