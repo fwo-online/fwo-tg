@@ -27,7 +27,7 @@ export const inventory = new Hono()
     const character = c.get('character');
     const code = c.req.param('code');
 
-    const item = await withValidation(CraftService.craftItem(character, code));
+    const item = await withValidation(CraftService.craftItem(character, code, 1));
 
     return c.json(item, 200);
   });

@@ -23,6 +23,8 @@ import { ClanPage } from '@/modules/clan/pages/ClanPage';
 import { ServiceShopPage } from '@/modules/serviceShop/pages/ServiceShopPage';
 import { LadderPage } from '@/modules/ladder/pages/LadderPage';
 import { AgoraPage } from '@/modules/agora/pages/AgoraPage';
+import { ClanForgePage } from '@/modules/clan/pages/ClanForgePage';
+import { ClanForgeListPage } from '@/modules/clan/pages/ClanForgeListPage';
 
 export function Router() {
   return (
@@ -41,6 +43,10 @@ export function Router() {
               <Route path="" Component={withBackButton(ClanPage)} />
               <Route path="list" Component={withBackButton(ClanListPage)} />
               <Route path="create" Component={withBackButton(ClanCreatePage)} />
+              <Route path="forge">
+                <Route path="" Component={withBackButton(ClanForgePage)} />
+                <Route path=":wear" Component={withBackButton(ClanForgeListPage)} />
+              </Route>
             </Route>
           </Route>
           <Route path="/arena">

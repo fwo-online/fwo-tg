@@ -6,6 +6,7 @@ import { useClanStore } from '@/modules/clan/contexts/useClan';
 import { ClanPlayers } from '@/modules/clan/components/ClanPlayers';
 import { ClanRequests } from '@/modules/clan/components/ClanRequests';
 import { useClanOwner } from '@/modules/clan/hooks/useClanOwner';
+import { ClanForge } from '@/modules/clan/components/ClanForge';
 
 export const Clan: FC = () => {
   const lvl = useClanStore((state) => state.clan.lvl);
@@ -25,6 +26,11 @@ export const Clan: FC = () => {
       <div>
         <h5 className="-mb-3">Казна</h5>
         <ClanGold />
+      </div>
+
+      <div className="flex justify-between items-center">
+        <h5>Кузница</h5>
+        <ClanForge />
       </div>
 
       <div>

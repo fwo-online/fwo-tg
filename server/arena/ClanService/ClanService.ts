@@ -17,6 +17,7 @@ import {
   type Clan as ClanSchema,
   clanLvlCost,
   clanAcceptCostPerLvl,
+  clanForgeCost,
 } from '@fwo/shared';
 
 /**
@@ -84,7 +85,7 @@ export class ClanService {
   static async removeClan(clanId: string, ownerId: string) {
     const clan = await this.getClanById(clanId);
     if (!clan.owner._id.equals(ownerId)) {
-      throw new Error('Вы не являетесь владельцем клана');
+      throw new ValidationError('Вы не являетесь владельцем клана');
     }
 
     const promises = clan.players.map(async (player) => {
@@ -255,7 +256,43 @@ export class ClanService {
     await char?.leaveClan();
   }
 
+  static async openForge(clanId: string) {
+    const clan = await this.getClanById(clanId);
+
+    if (clan.isForgeActive) {
+      throw new ValidationError('Кузница уже активна');
+    }
+
+    const now = new Date();
+    const expiresAt = new Date(now.setMonth(now.getMonth() + 1));
+
+    // @todo удалить временную скидку
+    if (clan.gold < clanForgeCost / 10) {
+      throw new ValidationError('В казне недостаточно золота');
+    }
+
+    const updated = await this.updateClan(clanId, {
+      $set: {
+        'forge.openedAt': new Date(),
+        'forge.expiresAt': expiresAt,
+        'forge.lvl': clan.forge?.lvl ?? 1,
+      },
+      $inc: { gold: -(clanForgeCost / 10) },
+    });
+
+    return this.toObject(updated);
+  }
+
+  static async checkForge(claiId: string) {
+    const clan = await this.getClanById(claiId);
+
+    if (!clan.isForgeActive) {
+      throw new ValidationError('Кузница не активна');
+    }
+  }
+
   static toObject(clan: Clan): ClanSchema {
+    console.log(clan);
     return {
       id: clan._id?.toString(),
       name: clan.name,
@@ -266,6 +303,10 @@ export class ClanService {
       players: clan.players.map(({ _id }) => _id.toString()),
       owner: clan.owner._id.toString(),
       maxPlayers: clan.maxPlayers,
+      forge: {
+        active: clan.isForgeActive,
+        expiresAt: clan.forge?.expiresAt?.toString() ?? null,
+      },
     };
   }
 
