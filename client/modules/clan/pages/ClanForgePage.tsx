@@ -12,6 +12,10 @@ export const ClanForgePage: FC = () => {
 
   return (
     <Card header="Клановая кузница" className="m-4!">
+      <h5 className="text-sm">
+        Здесь ты можешь создать предметы. Шанс создания редких предметов повышается с уровнем
+        кузницы!
+      </h5>
       <ItemsWearList onClick={onClick} />
     </Card>
   );

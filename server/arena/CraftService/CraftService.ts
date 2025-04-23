@@ -2,49 +2,38 @@ import type { CharacterService } from '@/arena/CharacterService';
 import ValidationError from '@/arena/errors/ValidationError';
 import { ItemService } from '@/arena/ItemService';
 import MiscService from '@/arena/MiscService';
-import { type Item, ItemWear } from '@fwo/shared';
 import { mapValues } from 'es-toolkit';
 
 export class CraftService {
-  /**
-   * Закладка для рандомных модификаторов предмета, например, "Крепкий Стальной шлем"
-   * @todo
-   */
-  static getRandomModifiers() {
-    const modifier = {
-      heavy: {
-        phys: { defence: 1 },
-        magic: { defence: 1 },
-        weight: 1,
-      },
-      arcane: {
-        magic: { attack: 1, defence: 1 },
-      },
-    } satisfies Record<string, DeepPartial<Item>>;
+  static baseCraftChance: Record<number, number> = {
+    1: 100,
+    2: 60,
+    3: 30,
+  };
 
-    return modifier;
-  }
-
-  static checkChance(tier: number) {
-    if (tier === 2 && MiscService.dice('1d100') > 30) {
-      return false;
+  static checkChance(tier: number, modifier = 0) {
+    if (tier === 1) {
+      return true;
     }
 
-    return true;
+    const chance = this.baseCraftChance[tier] + modifier * 100;
+    console.debug('craft item chance:', chance, 'modifier:', modifier, 'tier:', tier);
+
+    return MiscService.dice('1d100') <= chance;
   }
 
-  static async craftItem(character: CharacterService, code: string, tier?: number) {
+  static async craftItem(character: CharacterService, code: string, modifier: number) {
     const baseItem = ItemService.getItemByCode(code);
 
     if (!baseItem) {
       throw new ValidationError('Предмет не найден');
     }
 
-    if (!baseItem.craft || baseItem.tier !== tier) {
+    if (!baseItem.craft) {
       throw new ValidationError('Этот предмет нельзя скрафтить');
     }
 
-    if (!this.checkChance(baseItem.tier)) {
+    if (!this.checkChance(baseItem.tier, modifier)) {
       const modifier = Math.min(baseItem.tier - 1 * 0.33, 1);
       await character.resources.takeResources({
         components: mapValues(baseItem.craft.components, (val = 0) => Math.ceil(val * modifier)),

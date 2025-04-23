@@ -12,6 +12,10 @@ export const ForgePage: FC = () => {
 
   return (
     <Card header="Кузница" className="m-4!">
+      <h5 className="text-sm">
+        Здесь ты можешь создать предметы. У предметов с уровня 2 появляется шанс неудачи при крафте.
+        В клановой кузнице шанс успеха выше!
+      </h5>
       <ItemsWearList onClick={onClick} />
     </Card>
   );

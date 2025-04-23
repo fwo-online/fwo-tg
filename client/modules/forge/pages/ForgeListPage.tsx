@@ -12,7 +12,7 @@ export const ForgeListPage: FC = () => {
   return (
     <Card header={wearListTranslations[wear]} className="m-4!">
       <Suspense fallback={<Placeholder description="Ищем предметы..." />}>
-        <ForgeList shopPromise={getShopItems({ wear, tier: 1 })} />
+        <ForgeList shopPromise={getShopItems({ wear })} />
       </Suspense>
     </Card>
   );

@@ -26,6 +26,7 @@ export const ItemModal: FC<{
       <Card className="p-3" header={item.info.name}>
         <div className="flex flex-col gap-2 p-2 pt-0!">
           {types.length ? <h5 className="text-sm">{types.join(' ')}</h5> : null}
+          <h5 className="text-sm">Уровень {item.tier}</h5>
           {item.info.description && <h5 className="text-sm">{item.info.description}</h5>}
 
           <div className="text-sm">

@@ -291,6 +291,13 @@ export class ClanService {
     }
   }
 
+  static getForgeModifier(level: number) {
+    if (level >= 5) return 0.3;
+    if (level >= 3) return 0.2;
+    if (level >= 1) return 0.1;
+    return 0;
+  }
+
   static toObject(clan: Clan): ClanSchema {
     console.log(clan);
     return {
