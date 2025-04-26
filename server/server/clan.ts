@@ -68,7 +68,7 @@ export const clan = new Hono()
     const code = c.req.param('code');
 
     await withValidation(ClanService.checkForge(character.clan.id));
-    const modifier = ClanService.getForgeModifier(character.clan.lvl);
+    const modifier = ClanService.getForgeModifier(character.clan.forge.lvl);
     const item = await withValidation(CraftService.craftItem(character, code, modifier));
 
     return c.json(item, 200);

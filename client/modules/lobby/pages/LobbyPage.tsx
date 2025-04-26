@@ -13,7 +13,7 @@ export function LobbyPage() {
   };
 
   return (
-    <div className="m-3 mt-4">
+    <div className="m-3 mt-4 h-full flex flex-col">
       <div className="flex flex-col mb-8">
         <Button onClick={navigateToLadder}>Рейтинг</Button>
       </div>
@@ -21,7 +21,7 @@ export function LobbyPage() {
         <LobbyList searchers={searchers} />
       </Card>
 
-      <div className="flex flex-col fixed bottom-24 left-2 right-2">
+      <div className="flex flex-col mt-auto pb-8">
         {isSearching ? (
           <Button className="is-warning" onClick={toggleSearch}>
             Остановить поиск игры

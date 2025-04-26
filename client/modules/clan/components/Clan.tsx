@@ -10,6 +10,7 @@ import { ClanForge } from '@/modules/clan/components/ClanForge';
 
 export const Clan: FC = () => {
   const lvl = useClanStore((state) => state.clan.lvl);
+  const forgeLvl = useClanStore((state) => state.clan.forge.lvl);
   const players = useClanStore((state) => state.clan.players);
   const maxPlayers = useClanStore((state) => state.clan.maxPlayers);
   const requests = useClanStore((state) => state.clan.requests);
@@ -28,12 +29,10 @@ export const Clan: FC = () => {
         <ClanGold />
       </div>
 
-      {false && (
-        <div className="flex justify-between items-center">
-          <h5>Кузница</h5>
-          <ClanForge />
-        </div>
-      )}
+      <div className="flex justify-between items-center">
+        <h5>Кузница {forgeLvl} ур.</h5>
+        <ClanForge />
+      </div>
 
       <div>
         <h5>

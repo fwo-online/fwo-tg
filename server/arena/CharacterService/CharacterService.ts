@@ -361,4 +361,8 @@ export class CharacterService {
   toPublicObject(): CharacterPublic {
     return toPublicObject(this.charObj);
   }
+
+  static toPublicObject(charObj: Char): CharacterPublic {
+    return toPublicObject(charObj);
+  }
 }

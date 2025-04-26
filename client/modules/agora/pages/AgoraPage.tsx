@@ -10,13 +10,19 @@ export const AgoraPage: FC = () => {
     navigate('/agora/forge');
   };
 
+  const goToMarket = () => {
+    navigate('/agora/market');
+  };
+
   const goToServiceShop = () => {
     navigate('/agora/service');
   };
+
   return (
     <Card header="Рынок" className="m-4">
       <div className="flex flex-col gap-2">
         <Button onClick={goToForge}>Кузница</Button>
+        <Button onClick={goToMarket}>Барахолка</Button>
         <Button onClick={goToServiceShop}>Седой торговец</Button>
       </div>
     </Card>

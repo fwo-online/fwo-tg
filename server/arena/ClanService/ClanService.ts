@@ -17,7 +17,7 @@ import {
   type Clan as ClanSchema,
   clanLvlCost,
   clanAcceptCostPerLvl,
-  clanForgeCost,
+  clanForgeCostMultiplier,
 } from '@fwo/shared';
 
 /**
@@ -263,21 +263,21 @@ export class ClanService {
       throw new ValidationError('Кузница уже активна');
     }
 
-    const now = new Date();
-    const expiresAt = new Date(now.setMonth(now.getMonth() + 1));
-
-    // @todo удалить временную скидку
-    if (clan.gold < clanForgeCost / 10) {
+    const cost = clanLvlCost[clan.lvl - 1] * clanForgeCostMultiplier;
+    if (clan.gold < cost) {
       throw new ValidationError('В казне недостаточно золота');
     }
+
+    const now = new Date();
+    const expiresAt = new Date(now.setMonth(now.getMonth() + 1));
 
     const updated = await this.updateClan(clanId, {
       $set: {
         'forge.openedAt': new Date(),
         'forge.expiresAt': expiresAt,
-        'forge.lvl': clan.forge?.lvl ?? 1,
+        'forge.lvl': this.getForgeLevel(clan.lvl),
       },
-      $inc: { gold: -(clanForgeCost / 10) },
+      $inc: { gold: -cost },
     });
 
     return this.toObject(updated);
@@ -291,15 +291,18 @@ export class ClanService {
     }
   }
 
-  static getForgeModifier(level: number) {
-    if (level >= 5) return 0.3;
-    if (level >= 3) return 0.2;
-    if (level >= 1) return 0.1;
+  static getForgeLevel(clanLvl: number) {
+    if (clanLvl >= 5) return 3;
+    if (clanLvl >= 3) return 2;
+    if (clanLvl >= 1) return 1;
     return 0;
   }
 
+  static getForgeModifier(forgeLvl: number) {
+    return forgeLvl * 0.1;
+  }
+
   static toObject(clan: Clan): ClanSchema {
-    console.log(clan);
     return {
       id: clan._id?.toString(),
       name: clan.name,
@@ -312,6 +315,7 @@ export class ClanService {
       maxPlayers: clan.maxPlayers,
       forge: {
         active: clan.isForgeActive,
+        lvl: clan.forge.lvl ?? this.getForgeLevel(clan.lvl),
         expiresAt: clan.forge?.expiresAt?.toString() ?? null,
       },
     };

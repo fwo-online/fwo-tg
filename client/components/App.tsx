@@ -8,7 +8,6 @@ import { Router } from '@/router';
 
 import { WebSocketProvider } from '@/contexts/webSocket';
 import { createWebSocket } from '@/api';
-import { getCharacter } from '@/api/character';
 import { Placeholder } from '@/components/Placeholder';
 import { Card } from '@/components/Card';
 
@@ -22,6 +21,7 @@ export function App() {
       platform={['macos', 'ios'].includes(tgWebAppPlatform) ? 'ios' : 'base'}
       style={{
         '--tgui--font-family': '"Pixeloid", sans-serif',
+        height: '100%',
       }}
     >
       <HashRouter>
@@ -33,7 +33,7 @@ export function App() {
           }
         >
           <WebSocketProvider socket={createWebSocket()}>
-            <CharacterProvider character={getCharacter()}>
+            <CharacterProvider>
               <Router />
             </CharacterProvider>
           </WebSocketProvider>

@@ -11,6 +11,7 @@ import { passiveSkill } from './passiveSkill';
 import { clan } from './clan';
 import { serviceShop } from '@/server/serviceShop';
 import { ladder } from '@/server/ladder';
+import { market } from '@/server/market';
 
 const origin = [process.env.APP_URL].filter(isString);
 
@@ -25,7 +26,8 @@ export const app = new Hono()
   .route('/clan', clan)
   .route('/passiveSkill', passiveSkill)
   .route('/serviceShop', serviceShop)
-  .route('/ladder', ladder);
+  .route('/ladder', ladder)
+  .route('/market', market);
 
 export default app;
 

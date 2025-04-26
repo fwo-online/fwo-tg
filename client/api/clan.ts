@@ -26,6 +26,9 @@ export const upgradeClanLvl = () => createRequest(client.clan['upgrade-lvl'].$po
 
 export const openClanForge = () => createRequest(client.clan.forge.open.$post)({});
 
+export const forgeClanItem = (code: string) =>
+  createRequest(client.clan.forge.item[':code'].$post)({ param: { code } });
+
 export const deleteClan = () => createRequest(client.clan.$delete)({});
 
 export const leaveClan = () => createRequest(client.clan.leave.$post)({});
