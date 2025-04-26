@@ -66,6 +66,7 @@ const item = new Schema<Item, ItemModel>(
     hit: { type: Object },
     craft: { type: Object },
     modifiers: { type: Object },
+    tier: { type: Number },
     createdBy: { type: Schema.Types.ObjectId, ref: 'Character' },
   },
   {
