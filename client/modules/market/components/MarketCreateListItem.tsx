@@ -11,8 +11,8 @@ export const MarketCreateListItem: FC<{ item: Item }> = ({ item }) => {
   const isEquipped = equipment.includes(item.id);
   const { createItem, isPending } = useMarketItemCreate();
   const [price, setPrice] = useState<string>('');
-  const minPrice = item.price / 0.25;
-  const maxPrice = item.price * 2;
+  const minPrice = Math.ceil(item.price * 0.25);
+  const maxPrice = Math.ceil(item.price * 2);
 
   const handleCreateItem = () => {
     if (Number.isNaN(Number(price)) || !price) {
@@ -23,11 +23,16 @@ export const MarketCreateListItem: FC<{ item: Item }> = ({ item }) => {
   };
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    if (Number.isNaN(e.target.valueAsNumber) && e.target.value) {
+    if (e.target.value === '') {
+      setPrice('');
       return;
     }
 
-    setPrice(e.target.valueAsNumber.toString());
+    if (Number.isNaN(Number(e.target.value))) {
+      return;
+    }
+
+    setPrice(e.target.value);
   };
 
   return (
@@ -44,6 +49,11 @@ export const MarketCreateListItem: FC<{ item: Item }> = ({ item }) => {
       }
       footer={
         <div className="flex flex-col gap-2">
+          {price ? (
+            <h5>Ты получишь {Math.round(Number(price) * 0.8)}💰</h5>
+          ) : (
+            <h5>Ты получишь 80% от указанной цены</h5>
+          )}
           <input
             value={price}
             className="nes-input"
