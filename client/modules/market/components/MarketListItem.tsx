@@ -15,7 +15,12 @@ export const MarketListItem: FC<{ item: ItemMarket }> = ({ item }) => {
     <ItemModal
       item={item.item}
       showComponents={false}
-      trigger={<Button className="text-start">{item.item.info.name}</Button>}
+      trigger={
+        <Button className="flex justify-between">
+          <span>{item.item.info.name}</span>
+          <span>{item.price}💰</span>
+        </Button>
+      }
       footer={
         item.seller.id === character.id ? (
           <div className="flex flex-col">
