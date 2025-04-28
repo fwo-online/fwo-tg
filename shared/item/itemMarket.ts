@@ -8,3 +8,5 @@ export type ItemMarket = {
   price: number;
   createdAt: string;
 };
+
+export const itemMarketRequiredLevel = 5;

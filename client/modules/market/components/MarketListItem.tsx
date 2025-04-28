@@ -3,7 +3,7 @@ import { useCharacter } from '@/contexts/character';
 import { ItemModal } from '@/modules/items/components/ItemModal';
 import { useMarketItemBuy } from '@/modules/market/hooks/useMarketItemBuy';
 import { useMarketItemDelete } from '@/modules/market/hooks/useMarketItemDelete';
-import type { ItemMarket } from '@fwo/shared';
+import { itemMarketRequiredLevel, type ItemMarket } from '@fwo/shared';
 import type { FC } from 'react';
 
 export const MarketListItem: FC<{ item: ItemMarket }> = ({ item }) => {
@@ -30,16 +30,20 @@ export const MarketListItem: FC<{ item: ItemMarket }> = ({ item }) => {
         ) : (
           <div className="flex flex-col gap-2">
             <h5 className="text-sm">Продавец: {item.seller.name}</h5>
-            <div className="flex items-center justify-between gap-4">
-              <Button
-                className="flex-1"
-                disabled={isBuying || isDeleting}
-                onClick={() => buyItem(item.id)}
-              >
-                Купить за {item.price}💰
-              </Button>
-              <div>У тебя {character.gold}💰</div>
-            </div>
+            {character.lvl < itemMarketRequiredLevel ? (
+              <Button disabled>Откроется на {itemMarketRequiredLevel} уровне</Button>
+            ) : (
+              <div className="flex items-center justify-between gap-4">
+                <Button
+                  className="flex-1"
+                  disabled={isBuying || isDeleting}
+                  onClick={() => buyItem(item.id)}
+                >
+                  Купить за {item.price}💰
+                </Button>
+                <div>У тебя {character.gold}💰</div>
+              </div>
+            )}
           </div>
         )
       }
