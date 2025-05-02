@@ -17,6 +17,7 @@ import {
   type Clan as ClanSchema,
   clanLvlCost,
   clanAcceptCostPerLvl,
+  clanForgeCostMultiplier,
 } from '@fwo/shared';
 
 /**
@@ -84,7 +85,7 @@ export class ClanService {
   static async removeClan(clanId: string, ownerId: string) {
     const clan = await this.getClanById(clanId);
     if (!clan.owner._id.equals(ownerId)) {
-      throw new Error('Вы не являетесь владельцем клана');
+      throw new ValidationError('Вы не являетесь владельцем клана');
     }
 
     const promises = clan.players.map(async (player) => {
@@ -255,6 +256,52 @@ export class ClanService {
     await char?.leaveClan();
   }
 
+  static async openForge(clanId: string) {
+    const clan = await this.getClanById(clanId);
+
+    if (clan.isForgeActive) {
+      throw new ValidationError('Кузница уже активна');
+    }
+
+    const cost = clanLvlCost[clan.lvl - 1] * clanForgeCostMultiplier;
+    if (clan.gold < cost) {
+      throw new ValidationError('В казне недостаточно золота');
+    }
+
+    const now = new Date();
+    const expiresAt = new Date(now.setMonth(now.getMonth() + 1));
+
+    const updated = await this.updateClan(clanId, {
+      $set: {
+        'forge.openedAt': new Date(),
+        'forge.expiresAt': expiresAt,
+        'forge.lvl': this.getForgeLevel(clan.lvl),
+      },
+      $inc: { gold: -cost },
+    });
+
+    return this.toObject(updated);
+  }
+
+  static async checkForge(claiId: string) {
+    const clan = await this.getClanById(claiId);
+
+    if (!clan.isForgeActive) {
+      throw new ValidationError('Кузница не активна');
+    }
+  }
+
+  static getForgeLevel(clanLvl: number) {
+    if (clanLvl >= 5) return 3;
+    if (clanLvl >= 3) return 2;
+    if (clanLvl >= 1) return 1;
+    return 0;
+  }
+
+  static getForgeModifier(forgeLvl: number) {
+    return forgeLvl * 0.1;
+  }
+
   static toObject(clan: Clan): ClanSchema {
     return {
       id: clan._id?.toString(),
@@ -266,6 +313,11 @@ export class ClanService {
       players: clan.players.map(({ _id }) => _id.toString()),
       owner: clan.owner._id.toString(),
       maxPlayers: clan.maxPlayers,
+      forge: {
+        active: clan.isForgeActive,
+        lvl: clan.forge.lvl ?? this.getForgeLevel(clan.lvl),
+        expiresAt: clan.forge?.expiresAt?.toString() ?? null,
+      },
     };
   }
 

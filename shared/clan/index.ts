@@ -13,6 +13,11 @@ export type Clan = {
   requests: string[];
   hasEmptySlot: boolean;
   maxPlayers: number;
+  forge: {
+    active: boolean;
+    lvl: number;
+    expiresAt: string | null;
+  };
 };
 
 export type ClanPublic = Pick<Clan, 'id' | 'name' | 'players' | 'owner'>;
@@ -21,5 +26,6 @@ export const createClanSchema = v.object({
   name: nameSchema,
 });
 
-export const clanLvlCost = [100, 250, 750, 1500];
+export const clanLvlCost = [100, 250, 750, 1500, 3000];
 export const clanAcceptCostPerLvl = 50;
+export const clanForgeCostMultiplier = 3;

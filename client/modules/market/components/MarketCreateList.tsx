@@ -1,27 +1,23 @@
 import type { FC } from 'react';
 import { Placeholder } from '@/components/Placeholder';
-import { useCharacterInventory } from '@/modules/character/hooks/useCharacterInventory';
 import { wearList, wearListTranslations } from '@/constants/inventory';
-import { CharacterInventoryListItem } from '@/modules/character/components/CharacterInventoryListItem';
-import { CharacterInventoryComponents } from '@/modules/character/components/CharacterInventoryComponents';
+import { useCharacterInventory } from '@/modules/character/hooks/useCharacterInventory';
+import { MarketCreateListItem } from '@/modules/market/components/MarketCreateListItem';
 
-export const CharacterInventoryList: FC = () => {
+export const MarketCreateList: FC = () => {
   const { items, inventoryByWear } = useCharacterInventory();
+  const itemsToSell = items.filter(({ tier }) => tier > 0);
 
   return (
     <div className="flex flex-col gap-2">
-      <div>
-        <h5>Компоненты</h5>
-        <CharacterInventoryComponents />
-      </div>
-      {items.length ? (
+      {itemsToSell.length ? (
         wearList.map(
           (wear) =>
             inventoryByWear[wear] && (
               <>
                 <h5 key={wear}>{wearListTranslations[wear]}</h5>
                 {inventoryByWear[wear]?.map((item) => (
-                  <CharacterInventoryListItem key={item.id} item={item} />
+                  <MarketCreateListItem key={item.id} item={item} />
                 ))}
               </>
             ),

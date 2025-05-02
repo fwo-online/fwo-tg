@@ -1,11 +1,13 @@
-import mongoose, { Schema, type Model, type Types } from 'mongoose';
+import type { Char } from '@/models/character';
+import type { Item } from '@/models/item';
+import mongoose, { type PopulatedDoc, Schema, type Model, type Types } from 'mongoose';
 
 export interface MarketItem {
   _id: Types.ObjectId;
   id: string;
 
-  seller: Types.ObjectId;
-  item: Types.ObjectId;
+  seller: PopulatedDoc<Char>;
+  item: PopulatedDoc<Item>;
   price: number;
   sold: boolean;
   createdAt: string;

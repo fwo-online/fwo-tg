@@ -23,7 +23,9 @@
     "react-router": "^7.3.0",
     "socket.io-client": "^4.8.1",
     "suspend-react": "^0.1.3",
+    "swr": "^2.3.3",
     "tailwindcss": "^4.0.14",
+    "vaul": "^1.1.2",
     "zustand": "^5.0.3"
   },
   "devDependencies": {

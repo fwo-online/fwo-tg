@@ -7,6 +7,7 @@ import { withValidation } from './utils/withValidation';
 import { handleValidationError } from '@/server/utils/handleValidationError';
 import { clanMiddleware } from '@/server/middlewares/clanMiddleware';
 import * as v from 'valibot';
+import { CraftService } from '@/arena/CraftService/CraftService';
 
 export const clan = new Hono()
   .use(userMiddleware, characterMiddleware)
@@ -62,6 +63,16 @@ export const clan = new Hono()
 
     return c.json({}, 200);
   })
+  .post('/forge/item/:code', async (c) => {
+    const character = c.get('character');
+    const code = c.req.param('code');
+
+    await withValidation(ClanService.checkForge(character.clan.id));
+    const modifier = ClanService.getForgeModifier(character.clan.forge.lvl);
+    const item = await withValidation(CraftService.craftItem(character, code, modifier));
+
+    return c.json(item, 200);
+  })
   .use(clanMiddleware({ owner: true }))
   .delete('', async (c) => {
     const character = c.get('character');
@@ -90,6 +101,13 @@ export const clan = new Hono()
     const character = c.get('character');
 
     const clan = await withValidation(ClanService.levelUp(character.clan.id));
+
+    return c.json(clan, 200);
+  })
+  .post('/forge/open', async (c) => {
+    const character = c.get('character');
+
+    const clan = await withValidation(ClanService.openForge(character.clan.id));
 
     return c.json(clan, 200);
   });

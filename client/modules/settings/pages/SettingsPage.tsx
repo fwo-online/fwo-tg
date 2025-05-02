@@ -1,7 +1,6 @@
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { useCharacter } from '@/contexts/character';
-import { ServiceShop } from '@/modules/serviceShop/components/ServiceShop';
 import { useSettingsCharacter } from '@/modules/settings/hooks/useSettingsCharacter';
 import { useSettingsClan } from '@/modules/settings/hooks/useSettingsClan';
 
@@ -18,7 +17,6 @@ export function SettingsPage() {
         <Button onClick={removeCharacter}>Удалить персонажа</Button>
         {isClanOwner && <Button onClick={removeClan}>Удалить клан</Button>}
         {character.clan && !isClanOwner && <Button onClick={leaveClan}>Покинуть клан</Button>}
-        <ServiceShop />
       </div>
     </Card>
   );

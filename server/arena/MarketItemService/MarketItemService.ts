@@ -1,26 +1,47 @@
 import { CharacterService } from '@/arena/CharacterService';
+import ValidationError from '@/arena/errors/ValidationError';
+import type { Char } from '@/models/character';
 import type { Item } from '@/models/item';
-import { MarketItemModel } from '@/models/market-item';
+import { type MarketItem, MarketItemModel } from '@/models/market-item';
+import { populatedDocGuard } from '@/utils/populatedDocGuard';
 
 export class MarketItemService {
   static async getMarketItems() {
-    const marketItems = await MarketItemModel.find({ sold: false }).sort({ createdAt: -1 });
+    const marketItems = await MarketItemModel.find({ sold: false })
+      .sort({ createdAt: -1 })
+      .populate<{ item: Item }>('item')
+      .populate<{ seller: Char }>({ path: 'seller', populate: { path: 'clan' } });
 
-    return marketItems.map((marketItem) => marketItem.toObject());
+    return marketItems.map((marketItem) => this.toObject(marketItem));
+  }
+
+  static toObject(marketItem: MarketItem) {
+    if (!populatedDocGuard(marketItem.item) || !populatedDocGuard(marketItem.seller)) {
+      console.error('marketItem is not populated', marketItem);
+      throw new ValidationError('Лот не найден');
+    }
+
+    return {
+      id: marketItem.id,
+      seller: CharacterService.toPublicObject(marketItem.seller),
+      item: marketItem.item,
+      price: marketItem.price,
+      createdAt: marketItem.createdAt,
+    };
   }
 
   static async createMarketItem(character: CharacterService, itemID: string, price: number) {
     const item = character.inventory.getItem(itemID);
     if (!item) {
-      throw new Error('Предмет не найден');
+      throw new ValidationError('Предмет не найден');
     }
 
     if (price < item.price * 0.25) {
-      throw new Error('Цена слишком низкая');
+      throw new ValidationError('Цена слишком низкая');
     }
 
     if (price > item.price * 2) {
-      throw new Error('Цена слишком высокая');
+      throw new ValidationError('Цена слишком высокая');
     }
 
     try {
@@ -37,20 +58,46 @@ export class MarketItemService {
       return marketItem.toObject();
     } catch (e) {
       console.error(e);
-      throw new Error('Не удалось создать лот');
+      throw new ValidationError('Не удалось создать лот');
     }
   }
 
-  static async buyMarketItem(character: CharacterService, itemID: string) {
-    const marketItem = await MarketItemModel.findById(itemID).populate<{ item: Item }>('item');
+  static async removeMarketItem(character: CharacterService, marketItemID: string) {
+    const marketItem = await MarketItemModel.findById(marketItemID)
+      .populate<{ item: Item }>('item')
+      .populate<{ seller: Char }>('seller');
+
     if (!marketItem) {
-      throw new Error('Лот не найден');
+      throw new ValidationError('Лот не найден');
     }
     if (marketItem.sold) {
-      throw new Error('Лот уже продан');
+      throw new ValidationError('Лот уже продан');
     }
-    if (marketItem.seller.toString() === character.id) {
-      throw new Error('Вы не можете купить свой собственный лот');
+    if (!marketItem.seller._id.equals(character.id)) {
+      throw new ValidationError('Вы не можете отменить чужой лот');
+    }
+
+    try {
+      await marketItem.deleteOne();
+      await character.inventory.addItem(marketItem.item);
+    } catch (e) {
+      console.error(e);
+      throw new ValidationError('Не удалось отменить лот');
+    }
+  }
+
+  static async buyMarketItem(character: CharacterService, marketItemID: string) {
+    const marketItem = await MarketItemModel.findById(marketItemID)
+      .populate<{ item: Item }>('item')
+      .populate<{ seller: Char }>('seller');
+    if (!marketItem) {
+      throw new ValidationError('Лот не найден');
+    }
+    if (marketItem.sold) {
+      throw new ValidationError('Лот уже продан');
+    }
+    if (marketItem.seller._id.equals(character.id)) {
+      throw new ValidationError('Вы не можете купить свой собственный лот');
     }
 
     try {
@@ -58,11 +105,11 @@ export class MarketItemService {
       await character.resources.takeResources({ gold: marketItem.price });
       await character.inventory.addItem(marketItem.item);
 
-      const seller = await CharacterService.getCharacterById(marketItem.seller.toString());
+      const seller = await CharacterService.getCharacterById(marketItem.seller.id);
       await seller.resources.addResources({ gold: Math.round(marketItem.price * 0.8) });
     } catch (e) {
       console.error(e);
-      throw new Error('Произошла ошибка при покупке лота');
+      throw new ValidationError('Произошла ошибка при покупке лота');
     }
   }
 }

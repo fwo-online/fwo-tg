@@ -1,29 +1,27 @@
 import type { CharacterService } from '@/arena/CharacterService';
 import ValidationError from '@/arena/errors/ValidationError';
 import { ItemService } from '@/arena/ItemService';
-import type { Item } from '@fwo/shared';
+import MiscService from '@/arena/MiscService';
+import { baseItemCostModifier, baseCraftChance, getItemPrice } from '@fwo/shared';
+import { mapValues } from 'es-toolkit';
 
 export class CraftService {
-  /**
-   * Закладка для рандомных модификаторов предмета, например, "Крепкий Стальной шлем"
-   * @todo
-   */
-  static getRandomModifiers() {
-    const modifier = {
-      heavy: {
-        phys: { defence: 1 },
-        magic: { defence: 1 },
-        weight: 1,
-      },
-      arcane: {
-        magic: { attack: 1, defence: 1 },
-      },
-    } satisfies Record<string, DeepPartial<Item>>;
+  static checkChance(tier: number, modifier = 0) {
+    if (tier === 1) {
+      return true;
+    }
 
-    return modifier;
+    const chance = Math.min(baseCraftChance[tier] + modifier * 100, 100);
+    console.debug('craft item chance:', chance, 'modifier:', modifier, 'tier:', tier);
+
+    return MiscService.dice('1d100') <= chance;
   }
 
-  static async craftItem(character: CharacterService, code: string) {
+  static getResourcesModifier(tier: number, modifier: number) {
+    return Math.min(Math.max((tier - 1) * (baseItemCostModifier - modifier), 0), 1);
+  }
+
+  static async craftItem(character: CharacterService, code: string, modifier = 0) {
     const baseItem = ItemService.getItemByCode(code);
 
     if (!baseItem) {
@@ -34,9 +32,21 @@ export class CraftService {
       throw new ValidationError('Этот предмет нельзя скрафтить');
     }
 
+    if (!this.checkChance(baseItem.tier, modifier)) {
+      const resourcesModifier = this.getResourcesModifier(baseItem.tier, modifier);
+      await character.resources.takeResources({
+        components: mapValues(baseItem.craft.components, (val = 0) =>
+          Math.ceil(val * resourcesModifier),
+        ),
+        gold: Math.ceil(baseItem.price * resourcesModifier),
+      });
+
+      throw new ValidationError('Не удалось скрафтить предмет');
+    }
+
     await character.resources.takeResources({
       components: baseItem.craft.components,
-      gold: baseItem.price * 0.4,
+      gold: getItemPrice(baseItem.price, baseItem.tier),
     });
 
     const item = await ItemService.createItem(baseItem, character.charObj);

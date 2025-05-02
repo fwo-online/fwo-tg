@@ -5,10 +5,8 @@ import type { Char } from '@/models/character';
 import { filterByClass, filterByWear } from '@/arena/ItemService/utils';
 
 export class ItemService {
-  static getItemsByClass(characterClass: CharacterClass, filter?: { wear: string }) {
-    const itemsByClass = Object.values(arena.items)
-      .filter(({ tier }) => Boolean(tier))
-      .filter(filterByClass(characterClass));
+  static getItemsByClass(characterClass: CharacterClass, filter?: { wear: string; tier?: number }) {
+    const itemsByClass = Object.values(arena.items).filter(filterByClass(characterClass));
 
     if (filter?.wear) {
       return itemsByClass.filter(filterByWear(filter.wear));

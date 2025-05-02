@@ -1,21 +1,24 @@
+import { getCharacter } from '@/api/character';
 import type { Character } from '@fwo/shared';
-import type { Dispatch, PropsWithChildren, SetStateAction } from 'react';
-import { createContext, use, useState } from 'react';
+import type { PropsWithChildren } from 'react';
+import { createContext, use } from 'react';
+import useSWR, { type KeyedMutator } from 'swr';
 
 export type CharacterContextType = {
   character: Character | undefined;
-  setCharacter: Dispatch<SetStateAction<Character | undefined>>;
+  setCharacter: KeyedMutator<Character | undefined>;
 };
 
 export const CharacterContext = createContext<CharacterContextType | undefined>(undefined);
 
-export const CharacterProvider = ({
-  children,
-  ...props
-}: PropsWithChildren<{ character: Promise<Character | undefined> }>) => {
-  const [character, setCharacter] = useState(use(props.character) ?? undefined);
+export const CharacterProvider = ({ children }: PropsWithChildren) => {
+  const { data, mutate } = useSWR('character', getCharacter, { suspense: true });
 
-  return <CharacterContext value={{ character, setCharacter }}>{children}</CharacterContext>;
+  return (
+    <CharacterContext value={{ character: data, setCharacter: mutate }}>
+      {children}
+    </CharacterContext>
+  );
 };
 
 export const useCharacterContext = () => {

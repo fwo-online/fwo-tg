@@ -10,12 +10,7 @@ import { RoundService, RoundStatus } from '@/arena/RoundService';
 import arena from '@/arena';
 import { mapValues } from 'es-toolkit';
 import EventEmitter from 'node:events';
-import {
-  type GameStatus,
-  type ItemComponent,
-  type PlayerPerformance,
-  reservedClanName,
-} from '@fwo/shared';
+import { type GameStatus, type ItemComponent, reservedClanName } from '@fwo/shared';
 import { StatisticsService } from '@/arena/StatisticsService';
 import { LadderService } from '@/arena/LadderService';
 

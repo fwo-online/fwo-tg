@@ -6,9 +6,11 @@ import { useClanStore } from '@/modules/clan/contexts/useClan';
 import { ClanPlayers } from '@/modules/clan/components/ClanPlayers';
 import { ClanRequests } from '@/modules/clan/components/ClanRequests';
 import { useClanOwner } from '@/modules/clan/hooks/useClanOwner';
+import { ClanForge } from '@/modules/clan/components/ClanForge';
 
 export const Clan: FC = () => {
   const lvl = useClanStore((state) => state.clan.lvl);
+  const forgeLvl = useClanStore((state) => state.clan.forge.lvl);
   const players = useClanStore((state) => state.clan.players);
   const maxPlayers = useClanStore((state) => state.clan.maxPlayers);
   const requests = useClanStore((state) => state.clan.requests);
@@ -25,6 +27,11 @@ export const Clan: FC = () => {
       <div>
         <h5 className="-mb-3">Казна</h5>
         <ClanGold />
+      </div>
+
+      <div className="flex justify-between items-center">
+        <h5>Кузница {forgeLvl} ур.</h5>
+        <ClanForge />
       </div>
 
       <div>

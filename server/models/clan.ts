@@ -2,23 +2,28 @@ import mongoose, { Schema, type Model, type Types } from 'mongoose';
 import type { Char } from './character';
 
 export interface Clan {
-  _id: Types.ObjectId
-  id: string
+  _id: Types.ObjectId;
+  id: string;
 
   name: string;
   logo: {
     moderated: boolean;
     type: string;
     data: Buffer;
-  },
+  };
   gold: number;
   lvl: number;
   owner: Char;
   players: Char[];
   requests: Char[];
+  forge: {
+    lvl: number;
+    openedAt?: Date;
+    expiresAt?: Date;
+  };
 }
 
-export type ClanModel = Model<Clan> & typeof Clan
+export type ClanModel = Model<Clan> & typeof Clan;
 
 export class Clan {
   get maxPlayers(): number {
@@ -27,6 +32,10 @@ export class Clan {
 
   get hasEmptySlot(): boolean {
     return this.players.length < this.maxPlayers;
+  }
+
+  get isForgeActive(): boolean {
+    return Boolean(this.forge?.expiresAt && new Date() < this.forge.expiresAt);
   }
 }
 
@@ -49,6 +58,11 @@ const schema = new Schema<Clan>({
     ref: 'Character',
     required: true,
     unique: true,
+  },
+  forge: {
+    lvl: { type: Number, default: 0 },
+    openedAt: { type: Date },
+    expiresAt: { type: Date },
   },
 });
 

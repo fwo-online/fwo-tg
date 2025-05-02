@@ -1,5 +1,5 @@
-import type { Item } from '@fwo/shared';
-import { use, type FC } from 'react';
+import { getItemPrice, type Item } from '@fwo/shared';
+import type { FC } from 'react';
 import { forgeItem } from '@/api/inventory';
 import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 import { ItemModal } from '@/modules/items/components/ItemModal';
@@ -9,9 +9,9 @@ import { popup } from '@telegram-apps/sdk-react';
 import { Button } from '@/components/Button';
 import { Placeholder } from '@/components/Placeholder';
 import { every } from 'es-toolkit/compat';
+import { forgeClanItem } from '@/api/clan';
 
-export const ForgeList: FC<{ shopPromise: Promise<Item[]> }> = ({ shopPromise }) => {
-  const items = use(shopPromise);
+export const ForgeList: FC<{ items: Item[]; clanForge?: boolean }> = ({ items, clanForge }) => {
   const { character } = useCharacter();
   const { updateCharacter } = useUpdateCharacter();
   const [_, makeRequest] = useRequest();
@@ -28,11 +28,15 @@ export const ForgeList: FC<{ shopPromise: Promise<Item[]> }> = ({ shopPromise })
   };
 
   const handleForge = async (item: Item) => {
-    makeRequest(async () => {
-      await forgeItem(item.code);
+    await makeRequest(async () => {
+      if (clanForge) {
+        await forgeClanItem(item.code);
+      } else {
+        await forgeItem(item.code);
+      }
       popup.open({ message: `Ты создал ${item.info.name}` });
-      await updateCharacter();
     });
+    await updateCharacter();
   };
 
   return items.length ? (
@@ -49,7 +53,7 @@ export const ForgeList: FC<{ shopPromise: Promise<Item[]> }> = ({ shopPromise })
                 disabled={!canForge(item)}
                 onClick={() => handleForge(item)}
               >
-                Создать за {Math.round(item.price * 0.2)}💰
+                Создать за {getItemPrice(item.price, item.tier)}💰
               </Button>
               <div>У тебя {character.gold}💰</div>
             </div>
