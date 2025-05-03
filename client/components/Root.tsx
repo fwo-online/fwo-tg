@@ -1,8 +1,5 @@
-// import { TonConnectUIProvider } from '@tonconnect/ui-react';
-
 import { App } from '../components/App';
 import { ErrorBoundary } from '../components/ErrorBoundary';
-// import { publicUrl } from '@/helpers/publicUrl.ts';
 
 function ErrorBoundaryError({ error }: { error: unknown }) {
   return (
@@ -10,12 +7,14 @@ function ErrorBoundaryError({ error }: { error: unknown }) {
       <p>An unhandled error occurred:</p>
       <blockquote>
         <code>
-          {// eslint-disable-next-line no-nested-ternary
-          error instanceof Error
-            ? error.message
-            : typeof error === 'string'
-              ? error
-              : JSON.stringify(error)}
+          {
+            // eslint-disable-next-line no-nested-ternary
+            error instanceof Error
+              ? error.message
+              : typeof error === 'string'
+                ? error
+                : JSON.stringify(error)
+          }
         </code>
       </blockquote>
     </div>
@@ -25,13 +24,7 @@ function ErrorBoundaryError({ error }: { error: unknown }) {
 export function Root() {
   return (
     <ErrorBoundary fallback={ErrorBoundaryError}>
-      {/* <TonConnectUIProvider
-        manifestUrl={publicUrl('tonconnect-manifest.json')}
-      > */}
-        {/* <RouterProvider router={router}> */}
-          <App/>
-        {/* </RouterProvider> */}
-      {/* </TonConnectUIProvider> */}
+      <App />
     </ErrorBoundary>
   );
 }

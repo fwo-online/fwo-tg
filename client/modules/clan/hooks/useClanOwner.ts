@@ -1,11 +1,11 @@
-import { useCharacter } from '@/contexts/character';
-import { useClanStore } from '@/modules/clan/contexts/useClan';
+import { useCharacter } from '@/modules/character/store/character';
+import { useClan } from '@/modules/clan/store/clan';
 
 export const useClanOwner = () => {
-  const { character } = useCharacter();
-  const owner = useClanStore((state) => state.clan.owner);
+  const characterID = useCharacter((character) => character.id);
+  const ownerID = useClan((clan) => clan.owner);
 
-  const isOwner = character.id === owner;
+  const isOwner = characterID === ownerID;
 
   return {
     isOwner,

@@ -8,10 +8,13 @@ export const useMarketItemBuy = () => {
   const [isPending, makeRequest] = useRequest();
 
   const buyItem = async (itemId: string) => {
-    confirm('Вы уверены, что хотите купить этот предмет?', async () => {
-      await makeRequest(() => buyMarketItem(itemId));
-      mutate('marketItems');
-      await mutate('character');
+    confirm({
+      message: 'Вы уверены, что хотите купить этот предмет?',
+      onConfirm: async () => {
+        await makeRequest(() => buyMarketItem(itemId));
+        mutate('marketItems');
+        await mutate('character');
+      },
     });
   };
 

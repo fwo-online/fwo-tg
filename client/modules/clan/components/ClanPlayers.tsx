@@ -1,15 +1,14 @@
-import { getCharacterList } from '@/api/character';
 import { Description } from '@/components/Description';
 import { CharacterImage } from '@/modules/character/components/CharacterImage';
+import { useClanPlayers } from '@/modules/clan/hooks/useClanPlayers';
 import type { CharacterPublic } from '@fwo/shared';
 import type { FC, ReactNode } from 'react';
-import { suspend } from 'suspend-react';
 
 export const ClanPlayers: FC<{
   players: string[];
   after?: (character: CharacterPublic) => ReactNode;
 }> = ({ players, after }) => {
-  const characters = suspend((...players) => getCharacterList(players), players);
+  const characters = useClanPlayers(players);
 
   return (
     <Description>

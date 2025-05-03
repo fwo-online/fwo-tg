@@ -1,29 +1,31 @@
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import { Description } from '@/components/Description';
 import { type GameStatus as GameStatusSchema, reservedClanName } from '@fwo/shared';
-import { useCharacter } from '@/contexts/character';
+
 import { CharacterImage } from '@/modules/character/components/CharacterImage';
 import { mapValues, omit } from 'es-toolkit';
+import { useCharacter } from '@/modules/character/store/character';
 
 export function GameStatus() {
-  const { character } = useCharacter();
+  const clan = useCharacter((character) => character.clan);
+  const characterID = useCharacter((character) => character.id);
   const players = useGameStore((state) => state.players);
   const statusByClan = useGameStore((state) => state.statusByClan);
-  const alliesStatus = character.clan
-    ? statusByClan[character.clan?.name]
-    : statusByClan[reservedClanName]?.filter(({ id }) => id === character.id);
+  const alliesStatus = clan
+    ? statusByClan[clan?.name]
+    : statusByClan[reservedClanName]?.filter(({ id }) => id === characterID);
 
-  const enemiesStatus: Partial<Record<string, GameStatusSchema[]>> = character.clan
-    ? omit(statusByClan, [character.clan.name])
+  const enemiesStatus: Partial<Record<string, GameStatusSchema[]>> = clan
+    ? omit(statusByClan, [clan.name])
     : mapValues(statusByClan, (statuses, clan) => {
         if (clan === reservedClanName) {
-          return statuses?.filter(({ id }) => id !== character.id);
+          return statuses?.filter(({ id }) => id !== characterID);
         }
         return statuses;
       });
 
   return (
-    <Description header={character.clan ? character.clan.name : ''}>
+    <Description header={clan?.name ?? ''}>
       {alliesStatus?.map((status) => (
         <Description.Item
           key={status.name}

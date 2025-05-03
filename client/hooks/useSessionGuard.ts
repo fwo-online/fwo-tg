@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router';
-import { useWebSocket } from '@/contexts/webSocket';
 import { useMountEffect } from '@/hooks/useMountEffect';
+import { useSocket } from '@/stores/socket';
 
 export const useSessionGuard = () => {
-  const socket = useWebSocket();
+  const socket = useSocket();
   const navigate = useNavigate();
 
   useMountEffect(() => {
@@ -14,7 +14,7 @@ export const useSessionGuard = () => {
 };
 
 export const useSessionReconnect = () => {
-  const socket = useWebSocket();
+  const socket = useSocket();
   const navigate = useNavigate();
 
   return () => {

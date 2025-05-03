@@ -1,10 +1,10 @@
 import { getDonationInvoice } from '@/api/serviceShop';
 import { useRequest } from '@/hooks/useRequest';
-import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
+import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
 import { invoice, popup } from '@telegram-apps/sdk-react';
 
 export const useServiceShopDonation = () => {
-  const { updateCharacter } = useUpdateCharacter();
+  const { syncCharacter } = useSyncCharacter();
   const [loading, makeRequest] = useRequest();
 
   const donateByStars = (amount: number) => {
@@ -13,7 +13,7 @@ export const useServiceShopDonation = () => {
 
       invoice.open(url, 'url').then((status) => {
         if (status === 'paid') {
-          updateCharacter();
+          syncCharacter();
           popup.open({ message: 'Пожертвование успешно отправлено!' });
         }
         if (status === 'cancelled' || status === 'failed') {

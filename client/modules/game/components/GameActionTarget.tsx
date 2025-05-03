@@ -1,18 +1,18 @@
 import { type FC, useCallback } from 'react';
-import type { PublicGameStatus } from '@fwo/shared';
+import type { Player } from '@fwo/shared';
 
 export const GameActionTarget: FC<{
-  status: PublicGameStatus;
+  player: Player;
   onChange: (target: string) => void;
-}> = ({ status, onChange }) => {
+}> = ({ player, onChange }) => {
   const handleChange = useCallback(() => {
-    onChange(status.id);
-  }, [onChange, status.id]);
+    onChange(player.id);
+  }, [onChange, player.id]);
 
   return (
     <label>
-      <input className="nes-radio" type="radio" name={status.id} onChange={handleChange} />
-      <span>{status.name}</span>
+      <input className="nes-radio" type="radio" name={player.id} onChange={handleChange} />
+      <span>{player.name}</span>
     </label>
   );
 };

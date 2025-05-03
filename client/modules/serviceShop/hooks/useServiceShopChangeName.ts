@@ -1,11 +1,13 @@
 import { changeName, getChangeNameInvoice } from '@/api/serviceShop';
+import { useConfirm } from '@/hooks/useConfirm';
 import { useRequest } from '@/hooks/useRequest';
-import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
+import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
 import { invoice, popup } from '@telegram-apps/sdk-react';
 
 export const useServiceShopChangeName = () => {
-  const { updateCharacter } = useUpdateCharacter();
+  const { syncCharacter } = useSyncCharacter();
   const [loading, makeRequest] = useRequest();
+  const { confirm } = useConfirm();
 
   const changeNameByStars = (name: string) => {
     makeRequest(async () => {
@@ -13,7 +15,7 @@ export const useServiceShopChangeName = () => {
 
       invoice.open(url, 'url').then((status) => {
         if (status === 'paid') {
-          updateCharacter();
+          syncCharacter();
           popup.open({ message: 'Имя успешно изменено' });
         }
         if (status === 'cancelled' || status === 'failed') {
@@ -24,25 +26,13 @@ export const useServiceShopChangeName = () => {
   };
 
   const changeNameByComponents = (name: string) => {
-    makeRequest(async () => {
-      const id = await popup.open({
-        message: 'Вы уверены, что изменить имя?',
-        buttons: [
-          {
-            id: 'close',
-            type: 'close',
-          },
-          {
-            id: 'ok',
-            type: 'ok',
-          },
-        ],
-      });
-      if (id === 'ok') {
-        await changeName(name);
-        updateCharacter();
+    confirm({
+      message: 'Вы уверены, что изменить имя?',
+      onConfirm: async () => {
+        makeRequest(() => changeName(name));
+        await syncCharacter();
         popup.open({ message: 'Имя успешно изменено' });
-      }
+      },
     });
   };
 

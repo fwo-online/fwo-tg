@@ -3,12 +3,12 @@ import { Card } from '@/components/Card';
 import { Placeholder } from '@/components/Placeholder';
 import { LadderList } from '@/modules/ladder/components/LadderList';
 import { Suspense, type FC } from 'react';
-import { suspend } from 'suspend-react';
+import useSWR from 'swr';
 
 const LadderListLoader = () => {
-  const ladderList = suspend(() => getLadderList(), ['ladder'], { lifespan: 1 });
+  const { data } = useSWR('ladder', getLadderList, { suspense: true });
 
-  return <LadderList ladderList={ladderList} />;
+  return <LadderList ladderList={data} />;
 };
 
 export const LadderPage: FC = () => {

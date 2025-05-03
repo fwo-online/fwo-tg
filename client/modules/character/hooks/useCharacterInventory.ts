@@ -1,28 +1,30 @@
 import { equipItem, unEquipItem } from '@/api/inventory';
-import { useCharacter } from '@/contexts/character';
+
 import { useRequest } from '@/hooks/useRequest';
-import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
+import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
+import { useCharacter } from '@/modules/character/store/character';
 import { groupBy } from 'es-toolkit';
 
 export const useCharacterInventory = () => {
-  const { character } = useCharacter();
-  const { updateCharacter } = useUpdateCharacter();
+  const items = useCharacter((character) => character.items);
+  const equipment = useCharacter((character) => character.equipment);
+  const { syncCharacter } = useSyncCharacter();
 
-  const inventoryByWear = groupBy(character.items, (item) => item.wear);
+  const inventoryByWear = groupBy(items, (item) => item.wear);
 
   const [_, makeRequest] = useRequest();
 
   const handleEquip = async (id: string) => {
     makeRequest(async () => {
       await equipItem(id);
-      await updateCharacter();
+      await syncCharacter();
     });
   };
 
   const handleUnEquip = async (id: string) => {
     makeRequest(async () => {
       await unEquipItem(id);
-      await updateCharacter();
+      await syncCharacter();
     });
   };
 
@@ -30,7 +32,7 @@ export const useCharacterInventory = () => {
     handleEquip,
     handleUnEquip,
     inventoryByWear,
-    items: character.items,
-    equipment: character.equipment,
+    items,
+    equipment,
   };
 };

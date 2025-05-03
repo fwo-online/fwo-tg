@@ -1,11 +1,11 @@
 import { Card } from '@/components/Card';
-import { useCharacter } from '@/contexts/character';
+import { useCharacter } from '@/modules/character/store/character';
 import { LadderListItem } from '@/modules/ladder/components/LadderListItem';
 import type { CharacterPublic } from '@fwo/shared';
 import type { FC } from 'react';
 
 export const LadderList: FC<{ ladderList: CharacterPublic[] }> = ({ ladderList }) => {
-  const { character } = useCharacter();
+  const character = useCharacter();
   const characterPosition = ladderList.findIndex(({ id }) => character.id === id);
 
   return (

@@ -1,21 +1,22 @@
 import { useLocation, useNavigate } from 'react-router';
-import { useWebSocket } from '@/contexts/webSocket';
 import { useCallback, useEffect } from 'react';
-import { useCharacter } from '@/contexts/character';
-import { useMountEffect } from './useMountEffect';
+import { useCharacterStore } from '@/modules/character/store/character';
+import { useSocket } from '@/stores/socket';
+import { useMountEffect } from '@/hooks/useMountEffect';
 
 export const useGameGuard = () => {
-  const socket = useWebSocket();
+  const socket = useSocket();
   const navigate = useNavigate();
   const location = useLocation();
-  const { character } = useCharacter();
+  const game = useCharacterStore((state) => state.character?.game);
+  const setGame = useCharacterStore((state) => state.setGame);
 
   const navigateToGame = useCallback(
     (gameID: string) => {
-      character.game = gameID;
+      setGame(gameID);
       navigate(`/game/${gameID}`);
     },
-    [navigate, character],
+    [navigate, setGame],
   );
 
   useEffect(() => {
@@ -27,11 +28,11 @@ export const useGameGuard = () => {
   }, [socket.on, socket.off, navigateToGame]);
 
   useMountEffect(() => {
-    if (character.game) {
-      navigateToGame(character.game);
+    if (game) {
+      navigateToGame(game);
     }
 
-    if (!character.game && location.pathname.startsWith('/game')) {
+    if (!game && location.pathname.startsWith('/game')) {
       navigate('/');
     }
   });

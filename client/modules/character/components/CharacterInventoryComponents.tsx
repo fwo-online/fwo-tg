@@ -1,11 +1,10 @@
 import type { FC } from 'react';
-
 import { useItemComponents } from '@/modules/items/hooks/useItemComponents';
-import { useCharacter } from '@/contexts/character';
+import { useCharacter } from '@/modules/character/store/character';
 
 export const CharacterInventoryComponents: FC = () => {
   const { components, getComponentImage } = useItemComponents();
-  const { character } = useCharacter();
+  const character = useCharacter();
 
   return (
     <div className="flex gap-4 flex-wrap">

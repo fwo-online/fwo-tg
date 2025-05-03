@@ -1,24 +1,20 @@
 import type { PassiveSkill } from '@fwo/shared';
-import { type FC, use } from 'react';
-import { useCharacter } from '@/contexts/character';
-import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
+import type { FC } from 'react';
 import { useRequest } from '@/hooks/useRequest';
-import { Button } from '@/components/Button';
-import { PassiveSkillModal } from './PassiveSkillModal';
 import { learnPassiveSkill } from '@/api/passiveSkills';
+import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
+import { PassiveSkillModal } from '@/modules/passiveSkills/components/PassiveSkillModal';
 
 export const PassiveSkillsList: FC<{
-  skillsSource: Promise<PassiveSkill[]>;
-}> = ({ skillsSource }) => {
-  const { character } = useCharacter();
-  const skills = use(skillsSource);
-  const { updateCharacter } = useUpdateCharacter();
+  skills: PassiveSkill[];
+}> = ({ skills }) => {
+  const { syncCharacter } = useSyncCharacter();
   const [isPending, makeRequest] = useRequest();
 
   const handleLearn = async (skill: PassiveSkill) => {
     makeRequest(async () => {
       await learnPassiveSkill(skill.name);
-      await updateCharacter();
+      await syncCharacter();
     });
   };
 
@@ -30,14 +26,6 @@ export const PassiveSkillsList: FC<{
           passiveSkill={skill}
           loading={isPending}
           onLearn={handleLearn}
-          trigger={
-            <Button>
-              <div className="flex justify-between items-center text-sm">
-                {skill.displayName}
-                <div className="opacity-50">{character.passiveSkills[skill.name]}</div>
-              </div>
-            </Button>
-          }
         />
       ))}
     </div>

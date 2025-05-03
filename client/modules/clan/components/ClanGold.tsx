@@ -1,14 +1,13 @@
 import { Button } from '@/components/Button';
-import { useClanStore } from '@/modules/clan/contexts/useClan';
 import { useClanGold } from '@/modules/clan/hooks/useClanGold';
+import { useClan } from '@/modules/clan/store/clan';
 import { type ChangeEventHandler, type FC, useState } from 'react';
 
 export const ClanGold: FC = () => {
   const [adding, setAdding] = useState(false);
   const [goldToAdd, setGoldToAdd] = useState('');
   const { addGold } = useClanGold();
-  const gold = useClanStore((state) => state.clan.gold);
-  const loading = useClanStore((state) => state.loading);
+  const gold = useClan((clan) => clan.gold);
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     if (Number.isNaN(e.target.valueAsNumber) && e.target.value) {
@@ -42,14 +41,10 @@ export const ClanGold: FC = () => {
             />
             <div className="flex items-center gap-4">
               <div className="flex gap-4 ">
-                <Button
-                  className="is-success"
-                  disabled={!goldToAdd || loading}
-                  onClick={handleAddGold}
-                >
+                <Button className="is-success" disabled={!goldToAdd} onClick={handleAddGold}>
                   ✔
                 </Button>
-                <Button className="is-error" disabled={loading} onClick={() => setAdding(false)}>
+                <Button className="is-error" onClick={() => setAdding(false)}>
                   ✖
                 </Button>
               </div>

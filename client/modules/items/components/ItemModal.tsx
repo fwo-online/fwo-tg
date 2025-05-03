@@ -2,13 +2,12 @@ import { Card } from '@/components/Card';
 import type { Item } from '@fwo/shared';
 import { Modal } from '@/components/Modal/Modal';
 import type { ReactNode, FC } from 'react';
-
-import { useCharacter } from '@/contexts/character';
 import { ItemCharacterAttributes } from '@/modules/items/components/ItemCharacterAttribites';
 import { ItemAttributes } from '@/modules/items/components/ItemAttributes';
 import { ItemComponents } from '@/modules/items/components/ItemComponents';
 import { useItemType } from '@/modules/items/hooks/useItemType';
 import { sum } from 'es-toolkit/compat';
+import { useCharacter } from '@/modules/character/store/character';
 
 export const ItemModal: FC<{
   item: Item;
@@ -16,7 +15,7 @@ export const ItemModal: FC<{
   footer?: ReactNode;
   showComponents?: boolean;
 }> = ({ item, trigger, footer, showComponents }) => {
-  const { character } = useCharacter();
+  const attributes = useCharacter((character) => character.attributes);
   const types = useItemType(item);
 
   const showCharacterAttributes = sum(Object.values(item.attributes)) > 0;
@@ -33,7 +32,7 @@ export const ItemModal: FC<{
             <h5>Требуемые характеристики</h5>
             <ItemCharacterAttributes
               itemAttributes={item.requiredAttributes}
-              characterAttributes={character.attributes}
+              characterAttributes={attributes}
             />
           </div>
           <div>

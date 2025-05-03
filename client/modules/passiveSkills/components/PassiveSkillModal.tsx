@@ -1,24 +1,33 @@
 import type { FC, ReactNode } from 'react';
-import { useCharacter } from '@/contexts/character';
 import type { PassiveSkill } from '@fwo/shared';
 import { Modal } from '@telegram-apps/telegram-ui';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
+import { useCharacter } from '@/modules/character/store/character';
 
 export const PassiveSkillModal: FC<{
   passiveSkill: PassiveSkill;
   loading?: boolean;
   trigger?: ReactNode;
   onLearn: (skill: PassiveSkill) => void;
-}> = ({ passiveSkill, loading, trigger, onLearn }) => {
-  const { character } = useCharacter();
-  const hasMaxSkillLvl =
-    character.passiveSkills[passiveSkill.name] === passiveSkill.bonusCost.length;
-  const hasRequiredBonus =
-    character.bonus >= passiveSkill.bonusCost[character.passiveSkills[passiveSkill.name] || 0];
+}> = ({ passiveSkill, loading, onLearn }) => {
+  const bonus = useCharacter((character) => character.bonus);
+  const passiveSkillLvl = useCharacter((character) => character.passiveSkills[passiveSkill.name]);
+
+  const hasMaxSkillLvl = passiveSkillLvl === passiveSkill.bonusCost.length;
+  const hasRequiredBonus = bonus >= passiveSkill.bonusCost[passiveSkillLvl || 0];
 
   return (
-    <Modal trigger={trigger}>
+    <Modal
+      trigger={
+        <Button>
+          <div className="flex justify-between items-center text-sm">
+            {passiveSkill.displayName}
+            <div className="opacity-50">{passiveSkillLvl}</div>
+          </div>
+        </Button>
+      }
+    >
       <Card header={passiveSkill.displayName} className="mt-1">
         <div className="flex flex-col gap-2">
           <div className="flex gap-2 text-sm opacity-50">
@@ -41,11 +50,10 @@ export const PassiveSkillModal: FC<{
                 onClick={() => onLearn(passiveSkill)}
                 disabled={!hasRequiredBonus || loading}
               >
-                Изучить за {passiveSkill.bonusCost[character.passiveSkills[passiveSkill.name] || 0]}
-                💡
+                Изучить за {passiveSkill.bonusCost[passiveSkillLvl || 0]}💡
               </Button>
 
-              <div>У тебя {character.bonus}💡</div>
+              <div>У тебя {bonus}💡</div>
             </div>
           )}
         </div>

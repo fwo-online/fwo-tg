@@ -1,11 +1,13 @@
 import { getResetAttributesInvoice, resetAttributes } from '@/api/serviceShop';
+import { useConfirm } from '@/hooks/useConfirm';
 import { useRequest } from '@/hooks/useRequest';
-import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
+import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
 import { invoice, popup } from '@telegram-apps/sdk-react';
 
 export const useServiceShopResetAttributes = () => {
-  const { updateCharacter } = useUpdateCharacter();
+  const { syncCharacter } = useSyncCharacter();
   const [loading, makeRequest] = useRequest();
+  const { confirm } = useConfirm();
 
   const resetAttributesByStars = () => {
     makeRequest(async () => {
@@ -13,7 +15,7 @@ export const useServiceShopResetAttributes = () => {
 
       invoice.open(url, 'url').then((status) => {
         if (status === 'paid') {
-          updateCharacter();
+          syncCharacter();
           popup.open({ message: 'Характеристики успешно сброшены' });
         }
         if (status === 'cancelled' || status === 'failed') {
@@ -24,25 +26,13 @@ export const useServiceShopResetAttributes = () => {
   };
 
   const resetAttributesByComponents = () => {
-    makeRequest(async () => {
-      const id = await popup.open({
-        message: 'Вы уверены, что хотите сбросить характеристики?',
-        buttons: [
-          {
-            id: 'close',
-            type: 'close',
-          },
-          {
-            id: 'ok',
-            type: 'ok',
-          },
-        ],
-      });
-      if (id === 'ok') {
-        await resetAttributes();
-        updateCharacter();
+    confirm({
+      message: 'Вы уверены, что хотите сбросить характеристики?',
+      onConfirm: async () => {
+        await makeRequest(() => resetAttributes());
+        syncCharacter();
         popup.open({ message: 'Характеристики успешно сброшены' });
-      }
+      },
     });
   };
 

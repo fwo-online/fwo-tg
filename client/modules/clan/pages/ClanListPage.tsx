@@ -1,6 +1,6 @@
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
-import { useCharacter } from '@/contexts/character';
+import { useCharacter } from '@/modules/character/store/character';
 import { ClanList } from '@/modules/clan/components/ClanList';
 import { useClans } from '@/modules/clan/hooks/useClans';
 import type { Clan } from '@fwo/shared';
@@ -9,14 +9,14 @@ import { Navigate, useNavigate } from 'react-router';
 
 const ClanListLoader = () => {
   const { clans, isLoading, createRequest, cancelRequest } = useClans();
-  const { character } = useCharacter();
+  const characterID = useCharacter((character) => character.id);
 
   if (!clans.length) {
     return 'Кланов не найдено';
   }
 
   const isRequested = (clan: Clan) => {
-    return clan.requests.includes(character.id);
+    return clan.requests.includes(characterID);
   };
 
   return (
@@ -32,7 +32,7 @@ const ClanListLoader = () => {
 
 export const ClanListPage: FC = () => {
   const navigate = useNavigate();
-  const { character } = useCharacter();
+  const character = useCharacter();
 
   if (character.clan) {
     return <Navigate to="/clan" />;

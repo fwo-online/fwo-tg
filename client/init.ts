@@ -27,11 +27,10 @@ export async function init(debug: boolean) {
 
   // Mount all components used in the project.
 
-  miniApp.mount().then(() => {
-    // Define components-related CSS variables.
-    miniApp.bindCssVars();
-    themeParams.bindCssVars();
-  });
+  miniApp.mountSync();
+
+  miniApp.bindCssVars();
+  themeParams.bindCssVars();
 
   backButton.mount();
   initData.restore();

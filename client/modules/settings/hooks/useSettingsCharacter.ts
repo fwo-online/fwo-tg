@@ -1,10 +1,12 @@
 import { deleteCharacter } from '@/api/character';
 import { useRequest } from '@/hooks/useRequest';
-import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
+import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
+import { useSocketStore } from '@/stores/socket';
 import { popup } from '@telegram-apps/sdk-react';
 
 export const useSettingsCharacter = () => {
-  const { updateCharacter } = useUpdateCharacter();
+  const { clearCharacter } = useSyncCharacter();
+  const disconnect = useSocketStore((state) => state.disconnect);
   const [_, makeRequest] = useRequest();
 
   const removeCharacter = async () => {
@@ -17,7 +19,8 @@ export const useSettingsCharacter = () => {
     if (buttonId === 'delete') {
       await makeRequest(async () => {
         await deleteCharacter();
-        await updateCharacter();
+        await clearCharacter();
+        await disconnect();
       });
     }
   };

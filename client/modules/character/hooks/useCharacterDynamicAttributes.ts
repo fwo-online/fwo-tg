@@ -1,11 +1,13 @@
 import { getCharacterDynamicAttributes } from '@/api/character';
-import { useCharacter } from '@/contexts/character';
+import { useCharacter } from '@/modules/character/store/character';
 import type { CharacterAttributes } from '@fwo/shared';
 import { useEffect, useState, useTransition } from 'react';
 
 export const useCharacterDynamicAttributes = (attributes: CharacterAttributes) => {
-  const { character } = useCharacter();
-  const [dynamicAttributes, setDynamicAttributes] = useState(character.dynamicAttributes);
+  const character = useCharacter();
+  const [dynamicAttributes, setDynamicAttributes] = useState(
+    structuredClone(character.dynamicAttributes),
+  );
   const [loading, startTransition] = useTransition();
 
   useEffect(() => {

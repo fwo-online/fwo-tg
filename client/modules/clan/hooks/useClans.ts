@@ -1,22 +1,22 @@
 import { cancelClanRequest, createClanRequest, getClans } from '@/api/clan';
 import { useRequest } from '@/hooks/useRequest';
 import { popup } from '@telegram-apps/sdk-react';
-import { clear, suspend } from 'suspend-react';
+import useSWR from 'swr';
 
 export const useClans = () => {
-  const clans = suspend(() => getClans(), ['clans']);
+  const { data: clans, mutate } = useSWR('clans', getClans, { suspense: true });
 
   const [isLoading, makeRequest] = useRequest();
 
   const createRequest = async (id: string) => {
     await makeRequest(() => createClanRequest(id));
-    clear(['clans']);
+    mutate();
     popup.open({ message: 'Заявка успешно отправлена' });
   };
 
   const cancelRequest = async (id: string) => {
     await makeRequest(() => cancelClanRequest(id));
-    clear(['clans']);
+    mutate();
     popup.open({ message: 'Заявка успешно отменена' });
   };
 

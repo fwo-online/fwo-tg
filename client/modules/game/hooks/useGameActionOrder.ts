@@ -1,11 +1,11 @@
-import { useWebSocket } from '@/contexts/webSocket';
 import { popup } from '@telegram-apps/sdk-react';
 import { useGameStore } from '../store/useGameStore';
 import { useTransition } from 'react';
 import { pick } from 'es-toolkit';
+import { useSocket } from '@/stores/socket';
 
 export const useGameActionOrder = (onSuccess: () => void) => {
-  const socket = useWebSocket();
+  const socket = useSocket();
   const setOrders = useGameStore((state) => state.setOrders);
   const setRemainPower = useGameStore((state) => state.setPower);
   const setActions = useGameStore((state) => state.setActions);

@@ -1,13 +1,13 @@
 import type { FC } from 'react';
-
 import { CharacterClass, type Attributes } from '@fwo/shared';
 import { Description } from '@/components/Description';
-import { useCharacter } from '@/contexts/character';
+import { useCharacter } from '@/modules/character/store/character';
 
 export const CharacterAttributes: FC<{ dynamicAttributes: Attributes }> = ({
   dynamicAttributes,
 }) => {
-  const { character } = useCharacter();
+  const characterClass = useCharacter((character) => character.class);
+
   return (
     <Description>
       <Description.Item after={`${dynamicAttributes.hit.min} - ${dynamicAttributes.hit.max}`}>
@@ -25,12 +25,12 @@ export const CharacterAttributes: FC<{ dynamicAttributes: Attributes }> = ({
       <Description.Item after={dynamicAttributes.regen.en}>Восстановление энергии</Description.Item>
       <Description.Item after={dynamicAttributes.magic.attack}>Магическая атака</Description.Item>
       <Description.Item after={dynamicAttributes.magic.defence}>Магическая защита</Description.Item>
-      {character.class === CharacterClass.Archer && (
+      {characterClass === CharacterClass.Archer && (
         <Description.Item after={dynamicAttributes.maxTarget}>
           Количество целей для атаки
         </Description.Item>
       )}
-      {(character.class === CharacterClass.Mage || character.class === CharacterClass.Priest) && (
+      {(characterClass === CharacterClass.Mage || characterClass === CharacterClass.Priest) && (
         <Description.Item after={dynamicAttributes.spellLength}>
           Длительность магии
         </Description.Item>

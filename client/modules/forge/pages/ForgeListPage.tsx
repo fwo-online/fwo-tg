@@ -9,8 +9,7 @@ import useSWR from 'swr';
 
 const ForgeListLoader = () => {
   const { wear } = useParams<{ wear: string }>();
-
-  const { data = [] } = useSWR('forgeList', () => getShopItems({ wear }));
+  const { data = [] } = useSWR('forgeList', () => getShopItems({ wear }), { suspense: true });
 
   return <ForgeList items={data} />;
 };

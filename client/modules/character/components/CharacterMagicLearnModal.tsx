@@ -1,12 +1,12 @@
-import { useCharacter } from '@/contexts/character';
 import { Modal } from '@telegram-apps/telegram-ui';
 import { times } from 'es-toolkit/compat';
 import { useCharacterLearnMagic } from '../hooks/useCharacterLearnMagic';
 import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
+import { useCharacter } from '@/modules/character/store/character';
 
 export const CharacterMagicsLearnModal = () => {
-  const { character } = useCharacter();
+  const character = useCharacter();
   const { isLearning, handleLearn } = useCharacterLearnMagic();
 
   return (

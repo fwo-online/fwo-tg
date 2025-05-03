@@ -1,16 +1,15 @@
 import type { FC } from 'react';
-
-import { useCharacter } from '@/contexts/character';
 import { CharacterImage } from '@/modules/character/components/CharacterImage';
 import { characterClassNameMap } from '@/constants/character';
 import { useNavigate } from 'react-router';
 import { CharacterClass } from '@fwo/shared';
 import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
+import { useCharacter } from '@/modules/character/store/character';
 
 export const CharacterPage: FC = () => {
   const navigate = useNavigate();
-  const { character } = useCharacter();
+  const character = useCharacter();
 
   return (
     <div className="flex flex-col gap-2 m-3!">

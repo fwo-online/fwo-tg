@@ -2,19 +2,19 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Suspense, type FC } from 'react';
 import { ClanGold } from '@/modules/clan/components/ClanGold';
 import { ClanLevel } from '@/modules/clan/components/ClanLevel';
-import { useClanStore } from '@/modules/clan/contexts/useClan';
 import { ClanPlayers } from '@/modules/clan/components/ClanPlayers';
 import { ClanRequests } from '@/modules/clan/components/ClanRequests';
 import { useClanOwner } from '@/modules/clan/hooks/useClanOwner';
 import { ClanForge } from '@/modules/clan/components/ClanForge';
+import { useClan } from '@/modules/clan/store/clan';
 
 export const Clan: FC = () => {
-  const lvl = useClanStore((state) => state.clan.lvl);
-  const forgeLvl = useClanStore((state) => state.clan.forge.lvl);
-  const players = useClanStore((state) => state.clan.players);
-  const maxPlayers = useClanStore((state) => state.clan.maxPlayers);
-  const requests = useClanStore((state) => state.clan.requests);
-  const owner = useClanStore((state) => state.clan.owner);
+  const lvl = useClan((clan) => clan.lvl);
+  const forgeLvl = useClan((clan) => clan.forge.lvl);
+  const players = useClan((clan) => clan.players);
+  const maxPlayers = useClan((clan) => clan.maxPlayers);
+  const requests = useClan((clan) => clan.requests);
+  const owner = useClan((clan) => clan.owner);
   const { isOwner } = useClanOwner();
 
   return (

@@ -1,33 +1,24 @@
 import { openClanForge } from '@/api/clan';
+import { useConfirm } from '@/hooks/useConfirm';
 import { useRequest } from '@/hooks/useRequest';
-import { useClanStore } from '@/modules/clan/contexts/useClan';
+import { useSyncClan } from '@/modules/clan/hooks/useSyncClan';
+import { useClan } from '@/modules/clan/store/clan';
 import { clanForgeCostMultiplier, clanLvlCost } from '@fwo/shared';
-import { popup } from '@telegram-apps/sdk-react';
 
 export const useClanForge = () => {
   const [_, makeRequest] = useRequest();
-  const updateClan = useClanStore((state) => state.updateClan);
-  const lvl = useClanStore((state) => state.clan.lvl);
+  const { syncClan } = useSyncClan();
+  const lvl = useClan((clan) => clan.lvl);
+  const { confirm } = useConfirm();
 
   const openForge = async () => {
-    const id = await popup.open({
+    confirm({
       title: 'Открыть кузницу?',
       message: `Стоимость открытия ${clanLvlCost[lvl - 1] * clanForgeCostMultiplier}💰. Кузница закроется через месяц`,
-      buttons: [
-        {
-          id: 'close',
-          type: 'close',
-        },
-        {
-          id: 'ok',
-          type: 'ok',
-        },
-      ],
+      onConfirm: async () => {
+        syncClan(await makeRequest(openClanForge));
+      },
     });
-
-    if (id === 'ok') {
-      updateClan(makeRequest(async () => await openClanForge()));
-    }
   };
 
   return {

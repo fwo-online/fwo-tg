@@ -1,30 +1,28 @@
 import { getItemPrice, type Item } from '@fwo/shared';
 import type { FC } from 'react';
 import { forgeItem } from '@/api/inventory';
-import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 import { ItemModal } from '@/modules/items/components/ItemModal';
-import { useCharacter } from '@/contexts/character';
 import { useRequest } from '@/hooks/useRequest';
 import { popup } from '@telegram-apps/sdk-react';
 import { Button } from '@/components/Button';
 import { Placeholder } from '@/components/Placeholder';
 import { every } from 'es-toolkit/compat';
 import { forgeClanItem } from '@/api/clan';
+import { useCharacter } from '@/modules/character/store/character';
+import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
 
 export const ForgeList: FC<{ items: Item[]; clanForge?: boolean }> = ({ items, clanForge }) => {
-  const { character } = useCharacter();
-  const { updateCharacter } = useUpdateCharacter();
+  const gold = useCharacter((character) => character.gold);
+  const components = useCharacter((character) => character.components);
+  const { syncCharacter } = useSyncCharacter();
   const [_, makeRequest] = useRequest();
 
   const canForge = (item: Item) => {
-    if (character.gold < item.price * 0.2) {
+    if (gold < item.price * 0.2) {
       return false;
     }
 
-    return every(
-      item.craft?.components,
-      (value, key) => (character.components[key] ?? 0) >= (value ?? 0),
-    );
+    return every(item.craft?.components, (value, key) => (components[key] ?? 0) >= (value ?? 0));
   };
 
   const handleForge = async (item: Item) => {
@@ -36,7 +34,7 @@ export const ForgeList: FC<{ items: Item[]; clanForge?: boolean }> = ({ items, c
       }
       popup.open({ message: `Ты создал ${item.info.name}` });
     });
-    await updateCharacter();
+    await syncCharacter();
   };
 
   return items.length ? (
@@ -55,7 +53,7 @@ export const ForgeList: FC<{ items: Item[]; clanForge?: boolean }> = ({ items, c
               >
                 Создать за {getItemPrice(item.price, item.tier)}💰
               </Button>
-              <div>У тебя {character.gold}💰</div>
+              <div>У тебя {gold}💰</div>
             </div>
           }
           showComponents

@@ -50,11 +50,11 @@ export const GameAction: FC<{
       {hasTargets ? (
         <Placeholder description="Нет доступных целей" />
       ) : (
-        Object.entries(availableTargets).map(([clan, statuses]) => (
+        Object.entries(availableTargets).map(([clan, players]) => (
           <div key={clan} className="flex flex-col">
             <h6 className="font-semibold">{clan === reservedClanName ? 'Без клана' : clan}</h6>
-            {statuses.map((status) => (
-              <GameActionTarget key={status.id} status={status} onChange={handleTargetChange} />
+            {players.map((player) => (
+              <GameActionTarget key={player.id} player={player} onChange={handleTargetChange} />
             ))}
           </div>
         ))

@@ -200,7 +200,7 @@ export class CharacterInventory {
 
   toObject() {
     return {
-      items: this.items,
+      items: this.items.map((item) => ({ ...item, id: item.id || item._id.toString() })),
       equipment: Array.from(this.equipment.values()).map((item) => item.id),
     };
   }

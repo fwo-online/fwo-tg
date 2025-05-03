@@ -1,9 +1,9 @@
 import type { FC, ReactNode } from 'react';
-import { useCharacter } from '@/contexts/character';
 import type { Skill } from '@fwo/shared';
 import { Modal } from '@telegram-apps/telegram-ui';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
+import { useCharacter } from '@/modules/character/store/character';
 
 export const CharacterSkillModal: FC<{
   skill: Skill;
@@ -11,7 +11,7 @@ export const CharacterSkillModal: FC<{
   trigger?: ReactNode;
   onLearn: (skill: Skill) => void;
 }> = ({ skill, loading, trigger, onLearn }) => {
-  const { character } = useCharacter();
+  const character = useCharacter();
   const hasMaxSkillLvl = character.skills[skill.name] === skill.bonusCost.length;
   const hasRequiredLvl = character.lvl >= (skill.classList[character.class] ?? 0);
   const hasRequiredBonus = character.bonus >= skill.bonusCost[character.skills[skill.name] || 0];

@@ -2,12 +2,7 @@ import { miniApp, useSignal, retrieveLaunchParams } from '@telegram-apps/sdk-rea
 import { AppRoot } from '@telegram-apps/telegram-ui';
 import { Suspense } from 'react';
 import { HashRouter } from 'react-router';
-
-import { CharacterProvider } from '@/contexts/character';
 import { Router } from '@/router';
-
-import { WebSocketProvider } from '@/contexts/webSocket';
-import { createWebSocket } from '@/api';
 import { Placeholder } from '@/components/Placeholder';
 import { Card } from '@/components/Card';
 
@@ -32,11 +27,7 @@ export function App() {
             </Card>
           }
         >
-          <WebSocketProvider socket={createWebSocket()}>
-            <CharacterProvider>
-              <Router />
-            </CharacterProvider>
-          </WebSocketProvider>
+          <Router />
         </Suspense>
       </HashRouter>
     </AppRoot>

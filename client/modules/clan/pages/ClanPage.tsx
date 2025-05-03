@@ -1,40 +1,28 @@
-import { getClanByID } from '@/api/clan';
 import { Card } from '@/components/Card';
 import { Placeholder } from '@/components/Placeholder';
-import { useCharacter } from '@/contexts/character';
-import { useUnmountEffect } from '@/hooks/useUnmountEffect';
+import { useCharacter } from '@/modules/character/store/character';
 import { Clan } from '@/modules/clan/components/Clan';
-import { ClanProvider } from '@/modules/clan/contexts/useClan';
-import type { ClanPublic } from '@fwo/shared';
+import { useSyncClan } from '@/modules/clan/hooks/useSyncClan';
 import { Suspense, type FC } from 'react';
 import { Navigate } from 'react-router';
-import { clear, suspend } from 'suspend-react';
 
-const ClanLoader: FC<{ clan: ClanPublic }> = ({ clan }) => {
-  useUnmountEffect(() => {
-    clear([clan.id]);
-  });
+const ClanLoader = () => {
+  useSyncClan();
 
-  const loadedClan = suspend(async (id) => getClanByID(id), [clan.id]);
-
-  return (
-    <ClanProvider clan={loadedClan}>
-      <Clan />
-    </ClanProvider>
-  );
+  return <Clan />;
 };
 
 export const ClanPage: FC = () => {
-  const { character } = useCharacter();
+  const clan = useCharacter((character) => character.clan);
 
-  if (!character.clan) {
+  if (!clan) {
     return <Navigate to="/clan/list" />;
   }
 
   return (
-    <Card header={character.clan.name} className="m-4">
+    <Card header={clan.name} className="m-4">
       <Suspense fallback={<Placeholder description="Загружаем клан..." />}>
-        <ClanLoader clan={character.clan} />
+        <ClanLoader />
       </Suspense>
     </Card>
   );

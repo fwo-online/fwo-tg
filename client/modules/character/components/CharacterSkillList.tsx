@@ -1,24 +1,21 @@
 import type { Skill } from '@fwo/shared';
-import { type FC, use } from 'react';
+import type { FC } from 'react';
 import { CharacterSkillModal } from '@/modules/character/components/CharacterSkillModal';
-import { useCharacter } from '@/contexts/character';
-import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
 import { learnSkill } from '@/api/skill';
 import { useRequest } from '@/hooks/useRequest';
 import { Button } from '@/components/Button';
+import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
+import { useCharacter } from '@/modules/character/store/character';
 
-export const CharacterSkillList: FC<{
-  skillsSource: Promise<Skill[]>;
-}> = ({ skillsSource }) => {
-  const { character } = useCharacter();
-  const skills = use(skillsSource);
-  const { updateCharacter } = useUpdateCharacter();
+export const CharacterSkillList: FC<{ skills: Skill[] }> = ({ skills }) => {
+  const character = useCharacter();
+  const { syncCharacter } = useSyncCharacter();
   const [isPending, makeRequest] = useRequest();
 
   const handleLearn = async (skill: Skill) => {
     makeRequest(async () => {
       await learnSkill(skill.name);
-      await updateCharacter();
+      await syncCharacter();
     });
   };
 

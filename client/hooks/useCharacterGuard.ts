@@ -1,21 +1,21 @@
-import { useCharacter } from '@/contexts/character';
-import { useWebSocket } from '@/contexts/webSocket';
 import { useMountEffect } from '@/hooks/useMountEffect';
-import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
+import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
+import { useCharacterStore } from '@/modules/character/store/character';
+import { useSocket } from '@/stores/socket';
 import { useCallback, useEffect } from 'react';
 
 export const useCharacterGuard = () => {
-  const socket = useWebSocket();
-  const { character, setCharacter } = useCharacter();
-  const { updateCharacter } = useUpdateCharacter();
+  const socket = useSocket();
+  const setGame = useCharacterStore((state) => state.setGame);
+  const { syncCharacter } = useSyncCharacter();
 
   const handleGameEnd = useCallback(() => {
-    setCharacter(() => Object.assign(structuredClone(character), { game: undefined }));
-    updateCharacter();
-  }, [character, updateCharacter, setCharacter]);
+    setGame(undefined);
+    syncCharacter();
+  }, [setGame, syncCharacter]);
 
   useMountEffect(() => {
-    socket.io.on('reconnect', updateCharacter);
+    socket.io.on('reconnect', () => syncCharacter);
   });
 
   useEffect(() => {

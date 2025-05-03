@@ -2,7 +2,7 @@ import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Placeholder } from '@/components/Placeholder';
-import { useCharacter } from '@/contexts/character';
+import { useCharacter } from '@/modules/character/store/character';
 import { MarketList } from '@/modules/market/components/MarketList';
 import { useMarketItems } from '@/modules/market/hooks/useMarketItems';
 import { itemMarketRequiredLevel } from '@fwo/shared';
@@ -17,7 +17,7 @@ const MarketListLoader = () => {
 
 export const MarketPage: FC = () => {
   const navigate = useNavigate();
-  const { character } = useCharacter();
+  const character = useCharacter();
 
   const goToCreateMarketItem = () => {
     navigate('/agora/market/create');

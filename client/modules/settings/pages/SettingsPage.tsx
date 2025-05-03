@@ -1,11 +1,11 @@
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
-import { useCharacter } from '@/contexts/character';
+import { useCharacter } from '@/modules/character/store/character';
 import { useSettingsCharacter } from '@/modules/settings/hooks/useSettingsCharacter';
 import { useSettingsClan } from '@/modules/settings/hooks/useSettingsClan';
 
 export function SettingsPage() {
-  const { character } = useCharacter();
+  const character = useCharacter();
   const { removeCharacter } = useSettingsCharacter();
   const { removeClan, leaveClan } = useSettingsClan();
 

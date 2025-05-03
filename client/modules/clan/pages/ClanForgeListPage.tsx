@@ -10,7 +10,7 @@ import useSWR from 'swr';
 const ClanForgeListLoader = () => {
   const { wear } = useParams<{ wear: string }>();
 
-  const { data = [] } = useSWR('clanForgeList', () => getShopItems({ wear }));
+  const { data = [] } = useSWR('clanForgeList', () => getShopItems({ wear }), { suspense: true });
 
   return <ForgeList items={data} clanForge />;
 };

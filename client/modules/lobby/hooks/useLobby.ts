@@ -1,16 +1,16 @@
-import { useCharacter } from '@/contexts/character';
-import { useWebSocket } from '@/contexts/webSocket';
+import { useCharacter } from '@/modules/character/store/character';
+import { useSocket } from '@/stores/socket';
 import type { CharacterPublic } from '@fwo/shared';
 import { popup } from '@telegram-apps/sdk-react';
 import { useEffect, useState } from 'react';
 
 export const useLobby = () => {
-  const socket = useWebSocket();
-  const { character } = useCharacter();
+  const socket = useSocket();
+  const characterID = useCharacter((character) => character.id);
 
   const [searchers, setSearchers] = useState<CharacterPublic[]>([]);
 
-  const isSearching = searchers.some(({ id }) => id === character.id);
+  const isSearching = searchers.some(({ id }) => id === characterID);
 
   useEffect(() => {
     socket.on('lobby:list', setSearchers);

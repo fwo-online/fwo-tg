@@ -1,10 +1,10 @@
 import { deleteClan, leaveClan } from '@/api/clan';
 import { useRequest } from '@/hooks/useRequest';
-import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
+import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
 import { popup } from '@telegram-apps/sdk-react';
 
 export const useSettingsClan = () => {
-  const { updateCharacter } = useUpdateCharacter();
+  const { syncCharacter } = useSyncCharacter();
   const [_, makeRequest] = useRequest();
 
   const remove = async () => {
@@ -17,7 +17,7 @@ export const useSettingsClan = () => {
     if (buttonId === 'delete') {
       await makeRequest(async () => {
         await deleteClan();
-        await updateCharacter();
+        await syncCharacter();
       });
       popup.open({ message: 'Клан был удалён' });
     }
@@ -32,7 +32,7 @@ export const useSettingsClan = () => {
     if (buttonId === 'leave') {
       await makeRequest(async () => {
         await leaveClan();
-        await updateCharacter();
+        await syncCharacter();
       });
       popup.open({ message: 'Ты покинул клан' });
     }

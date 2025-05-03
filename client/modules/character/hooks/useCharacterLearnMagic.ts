@@ -1,42 +1,29 @@
 import { learnMagic } from '@/api/magic';
+import { useConfirm } from '@/hooks/useConfirm';
 import { useRequest } from '@/hooks/useRequest';
-import { useUpdateCharacter } from '@/hooks/useUpdateCharacter';
+import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
 import { popup } from '@telegram-apps/sdk-react';
 
 export const useCharacterLearnMagic = () => {
-  const { updateCharacter } = useUpdateCharacter();
+  const { syncCharacter } = useSyncCharacter();
   const [isLearning, makeRequest] = useRequest();
+  const { confirm } = useConfirm();
 
   const handleLearn = async (lvl: number) => {
-    if (!popup.isSupported()) {
-      return;
-    }
-
-    const id = await popup.open({
+    confirm({
       message: `Стоимость изучения ${lvl}💡`,
-      buttons: [
-        {
-          id: 'close',
-          type: 'close',
-        },
-        {
-          id: 'ok',
-          type: 'ok',
-        },
-      ],
-    });
+      onConfirm: () => {
+        makeRequest(async () => {
+          const magic = await learnMagic(lvl);
+          await syncCharacter();
 
-    if (id === 'ok') {
-      makeRequest(async () => {
-        const magic = await learnMagic(lvl);
-        await updateCharacter();
-
-        await popup.open({
-          title: 'Успешное изучение',
-          message: `${magic.displayName}`,
+          await popup.open({
+            title: 'Успешное изучение',
+            message: `${magic.displayName}`,
+          });
         });
-      });
-    }
+      },
+    });
   };
 
   return {

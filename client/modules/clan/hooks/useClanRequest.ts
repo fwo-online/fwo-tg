@@ -1,35 +1,24 @@
 import { acceptClanRequest, rejectClanRequest } from '@/api/clan';
+import { useConfirm } from '@/hooks/useConfirm';
 import { useRequest } from '@/hooks/useRequest';
-import { useClanStore } from '@/modules/clan/contexts/useClan';
+import { useSyncClan } from '@/modules/clan/hooks/useSyncClan';
 import { clanAcceptCostPerLvl, type CharacterPublic } from '@fwo/shared';
-import { popup } from '@telegram-apps/sdk-react';
 
 export const useClanRequest = () => {
-  const updateClan = useClanStore((state) => state.updateClan);
+  const { syncClan } = useSyncClan();
   const [_, makeRequest] = useRequest();
+  const { confirm } = useConfirm();
 
   const acceptRequest = async (requester: CharacterPublic) => {
-    const id = await popup.open({
+    confirm({
       message: `Стоимость принятия заявки ${requester.lvl * clanAcceptCostPerLvl}💰`,
-      buttons: [
-        {
-          id: 'close',
-          type: 'close',
-        },
-        {
-          id: 'ok',
-          type: 'ok',
-        },
-      ],
+      onConfirm: async () =>
+        syncClan(await makeRequest(async () => acceptClanRequest(requester.id))),
     });
-
-    if (id === 'ok') {
-      updateClan(makeRequest(async () => acceptClanRequest(requester.id)));
-    }
   };
 
-  const rejectRequest = (requester: CharacterPublic) => {
-    updateClan(makeRequest(async () => rejectClanRequest(requester.id)));
+  const rejectRequest = async (requester: CharacterPublic) => {
+    syncClan(await makeRequest(async () => rejectClanRequest(requester.id)));
   };
 
   return {

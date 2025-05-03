@@ -1,5 +1,5 @@
 import { Button } from '@/components/Button';
-import { useCharacter } from '@/contexts/character';
+import { useCharacter } from '@/modules/character/store/character';
 import { ItemModal } from '@/modules/items/components/ItemModal';
 import { useMarketItemBuy } from '@/modules/market/hooks/useMarketItemBuy';
 import { useMarketItemDelete } from '@/modules/market/hooks/useMarketItemDelete';
@@ -7,7 +7,7 @@ import { itemMarketRequiredLevel, type ItemMarket } from '@fwo/shared';
 import type { FC } from 'react';
 
 export const MarketListItem: FC<{ item: ItemMarket }> = ({ item }) => {
-  const { character } = useCharacter();
+  const character = useCharacter();
   const { buyItem, isPending: isBuying } = useMarketItemBuy();
   const { deleteItem, isPending: isDeleting } = useMarketItemDelete();
 

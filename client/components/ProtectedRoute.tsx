@@ -1,19 +1,26 @@
 import { Navigate, Outlet } from 'react-router';
-import { useCharacterContext } from '@/contexts/character';
-import { useSessionGuard } from '@/hooks/useSessionGuard';
 import { useGameGuard } from '@/hooks/useGameGuard';
 import { useCharacterGuard } from '@/hooks/useCharacterGuard';
+import { useCharacterStore } from '@/modules/character/store/character';
+import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
+import { useSocketStore } from '@/stores/socket';
+import { use } from 'react';
 
-export const ProtectedRoute = () => {
-  const { character } = useCharacterContext();
-
-  if (!character) {
-    return <Navigate to="/" />;
-  }
-
-  useSessionGuard();
+const ProtectedRouteGuards = () => {
+  use(useSocketStore().connect());
   useCharacterGuard();
   useGameGuard();
 
   return <Outlet />;
+};
+
+export const ProtectedRoute = () => {
+  const hasCharacter = useCharacterStore((state) => Boolean(state.character));
+  useSyncCharacter();
+
+  if (!hasCharacter) {
+    return <Navigate to="/" />;
+  }
+
+  return <ProtectedRouteGuards />;
 };

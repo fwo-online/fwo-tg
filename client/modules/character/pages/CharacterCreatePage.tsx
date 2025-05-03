@@ -2,26 +2,29 @@ import type { CreateCharacterDto } from '@fwo/shared';
 import { Navigate } from 'react-router';
 import { createCharacter } from '@/api/character';
 import { SelectCharacter } from '@/modules/character/components/CharacterSelect';
-import { useCharacterContext } from '@/contexts/character';
-import { useWebSocket } from '@/contexts/webSocket';
+
 import { useRequest } from '@/hooks/useRequest';
+import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
+import { useCharacterStore } from '@/modules/character/store/character';
+import { useSocketStore } from '@/stores/socket';
 
 export const CharacterCreatePage = () => {
-  const { character, setCharacter } = useCharacterContext();
-  const ws = useWebSocket();
+  const hasCharacter = useCharacterStore((state) => Boolean(state.character));
+  const connect = useSocketStore((state) => state.connect);
   const [_, makeRequest] = useRequest();
+  const { syncCharacter } = useSyncCharacter();
 
   const onSelect = async (createCharacterDto: CreateCharacterDto) => {
     await makeRequest(async () => {
       const character = await createCharacter(createCharacterDto);
       if (character) {
-        setCharacter(character);
-        ws.connect();
+        await connect();
+        syncCharacter(character);
       }
     });
   };
 
-  if (character) {
+  if (hasCharacter) {
     return <Navigate to="/character" />;
   }
 
