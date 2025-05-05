@@ -1,7 +1,7 @@
 import { Card } from '@/components/Card';
 import { Description } from '@/components/Description';
+import { Modal } from '@/components/Modal';
 import type { Magic } from '@fwo/shared';
-import { Modal } from '@telegram-apps/telegram-ui';
 import type { FC, ReactNode } from 'react';
 
 export const CharacterMagicModal: FC<{ magic: Magic; trigger?: ReactNode }> = ({

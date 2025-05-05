@@ -15,18 +15,12 @@ body {
   margin: 0;
   height: var(--tg-viewport-height, 100dvh);
   overflow: hidden;
+  font-family: 'PixeloidMono', monospace;
+  color: var(--tg-theme-text-color);
 }
 
 #root {
   height: 100%;
-}
-
-div {
-  font-family: var(--tgui--font-family);
-}
-
-code {
-  font-family: 'PixeloidMono', monospace;
 }
 
 blockquote {

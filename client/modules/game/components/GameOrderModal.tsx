@@ -1,10 +1,10 @@
-import { Modal } from '@telegram-apps/telegram-ui';
 import { useState } from 'react';
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import { GameOrderList } from '@/modules/game//components/GameOrderList';
 import { GameOrder } from './GameOrder';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
+import { Modal } from '@/components/Modal';
 
 export function GameOrderModal() {
   const [open, setOpen] = useState(true);
@@ -14,6 +14,7 @@ export function GameOrderModal() {
     <Modal
       open={canOrder && open}
       onOpenChange={setOpen}
+      handleOnly
       trigger={
         <Button
           className="fixed bottom-4 left-2 right-2 is-primary"
@@ -25,6 +26,7 @@ export function GameOrderModal() {
       }
     >
       <Card>
+        <Modal.Handle />
         <GameOrderList />
         <GameOrder />
       </Card>

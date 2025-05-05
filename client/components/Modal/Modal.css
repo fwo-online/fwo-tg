@@ -1,0 +1,11 @@
+[data-vaul-handle] {
+  position: relative !important;
+  background-color: var(--tg-theme-text-color) !important;
+  opacity: 1 !important;
+  border-radius: 0 !important;
+  margin-bottom: 16px !important;
+}
+
+[data-vaul-handle-hitarea] {
+  width: 100vw !important;
+}

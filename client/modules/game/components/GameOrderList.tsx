@@ -1,4 +1,3 @@
-import { ButtonCell } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import type { Order } from '@fwo/shared';
@@ -11,9 +10,9 @@ const GameOrderListItem: FC<{
   const target = useGameStore((state) => state.players[order.target]);
 
   return (
-    <ButtonCell>
+    <div>
       <i>{order.action.displayName}</i> на <b>{target.name}</b> ({order.power}%)
-    </ButtonCell>
+    </div>
   );
 };
 

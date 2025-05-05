@@ -1,9 +1,9 @@
-import { Modal } from '@telegram-apps/telegram-ui';
 import { times } from 'es-toolkit/compat';
 import { useCharacterLearnMagic } from '../hooks/useCharacterLearnMagic';
 import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
 import { useCharacter } from '@/modules/character/store/character';
+import { Modal } from '@/components/Modal';
 
 export const CharacterMagicsLearnModal = () => {
   const character = useCharacter();

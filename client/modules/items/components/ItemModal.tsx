@@ -1,6 +1,6 @@
 import { Card } from '@/components/Card';
 import type { Item } from '@fwo/shared';
-import { Modal } from '@/components/Modal/Modal';
+import { Modal } from '@/components/Modal';
 import type { ReactNode, FC } from 'react';
 import { ItemCharacterAttributes } from '@/modules/items/components/ItemCharacterAttribites';
 import { ItemAttributes } from '@/modules/items/components/ItemAttributes';

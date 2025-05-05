@@ -1,6 +1,5 @@
-import { Slider } from '@telegram-apps/telegram-ui';
 import { useGameStore } from '@/modules/game/store/useGameStore';
-import { type FC, useState } from 'react';
+import { type ChangeEventHandler, type FC, useState } from 'react';
 import { reservedClanName, type Action } from '@fwo/shared';
 import { useGameActionTargets } from '../hooks/useGameActionTargets';
 import { GameActionTarget } from './GameActionTarget';
@@ -8,6 +7,7 @@ import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
 import { Placeholder } from '@/components/Placeholder';
 import { useMountEffect } from '@/hooks/useMountEffect';
+import { Slider } from '@/components/Slider';
 
 export const GameAction: FC<{
   action: Action;
@@ -19,11 +19,12 @@ export const GameAction: FC<{
   const { hasTargets, availableTargets } = useGameActionTargets({ action });
   const [target, setTarget] = useState<string | null>(null);
 
-  const handleSliderChange = (value: number) => {
+  const handleSliderChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     if (action.power) {
       return;
     }
-    setPower(Math.min(remainPower, value));
+
+    setPower(Math.min(remainPower, e.target.valueAsNumber));
   };
 
   const handleTargetChange = (target: string) => {
@@ -60,14 +61,11 @@ export const GameAction: FC<{
         ))
       )}
       <div className="flex flex-col ga-2">
-        <Slider
-          before={0}
-          after={remainPower}
-          value={power}
-          min={0}
-          max={remainPower}
-          onChange={handleSliderChange}
-        />
+        <div className="flex items-center gap-2 mb-4">
+          <span>0</span>
+          <Slider value={power} min={0} max={remainPower} step={1} onChange={handleSliderChange} />
+          <span>{remainPower}</span>
+        </div>
 
         {!target ? (
           <Button disabled>Выбери цель</Button>

@@ -1,4 +1,4 @@
-import { Placeholder } from '@telegram-apps/telegram-ui';
+import { Placeholder } from '@/components/Placeholder';
 import type { FC, ReactNode } from 'react';
 
 export const ErrorPage: FC<{ error?: string | Error; action?: ReactNode }> = ({
@@ -8,10 +8,9 @@ export const ErrorPage: FC<{ error?: string | Error; action?: ReactNode }> = ({
   const desctiption = error instanceof Error ? error.message : error;
 
   return (
-    <Placeholder
-      header="Ошибка"
-      description={desctiption}
-      action={<div className="fixed bottom-4 left-2 right-2 flex flex-col">{action}</div>}
-    />
+    <div className="flex flex-col justify-between">
+      <Placeholder header="Ошибка" description={desctiption} />
+      <div className="fixed bottom-4 left-2 right-2 flex flex-col">{action}</div>
+    </div>
   );
 };

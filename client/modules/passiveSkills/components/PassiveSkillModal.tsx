@@ -1,9 +1,9 @@
 import type { FC, ReactNode } from 'react';
 import type { PassiveSkill } from '@fwo/shared';
-import { Modal } from '@telegram-apps/telegram-ui';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { useCharacter } from '@/modules/character/store/character';
+import { Modal } from '@/components/Modal';
 
 export const PassiveSkillModal: FC<{
   passiveSkill: PassiveSkill;

@@ -3,8 +3,8 @@ import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import type { Clan } from '@fwo/shared';
-import { Modal } from '@telegram-apps/telegram-ui';
 import { ClanPlayers } from '@/modules/clan/components/ClanPlayers';
+import { Modal } from '@/components/Modal';
 
 export const ClanListItem: FC<{
   clan: Clan;

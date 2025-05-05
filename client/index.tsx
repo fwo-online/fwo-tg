@@ -5,7 +5,6 @@ import { EnvUnsupported } from './components/EnvUnsupported';
 import { Root } from './components/Root';
 import { init } from './init';
 
-import '@telegram-apps/telegram-ui/dist/styles.css';
 import './index.css';
 
 // biome-ignore lint/style/noNonNullAssertion: <explanation>

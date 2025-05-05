@@ -13,7 +13,6 @@
     "@fwo/server": "workspace:^",
     "@fwo/shared": "workspace:^",
     "@telegram-apps/sdk-react": "^3.2.4",
-    "@telegram-apps/telegram-ui": "^2.1.8",
     "classnames": "^2.5.1",
     "es-toolkit": "^1.36.0",
     "nes.css": "^2.3.0",
