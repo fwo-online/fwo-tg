@@ -8,9 +8,7 @@ export const Placeholder: FC<
       {header ? (
         <div className="font-semibold flex items-center justify-center">{header}</div>
       ) : null}
-      <div className="text-sm font-semibold p-4 flex items-center justify-center">
-        {description}
-      </div>
+      <div className="text-sm font-semibold flex items-center justify-center">{description}</div>
     </div>
   );
 };
