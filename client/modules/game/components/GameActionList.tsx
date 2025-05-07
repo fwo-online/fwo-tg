@@ -26,7 +26,7 @@ export const GameActionList: FC<{
 
   return (
     <Card header="Действия">
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 max-h-[300px] overflow-auto">
         {power === 100 && round > 1 && (
           <Button className="p-0  mb-4" onClick={onRepeat} disabled={isPending}>
             Повторить

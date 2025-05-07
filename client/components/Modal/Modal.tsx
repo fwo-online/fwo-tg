@@ -13,7 +13,7 @@ export const ModalComponent: FC<PropsWithChildren<DialogProps & { trigger: React
       <Drawer.Trigger asChild>{trigger}</Drawer.Trigger>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 z-50 bg-black/50" />
-        <Drawer.Content className="fixed bottom-0 z-50 w-full">{children}</Drawer.Content>
+        <Drawer.Content className="fixed -bottom-2 z-50 w-full">{children}</Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>
   );
