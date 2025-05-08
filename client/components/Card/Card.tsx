@@ -20,11 +20,11 @@ export const Card: FC<CardProps> = ({ children, header, className, ...restProps 
       {...restProps}
     >
       {header && (
-        <svg viewBox="0 0 400 50" x="0" y="0" className="text-md font-semibold!">
-          <text className="nes-container__outline" x="-350" y="40">
+        <svg viewBox="0 0 300 30" x="0" y="0" className="text-md font-semibold!">
+          <text className="nes-container__outline" x="10" y="50%">
             {header}
           </text>
-          <text className="nes-container__text" x="-350" y="40">
+          <text className="nes-container__text" x="10" y="50%">
             {header}
           </text>
         </svg>

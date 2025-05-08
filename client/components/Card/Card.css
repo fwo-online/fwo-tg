@@ -6,17 +6,15 @@
 
 .nes-container.with-title svg {
   position: absolute;
-  transform: translateY(-24px);
+  transform: translate(-12px, -24px);
   z-index: 1;
-  font-size: 40px;
+  font-size: 14px;
   font-weight: bold;
-  width: 450px;
-  height: 20px;
 }
 
 .nes-container.with-title .nes-container__outline {
   stroke: var(--tg-theme-secondary-bg-color);
-  stroke-width: 14px;
+  stroke-width: 6px;
   stroke-linejoin: round;
 }
 
