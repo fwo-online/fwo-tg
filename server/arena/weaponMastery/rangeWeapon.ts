@@ -8,7 +8,7 @@ class RangeWeapon extends CounterEvasionSkill {
   constructor() {
     super({
       name: 'rangeWeapon',
-      displayName: 'Навык владения метательным оружием',
+      displayName: 'Владение дальним оружием',
       description:
         'Дает бонусы метательному и дальнобойному оружию, снижая вероятность промаха при использовании оружия такого типа',
       chance: [55, 60, 65, 70, 75, 80],

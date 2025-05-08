@@ -6,7 +6,7 @@ class HealingWeapon extends IncreaseEffectSkill {
   constructor() {
     super({
       name: 'healingWeapon',
-      displayName: 'Навык владения лечащим оружием',
+      displayName: 'Владение лечащим оружием',
       description: 'Дает бонусы лечащему оружию, повышая урон при атаке лечащим оружием',
       chance: [5, 10, 15, 20, 25, 30],
       effect: [3, 6, 9, 12, 15, 18],
