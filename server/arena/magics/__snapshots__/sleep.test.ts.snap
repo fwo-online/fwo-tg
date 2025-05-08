@@ -1,6 +1,6 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`paralysis target should sleep and not be able to attack 1`] = `
+exports[`sleep target should sleep and not be able to attack 1`] = `
 "*asperiores* использовал _Усыпление_ на *repellat*
 \\[ 📖20 ]
 *repellat* пытался атаковать *asperiores*, но у него не получилось
@@ -13,7 +13,7 @@ _Усыпление_ *asperiores*
 _Усыпление_ *asperiores*"
 `;
 
-exports[`paralysis should handle several casters 1`] = `
+exports[`sleep should handle several casters 1`] = `
 "*iure* использовал _Усыпление_ на *nulla*
 \\[ 📖20 ]
 *qui* использовал _Усыпление_ на *nulla*

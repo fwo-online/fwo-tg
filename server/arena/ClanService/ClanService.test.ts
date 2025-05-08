@@ -1,6 +1,4 @@
-import {
-  describe, beforeEach, it, expect,
-} from 'bun:test';
+import { describe, beforeEach, it, expect } from 'bun:test';
 import arena from '@/arena';
 import type { Char } from '@/models/character';
 import type { Clan } from '@/models/clan';
@@ -98,7 +96,7 @@ describe('ClanService', () => {
 
   it('should throw if clan has max level', async () => {
     const char = await TestUtils.createCharacter();
-    const clan = await TestUtils.createClan(char.id, { lvl: 4, gold: 100_000 });
+    const clan = await TestUtils.createClan(char.id, { lvl: 5, gold: 100_000 });
 
     await expect(ClanService.levelUp(clan.id)).rejects.toMatchObject(new Error('Клан имеет максимальный уровень'));
     await expect(TestUtils.getClan(clan.id)).resolves.toMatchObject({

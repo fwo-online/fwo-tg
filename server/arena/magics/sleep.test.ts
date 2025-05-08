@@ -10,7 +10,7 @@ import sleep from './sleep';
 
 // npm t server/arena/magics/sleep.test.ts
 
-describe('paralysis', () => {
+describe('sleep', () => {
   let game: GameService;
 
   beforeAll(() => {

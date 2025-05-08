@@ -1,19 +1,19 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`shieldBlock should block attack if target has less attrs 1`] = `
-"*repellat* использовал _Блок щитом_ с эффектом 10.67
+"*repellat* использовал _🛡️ Блок щитом_ с эффектом 10.67
 
 *asperiores* пытался атаковать *repellat*, но у него не получилось
-_Блок щитом_ *repellat*: 📖40"
+_🛡️ Блок щитом_ *repellat*: 📖40"
 `;
 
 exports[`shieldBlock should breack block with multiple attacks 1`] = `
-"*nulla* использовал _Блок щитом_ с эффектом 13.75
+"*nulla* использовал _🛡️ Блок щитом_ с эффектом 13.75
 
 *iure* пытался атаковать *nulla*, но у него не получилось
-_Блок щитом_ *nulla*: 📖40
+_🛡️ Блок щитом_ *nulla*: 📖40
 *iure* пытался атаковать *nulla*, но у него не получилось
-_Блок щитом_ *nulla*: 📖40
+_🛡️ Блок щитом_ *nulla*: 📖40
 *iure* рубанул *nulla* _Оружием_ и нанёс *7.2* урона
 \\[ nulla 💥 💔-7.2/2.13 📖58 ]"
 `;
