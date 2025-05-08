@@ -1,0 +1,7 @@
+.nes-dialog {
+  margin: auto;
+  padding: 0;
+  background-color: var(--tg-theme-secondary-bg-color);
+  border-image-repeat: stretch !important;
+  max-width: 85% !important;
+}

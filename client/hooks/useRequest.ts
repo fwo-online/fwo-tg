@@ -1,8 +1,9 @@
-import { popup } from '@telegram-apps/sdk-react';
+import { usePopup } from '@/hooks/usePopup';
 import { useState } from 'react';
 
 export const useRequest = () => {
   const [isLoading, setLoading] = useState(false);
+  const popup = usePopup();
 
   const makeRequest = async <T>(fn: () => T): Promise<Awaited<T | undefined>> => {
     setLoading(true);
@@ -11,7 +12,7 @@ export const useRequest = () => {
       return await fn();
     } catch (e) {
       if (e instanceof Error) {
-        popup.open({ message: e.message });
+        popup.info({ message: e.message });
       }
     } finally {
       setLoading(false);

@@ -1,9 +1,9 @@
 import { changeCharacterAttributes } from '@/api/character';
+import { usePopup } from '@/hooks/usePopup';
 import { useRequest } from '@/hooks/useRequest';
 import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
 import { useCharacter } from '@/modules/character/store/character';
 import type { CharacterAttributes } from '@fwo/shared';
-import { popup } from '@telegram-apps/sdk-react';
 import { useState } from 'react';
 
 export const useCharacterAttributes = () => {
@@ -13,6 +13,7 @@ export const useCharacterAttributes = () => {
   const [attributes, setAttributes] = useState(structuredClone(character.attributes));
   const hasChanges = free !== character.free;
   const [isPending, makeRequest] = useRequest();
+  const popup = usePopup();
 
   const handleChangeAttribute = (attribute: keyof CharacterAttributes) => {
     setAttributes(() => {
@@ -34,7 +35,7 @@ export const useCharacterAttributes = () => {
       const updatedCharacter = await changeCharacterAttributes(attributes);
       if (updatedCharacter) {
         syncCharacter(updatedCharacter);
-        popup.open({ message: 'Изменения сохранены' });
+        popup.info({ message: 'Изменения сохранены' });
       }
     });
   };

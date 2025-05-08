@@ -1,5 +1,5 @@
 import { acceptClanRequest, rejectClanRequest } from '@/api/clan';
-import { useConfirm } from '@/hooks/useConfirm';
+import { usePopup } from '@/hooks/usePopup';
 import { useRequest } from '@/hooks/useRequest';
 import { useSyncClan } from '@/modules/clan/hooks/useSyncClan';
 import { clanAcceptCostPerLvl, type CharacterPublic } from '@fwo/shared';
@@ -7,10 +7,10 @@ import { clanAcceptCostPerLvl, type CharacterPublic } from '@fwo/shared';
 export const useClanRequest = () => {
   const { syncClan } = useSyncClan();
   const [_, makeRequest] = useRequest();
-  const { confirm } = useConfirm();
+  const popup = usePopup();
 
   const acceptRequest = async (requester: CharacterPublic) => {
-    confirm({
+    popup.confirm({
       message: `Стоимость принятия заявки ${requester.lvl * clanAcceptCostPerLvl}💰`,
       onConfirm: async () =>
         syncClan(await makeRequest(async () => acceptClanRequest(requester.id))),

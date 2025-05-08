@@ -3,6 +3,7 @@ import { HashRouter } from 'react-router';
 import { Router } from '@/router';
 import { Placeholder } from '@/components/Placeholder';
 import { Card } from '@/components/Card';
+import { PopupProvider } from '@/context/popup';
 
 export function App() {
   return (
@@ -14,7 +15,9 @@ export function App() {
           </Card>
         }
       >
-        <Router />
+        <PopupProvider>
+          <Router />
+        </PopupProvider>
       </Suspense>
     </HashRouter>
   );

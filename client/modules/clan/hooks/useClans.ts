@@ -1,9 +1,10 @@
 import { cancelClanRequest, createClanRequest, getClans } from '@/api/clan';
+import { usePopup } from '@/hooks/usePopup';
 import { useRequest } from '@/hooks/useRequest';
-import { popup } from '@telegram-apps/sdk-react';
 import useSWR from 'swr';
 
 export const useClans = () => {
+  const popup = usePopup();
   const { data: clans, mutate } = useSWR('clans', getClans, { suspense: true });
 
   const [isLoading, makeRequest] = useRequest();
@@ -11,13 +12,13 @@ export const useClans = () => {
   const createRequest = async (id: string) => {
     await makeRequest(() => createClanRequest(id));
     mutate();
-    popup.open({ message: 'Заявка успешно отправлена' });
+    popup.info({ message: 'Заявка успешно отправлена' });
   };
 
   const cancelRequest = async (id: string) => {
     await makeRequest(() => cancelClanRequest(id));
     mutate();
-    popup.open({ message: 'Заявка успешно отменена' });
+    popup.info({ message: 'Заявка успешно отменена' });
   };
 
   return { clans, createRequest, cancelRequest, isLoading };

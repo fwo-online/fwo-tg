@@ -4,13 +4,14 @@ import { useGameStore } from '@/modules/game/store/useGameStore';
 import { useGameKickState } from './useGameKickState';
 import { useMountEffect } from '@/hooks/useMountEffect';
 import { useNavigate } from 'react-router';
-import { popup } from '@telegram-apps/sdk-react';
 import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
 import { useSocket } from '@/stores/socket';
+import { usePopup } from '@/hooks/usePopup';
 
 export function useGameState() {
   const socket = useSocket();
   const { syncCharacter } = useSyncCharacter();
+  const popup = usePopup();
 
   const navigate = useNavigate();
   const setOrders = useGameStore((state) => state.setOrders);
@@ -55,8 +56,8 @@ export function useGameState() {
 
   const handleEndGame = useCallback(() => {
     navigate('/');
-    popup.open({ message: 'Игра завершена' });
-  }, [navigate]);
+    popup.info({ message: 'Игра завершена' });
+  }, [navigate, popup.info]);
 
   const handleStartGame = () => {
     socket.emitWithAck('game:connected').then(async (res) => {
@@ -66,7 +67,7 @@ export function useGameState() {
       } else {
         await syncCharacter();
         navigate('/');
-        popup.open({ title: 'Не удалось подключиться к игре', message: res.message });
+        popup.info({ title: 'Не удалось подключиться к игре', message: res.message });
       }
     });
   };

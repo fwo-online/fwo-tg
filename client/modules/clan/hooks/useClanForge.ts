@@ -1,5 +1,5 @@
 import { openClanForge } from '@/api/clan';
-import { useConfirm } from '@/hooks/useConfirm';
+import { usePopup } from '@/hooks/usePopup';
 import { useRequest } from '@/hooks/useRequest';
 import { useSyncClan } from '@/modules/clan/hooks/useSyncClan';
 import { useClan } from '@/modules/clan/store/clan';
@@ -9,10 +9,10 @@ export const useClanForge = () => {
   const [_, makeRequest] = useRequest();
   const { syncClan } = useSyncClan();
   const lvl = useClan((clan) => clan.lvl);
-  const { confirm } = useConfirm();
+  const popup = usePopup();
 
   const openForge = async () => {
-    confirm({
+    popup.confirm({
       title: 'Открыть кузницу?',
       message: `Стоимость открытия ${clanLvlCost[lvl - 1] * clanForgeCostMultiplier}💰. Кузница закроется через месяц`,
       onConfirm: async () => {

@@ -3,19 +3,20 @@ import type { FC } from 'react';
 import { forgeItem } from '@/api/inventory';
 import { ItemModal } from '@/modules/items/components/ItemModal';
 import { useRequest } from '@/hooks/useRequest';
-import { popup } from '@telegram-apps/sdk-react';
 import { Button } from '@/components/Button';
 import { Placeholder } from '@/components/Placeholder';
 import { every } from 'es-toolkit/compat';
 import { forgeClanItem } from '@/api/clan';
 import { useCharacter } from '@/modules/character/store/character';
 import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
+import { usePopup } from '@/hooks/usePopup';
 
 export const ForgeList: FC<{ items: Item[]; clanForge?: boolean }> = ({ items, clanForge }) => {
   const gold = useCharacter((character) => character.gold);
   const components = useCharacter((character) => character.components);
   const { syncCharacter } = useSyncCharacter();
   const [_, makeRequest] = useRequest();
+  const popup = usePopup();
 
   const canForge = (item: Item) => {
     if (gold < item.price * 0.2) {
@@ -32,7 +33,7 @@ export const ForgeList: FC<{ items: Item[]; clanForge?: boolean }> = ({ items, c
       } else {
         await forgeItem(item.code);
       }
-      popup.open({ message: `Ты создал ${item.info.name}` });
+      popup.info({ message: `Ты создал ${item.info.name}` });
     });
     await syncCharacter();
   };
