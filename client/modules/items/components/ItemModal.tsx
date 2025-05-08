@@ -22,7 +22,7 @@ export const ItemModal: FC<{
 
   return (
     <Modal trigger={trigger}>
-      <Card className="p-3" header={item.info.name}>
+      <Card header={item.info.name}>
         <div className="flex flex-col gap-2 p-2 pt-0!">
           {types.length ? <h5 className="text-sm">{types.join(' ')}</h5> : null}
           <h5 className="text-sm">Уровень {item.tier ?? 0}</h5>
