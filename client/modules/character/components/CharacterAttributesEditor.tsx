@@ -28,7 +28,7 @@ export const CharacterAttributesEditor: FC<{
   };
 
   return (
-    <div className="flex gap-2">
+    <div className="flex justify-between gap-2">
       <AttributeButton attribute="str" />
       <AttributeButton attribute="dex" />
       <AttributeButton attribute="con" />
