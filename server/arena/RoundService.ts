@@ -29,6 +29,7 @@ export class RoundService {
   private emitter = new RoundEmitter();
   count = 0;
   status = RoundStatus.INIT;
+  timestamp = Date.now();
 
   /**
    * @description Возвращает объект с текущим состоянием раунда
@@ -137,6 +138,7 @@ export class RoundService {
    */
   private nextState(newState: RoundStatus, timeout = config.roundTimeout): void {
     const timer = setTimeout(() => {
+      this.timestamp = Date.now();
       this.onNextState(newState);
       clearTimeout(timer);
     }, timeout);

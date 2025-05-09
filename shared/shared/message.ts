@@ -55,12 +55,14 @@ export type ServerToClientMessage = Message<{
   'game:start': [gameID: string];
   'game:end': [];
   'game:startOrders': [
-    actions: {
+    data: {
       actions: Action[];
       magics: Action[];
       skills: Action[];
       power: number;
       orders: Order[];
+      ordersTime: number;
+      ordersStartTime: number;
     },
   ];
   'game:endOrders': [];

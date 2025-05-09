@@ -5,10 +5,13 @@ import { GameOrder } from './GameOrder';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Modal } from '@/components/Modal';
+import { GameOrderProgress } from '@/modules/game/components/GameOrderProgress';
 
 export function GameOrderModal() {
   const [open, setOpen] = useState(true);
   const canOrder = useGameStore((state) => state.canOrder);
+  const ordersTime = useGameStore((state) => state.ordersTime);
+  const ordersStartTime = useGameStore((state) => state.ordersStartTime);
 
   return (
     <Modal
@@ -27,8 +30,11 @@ export function GameOrderModal() {
     >
       <Card>
         <Modal.Handle />
-        <GameOrderList />
-        <GameOrder />
+        <div className="flex flex-col gap-2">
+          <GameOrderList />
+          <GameOrderProgress ordersTime={ordersTime} ordersTimeStart={ordersStartTime} />
+          <GameOrder />
+        </div>
       </Card>
     </Modal>
   );
