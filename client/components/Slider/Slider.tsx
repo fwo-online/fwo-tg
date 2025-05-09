@@ -27,6 +27,8 @@ export const Slider: FC<InputHTMLAttributes<HTMLInputElement>> = ({
         borderImageSource: getBorderSvg(textColor),
         '--slider-progress': `${progress}%`,
       }}
+      max={max}
+      min={min}
       type="range"
       className={classNames('nes-slider nes-input', className)}
       {...restProps}

@@ -3,7 +3,6 @@ import OrderError from '@/arena/errors/OrderError';
 import type GameService from '@/arena/GameService';
 import MatchMakingService from '@/arena/MatchMakingService';
 import ActionsHelper from '@/helpers/actionsHelper';
-
 import type { Server, Socket } from '@/server/ws';
 import { keyBy } from 'es-toolkit';
 import { activeConnections } from '@/server/utils/activeConnectons';
@@ -11,6 +10,7 @@ import type { OrderResult } from '@/arena/OrderService';
 import type { Player } from '@/arena/PlayersService';
 import type { ClanPublic, OrderResponse } from '@fwo/shared';
 import { RoundStatus } from '@/arena/RoundService';
+import config from '@/arena/config';
 
 const getRoom = (game: GameService, scope?: string) => {
   if (scope) {
@@ -62,6 +62,8 @@ export const onCreate = (io: Server) => {
           ...ActionsHelper.buildActions(player, game),
           orders: [],
           power: player.proc,
+          ordersTime: config.ordersTime,
+          ordersStartTime: game.round.timestamp,
         });
       });
     });
@@ -116,6 +118,8 @@ export const onConnection = (_io: Server, socket: Socket) => {
           power: proc,
         })),
         power: player.proc,
+        ordersTime: config.ordersTime,
+        ordersStartTime: game.round.timestamp,
       });
     }
   });

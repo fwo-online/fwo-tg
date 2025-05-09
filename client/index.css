@@ -35,6 +35,11 @@ img {
   image-rendering: pixelated;
 }
 
+progress {
+  border-image-repeat: stretch !important;
+  width: calc(100% - 8px);
+}
+
 @font-face {
   font-family: 'Pixeloid';
   src: url('/fonts/PixeloidSans.woff2') format('woff2');
