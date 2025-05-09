@@ -3,6 +3,7 @@ import { useTransition } from 'react';
 import { pick } from 'es-toolkit';
 import { useSocket } from '@/stores/socket';
 import { usePopup } from '@/hooks/usePopup';
+import type { OrderResponse } from '@fwo/shared';
 
 export const useGameActionOrder = (onSuccess: () => void) => {
   const socket = useSocket();
@@ -11,6 +12,17 @@ export const useGameActionOrder = (onSuccess: () => void) => {
   const setActions = useGameStore((state) => state.setActions);
   const [isPending, startTransition] = useTransition();
   const popup = usePopup();
+
+  const handleOrderResponse = (res: OrderResponse) => {
+    if (res.error) {
+      popup.info({ message: res.message });
+    } else {
+      setOrders(res.orders);
+      setRemainPower(res.power);
+      setActions(pick(res, ['actions', 'magics', 'skills']));
+      onSuccess();
+    }
+  };
 
   const handleOrder = async (action: string, target: string, power: number) => {
     if (!action) {
@@ -23,45 +35,28 @@ export const useGameActionOrder = (onSuccess: () => void) => {
         target,
         action,
       });
-
-      if (res.error) {
-        popup.info({ message: res.message });
-      } else {
-        setOrders(res.orders);
-        setRemainPower(res.power);
-        setActions(pick(res, ['actions', 'magics', 'skills']));
-        onSuccess();
-      }
+      handleOrderResponse(res);
     });
   };
 
   const handleRepeat = async () => {
     startTransition(async () => {
       const res = await socket.emitWithAck('game:orderRepeat');
-
-      if (res.error) {
-        popup.info({ message: res.message });
-      } else {
-        setOrders(res.orders);
-        setRemainPower(res.power);
-        setActions(pick(res, ['actions', 'magics', 'skills']));
-        onSuccess();
-      }
+      handleOrderResponse(res);
     });
   };
 
   const handleReset = async () => {
     startTransition(async () => {
       const res = await socket.emitWithAck('game:orderReset');
+      handleOrderResponse(res);
+    });
+  };
 
-      if (res.error) {
-        popup.info({ message: res.message });
-      } else {
-        setOrders(res.orders);
-        setRemainPower(res.power);
-        setActions(pick(res, ['actions', 'magics', 'skills']));
-        onSuccess();
-      }
+  const handleRemove = async (orderID: string) => {
+    startTransition(async () => {
+      const res = await socket.emitWithAck('game:orderRemove', orderID);
+      handleOrderResponse(res);
     });
   };
 
@@ -70,5 +65,6 @@ export const useGameActionOrder = (onSuccess: () => void) => {
     handleOrder,
     handleRepeat,
     handleReset,
+    handleRemove,
   };
 };
