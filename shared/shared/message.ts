@@ -39,6 +39,7 @@ export type ClientToServerMessage = Message<{
   ];
   'game:orderRepeat': [callback: (payload: OrderResponse) => void];
   'game:orderReset': [callback: (payload: OrderResponse) => void];
+  'game:orderRemove': [id: string, callback: (payload: OrderResponse) => void];
 }>;
 
 type Message<T extends Record<string, unknown[]>> = {

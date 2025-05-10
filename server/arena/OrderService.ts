@@ -5,6 +5,7 @@ import type PlayersService from '@/arena/PlayersService';
 import type { Player } from '@/arena/PlayersService';
 import ValidationError from './errors/ValidationError';
 import { isNumber } from 'es-toolkit/compat';
+import { randomBytes } from 'node:crypto';
 
 export interface Order {
   initiator: string;
@@ -14,6 +15,7 @@ export interface Order {
 }
 
 export interface OrderOutput extends Order {
+  id: string;
   action: ActionKey;
 }
 
@@ -75,7 +77,7 @@ export default class Orders {
     initiator.setProc(initiator.proc - order.proc);
     console.log('order :::: ', order);
 
-    this.ordersList.push(order as OrderOutput);
+    this.ordersList.push({ ...order, id: randomBytes(8).toString('hex') } as OrderOutput);
 
     return {
       orders: this.ordersList.filter(({ initiator }) => initiator === order.initiator),
@@ -239,5 +241,14 @@ export default class Orders {
     this.playersService.getById(charId)?.setProc(100);
 
     return { orders: [], proc: 100 };
+  }
+
+  removeAction(charId: string, orderId: string) {
+    const orders = this.ordersList.filter(
+      (order) => order.initiator === charId && order.id !== orderId,
+    );
+    const initialOrders = this.resetOrdersForPlayer(charId);
+
+    return orders.reduce((_, order) => this.orderAction(order), initialOrders);
   }
 }

@@ -15,7 +15,7 @@ export const character = new Hono()
   .post('/', vValidator('json', createCharacterSchema, handleValidationError), async (c) => {
     const createCharacterDto = await c.req.valid('json');
     const user = c.get('user');
-    await withValidation(
+    const { id } = await withValidation(
       createCharacter({
         owner: user.id.toString(),
         nickname: createCharacterDto.name,
@@ -26,7 +26,7 @@ export const character = new Hono()
       }),
     );
 
-    const character = await CharacterService.getCharacter(user.id.toString());
+    const character = await CharacterService.getCharacterById(id);
     return c.json(character.toObject(), 200);
   })
   .use(characterMiddleware)
