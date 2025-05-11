@@ -1,4 +1,3 @@
-import { ActionService } from '@/arena/ActionService';
 import OrderError from '@/arena/errors/OrderError';
 import type GameService from '@/arena/GameService';
 import MatchMakingService from '@/arena/MatchMakingService';
@@ -11,6 +10,7 @@ import type { Player } from '@/arena/PlayersService';
 import type { ClanPublic, OrderResponse } from '@fwo/shared';
 import { RoundStatus } from '@/arena/RoundService';
 import config from '@/arena/config';
+import { normalizeGameOrders } from '@/server/utils/normalizeGameOrders';
 
 const getRoom = (game: GameService, scope?: string) => {
   if (scope) {
@@ -73,8 +73,8 @@ export const onCreate = (io: Server) => {
     });
 
     game.on('end', () => {
+      io.in(getRoom(game)).emit('game:end');
       game.players.players.forEach((player) => {
-        io.emit('game:end');
         io.in(getRoom(game)).socketsLeave(getRoom(game, player.id));
       });
       io.socketsLeave(getRoom(game));
@@ -112,11 +112,7 @@ export const onConnection = (_io: Server, socket: Socket) => {
     if (game.round.status === RoundStatus.START_ORDERS && player.alive) {
       socket.emit('game:startOrders', {
         ...ActionsHelper.buildActions(player, game),
-        orders: game.orders.getPlayerOrders(player.id).map(({ target, proc, action }) => ({
-          action: ActionService.toObject(action),
-          target,
-          power: proc,
-        })),
+        orders: normalizeGameOrders(game.orders.getPlayerOrders(player.id)),
         power: player.proc,
         ordersTime: config.ordersTime,
         ordersStartTime: game.round.timestamp,
@@ -136,11 +132,7 @@ export const onConnection = (_io: Server, socket: Socket) => {
       return {
         error: false,
         power: proc,
-        orders: orders.map(({ target, proc, action }) => ({
-          action: ActionService.toObject(action),
-          target,
-          power: proc,
-        })),
+        orders: normalizeGameOrders(orders),
         ...ActionsHelper.buildActions(player, game),
       } as const;
     } catch (e) {
@@ -158,6 +150,10 @@ export const onConnection = (_io: Server, socket: Socket) => {
 
   socket.on('game:orderReset', (callback) => {
     callback(handleOrder((game, player) => game.orders.resetOrdersForPlayer(player.id)));
+  });
+
+  socket.on('game:orderRemove', (orderID, callback) => {
+    callback(handleOrder((game, player) => game.orders.removeAction(player.id, orderID)));
   });
 
   socket.on('game:order', (order, callback) => {
