@@ -1,3 +1,4 @@
+import type { BaseActionParams } from '@/arena/Constuructors/BaseAction';
 import CastError from '../errors/CastError';
 import type Game from '../GameService';
 import type { Player } from '../PlayersService';
@@ -64,7 +65,6 @@ export abstract class LongMagic extends CommonMagic {
     longArray.forEach((item) => {
       if (game.round.count === item.round) return;
       try {
-        item.duration -= 1;
         const initiator = game.players.getById(item.initiator);
         const target = game.players.getById(item.target);
         if (!initiator) {
@@ -79,9 +79,11 @@ export abstract class LongMagic extends CommonMagic {
         this.runLong(initiator, target, game); // вызов кастомного обработчика
         this.calculateExp();
         this.checkTargetIsDead(); // проверка трупов в длительных магиях
-        this.longNext({ initiator, target, game });
+        this.longNext({ initiator, target, game }, item);
       } catch (e) {
         this.handleCastError(e);
+      } finally {
+        item.duration -= 1;
       }
     });
     const filteredLongArray = longArray.filter((item) => item.duration !== 0);
@@ -116,9 +118,10 @@ export abstract class LongMagic extends CommonMagic {
    * @param target
    * @todo использовать super.next()
    */
-  longNext({ initiator, target, game } = this.params): void {
+  longNext({ initiator, target, game }: BaseActionParams, longItem: LongItem): void {
     const result: SuccessArgs = {
       ...super.getSuccessResult({ initiator, target, game }),
+      duration: longItem.duration,
       actionType: 'magic-long',
     };
 
@@ -128,11 +131,10 @@ export abstract class LongMagic extends CommonMagic {
   /**
    * Для длителных бафов exp считаем по BaseExp*effect
    */
-  getEffectExp(_effect: number, baseExp = 0) {
-    return Math.round((baseExp * this.params.initiator.proc) * _effect / 4);
+  getEffectExp(effect: number, baseExp = 0) {
+    return Math.round((baseExp * this.params.initiator.proc * effect) / 4);
   }
 }
-
 
 /**
  * [ибо 2,3,4 из 6] Эридан окутался <Сильной аурой> и

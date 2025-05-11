@@ -56,6 +56,7 @@ export type SuccessArgs = {
   orderType: OrderType;
   affects?: SuccessArgs[];
   msg?: CustomMessageFn;
+  duration?: number;
 };
 
 export type ActionType =
