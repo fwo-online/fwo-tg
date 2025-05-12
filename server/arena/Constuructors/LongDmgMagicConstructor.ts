@@ -1,3 +1,4 @@
+import type { BaseActionParams } from '@/arena/Constuructors/BaseAction';
 import CastError from '../errors/CastError';
 import type Game from '../GameService';
 import type { Player } from '../PlayersService';
@@ -60,7 +61,6 @@ export abstract class LongDmgMagic extends DmgMagic {
     longArray.forEach((item) => {
       if (game.round.count === item.round) return;
       try {
-        item.duration -= 1;
         const initiator = game.players.getById(item.initiator);
         const target = game.players.getById(item.target);
         if (!initiator) {
@@ -75,9 +75,11 @@ export abstract class LongDmgMagic extends DmgMagic {
         this.runLong(initiator, target, game); // вызов кастомного обработчика
         this.calculateExp();
         this.checkTargetIsDead(); // проверка трупов в длительных магиях
-        this.longNext({ initiator, target, game });
+        this.longNext({ initiator, target, game }, item);
       } catch (e) {
         this.handleCastError(e);
+      } finally {
+        item.duration -= 1;
       }
     });
     const filteredLongArray = longArray.filter((item) => item.duration !== 0);
@@ -109,9 +111,10 @@ export abstract class LongDmgMagic extends DmgMagic {
    * Функция формирующая специальный формат вывода для длительной магии
    * * @todo использовать super.next()
    */
-  longNext({ initiator, target, game } = this.params): void {
+  longNext({ initiator, target, game }: BaseActionParams, longItem: LongItem): void {
     const result: SuccessArgs = {
       ...super.getSuccessResult({ initiator, target, game }),
+      duration: longItem.duration,
       actionType: 'dmg-magic-long',
     };
 

@@ -1,10 +1,10 @@
 import arena from '@/arena';
-import { LogService } from '@/arena/LogService';
 import { type ItemComponent, itemComponentName, reservedClanName } from '@fwo/shared';
 import { bold } from '@/utils/formatString';
 import { profsData } from '@/data/profs';
 import { bot } from '@/bot';
 import { DonationHelper } from '@/helpers/donationHelper';
+import { formatMessage } from '@/arena/LogService/utils';
 
 const MAX_MESSAGE_LENGTH = 2 ** 12;
 const chatId = process.env.BOT_CHATID || -1001483444452;
@@ -61,19 +61,18 @@ export const initGameChannel = () => {
   });
 
   arena.mm.on('start', (game) => {
-    const log = new LogService(sendBattleLogMessages);
     broadcast('Игра начинается');
 
     game.on('startOrders', () => {
       broadcast('Пришло время делать заказы');
     });
-    game.on('startRound', (e) => {
-      broadcast(`⚡️ Раунд ${e.round} начинается ⚡`);
+    game.on('startRound', ({ round }) => {
+      broadcast(`⚡️ Раунд ${round} начинается ⚡`);
     });
-    game.on('endRound', async (e) => {
-      await log.sendBattleLog(e.log);
-      if (e.dead.length) {
-        await broadcast(`Погибшие в этом раунде: ${e.dead.map(({ nick }) => nick).join(', ')}`);
+    game.on('endRound', async ({ log, dead }) => {
+      await sendBattleLogMessages(log.map((log) => formatMessage(log)));
+      if (dead.length) {
+        await broadcast(`Погибшие в этом раунде: ${dead.map(({ nick }) => nick).join(', ')}`);
       }
     });
     game.on('kick', ({ player }) => {
