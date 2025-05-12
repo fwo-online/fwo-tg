@@ -7,7 +7,7 @@ import { DonationHelper } from '@/helpers/donationHelper';
 import { formatMessage } from '@/arena/LogService/utils';
 
 const MAX_MESSAGE_LENGTH = 2 ** 12;
-const chatId = process.env.BOT_CHATID || -1001483444452;
+export const BOT_CHAT_ID = process.env.BOT_CHATID || -1001483444452;
 
 export async function sendBattleLogMessages(messages: string[]) {
   let messageToSend = '';
@@ -33,7 +33,7 @@ export async function sendBattleLogMessages(messages: string[]) {
  * @param data - текст отправляемого сообщения
  * @param id - id чата
  */
-export async function broadcast(data: string, id: number | string = chatId): Promise<void> {
+export async function broadcast(data: string, id: number | string = BOT_CHAT_ID): Promise<void> {
   try {
     await bot.api.sendMessage(id, data, { parse_mode: 'Markdown' });
   } catch (e) {

@@ -5,6 +5,7 @@ import { createPayment } from '@/api/payment';
 import { InvoiceType } from '@fwo/shared';
 import { CharacterService } from '@/arena/CharacterService';
 import { ServiceShop } from '@/arena/ServiceShop';
+import { BOT_CHAT_ID } from '@/helpers/channelHelper';
 
 const bot = new Bot(process.env.BOT_TOKEN ?? '', {
   client: { environment: process.env.NODE_ENV === 'development' ? 'test' : 'prod' },
@@ -89,6 +90,20 @@ bot.on(':refunded_payment', async (ctx) => {
 
 export const initBot = () => {
   return bot.start();
+};
+
+export const checkUserIsChannelMember = async (userID: string | number) => {
+  try {
+    const { status } = await bot.api.getChatMember(BOT_CHAT_ID, Number(userID));
+    console.log(status);
+    if (status === 'left') {
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
 };
 
 export { bot };
