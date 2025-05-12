@@ -12,7 +12,7 @@ export const useLobbyHelp = () => {
 
   const openChannelLink = useCallback(() => {
     if (openTelegramLink.isAvailable()) {
-      openTelegramLink(import.meta.env.VITE_CHANNEL_URL);
+      openTelegramLink(import.meta.env.VITE_CHANNEL_URL || 'https://t.me/fwoarena');
     }
   }, []);
 
