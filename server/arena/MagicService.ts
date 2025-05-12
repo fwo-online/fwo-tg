@@ -4,6 +4,7 @@ import MiscService from '@/arena/MiscService';
 import type { Prof } from '@/data/profs';
 import type { CharacterService } from './CharacterService';
 import ValidationError from '@/arena/errors/ValidationError';
+import { canLearnMagic } from '@fwo/shared';
 
 const chance = config.magic.learnChance;
 
@@ -26,7 +27,7 @@ export default class MagicService {
    * @param lvl круг проучиваемой магии
    */
   static async learnMagic(character: CharacterService, lvl: number) {
-    if (lvl > character.lvl) {
+    if (!canLearnMagic(character.lvl, lvl)) {
       throw new ValidationError('Слишком низкий уровень персонажа');
     }
 
