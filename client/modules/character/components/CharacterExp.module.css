@@ -15,6 +15,7 @@
   height: 100%;
   transform: scaleX(var(--exp-progress));
   transform-origin: left;
-  background-color: var(--tg-theme-accent-text-color);
+  background: var(--tg-theme-accent-text-color);
+  box-shadow: inset 0px -4px #006bb3;
   z-index: -1;
 }

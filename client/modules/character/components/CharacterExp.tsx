@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import { useCharacter } from '@/modules/character/store/character';
 import { formatNumber } from '@/utils/formatNumber';
 
@@ -10,7 +9,7 @@ export const CharacterExp = () => {
   const progress = Math.ceil((exp / nextLvlExp) * 100);
 
   return (
-    <div style={{ '--exp-progress': `${progress}%` }} className={classNames(styles.exp, 'text-sm')}>
+    <div style={{ '--exp-progress': `${progress}%` }} className={styles.exp}>
       {formatNumber(exp)}/{formatNumber(nextLvlExp)}
     </div>
   );
