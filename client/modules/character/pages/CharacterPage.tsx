@@ -6,6 +6,8 @@ import { CharacterClass } from '@fwo/shared';
 import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
 import { useCharacter } from '@/modules/character/store/character';
+import { formatNumber } from '@/utils/formatNumber';
+import { CharacterExp } from '@/modules/character/components/CharacterExp';
 
 export const CharacterPage: FC = () => {
   const navigate = useNavigate();
@@ -27,19 +29,16 @@ export const CharacterPage: FC = () => {
           {characterClassNameMap[character.class]} {character.lvl}
         </Card>
         <div className="flex gap-2">
-          <Card className="flex flex-1 flex-col justify-center items-center p-0!">
-            Золото
-            <span>{character.gold}</span>
+          <Card className="flex flex-1 flex-col justify-center items-center py-0.5 px-0">
+            <span className="text-sm">{formatNumber(character.gold)}💰</span>
           </Card>
 
-          <Card className="flex flex-1 flex-col justify-center items-center p-0!">
-            Опыт
-            <span>{character.exp}</span>
+          <Card className="flex flex-2 flex-col justify-center items-center py-0 px-0">
+            <CharacterExp />
           </Card>
 
-          <Card className="flex flex-1 flex-col justify-center items-center p-0!">
-            Бонусы
-            <span>{character.bonus}</span>
+          <Card className="flex flex-1 flex-col justify-center items-center py-0.5 px-0">
+            <span className="text-sm">{formatNumber(character.bonus)}💡</span>
           </Card>
         </div>
       </Card>
