@@ -21,11 +21,3 @@
 .nes-container.with-title .nes-container__text {
   fill: var(--tg-theme-text-color);
 }
-
-.nes-container.with-title > .title {
-  -webkit-text-fill-color: var(--tg-theme-secondary-bg-color);
-  -webkit-text-stroke: 1px;
-  font-size: 18px;
-  /* -webkit-text-stroke: 2px var(--tg-theme-secondary-bg-color); */
-  background-color: transparent;
-}

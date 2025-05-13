@@ -13,6 +13,7 @@ export type Character = {
   bonus: number;
   lvl: number;
   exp: number;
+  nextLvlExp: number;
   psr: number;
   statistics: {
     games: number;

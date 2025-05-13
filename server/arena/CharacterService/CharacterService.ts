@@ -11,7 +11,7 @@ import { CharacterResources } from './CharacterResources';
 import { ClanService } from '@/arena/ClanService';
 import { CharacterAttributes } from '@/arena/CharacterService/CharacterAttributes';
 import { CharacterPerformance } from '@/arena/CharacterService/CharacterPerformance';
-import { calculateLvl } from '@/arena/CharacterService/utils/calculateLvl';
+import { calculateLvl, calculateNextLvlExp } from '@/arena/CharacterService/utils/calculateLvl';
 import { toPublicObject } from '@/arena/CharacterService/utils/toPublicObject';
 
 /**
@@ -346,6 +346,7 @@ export class CharacterService {
       gold: this.resources.gold,
       lvl: this.lvl,
       exp: this.resources.exp,
+      nextLvlExp: calculateNextLvlExp(this.lvl),
       psr: this.performance.psr,
       dynamicAttributes: this.attributes.getDynamicAttributes(),
       game: this.currentGame?.info.id,
