@@ -6,6 +6,7 @@ import { InvoiceType } from '@fwo/shared';
 import { CharacterService } from '@/arena/CharacterService';
 import { ServiceShop } from '@/arena/ServiceShop';
 import { BOT_CHAT_ID } from '@/helpers/channelHelper';
+import type { ChatMember } from 'grammy/types';
 
 const bot = new Bot(process.env.BOT_TOKEN ?? '', {
   client: { environment: process.env.NODE_ENV === 'development' ? 'test' : 'prod' },
@@ -93,15 +94,13 @@ export const initBot = () => {
 };
 
 export const checkUserIsChannelMember = async (userID: string | number) => {
+  const allowedStatuses: ChatMember['status'][] = ['administrator', 'creator', 'member'];
+
   try {
     const { status } = await bot.api.getChatMember(BOT_CHAT_ID, Number(userID));
-    console.log(status);
-    if (status === 'left') {
-      return false;
-    }
-    return true;
+
+    return allowedStatuses.includes(status);
   } catch (e) {
-    console.log(e);
     return false;
   }
 };
