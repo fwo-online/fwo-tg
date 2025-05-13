@@ -6,6 +6,7 @@
   width: 100%;
   height: 100%;
   z-index: 1;
+  padding-inline: 4px;
 }
 
 .exp::before {
@@ -16,6 +17,6 @@
   transform: scaleX(var(--exp-progress));
   transform-origin: left;
   background: var(--tg-theme-accent-text-color);
-  box-shadow: inset 0px -4px #006bb3;
+  box-shadow: inset 0 -4px #006bb3;
   z-index: -1;
 }

@@ -3,6 +3,7 @@ const formatter = new Intl.NumberFormat('en', {
   compactDisplay: 'short',
   roundingMode: 'floor',
   minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
 });
 
 const minNumberToFormat = 1000;
