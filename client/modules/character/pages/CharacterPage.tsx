@@ -28,11 +28,11 @@ export const CharacterPage: FC = () => {
           <Card className="py-0 flex justify-center">
             {characterClassNameMap[character.class]} {character.lvl}
           </Card>
-          <Card className="py-0 px-0 w-32">
+          <Card className="py-0 px-0 min-w-32">
             <CharacterExp />
           </Card>
         </div>
-        <div className="w-full flex items-start justify-between gap-2 text-sm">
+        <div className="w-full flex items-start justify-between gap-2">
           <Card className="py-0.5 px-2">{formatNumber(character.gold)}💰</Card>
 
           <Card className="py-0.5 px-3">{formatNumber(character.bonus)}💡</Card>
