@@ -4,7 +4,8 @@ import MiscService from '@/arena/MiscService';
 import type { Prof } from '@/data/profs';
 import type { CharacterService } from './CharacterService';
 import ValidationError from '@/arena/errors/ValidationError';
-import { canLearnMagic } from '@fwo/shared';
+import { canLearnMagic, getLearnMagicCost } from '@fwo/shared';
+import { mapValues } from 'es-toolkit';
 
 const chance = config.magic.learnChance;
 
@@ -38,7 +39,7 @@ export default class MagicService {
 
     const magic = magicsToLearn[MiscService.randInt(0, magicsToLearn.length)];
 
-    await character.resources.takeResources({ bonus: lvl });
+    await character.resources.takeResources({ bonus: getLearnMagicCost(lvl) });
 
     if (!learnChance()) {
       throw new ValidationError('Не удалось выучить. Удача не на твоей стороне');
@@ -58,11 +59,19 @@ export default class MagicService {
     const magicsByLvl = MagicService.getMagicListByProf(character.prof, lvl);
 
     return magicsByLvl.filter((magic) => {
-      if (character.magics[magic.name]) {
-        return character.magics[magic.name] < MagicService.MAX_MAGIC_LVL;
-      }
-      return true;
+      return (character.magics[magic.name] ?? 0) < MagicService.MAX_MAGIC_LVL;
     });
+  }
+
+  static getAvaiableLevels(character: CharacterService) {
+    const magics = MagicService.getMagicListByProf(character.class);
+
+    const magicsToLearn = magics.filter((magic) => {
+      return (character.magics[magic.name] ?? 0) < MagicService.MAX_MAGIC_LVL;
+    });
+
+    const magicsByLvl = Object.groupBy(magicsToLearn, ({ lvl }) => lvl);
+    return mapValues(magicsByLvl, (magics) => Boolean(magics?.length));
   }
 
   /**

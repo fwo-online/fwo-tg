@@ -1,4 +1,4 @@
-import { getMagicList } from '@/api/magic';
+import { getAvailableMagicLevels, getMagicList } from '@/api/magic';
 import { Suspense } from 'react';
 import { Card } from '@/components/Card';
 import { Placeholder } from '@/components/Placeholder';
@@ -8,19 +8,31 @@ import { CharacterMagicsLearnModal } from '@/modules/character/components/Charac
 import useSWR from 'swr';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
+const fetcher = async (magicKeys: string[]) => {
+  const [magics, avaiableMagicLevels] = await Promise.all([
+    getMagicList(magicKeys),
+    getAvailableMagicLevels(),
+  ]);
+
+  return {
+    magics,
+    avaiableMagicLevels,
+  };
+};
+
 const CharacterMagicListLoader = () => {
   const magics = useCharacter((character) => character.magics);
 
-  const { data } = useSWR(
-    ['magics', Object.keys(magics)],
-    ([_, magicKeys]) => getMagicList(magicKeys),
-    {
-      suspense: true,
-    },
-  );
+  const { data } = useSWR(['magics', Object.keys(magics)], ([_, magicKeys]) => fetcher(magicKeys), {
+    suspense: true,
+  });
 
-  console.log(data);
-  return <CharacterMagicList magics={data} />;
+  return (
+    <div className="flex flex-col gap-4">
+      <CharacterMagicList magics={data.magics} />
+      <CharacterMagicsLearnModal avaiableMagicLevels={data.avaiableMagicLevels} />
+    </div>
+  );
 };
 
 export const CharacterMagicsPage = () => {
@@ -33,8 +45,6 @@ export const CharacterMagicsPage = () => {
           </Suspense>
         </ErrorBoundary>
       </Card>
-
-      <CharacterMagicsLearnModal />
     </div>
   );
 };

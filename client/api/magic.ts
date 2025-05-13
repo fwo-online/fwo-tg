@@ -1,6 +1,6 @@
 import { client, createRequest } from '@/api';
 
-export const getAvailableMagicList = () => {
+export const getAvailableMagicLevels = () => {
   return createRequest(client.magic.available.$get)({});
 };
 

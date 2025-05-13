@@ -31,9 +31,9 @@ export const magic = new Hono()
   )
   .get('/available', (c) => {
     const character = c.get('character');
-    const magics = MagicService.getMagicListByProf(character.prof);
+    const magicLevels = MagicService.getAvaiableLevels(character);
 
-    return c.json(magics);
+    return c.json(magicLevels);
   })
   .get('/:id', (c) => {
     const id = c.req.param('id');

@@ -85,3 +85,7 @@ export type ReservedFailReason =
 export function canLearnMagic(characterLvl: number, magicLvl: number) {
   return magicLvl <= Math.ceil(characterLvl / 2);
 }
+
+export function getLearnMagicCost(magicLvl: number) {
+  return magicLvl ** 2;
+}
