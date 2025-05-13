@@ -53,6 +53,7 @@ export type ServerToClientMessage = Message<{
   'lobby:list': [characters: CharacterPublic[]];
   'lobby:start': [character: CharacterPublic];
   'lobby:stop': [character: CharacterPublic];
+  'lobby:help': [];
   'game:start': [gameID: string];
   'game:end': [];
   'game:startOrders': [

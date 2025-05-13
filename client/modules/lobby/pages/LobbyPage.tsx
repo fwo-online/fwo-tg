@@ -3,9 +3,11 @@ import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
 import { LobbyList } from '@/modules/lobby/components/LobbyList';
 import { useNavigate } from 'react-router';
+import { useLobbyHelp } from '@/modules/lobby/hooks/useLobbyHelp';
 
 export function LobbyPage() {
   const { toggleSearch, isSearching, searchers } = useLobby();
+  const { channelLinkVisible, openChannelLink } = useLobbyHelp();
   const navigate = useNavigate();
 
   const navigateToLadder = () => {
@@ -21,7 +23,8 @@ export function LobbyPage() {
         <LobbyList searchers={searchers} />
       </Card>
 
-      <div className="flex flex-col mt-auto pb-8">
+      <div className="flex flex-col gap-2 mt-auto pb-8">
+        {channelLinkVisible ? <Button onClick={openChannelLink}>Открыть лог</Button> : null}
         {isSearching ? (
           <Button className="is-warning" onClick={toggleSearch}>
             Остановить поиск игры
