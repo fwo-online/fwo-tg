@@ -4,28 +4,43 @@ import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
 import { useCharacter } from '@/modules/character/store/character';
 import { Modal } from '@/components/Modal';
+import { canLearnMagic, getLearnMagicCost } from '@fwo/shared';
+import classNames from 'classnames';
+import type { FC } from 'react';
 
-export const CharacterMagicsLearnModal = () => {
+export const CharacterMagicsLearnModal: FC<{ avaiableMagicLevels: Record<number, boolean> }> = ({
+  avaiableMagicLevels,
+}) => {
   const character = useCharacter();
   const { isLearning, handleLearn } = useCharacterLearnMagic();
 
-  return (
-    <Modal trigger={<Button className="is-primary">Изучить</Button>}>
-      <Card header="Изучение магии">
-        <span className="text-sm mb-2">
-          Выбери уровень изучаемой магии. Стоимость изучения равна уровню магии
-        </span>
-        <span>У тебя {character.bonus}💡</span>
+  const hasBonus = (lvl: number) => {
+    return character.bonus >= getLearnMagicCost(lvl);
+  };
 
-        <div className="flex gap-2">
+  const isDisabled = (lvl: number) =>
+    !hasBonus(lvl) || !canLearnMagic(character.lvl, lvl) || !avaiableMagicLevels[lvl] || isLearning;
+
+  return (
+    <Modal trigger={<Button className="is-primary">Изучить</Button>} modal={false}>
+      <Card header="Изучение магии">
+        <h5 className="text-sm">Выбери уровень магии, который хочешь изучить</h5>
+
+        <div className="flex flex-col gap-2">
+          <span className="self-end mr-4">У тебя {character.bonus}💡</span>
           {times(4, (i) => i + 1).map((lvl) => (
             <Button
               key={lvl}
-              className="flex-1 is-primary"
-              disabled={lvl > character.bonus || lvl > character.lvl || isLearning}
+              className={classNames('flex-1', {
+                'is-primary': !isDisabled(lvl),
+              })}
+              disabled={isDisabled(lvl)}
               onClick={() => handleLearn(lvl)}
             >
-              {lvl}💡
+              <div className="flex justify-between">
+                <div> Уровень {lvl} </div>
+                {avaiableMagicLevels[lvl] ? `${getLearnMagicCost(lvl)}💡` : '✅'}
+              </div>
             </Button>
           ))}
         </div>

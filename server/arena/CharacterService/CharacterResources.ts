@@ -84,6 +84,7 @@ export class CharacterResources {
     await this.character.saveToDb();
   }
 
+  /** @throws {ValidationError} */
   async takeResources({ components, gold, free, bonus }: Partial<Resources>) {
     this.validateResources({ components, gold, free, bonus });
 

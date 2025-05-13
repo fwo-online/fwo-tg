@@ -81,3 +81,11 @@ export type ReservedFailReason =
   | 'SKILL_FAIL'
   | 'PHYS_FAIL'
   | 'NO_WEAPON';
+
+export function canLearnMagic(characterLvl: number, magicLvl: number) {
+  return magicLvl <= Math.ceil(characterLvl / 2);
+}
+
+export function getLearnMagicCost(magicLvl: number) {
+  return magicLvl ** 2;
+}
