@@ -36,7 +36,7 @@ export abstract class LongMagic extends CommonMagic {
       this.buff = game.longActions[this.name] ?? [];
       this.getCost(initiator);
       this.checkPreAffects();
-      this.checkChance();
+      this.handleAffect(this.checkChance.bind(this));
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.checkTargetIsDead();
       this.calculateExp();

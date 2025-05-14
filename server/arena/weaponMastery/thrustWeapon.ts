@@ -3,7 +3,7 @@ import CounterEvasionSkill from './constructors/counterEvasionSkill';
 
 class ThrustWeapon extends CounterEvasionSkill {
   weaponTypes = ['thrust'];
-  affectedActionType: ActionType = 'dodge';
+  affectedActionTypes: ActionType[] = ['dodge', 'miss'];
 
   constructor() {
     super({

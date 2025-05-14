@@ -10,7 +10,7 @@ class StaticProtect extends PassiveSkillConstructor implements Affect {
       description: 'Пассивный шанс заблокировать атаку',
       chance: [0],
       effect: [0],
-      bonusCost: [0],
+      bonusCost: [],
     });
   }
 

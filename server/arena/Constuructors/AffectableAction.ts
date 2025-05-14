@@ -2,6 +2,7 @@ import { normalizeToArray } from '@/utils/array';
 import { BaseAction } from './BaseAction';
 import type { Affect, AffectFn } from './interfaces/Affect';
 import type { SuccessArgs } from './types';
+import CastError from '@/arena/errors/CastError';
 
 export abstract class AffectableAction extends BaseAction {
   private preAffects: Affect[] = [];
@@ -21,6 +22,12 @@ export abstract class AffectableAction extends BaseAction {
     this.affectHandlers = affectHandlers;
   }
 
+  clearAffects() {
+    this.preAffects = [];
+    this.postAffects = [];
+    this.affectHandlers = [];
+  }
+
   checkPreAffects() {
     this.preAffects.forEach((affect) => {
       this.handleAffect(affect.preAffect);
@@ -33,29 +40,28 @@ export abstract class AffectableAction extends BaseAction {
     });
   }
 
-  private handleAffect(affectMethod?: AffectFn) {
+  handleAffect(affectMethod?: AffectFn) {
     try {
       this.addAffects(affectMethod?.(this.context));
-    } catch (e) {
-      const handlerResult = this.checkAffectHandlers(e.reason);
-      if (!handlerResult) {
-        throw e;
+    } catch (error) {
+      if (error instanceof CastError) {
+        this.checkAffectHandlers(error);
       }
     }
   }
 
-  checkAffectHandlers(result: SuccessArgs | SuccessArgs[] = []) {
-    const [normalizedResult] = normalizeToArray(result);
+  checkAffectHandlers(error: CastError) {
+    const [normalizedResult] = normalizeToArray(error.reason);
 
     for (const affectHandler of this.affectHandlers) {
       const handlerResult = affectHandler.affectHandler?.(this.context, normalizedResult);
 
       if (handlerResult) {
         this.addAffects(handlerResult);
-        return true;
+        return;
       }
     }
-    return false;
+    throw error;
   }
 
   private addAffects(affects: undefined | SuccessArgs | SuccessArgs[]) {

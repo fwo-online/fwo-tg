@@ -15,6 +15,7 @@ const registerAttackAffects = () => {
     arena.actions.protect,
     arena.actions.chopWeapon,
     arena.actions.healingWeapon,
+    arena.actions.fatesMiss,
   ]);
 
   arena.actions.attack.registerPostAffects([arena.magics.lightShield]);
@@ -29,7 +30,13 @@ const registerAttackAffects = () => {
 
 const registerMagicAffects = () => {
   Object.values(arena.magics).forEach((magic) => {
-    magic.registerPreAffects([arena.magics.silence, arena.actions.paralysis, arena.magics.glitch]);
+    magic.registerPreAffects([
+      arena.actions.silence,
+      arena.actions.paralysis,
+      arena.actions.glitch,
+      arena.actions.divineWill,
+    ]);
+    magic.registerAffectHandlers([arena.actions.divineWill]);
   });
 };
 

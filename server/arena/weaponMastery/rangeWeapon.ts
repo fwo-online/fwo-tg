@@ -3,7 +3,7 @@ import CounterEvasionSkill from './constructors/counterEvasionSkill';
 
 class RangeWeapon extends CounterEvasionSkill {
   weaponTypes = ['range'];
-  affectedActionType: ActionType = 'dodge';
+  affectedActionTypes: ActionType[] = ['dodge', 'miss'];
 
   constructor() {
     super({

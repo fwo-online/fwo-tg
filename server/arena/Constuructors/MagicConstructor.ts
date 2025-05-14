@@ -61,7 +61,7 @@ export abstract class Magic extends AffectableAction {
     try {
       this.getCost(initiator);
       this.checkPreAffects();
-      this.checkChance();
+      this.handleAffect(this.checkChance.bind(this));
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.calculateExp();
       this.checkTargetIsDead();
@@ -131,26 +131,11 @@ export abstract class Magic extends AffectableAction {
 
   /**
    * Проверка прошла ли магия
-   * @return
    */
-  checkChance(): true | undefined {
-    // Если шанс > random = true
-    if (MiscService.rndm('1d100') <= this.getChance()) {
-      // Магия прошла, проверяем что скажут боги
-      if (this.godCheck()) {
-        // Боги фейлят шанс
-        throw new CastError('GOD_FAIL');
-      }
-      // Магия прошла
-      return true;
+  checkChance(): undefined {
+    if (MiscService.rndm('1d100') > this.getChance()) {
+      throw new CastError('CHANCE_FAIL');
     }
-    // Магия провалилась, проверяем что скажут боги
-    if (this.godCheck()) {
-      // Боги помогают
-      return true;
-    }
-    // Магия остается фейловой
-    throw new CastError('CHANCE_FAIL');
   }
 
   /**
@@ -184,7 +169,7 @@ export abstract class Magic extends AffectableAction {
       const x = (initiator.stats.val('magic.attack') / target.stats.val('magic.defence')) * 3;
       result += x;
     }
-    console.log(
+    console.debug(
       `${this.name} cast chance:: ${result * initiator.proc} (${result}), chance ${chance}, ratio (dmg): ${(initiator.stats.val('magic.attack') / target.stats.val('magic.defence')) * 3} initiator:: ${initiator.nick}, target:: ${target.nick}`,
     );
     return result * initiator.proc;

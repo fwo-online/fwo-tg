@@ -72,7 +72,8 @@ export type ActionType =
   | 'protect'
   | 'dodge'
   | 'passive'
-  | 'regeneration';
+  | 'regeneration'
+  | 'miss';
 
 export interface FailArgs {
   actionType: ActionType;
