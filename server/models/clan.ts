@@ -60,7 +60,7 @@ const schema = new Schema<Clan>({
     unique: true,
   },
   forge: {
-    lvl: { type: Number, default: 0 },
+    lvl: { type: Number, default: 1 },
     openedAt: { type: Date },
     expiresAt: { type: Date },
   },
