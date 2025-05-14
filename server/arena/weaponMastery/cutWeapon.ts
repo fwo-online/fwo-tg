@@ -3,7 +3,7 @@ import CounterEvasionSkill from './constructors/counterEvasionSkill';
 
 class CutWeapon extends CounterEvasionSkill {
   weaponTypes = ['cut'];
-  affectedActionType: ActionType = 'protect';
+  affectedActionTypes: ActionType[] = ['protect'];
 
   constructor() {
     super({
