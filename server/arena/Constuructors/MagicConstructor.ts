@@ -176,15 +176,6 @@ export abstract class Magic extends AffectableAction {
   }
 
   /**
-   * Функция воли богов
-   * @return true/false решение богов
-   */
-  // eslint-disable-next-line class-methods-use-this
-  godCheck(): boolean {
-    return MiscService.rndm('1d100') <= 5;
-  }
-
-  /**
    * Проверка убита ли цель
    * @todo после того как был нанесен урон любым dmg action, следует производить
    * общую проверку

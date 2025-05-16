@@ -28,7 +28,7 @@ describe('lightShield', () => {
   });
 
   beforeEach(() => {
-    spyOn(global.Math, 'random').mockReturnValue(0.01);
+    spyOn(global.Math, 'random').mockReturnValue(0.3);
   });
 
   afterEach(() => {
@@ -37,6 +37,7 @@ describe('lightShield', () => {
 
   it('initiator should be hit by light shield', async () => {
     game.players.players[0].proc = 1;
+    game.players.players[0].stats.set('magic.attack', 100);
     game.players.players[2].proc = 1;
 
     lightShield.cast(game.players.players[0], game.players.players[1], game);

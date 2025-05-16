@@ -20,7 +20,7 @@ class Anathema extends CommonMagic {
       orderType: 'enemy',
       aoeType: 'target',
       magType: 'bad',
-      chance: ['1d60', '1d70', '1d85'],
+      chance: ['1d60+30', '1d30+55', '1d10+75'],
       profList: ['p'],
       effect: [],
     });

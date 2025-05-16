@@ -19,7 +19,7 @@ class Eclipse extends CommonMagic implements Affect {
       orderType: 'enemy',
       aoeType: 'target',
       magType: 'bad',
-      chance: ['1d80', '1d90+5', '1d100+5'],
+      chance: ['1d80+20', '1d40+60', '1d20+80'],
       profList: ['p'],
       effect: [],
     });
