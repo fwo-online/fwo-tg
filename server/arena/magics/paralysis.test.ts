@@ -28,7 +28,7 @@ describe('paralysis', () => {
 
     game = new GameService([initiator1.id, target.id, initiator2.id]);
 
-    spyOn(global.Math, 'random').mockReturnValue(0.1);
+    spyOn(global.Math, 'random').mockReturnValue(0.5);
   });
 
   afterEach(() => {

@@ -27,7 +27,7 @@ describe('madness', () => {
 
     game = new GameService(ids);
 
-    spyOn(global.Math, 'random').mockReturnValue(0.05);
+    spyOn(global.Math, 'random').mockReturnValue(0.5);
   });
 
   afterEach(() => {

@@ -20,7 +20,7 @@ class Exorcism extends CommonMagic {
       orderType: 'team',
       aoeType: 'target',
       magType: 'good',
-      chance: ['1d60', '1d70', '1d80'],
+      chance: ['1d60+30', '1d30+55', '1d10+70'],
       profList: ['p'],
       effect: [],
     });
