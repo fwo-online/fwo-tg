@@ -1,4 +1,5 @@
 import OrderError from '@/arena/errors/OrderError';
+import ValidationError from '@/arena/errors/ValidationError';
 import type GameService from '@/arena/GameService';
 import MatchMakingService from '@/arena/MatchMakingService';
 import ActionsHelper from '@/helpers/actionsHelper';
@@ -136,7 +137,7 @@ export const onConnection = (_io: Server, socket: Socket) => {
         ...ActionsHelper.buildActions(player, game),
       } as const;
     } catch (e) {
-      if (e instanceof OrderError) {
+      if (e instanceof OrderError || e instanceof ValidationError) {
         return { error: true, message: e.message };
       }
       console.log('game:order', e);

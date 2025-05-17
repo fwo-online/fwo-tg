@@ -10,6 +10,7 @@ import { convertItemModifiers } from './utils';
 import type { CharacterClass, GameStatus, Player } from '@fwo/shared';
 import { ClanService } from '@/arena/ClanService';
 import { PlayerOffHand } from '@/arena/PlayersService/PlayerOffHand';
+import ValidationError from '@/arena/errors/ValidationError';
 
 export type Resists = Record<DamageType, number>;
 
@@ -136,6 +137,15 @@ export default class PlayerService {
 
   setProc(proc: number) {
     this.proc = proc;
+  }
+
+  /** @throws {ValidationError} */
+  takeProc(proc: number) {
+    if (proc > this.proc) {
+      throw new ValidationError('Недостаточно процентов');
+    }
+
+    this.proc -= proc;
   }
 
   reset() {

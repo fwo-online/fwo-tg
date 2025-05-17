@@ -3,7 +3,7 @@ import { type RoundService, RoundStatus } from '@/arena/RoundService';
 import OrderError from '@/arena/errors/OrderError';
 import type PlayersService from '@/arena/PlayersService';
 import type { Player } from '@/arena/PlayersService';
-import ValidationError from './errors/ValidationError';
+import ValidationError from '@/arena/errors/ValidationError';
 import { isNumber } from 'es-toolkit/compat';
 import { randomBytes } from 'node:crypto';
 
@@ -70,14 +70,14 @@ export default class Orders {
 
     this.validateOrder(initiator, target, order);
 
-    // if (action === 'attack') {
-    //   a.hand = 'righthand';
-    // }
-
-    initiator.setProc(initiator.proc - order.proc);
+    initiator.takeProc(order.proc);
     console.log('order :::: ', order);
 
-    this.ordersList.push({ ...order, id: randomBytes(8).toString('hex') } as OrderOutput);
+    this.ordersList.push({
+      ...order,
+      id: randomBytes(8).toString('hex'),
+      action: order.action as ActionKey,
+    });
 
     return {
       orders: this.ordersList.filter(({ initiator }) => initiator === order.initiator),
@@ -114,7 +114,29 @@ export default class Orders {
       throw new OrderError('Действие больше нельзя повторить', order);
     }
     if (!this.isValidAction(order, initiator)) {
-      throw new OrderError(`action spoof:${order.action}`);
+      console.warn(`action spoof: ${order.action} ${initiator.nick}`);
+      throw new OrderError(`action spoof: ${order.action}`);
+    }
+    if (!this.isValidOrderType(order, initiator, target)) {
+      console.warn(`order type spoof: ${order.action} ${initiator.nick} ${target.nick}`);
+      throw new OrderError(`order type spoof: ${order.action}`);
+    }
+  }
+
+  isValidOrderType(order: OrderOutput, initiator: Player, target: Player): boolean {
+    const { orderType } = ActionService.toObject(order.action);
+
+    switch (orderType) {
+      case 'self':
+        return initiator.id === target.id;
+      case 'team':
+        return initiator.isAlly(target, true);
+      case 'teamExceptSelf':
+        return initiator.isAlly(target, false);
+      case 'enemy':
+        return !initiator.isAlly(target, true);
+      default:
+        return true;
     }
   }
 
@@ -156,21 +178,21 @@ export default class Orders {
   /**
    * Проверка доступно ли действие для персонажа
    */
-  isValidAction({ action, proc }: Order, player: Player): boolean {
-    if (ActionService.isBaseAction(action)) {
+  isValidAction(order: Order, player: Player): order is OrderOutput {
+    if (ActionService.isBaseAction(order.action)) {
       return true;
     }
 
-    if (!ActionService.isAction(action)) {
+    if (!ActionService.isAction(order.action)) {
       return false;
     }
 
-    if (!player.getSkillLevel(action) && !player.getMagicLevel(action)) {
+    if (!player.getSkillLevel(order.action) && !player.getMagicLevel(order.action)) {
       return false;
     }
 
-    const { power } = ActionService.toObject(action);
-    if (isNumber(power) && power !== proc) {
+    const { power } = ActionService.toObject(order.action);
+    if (isNumber(power) && power !== order.proc) {
       return false;
     }
 
