@@ -18,7 +18,7 @@ class Madness extends CommonMagic implements Affect {
       orderType: 'enemy',
       aoeType: 'target',
       magType: 'bad',
-      chance: ['1d75', '1d80', '1d82'],
+      chance: ['1d10+75', '1d20+80', '1d20+85'],
       profList: ['m'],
       effect: [],
     });
