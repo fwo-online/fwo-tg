@@ -18,6 +18,12 @@ export async function findCharacter(query: FilterQuery<Char>) {
   return char;
 }
 
+export async function hasCharacter(query: FilterQuery<Char>) {
+  const character = await CharModel.exists({ ...query, deleted: false });
+
+  return !!character;
+}
+
 export async function removeCharacter(_id?: string) {
   const character = await CharModel.findOneAndUpdate(
     { _id, deleted: false },
