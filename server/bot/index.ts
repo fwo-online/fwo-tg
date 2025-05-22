@@ -7,6 +7,7 @@ import { CharacterService } from '@/arena/CharacterService';
 import { ServiceShop } from '@/arena/ServiceShop';
 import { BOT_CHAT_ID } from '@/helpers/channelHelper';
 import type { ChatMember } from 'grammy/types';
+import { hasCharacter } from '@/api/character';
 
 const bot = new Bot(process.env.BOT_TOKEN ?? '', {
   client: { environment: process.env.NODE_ENV === 'development' ? 'test' : 'prod' },
@@ -89,8 +90,39 @@ bot.on(':refunded_payment', async (ctx) => {
   await character.remove();
 });
 
+const knownIDs = new Set<number>();
+
+bot.on('message', async (ctx) => {
+  if (ctx.chat.id.toString() !== BOT_CHAT_ID.toString()) {
+    return;
+  }
+
+  if (knownIDs.has(ctx.from?.id)) {
+    return;
+  }
+
+  const userHasCharacter = await checkUserHasCharacter(ctx.from?.id);
+
+  if (userHasCharacter) {
+    knownIDs.add(ctx.from?.id);
+    return;
+  }
+
+  await ctx.deleteMessage();
+  await ctx.reply(
+    `[${ctx.from.first_name}](tg://user?id=${ctx.from.id}), зарегистрируй персонажа в @FightWorldBot, чтобы получить доступ к чату`,
+    {
+      parse_mode: 'MarkdownV2',
+    },
+  );
+});
+
 export const initBot = () => {
   return bot.start();
+};
+
+export const checkUserHasCharacter = async (userID: string | number) => {
+  return await hasCharacter({ owner: userID });
 };
 
 export const checkUserIsChannelMember = async (userID: string | number) => {
