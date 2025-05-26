@@ -17,12 +17,12 @@ void connect(async () => {
   await ItemModel.load();
   await ItemSetModel.load();
 
+  initGameChannel();
   await initBot();
 });
 
 registerGlobals();
 registerAffects();
-initGameChannel();
 
 const server = serve({
   fetch: app.fetch,

@@ -18,7 +18,7 @@ const WEAPON_TYPES = {
   },
   cut: {
     name: 'режущее',
-    action: (target, weapon) => `пустил кровь ${bold(target.nick)} с помощью ${italic(weapon.info.name)}`,
+    action: (target, weapon) => `пустил кровь ${bold(target.nick)} ${italic(weapon.info.case)}`,
   },
   chop: {
     name: 'рубящее',
@@ -26,27 +26,15 @@ const WEAPON_TYPES = {
   },
   heal: {
     name: 'лечащее',
-    action: (target, weapon) => `вонзил ${italic(weapon.info.name)} в ${bold(target.nick)}`,
+    action: (target, weapon) => `атаковал ${italic(weapon.info.name)} в ${bold(target.nick)}`,
   },
   range: {
     name: 'метательное',
     action: (target, weapon) => `атаковал ${bold(target.nick)} ${italic(weapon.info.case)}`,
   },
-  m: {
-    name: 'дальнобойное',
-    action: (target, weapon) => `стрельнул в ${bold(target.nick)} ${italic(weapon.info.case)}`,
-  },
-  f: {
-    name: 'зажигательное',
-    action: (target, weapon) => `обжег ${bold(target.nick)} с помощью ${italic(weapon.info.case)}`,
-  },
   stun: {
     name: 'оглушающее',
     action: (target, weapon) => `дал по башке ${bold(target.nick)} ${italic(weapon.info.case)}`,
-  },
-  r: {
-    name: 'спецоружие',
-    action: (target, weapon) => `атаковал ${bold(target.nick)} ${italic(weapon.info.case)}`,
   },
 };
 /**
