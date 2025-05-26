@@ -10,6 +10,7 @@ export type Player = {
   clan?: ClanPublic;
   alive: boolean;
   weapon?: ItemInfo;
+  isBot?: boolean;
 };
 
 export type PlayerPerformance = {

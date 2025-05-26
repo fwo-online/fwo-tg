@@ -17,7 +17,7 @@ export class LadderService {
   constructor(players: PlayersService, round: RoundService) {
     this.players = players;
     this.round = round;
-    this.gamePSR = this.calculateGamePSR(players.players);
+    this.gamePSR = this.calculateGamePSR(players.nonBotPlayers);
   }
 
   static async getLadderList() {
@@ -34,7 +34,7 @@ export class LadderService {
 
   calculateGamePSR(players: Player[]): number {
     const totalMMR = sumBy(players, (player) => player.psr);
-    return Math.round(totalMMR / players.length);
+    return Math.max(Math.round(totalMMR / players.length), 1);
   }
 
   async calculatePSR(
@@ -91,15 +91,15 @@ export class LadderService {
   }
 
   async setPSRForPlayers() {
-    const winnersCount = sumBy(this.players.players, (player) =>
+    const winnersCount = sumBy(this.players.nonBotPlayers, (player) =>
       player.performance.winner ? 1 : 0,
     );
-    const winnersRatio = winnersCount / this.players.players.length;
+    const winnersRatio = winnersCount / this.players.nonBotPlayers.length;
 
     await Promise.all(
-      this.players.players.map(async (player) => {
+      this.players.nonBotPlayers.map(async (player) => {
         const psr = await this.calculatePSR(
-          player.psr,
+          Math.max(player.psr, 1),
           player.prof,
           player.stats.collect.performance,
           winnersRatio,
@@ -114,7 +114,7 @@ export class LadderService {
       await this.setPSRForPlayers();
 
       await LadderModel.create(
-        this.players.players.map((player) => ({
+        this.players.nonBotPlayers.map((player) => ({
           player: player.id,
           psr: player.stats.collect.psr,
           winner: player.performance.winner,
@@ -127,7 +127,7 @@ export class LadderService {
       );
 
       await Promise.all(
-        this.players.players.map(async (player) => {
+        this.players.nonBotPlayers.map(async (player) => {
           const character = await CharacterService.getCharacterById(player.id);
           await character.performance.addGameStat(player.performance, player.stats.collect.psr);
         }),

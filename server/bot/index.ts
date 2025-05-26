@@ -8,6 +8,8 @@ import { ServiceShop } from '@/arena/ServiceShop';
 import { BOT_CHAT_ID } from '@/helpers/channelHelper';
 import type { ChatMember } from 'grammy/types';
 import { hasCharacter } from '@/api/character';
+import arena from '@/arena';
+import { createWolf } from '@/arena/MonsterService/monsters/wolf';
 
 const bot = new Bot(process.env.BOT_TOKEN ?? '', {
   client: { environment: process.env.NODE_ENV === 'development' ? 'test' : 'prod' },
@@ -41,6 +43,30 @@ bot.command('help', async (ctx) => {
   }
 
   ctx.reply('https://telegra.ph/Fight-Wold-Online-Help-11-05');
+});
+
+bot.command('monsters', async (ctx) => {
+  if (!ctx.from) {
+    return;
+  }
+  const lvl = Number.parseInt(ctx.match);
+  if (Number.isNaN(lvl)) {
+    return;
+  }
+
+  const { status } = await ctx.getChatMember(ctx.from?.id);
+
+  if (!['administrator', 'creator'].includes(status)) {
+    return;
+  }
+
+  if (lvl) {
+    arena.monsters.wolf = await createWolf(lvl);
+    ctx.reply(`Создан монстр ${lvl} уровня`);
+  } else {
+    arena.monsters = {};
+    ctx.reply('Монстры отключены');
+  }
 });
 
 bot.on('pre_checkout_query', async (ctx) => {

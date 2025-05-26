@@ -48,7 +48,14 @@ export function GameStatus() {
             {statuses?.map((status) => (
               <Description.Item key={status.id} after={<>❤️ {status.hp}</>}>
                 <div className="flex">
-                  <CharacterImage characterClass={players[status.id].class} small /> {status.name}
+                  {players[status.id].isBot ? (
+                    <>🐺{status.name}</>
+                  ) : (
+                    <>
+                      <CharacterImage characterClass={players[status.id].class} small />
+                      {status.name}
+                    </>
+                  )}
                 </div>
               </Description.Item>
             ))}

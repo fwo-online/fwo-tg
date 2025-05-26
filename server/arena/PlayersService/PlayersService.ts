@@ -28,6 +28,14 @@ export default class PlayersService {
     return this.players.filter(({ alive }) => !alive);
   }
 
+  get nonBotPlayers(): Player[] {
+    return this.players.filter(({ isBot }) => !isBot);
+  }
+
+  get aliveNonBotPlayers(): Player[] {
+    return this.nonBotPlayers.filter(({ alive }) => alive);
+  }
+
   getById(id: string): Player | undefined {
     return this.list[id];
   }

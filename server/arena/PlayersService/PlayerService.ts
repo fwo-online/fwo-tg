@@ -48,8 +48,9 @@ export default class PlayerService {
   proc: number;
   weapon: PlayerWeapon;
   offHand: PlayerOffHand;
+  isBot: boolean;
 
-  constructor(params: CharacterService) {
+  constructor(params: CharacterService, isBot = false) {
     this.nick = params.nickname;
     this.id = params.id;
     this.owner = params.owner;
@@ -72,6 +73,7 @@ export default class PlayerService {
     this.proc = 100;
     this.weapon = new PlayerWeapon(params.inventory.getEquippedWeapon());
     this.offHand = new PlayerOffHand(params.inventory.getEquippedOffHand());
+    this.isBot = isBot;
   }
 
   /**
@@ -195,6 +197,7 @@ export default class PlayerService {
       clan: this.clan ? ClanService.toPublicObject(this.clan) : undefined,
       alive: this.alive,
       weapon: this.weapon.item?.info,
+      isBot: this.isBot,
     };
   }
 }

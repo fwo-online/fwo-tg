@@ -31,8 +31,8 @@ export interface Char {
   bonus: number;
   clan?: Clan;
   penalty: {
-      reason: string;
-      date: Date;
+    reason: string;
+    date: Date;
   }[];
   modifiers?: {
     crit: number;

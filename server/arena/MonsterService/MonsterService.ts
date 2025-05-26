@@ -36,7 +36,7 @@ export class MonsterService extends PlayerService {
     type: MonsterType,
     AIClass: new (monster: MonsterService) => MonsterAI,
   ) {
-    super(params);
+    super(params, true);
 
     this.type = type;
     this.ai = new AIClass(this);
