@@ -3,7 +3,7 @@ import { brackets } from '@/utils/formatString';
 import { getDamageTypeIcon } from '@/utils/icons';
 
 export function formatExp(args: SuccessArgs): string {
-  const exp = args.initiator.isBot ? '' : ` 📖${args.exp}`;
+  const exp = args.initiator.isBot ? '' : `📖${args.exp}`;
   switch (args.actionType) {
     case 'phys':
     case 'dmg-magic':
@@ -11,7 +11,7 @@ export function formatExp(args: SuccessArgs): string {
     case 'aoe-dmg-magic': {
       return brackets(
         [
-          `${args.target.nick} ${getDamageTypeIcon(args.effectType)} 💔-${args.effect}/${args.hp}${exp}`,
+          `${args.target.nick} ${getDamageTypeIcon(args.effectType)} 💔-${args.effect}/${args.hp} ${exp}`,
           ...args.expArr.map(
             ({ target, val, hp, exp }) =>
               `${target.nick} ${getDamageTypeIcon(args.effectType)} 💔-${val}/${hp} 📖${exp}`,
@@ -20,7 +20,7 @@ export function formatExp(args: SuccessArgs): string {
       );
     }
     case 'heal-magic': {
-      return brackets(`❤️+${args.effect}/${args.hp}${exp}`);
+      return brackets(`❤️+${args.effect}/${args.hp} ${exp}`);
     }
     case 'heal':
       return brackets(

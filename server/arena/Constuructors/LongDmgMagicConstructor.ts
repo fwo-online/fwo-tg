@@ -115,6 +115,7 @@ export abstract class LongDmgMagic extends DmgMagic {
   longNext({ initiator, target, game }: BaseActionParams, longItem: LongItem): void {
     const result: SuccessArgs = {
       ...super.getSuccessResult({ initiator, target, game }),
+      msg: this.longCustomMessage?.bind(this),
       duration: longItem.duration,
       actionType: 'dmg-magic-long',
     };

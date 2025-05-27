@@ -63,12 +63,14 @@ export type ActionType =
   | 'magic-long'
   | 'skill'
   | 'phys'
+  | 'phys-long'
   | 'heal-magic'
   | 'heal'
   | 'protect'
   | 'dodge'
   | 'passive'
-  | 'regeneration';
+  | 'regeneration'
+  | 'miss';
 
 export type ReservedFailReason =
   | 'NO_INITIATOR'

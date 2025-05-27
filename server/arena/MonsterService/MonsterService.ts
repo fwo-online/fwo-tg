@@ -1,10 +1,10 @@
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
 import type GameService from '@/arena/GameService';
+import { stubParams } from '@/arena/MonsterService/utils/stubParams';
 import PlayerService from '@/arena/PlayersService/PlayerService';
 import type { Char } from '@/models/character';
-import { CharacterClass, type MonsterType } from '@fwo/shared';
-import { Types } from 'mongoose';
+import type { MonsterType } from '@fwo/shared';
 
 /**
  * Monster Service
@@ -43,35 +43,11 @@ export class MonsterService extends PlayerService {
   }
 
   static create(
-    param: MonsterParams,
+    params: MonsterParams,
     type: MonsterType,
     AIClass: new (monster: MonsterService) => MonsterAI,
   ) {
-    const monster = new CharacterService({
-      ...param,
-      _id: new Types.ObjectId(),
-      owner: param.id,
-      birthday: new Date(),
-      prof: CharacterClass.Warrior,
-      exp: 0,
-      gold: 0,
-      psr: 0,
-      free: 0,
-      bonus: 0,
-      sex: 'm',
-      penalty: [],
-      expLimit: { earn: 0, expiresAt: new Date() },
-      deleted: false,
-      components: new Map(),
-      lastFight: null,
-      statistics: {
-        games: 0,
-        kills: 0,
-        death: 0,
-        runs: 0,
-        wins: 0,
-      },
-    });
+    const monster = new CharacterService(stubParams(params));
 
     arena.characters[monster.id] = monster;
 

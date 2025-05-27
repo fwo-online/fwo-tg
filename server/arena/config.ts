@@ -85,6 +85,7 @@ export default {
       'regeneration',
     ],
     'attack',
+    'bleeding',
     //
     [
       'fireBall',
@@ -108,7 +109,6 @@ export default {
       'strongHeal',
     ],
     'handsHeal',
-    'bleeding',
     // 'postHeal',
     // 'life_force',
     // 'spirit_unity',
