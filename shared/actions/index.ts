@@ -63,7 +63,6 @@ export type ActionType =
   | 'magic-long'
   | 'skill'
   | 'phys'
-  | 'phys-long'
   | 'heal-magic'
   | 'heal'
   | 'protect'
