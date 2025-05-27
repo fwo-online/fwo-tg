@@ -18,7 +18,7 @@ const registerAttackAffects = () => {
     arena.actions.fatesMiss,
   ]);
 
-  arena.actions.attack.registerPostAffects([arena.magics.lightShield]);
+  arena.actions.attack.registerPostAffects([arena.magics.lightShield, arena.magics.bleeding]);
 
   arena.actions.attack.registerAffectHandlers([
     arena.actions.cutWeapon,
