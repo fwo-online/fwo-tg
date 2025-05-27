@@ -34,10 +34,10 @@ export function formatExp(args: SuccessArgs): string {
       );
     case 'skill':
     case 'dodge':
-      return args.exp ? brackets(exp.slice(1, -1)) : '';
+      return args.exp ? brackets(exp) : '';
     case 'passive':
       return '';
     default:
-      return brackets(exp.slice(1, -1));
+      return brackets(exp);
   }
 }
