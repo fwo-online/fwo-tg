@@ -29,25 +29,31 @@ class WolfAI extends MonsterAI {
 }
 
 export const createWolf = async (lvl = 1) => {
-  await ItemModel.updateOne({ code: 'test' }, arena.items.test, { upsert: true });
-  const item = await ItemModel.findOne({ code: 'test' }).orFail();
+  const fang = await ItemModel.findOneAndUpdate({ code: 'fang' }, arena.items.fang, {
+    upsert: true,
+    new: true,
+  }).orFail();
+  const claws = await ItemModel.findOneAndUpdate({ code: 'claws' }, arena.items.fang, {
+    upsert: true,
+    new: true,
+  }).orFail();
 
   return MonsterService.create(
     {
       id: 'wolf',
       nickname: 'Волк',
       harks: {
-        str: Math.round(lvl * 10 + 25),
-        dex: Math.round(lvl * 7 + 16),
-        int: 10,
-        wis: 10,
-        con: Math.round(lvl * 7 + 20),
+        str: Math.round(lvl * 4 + 20),
+        dex: Math.round(lvl * 1 + 10),
+        int: Math.round(lvl * 1 + 10),
+        wis: Math.round(lvl * 1 + 10),
+        con: Math.round(lvl * 3 + 16),
       },
-      magics: {},
+      magics: { bleeding: Math.min(Math.round(lvl / 10), 3) },
       skills: {},
       passiveSkills: {},
-      items: [item],
-      equipment: new Map([[ItemWear.TwoHands, item]]),
+      items: [fang, claws],
+      equipment: new Map([[ItemWear.TwoHands, fang]]),
     },
     MonsterType.Wolf,
     WolfAI,

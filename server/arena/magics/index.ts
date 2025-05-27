@@ -38,3 +38,4 @@ export { default as secondLife } from './secondLife';
 export { default as sleep } from './sleep';
 export { default as strongAura } from './strongAura';
 export { default as vampirism } from './vampirism';
+export { default as bleeding } from './bleeding';
