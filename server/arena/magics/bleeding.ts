@@ -6,7 +6,7 @@ class Bleeding extends LongDmgMagic {
   constructor() {
     super({
       name: 'bleeding',
-      displayName: '🩸 Кровотечение',
+      displayName: '🩸Кровотечение',
       desc: 'Кровотечение наносит урон в течение нескольких ходов',
       cost: 0,
       baseExp: 0,
@@ -15,7 +15,7 @@ class Bleeding extends LongDmgMagic {
       orderType: 'enemy',
       aoeType: 'target',
       magType: 'bad',
-      chance: [100, 100, 100],
+      chance: [10, 20, 30],
       effect: ['1d3', '1d7', '1d12'],
       dmgType: 'physical',
       profList: ['w'],
@@ -23,8 +23,7 @@ class Bleeding extends LongDmgMagic {
   }
 
   getChance(): number {
-    const magicLvl = this.params.initiator.getMagicLevel(this.name);
-    return this.chance[magicLvl - 1] as number;
+    return 100;
   }
 
   shouldClearDebuff(effect: number): boolean {
@@ -67,14 +66,16 @@ class Bleeding extends LongDmgMagic {
     target.stats.down('hp', this.status.effect);
   }
 
-  postAffect: Affect['postAffect'] = (context): undefined => {
+  postAffect: Affect['postAffect'] = (context) => {
     this.applyContext(context);
 
-    if (!this.params.initiator.getMagicLevel(this.name)) {
+    const lvl = this.params.initiator.getMagicLevel(this.name);
+    if (!lvl) {
       return;
     }
 
-    if (MiscService.rndm('1d100') > this.getChance()) {
+    const chance = this.chance[lvl - 1] as number;
+    if (MiscService.rndm('1d100') > chance) {
       return;
     }
 
@@ -83,7 +84,10 @@ class Bleeding extends LongDmgMagic {
     }
 
     const { initiator, target, game } = this.params;
-    this.cast(initiator, target, game);
+    this.run();
+    this.postRun(initiator, target, game);
+
+    return this.getSuccessResult(this.params);
   };
 }
 

@@ -11,7 +11,8 @@ export function formatCause(cause: SuccessArgs) {
     case 'protect':
       return `${italic(cause.action)} ${cause.expArr.map(({ initiator, exp }) => `${bold(initiator.nick)}: 📖${exp}`)}`;
     case 'dmg-magic':
-      return `$${formatAction(cause)}\n${formatExp(cause)}`;
+    case 'dmg-magic-long':
+      return `${formatAction(cause)}\n${formatExp(cause)}`;
     default:
       return `${italic(cause.action)} ${bold(cause.initiator.nick)}`;
   }

@@ -8,6 +8,10 @@ class WolfAI extends MonsterAI {
   makeOrder(game: GameService) {
     const target = this.chooseTarget(game);
 
+    if (!target) {
+      return;
+    }
+
     game.orders.orderAction({
       action: 'attack',
       initiator: this.monster.id,
@@ -17,14 +21,15 @@ class WolfAI extends MonsterAI {
   }
 
   private chooseTarget(game: GameService) {
-    return game.players.alivePlayers
-      .filter(({ isBot }) => !isBot)
-      .reduce((target, player) => {
+    const targets = game.players.alivePlayers.filter(({ isBot }) => !isBot);
+    if (targets.length) {
+      return targets.reduce((target, player) => {
         if (target.stats.val('hp') < player.stats.val('hp')) {
           return target;
         }
         return player;
       });
+    }
   }
 }
 
@@ -41,13 +46,13 @@ export const createWolf = async (lvl = 1) => {
   return MonsterService.create(
     {
       id: 'wolf',
-      nickname: 'Волк',
+      nickname: '🐺Волк',
       harks: {
         str: Math.round(lvl * 4 + 20),
         dex: Math.round(lvl * 1 + 10),
-        int: Math.round(lvl * 1 + 10),
-        wis: Math.round(lvl * 1 + 10),
-        con: Math.round(lvl * 3 + 16),
+        int: Math.round(lvl * 0.75 + 3),
+        wis: Math.round(lvl * 0.5 + 3),
+        con: Math.round(lvl * 4 + 20),
       },
       magics: { bleeding: Math.min(Math.round(lvl / 10), 3) },
       skills: {},

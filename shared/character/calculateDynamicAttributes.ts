@@ -69,8 +69,7 @@ export const calculateDynamicAttributes = ({
   ...charObj
 }: Pick<Character, 'class' | 'lvl' | 'attributes'>): CharacterDynamicAttributes => {
   const maxTarget = charObj.class === 'l' ? Math.round(charObj.lvl + 3 / 2) : 1;
-  const spellLength =
-    charObj.class === 'm' || charObj.class === 'p' ? Math.round((attributes.int - 4) / 3) : 0;
+  const spellLength = Math.round((attributes.int - 4) / 3);
 
   return {
     phys: calculatePhysAttributes(attributes, charObj.class),

@@ -97,6 +97,7 @@ export abstract class LongDmgMagic extends DmgMagic {
    * buff = { frostTouch = [{initiator,target,duration},{}] }
    */
   postRun(initiator: Player, target: Player, game: Game): void {
+    game.longActions[this.name] ??= [];
     game.longActions[this.name]?.push({
       initiator: this.params.initiator.id || initiator.id,
       target: this.params.target.id || target.id,

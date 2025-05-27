@@ -31,9 +31,9 @@ export function GameStatus() {
           key={status.name}
           after={
             <>
-              {status.hp && <>❤️ {status.hp}</>}
-              {status.mp && <>💧 {status.mp}</>}
-              {status.en && <>🔋 {status.en}</>}
+              {status.hp && <>❤️{status.hp}</>}
+              {status.mp && <>💧{status.mp}</>}
+              {status.en && <>🔋{status.en}</>}
             </>
           }
         >
@@ -46,16 +46,12 @@ export function GameStatus() {
         statuses?.length ? (
           <Description key={clan} header={clan === reservedClanName ? 'Без клана' : clan}>
             {statuses?.map((status) => (
-              <Description.Item key={status.id} after={<>❤️ {status.hp}</>}>
-                <div className="flex">
-                  {players[status.id].isBot ? (
-                    <>🐺{status.name}</>
-                  ) : (
-                    <>
-                      <CharacterImage characterClass={players[status.id].class} small />
-                      {status.name}
-                    </>
+              <Description.Item key={status.id} after={<>❤️{status.hp}</>}>
+                <div className="flex gap-2">
+                  {players[status.id].isBot ? null : (
+                    <CharacterImage characterClass={players[status.id].class} small />
                   )}
+                  {status.name}
                 </div>
               </Description.Item>
             ))}
