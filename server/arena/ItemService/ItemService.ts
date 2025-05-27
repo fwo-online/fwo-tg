@@ -6,7 +6,8 @@ import { filterByClass, filterByWear } from '@/arena/ItemService/utils';
 
 export class ItemService {
   static getItemsByClass(characterClass: CharacterClass, filter?: { wear: string; tier?: number }) {
-    const itemsByClass = Object.values(arena.items).filter(filterByClass(characterClass));
+    const visibleItems = Object.values(arena.items).filter(({ hidden }) => !hidden);
+    const itemsByClass = visibleItems.filter(filterByClass(characterClass));
 
     if (filter?.wear) {
       return itemsByClass.filter(filterByWear(filter.wear));

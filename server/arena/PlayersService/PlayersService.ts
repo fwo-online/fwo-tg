@@ -112,4 +112,8 @@ export default class PlayersService {
   kick(id: string) {
     delete this.list[id];
   }
+
+  add(player: Player) {
+    this.list[player.id] = player;
+  }
 }

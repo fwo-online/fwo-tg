@@ -63,15 +63,15 @@ export const initGameChannel = async () => {
   arena.mm.prependListener('start', (game) => {
     const wolf = arena.monsters.wolf;
     if (wolf) {
-      game.players.list[wolf.id] = wolf;
-      wolf.stats.inRound = {};
+      game.players.add(wolf);
+      wolf.stats.reset();
     }
 
     broadcast('Игра начинается');
 
     game.on('startOrders', () => {
       broadcast('Пришло время делать заказы');
-      if (arena.monsters) {
+      if (wolf) {
         wolf.ai.makeOrder(game);
       }
     });
