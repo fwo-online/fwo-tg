@@ -9,6 +9,7 @@ import type * as magics from './magics';
 import type * as passiveSkills from './passiveSkills';
 import type * as skills from './skills';
 import type * as weaponMastery from './weaponMastery';
+import type { MonsterService } from '@/arena/MonsterService/MonsterService';
 
 export default {
   mm: null as unknown as typeof MatchMaking,
@@ -24,4 +25,5 @@ export default {
     typeof passiveSkills &
     typeof weaponMastery,
   clans: new Map<string, Clan>(),
+  monsters: {} as Record<string, MonsterService>,
 };

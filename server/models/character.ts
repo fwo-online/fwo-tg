@@ -30,19 +30,17 @@ export interface Char {
   passiveSkills?: Record<string, number>;
   bonus: number;
   clan?: Clan;
-  penalty: [
-    {
-      reason: string;
-      date: Date;
-    },
-  ];
+  penalty: {
+    reason: string;
+    date: Date;
+  }[];
   modifiers?: {
     crit: number;
     agile: number;
     block: number;
     luck: number;
   };
-  expLimit: {
+  expLimit?: {
     earn: number;
     expiresAt: Date;
   };

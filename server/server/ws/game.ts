@@ -24,7 +24,7 @@ const getRoom = (game: GameService, scope?: string) => {
 export const onCreate = (io: Server) => {
   MatchMakingService.on('start', async (game) => {
     await Promise.all(
-      game.players.players.map(async (player) => {
+      game.players.nonBotPlayers.map(async (player) => {
         const socket = activeConnections.get(player.owner);
         if (socket) {
           await socket.join([getRoom(game), getRoom(game, player.id)]);

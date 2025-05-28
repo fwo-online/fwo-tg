@@ -68,7 +68,8 @@ export type ActionType =
   | 'protect'
   | 'dodge'
   | 'passive'
-  | 'regeneration';
+  | 'regeneration'
+  | 'miss';
 
 export type ReservedFailReason =
   | 'NO_INITIATOR'

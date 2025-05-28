@@ -16,7 +16,10 @@ export const generateItems = async () => {
     },
   }).fromString(csvItems);
 
-  return parse(array(itemSchema), rawItems);
+  return parse(
+    array(itemSchema),
+    rawItems.filter(({ code }) => Boolean(code)),
+  );
 };
 
 export const generateItemsSets = async () => {

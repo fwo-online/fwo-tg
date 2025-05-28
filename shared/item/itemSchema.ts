@@ -28,6 +28,7 @@ export const itemSchema = v.object({
   ),
   modifiers: v.optional(v.record(v.string(), v.partial(attributesSchema))),
   tier: v.number(),
+  hidden: v.optional(v.boolean(), false),
 });
 
 export type ItemInput = v.InferInput<typeof itemSchema>;

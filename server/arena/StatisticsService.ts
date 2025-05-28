@@ -20,7 +20,7 @@ export class StatisticsService {
   }
 
   private getWinners() {
-    const aliveByClan = this.players.groupByClan(this.players.alivePlayers);
+    const aliveByClan = this.players.groupByClan(this.players.aliveNonBotPlayers);
     const winnersByClan = mapValues(aliveByClan, (players, clan) => {
       if (clan !== reservedClanName) {
         return this.players.getPlayersByClan(players?.[0].clan?.id); // все союзники считаются победителями
@@ -32,7 +32,7 @@ export class StatisticsService {
   }
 
   private getLosers(winners: Player[]) {
-    return differenceBy(this.players.players, winners, ({ id }) => id);
+    return differenceBy(this.players.nonBotPlayers, winners, ({ id }) => id);
   }
 
   private giveWinnerRewards(winners: Player[]) {
@@ -76,7 +76,7 @@ export class StatisticsService {
     const playersPerformance = this.history.getPlayersPerformance();
     const winnerIDs = new Set(winners.map(({ id }) => id));
 
-    this.players.players.forEach((player) => {
+    this.players.nonBotPlayers.forEach((player) => {
       player.stats.addPerformance({
         ...(playersPerformance[player.id] ?? { damage: 0, heal: 0 }),
         alive: player.alive,
@@ -87,7 +87,7 @@ export class StatisticsService {
   }
 
   getStatistics(winners: Player[], _losers: Player[]) {
-    const playersByClan = this.players.groupByClan();
+    const playersByClan = this.players.groupByClan(this.players.nonBotPlayers);
     const winnerIDs = new Set(winners.map(({ id }) => id));
 
     return mapValues(playersByClan, (players) =>
@@ -108,7 +108,7 @@ export class StatisticsService {
   async saveRewards() {
     try {
       await Promise.all(
-        this.players.players.map(async (player) => {
+        this.players.nonBotPlayers.map(async (player) => {
           const char = await CharacterService.getCharacterById(player.id);
 
           await char.resources.addResources({

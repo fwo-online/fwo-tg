@@ -41,7 +41,7 @@ export async function broadcast(data: string, id: number | string = BOT_CHAT_ID)
   }
 }
 
-export const initGameChannel = () => {
+export const initGameChannel = async () => {
   arena.mm.on('push', ({ id }) => {
     const character = arena.characters[id];
     if (character) {
@@ -60,11 +60,20 @@ export const initGameChannel = () => {
     }
   });
 
-  arena.mm.on('start', (game) => {
+  arena.mm.prependListener('start', (game) => {
+    const wolf = arena.monsters.wolf;
+    if (wolf) {
+      game.players.add(wolf);
+      wolf.stats.reset();
+    }
+
     broadcast('Игра начинается');
 
     game.on('startOrders', () => {
       broadcast('Пришло время делать заказы');
+      if (wolf) {
+        wolf.ai.makeOrder(game);
+      }
     });
     game.on('startRound', ({ round }) => {
       broadcast(`⚡️ Раунд ${round} начинается ⚡`);

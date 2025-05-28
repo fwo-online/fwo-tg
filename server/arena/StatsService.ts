@@ -121,6 +121,17 @@ export default class StatsService {
     };
   }
 
+  reset(): void {
+    this.inRound = {
+      ...structuredClone(this.defStat),
+      hp: this.defStat.base.hp,
+      mp: this.defStat.base.mp,
+      en: this.defStat.base.en,
+      exp: 0,
+      static: structuredClone(this.defStat.phys),
+    };
+  }
+
   /**
    * Функция возвращающее значение атрибута
    * @param atr str/atk/prt/dex

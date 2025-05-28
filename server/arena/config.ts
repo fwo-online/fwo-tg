@@ -85,6 +85,7 @@ export default {
       'regeneration',
     ],
     'attack',
+    'bleeding',
     //
     [
       'fireBall',
