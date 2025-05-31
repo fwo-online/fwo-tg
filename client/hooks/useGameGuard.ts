@@ -1,11 +1,10 @@
 import { useLocation, useNavigate } from 'react-router';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useCharacterStore } from '@/modules/character/store/character';
-import { useSocket } from '@/stores/socket';
 import { useMountEffect } from '@/hooks/useMountEffect';
+import { useSocketListener } from '@/hooks/useSocketListener';
 
 export const useGameGuard = () => {
-  const socket = useSocket();
   const navigate = useNavigate();
   const location = useLocation();
   const game = useCharacterStore((state) => state.character?.game);
@@ -19,13 +18,7 @@ export const useGameGuard = () => {
     [navigate, setGame],
   );
 
-  useEffect(() => {
-    socket.on('game:start', navigateToGame);
-
-    return () => {
-      socket.off('game:start', navigateToGame);
-    };
-  }, [socket.on, socket.off, navigateToGame]);
+  useSocketListener('game:start', navigateToGame);
 
   useMountEffect(() => {
     if (game) {
