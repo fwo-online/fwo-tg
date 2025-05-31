@@ -6,6 +6,10 @@ import { ItemWear, MonsterType } from '@fwo/shared';
 
 class WolfAI extends MonsterAI {
   makeOrder(game: GameService) {
+    if (!this.monster.alive) {
+      return;
+    }
+
     const target = this.chooseTarget(game);
 
     if (!target) {

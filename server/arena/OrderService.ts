@@ -98,6 +98,9 @@ export default class Orders {
     if (!initiator) {
       throw new OrderError('Вы не в игре', order);
     }
+    if (!initiator.alive) {
+      throw new OrderError('Вы мертвы', order);
+    }
     if (this.roundService.status !== RoundStatus.START_ORDERS) {
       throw new OrderError('Раунд ещё не начался', order);
     }
