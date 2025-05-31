@@ -1,8 +1,9 @@
 import { useMountEffect } from '@/hooks/useMountEffect';
+import { useSocketListener } from '@/hooks/useSocketListener';
 import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
 import { useCharacterStore } from '@/modules/character/store/character';
 import { useSocket } from '@/stores/socket';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
 export const useCharacterGuard = () => {
   const socket = useSocket();
@@ -18,11 +19,5 @@ export const useCharacterGuard = () => {
     socket.io.on('reconnect', () => syncCharacter);
   });
 
-  useEffect(() => {
-    socket.on('game:end', handleGameEnd);
-
-    return () => {
-      socket.off('game:end');
-    };
-  }, [socket, handleGameEnd]);
+  useSocketListener('game:end', handleGameEnd);
 };

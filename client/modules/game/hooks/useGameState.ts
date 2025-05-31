@@ -1,5 +1,5 @@
 import type { ServerToClientMessage } from '@fwo/shared';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import { useGameKickState } from './useGameKickState';
 import { useMountEffect } from '@/hooks/useMountEffect';
@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router';
 import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
 import { useSocket } from '@/stores/socket';
 import { usePopup } from '@/hooks/usePopup';
+import { useSocketListener } from '@/hooks/useSocketListener';
 
 export function useGameState() {
   const socket = useSocket();
@@ -84,17 +85,8 @@ export function useGameState() {
     }
   });
 
-  useEffect(() => {
-    socket.on('game:startRound', handleStartRound);
-    socket.on('game:startOrders', handleStartOrders);
-    socket.on('game:endOrders', handleEndOrders);
-    socket.on('game:end', handleEndGame);
-
-    return () => {
-      socket.off('game:startRound', handleStartRound);
-      socket.off('game:startOrders', handleStartOrders);
-      socket.off('game:endOrders', handleEndOrders);
-      socket.off('game:end', handleEndGame);
-    };
-  }, [socket, handleStartRound, handleStartOrders, handleEndOrders, handleEndGame]);
+  useSocketListener('game:startRound', handleStartRound);
+  useSocketListener('game:startOrders', handleStartOrders);
+  useSocketListener('game:endOrders', handleEndOrders);
+  useSocketListener('game:end', handleEndGame);
 }

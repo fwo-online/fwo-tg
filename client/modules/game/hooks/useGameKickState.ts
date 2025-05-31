@@ -1,14 +1,13 @@
 import { usePopup } from '@/hooks/usePopup';
+import { useSocketListener } from '@/hooks/useSocketListener';
 import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
 import { useCharacter } from '@/modules/character/store/character';
-import { useSocket } from '@/stores/socket';
 import type { ServerToClientMessage } from '@fwo/shared';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 
 export function useGameKickState() {
   const popup = usePopup();
-  const socket = useSocket();
   const navigate = useNavigate();
   const characterID = useCharacter((character) => character.id);
   const { syncCharacter } = useSyncCharacter();
@@ -30,13 +29,6 @@ export function useGameKickState() {
     [navigate, characterID, syncCharacter, popup.info],
   );
 
-  useEffect(() => {
-    socket.on('game:preKick', handlePreKick);
-    socket.on('game:kick', handleKick);
-
-    return () => {
-      socket.off('game:preKick', handlePreKick);
-      socket.off('game:kick', handleKick);
-    };
-  }, [socket.on, socket.off, handlePreKick, handleKick]);
+  useSocketListener('game:preKick', handlePreKick);
+  useSocketListener('game:kick', handleKick);
 }

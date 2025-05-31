@@ -1,9 +1,8 @@
-import { useSocket } from '@/stores/socket';
+import { useSocketListener } from '@/hooks/useSocketListener';
 import { openTelegramLink } from '@telegram-apps/sdk-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 export const useLobbyHelp = () => {
-  const socket = useSocket();
   const [channelLinkVisible, setChannelLinkVisible] = useState(false);
 
   const showChannelLink = useCallback(() => {
@@ -16,13 +15,7 @@ export const useLobbyHelp = () => {
     }
   }, []);
 
-  useEffect(() => {
-    socket.on('lobby:help', showChannelLink);
-
-    return () => {
-      socket.off('lobby:help', showChannelLink);
-    };
-  }, [socket, showChannelLink]);
+  useSocketListener('lobby:help', showChannelLink);
 
   return {
     openChannelLink,
