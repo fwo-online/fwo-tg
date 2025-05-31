@@ -18,6 +18,7 @@ export type Clan = {
     lvl: number;
     expiresAt: string | null;
   };
+  channel?: number;
 };
 
 export type ClanPublic = Pick<Clan, 'id' | 'name' | 'players' | 'owner'>;

@@ -16,6 +16,7 @@ export interface Clan {
   owner: Char;
   players: Char[];
   requests: Char[];
+  channel?: number;
   forge: {
     lvl: number;
     openedAt?: Date;
@@ -59,6 +60,7 @@ const schema = new Schema<Clan>({
     required: true,
     unique: true,
   },
+  channel: { type: Schema.Types.Number },
   forge: {
     lvl: { type: Number, default: 1 },
     openedAt: { type: Date },

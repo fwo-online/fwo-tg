@@ -10,6 +10,8 @@ import type { ChatMember } from 'grammy/types';
 import { hasCharacter } from '@/api/character';
 import arena from '@/arena';
 import { createWolf } from '@/arena/MonsterService/monsters/wolf';
+import { ClanService } from '@/arena/ClanService';
+import ValidationError from '@/arena/errors/ValidationError';
 
 const bot = new Bot(process.env.BOT_TOKEN ?? '', {
   client: { environment: process.env.NODE_ENV === 'development' ? 'test' : 'prod' },
@@ -54,9 +56,8 @@ bot.command('monsters', async (ctx) => {
     return;
   }
 
-  const { status } = await ctx.getChatMember(ctx.from?.id);
-
-  if (!['administrator', 'creator'].includes(status)) {
+  const isAdmin = await chechUserIsChannelAdmin(ctx.from.id, BOT_CHAT_ID);
+  if (!isAdmin) {
     return;
   }
 
@@ -66,6 +67,49 @@ bot.command('monsters', async (ctx) => {
   } else {
     arena.monsters = {};
     ctx.reply('Монстры отключены');
+  }
+});
+
+bot.command('clan', async (ctx) => {
+  if (!ctx.from) {
+    return;
+  }
+
+  const isAdmin = await chechUserIsChannelAdmin(ctx.from.id, ctx.chat.id);
+  if (!isAdmin) {
+    await ctx.reply('Вы не являетесь администратором канала');
+    return;
+  }
+
+  try {
+    const character = await CharacterService.getCharacter(ctx.from.id.toString());
+
+    if (!character.clan) {
+      await ctx.reply('Вы не состоите в клане');
+      return;
+    }
+
+    const command = ctx.match;
+    if (command === 'link') {
+      await ClanService.updateChannel(character.clan.id, character.id, ctx.chat.id);
+      await ctx.reply('Канал успешно привязян к клану');
+      return;
+    }
+
+    if (command === 'unlink') {
+      await ClanService.updateChannel(character.clan.id, character.id, undefined);
+      await ctx.reply('Канал успешно отвязан от клана');
+      return;
+    }
+
+    await ctx.reply('Неизвестная команда');
+  } catch (e) {
+    if (e instanceof ValidationError) {
+      await ctx.reply(e.message);
+    } else {
+      console.error(e);
+      await ctx.reply('Что-то пошло не так');
+    }
   }
 });
 
@@ -158,7 +202,18 @@ export const checkUserIsChannelMember = async (userID: string | number) => {
     const { status } = await bot.api.getChatMember(BOT_CHAT_ID, Number(userID));
 
     return allowedStatuses.includes(status);
-  } catch (e) {
+  } catch {
+    return false;
+  }
+};
+
+export const chechUserIsChannelAdmin = async (userID: string | number, chatID: string | number) => {
+  const allowedStatuses: ChatMember['status'][] = ['administrator', 'creator'];
+  try {
+    const { status } = await bot.api.getChatMember(chatID, Number(userID));
+
+    return allowedStatuses.includes(status);
+  } catch {
     return false;
   }
 };
