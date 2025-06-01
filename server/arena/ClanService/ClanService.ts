@@ -256,6 +256,14 @@ export class ClanService {
     await char?.leaveClan();
   }
 
+  static async updateChannel(clanID: string, ownerID: string, channel?: number) {
+    const clan = await this.getClanById(clanID);
+    if (!clan.owner._id.equals(ownerID)) {
+      throw new ValidationError('Вы не являетесь владельцем клана');
+    }
+    await this.updateClan(clan.id, { channel });
+  }
+
   static async openForge(clanId: string) {
     const clan = await this.getClanById(clanId);
 
@@ -318,6 +326,7 @@ export class ClanService {
         lvl: clan.forge.lvl ?? this.getForgeLevel(clan.lvl),
         expiresAt: clan.forge?.expiresAt?.toString() ?? null,
       },
+      channel: clan.channel,
     };
   }
 

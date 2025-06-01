@@ -7,6 +7,8 @@ import { ClanRequests } from '@/modules/clan/components/ClanRequests';
 import { useClanOwner } from '@/modules/clan/hooks/useClanOwner';
 import { ClanForge } from '@/modules/clan/components/ClanForge';
 import { useClan } from '@/modules/clan/store/clan';
+import { Button } from '@/components/Button';
+import { Popup } from '@/components/Popup';
 
 export const Clan: FC = () => {
   const lvl = useClan((clan) => clan.lvl);
@@ -15,6 +17,7 @@ export const Clan: FC = () => {
   const maxPlayers = useClan((clan) => clan.maxPlayers);
   const requests = useClan((clan) => clan.requests);
   const owner = useClan((clan) => clan.owner);
+  const channel = useClan((clan) => clan.channel);
   const { isOwner } = useClanOwner();
 
   return (
@@ -68,6 +71,23 @@ export const Clan: FC = () => {
               />
             </Suspense>
           </ErrorBoundary>
+        </div>
+      )}
+
+      {channel ? (
+        <div className="flex gap-2 items-center">
+          <h5>Канал привязан</h5>
+          <Popup trigger={<Button>!</Button>}>
+            Для отвязки бота используйте команду <code>/clan unlink</code> в канале с ботом
+          </Popup>
+        </div>
+      ) : (
+        <div className="flex gap-2 items-center">
+          <h5>Канал не привязан</h5>
+          <Popup trigger={<Button>!</Button>}>
+            Для привязки канала добавьте бота в канал и используйте команду <code>/clan link</code>{' '}
+            в канале
+          </Popup>
         </div>
       )}
     </div>

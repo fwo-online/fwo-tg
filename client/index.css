@@ -40,6 +40,10 @@ progress {
   width: calc(100% - 8px);
 }
 
+pre, code {
+  font-family: 'PixeloidMono';
+}
+
 @font-face {
   font-family: 'Pixeloid';
   src: url('/fonts/PixeloidSans.woff2') format('woff2');
