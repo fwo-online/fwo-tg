@@ -10,9 +10,7 @@ import { RoundService, RoundStatus } from '@/arena/RoundService';
 import arena from '@/arena';
 import { mapValues } from 'es-toolkit';
 import EventEmitter from 'node:events';
-import { type GameStatus, type ItemComponent, reservedClanName } from '@fwo/shared';
-import { StatisticsService } from '@/arena/StatisticsService';
-import { LadderService } from '@/arena/LadderService';
+import { type GameStatus, reservedClanName } from '@fwo/shared';
 
 export type KickReason = 'afk' | 'run';
 
@@ -34,17 +32,8 @@ export interface GlobalFlags {
  * Класс для объекта игры
  */
 export default class GameService extends EventEmitter<{
-  end: [
-    {
-      reason: string | undefined;
-      statistic: Partial<
-        Record<
-          string,
-          { exp: number; gold: number; nick: string; component?: ItemComponent; winner?: boolean }[]
-        >
-      >;
-    },
-  ];
+  start: [];
+  end: [{ reason: string | undefined }];
   startOrders: [];
   endOrders: [];
   preKick: [{ reason: string; player: Player }];
@@ -54,8 +43,6 @@ export default class GameService extends EventEmitter<{
 }> {
   players: PlayersService;
   orders: OrderService;
-  statistic: StatisticsService;
-  ladder: LadderService;
   round = new RoundService();
   history = new HistoryService();
   longActions: Partial<Record<keyof typeof magics, LongItem[]>> = {};
@@ -74,8 +61,6 @@ export default class GameService extends EventEmitter<{
 
     this.players = new PlayersService(players);
     this.orders = new OrderService(this.players, this.round);
-    this.statistic = new StatisticsService(this.players, this.history);
-    this.ladder = new LadderService(this.players, this.round);
     this.flags = {
       noDamageRound: 0,
       global: {
@@ -243,29 +228,12 @@ export default class GameService extends EventEmitter<{
     console.debug('GC debug:: endGame', this.info.id);
     // Отправляем статистику
     setTimeout(async () => {
-      const statistic = await this.statistic.giveRewards(!this.isTeamWin);
-      await this.ladder.saveGameStats();
-
       this.resetGameIds(this.players.players);
 
-      this.emit('end', { reason: this.getEndGameReason(), statistic });
+      this.emit('end', { reason: this.getEndGameReason() });
       this.removeAllListeners();
 
       arena.mm.cancel();
-
-      // FIXME move to client side
-      this.forAllPlayers((player: Player) => {
-        const char = arena.characters[player.id];
-        if (char.expEarnedToday >= char.expLimitToday) {
-          char.autoreg = false;
-        }
-        if (!char.autoreg) return;
-        arena.mm.push({
-          id: player.id,
-          psr: char.performance.psr,
-          startTime: Date.now(),
-        });
-      });
     }, 1000);
   }
 
@@ -301,6 +269,10 @@ export default class GameService extends EventEmitter<{
     // Обработка сообщений от Round Module
     this.round.subscribe(({ state, round }) => {
       switch (state) {
+        case RoundStatus.INIT: {
+          this.emit('start');
+          break;
+        }
         case RoundStatus.START_ROUND: {
           this.forAllPlayers(this.checkOrders);
           this.sendStatus(round);
