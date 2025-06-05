@@ -45,6 +45,7 @@ export class CharacterService {
 
   wasLvlUp = false;
   autoreg = false;
+  towerID = '';
 
   get id() {
     return this.charObj.id.toString();
@@ -193,6 +194,10 @@ export class CharacterService {
 
   get currentGame() {
     return arena.games[this.gameId];
+  }
+
+  get currentTower() {
+    return arena.towers[this.towerID];
   }
 
   /**
@@ -349,6 +354,7 @@ export class CharacterService {
       psr: this.performance.psr,
       dynamicAttributes: this.attributes.getDynamicAttributes(),
       game: this.currentGame?.info.id,
+      tower: this.currentTower?.id,
       statistics: this.performance.statistics,
       components: Object.fromEntries(this.resources.components.entries()) as Record<
         ItemComponent,

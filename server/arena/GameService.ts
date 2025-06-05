@@ -38,7 +38,10 @@ export default class GameService extends EventEmitter<{
     {
       reason: string | undefined;
       statistic: Partial<
-        Record<string, { exp: number; gold: number; nick: string; component?: ItemComponent }[]>
+        Record<
+          string,
+          { exp: number; gold: number; nick: string; component?: ItemComponent; winner?: boolean }[]
+        >
       >;
     },
   ];
