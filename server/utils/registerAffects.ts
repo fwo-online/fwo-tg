@@ -29,6 +29,8 @@ const registerAttackAffects = () => {
 };
 
 const registerMagicAffects = () => {
+  arena.magics.sleep.registerPreAffects([arena.actions.nightcall]);
+
   Object.values(arena.magics).forEach((magic) => {
     magic.registerPreAffects([
       arena.actions.silence,
