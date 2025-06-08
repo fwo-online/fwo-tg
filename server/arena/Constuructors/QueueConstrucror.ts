@@ -1,6 +1,6 @@
 import config from '@/arena/config';
-import GameService from '@/arena/GameService';
 import type { MatchMakingItem } from '@/arena/MatchMakingService';
+import { createLadderGame } from '@/helpers/gameHelper';
 
 /**
  * Конструктор объекта очереди
@@ -58,8 +58,7 @@ class QueueConstructor {
    */
   async goStartGame() {
     try {
-      const newGame = new GameService(this.players.map((pl) => pl.id));
-      const game = await newGame.createGame();
+      const game = await createLadderGame(this.players.map((pl) => pl.id));
       this.open = false;
       return game;
     } catch (e) {
