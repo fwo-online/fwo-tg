@@ -5,14 +5,15 @@ import { getRandomComponent } from '@/utils/getRandomComponent';
 import { CharacterService } from '@/arena/CharacterService';
 import type { Player } from '@/arena/PlayersService';
 import type { HistoryService } from '@/arena/HistoryService';
+import type GameService from '@/arena/GameService';
 
 export class StatisticsService {
   players: PlayersService;
   history: HistoryService;
 
-  constructor(players: PlayersService, history: HistoryService) {
-    this.players = players;
-    this.history = history;
+  constructor(game: GameService) {
+    this.players = game.players;
+    this.history = game.history;
   }
 
   private getGoldForGame() {

@@ -1,10 +1,10 @@
-import GameService from '@/arena/GameService';
+import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
 import { createWolf } from '@/arena/MonsterService/monsters/wolf';
 import EventEmitter from 'node:events';
 import arena from '@/arena';
-import { some } from 'es-toolkit/compat';
 import { CharacterService } from '@/arena/CharacterService';
+import { createTowerGame } from '@/helpers/gameHelper';
 
 export enum TowerStatus {
   WAITING = 'WAITING',
@@ -57,8 +57,7 @@ export class TowerService extends EventEmitter<{
     const monsterLevel = isBoss ? 30 : MiscService.randInt(10, 20);
     const monster = await createWolf(monsterLevel);
 
-    const newGame = new GameService(this.players);
-    const game = await newGame.createGame();
+    const game = await createTowerGame(this.players, isBoss);
 
     if (!game) {
       throw new Error('Failed to create game');
@@ -72,9 +71,9 @@ export class TowerService extends EventEmitter<{
       monster.ai.makeOrder(game);
     });
 
-    game.on('end', async ({ statistic }) => {
-      const win = some(statistic, (players) => players?.some(({ winner }) => winner));
-      await this.handleBattleEnd(game, isBoss, win);
+    game.on('end', () => {
+      const win = game.players.aliveNonBotPlayers.length > 0;
+      this.handleBattleEnd(game, isBoss, win);
     });
 
     this.emit('battleStart', game, isBoss);

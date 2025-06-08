@@ -1,7 +1,13 @@
 import { get, set } from 'lodash';
 import { floatNumber } from '@/utils/floatNumber';
-import type { CharacterDynamicAttributes, ItemComponent, PlayerPerformance } from '@fwo/shared';
+import type {
+  CharacterDynamicAttributes,
+  Item,
+  ItemComponent,
+  PlayerPerformance,
+} from '@fwo/shared';
 import type { PhysAttributes } from '@fwo/shared';
+import { mapValues } from 'es-toolkit';
 
 type CombineAll<T> = T extends { [name in keyof T]: infer Type } ? Type : never;
 
@@ -40,7 +46,7 @@ export default class StatsService {
   public readonly collect = {
     exp: 0,
     gold: 0,
-    component: undefined as ItemComponent | undefined,
+    components: {} as Partial<Record<ItemComponent, number>>,
     performance: {
       alive: true,
       damage: 0,
@@ -48,6 +54,7 @@ export default class StatsService {
       kills: 0,
       winner: false,
     } satisfies PlayerPerformance,
+    item: undefined as Item | undefined,
     psr: 0,
   };
   /**
@@ -150,8 +157,17 @@ export default class StatsService {
 
   addComponent(component: ItemComponent | undefined) {
     if (component) {
-      this.collect.component = component;
+      this.collect.components = mapValues(this.collect.components, (value, key) => {
+        if (key === component) {
+          return (value ?? 0) + 1;
+        }
+        return value;
+      });
     }
+  }
+
+  addItem(item: Item) {
+    this.collect.item = item;
   }
 
   addPerformance(performance: PlayerPerformance) {
