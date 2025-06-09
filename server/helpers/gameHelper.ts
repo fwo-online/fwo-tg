@@ -1,16 +1,20 @@
 import GameService from '@/arena/GameService';
 import { LadderService } from '@/arena/LadderService';
 import { formatMessage } from '@/arena/LogService/utils';
-import {
-  LadderRewardService,
-  type RewardServiceFactory,
-  TowerRewardService,
-} from '@/arena/RewardService';
+import { LadderRewardService, TowerRewardService } from '@/arena/RewardService';
 import { broadcast, sendBattleLogMessages } from '@/helpers/channelHelper';
+import { DonationHelper } from '@/helpers/donationHelper';
 import { bold } from '@/utils/formatString';
+import {
+  type GameResult,
+  type ItemComponent,
+  itemComponentName,
+  reservedClanName,
+} from '@fwo/shared';
+import { mapValues } from 'es-toolkit';
 
-export async function createGame(players: string[], reward: RewardServiceFactory) {
-  const newGame = new GameService(players, reward);
+export async function createGame(players: string[]) {
+  const newGame = new GameService(players);
   const game = await newGame.createGame();
 
   if (!game) {
@@ -40,29 +44,94 @@ export async function createGame(players: string[], reward: RewardServiceFactory
     broadcast(`Игрок ${bold(player.nick)} был выброшен из игры`);
   });
 
+  game.on('end', async () => {
+    setTimeout(async () => {
+      if (DonationHelper.shouldAnnounce()) {
+        const donators = await DonationHelper.getDonators();
+
+        if (donators.length) {
+          await broadcast(`${bold('Поддержавшие проект в этом месяце:')}
+  ${donators.map((donator) => `⭐ ${bold(donator.nickname)}`).join('\n')}
+            
+  Спасибо за поддержку!`);
+          DonationHelper.resetLastAnnouncement();
+        }
+      }
+    }, 10000);
+  });
+
   return game;
 }
 
+const componentsToString = (components?: Partial<Record<ItemComponent, number>>) => {
+  Object.values(
+    mapValues(
+      components ?? {},
+      (value, component) => `${value ?? 0} ${itemComponentName[component]}`,
+    ),
+  ).join(', ');
+};
+
+const resultToString = (result: GameResult) => {
+  `\t${result.winner ? '🏆' : '👤'} ${result.player.name} получает ${result.exp}📖, ${result.gold}💰 ${componentsToString(result.components)} ${result.item?.info.name ?? ''}`;
+};
+
 export async function createLadderGame(players: string[]) {
-  const game = await createGame(players, (game) => new LadderRewardService(game));
+  const game = await createGame(players);
 
   if (!game) {
     return;
   }
 
+  const reward = new LadderRewardService(game);
   const ladder = new LadderService(game);
 
-  game.on('end', async () => {
-    await ladder.saveGameStats();
+  game.on('end', async ({ draw }) => {
+    const rewards = await reward.giveRewards(draw);
+    const resultsByClan = Object.groupBy(
+      rewards,
+      ({ player }) => player.clan?.name || reservedClanName,
+    );
+
+    await broadcast('Игра завершена');
+    await broadcast(`${bold`Статистика игры`}
+  ${Object.entries(resultsByClan)
+    .map(
+      ([clan, players]) =>
+        `${bold(clan === reservedClanName ? 'Без клана' : clan)}:\n${players?.map(resultToString).join('\n')}`,
+    )
+    .join('\n\n')}`);
   });
+
+  await ladder.saveGameStats();
+  return game;
 }
 
 export async function createTowerGame(players: string[], isBoss: boolean) {
-  const game = await createGame(players, (game) => new TowerRewardService(game, isBoss));
+  const game = await createGame(players);
 
   if (!game) {
     return;
   }
+
+  const reward = new TowerRewardService(game, isBoss);
+
+  game.on('end', async ({ draw }) => {
+    const rewards = await reward.giveRewards(draw);
+    const resultsByClan = Object.groupBy(
+      rewards,
+      ({ player }) => player.clan?.name || reservedClanName,
+    );
+
+    await broadcast('Игра завершена');
+    await broadcast(`${bold`Статистика игры`}
+  ${Object.entries(resultsByClan)
+    .map(
+      ([clan, players]) =>
+        `${bold(clan === reservedClanName ? 'Без клана' : clan)}:\n${players?.map(resultToString).join('\n')}`,
+    )
+    .join('\n\n')}`);
+  });
 
   return game;
 }

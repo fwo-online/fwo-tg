@@ -10,8 +10,7 @@ import { RoundService, RoundStatus } from '@/arena/RoundService';
 import arena from '@/arena';
 import { mapValues } from 'es-toolkit';
 import EventEmitter from 'node:events';
-import { type GameResult, type GameStatus, reservedClanName } from '@fwo/shared';
-import type { RewardService, RewardServiceFactory } from '@/arena/RewardService';
+import { type GameStatus, reservedClanName } from '@fwo/shared';
 
 export type KickReason = 'afk' | 'run';
 
@@ -34,7 +33,7 @@ export interface GlobalFlags {
  */
 export default class GameService extends EventEmitter<{
   start: [];
-  end: [{ reason: string | undefined; rewards: GameResult[] }];
+  end: [{ reason: string | undefined; draw: boolean }];
   startOrders: [];
   endOrders: [];
   preKick: [{ reason: string; player: Player }];
@@ -52,18 +51,16 @@ export default class GameService extends EventEmitter<{
     noDamageRound: number;
     global: GlobalFlags;
   };
-  reward: RewardService;
 
   /**
    * Конструктор объекта игры
    * @param players массив игроков
    */
-  constructor(players: string[], rewardServiceFactory: RewardServiceFactory) {
+  constructor(players: string[]) {
     super();
 
     this.players = new PlayersService(players);
     this.orders = new OrderService(this.players, this.round);
-    this.reward = rewardServiceFactory(this);
     this.flags = {
       noDamageRound: 0,
       global: {
@@ -231,11 +228,9 @@ export default class GameService extends EventEmitter<{
     console.debug('GC debug:: endGame', this.info.id);
     // Отправляем статистику
     setTimeout(async () => {
-      const rewards = await this.reward.giveRewards(!this.isTeamWin);
-
       this.resetGameIds(this.players.players);
 
-      this.emit('end', { reason: this.getEndGameReason(), rewards });
+      this.emit('end', { reason: this.getEndGameReason(), draw: !this.isTeamWin });
       this.removeAllListeners();
 
       arena.mm.cancel();
