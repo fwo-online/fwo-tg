@@ -27,3 +27,5 @@ export type PublicGameStatus = {
   maxMP: number;
   maxEN: number;
 };
+
+export type GameType = 'tower' | 'ladder';

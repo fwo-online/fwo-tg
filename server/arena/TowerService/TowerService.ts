@@ -20,7 +20,7 @@ export class TowerService extends EventEmitter<{
   start: [tower: TowerService];
   battleStart: [game: GameService, isBoss: boolean];
   battleEnd: [game: GameService, victory: boolean];
-  finish: [];
+  end: [];
 }> {
   id: string;
   players: string[];
@@ -36,6 +36,8 @@ export class TowerService extends EventEmitter<{
     this.timeSpent = 0;
   }
 
+  static emitter = new EventEmitter<{ start: [TowerService] }>();
+
   async createTower() {
     arena.towers[this.id] = this;
 
@@ -47,8 +49,10 @@ export class TowerService extends EventEmitter<{
       }
     });
 
+    TowerService.emitter.emit('start', this);
     this.emit('start', this);
     await this.initHandlers();
+    return this;
   }
 
   async startFight(isBoss = false) {
@@ -132,7 +136,7 @@ export class TowerService extends EventEmitter<{
 
     delete arena.towers?.[this.id];
 
-    this.emit('finish');
+    this.emit('end');
   }
 
   static isPlayerInTower(playerId: string): boolean {

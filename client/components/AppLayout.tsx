@@ -8,8 +8,8 @@ const tabs = [
     text: 'Персонаж',
   },
   {
-    path: '/arena',
-    text: 'Арена',
+    path: '/lobby',
+    text: 'Мир',
   },
   {
     path: '/agora',

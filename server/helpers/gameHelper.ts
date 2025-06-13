@@ -1,7 +1,9 @@
+import arena from '@/arena';
 import GameService from '@/arena/GameService';
 import { LadderService } from '@/arena/LadderService';
 import { formatMessage } from '@/arena/LogService/utils';
 import { LadderRewardService, TowerRewardService } from '@/arena/RewardService';
+import { TowerService } from '@/arena/TowerService/TowerService';
 import { broadcast, sendBattleLogMessages } from '@/helpers/channelHelper';
 import { DonationHelper } from '@/helpers/donationHelper';
 import { bold } from '@/utils/formatString';
@@ -87,6 +89,8 @@ export async function createLadderGame(players: string[]) {
   const ladder = new LadderService(game);
 
   game.on('end', async ({ draw }) => {
+    arena.mm.reset('ladder');
+
     const rewards = await reward.giveRewards(draw);
     const resultsByClan = Object.groupBy(
       rewards,
@@ -95,16 +99,28 @@ export async function createLadderGame(players: string[]) {
 
     await broadcast('Игра завершена');
     await broadcast(`${bold`Статистика игры`}
-  ${Object.entries(resultsByClan)
-    .map(
-      ([clan, players]) =>
-        `${bold(clan === reservedClanName ? 'Без клана' : clan)}:\n${players?.map(resultToString).join('\n')}`,
-    )
-    .join('\n\n')}`);
+${Object.entries(resultsByClan)
+  .map(
+    ([clan, players]) =>
+      `${bold(clan === reservedClanName ? 'Без клана' : clan)}:\n${players?.map(resultToString).join('\n')}`,
+  )
+  .join('\n\n')}`);
   });
 
   await ladder.saveGameStats();
   return game;
+}
+
+export async function createTower(players: string[]) {
+  const newTower = new TowerService(players);
+  const tower = await newTower.createTower();
+  tower.on('end', () => {
+    arena.mm.reset('tower');
+
+    broadcast('Башня завершена');
+  });
+
+  return tower;
 }
 
 export async function createTowerGame(players: string[], isBoss: boolean) {
@@ -125,12 +141,12 @@ export async function createTowerGame(players: string[], isBoss: boolean) {
 
     await broadcast('Игра завершена');
     await broadcast(`${bold`Статистика игры`}
-  ${Object.entries(resultsByClan)
-    .map(
-      ([clan, players]) =>
-        `${bold(clan === reservedClanName ? 'Без клана' : clan)}:\n${players?.map(resultToString).join('\n')}`,
-    )
-    .join('\n\n')}`);
+${Object.entries(resultsByClan)
+  .map(
+    ([clan, players]) =>
+      `${bold(clan === reservedClanName ? 'Без клана' : clan)}:\n${players?.map(resultToString).join('\n')}`,
+  )
+  .join('\n\n')}`);
   });
 
   return game;

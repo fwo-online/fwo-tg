@@ -2,10 +2,13 @@ import arena from '@/arena';
 import MatchMakingService from '@/arena/MatchMakingService';
 import { checkUserIsChannelMember } from '@/bot';
 import type { Server, Socket } from '@/server/ws';
+import { mapValues } from 'es-toolkit';
 
 export const onCreate = (io: Server) => {
-  MatchMakingService.on('list', (mmItems) => {
-    const characters = mmItems.map(({ id }) => arena.characters[id].toPublicObject());
+  MatchMakingService.on('list', (queues) => {
+    const characters = mapValues(queues, (items) =>
+      items.map(({ id }) => arena.characters[id].toPublicObject()),
+    );
     io.to('lobby').emit('lobby:list', characters);
   });
 };
@@ -15,7 +18,11 @@ export const onConnection = (_io: Server, socket: Socket) => {
 
   socket.on('lobby:enter', async (callback) => {
     socket.join('lobby');
-    callback(MatchMakingService.mmQueue.map(({ id }) => arena.characters[id].toPublicObject()));
+    const queues = MatchMakingService.allQueue;
+    const characters = mapValues(queues, (queue) =>
+      queue.items.map(({ id }) => arena.characters[id].toPublicObject()),
+    );
+    callback(characters);
 
     const isChannelMember = await checkUserIsChannelMember(character.owner);
     if (!isChannelMember) {
@@ -27,10 +34,11 @@ export const onConnection = (_io: Server, socket: Socket) => {
     socket.leave('lobby');
   });
 
-  socket.on('lobby:start', (callback) => {
+  socket.on('lobby:start', (queue, callback) => {
     try {
       MatchMakingService.push({
         id: character.id,
+        queue,
         psr: character.performance.psr,
         startTime: Date.now(),
       });

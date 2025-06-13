@@ -1,70 +1,59 @@
+import arena from '@/arena';
 import config from '@/arena/config';
-import type { MatchMakingItem } from '@/arena/MatchMakingService';
-import { createLadderGame } from '@/helpers/gameHelper';
+import { createLadderGame, createTower } from '@/helpers/gameHelper';
+import type { GameType } from '@fwo/shared';
 
-/**
- * Конструктор объекта очереди
- */
-class QueueConstructor {
-  psr = 0;
+export type QueueItem = {
+  id: string;
+  startTime: number;
+  queue: GameType;
+};
+
+export abstract class Queue {
   open = true;
-  players: MatchMakingItem[];
-  /**
-   * Конструтор пустой очереди
-   * @param {mmObj[]} searchers
-   */
-  constructor(searchers: MatchMakingItem[]) {
-    this.players = searchers;
+  items: QueueItem[] = [];
+
+  push(item: QueueItem): void {
+    this.items.push(item);
   }
 
-  /**
-   * Добавление чара в предсобранную комнату для игры
-   * @param searcherObj Объект чара начавшего поиск
-   */
-  async addTo(searcherObj: MatchMakingItem) {
-    try {
-      this.players.push(searcherObj);
-      if (this.checkStatus()) {
-        this.open = false;
-        await this.goStartGame();
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }
+  abstract checkStatus(): boolean;
 
-  /**
-   * Описание политики объекта очереди
-   * @param searcherObj
-   * @return {Boolean}
-   */
-  policy(searcherObj: MatchMakingItem) {
-    const playerPsr = searcherObj.psr;
-    return !this.players.length || playerPsr > this.psr / this.players.length + 50;
-  }
-
-  /**
-   * Возвращает достигнут ли лимит игроков в очереди
-   * @return {Boolean}
-   */
-  checkStatus() {
-    // Проверяем не собралась ли уже у нас очередь ?
-    return this.players.length >= config.minPlayersLimit;
-  }
-
-  /**
-   * Функция создания объекта игры после того как достаточное кол-во игроков,
-   * уже найдено в игру.
-   */
-  async goStartGame() {
-    try {
-      const game = await createLadderGame(this.players.map((pl) => pl.id));
-      this.open = false;
-      return game;
-    } catch (e) {
-      console.error(e);
-    }
+  async start(): Promise<void> {
+    this.open = false;
   }
 }
 
-export default QueueConstructor;
+export class LadderQueue extends Queue {
+  checkStatus(): boolean {
+    if (this.items.length < config.minPlayersLimit) {
+      return false;
+    }
+
+    const playersByClan = this.items.reduce<Record<string, number>>((acc, { id }) => {
+      const clan = arena.characters[id].clan;
+      if (clan) {
+        acc[clan.name] ??= 0;
+        acc[clan.name]++;
+      }
+      return acc;
+    }, {});
+    return Object.values(playersByClan).every((count) => count <= this.items.length / 2);
+  }
+
+  override async start(): Promise<void> {
+    await createLadderGame(this.items.splice(0, config.maxPlayersLimit).map(({ id }) => id));
+    await super.start();
+  }
+}
+
+export class TowerQueue extends Queue {
+  checkStatus(): boolean {
+    return this.items.length >= config.minPlayersLimit;
+  }
+
+  override async start(): Promise<void> {
+    await createTower(this.items.splice(0, config.maxPlayersLimit).map(({ id }) => id));
+    await super.start();
+  }
+}
