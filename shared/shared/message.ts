@@ -1,7 +1,7 @@
 import type { CharacterPublic } from '@/character/characterPublic';
 import type { Character } from '@/character';
 import type { Player } from './player';
-import type { GameStatus } from '@/game';
+import type { GameStatus, GameType } from '@/game';
 import type { Action } from './action';
 import type { RPC } from './rpc';
 import type { Order } from './orderSchema';
@@ -17,9 +17,9 @@ export type OrderResponse = RPC<{
 
 export type ClientToServerMessage = Message<{
   character: [callback: (character: Character) => void];
-  'lobby:enter': [callback: (characters: CharacterPublic[]) => void];
+  'lobby:enter': [callback: (characters: Record<GameType, CharacterPublic[]>) => void];
   'lobby:leave': [];
-  'lobby:start': [callback: (payload: RPC<{ success?: boolean }>) => void];
+  'lobby:start': [type: GameType, callback: (payload: RPC<{ success?: boolean }>) => void];
   'lobby:stop': [];
   'game:connected': [
     callback: (
@@ -50,9 +50,9 @@ export type ServerToClientMessage = Message<{
   character: [character: Character];
   'lobby:enter': [character: CharacterPublic];
   'lobby:leave': [character: CharacterPublic];
-  'lobby:list': [characters: CharacterPublic[]];
-  'lobby:start': [character: CharacterPublic];
-  'lobby:stop': [character: CharacterPublic];
+  'lobby:list': [characters: Record<GameType, CharacterPublic[]>];
+  'lobby:start': [character: CharacterPublic, type: GameType];
+  'lobby:stop': [character: CharacterPublic, type: GameType];
   'lobby:help': [];
   'game:start': [gameID: string];
   'game:end': [];
@@ -76,4 +76,5 @@ export type ServerToClientMessage = Message<{
   ];
   'game:kick': [{ reason: string; player: Player }];
   'game:preKick': [{ reason: string; player: Player }];
+  'tower:start': [towerID: string];
 }>;

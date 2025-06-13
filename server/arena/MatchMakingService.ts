@@ -1,9 +1,13 @@
 import { EventEmitter } from 'node:events';
-import _ from 'lodash';
 import config from './config';
-import QueueConstructor from './Constuructors/QueueConstrucror';
-import arena from './index';
-import type GameService from './GameService';
+import {
+  LadderQueue,
+  type QueueItem,
+  TowerQueue,
+  type Queue,
+} from './Constuructors/QueueConstrucror';
+import type { GameType } from '@fwo/shared';
+import { mapValues } from 'es-toolkit';
 
 /**
  * MatchMaking system
@@ -11,135 +15,116 @@ import type GameService from './GameService';
  * @description Класс объекта MM, для сбора игр
  * */
 
-export type MatchMakingItem = {
-  id: string;
-  psr: number;
-  startTime: number;
-};
 /**
  * Общий класс объекта MatchMaking
  */
 class MatchMaking extends EventEmitter<{
-  start: [game: GameService];
-  list: [players: MatchMakingItem[]];
-  push: [player: MatchMakingItem];
-  pull: [player: MatchMakingItem];
+  list: [players: Record<GameType, QueueItem[]>];
+  push: [player: QueueItem];
+  pull: [player: QueueItem];
 }> {
-  allQueue: QueueConstructor[] = [];
-  mmQueue: MatchMakingItem[] = [];
-  timerId?: NodeJS.Timer;
+  allQueue: Record<GameType, Queue> = {
+    tower: new TowerQueue(),
+    ladder: new LadderQueue(),
+  };
+  timers: Partial<Record<GameType, NodeJS.Timer>> = {};
   playerAttempts: Record<string, number[]> = {};
-
-  checkStatus() {
-    const [withClans] = _.partition(this.mmQueue, (mmObj) => arena.characters[mmObj.id].clan);
-    const clans = _.groupBy(withClans, (mmObj) => arena.characters[mmObj.id].clan?.id);
-    const isEveryEnemy = Object.values(clans).every((c) => c.length <= this.mmQueue.length / 2);
-    return this.mmQueue.length >= config.minPlayersLimit && isEveryEnemy;
-  }
 
   /**
    * Удаление объекта игрока в очередь поиска
    * @param id id чара в поиске
    */
   pull(id: string) {
-    const obj = this.mmQueue.find((el) => el.id === id);
-    if (obj) {
-      this.mmQueue.splice(this.mmQueue.indexOf(obj), 1);
-      this.main();
-      this.emit('pull', obj);
-      this.emit('list', this.mmQueue);
-    }
-
-    console.debug('MM pull debug', this.mmQueue);
+    Object.entries(this.allQueue).forEach(([type, queue]) => {
+      const index = queue.items.findIndex((item) => id === item.id);
+      if (index !== -1) {
+        const [item] = queue.items.splice(index, 1);
+        this.emit('pull', item);
+        this.list();
+        this.main(type as GameType);
+      }
+    });
+    console.debug('MM pull debug', id);
   }
 
   /**
    * Добавление объекта игрока в очередь поиска
    * @param obj Объект запроса поиска {charId,psr,startTime}
    */
-  push(obj: MatchMakingItem) {
-    if (this.mmQueue.some((el) => el.id === obj.id)) {
+  push(item: QueueItem) {
+    const queue = this.allQueue[item.queue];
+
+    if (queue.items.some(({ id }) => id === item.id)) {
       return;
     }
 
+    this.validate(item);
+
+    queue.push(item);
+    this.emit('push', item);
+    this.list();
+    this.main(item.queue);
+  }
+
+  validate(item: QueueItem) {
     const now = Date.now();
 
-    this.playerAttempts[obj.id] = (this.playerAttempts[obj.id] || []).filter(
+    this.playerAttempts[item.id] = (this.playerAttempts[item.id] || []).filter(
       (timestamp) => now - timestamp < 5 * 60 * 1000,
     );
 
-    if (this.playerAttempts[obj.id].length >= 5) {
+    if (this.playerAttempts[item.id].length >= 5) {
       throw new Error('Слишком много попыток, попобуй позднее');
     }
 
-    this.playerAttempts[obj.id].push(now);
+    this.playerAttempts[item.id].push(now);
+  }
 
-    if (this.mmQueue.some((el) => el.id === obj.id)) {
-      return;
-    }
-
-    this.mmQueue.push(obj);
-    this.emit('push', obj);
-    this.emit('list', this.mmQueue);
-    this.main();
+  list() {
+    this.emit(
+      'list',
+      mapValues(this.allQueue, (queue) => queue.items),
+    );
   }
 
   /**
    * Функция остановки системы подбора игроков
-   * admin only
    */
-  stop() {
-    if (this.timerId) {
-      clearInterval(this.timerId);
+  stop(type: GameType) {
+    if (this.timers[type]) {
+      clearInterval(this.timers[type]);
     }
-  }
-
-  /**
-   * Чистим очередь
-   */
-  clean() {
-    this.allQueue.forEach((queue, i) => {
-      if (!queue.open) {
-        this.allQueue.splice(i, 1);
-      }
-    });
   }
 
   /**
    * Добавляем игроков в комнату
    */
-  start() {
-    if (!this.allQueue.length) {
-      const queue = new QueueConstructor(this.mmQueue.splice(0, config.maxPlayersLimit));
-      this.emit('list', this.mmQueue);
-
-      if (queue.checkStatus()) {
-        this.allQueue.push(queue);
-        queue.goStartGame().then((game) => {
-          if (game) {
-            this.emit('start', game);
-          }
-        });
-      }
+  async start(type: GameType) {
+    const queue = this.allQueue[type];
+    if (queue.checkStatus()) {
+      await queue.start();
+      this.list();
     }
   }
 
   /**
    * Запускаем очистку и создаём новую очередь
    */
-  cancel() {
-    this.clean();
-    this.main();
+  reset(type: GameType) {
+    const queue = this.allQueue[type];
+    queue.open = true;
+    this.main(type);
   }
 
   /**
    * Основная функции работы с очередями
    */
-  main() {
-    this.stop();
-    if (this.checkStatus()) {
-      this.timerId = setTimeout(() => {
-        this.start();
+  main(type: GameType) {
+    this.stop(type);
+    const queue = this.allQueue[type];
+    if (queue.open && queue.checkStatus()) {
+      this.timers[type] = setTimeout(() => {
+        this.start(type);
       }, config.startGameTimeout);
     }
   }

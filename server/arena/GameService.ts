@@ -69,6 +69,8 @@ export default class GameService extends EventEmitter<{
     };
   }
 
+  static emitter = new EventEmitter<{ start: [game: GameService] }>();
+
   /**
    * Функция проверки окончания игры
    */
@@ -232,8 +234,6 @@ export default class GameService extends EventEmitter<{
 
       this.emit('end', { reason: this.getEndGameReason(), draw: !this.isTeamWin });
       this.removeAllListeners();
-
-      arena.mm.cancel();
     }, 1000);
   }
 
@@ -270,6 +270,7 @@ export default class GameService extends EventEmitter<{
     this.round.subscribe(({ state, round }) => {
       switch (state) {
         case RoundStatus.INIT: {
+          GameService.emitter.emit('start', this);
           this.emit('start');
           break;
         }
