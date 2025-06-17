@@ -100,6 +100,10 @@ export class CharacterInventory {
       return false;
     }
 
+    if (!itemToEquip.class.includes(this.character.class)) {
+      return false;
+    }
+
     return true;
   }
 

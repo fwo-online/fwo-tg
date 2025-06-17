@@ -29,6 +29,7 @@ import { MarketCreatePage } from '@/modules/market/pages/MarketCreatePage';
 import { LobbyArenaPage } from '@/modules/lobby/pages/LobbyArenaPage';
 import { LobbyTowerPage } from '@/modules/lobby/pages/LobbyTowerPage';
 import { LadderPage } from '@/modules/ladder/pages/LadderPage';
+import { TowerPage } from '@/modules/tower/pages/TowerPage';
 
 export function Router() {
   return (
@@ -74,6 +75,7 @@ export function Router() {
           </Route>
         </Route>
         <Route path="/game/:gameID" element={<GamePage />} />
+        <Route path="/tower/:towerID" element={<TowerPage />} />
       </Route>
       <Route path="/connection-error" element={<ErrorConnectionPage />} />
       <Route path="/error" element={<ErrorPage />} />

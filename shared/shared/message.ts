@@ -40,6 +40,9 @@ export type ClientToServerMessage = Message<{
   'game:orderRepeat': [callback: (payload: OrderResponse) => void];
   'game:orderReset': [callback: (payload: OrderResponse) => void];
   'game:orderRemove': [id: string, callback: (payload: OrderResponse) => void];
+  'tower:connected': [
+    callback: (payload: RPC<{ players: Record<string, CharacterPublic> }>) => void,
+  ];
 }>;
 
 type Message<T extends Record<string, unknown[]>> = {
@@ -77,4 +80,5 @@ export type ServerToClientMessage = Message<{
   'game:kick': [{ reason: string; player: Player }];
   'game:preKick': [{ reason: string; player: Player }];
   'tower:start': [towerID: string];
+  'tower:end': [];
 }>;
