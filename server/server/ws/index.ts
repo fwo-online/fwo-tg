@@ -3,6 +3,7 @@ import type { ClientToServerMessage, ServerToClientMessage } from '@fwo/shared';
 import type { DefaultEventsMap, Server as IOServer, Socket as IOSocket } from 'socket.io';
 import * as game from './game';
 import * as lobby from './lobby';
+import * as tower from './tower';
 import * as character from './character';
 
 export type Server = IOServer<
@@ -25,10 +26,12 @@ export const middleware = (io: Server) => (socket: Socket, next: (error?: Error)
 export const onCreate = (io: Server) => {
   game.onCreate(io);
   lobby.onCreate(io);
+  tower.onCreate(io);
 };
 
 export const onConnection = (io: Server, socket: Socket) => {
   character.onConnection(io, socket);
   lobby.onConnection(io, socket);
   game.onConnection(io, socket);
+  tower.onConnection(io, socket);
 };

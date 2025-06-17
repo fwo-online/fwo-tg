@@ -126,19 +126,25 @@ export class TowerRewardService extends RewardService {
   protected async giveWinnerRewards(winners: Player[]) {
     const goldForGame = this.getGoldForGame();
 
-    for await (const winner of winners) {
-      winner.stats.addGold(goldForGame);
-      if (this.isBoss) {
-        const character = await CharacterService.getCharacterById(winner.id);
-        const item = await ItemService.createRandomItem(character.charObj);
-        await character.inventory.addItem(item.toObject());
+    try {
+      await Promise.all(
+        winners.map(async (winner) => {
+          winner.stats.addGold(goldForGame);
+          if (this.isBoss) {
+            const character = await CharacterService.getCharacterById(winner.id);
+            const item = await ItemService.createRandomItem(character.charObj, { tier: 2 });
+            await character.inventory.addItem(item.toObject());
 
-        winner.stats.addItem(item.toObject());
-      } else {
-        times(MiscService.randInt(2, 7), () => {
-          winner.stats.addComponent(getRandomComponent(100));
-        });
-      }
+            winner.stats.addItem(item.toObject());
+          } else {
+            times(MiscService.randInt(2, 7), () => {
+              winner.stats.addComponent(getRandomComponent(100));
+            });
+          }
+        }),
+      );
+    } catch (e) {
+      console.error('giveWinnerRewards::', e);
     }
   }
 
