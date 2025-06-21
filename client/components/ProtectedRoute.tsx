@@ -5,11 +5,13 @@ import { useCharacterStore } from '@/modules/character/store/character';
 import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
 import { useSocketStore } from '@/stores/socket';
 import { use } from 'react';
+import { useTowerGuard } from '@/hooks/useTowerGuard';
 
 const ProtectedRouteGuards = () => {
   use(useSocketStore().connect());
   useCharacterGuard();
   useGameGuard();
+  useTowerGuard();
 
   return <Outlet />;
 };

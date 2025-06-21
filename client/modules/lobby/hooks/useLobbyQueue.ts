@@ -4,10 +4,10 @@ import { useSocketListener } from '@/hooks/useSocketListener';
 import { useUnmountEffect } from '@/hooks/useUnmountEffect';
 import { useCharacter } from '@/modules/character/store/character';
 import { useSocket } from '@/stores/socket';
-import type { CharacterPublic } from '@fwo/shared';
-import { useState } from 'react';
+import type { CharacterPublic, GameType } from '@fwo/shared';
+import { useCallback, useState } from 'react';
 
-export const useLobby = () => {
+export const useLobbyQueue = (queue: GameType) => {
   const socket = useSocket();
   const popup = usePopup();
   const characterID = useCharacter((character) => character.id);
@@ -16,10 +16,17 @@ export const useLobby = () => {
 
   const isSearching = searchers.some(({ id }) => id === characterID);
 
-  useSocketListener('lobby:list', setSearchers);
+  const handleLobbyList = useCallback(
+    (characters: Record<GameType, CharacterPublic[]>) => {
+      setSearchers(characters[queue]);
+    },
+    [queue],
+  );
+
+  useSocketListener('lobby:list', handleLobbyList);
 
   useMountEffect(() => {
-    socket.emitWithAck('lobby:enter').then(setSearchers);
+    socket.emitWithAck('lobby:enter').then(handleLobbyList);
   });
 
   useUnmountEffect(() => {
@@ -30,7 +37,7 @@ export const useLobby = () => {
     if (isSearching) {
       socket.emit('lobby:stop');
     } else {
-      const res = await socket.emitWithAck('lobby:start');
+      const res = await socket.emitWithAck('lobby:start', queue);
       if (res.error) {
         popup.info({ message: res.message });
       }

@@ -7,7 +7,7 @@ const components = [
   { name: ItemComponent.Iron, cost: 50 },
   { name: ItemComponent.Wood, cost: 25 },
   { name: ItemComponent.Steel, cost: 100 },
-  { name: ItemComponent.Arcanite, cost: 500 },
+  // { name: ItemComponent.Arcanite, cost: 500 },
 ];
 
 const weights = components.map((c) => 1 / c.cost);

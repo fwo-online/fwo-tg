@@ -21,12 +21,15 @@ import { ClanListPage } from '@/modules/clan/pages/ClanListPage';
 import { ClanCreatePage } from '@/modules/clan/pages/ClanCreatePage';
 import { ClanPage } from '@/modules/clan/pages/ClanPage';
 import { ServiceShopPage } from '@/modules/serviceShop/pages/ServiceShopPage';
-import { LadderPage } from '@/modules/ladder/pages/LadderPage';
 import { AgoraPage } from '@/modules/agora/pages/AgoraPage';
 import { ClanForgePage } from '@/modules/clan/pages/ClanForgePage';
 import { ClanForgeListPage } from '@/modules/clan/pages/ClanForgeListPage';
 import { MarketPage } from '@/modules/market/pages/MarketPage';
 import { MarketCreatePage } from '@/modules/market/pages/MarketCreatePage';
+import { LobbyArenaPage } from '@/modules/lobby/pages/LobbyArenaPage';
+import { LobbyTowerPage } from '@/modules/lobby/pages/LobbyTowerPage';
+import { LadderPage } from '@/modules/ladder/pages/LadderPage';
+import { TowerPage } from '@/modules/tower/pages/TowerPage';
 
 export function Router() {
   return (
@@ -51,9 +54,11 @@ export function Router() {
               </Route>
             </Route>
           </Route>
-          <Route path="/arena">
+          <Route path="/lobby">
             <Route path="" element={<LobbyPage />} />
             <Route path="ladder" Component={withBackButton(LadderPage)} />
+            <Route path="arena" Component={withBackButton(LobbyArenaPage)} />
+            <Route path="tower" Component={withBackButton(LobbyTowerPage)} />
           </Route>
           <Route path="/settings" Component={withBackButton(SettingsPage)} />
           <Route path="/agora">
@@ -70,6 +75,7 @@ export function Router() {
           </Route>
         </Route>
         <Route path="/game/:gameID" element={<GamePage />} />
+        <Route path="/tower/:towerID" element={<TowerPage />} />
       </Route>
       <Route path="/connection-error" element={<ErrorConnectionPage />} />
       <Route path="/error" element={<ErrorPage />} />

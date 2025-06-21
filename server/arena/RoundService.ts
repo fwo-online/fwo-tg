@@ -102,6 +102,7 @@ export class RoundService {
     console.log('Round State:', state);
     switch (state) {
       case RoundStatus.INIT:
+        this.write();
         // Состояние инициации раунда после создания игры
         this.nextState(RoundStatus.START_ROUND);
         break;
@@ -145,7 +146,7 @@ export class RoundService {
   }
 
   initRound(): void {
-    this.nextState(RoundStatus.INIT, 0);
+    this.nextState(RoundStatus.INIT, 500);
   }
 
   nextRound(): void {

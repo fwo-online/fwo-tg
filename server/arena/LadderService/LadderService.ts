@@ -7,6 +7,7 @@ import type PlayersService from '@/arena/PlayersService';
 import type { RoundService } from '@/arena/RoundService';
 import { toPublicObject } from '@/arena/CharacterService/utils/toPublicObject';
 import { getCharactersByPSR } from '@/api/character';
+import type GameService from '@/arena/GameService';
 
 export class LadderService {
   players: PlayersService;
@@ -14,10 +15,10 @@ export class LadderService {
   gamePSR: number;
   static cachedLadderList: CharacterPublic[] | null = null;
 
-  constructor(players: PlayersService, round: RoundService) {
-    this.players = players;
-    this.round = round;
-    this.gamePSR = this.calculateGamePSR(players.nonBotPlayers);
+  constructor(game: GameService) {
+    this.players = game.players;
+    this.round = game.round;
+    this.gamePSR = this.calculateGamePSR(game.players.nonBotPlayers);
   }
 
   static async getLadderList() {

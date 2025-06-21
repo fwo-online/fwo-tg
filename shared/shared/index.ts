@@ -24,4 +24,6 @@ declare global {
         [P in keyof T]?: DeepPartial<T[P]>;
       }
     : T;
+
+  type MaybePromise<T> = T | Promise<T>;
 }
