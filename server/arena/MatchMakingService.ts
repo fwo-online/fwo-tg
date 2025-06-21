@@ -1,13 +1,15 @@
 import { EventEmitter } from 'node:events';
-import config from './config';
-import {
-  LadderQueue,
-  type QueueItem,
-  TowerQueue,
-  type Queue,
-} from './Constuructors/QueueConstrucror';
+import ValidationError from '@/arena/errors/ValidationError';
 import type { GameType } from '@fwo/shared';
 import { mapValues } from 'es-toolkit';
+import { some } from 'es-toolkit/compat';
+import {
+  LadderQueue,
+  type Queue,
+  type QueueItem,
+  TowerQueue,
+} from './Constuructors/QueueConstrucror';
+import config from './config';
 
 /**
  * MatchMaking system
@@ -52,13 +54,9 @@ class MatchMaking extends EventEmitter<{
    * @param obj Объект запроса поиска {charId,psr,startTime}
    */
   push(item: QueueItem) {
-    const queue = this.allQueue[item.queue];
-
-    if (queue.items.some(({ id }) => id === item.id)) {
-      return;
-    }
-
     this.validate(item);
+
+    const queue = this.allQueue[item.queue];
 
     queue.push(item);
     this.emit('push', item);
@@ -67,6 +65,10 @@ class MatchMaking extends EventEmitter<{
   }
 
   validate(item: QueueItem) {
+    if (some(this.allQueue, (queue) => queue.items.some(({ id }) => id === item.id))) {
+      throw new ValidationError('Ты уже стоишь в очереди');
+    }
+
     const now = Date.now();
 
     this.playerAttempts[item.id] = (this.playerAttempts[item.id] || []).filter(
@@ -74,7 +76,7 @@ class MatchMaking extends EventEmitter<{
     );
 
     if (this.playerAttempts[item.id].length >= 5) {
-      throw new Error('Слишком много попыток, попобуй позднее');
+      throw new ValidationError('Слишком много попыток, попобуй позднее');
     }
 
     this.playerAttempts[item.id].push(now);

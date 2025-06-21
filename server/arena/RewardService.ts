@@ -1,14 +1,14 @@
-import type PlayersService from '@/arena/PlayersService';
-import { differenceBy, mapValues, noop } from 'es-toolkit';
-import { type GameResult, reservedClanName } from '@fwo/shared';
-import { getRandomComponent } from '@/utils/getRandomComponent';
 import { CharacterService } from '@/arena/CharacterService';
-import type { Player } from '@/arena/PlayersService';
-import type { HistoryService } from '@/arena/HistoryService';
 import type GameService from '@/arena/GameService';
+import type { HistoryService } from '@/arena/HistoryService';
 import { ItemService } from '@/arena/ItemService';
-import { times } from 'lodash';
 import MiscService from '@/arena/MiscService';
+import type PlayersService from '@/arena/PlayersService';
+import type { Player } from '@/arena/PlayersService';
+import { getRandomComponent } from '@/utils/getRandomComponent';
+import { type GameResult, reservedClanName } from '@fwo/shared';
+import { differenceBy, mapValues, noop } from 'es-toolkit';
+import { times } from 'lodash';
 
 export type RewardServiceFactory = (game: GameService) => RewardService;
 
@@ -105,14 +105,12 @@ export class LadderRewardService extends RewardService {
 
     winners.forEach((winner) => {
       winner.stats.addGold(goldForGame);
-      winner.stats.addComponent(getRandomComponent(45));
+      winner.stats.addComponent(getRandomComponent(15));
     });
   }
 
-  protected giveLoserRewards(losers: Player[]) {
-    losers.forEach((loser) => {
-      loser.stats.addComponent(getRandomComponent(15));
-    });
+  protected giveLoserRewards(_losers: Player[]) {
+    // проигравшие не получают ничего
   }
 }
 
