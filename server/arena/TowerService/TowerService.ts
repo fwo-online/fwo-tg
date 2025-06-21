@@ -62,7 +62,7 @@ export class TowerService extends EventEmitter<{
       sumBy(game.players.nonBotPlayers, ({ lvl }) => lvl) / game.players.nonBotPlayers.length,
     );
     if (isBoss) {
-      const bossLvl = Math.round(averagePlayersLvl * (game.players.nonBotPlayers.length * 0.75));
+      const bossLvl = Math.round(averagePlayersLvl * game.players.nonBotPlayers.length);
       const boss = await createAlpha(bossLvl);
 
       game.players.add(boss);
