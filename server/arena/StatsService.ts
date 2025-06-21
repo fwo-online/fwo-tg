@@ -1,4 +1,3 @@
-import { get, set } from 'lodash';
 import { floatNumber } from '@/utils/floatNumber';
 import type {
   CharacterDynamicAttributes,
@@ -7,7 +6,7 @@ import type {
   PlayerPerformance,
 } from '@fwo/shared';
 import type { PhysAttributes } from '@fwo/shared';
-import { mapValues } from 'es-toolkit';
+import { get, set } from 'lodash';
 
 type CombineAll<T> = T extends { [name in keyof T]: infer Type } ? Type : never;
 
@@ -157,12 +156,8 @@ export default class StatsService {
 
   addComponent(component: ItemComponent | undefined) {
     if (component) {
-      this.collect.components = mapValues(this.collect.components, (value, key) => {
-        if (key === component) {
-          return (value ?? 0) + 1;
-        }
-        return value;
-      });
+      this.collect.components[component] ??= 0;
+      this.collect.components[component] += 1;
     }
   }
 

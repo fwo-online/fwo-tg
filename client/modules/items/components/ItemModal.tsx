@@ -1,13 +1,14 @@
 import { Card } from '@/components/Card';
-import type { Item } from '@fwo/shared';
 import { Modal } from '@/components/Modal';
-import type { ReactNode, FC } from 'react';
-import { ItemCharacterAttributes } from '@/modules/items/components/ItemCharacterAttribites';
+import { characterClassNameMap } from '@/constants/character';
+import { useCharacter } from '@/modules/character/store/character';
 import { ItemAttributes } from '@/modules/items/components/ItemAttributes';
+import { ItemCharacterAttributes } from '@/modules/items/components/ItemCharacterAttribites';
 import { ItemComponents } from '@/modules/items/components/ItemComponents';
 import { useItemType } from '@/modules/items/hooks/useItemType';
+import type { Item } from '@fwo/shared';
 import { sum } from 'es-toolkit/compat';
-import { useCharacter } from '@/modules/character/store/character';
+import type { FC, ReactNode } from 'react';
 
 export const ItemModal: FC<{
   item: Item;
@@ -15,17 +16,30 @@ export const ItemModal: FC<{
   footer?: ReactNode;
   showComponents?: boolean;
 }> = ({ item, trigger, footer, showComponents }) => {
+  const characterClass = useCharacter((character) => character.class);
   const attributes = useCharacter((character) => character.attributes);
   const types = useItemType(item);
 
+  const showClass = !item.class.includes(characterClass);
   const showCharacterAttributes = sum(Object.values(item.attributes)) > 0;
 
   return (
     <Modal trigger={trigger}>
       <Card header={item.info.name}>
         <div className="flex flex-col gap-2 p-2 pt-0!">
-          {types.length ? <h5 className="text-sm">{types.join(' ')}</h5> : null}
-          <h5 className="text-sm">Уровень {item.tier ?? 0}</h5>
+          <div className="flex flex-col">
+            {types.length ? <h5 className="text-sm">{types.join(' ')}</h5> : null}
+            <h5 className="text-sm">Уровень {item.tier ?? 0}</h5>
+            {showClass ? (
+              <h5 className="text-sm text-red-500">
+                Класс:
+                {item.class
+                  .map((characterClass) => characterClassNameMap[characterClass])
+                  .join(',')}
+              </h5>
+            ) : null}
+          </div>
+
           {item.info.description && <h5 className="text-sm">{item.info.description}</h5>}
 
           <div className="text-sm">

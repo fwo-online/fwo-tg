@@ -1,18 +1,18 @@
-import _ from 'lodash';
-import type { UpdateQuery } from 'mongoose';
 import { findCharacter, removeCharacter, updateCharacter } from '@/api/character';
 import arena from '@/arena';
-import config from '@/arena/config';
-import { CharacterInventory } from './CharacterInventory';
-import type { Char } from '@/models/character';
-import type { Character, CharacterClass, CharacterPublic, ItemComponent } from '@fwo/shared';
-import type { Item } from '@/models/item';
-import { CharacterResources } from './CharacterResources';
-import { ClanService } from '@/arena/ClanService';
 import { CharacterAttributes } from '@/arena/CharacterService/CharacterAttributes';
 import { CharacterPerformance } from '@/arena/CharacterService/CharacterPerformance';
 import { calculateLvl, calculateNextLvlExp } from '@/arena/CharacterService/utils/calculateLvl';
 import { toPublicObject } from '@/arena/CharacterService/utils/toPublicObject';
+import { ClanService } from '@/arena/ClanService';
+import config from '@/arena/config';
+import type { Char } from '@/models/character';
+import type { Item } from '@/models/item';
+import type { Character, CharacterClass, CharacterPublic, ItemComponent } from '@fwo/shared';
+import _ from 'lodash';
+import type { UpdateQuery } from 'mongoose';
+import { CharacterInventory } from './CharacterInventory';
+import { CharacterResources } from './CharacterResources';
 
 /**
  * Конструктор персонажа
@@ -116,6 +116,18 @@ export class CharacterService {
   /** @type {string[]} */
   set favoriteMagicList(value) {
     this.charObj.favoriteMagicList = value;
+  }
+
+  get lastFight() {
+    return this.charObj.lastFight;
+  }
+
+  get lastTower() {
+    return this.charObj.lastTower;
+  }
+
+  set lastTower(value: Date | null) {
+    this.charObj.lastTower = value;
   }
 
   async changeNickname(newNickname: string) {
@@ -296,7 +308,7 @@ export class CharacterService {
   async saveToDb() {
     try {
       console.log('Saving char :: id', this.id);
-      const { magics, skills, passiveSkills, clan } = this;
+      const { magics, skills, passiveSkills, clan, lastFight, lastTower } = this;
       const { gold, components, exp, free, bonus } = this.resources;
       const { items, equipment } = this.inventory;
 
@@ -318,6 +330,8 @@ export class CharacterService {
         harks: this.charObj.harks,
         items,
         equipment,
+        lastFight,
+        lastTower,
       });
     } catch (e) {
       console.error('Fail on CharSave:', e);

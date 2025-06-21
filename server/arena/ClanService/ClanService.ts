@@ -1,4 +1,3 @@
-import type { UpdateQuery } from 'mongoose';
 import {
   createClan,
   deleteClan,
@@ -13,12 +12,14 @@ import ValidationError from '@/arena/errors/ValidationError';
 import type { Clan } from '@/models/clan';
 import {
   type ClanPublic,
-  reservedClanName,
   type Clan as ClanSchema,
-  clanLvlCost,
   clanAcceptCostPerLvl,
   clanForgeCostMultiplier,
+  clanLvlCost,
+  monstersClanName,
+  reservedClanName,
 } from '@fwo/shared';
+import type { UpdateQuery } from 'mongoose';
 
 /**
  * Clan Service
@@ -59,7 +60,7 @@ export class ClanService {
    */
   static async createClan(charId: string, name: string) {
     const char = await CharacterService.getCharacterById(charId);
-    if (name === reservedClanName) {
+    if (name === reservedClanName || name === monstersClanName) {
       throw new ValidationError('Недопустимое название клана');
     }
     await char.resources.takeResources({ gold: clanLvlCost[0] });

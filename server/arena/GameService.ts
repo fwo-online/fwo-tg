@@ -1,16 +1,16 @@
+import EventEmitter from 'node:events';
 import { createGame } from '@/api/game';
-import type { Game } from '@/models/game';
+import arena from '@/arena';
 import type { LongItem } from '@/arena/Constuructors/LongMagicConstructor';
 import { engine } from '@/arena/EngineService';
-import { HistoryService, type HistoryItem } from '@/arena/HistoryService';
-import type * as magics from '@/arena/magics';
+import { type HistoryItem, HistoryService } from '@/arena/HistoryService';
 import OrderService from '@/arena/OrderService';
 import PlayersService, { type Player } from '@/arena/PlayersService';
 import { RoundService, RoundStatus } from '@/arena/RoundService';
-import arena from '@/arena';
-import { mapValues } from 'es-toolkit';
-import EventEmitter from 'node:events';
+import type * as magics from '@/arena/magics';
+import type { Game } from '@/models/game';
 import { type GameStatus, reservedClanName } from '@fwo/shared';
+import { mapValues } from 'es-toolkit';
 
 export type KickReason = 'afk' | 'run';
 
@@ -74,7 +74,7 @@ export default class GameService extends EventEmitter<{
   /**
    * Функция проверки окончания игры
    */
-  get isGameEnd(): boolean {
+  isGameEnd(): boolean {
     return (
       this.isTeamWin ||
       this.players.alivePlayers.length === 0 ||
@@ -285,7 +285,7 @@ export default class GameService extends EventEmitter<{
           this.players.reset();
           this.orders.reset();
           this.handleEndGameFlags();
-          if (this.isGameEnd) {
+          if (this.isGameEnd()) {
             this.round.unsubscribe();
             this.endGame();
           } else {

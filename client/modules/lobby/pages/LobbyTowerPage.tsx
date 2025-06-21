@@ -9,7 +9,7 @@ export const LobbyTowerPage = () => {
   return (
     <div className="h-full overflow-hidden flex flex-col">
       <Card header="Башня" className="m-4">
-        <div className="flex flex-col mt-4">
+        <div className="flex flex-col">
           <h5>Ищут игру</h5>
           <LobbyList searchers={searchers} />
         </div>

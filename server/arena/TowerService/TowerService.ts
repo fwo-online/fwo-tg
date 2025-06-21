@@ -1,20 +1,15 @@
-import type GameService from '@/arena/GameService';
-import MiscService from '@/arena/MiscService';
-import { createWolf } from '@/arena/MonsterService/monsters/wolf';
 import EventEmitter from 'node:events';
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
+import type GameService from '@/arena/GameService';
+import MiscService from '@/arena/MiscService';
+import { createAlpha } from '@/arena/MonsterService/monsters/alpha';
+import { createWolf } from '@/arena/MonsterService/monsters/wolf';
 import { createTowerGame } from '@/helpers/gameHelper';
+import { sumBy } from 'es-toolkit';
 
-export enum TowerStatus {
-  WAITING = 'WAITING',
-  BATTLE = 'BATTLE',
-  BOSS_BATTLE = 'BOSS_BATTLE',
-  FINISHED = 'FINISHED',
-}
-
-const timeout = 30 * 1000;
-const time = timeout * 20;
+const timeout = 30 * 1000; // 30s
+const time = timeout * 20; // 10m
 
 export class TowerService extends EventEmitter<{
   start: [tower: TowerService];
@@ -24,16 +19,17 @@ export class TowerService extends EventEmitter<{
 }> {
   id: string;
   players: string[];
-  status: TowerStatus = TowerStatus.WAITING;
   currentGame?: GameService;
   checkInterval?: Timer;
   timeSpent: number;
+  startedAt: number;
 
   constructor(players: string[]) {
     super();
     this.id = `tower_${Date.now()}`;
     this.players = players;
     this.timeSpent = 0;
+    this.startedAt = Date.now();
   }
 
   static emitter = new EventEmitter<{ start: [TowerService] }>();
@@ -56,24 +52,28 @@ export class TowerService extends EventEmitter<{
   }
 
   async startFight(isBoss = false) {
-    this.status = isBoss ? TowerStatus.BOSS_BATTLE : TowerStatus.BATTLE;
-
-    const monsterLevel = isBoss ? 30 : MiscService.randInt(10, 20);
-    const monster = await createWolf(monsterLevel);
-
     const game = await createTowerGame(this.players, isBoss);
 
     if (!game) {
       throw new Error('Failed to create game');
     }
 
-    game.players.add(monster);
+    const averagePlayersLvl = Math.round(
+      sumBy(game.players.nonBotPlayers, ({ lvl }) => lvl) / game.players.nonBotPlayers.length,
+    );
+    if (isBoss) {
+      const bossLvl = Math.round(averagePlayersLvl * (game.players.nonBotPlayers.length * 0.75));
+      const boss = await createAlpha(bossLvl);
+
+      game.players.add(boss);
+    } else {
+      const monsterLvl = Math.round(averagePlayersLvl * (game.players.nonBotPlayers.length * 0.5));
+      const monster = await createWolf(monsterLvl);
+
+      game.players.add(monster);
+    }
 
     this.currentGame = game;
-
-    game.on('startOrders', () => {
-      monster.ai.makeOrder(game);
-    });
 
     game.on('end', () => {
       const win = game.players.aliveNonBotPlayers.length > 0;
@@ -83,22 +83,15 @@ export class TowerService extends EventEmitter<{
     this.emit('battleStart', game, isBoss);
   }
 
-  async giveReward() {
-    //...
-  }
-
   async handleBattleEnd(game: GameService, wasBossBattle: boolean, win: boolean) {
-    if (win) {
-      await this.giveReward();
-    }
-
-    this.status = TowerStatus.WAITING;
     this.currentGame = undefined;
 
     this.emit('battleEnd', game, win);
 
     if (wasBossBattle || !win) {
-      await this.finish();
+      await this.endTower();
+    } else {
+      this.initHandlers();
     }
   }
 
@@ -113,24 +106,21 @@ export class TowerService extends EventEmitter<{
         return;
       }
 
-      if (MiscService.dice('1d100') <= 10) {
+      if (MiscService.dice('1d100') >= 80) {
         clearInterval(this.checkInterval);
         await this.startFight(false);
       }
-    }, timeout); // 30 секунд
+    }, timeout);
   }
 
-  async finish() {
-    if (this.status === TowerStatus.FINISHED) {
-      return;
-    }
-
-    this.status = TowerStatus.FINISHED;
+  async endTower() {
     this.players.forEach((playerId) => {
       const char = arena.characters[playerId];
       if (char) {
         char.towerID = '';
         char.gameId = '';
+        char.lastTower = new Date();
+        void char.saveToDb();
       }
     });
 

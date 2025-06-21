@@ -1,7 +1,7 @@
-import mongoose, { Schema, type Types, type Model } from 'mongoose';
 import type { Clan } from '@/models/clan';
-import type { CharacterAttributes, CharacterClass, ItemComponent, ItemWear } from '@fwo/shared';
 import type { Item } from '@/models/item';
+import type { CharacterAttributes, CharacterClass, ItemComponent, ItemWear } from '@fwo/shared';
+import mongoose, { Schema, type Types, type Model } from 'mongoose';
 
 export interface Char {
   _id: Types.ObjectId;
@@ -24,6 +24,7 @@ export interface Char {
   free: number;
   sex: 'm' | 'f';
   lastFight: Date | null;
+  lastTower: Date | null;
   psr: number;
   magics?: Record<string, number>;
   skills?: Record<string, number>;
@@ -138,6 +139,7 @@ const character = new Schema<Char, CharModel>({
     of: Number,
     default: {},
   },
+  lastTower: { type: Schema.Types.Date, default: null },
 });
 
 character.loadClass(Char);

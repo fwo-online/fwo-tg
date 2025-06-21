@@ -4,7 +4,7 @@ import { MonsterAI, MonsterService } from '@/arena/MonsterService/MonsterService
 import { ItemModel } from '@/models/item';
 import { ItemWear, MonsterType } from '@fwo/shared';
 
-class WolfAI extends MonsterAI {
+class AlfaAI extends MonsterAI {
   makeOrder(game: GameService) {
     if (!this.monster.alive) {
       return;
@@ -37,29 +37,29 @@ class WolfAI extends MonsterAI {
   }
 }
 
-export const createWolf = async (lvl = 1) => {
-  const fang = await ItemModel.findOneAndUpdate({ code: 'fang' }, arena.items.fang, {
+export const createAlpha = async (lvl = 1) => {
+  const claws = await ItemModel.findOneAndUpdate({ code: 'claws' }, arena.items.fang, {
     upsert: true,
     new: true,
   }).orFail();
 
   return MonsterService.create(
     {
-      nickname: '🐺Волк',
+      nickname: '🐺Альфа',
       harks: {
-        str: Math.round(lvl * 4 + 20),
+        str: Math.round(lvl * 6 + 20),
         dex: Math.round(lvl * 1 + 10),
         int: Math.round(lvl * 0.5 + 3),
         wis: Math.round(lvl * 0.5 + 3),
-        con: Math.round(lvl * 4 + 20),
+        con: Math.round(lvl * 6 + 20),
       },
-      magics: { bleeding: 1 },
+      magics: { bleeding: 3 },
       skills: {},
-      passiveSkills: { lacerate: 1 },
-      items: [fang],
-      equipment: new Map([[ItemWear.TwoHands, fang]]),
+      passiveSkills: { lacerate: 3 },
+      items: [claws],
+      equipment: new Map([[ItemWear.TwoHands, claws]]),
     },
     MonsterType.Wolf,
-    WolfAI,
+    AlfaAI,
   );
 };

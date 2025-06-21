@@ -24,7 +24,7 @@ export abstract class MonsterAI {
 
 export type MonsterParams = Pick<
   Char,
-  'id' | 'nickname' | 'harks' | 'magics' | 'skills' | 'passiveSkills' | 'items' | 'equipment'
+  'nickname' | 'harks' | 'magics' | 'skills' | 'passiveSkills' | 'items' | 'equipment'
 >;
 
 export class MonsterService extends PlayerService {
@@ -42,15 +42,19 @@ export class MonsterService extends PlayerService {
     this.ai = new AIClass(this);
   }
 
-  static create(
+  static async create(
     params: MonsterParams,
     type: MonsterType,
     AIClass: new (monster: MonsterService) => MonsterAI,
   ) {
-    const monster = new CharacterService(stubParams(params));
+    const monster = new CharacterService(await stubParams(params));
 
     arena.characters[monster.id] = monster;
 
     return new MonsterService(monster, type, AIClass);
+  }
+
+  static isMonster(player: PlayerService): player is MonsterService {
+    return player.isBot;
   }
 }
