@@ -6,7 +6,7 @@ import MiscService from '@/arena/MiscService';
 import type PlayersService from '@/arena/PlayersService';
 import type { Player } from '@/arena/PlayersService';
 import { getRandomComponent } from '@/utils/getRandomComponent';
-import { type GameResult, reservedClanName } from '@fwo/shared';
+import { type GameResult, ItemComponent, reservedClanName } from '@fwo/shared';
 import { differenceBy, mapValues, noop } from 'es-toolkit';
 import { times } from 'lodash';
 
@@ -133,6 +133,7 @@ export class TowerRewardService extends RewardService {
             const item = await ItemService.createRandomItem(character.charObj, { tier: 2 });
             await character.inventory.addItem(item.toObject());
 
+            winner.stats.addComponent(ItemComponent.Arcanite);
             winner.stats.addItem(item.toObject());
           } else {
             times(MiscService.randInt(1, 5), () => {
