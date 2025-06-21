@@ -1,30 +1,24 @@
+// import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
-import { useMountEffect } from '@/hooks/useMountEffect';
-import { CharacterImage } from '@/modules/character/components/CharacterImage';
-import { useSocket } from '@/stores/socket';
-import type { CharacterPublic } from '@fwo/shared';
-import { useState } from 'react';
+import { Player } from '@/components/Player';
+import { useTower } from '@/modules/tower/hooks/useTower';
 
 export const TowerPage = () => {
-  const socket = useSocket();
-  const [players, setPlayers] = useState<Record<string, CharacterPublic>>({});
-
-  useMountEffect(() => {
-    socket.emitWithAck('tower:connected').then((res) => {
-      if (!res.error) {
-        setPlayers(res.players);
-      }
-    });
-  });
+  const { players, startedAt } = useTower();
+  const time = new Date(Date.now() - startedAt).toISOString().substring(14, 19);
 
   return (
-    <Card header="Башня">
-      {Object.entries(players).map(([id, player]) => (
-        <div key={id}>
-          <CharacterImage characterClass={player.class} small />
-          {player.name}
-        </div>
-      ))}
+    <Card header="Башня" className="m-4">
+      <div className="flex justify-between items-center mb-4">
+        {time}
+        {/* <Button>Выход</Button> */}
+      </div>
+      <div className="flex flex-col">
+        <h5>Игроки</h5>
+        {Object.entries(players).map(([id, player]) => (
+          <Player key={id} class={player.class} name={player.name} lvl={player.lvl} />
+        ))}
+      </div>
     </Card>
   );
 };

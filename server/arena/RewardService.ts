@@ -137,7 +137,7 @@ export class TowerRewardService extends RewardService {
 
             winner.stats.addItem(item.toObject());
           } else {
-            times(MiscService.randInt(2, 7), () => {
+            times(MiscService.randInt(1, 5), () => {
               winner.stats.addComponent(getRandomComponent(100));
             });
           }

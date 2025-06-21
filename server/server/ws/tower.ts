@@ -1,7 +1,6 @@
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
 import { TowerService } from '@/arena/TowerService/TowerService';
-import { broadcast } from '@/helpers/channelHelper';
 import { activeConnections } from '@/server/utils/activeConnectons';
 import type { Server, Socket } from '@/server/ws';
 import { keyBy } from 'es-toolkit';
@@ -24,21 +23,10 @@ export const onCreate = (io: Server) => {
       }),
     ).catch((e) => console.log('MM start fail:: ', e));
 
-    console.log('send');
     io.to(getRoom(tower)).emit('tower:start', tower.id);
 
     tower.on('end', () => {
       io.to(getRoom(tower)).emit('tower:end');
-    });
-
-    tower.on('battleStart', async () => {
-      await broadcast('Вы встречаете на своём пути монстра!');
-    });
-
-    tower.on('battleEnd', async (_, win) => {
-      if (win) {
-        await broadcast('Вы побеждате монстра!');
-      }
     });
   });
 };
@@ -58,7 +46,10 @@ export const onConnection = (_io: Server, socket: Socket) => {
           return char.toObject();
         }),
       );
-      return callback({ players: keyBy(players, ({ id }) => id) });
+      return callback({
+        players: keyBy(players, ({ id }) => id),
+        startedAt: character.currentTower.startedAt,
+      });
     } catch (e) {
       console.error(e);
       return callback({ error: true, message: 'Что-то пошло не так' });

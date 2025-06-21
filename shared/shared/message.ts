@@ -1,11 +1,11 @@
-import type { CharacterPublic } from '@/character/characterPublic';
 import type { Character } from '@/character';
-import type { Player } from './player';
+import type { CharacterPublic } from '@/character/characterPublic';
+import type { ClanPublic } from '@/clan';
 import type { GameStatus, GameType } from '@/game';
 import type { Action } from './action';
-import type { RPC } from './rpc';
 import type { Order } from './orderSchema';
-import type { ClanPublic } from '@/clan';
+import type { Player } from './player';
+import type { RPC } from './rpc';
 
 export type OrderResponse = RPC<{
   actions: Action[];
@@ -41,7 +41,9 @@ export type ClientToServerMessage = Message<{
   'game:orderReset': [callback: (payload: OrderResponse) => void];
   'game:orderRemove': [id: string, callback: (payload: OrderResponse) => void];
   'tower:connected': [
-    callback: (payload: RPC<{ players: Record<string, CharacterPublic> }>) => void,
+    callback: (
+      payload: RPC<{ players: Record<string, CharacterPublic>; startedAt: number }>,
+    ) => void,
   ];
 }>;
 
