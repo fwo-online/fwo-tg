@@ -55,7 +55,7 @@ export const createAlpha = async (lvl = 1) => {
       },
       magics: { bleeding: 3 },
       skills: {},
-      passiveSkills: { lacerate: 3 },
+      passiveSkills: { lacerate: 3, nightcall: 1 },
       items: [claws],
       equipment: new Map([[ItemWear.TwoHands, claws]]),
     },

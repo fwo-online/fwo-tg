@@ -55,7 +55,7 @@ export const createWolf = async (lvl = 1) => {
       },
       magics: { bleeding: 1 },
       skills: {},
-      passiveSkills: { lacerate: 1 },
+      passiveSkills: { lacerate: 1, nightcall: 1 },
       items: [fang],
       equipment: new Map([[ItemWear.TwoHands, fang]]),
     },
