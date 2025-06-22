@@ -2,7 +2,7 @@ import { EventEmitter } from 'node:events';
 import ValidationError from '@/arena/errors/ValidationError';
 import type { GameType } from '@fwo/shared';
 import { mapValues } from 'es-toolkit';
-import { some } from 'es-toolkit/compat';
+import { every, some } from 'es-toolkit/compat';
 import {
   LadderQueue,
   type Queue,
@@ -124,7 +124,8 @@ class MatchMaking extends EventEmitter<{
   main(type: GameType) {
     this.stop(type);
     const queue = this.allQueue[type];
-    if (queue.open && queue.checkStatus()) {
+    /** @todo проверять только текущий тип очереди, когда башня будет в отдельных каналах  */
+    if (every(this.allQueue, (queue) => queue.open) && queue.checkStatus()) {
       this.timers[type] = setTimeout(() => {
         this.start(type);
       }, config.startGameTimeout);

@@ -35,6 +35,7 @@ export class TowerService extends EventEmitter<{
   static emitter = new EventEmitter<{ start: [TowerService] }>();
 
   async createTower() {
+    console.debug('Tower debug:: create tower', this.id);
     arena.towers[this.id] = this;
 
     this.players.forEach((playerId) => {
@@ -52,6 +53,7 @@ export class TowerService extends EventEmitter<{
   }
 
   async startFight(isBoss = false) {
+    console.debug('Tower debug:: start game: boss', isBoss);
     const game = await createTowerGame(this.players, isBoss);
 
     if (!game) {
@@ -61,6 +63,7 @@ export class TowerService extends EventEmitter<{
     const averagePlayersLvl = Math.round(
       sumBy(game.players.nonBotPlayers, ({ lvl }) => lvl) / game.players.nonBotPlayers.length,
     );
+    console.log('Tower debug:: average lvl', averagePlayersLvl);
     if (isBoss) {
       const bossLvl = Math.round(averagePlayersLvl * game.players.nonBotPlayers.length);
       const boss = await createAlpha(bossLvl);
@@ -86,6 +89,7 @@ export class TowerService extends EventEmitter<{
   async handleBattleEnd(game: GameService, wasBossBattle: boolean, win: boolean) {
     this.currentGame = undefined;
 
+    console.debug('Tower debug:: battle end', 'win:', win, 'boss:', wasBossBattle);
     this.emit('battleEnd', game, win);
 
     if (wasBossBattle || !win) {
@@ -99,6 +103,7 @@ export class TowerService extends EventEmitter<{
     this.checkInterval = setInterval(async () => {
       this.timeSpent += timeout;
       const timeLeft = time - this.timeSpent;
+      console.debug('Tower debug:: time left:', timeLeft, 'time spent:', this.timeSpent);
 
       if (timeLeft <= 0) {
         clearInterval(this.checkInterval);

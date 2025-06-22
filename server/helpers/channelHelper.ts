@@ -1,7 +1,7 @@
 import arena from '@/arena';
-import { bold } from '@/utils/formatString';
-import { profsData } from '@/data/profs';
 import { bot } from '@/bot';
+import { profsData } from '@/data/profs';
+import { bold } from '@/utils/formatString';
 
 const MAX_MESSAGE_LENGTH = 2 ** 12;
 export const BOT_CHAT_ID = process.env.BOT_CHATID || -1001483444452;
@@ -39,11 +39,22 @@ export async function broadcast(data: string, id: number | string = BOT_CHAT_ID)
 }
 
 export const initGameChannel = async () => {
-  arena.mm.on('push', ({ id }) => {
+  arena.mm.on('push', ({ id, queue }) => {
     const character = arena.characters[id];
-    if (character) {
+    if (!character) {
+      console.error('mm push error:::', id);
+      return;
+    }
+
+    if (queue === 'ladder') {
       broadcast(
         `Игрок ${character.clan ? `\\[${character.clan.name}\] ` : ''}${bold(character.nickname)} (${profsData[character.prof].icon}${character.lvl}) начал поиск игры!`,
+      );
+    }
+
+    if (queue === 'tower') {
+      broadcast(
+        `Игрок ${character.clan ? `\\[${character.clan.name}\] ` : ''}${bold(character.nickname)} (${profsData[character.prof].icon}${character.lvl}) планирует поход в башню!`,
       );
     }
   });
