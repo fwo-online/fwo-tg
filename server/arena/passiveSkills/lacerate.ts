@@ -1,5 +1,5 @@
-import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
 import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConstructor';
+import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
 import { bleeding } from '@/arena/magics';
 
 class Lacerate extends PassiveSkillConstructor implements Affect {
@@ -37,7 +37,6 @@ class Lacerate extends PassiveSkillConstructor implements Affect {
     }
 
     bleeding.applyContext(context);
-    bleeding.run();
     bleeding.postRun(initiator, target, game);
 
     return this.getSuccessResult({ initiator, target, game });

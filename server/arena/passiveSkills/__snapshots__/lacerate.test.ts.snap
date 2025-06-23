@@ -1,0 +1,13 @@
+// Bun Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lacerate should apply bleeding 1`] = `
+"*quisquam* пустил кровь *labore* _Оружием_ и нанёс *7.2* урона
+\\[ labore 💥 💔-7.2/0.8 📖58 ]
+
+_🩸Рассечение_ *quisquam*"
+`;
+
+exports[`lacerate should apply bleeding 2`] = `
+"⏳5 *quisquam* вызвал эффект _🩸Кровотечение_ на *labore*, нанеся 5.23 урона
+\\[ labore 💥 💔-5.23/-4.43 📖50 ]"
+`;
