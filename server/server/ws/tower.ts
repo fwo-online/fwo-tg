@@ -35,20 +35,22 @@ export const onConnection = (_io: Server, socket: Socket) => {
   const { character } = socket.data;
 
   socket.on('tower:connected', async (callback) => {
-    if (!character.currentTower) {
+    const tower = character.currentTower;
+    if (!tower) {
       return callback({ error: true, message: 'Вы не в башне' });
     }
 
     try {
       const players = await Promise.all(
-        character.currentTower.players.map(async (id) => {
+        tower.players.map(async (id) => {
           const char = await CharacterService.getCharacterById(id);
           return char.toObject();
         }),
       );
       return callback({
         players: keyBy(players, ({ id }) => id),
-        startedAt: character.currentTower.startedAt,
+        timeSpent: tower.timeSpent,
+        timeLeft: tower.timeLeft,
       });
     } catch (e) {
       console.error(e);

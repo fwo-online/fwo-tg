@@ -6,30 +6,30 @@ import MiscService from '@/arena/MiscService';
 import { createAlpha } from '@/arena/MonsterService/monsters/alpha';
 import { createWolf } from '@/arena/MonsterService/monsters/wolf';
 import { createTowerGame } from '@/helpers/gameHelper';
-import { sumBy } from 'es-toolkit';
 
-const timeout = 30 * 1000; // 30s
-const time = timeout * 20; // 10m
+const timeout = 10 * 1000; // 10s
+const timeLeft = timeout * 48; // 8m;
 
 export class TowerService extends EventEmitter<{
   start: [tower: TowerService];
   battleStart: [game: GameService, isBoss: boolean];
   battleEnd: [game: GameService, victory: boolean];
+  updateTime: [timeSpent: number, timeLeft: number];
   end: [];
 }> {
-  id: string;
+  id = `tower_${Date.now()}`;
+  timeSpent = 0;
+  timeLeft = timeLeft;
+  battlesCount = 0;
+
   players: string[];
   currentGame?: GameService;
   checkInterval?: Timer;
-  timeSpent: number;
-  startedAt: number;
 
   constructor(players: string[]) {
     super();
     this.id = `tower_${Date.now()}`;
     this.players = players;
-    this.timeSpent = 0;
-    this.startedAt = Date.now();
   }
 
   static emitter = new EventEmitter<{ start: [TowerService] }>();
@@ -60,17 +60,19 @@ export class TowerService extends EventEmitter<{
       throw new Error('Failed to create game');
     }
 
-    const averagePlayersLvl = Math.round(
-      sumBy(game.players.nonBotPlayers, ({ lvl }) => lvl) / game.players.nonBotPlayers.length,
-    );
-    console.log('Tower debug:: average lvl', averagePlayersLvl);
+    this.battlesCount++;
+
+    const maxPlayerLvl = game.players.nonBotPlayers.reduce((max, { lvl }) => Math.max(lvl, max), 0);
+    console.debug('Tower debug:: max player lvl', maxPlayerLvl);
     if (isBoss) {
-      const bossLvl = Math.round(averagePlayersLvl * game.players.nonBotPlayers.length);
+      const bossLvl = Math.round(maxPlayerLvl * game.players.nonBotPlayers.length * 1.25);
       const boss = await createAlpha(bossLvl);
 
       game.players.add(boss);
     } else {
-      const monsterLvl = Math.round(averagePlayersLvl * (game.players.nonBotPlayers.length * 0.5));
+      const monsterLvl = Math.round(
+        maxPlayerLvl * (game.players.nonBotPlayers.length * (0.33 + 0.2 * this.battlesCount)),
+      );
       const monster = await createWolf(monsterLvl);
 
       game.players.add(monster);
@@ -81,6 +83,12 @@ export class TowerService extends EventEmitter<{
     game.on('end', () => {
       const win = game.players.aliveNonBotPlayers.length > 0;
       this.handleBattleEnd(game, isBoss, win);
+    });
+
+    game.on('endRound', ({ dead }) => {
+      dead.forEach((player) => {
+        this.players.filter((id) => player.id !== id);
+      });
     });
 
     this.emit('battleStart', game, isBoss);
@@ -102,19 +110,33 @@ export class TowerService extends EventEmitter<{
   async initHandlers() {
     this.checkInterval = setInterval(async () => {
       this.timeSpent += timeout;
-      const timeLeft = time - this.timeSpent;
-      console.debug('Tower debug:: time left:', timeLeft, 'time spent:', this.timeSpent);
+      this.timeLeft -= timeout;
+      console.debug('Tower debug:: time left:', this.timeLeft, 'time spent:', this.timeSpent);
 
-      if (timeLeft <= 0) {
+      if (this.timeLeft <= 0) {
         clearInterval(this.checkInterval);
         await this.startFight(true);
         return;
       }
 
-      if (MiscService.dice('1d100') >= 80) {
+      if (this.battlesCount > 3) {
+        this.emit('updateTime', this.timeSpent, this.timeLeft);
+        return;
+      }
+
+      if (MiscService.dice('1d100') >= 95) {
         clearInterval(this.checkInterval);
         await this.startFight(false);
+        return;
       }
+
+      if (this.timeSpent > this.timeLeft && this.battlesCount === 0) {
+        clearInterval(this.checkInterval);
+        await this.startFight(false);
+        return;
+      }
+
+      this.emit('updateTime', this.timeSpent, this.timeLeft);
     }, timeout);
   }
 

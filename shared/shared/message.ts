@@ -42,7 +42,11 @@ export type ClientToServerMessage = Message<{
   'game:orderRemove': [id: string, callback: (payload: OrderResponse) => void];
   'tower:connected': [
     callback: (
-      payload: RPC<{ players: Record<string, CharacterPublic>; startedAt: number }>,
+      payload: RPC<{
+        players: Record<string, CharacterPublic>;
+        timeSpent: number;
+        timeLeft: number;
+      }>,
     ) => void,
   ];
 }>;
@@ -83,4 +87,5 @@ export type ServerToClientMessage = Message<{
   'game:preKick': [{ reason: string; player: Player }];
   'tower:start': [towerID: string];
   'tower:end': [];
+  'tower:updateTime': [timeSpent: number, timeLeft: number];
 }>;
