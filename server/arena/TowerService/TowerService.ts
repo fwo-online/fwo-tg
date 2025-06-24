@@ -10,7 +10,7 @@ import { createTowerGame } from '@/helpers/gameHelper';
 import { ClanModel } from '@/models/clan';
 import { Types } from 'mongoose';
 
-const timeout = 10 * 100; // 10s
+const timeout = 10 * 500; // 10s
 const timeLeft = timeout * 48; // 8m;
 
 export class TowerService extends EventEmitter<{
