@@ -34,8 +34,8 @@ describe('beastCall', () => {
     beastCall.cast(game.players.players[0], game.players.players[0], game)
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
-    expect(game.players.players.length).toBe(3);
-    expect(game.players.players).toMatchObject([{ nick: game.players.players[0].nick}, { nick: '🐺 Волк 1'}, { nick: '🐺 Волк 2'}])
+    expect(game.players.players.length).toBe(4);
+    expect(game.players.players).toMatchObject([{ nick: game.players.players[0].nick}, { nick: '🐺 Волк 1'}, { nick: '🐺 Волк 2'}, { nick: '🐺 Волк 3'}])
   });
 
 });

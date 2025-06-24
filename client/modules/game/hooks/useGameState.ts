@@ -35,6 +35,14 @@ export function useGameState() {
     [setRound, setStatusByClan],
   );
 
+  const handlePlayers = useCallback(
+    ({ players, clans }: Parameters<ServerToClientMessage['game:players']>[0]) => {
+      setPlayers(players);
+      setClans(clans);
+    },
+    [setPlayers, setClans],
+  );
+
   const handleStartOrders = useCallback(
     ({
       actions,
@@ -85,6 +93,7 @@ export function useGameState() {
     }
   });
 
+  useSocketListener('game:players', handlePlayers);
   useSocketListener('game:startRound', handleStartRound);
   useSocketListener('game:startOrders', handleStartOrders);
   useSocketListener('game:endOrders', handleEndOrders);

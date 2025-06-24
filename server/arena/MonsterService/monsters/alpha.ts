@@ -14,7 +14,7 @@ class AlfaAI extends MonsterAI {
     }
 
     if (
-      (MiscService.dice('1d50') ||
+      (MiscService.dice('1d100') > 50 ||
         this.monster.stats.val('hp') < this.monster.stats.val('base.hp') / 2) &&
       !this.beastCallUsed
     ) {

@@ -40,6 +40,7 @@ export default class GameService extends EventEmitter<{
   kick: [{ reason: string; player: Player }];
   startRound: [{ round: number; status: Record<string, GameStatus[]> }];
   endRound: [{ dead: Player[]; log: HistoryItem[] }];
+  players: [players: Player[]];
 }> {
   players: PlayersService;
   orders: OrderService;
@@ -349,6 +350,11 @@ export default class GameService extends EventEmitter<{
    */
   forAllPlayers(f: (player: Player) => void): void {
     this.players.players.forEach((p) => f.call(this, p));
+  }
+
+  addPlayers(players: Player[]) {
+    players.forEach((player) => this.players.add(player));
+    this.emit('players', this.players.players);
   }
 
   getStatus() {

@@ -130,14 +130,14 @@ export async function createTower(players: string[]) {
   });
 
   tower.on('battleStart', async () => {
-    await broadcast('Монстр нападает на путников!');
+    await broadcast('Монстры нападают на путников!');
   });
 
   tower.on('battleEnd', async (_, win) => {
     if (win) {
-      await broadcast('Монстр побеждён!');
+      await broadcast('Монстры побеждён!');
     } else {
-      await broadcast('Монстр победил путников!');
+      await broadcast('Монстры победил путников!');
     }
   });
 

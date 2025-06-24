@@ -78,11 +78,11 @@ export class TowerService extends EventEmitter<{
     if (isBoss) {
       const boss = createAlpha(this.getMonsterLvl(true));
 
-      game.players.add(boss);
+      game.addPlayers([boss]);
     } else {
       const monster = createWolf(this.getMonsterLvl(false));
 
-      game.players.add(monster);
+      game.addPlayers([monster]);
     }
   }
 

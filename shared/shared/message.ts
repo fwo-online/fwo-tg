@@ -85,6 +85,12 @@ export type ServerToClientMessage = Message<{
   ];
   'game:kick': [{ reason: string; player: Player }];
   'game:preKick': [{ reason: string; player: Player }];
+  'game:players': [
+    {
+      players: Record<string, Player>;
+      clans: Record<string, ClanPublic>;
+    },
+  ];
   'tower:start': [towerID: string];
   'tower:end': [];
   'tower:updateTime': [timeSpent: number, timeLeft: number];

@@ -44,6 +44,21 @@ export const onCreate = (io: Server) => {
       io.to(getRoom(game)).emit('game:startRound', e);
     });
 
+    game.on('players', () => {
+      const players = keyBy(
+        game.players.players.map((player) => player.toObject()),
+        ({ id }) => id,
+      );
+      const clans = Object.values(players).reduce<Record<string, ClanPublic>>((acc, { clan }) => {
+        if (clan) {
+          acc[clan.id] = clan;
+        }
+        return acc;
+      }, {});
+
+      io.to(getRoom(game)).emit('game:players', { players, clans });
+    });
+
     game.on('endRound', ({ dead }) => {
       dead.forEach((player) => {
         io.in(getRoom(game, player.id)).emit('game:end');

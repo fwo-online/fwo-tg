@@ -1,8 +1,8 @@
+import { createWolf } from '@/arena/MonsterService/monsters/wolf';
 import { bold, italic } from '@/utils/formatString';
+import { times } from 'es-toolkit/compat';
 import { Skill } from '../Constuructors/SkillConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
-import { createWolf } from '@/arena/MonsterService/monsters/wolf';
-import { times } from 'es-toolkit/compat';
 
 /**
  * Берсерк
@@ -20,7 +20,7 @@ class BeastCall extends Skill {
       orderType: 'self',
       aoeType: 'target',
       chance: [90, 95, 100],
-      effect: [1, 2, 3],
+      effect: [2, 3, 4],
       profList: {},
       bonusCost: [0, 0, 0],
     });
@@ -31,9 +31,10 @@ class BeastCall extends Skill {
     const initiatorMagicLvl = initiator.skills[this.name];
     const effect = this.effect[initiatorMagicLvl - 1] || 1;
 
-    times(effect).forEach((i) => {
-      game.players.add(createWolf(initiator.lvl - 5, (i + 1).toString()));
+    const wolfs = times(effect).map((i) => {
+      return createWolf(initiator.lvl, (i + 1).toString());
     });
+    game.addPlayers(wolfs);
 
     this.calculateExp();
   }
