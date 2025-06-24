@@ -54,16 +54,27 @@ export const initGameChannel = async () => {
 
     if (queue === 'tower') {
       broadcast(
-        `Игрок ${character.clan ? `\\[${character.clan.name}\] ` : ''}${bold(character.nickname)} (${profsData[character.prof].icon}${character.lvl}) планирует поход в башню!`,
+        `Игрок ${bold(character.nickname)} (${profsData[character.prof].icon}${character.lvl}) планирует поход в башню!`,
       );
     }
   });
 
-  arena.mm.on('pull', ({ id }) => {
+  arena.mm.on('pull', ({ id, queue }) => {
     const character = arena.characters[id];
-    if (character) {
+    if (!character) {
+      console.error('mm pull error:::', id);
+      return;
+    }
+
+    if (queue === 'ladder') {
       broadcast(
         `Игрок ${character.clan ? `\\[${character.clan.name}\] ` : ''}${bold(character.nickname)} (${profsData[character.prof].icon}${character.lvl}) передумал...`,
+      );
+    }
+
+    if (queue === 'tower') {
+      broadcast(
+        `Игрок ${bold(character.nickname)} (${profsData[character.prof].icon}${character.lvl}) передумал...`,
       );
     }
   });

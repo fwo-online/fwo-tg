@@ -1,5 +1,3 @@
-import arena from '@/arena';
-import { CharacterService } from '@/arena/CharacterService';
 import { TowerService } from '@/arena/TowerService/TowerService';
 import { activeConnections } from '@/server/utils/activeConnectons';
 import type { Server, Socket } from '@/server/ws';
@@ -12,13 +10,12 @@ const getRoom = (tower: TowerService) => {
 export const onCreate = (io: Server) => {
   TowerService.emitter.on('start', async (tower) => {
     await Promise.all(
-      tower.players.map(async (id) => {
-        const player = arena.characters[id];
-        const socket = activeConnections.get(player.owner);
+      tower.characters.map(async (character) => {
+        const socket = activeConnections.get(character.owner);
         if (socket) {
           await socket.join(getRoom(tower));
         } else {
-          console.log('no connections found: ', player.id);
+          console.log('no connections found: ', character.id);
         }
       }),
     ).catch((e) => console.log('MM start fail:: ', e));
@@ -27,6 +24,10 @@ export const onCreate = (io: Server) => {
 
     tower.on('end', () => {
       io.to(getRoom(tower)).emit('tower:end');
+    });
+
+    tower.on('updateTime', (timeSpent, timeLeft) => {
+      io.to(getRoom(tower)).emit('tower:updateTime', timeSpent, timeLeft);
     });
   });
 };
@@ -41,14 +42,11 @@ export const onConnection = (_io: Server, socket: Socket) => {
     }
 
     try {
-      const players = await Promise.all(
-        tower.players.map(async (id) => {
-          const char = await CharacterService.getCharacterById(id);
-          return char.toObject();
-        }),
-      );
       return callback({
-        players: keyBy(players, ({ id }) => id),
+        players: keyBy(
+          tower.characters.map((character) => character.toObject()),
+          ({ id }) => id,
+        ),
         timeSpent: tower.timeSpent,
         timeLeft: tower.timeLeft,
       });

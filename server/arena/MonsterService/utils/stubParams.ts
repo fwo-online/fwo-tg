@@ -8,5 +8,5 @@ export const stubParams = (params: MonsterParams) => {
 
   char.clan = clan;
 
-  return char.populate(['items', 'equipment']);
+  return char;
 };

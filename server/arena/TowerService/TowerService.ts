@@ -5,9 +5,12 @@ import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
 import { createAlpha } from '@/arena/MonsterService/monsters/alpha';
 import { createWolf } from '@/arena/MonsterService/monsters/wolf';
+import type { Player } from '@/arena/PlayersService';
 import { createTowerGame } from '@/helpers/gameHelper';
+import { ClanModel } from '@/models/clan';
+import { Types } from 'mongoose';
 
-const timeout = 10 * 1000; // 10s
+const timeout = 10 * 100; // 10s
 const timeLeft = timeout * 48; // 8m;
 
 export class TowerService extends EventEmitter<{
@@ -22,80 +25,101 @@ export class TowerService extends EventEmitter<{
   timeLeft = timeLeft;
   battlesCount = 0;
 
-  players: string[];
+  lvl: number;
+  init: string[];
   currentGame?: GameService;
   checkInterval?: Timer;
 
-  constructor(players: string[]) {
+  constructor(init: string[], lvl: number) {
     super();
     this.id = `tower_${Date.now()}`;
-    this.players = players;
+    this.init = init;
+    this.lvl = lvl;
   }
 
   static emitter = new EventEmitter<{ start: [TowerService] }>();
 
-  async createTower() {
+  get characters() {
+    return this.init.map((id) => arena.characters[id]);
+  }
+
+  createTower() {
     console.debug('Tower debug:: create tower', this.id);
     arena.towers[this.id] = this;
 
-    this.players.forEach((playerId) => {
-      const char = arena.characters[playerId];
-      if (char) {
-        char.towerID = this.id;
-        char.gameId = this.id;
-      }
+    this.characters.forEach((character) => {
+      character.towerID = this.id;
+      character.gameId = this.id;
     });
 
     TowerService.emitter.emit('start', this);
     this.emit('start', this);
-    await this.initHandlers();
+    this.initHandlers();
     return this;
+  }
+
+  getMonsterLvl(isBoss: boolean) {
+    if (isBoss) {
+      return Math.max(this.lvl * 5, 15);
+    }
+
+    return Math.round(Math.max(this.lvl * 2.5 + 1 * this.battlesCount, 10));
+  }
+
+  createMonster(isBoss: boolean) {
+    const game = this.currentGame;
+
+    if (!game) {
+      throw new Error('Failed to create monster');
+    }
+
+    const maxPlayerLvl = game.players.nonBotPlayers.reduce((max, { lvl }) => Math.max(lvl, max), 0);
+    console.debug('Tower debug:: max player lvl', maxPlayerLvl);
+    if (isBoss) {
+      const boss = createAlpha(this.getMonsterLvl(true));
+
+      game.players.add(boss);
+    } else {
+      const monster = createWolf(this.getMonsterLvl(false));
+
+      game.players.add(monster);
+    }
   }
 
   async startFight(isBoss = false) {
     console.debug('Tower debug:: start game: boss', isBoss);
-    const game = await createTowerGame(this.players, isBoss);
+    const game = await createTowerGame(this.init, isBoss);
 
     if (!game) {
       throw new Error('Failed to create game');
     }
 
+    const clan = new ClanModel({ owner: new Types.ObjectId(), name: 'Путники' });
+
+    game.players.nonBotPlayers.forEach((player) => {
+      player.clan = clan;
+    });
+
     this.battlesCount++;
-
-    const maxPlayerLvl = game.players.nonBotPlayers.reduce((max, { lvl }) => Math.max(lvl, max), 0);
-    console.debug('Tower debug:: max player lvl', maxPlayerLvl);
-    if (isBoss) {
-      const bossLvl = Math.round(maxPlayerLvl * game.players.nonBotPlayers.length * 1.25);
-      const boss = await createAlpha(bossLvl);
-
-      game.players.add(boss);
-    } else {
-      const monsterLvl = Math.round(
-        maxPlayerLvl * (game.players.nonBotPlayers.length * (0.33 + 0.2 * this.battlesCount)),
-      );
-      const monster = await createWolf(monsterLvl);
-
-      game.players.add(monster);
-    }
-
     this.currentGame = game;
 
+    this.createMonster(isBoss);
+
     game.on('end', () => {
-      const win = game.players.aliveNonBotPlayers.length > 0;
-      this.handleBattleEnd(game, isBoss, win);
+      this.handleBattleEnd(game, isBoss, game.players.aliveNonBotPlayers);
     });
 
     game.on('endRound', ({ dead }) => {
-      dead.forEach((player) => {
-        this.players.filter((id) => player.id !== id);
-      });
+      this.sortDead(dead);
     });
 
     this.emit('battleStart', game, isBoss);
   }
 
-  async handleBattleEnd(game: GameService, wasBossBattle: boolean, win: boolean) {
+  async handleBattleEnd(game: GameService, wasBossBattle: boolean, alivePlayers: Player[]) {
     this.currentGame = undefined;
+    this.init = alivePlayers.map(({ id }) => id);
+    const win = alivePlayers.length > 0;
 
     console.debug('Tower debug:: battle end', 'win:', win, 'boss:', wasBossBattle);
     this.emit('battleEnd', game, win);
@@ -107,7 +131,20 @@ export class TowerService extends EventEmitter<{
     }
   }
 
-  async initHandlers() {
+  resetTowerIds(characters: CharacterService[]) {
+    characters.forEach((character) => {
+      character.towerID = '';
+      character.lastTower = new Date();
+      void character.saveToDb();
+    });
+  }
+
+  sortDead(dead: Player[]) {
+    this.init = this.init.filter((id) => dead.some((player) => player.id === id));
+    this.resetTowerIds(dead.map(({ id }) => arena.characters[id]));
+  }
+
+  initHandlers() {
     this.checkInterval = setInterval(async () => {
       this.timeSpent += timeout;
       this.timeLeft -= timeout;
@@ -124,7 +161,7 @@ export class TowerService extends EventEmitter<{
         return;
       }
 
-      if (MiscService.dice('1d100') >= 95) {
+      if (MiscService.dice('1d100') >= 93) {
         clearInterval(this.checkInterval);
         await this.startFight(false);
         return;
@@ -141,14 +178,10 @@ export class TowerService extends EventEmitter<{
   }
 
   async endTower() {
-    this.players.forEach((playerId) => {
-      const char = arena.characters[playerId];
-      if (char) {
-        char.towerID = '';
-        char.gameId = '';
-        char.lastTower = new Date();
-        void char.saveToDb();
-      }
+    this.characters.forEach((character) => {
+      character.towerID = '';
+      character.lastTower = new Date();
+      void character.saveToDb();
     });
 
     delete arena.towers?.[this.id];

@@ -4,7 +4,7 @@ import type GameService from '@/arena/GameService';
 import { stubParams } from '@/arena/MonsterService/utils/stubParams';
 import PlayerService from '@/arena/PlayersService/PlayerService';
 import type { Char } from '@/models/character';
-import type { MonsterType } from '@fwo/shared';
+import { ItemWear, type MonsterType } from '@fwo/shared';
 
 /**
  * Monster Service
@@ -42,16 +42,20 @@ export class MonsterService extends PlayerService {
     this.ai = new AIClass(this);
   }
 
-  static async create(
+  static create(
     params: MonsterParams,
     type: MonsterType,
     AIClass: new (monster: MonsterService) => MonsterAI,
   ) {
-    const monster = new CharacterService(await stubParams(params));
+    const monster = new CharacterService(stubParams(params));
 
     arena.characters[monster.id] = monster;
 
-    return new MonsterService(monster, type, AIClass);
+    const player = new MonsterService(monster, type, AIClass);
+    // fixme
+    player.weapon.item = params.equipment.get(ItemWear.TwoHands);
+
+    return player;
   }
 
   static isMonster(player: PlayerService): player is MonsterService {

@@ -1,9 +1,9 @@
 import arena from '@/arena';
-import type { CharacterClass, Item, ItemOutput } from '@fwo/shared';
-import { ItemModel } from '@/models/item';
-import type { Char } from '@/models/character';
 import { filterByClass, filterByWear } from '@/arena/ItemService/utils';
 import MiscService from '@/arena/MiscService';
+import type { Char } from '@/models/character';
+import { ItemModel } from '@/models/item';
+import type { CharacterClass, ItemOutput } from '@fwo/shared';
 import { matches } from 'es-toolkit/compat';
 
 export class ItemService {
@@ -30,7 +30,9 @@ export class ItemService {
   }
 
   static createRandomItem(createdBy: Char, match: Partial<ItemOutput>) {
-    const items = Object.values(arena.items).filter(matches(match));
+    const items = Object.values(arena.items)
+      .filter(({ hidden }) => !hidden)
+      .filter(matches(match));
     const random = MiscService.randInt(0, items.length);
     const item = items[random];
 

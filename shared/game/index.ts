@@ -29,3 +29,5 @@ export type PublicGameStatus = {
 };
 
 export type GameType = 'tower' | 'ladder';
+
+export const towerRequiredLvl = 5;

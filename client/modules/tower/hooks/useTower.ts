@@ -2,9 +2,8 @@ import { useMountEffect } from '@/hooks/useMountEffect';
 import { useSocketListener } from '@/hooks/useSocketListener';
 import { useSocket } from '@/stores/socket';
 import type { CharacterPublic } from '@fwo/shared';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useInterval } from 'react-use';
 
 export const useTower = () => {
   const socket = useSocket();
@@ -13,12 +12,16 @@ export const useTower = () => {
   const [timeSpent, setTimeSpent] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
 
+  const handleTime = useCallback((timeSpent: number, timeLeft: number) => {
+    setTimeSpent(timeSpent);
+    setTimeLeft(timeLeft);
+  }, []);
+
   useMountEffect(() => {
     socket.emitWithAck('tower:connected').then((res) => {
       if (!res.error) {
         setPlayers(res.players);
-        setTimeSpent(res.timeSpent);
-        setTimeLeft(res.timeLeft);
+        handleTime(res.timeSpent, res.timeLeft);
       } else {
         navigate('/');
       }
@@ -26,6 +29,7 @@ export const useTower = () => {
   });
 
   useSocketListener('tower:end', () => navigate('/'));
+  useSocketListener('tower:updateTime', handleTime);
 
   return {
     players,
