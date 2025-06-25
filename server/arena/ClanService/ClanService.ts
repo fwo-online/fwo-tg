@@ -17,6 +17,7 @@ import {
   clanForgeCostMultiplier,
   clanLvlCost,
   monstersClanName,
+  playersClanName,
   reservedClanName,
 } from '@fwo/shared';
 import type { UpdateQuery } from 'mongoose';
@@ -60,7 +61,7 @@ export class ClanService {
    */
   static async createClan(charId: string, name: string) {
     const char = await CharacterService.getCharacterById(charId);
-    if (name === reservedClanName || name === monstersClanName) {
+    if ([reservedClanName, monstersClanName, playersClanName].includes(name)) {
       throw new ValidationError('Недопустимое название клана');
     }
     await char.resources.takeResources({ gold: clanLvlCost[0] });
@@ -84,7 +85,7 @@ export class ClanService {
    * @param clanId
    */
   static async removeClan(clanId: string, ownerId: string) {
-    const clan = await this.getClanById(clanId);
+    const clan = await ClanService.getClanById(clanId);
     if (!clan.owner._id.equals(ownerId)) {
       throw new ValidationError('Вы не являетесь владельцем клана');
     }
@@ -109,7 +110,7 @@ export class ClanService {
    * @throws {ValidationError}
    */
   static async levelUp(clanId: string) {
-    const clan = await this.getClanById(clanId);
+    const clan = await ClanService.getClanById(clanId);
     if (clan.lvl >= clanLvlCost.length) {
       throw new ValidationError('Клан имеет максимальный уровень');
     }
@@ -117,7 +118,9 @@ export class ClanService {
     if (clan.gold < cost) {
       throw new ValidationError('В казне недостаточно золота');
     }
-    const updated = await this.updateClan(clan.id, { $inc: { gold: -cost, lvl: 1 } });
+    const updated = await ClanService.updateClan(clan.id, {
+      $inc: { gold: -cost, lvl: 1 },
+    });
     return ClanService.toObject(updated);
   }
 
@@ -131,7 +134,7 @@ export class ClanService {
     const char = await CharacterService.getCharacterById(charId);
     await char.resources.takeResources({ gold });
 
-    const clan = await this.updateClan(clanId, { $inc: { gold } });
+    const clan = await ClanService.updateClan(clanId, { $inc: { gold } });
 
     return ClanService.toObject(clan);
   }
@@ -143,7 +146,7 @@ export class ClanService {
    */
   static async createRequest(clanId: string, charId: string) {
     const char = await CharacterService.getCharacterById(charId);
-    const clan = await this.getClanById(clanId);
+    const clan = await ClanService.getClanById(clanId);
 
     const remainingTime = (date: Date) => ((date.valueOf() - Date.now()) / 60000).toFixed();
 
@@ -170,9 +173,11 @@ export class ClanService {
       throw new ValidationError('Клан уже сформирован');
     }
 
-    const updatedClan = await this.updateClan(clanId, { $push: { requests: charId } });
+    const updatedClan = await ClanService.updateClan(clanId, {
+      $push: { requests: charId },
+    });
 
-    return this.toObject(updatedClan);
+    return ClanService.toObject(updatedClan);
   }
 
   /**
@@ -182,10 +187,12 @@ export class ClanService {
    */
   static async removeRequest(clanId: string, charId: string) {
     const char = await CharacterService.getCharacterById(charId);
-    const clan = await this.updateClan(clanId, { $pull: { requests: { $in: [charId] } } });
+    const clan = await ClanService.updateClan(clanId, {
+      $pull: { requests: { $in: [charId] } },
+    });
     await char.updatePenalty('clan_request', 60);
 
-    return this.toObject(clan);
+    return ClanService.toObject(clan);
   }
 
   /**
@@ -194,7 +201,7 @@ export class ClanService {
    * @param charId - id игрока
    */
   static async acceptRequest(clanId: string, requesterID: string) {
-    const clan = await this.getClanById(clanId);
+    const clan = await ClanService.getClanById(clanId);
     if (!clan.requests.some(({ id }) => id === requesterID)) {
       throw new ValidationError('Такой заявки не существует');
     }
@@ -214,7 +221,7 @@ export class ClanService {
       throw new ValidationError('В казне недостаточно золота');
     }
 
-    const updatedClan = await this.updateClan(clan.id, {
+    const updatedClan = await ClanService.updateClan(clan.id, {
       $push: { players: requesterID },
       $pull: { requests: { $in: [requesterID] } },
       $inc: { gold: -cost },
@@ -231,9 +238,9 @@ export class ClanService {
    * @param charId - id игрока
    */
   static async rejectRequest(clanId: string, charId: string) {
-    const clan = await this.getClanById(clanId);
+    const clan = await ClanService.getClanById(clanId);
 
-    const updatedClan = await this.updateClan(clan.id, {
+    const updatedClan = await ClanService.updateClan(clan.id, {
       $pull: { requests: { $in: [charId] } },
     });
 
@@ -250,7 +257,7 @@ export class ClanService {
     if (clan.owner.id === charId) {
       throw new ValidationError('Невозможно покинуть клан, где вы являетесь владельцем');
     }
-    await this.updateClan(clanId, {
+    await ClanService.updateClan(clanId, {
       $pull: { players: { $in: [charId] } },
     });
     const char = await CharacterService.getCharacterById(charId);
@@ -258,15 +265,15 @@ export class ClanService {
   }
 
   static async updateChannel(clanID: string, ownerID: string, channel?: number) {
-    const clan = await this.getClanById(clanID);
+    const clan = await ClanService.getClanById(clanID);
     if (!clan.owner._id.equals(ownerID)) {
       throw new ValidationError('Вы не являетесь владельцем клана');
     }
-    await this.updateClan(clan.id, { channel });
+    await ClanService.updateClan(clan.id, { channel });
   }
 
   static async openForge(clanId: string) {
-    const clan = await this.getClanById(clanId);
+    const clan = await ClanService.getClanById(clanId);
 
     if (clan.isForgeActive) {
       throw new ValidationError('Кузница уже активна');
@@ -280,20 +287,20 @@ export class ClanService {
     const now = new Date();
     const expiresAt = new Date(now.setMonth(now.getMonth() + 1));
 
-    const updated = await this.updateClan(clanId, {
+    const updated = await ClanService.updateClan(clanId, {
       $set: {
         'forge.openedAt': new Date(),
         'forge.expiresAt': expiresAt,
-        'forge.lvl': this.getForgeLevel(clan.lvl),
+        'forge.lvl': ClanService.getForgeLevel(clan.lvl),
       },
       $inc: { gold: -cost },
     });
 
-    return this.toObject(updated);
+    return ClanService.toObject(updated);
   }
 
   static async checkForge(claiId: string) {
-    const clan = await this.getClanById(claiId);
+    const clan = await ClanService.getClanById(claiId);
 
     if (!clan.isForgeActive) {
       throw new ValidationError('Кузница не активна');
@@ -324,7 +331,7 @@ export class ClanService {
       maxPlayers: clan.maxPlayers,
       forge: {
         active: clan.isForgeActive,
-        lvl: clan.forge.lvl ?? this.getForgeLevel(clan.lvl),
+        lvl: clan.forge.lvl ?? ClanService.getForgeLevel(clan.lvl),
         expiresAt: clan.forge?.expiresAt?.toString() ?? null,
       },
       channel: clan.channel,

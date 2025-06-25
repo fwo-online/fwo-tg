@@ -19,7 +19,7 @@ class BeastCall extends Skill {
       costType: 'en',
       orderType: 'self',
       aoeType: 'target',
-      chance: [90, 95, 100],
+      chance: [95, 98, 100],
       effect: [2, 3, 4],
       profList: {},
       bonusCost: [0, 0, 0],
@@ -31,9 +31,7 @@ class BeastCall extends Skill {
     const initiatorMagicLvl = initiator.skills[this.name];
     const effect = this.effect[initiatorMagicLvl - 1] || 1;
 
-    const wolfs = times(effect).map((i) => {
-      return createWolf(initiator.lvl, (i + 1).toString());
-    });
+    const wolfs = times(effect).map((i) => createWolf(initiator.lvl, i));
     game.addPlayers(wolfs);
 
     this.calculateExp();

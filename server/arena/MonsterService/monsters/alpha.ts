@@ -70,14 +70,14 @@ export const createAlpha = (lvl = 1) => {
     {
       nickname: '🐺 Альфа',
       harks: {
-        str: Math.round(lvl * 6 + 20),
+        str: Math.round(lvl * 8 + 20),
         dex: Math.round(lvl * 1 + 10),
         int: Math.round(lvl * 0.5 + 3),
         wis: Math.round(lvl * 0.5 + 3),
-        con: Math.round(lvl * 6 + 20),
+        con: Math.round(lvl * 12 + 20),
       },
       magics: { bleeding: 3 },
-      skills: { beastCall: Math.min(Math.round(lvl / 15), 3) },
+      skills: { beastCall: Math.min(Math.round(lvl / 20), 3) },
       passiveSkills: { lacerate: 3, nightcall: 1 },
       items: [claws],
       equipment: new Map([[ItemWear.TwoHands, claws]]),

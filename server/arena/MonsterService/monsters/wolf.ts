@@ -47,11 +47,11 @@ class WolfAI extends MonsterAI {
   }
 }
 
-export const createWolf = (lvl = 1, id = '') => {
+export const createWolf = (lvl = 1, id: string | number = '') => {
   const fang = new ItemModel(arena.items.fang);
   return MonsterService.create(
     {
-      nickname: `🐺 Волк ${id}`.trimEnd(),
+      nickname: `🐺 Волк ${id.toString()}`.trimEnd(),
       harks: {
         str: Math.round(lvl * 4 + 20),
         dex: Math.round(lvl * 1 + 10),
