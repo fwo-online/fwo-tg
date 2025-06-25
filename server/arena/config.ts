@@ -17,7 +17,7 @@ export default {
   startGameTimeout: 35000,
   // ---------------------------------------------------------
   startRoundTime: 50000, // время на сбор участников для игры (30сек)
-  ordersTime: 30000, // время заказов (30сек)
+  ordersTime: 40000, // время заказов (30сек)
   minMemb: 0, // минимальное кол-во участников в игру
   roundTimeout: 20000, // время задержки между раундами
   lvlRatio: 3, // коэфицент уровня 1000*х = 1лвл
@@ -85,9 +85,9 @@ export default {
       'regeneration',
     ],
     'attack',
-    'bleeding',
     //
     [
+      'bleeding',
       'fireBall',
       // 'ice_lance',
       'magicArrow',
