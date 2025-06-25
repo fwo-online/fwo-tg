@@ -86,11 +86,15 @@ export class TowerService extends EventEmitter<{
   }
 
   getMonstersCount() {
-    if (this.battlesCount === 3) {
-      return Math.max(this.battlesCount, this.init.length);
+    if (this.battlesCount === 1 || this.battlesCount === 3) {
+      return 3;
     }
 
-    return this.battlesCount;
+    if (this.battlesCount === 2) {
+      return 5;
+    }
+
+    return 3;
   }
 
   createMonsters() {
@@ -101,13 +105,8 @@ export class TowerService extends EventEmitter<{
     }
 
     const count = this.getMonstersCount();
-    if (count === 1) {
-      const wolf = createWolf(this.getMonsterLvl(false));
-      game.addPlayers([wolf]);
-    } else {
-      const wolfs = times(count).map((i) => createWolf(this.getMonsterLvl(false), i));
-      game.addPlayers(wolfs);
-    }
+    const wolfs = times(count).map((i) => createWolf(this.getMonsterLvl(false), i));
+    game.addPlayers(wolfs);
   }
 
   async startFight(isBoss = false) {
@@ -156,7 +155,7 @@ export class TowerService extends EventEmitter<{
     this.emit('battleEnd', game, win);
 
     if (wasBossBattle || !win) {
-      await this.endTower();
+      await this.endTower(win);
     } else {
       this.initHandlers();
     }
