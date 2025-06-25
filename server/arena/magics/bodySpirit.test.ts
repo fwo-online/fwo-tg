@@ -3,7 +3,7 @@ import {
 } from 'bun:test';
 import casual from 'casual';
 import GameService from '@/arena/GameService';
-import { type Char } from '@/models/character';
+import type { Char } from '@/models/character';
 import TestUtils from '@/utils/testUtils';
 import bodySpirit from './bodySpirit';
 // npm t server/arena/magics/bodySpirit.test.ts

@@ -1,13 +1,12 @@
-import _ from 'lodash';
-import type { HarksLvl } from '@/data/harks';
-import type { Char } from '@/models/character';
+import { calculateDynamicAttributes } from '@fwo/shared';
 import { sum } from 'es-toolkit';
-import ValidationError from '@/arena/errors/ValidationError';
 import { every } from 'es-toolkit/compat';
 import type { CharacterService } from '@/arena/CharacterService';
+import ValidationError from '@/arena/errors/ValidationError';
+import type { HarksLvl } from '@/data/harks';
 import { profsData } from '@/data/profs';
+import type { Char } from '@/models/character';
 import { assignWithSum } from '@/utils/assignWithSum';
-import { calculateDynamicAttributes } from '@fwo/shared';
 
 /**
  * Класс описывающий персонажа внутри игры

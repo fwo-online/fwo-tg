@@ -1,13 +1,13 @@
-import { Button } from '@/components/Button';
 import type { CharacterAttributes } from '@fwo/shared';
-
 import type { FC } from 'react';
+import { Button } from '@/components/Button';
 
 export const CharacterAttributesEditor: FC<{
   attributes: CharacterAttributes;
   disabled: boolean;
   onChange: (attribute: keyof CharacterAttributes) => void;
 }> = ({ attributes, disabled, onChange }) => {
+  // biome-ignore lint/nursery/noNestedComponentDefinitions: fixme
   const AttributeButton: FC<{ attribute: keyof CharacterAttributes }> = ({ attribute }) => {
     const handleClick = () => {
       if (disabled) {

@@ -1,18 +1,17 @@
-import _ from 'lodash';
+import type { Character, CharacterClass, CharacterPublic, ItemComponent } from '@fwo/shared';
 import type { UpdateQuery } from 'mongoose';
 import { findCharacter, removeCharacter, updateCharacter } from '@/api/character';
 import arena from '@/arena';
-import config from '@/arena/config';
-import { CharacterInventory } from './CharacterInventory';
-import type { Char } from '@/models/character';
-import type { Character, CharacterClass, CharacterPublic, ItemComponent } from '@fwo/shared';
-import type { Item } from '@/models/item';
-import { CharacterResources } from './CharacterResources';
-import { ClanService } from '@/arena/ClanService';
 import { CharacterAttributes } from '@/arena/CharacterService/CharacterAttributes';
 import { CharacterPerformance } from '@/arena/CharacterService/CharacterPerformance';
 import { calculateLvl, calculateNextLvlExp } from '@/arena/CharacterService/utils/calculateLvl';
 import { toPublicObject } from '@/arena/CharacterService/utils/toPublicObject';
+import { ClanService } from '@/arena/ClanService';
+import config from '@/arena/config';
+import type { Char } from '@/models/character';
+import type { Item } from '@/models/item';
+import { CharacterInventory } from './CharacterInventory';
+import { CharacterResources } from './CharacterResources';
 
 /**
  * Конструктор персонажа

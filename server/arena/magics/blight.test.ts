@@ -4,7 +4,7 @@ import {
 import casual from 'casual';
 import GameService from '@/arena/GameService';
 import { profsData } from '@/data/profs';
-import { type Char } from '@/models/character';
+import type { Char } from '@/models/character';
 import TestUtils from '@/utils/testUtils';
 import blight from './blight';
 // npm t server/arena/magics/blight.test.ts
