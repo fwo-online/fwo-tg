@@ -186,18 +186,16 @@ export class TowerService extends EventEmitter<{
         return;
       }
 
-      if (this.battlesCount >= 3) {
+      if (this.battlesCount > 2) {
         this.emit('updateTime', this.timeSpent, this.timeLeft);
         return;
       }
 
-      if (MiscService.dice('1d100') >= 75) {
-        clearInterval(this.checkInterval);
-        await this.startFight(false);
-        return;
-      }
-
-      if (this.timeSpent > this.timeLeft && this.battlesCount === 0) {
+      if (
+        MiscService.dice('1d100') >= 80 ||
+        (this.timeSpent > this.timeLeft && this.battlesCount === 0) ||
+        (this.timeSpent > this.timeLeft * 1.5 && this.battlesCount === 1)
+      ) {
         clearInterval(this.checkInterval);
         await this.startFight(false);
         return;
