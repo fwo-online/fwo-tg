@@ -67,11 +67,11 @@ export class TowerService extends EventEmitter<{
 
   getMonsterLvl(isBoss: boolean) {
     if (isBoss) {
-      return 10 + this.lvl * 5;
+      return 10 + this.lvl * 3;
     }
 
     const random = MiscService.randInt(-1, 2);
-    return 5 + this.lvl * 5 + random;
+    return 5 + this.lvl * 3 + random;
   }
 
   createBoss() {
