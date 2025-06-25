@@ -4,6 +4,7 @@ import type { Char } from '@/models/character';
 import type { Item } from '@/models/item';
 import { type MarketItem, MarketItemModel } from '@/models/market-item';
 import { populatedDocGuard } from '@/utils/populatedDocGuard';
+import type { Document } from 'mongoose';
 
 export class MarketItemService {
   static async getMarketItems() {
@@ -64,7 +65,7 @@ export class MarketItemService {
 
   static async removeMarketItem(character: CharacterService, marketItemID: string) {
     const marketItem = await MarketItemModel.findById(marketItemID)
-      .populate<{ item: Item }>('item')
+      .populate<{ item: Document<Item> }>('item')
       .populate<{ seller: Char }>('seller');
 
     if (!marketItem) {
@@ -79,7 +80,7 @@ export class MarketItemService {
 
     try {
       await marketItem.deleteOne();
-      await character.inventory.addItem(marketItem.item);
+      await character.inventory.addItem(marketItem.item.toObject());
     } catch (e) {
       console.error(e);
       throw new ValidationError('Не удалось отменить лот');
@@ -88,7 +89,7 @@ export class MarketItemService {
 
   static async buyMarketItem(character: CharacterService, marketItemID: string) {
     const marketItem = await MarketItemModel.findById(marketItemID)
-      .populate<{ item: Item }>('item')
+      .populate<{ item: Document<Item> }>('item')
       .populate<{ seller: Char }>('seller');
     if (!marketItem) {
       throw new ValidationError('Лот не найден');
@@ -101,9 +102,12 @@ export class MarketItemService {
     }
 
     try {
-      await marketItem.updateOne({ sold: true });
+      const result = await marketItem.updateOne({ sold: true });
+      if (result.modifiedCount === 0) {
+        throw new ValidationError('Лот больше не существует');
+      }
       await character.resources.takeResources({ gold: marketItem.price });
-      await character.inventory.addItem(marketItem.item);
+      await character.inventory.addItem(marketItem.item.toObject());
 
       const seller = await CharacterService.getCharacterById(marketItem.seller.id);
       await seller.resources.addResources({ gold: Math.round(marketItem.price * 0.8) });
