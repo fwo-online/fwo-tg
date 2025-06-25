@@ -1,8 +1,8 @@
+import type { CostType, Skill } from '@fwo/shared';
 import type { Prof } from '@/data/profs';
 import type { CharacterService } from './CharacterService';
 import ValidationError from './errors/ValidationError';
 import * as skills from './skills';
-import type { CostType, Skill } from '@fwo/shared';
 
 export type SkillsNames = keyof typeof skills;
 
@@ -55,7 +55,7 @@ export default class SkillService {
       throw new Error();
     }
 
-    return SkillService.toObject(skills[id]);
+    return SkillService.toObject(this.skills[id]);
   }
 
   static getSkillListByProf(prof: Prof) {

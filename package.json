@@ -43,7 +43,7 @@
     "valibot": "^1.0.0-rc.4"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.0.5",
     "typescript": "^5.8.2"
   }
 }

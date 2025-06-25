@@ -1,17 +1,17 @@
 import { themeParams, useSignal } from '@telegram-apps/sdk-react';
+import classNames from 'classnames';
 import {
   cloneElement,
+  type DialogHTMLAttributes,
   type FC,
   isValidElement,
-  type PropsWithChildren,
-  type DialogHTMLAttributes,
-  useRef,
-  type ReactElement,
-  useImperativeHandle,
-  type RefObject,
   type MouseEvent,
+  type PropsWithChildren,
+  type ReactElement,
+  type RefObject,
+  useImperativeHandle,
+  useRef,
 } from 'react';
-import classNames from 'classnames';
 import './Popup.css';
 import { createPortal } from 'react-dom';
 
@@ -63,6 +63,12 @@ export const PopupOverlay: FC<PopupOverlayProps> = ({ children, onClick, ref, ..
     }
   };
 
+  const container = document.getElementById('popup');
+
+  if (!container) {
+    throw new Error('Popup container not found');
+  }
+
   return createPortal(
     <dialog
       ref={dialogRef}
@@ -74,8 +80,7 @@ export const PopupOverlay: FC<PopupOverlayProps> = ({ children, onClick, ref, ..
     >
       {children}
     </dialog>,
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    document.getElementById('popup')!,
+    container,
   );
 };
 

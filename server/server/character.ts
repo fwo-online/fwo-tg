@@ -1,14 +1,14 @@
+import { characterAttributesSchema, createCharacterSchema } from '@fwo/shared';
 import { vValidator } from '@hono/valibot-validator';
 import { Hono } from 'hono';
+import * as v from 'valibot';
 import { createCharacter } from '@/api/character';
 import { CharacterService } from '@/arena/CharacterService';
 import { profsData } from '@/data/profs';
-import { characterAttributesSchema, createCharacterSchema } from '@fwo/shared';
-import { characterMiddleware, userMiddleware } from './middlewares';
-import { withValidation } from '@/server/utils/withValidation';
 import { handleValidationError } from '@/server/utils/handleValidationError';
-import * as v from 'valibot';
+import { withValidation } from '@/server/utils/withValidation';
 import { normalizeToArray } from '@/utils/array';
+import { characterMiddleware, userMiddleware } from './middlewares';
 
 export const character = new Hono()
   .use(userMiddleware)
