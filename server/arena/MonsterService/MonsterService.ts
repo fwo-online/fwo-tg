@@ -1,10 +1,10 @@
+import { ItemWear, type MonsterType } from '@fwo/shared';
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
 import type GameService from '@/arena/GameService';
 import { stubParams } from '@/arena/MonsterService/utils/stubParams';
 import PlayerService from '@/arena/PlayersService/PlayerService';
 import type { Char } from '@/models/character';
-import { ItemWear, type MonsterType } from '@fwo/shared';
 
 /**
  * Monster Service

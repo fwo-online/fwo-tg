@@ -1,5 +1,5 @@
-import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConstructor';
 import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
+import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConstructor';
 import { bleeding } from '@/arena/magics';
 
 class Lacerate extends PassiveSkillConstructor implements Affect {

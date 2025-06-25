@@ -1,6 +1,6 @@
+import { times } from 'es-toolkit/compat';
 import { createWolf } from '@/arena/MonsterService/monsters/wolf';
 import { bold, italic } from '@/utils/formatString';
-import { times } from 'es-toolkit/compat';
 import { Skill } from '../Constuructors/SkillConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
 
@@ -31,7 +31,8 @@ class BeastCall extends Skill {
     const initiatorMagicLvl = initiator.skills[this.name];
     const effect = this.effect[initiatorMagicLvl - 1] || 1;
 
-    const wolfs = times(effect).map((i) => createWolf(initiator.lvl, i));
+    const allies = game.players.getMyTeam(initiator.id);
+    const wolfs = times(effect).map((i) => createWolf(initiator.lvl, i + 1 + (allies.length - 1)));
     game.addPlayers(wolfs);
 
     this.calculateExp();

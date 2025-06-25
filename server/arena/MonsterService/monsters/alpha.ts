@@ -1,10 +1,10 @@
+import { ItemWear, MonsterType } from '@fwo/shared';
 import arena from '@/arena';
 import { isSuccessResult } from '@/arena/Constuructors/utils';
 import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
 import { MonsterAI, MonsterService } from '@/arena/MonsterService/MonsterService';
 import { ItemModel } from '@/models/item';
-import { ItemWear, MonsterType } from '@fwo/shared';
 
 class AlfaAI extends MonsterAI {
   beastCallUsed = false;
@@ -19,11 +19,11 @@ class AlfaAI extends MonsterAI {
       this.beastCallUsed = true;
     }
 
-    if (
-      (MiscService.dice('1d100') > 33 ||
-        this.monster.stats.val('hp') < this.monster.stats.val('base.hp') / 2) &&
-      !this.beastCallUsed
-    ) {
+    const randomChance = MiscService.dice('1d100') > 90;
+    const isHalfHP = this.monster.stats.val('hp') < this.monster.stats.val('base.hp') / 2;
+    const isAlliesAlive = !game.players.getAliveAllies(this.monster).length;
+
+    if ((randomChance || isHalfHP || !isAlliesAlive) && !this.beastCallUsed) {
       game.orders.orderAction({
         action: 'beastCall',
         initiator: this.monster.id,
@@ -77,9 +77,9 @@ export const createAlpha = (lvl = 1) => {
       harks: {
         str: Math.round(lvl * 8 + 20),
         dex: Math.round(lvl * 1 + 10),
-        int: Math.round(lvl * 0.5 + 3),
-        wis: Math.round(lvl * 0.5 + 3),
-        con: Math.round(lvl * 12 + 20),
+        int: Math.round(lvl * 0.5 + 10),
+        wis: Math.round(lvl * 0.5 + 10),
+        con: Math.round(lvl * 8 + 20),
       },
       magics: { bleeding: 3 },
       skills: { beastCall: Math.min(Math.round(lvl / 20), 3) },

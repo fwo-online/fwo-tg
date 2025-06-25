@@ -1,9 +1,9 @@
+import { ItemWear, MonsterType } from '@fwo/shared';
 import arena from '@/arena';
 import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
 import { MonsterAI, MonsterService } from '@/arena/MonsterService/MonsterService';
 import { ItemModel } from '@/models/item';
-import { ItemWear, MonsterType } from '@fwo/shared';
 
 class WolfAI extends MonsterAI {
   makeOrder(game: GameService) {
@@ -55,9 +55,9 @@ export const createWolf = (lvl = 1, id: string | number = '') => {
       harks: {
         str: Math.round(lvl * 4 + 20),
         dex: Math.round(lvl * 1 + 10),
-        int: Math.round(lvl * 0.5 + 3),
-        wis: Math.round(lvl * 0.5 + 3),
-        con: Math.round(lvl * 8 + 20),
+        int: Math.round(lvl * 0.5 + 10),
+        wis: Math.round(lvl * 0.5 + 10),
+        con: Math.round(lvl * 6 + 20),
       },
       magics: { bleeding: 1 },
       skills: {},

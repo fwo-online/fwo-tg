@@ -1,4 +1,7 @@
 import EventEmitter from 'node:events';
+import { playersClanName } from '@fwo/shared';
+import { times } from 'es-toolkit/compat';
+import { Types } from 'mongoose';
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
 import type GameService from '@/arena/GameService';
@@ -9,11 +12,8 @@ import type { Player } from '@/arena/PlayersService';
 import { createTowerGame } from '@/helpers/gameHelper';
 import { ClanModel } from '@/models/clan';
 import { type Tower, TowerModel } from '@/models/tower';
-import { playersClanName } from '@fwo/shared';
-import { times } from 'es-toolkit/compat';
-import { Types } from 'mongoose';
 
-const timeout = 5 * 1000; // 5s
+const timeout = 2.5 * 1000; // 5s
 const timeLeft = timeout * 48; // 4m;
 
 export class TowerService extends EventEmitter<{
@@ -67,10 +67,11 @@ export class TowerService extends EventEmitter<{
 
   getMonsterLvl(isBoss: boolean) {
     if (isBoss) {
-      return 20 + this.lvl * 5;
+      return 10 + this.lvl * 5;
     }
 
-    return 15 + this.lvl * 5;
+    const random = MiscService.randInt(-1, 2);
+    return 5 + this.lvl * 5 + random;
   }
 
   createBoss() {
@@ -86,7 +87,7 @@ export class TowerService extends EventEmitter<{
   }
 
   getMonstersCount() {
-    if (this.battlesCount === 1 || this.battlesCount === 3) {
+    if (this.battlesCount === 1) {
       return 3;
     }
 
@@ -105,7 +106,7 @@ export class TowerService extends EventEmitter<{
     }
 
     const count = this.getMonstersCount();
-    const wolfs = times(count).map((i) => createWolf(this.getMonsterLvl(false), i));
+    const wolfs = times(count).map((i) => createWolf(this.getMonsterLvl(false), i + 1));
     game.addPlayers(wolfs);
   }
 
@@ -131,6 +132,7 @@ export class TowerService extends EventEmitter<{
 
     if (isBoss) {
       this.createBoss();
+      this.createMonsters();
     } else {
       this.createMonsters();
     }
@@ -192,7 +194,7 @@ export class TowerService extends EventEmitter<{
       }
 
       if (
-        MiscService.dice('1d100') >= 80 ||
+        MiscService.dice('1d100') >= 90 ||
         (this.timeSpent > this.timeLeft && this.battlesCount === 0) ||
         (this.timeSpent > this.timeLeft * 1.5 && this.battlesCount === 1)
       ) {

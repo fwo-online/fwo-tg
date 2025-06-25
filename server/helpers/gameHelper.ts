@@ -1,3 +1,10 @@
+import {
+  type GameResult,
+  type ItemComponent,
+  itemComponentName,
+  reservedClanName,
+} from '@fwo/shared';
+import { mapValues } from 'es-toolkit';
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
@@ -9,13 +16,6 @@ import { TowerService } from '@/arena/TowerService/TowerService';
 import { broadcast, sendBattleLogMessages } from '@/helpers/channelHelper';
 import { DonationHelper } from '@/helpers/donationHelper';
 import { bold } from '@/utils/formatString';
-import {
-  type GameResult,
-  type ItemComponent,
-  itemComponentName,
-  reservedClanName,
-} from '@fwo/shared';
-import { mapValues } from 'es-toolkit';
 
 export async function createGame(players: string[]) {
   const newGame = new GameService(players);
@@ -135,9 +135,9 @@ export async function createTower(players: string[]) {
 
   tower.on('battleEnd', async (_, win) => {
     if (win) {
-      await broadcast('Монстры побеждён!');
+      await broadcast('Монстры побеждены!');
     } else {
-      await broadcast('Монстры победил путников!');
+      await broadcast('Монстры победили путников!');
     }
   });
 
