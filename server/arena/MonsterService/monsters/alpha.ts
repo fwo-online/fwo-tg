@@ -1,4 +1,5 @@
 import arena from '@/arena';
+import { isSuccessResult } from '@/arena/Constuructors/utils';
 import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
 import { MonsterAI, MonsterService } from '@/arena/MonsterService/MonsterService';
@@ -13,12 +14,16 @@ class AlfaAI extends MonsterAI {
       return;
     }
 
+    const result = game.getRoundResults().find(({ action }) => action === 'beastCall');
+    if (result && isSuccessResult(result)) {
+      this.beastCallUsed = true;
+    }
+
     if (
-      (MiscService.dice('1d100') > 50 ||
+      (MiscService.dice('1d100') > 33 ||
         this.monster.stats.val('hp') < this.monster.stats.val('base.hp') / 2) &&
       !this.beastCallUsed
     ) {
-      this.beastCallUsed = true;
       game.orders.orderAction({
         action: 'beastCall',
         initiator: this.monster.id,
@@ -66,7 +71,7 @@ class AlfaAI extends MonsterAI {
 export const createAlpha = (lvl = 1) => {
   const claws = new ItemModel(arena.items.claws);
 
-  return MonsterService.create(
+  const alpha = MonsterService.create(
     {
       nickname: '🐺 Альфа',
       harks: {
@@ -85,4 +90,7 @@ export const createAlpha = (lvl = 1) => {
     MonsterType.Wolf,
     AlfaAI,
   );
+  alpha.modifiers.chance.fail.paralysis = 75;
+
+  return alpha;
 };

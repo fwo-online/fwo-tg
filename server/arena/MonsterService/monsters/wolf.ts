@@ -49,7 +49,7 @@ class WolfAI extends MonsterAI {
 
 export const createWolf = (lvl = 1, id: string | number = '') => {
   const fang = new ItemModel(arena.items.fang);
-  return MonsterService.create(
+  const wolf = MonsterService.create(
     {
       nickname: `🐺 Волк ${id.toString()}`.trimEnd(),
       harks: {
@@ -68,4 +68,7 @@ export const createWolf = (lvl = 1, id: string | number = '') => {
     MonsterType.Wolf,
     WolfAI,
   );
+  wolf.modifiers.chance.fail.paralysis = 50;
+
+  return wolf;
 };
