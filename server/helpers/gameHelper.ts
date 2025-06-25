@@ -17,8 +17,8 @@ import {
 } from '@fwo/shared';
 import { mapValues } from 'es-toolkit';
 
-export async function createGame(players: string[], GameServiceClass = GameService) {
-  const newGame = new GameServiceClass(players);
+export async function createGame(players: string[]) {
+  const newGame = new GameService(players);
   const game = await newGame.createGame();
 
   if (!game) {
@@ -114,7 +114,7 @@ ${Object.entries(resultsByClan)
 
 export async function createTower(players: string[]) {
   const newTower = new TowerService(players, 5);
-  const tower = newTower.createTower();
+  const tower = await newTower.createTower();
   tower.on('end', async () => {
     arena.mm.reset('tower');
     const date = new Date();
@@ -144,16 +144,9 @@ export async function createTower(players: string[]) {
   return tower;
 }
 
-export async function createTowerGame(players: string[], isBoss: boolean) {
+export async function createTowerGame(tower: TowerService, isBoss: boolean) {
   /** @todo надо как-то нормально тут сделать */
-  const game = await createGame(
-    players,
-    class extends GameService {
-      override isGameEnd(): boolean {
-        return super.isGameEnd() || this.players.alivePlayers.every((player) => !player.isBot);
-      }
-    },
-  );
+  const game = await createGame(tower.init);
 
   if (!game) {
     return;
@@ -165,7 +158,7 @@ export async function createTowerGame(players: string[], isBoss: boolean) {
     });
   });
 
-  const reward = new TowerRewardService(game, isBoss);
+  const reward = new TowerRewardService(game, tower, isBoss);
 
   game.on('end', async ({ draw }) => {
     const rewards = await reward.giveRewards(draw);

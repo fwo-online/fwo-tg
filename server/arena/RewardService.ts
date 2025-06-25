@@ -5,6 +5,7 @@ import { ItemService } from '@/arena/ItemService';
 import MiscService from '@/arena/MiscService';
 import type PlayersService from '@/arena/PlayersService';
 import type { Player } from '@/arena/PlayersService';
+import type { TowerService } from '@/arena/TowerService/TowerService';
 import { getRandomComponent } from '@/utils/getRandomComponent';
 import { type GameResult, ItemComponent, reservedClanName } from '@fwo/shared';
 import { differenceBy, mapValues, noop } from 'es-toolkit';
@@ -116,8 +117,11 @@ export class LadderRewardService extends RewardService {
 
 export class TowerRewardService extends RewardService {
   protected isBoss: boolean;
-  constructor(game: GameService, isBoss: boolean) {
+  protected tower: TowerService;
+
+  constructor(game: GameService, tower: TowerService, isBoss: boolean) {
     super(game);
+    this.tower = tower;
     this.isBoss = isBoss;
   }
 
@@ -130,15 +134,17 @@ export class TowerRewardService extends RewardService {
           winner.stats.addGold(goldForGame);
           if (this.isBoss) {
             const character = await CharacterService.getCharacterById(winner.id);
-            const item = await ItemService.createRandomItem(character.charObj, { tier: 2 });
+            const item = await ItemService.createRandomItem({
+              createdBy: character.charObj,
+              filter: ({ price }) => price > this.tower.lvl * 500 && price < this.tower.lvl * 750,
+            });
             await character.inventory.addItem(item.toObject());
 
             winner.stats.addComponent(ItemComponent.Arcanite);
             winner.stats.addItem(item.toObject());
           } else {
-            times(MiscService.randInt(1, 4), () => {
-              winner.stats.addComponent(getRandomComponent(100));
-            });
+            winner.stats.addGold(goldForGame);
+            times(this.tower.battlesCount, () => winner.stats.addComponent(getRandomComponent(45)));
           }
         }),
       );

@@ -57,7 +57,7 @@ export const createWolf = (lvl = 1, id: string | number = '') => {
         dex: Math.round(lvl * 1 + 10),
         int: Math.round(lvl * 0.5 + 3),
         wis: Math.round(lvl * 0.5 + 3),
-        con: Math.round(lvl * 4 + 20),
+        con: Math.round(lvl * 8 + 20),
       },
       magics: { bleeding: 1 },
       skills: {},

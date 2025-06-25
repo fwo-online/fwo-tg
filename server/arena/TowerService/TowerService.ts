@@ -8,6 +8,7 @@ import { createWolf } from '@/arena/MonsterService/monsters/wolf';
 import type { Player } from '@/arena/PlayersService';
 import { createTowerGame } from '@/helpers/gameHelper';
 import { ClanModel } from '@/models/clan';
+import { type Tower, TowerModel } from '@/models/tower';
 import { playersClanName } from '@fwo/shared';
 import { times } from 'es-toolkit/compat';
 import { Types } from 'mongoose';
@@ -22,10 +23,10 @@ export class TowerService extends EventEmitter<{
   updateTime: [timeSpent: number, timeLeft: number];
   end: [];
 }> {
-  id = `tower_${Date.now()}`;
   timeSpent = 0;
   timeLeft = timeLeft;
   battlesCount = 0;
+  private tower!: Tower;
 
   lvl: number;
   init: string[];
@@ -34,18 +35,22 @@ export class TowerService extends EventEmitter<{
 
   constructor(init: string[], lvl: number) {
     super();
-    this.id = `tower_${Date.now()}`;
     this.init = init;
     this.lvl = lvl;
   }
 
   static emitter = new EventEmitter<{ start: [TowerService] }>();
 
+  get id() {
+    return this.tower.id;
+  }
+
   get characters() {
     return this.init.map((id) => arena.characters[id]);
   }
 
-  createTower() {
+  async createTower() {
+    this.tower = await TowerModel.create({ players: this.init, lvl: this.lvl });
     console.debug('Tower debug:: create tower', this.id);
     arena.towers[this.id] = this;
 
@@ -107,7 +112,7 @@ export class TowerService extends EventEmitter<{
 
   async startFight(isBoss = false) {
     console.debug('Tower debug:: start game: boss', isBoss);
-    const game = await createTowerGame(this.init, isBoss);
+    const game = await createTowerGame(this, isBoss);
 
     if (!game) {
       throw new Error('Failed to create game');
@@ -203,12 +208,14 @@ export class TowerService extends EventEmitter<{
     }, timeout);
   }
 
-  async endTower() {
+  async endTower(win: boolean) {
     this.characters.forEach((character) => {
       character.towerID = '';
       character.lastTower = new Date();
       void character.saveToDb();
     });
+
+    await TowerModel.findByIdAndUpdate(this.tower._id, { win });
 
     delete arena.towers?.[this.id];
 

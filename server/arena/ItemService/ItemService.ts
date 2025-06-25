@@ -29,10 +29,19 @@ export class ItemService {
     });
   }
 
-  static createRandomItem(createdBy: Char, match: Partial<ItemOutput>) {
+  static createRandomItem({
+    createdBy,
+    match,
+    filter = () => true,
+  }: {
+    createdBy: Char;
+    filter?: (item: ItemOutput) => boolean;
+    match?: Partial<ItemOutput>;
+  }) {
     const items = Object.values(arena.items)
       .filter(({ hidden }) => !hidden)
-      .filter(matches(match));
+      .filter(matches(match))
+      .filter(filter);
     const random = MiscService.randInt(0, items.length);
     const item = items[random];
 
