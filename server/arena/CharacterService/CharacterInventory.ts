@@ -1,15 +1,15 @@
 import arena from '@/arena';
+import type { CharacterService } from '@/arena/CharacterService/CharacterService';
 import ValidationError from '@/arena/errors/ValidationError';
 import type { Char } from '@/models/character';
+import type { Item } from '@/models/item';
+import { assignWithSum } from '@/utils/assignWithSum';
 import { ItemWear } from '@fwo/shared';
-import { attributesSchema, type Attributes } from '@fwo/shared';
+import { type Attributes, attributesSchema } from '@fwo/shared';
 import type { ItemSet } from '@fwo/shared';
 import type { Modifiers } from '@fwo/shared';
-import { assignWithSum } from '@/utils/assignWithSum';
-import { array, parse } from 'valibot';
 import { every } from 'es-toolkit/compat';
-import type { Item } from '@/models/item';
-import type { CharacterService } from '@/arena/CharacterService/CharacterService';
+import { array, parse } from 'valibot';
 
 export class CharacterInventory {
   harksFromItems: Attributes;
@@ -100,6 +100,10 @@ export class CharacterInventory {
       return false;
     }
 
+    if (!itemToEquip.class.includes(this.character.class)) {
+      return false;
+    }
+
     return true;
   }
 
@@ -168,7 +172,7 @@ export class CharacterInventory {
     for (const wear in this.equipment) {
       const item = this.equipment.get(wear as ItemWear);
 
-      if (item && !this.hasRequiredAttributes(item)) {
+      if (item && (!this.hasRequiredAttributes(item) || !this.canEquip(item))) {
         return this.unEquipItem(item.id);
       }
     }
