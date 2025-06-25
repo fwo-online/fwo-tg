@@ -113,7 +113,7 @@ ${Object.entries(resultsByClan)
 }
 
 export async function createTower(players: string[]) {
-  const newTower = new TowerService(players, 5);
+  const newTower = new TowerService(players, 1);
   const tower = await newTower.createTower();
   tower.on('end', async () => {
     arena.mm.reset('tower');

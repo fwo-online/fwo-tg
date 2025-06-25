@@ -67,10 +67,10 @@ export class TowerService extends EventEmitter<{
 
   getMonsterLvl(isBoss: boolean) {
     if (isBoss) {
-      return Math.max(this.lvl * 5, 15);
+      return 20 + this.lvl * 5;
     }
 
-    return Math.round(Math.max(this.lvl * 2.5 + 1 * this.battlesCount, 10));
+    return 15 + this.lvl * 5;
   }
 
   createBoss() {
