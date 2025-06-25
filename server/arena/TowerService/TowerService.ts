@@ -207,14 +207,14 @@ export class TowerService extends EventEmitter<{
     }, timeout);
   }
 
-  async endTower(win: boolean) {
+  async endTower(_win: boolean) {
     this.characters.forEach((character) => {
       character.towerID = '';
       character.lastTower = new Date();
       void character.saveToDb();
     });
 
-    await TowerModel.findByIdAndUpdate(this.tower._id, { win });
+    // await TowerModel.findByIdAndUpdate(this.tower._id, { win });
 
     delete arena.towers?.[this.id];
 
