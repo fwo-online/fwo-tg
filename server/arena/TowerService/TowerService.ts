@@ -51,7 +51,7 @@ export class TowerService extends EventEmitter<{
 
   async createTower() {
     this.tower = await TowerModel.create({ players: this.init, lvl: this.lvl });
-    console.debug('Tower debug:: create tower', this.id);
+    console.debug('Tower debug:: create tower', this.id, this.lvl);
     arena.towers[this.id] = this;
 
     this.characters.forEach((character) => {
