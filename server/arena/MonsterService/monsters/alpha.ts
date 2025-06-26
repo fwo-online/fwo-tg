@@ -14,7 +14,7 @@ class AlfaAI extends MonsterAI {
       return;
     }
 
-    const result = game.getRoundResults().find(({ action }) => action === 'beastCall');
+    const result = game.getLastRoundResults().find(({ action }) => action === 'beastCall');
     if (result && isSuccessResult(result)) {
       this.beastCallUsed = true;
     }
@@ -75,10 +75,10 @@ export const createAlpha = (lvl = 1) => {
     {
       nickname: '🐺 Альфа',
       harks: {
-        str: Math.round(lvl * 8 + 20),
+        str: Math.round(lvl * 12 + 20),
         dex: Math.round(lvl * 1 + 10),
-        int: Math.round(lvl * 0.5 + 10),
-        wis: Math.round(lvl * 0.5 + 10),
+        int: Math.round(lvl * 0.5 + 15),
+        wis: Math.round(lvl * 0.5 + 5),
         con: Math.round(lvl * 8 + 20),
       },
       magics: { bleeding: 3 },
@@ -90,7 +90,7 @@ export const createAlpha = (lvl = 1) => {
     MonsterType.Wolf,
     AlfaAI,
   );
-  alpha.modifiers.chance.fail.paralysis = 75;
+  alpha.modifiers.chance.fail.paralysis = 90;
 
   return alpha;
 };

@@ -1,3 +1,5 @@
+import type { Character, CharacterClass, CharacterPublic, ItemComponent } from '@fwo/shared';
+import type { UpdateQuery } from 'mongoose';
 import { findCharacter, removeCharacter, updateCharacter } from '@/api/character';
 import arena from '@/arena';
 import { CharacterAttributes } from '@/arena/CharacterService/CharacterAttributes';
@@ -8,8 +10,6 @@ import { ClanService } from '@/arena/ClanService';
 import config from '@/arena/config';
 import type { Char } from '@/models/character';
 import type { Item } from '@/models/item';
-import type { Character, CharacterClass, CharacterPublic, ItemComponent } from '@fwo/shared';
-import type { UpdateQuery } from 'mongoose';
 import { CharacterInventory } from './CharacterInventory';
 import { CharacterResources } from './CharacterResources';
 
@@ -33,19 +33,23 @@ export class CharacterService {
   /**
    * Конструктор игрока
    */
-  constructor(public charObj: Char) {
+  constructor(
+    public charObj: Char,
+    isBot = false,
+  ) {
     this.inventory = new CharacterInventory(this);
     this.resources = new CharacterResources(this);
     this.attributes = new CharacterAttributes(this);
     this.performance = new CharacterPerformance(this);
     this.charObj = charObj;
     this.mm = {};
-    this.resetExpLimit();
+    this.isBot = isBot;
   }
 
   wasLvlUp = false;
   autoreg = false;
   towerID = '';
+  isBot = false;
 
   get id() {
     return this.charObj.id.toString();
@@ -306,6 +310,9 @@ export class CharacterService {
    */
   async saveToDb() {
     try {
+      if (this.isBot) {
+        return;
+      }
       console.log('Saving char :: id', this.id);
       const { magics, skills, passiveSkills, clan, lastFight, lastTower } = this;
       const { gold, components, exp, free, bonus } = this.resources;

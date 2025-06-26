@@ -1,11 +1,13 @@
 import { times } from 'es-toolkit/compat';
+import arena from '@/arena';
+import MiscService from '@/arena/MiscService';
 import { createWolf } from '@/arena/MonsterService/monsters/wolf';
 import { bold, italic } from '@/utils/formatString';
 import { Skill } from '../Constuructors/SkillConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
 
 /**
- * Берсерк
+ * 🐺📣 Звериный клич
  */
 class BeastCall extends Skill {
   constructor() {
@@ -32,7 +34,13 @@ class BeastCall extends Skill {
     const effect = this.effect[initiatorMagicLvl - 1] || 1;
 
     const allies = game.players.getMyTeam(initiator.id);
-    const wolfs = times(effect).map((i) => createWolf(initiator.lvl, i + 1 + (allies.length - 1)));
+    const wolfs = times(effect).map((i) =>
+      createWolf(initiator.lvl - 5 + MiscService.randInt(-1, 2), i + 1 + (allies.length - 1)),
+    );
+    wolfs.forEach((wolf) => {
+      wolf.clan = initiator.clan;
+      initiator.clan?.players.push(arena.characters[wolf.id].charObj);
+    });
     game.addPlayers(wolfs);
 
     this.calculateExp();

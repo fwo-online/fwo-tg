@@ -1,4 +1,4 @@
-import { ItemWear, type MonsterType } from '@fwo/shared';
+import type { MonsterType } from '@fwo/shared';
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
 import type GameService from '@/arena/GameService';
@@ -10,7 +10,6 @@ import type { Char } from '@/models/character';
  * Monster Service
  * @description Класс для создание монстра
  * @module Service/Monster
- * @todo Это нерабочий модуль, только прототип
  */
 
 export abstract class MonsterAI {
@@ -46,16 +45,11 @@ export class MonsterService extends PlayerService {
     params: MonsterParams,
     type: MonsterType,
     AIClass: new (monster: MonsterService) => MonsterAI,
-  ) {
-    const monster = new CharacterService(stubParams(params));
-
+  ): MonsterService {
+    const monster = new CharacterService(stubParams(params), true);
     arena.characters[monster.id] = monster;
 
-    const player = new MonsterService(monster, type, AIClass);
-    // fixme
-    player.weapon.item = params.equipment.get(ItemWear.TwoHands);
-
-    return player;
+    return new MonsterService(monster, type, AIClass);
   }
 
   static isMonster(player: PlayerService): player is MonsterService {

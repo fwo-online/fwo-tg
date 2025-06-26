@@ -1,5 +1,5 @@
 import EventEmitter from 'node:events';
-import { playersClanName } from '@fwo/shared';
+import { monstersClanName, playersClanName } from '@fwo/shared';
 import { times } from 'es-toolkit/compat';
 import { Types } from 'mongoose';
 import arena from '@/arena';
@@ -67,20 +67,14 @@ export class TowerService extends EventEmitter<{
 
   getMonsterLvl(isBoss: boolean) {
     if (isBoss) {
-      return 10 + this.lvl * 3;
+      return 10 + this.lvl * 5;
     }
 
     const random = MiscService.randInt(-1, 2);
-    return 5 + this.lvl * 3 + random;
+    return 5 + this.lvl * 5 + random;
   }
 
-  createBoss() {
-    const game = this.currentGame;
-
-    if (!game) {
-      throw new Error('Failed to create monster');
-    }
-
+  createBoss(game: GameService) {
     const boss = createAlpha(this.getMonsterLvl(true));
 
     game.addPlayers([boss]);
@@ -98,16 +92,34 @@ export class TowerService extends EventEmitter<{
     return 3;
   }
 
-  createMonsters() {
-    const game = this.currentGame;
-
-    if (!game) {
-      throw new Error('Failed to create monster');
-    }
-
+  createMonsters(game: GameService) {
     const count = this.getMonstersCount();
     const wolfs = times(count).map((i) => createWolf(this.getMonsterLvl(false), i + 1));
     game.addPlayers(wolfs);
+  }
+
+  createPlayersClan(game: GameService) {
+    const clan = new ClanModel({
+      owner: new Types.ObjectId(),
+      name: playersClanName,
+    });
+
+    game.players.nonBotPlayers.forEach((player) => {
+      player.clan = clan;
+      clan.players.push(arena.characters[player.id].charObj);
+    });
+  }
+
+  createMonstersClan(game: GameService) {
+    const clan = new ClanModel({
+      owner: new Types.ObjectId(),
+      name: monstersClanName,
+    });
+
+    game.players.botPlayers.forEach((monster) => {
+      monster.clan = clan;
+      clan.players.push(arena.characters[monster.id].charObj);
+    });
   }
 
   async startFight(isBoss = false) {
@@ -118,24 +130,18 @@ export class TowerService extends EventEmitter<{
       throw new Error('Failed to create game');
     }
 
-    const clan = new ClanModel({
-      owner: new Types.ObjectId(),
-      name: playersClanName,
-    });
-
-    game.players.nonBotPlayers.forEach((player) => {
-      player.clan = clan;
-    });
-
     this.battlesCount++;
     this.currentGame = game;
 
     if (isBoss) {
-      this.createBoss();
-      this.createMonsters();
+      this.createBoss(game);
+      this.createMonsters(game);
     } else {
-      this.createMonsters();
+      this.createMonsters(game);
     }
+
+    this.createPlayersClan(game);
+    this.createMonstersClan(game);
 
     game.on('end', () => {
       this.handleBattleEnd(game, isBoss, game.players.aliveNonBotPlayers);
@@ -172,8 +178,9 @@ export class TowerService extends EventEmitter<{
   }
 
   sortDead(dead: Player[]) {
-    this.init = this.init.filter((id) => dead.some((player) => player.id === id));
-    this.resetTowerIds(dead.map(({ id }) => arena.characters[id]));
+    const nonBotDead = dead.filter(({ isBot }) => !isBot);
+    this.init = this.init.filter((id) => nonBotDead.some((player) => player.id === id));
+    this.resetTowerIds(nonBotDead.map(({ id }) => arena.characters[id]));
   }
 
   initHandlers() {
@@ -188,7 +195,7 @@ export class TowerService extends EventEmitter<{
         return;
       }
 
-      if (this.battlesCount > 2) {
+      if (this.battlesCount >= 2) {
         this.emit('updateTime', this.timeSpent, this.timeLeft);
         return;
       }

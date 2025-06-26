@@ -1,15 +1,14 @@
+import { type GameResult, ItemComponent, reservedClanName } from '@fwo/shared';
+import { differenceBy, mapValues, noop } from 'es-toolkit';
+import { times } from 'lodash';
 import { CharacterService } from '@/arena/CharacterService';
 import type GameService from '@/arena/GameService';
 import type { HistoryService } from '@/arena/HistoryService';
 import { ItemService } from '@/arena/ItemService';
-import MiscService from '@/arena/MiscService';
 import type PlayersService from '@/arena/PlayersService';
 import type { Player } from '@/arena/PlayersService';
 import type { TowerService } from '@/arena/TowerService/TowerService';
 import { getRandomComponent } from '@/utils/getRandomComponent';
-import { type GameResult, ItemComponent, reservedClanName } from '@fwo/shared';
-import { differenceBy, mapValues, noop } from 'es-toolkit';
-import { times } from 'lodash';
 
 export type RewardServiceFactory = (game: GameService) => RewardService;
 
