@@ -172,11 +172,17 @@ export class TowerService extends EventEmitter<{
     console.debug('Tower debug:: battle end', 'win:', win, 'boss:', wasBossBattle);
     this.emit('battleEnd', game, win);
 
+    this.resetMonsters(game);
+
     if (wasBossBattle || !win) {
       await this.endTower(win);
     } else {
       this.initHandlers();
     }
+  }
+
+  resetMonsters(game: GameService) {
+    game.players.botPlayers.forEach(({ id }) => delete arena.characters[id]);
   }
 
   resetTowerIds(characters: CharacterService[]) {
