@@ -237,7 +237,8 @@ export class TowerService extends EventEmitter<{
       void character.saveToDb();
     });
 
-    await TowerModel.findByIdAndUpdate(this.tower._id, { win });
+    const tower = await TowerModel.findByIdAndUpdate(this.tower._id, { win });
+    await tower?.save();
 
     delete arena.towers?.[this.id];
 
