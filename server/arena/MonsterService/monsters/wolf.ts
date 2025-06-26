@@ -54,11 +54,11 @@ export const createWolf = (lvl = 1, id: string | number = '') => {
     {
       nickname: `🐺 Волк ${id.toString()}`.trimEnd(),
       harks: {
-        str: Math.round(lvl * 4 + 10),
+        str: Math.round(lvl * 6 + 10),
         dex: Math.round(lvl * 1 + 15),
         int: Math.round(lvl * 0.5 + 10),
         wis: Math.round(lvl * 0.5 + 10),
-        con: Math.round(lvl * 4 + 15),
+        con: Math.round(lvl * 6 + 15),
       },
       magics: { bleeding: 1 },
       skills: {},
@@ -70,7 +70,7 @@ export const createWolf = (lvl = 1, id: string | number = '') => {
     MonsterType.Wolf,
     WolfAI,
   );
-  wolf.modifiers.chance.fail.paralysis = 66;
+  wolf.modifiers.chance.fail.paralysis = 90;
 
   return wolf;
 };

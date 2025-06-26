@@ -82,14 +82,14 @@ export class TowerService extends EventEmitter<{
 
   getMonstersCount() {
     if (this.battlesCount === 1) {
-      return 3;
+      return Math.max(3, Math.ceil(this.init.length / 2));
     }
 
     if (this.battlesCount === 2) {
-      return 5;
+      return Math.max(5, this.init.length - 1);
     }
 
-    return 3;
+    return Math.max(3, Math.ceil(this.init.length / 2));
   }
 
   createMonsters(game: GameService) {
