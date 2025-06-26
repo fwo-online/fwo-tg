@@ -132,16 +132,17 @@ export class TowerRewardService extends RewardService {
         winners.map(async (winner) => {
           winner.stats.addGold(goldForGame);
           if (this.isBoss) {
-            const character = await CharacterService.getCharacterById(winner.id);
-            const item = await ItemService.createRandomItem({
-              createdBy: character.charObj,
-              filter: ({ price }) =>
-                price > this.tower.lvl * 500 + 1000 && price < this.tower.lvl * 750 + 1500,
-            });
-            await character.inventory.addItem(item.toObject());
+            // const character = await CharacterService.getCharacterById(winner.id);
+            // const item = await ItemService.createRandomItem({
+            //   createdBy: character.charObj,
+            //   filter: ({ price }) =>
+            //     price > this.tower.lvl * 500 + 1000 && price < this.tower.lvl * 750 + 1500,
+            // });
+            // await character.inventory.addItem(item.toObject());
 
             winner.stats.addComponent(ItemComponent.Arcanite);
-            winner.stats.addItem(item.toObject());
+            times(this.tower.battlesCount, () => winner.stats.addComponent(getRandomComponent(45)));
+            // winner.stats.addItem(item.toObject());
           } else {
             winner.stats.addGold(goldForGame);
             times(this.tower.battlesCount, () => winner.stats.addComponent(getRandomComponent(45)));
