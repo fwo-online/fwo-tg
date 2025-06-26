@@ -144,7 +144,12 @@ export class TowerService extends EventEmitter<{
     this.createMonstersClan(game);
 
     game.on('end', () => {
-      this.handleBattleEnd(game, isBoss, game.players.aliveNonBotPlayers);
+      this.handleBattleEnd(
+        game,
+        isBoss,
+        game.players.aliveNonBotPlayers,
+        game.players.aliveBotPlayers,
+      );
     });
 
     game.on('endRound', ({ dead }) => {
@@ -154,10 +159,15 @@ export class TowerService extends EventEmitter<{
     this.emit('battleStart', game, isBoss);
   }
 
-  async handleBattleEnd(game: GameService, wasBossBattle: boolean, alivePlayers: Player[]) {
+  async handleBattleEnd(
+    game: GameService,
+    wasBossBattle: boolean,
+    alivePlayers: Player[],
+    aliveMonsters: Player[],
+  ) {
     this.currentGame = undefined;
     this.init = alivePlayers.map(({ id }) => id);
-    const win = alivePlayers.length > 0;
+    const win = alivePlayers.length > 0 && aliveMonsters.length === 0;
 
     console.debug('Tower debug:: battle end', 'win:', win, 'boss:', wasBossBattle);
     this.emit('battleEnd', game, win);
