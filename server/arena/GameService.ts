@@ -1,18 +1,16 @@
+import EventEmitter from 'node:events';
 import { createGame } from '@/api/game';
-import type { Game } from '@/models/game';
+import arena from '@/arena';
 import type { LongItem } from '@/arena/Constuructors/LongMagicConstructor';
 import { engine } from '@/arena/EngineService';
-import { HistoryService, type HistoryItem } from '@/arena/HistoryService';
-import type * as magics from '@/arena/magics';
+import { type HistoryItem, HistoryService } from '@/arena/HistoryService';
 import OrderService from '@/arena/OrderService';
 import PlayersService, { type Player } from '@/arena/PlayersService';
 import { RoundService, RoundStatus } from '@/arena/RoundService';
-import arena from '@/arena';
+import type * as magics from '@/arena/magics';
+import type { Game } from '@/models/game';
+import { type GameStatus, reservedClanName } from '@fwo/shared';
 import { mapValues } from 'es-toolkit';
-import EventEmitter from 'node:events';
-import { type GameStatus, type ItemComponent, reservedClanName } from '@fwo/shared';
-import { StatisticsService } from '@/arena/StatisticsService';
-import { LadderService } from '@/arena/LadderService';
 
 export type KickReason = 'afk' | 'run';
 
@@ -34,25 +32,18 @@ export interface GlobalFlags {
  * Класс для объекта игры
  */
 export default class GameService extends EventEmitter<{
-  end: [
-    {
-      reason: string | undefined;
-      statistic: Partial<
-        Record<string, { exp: number; gold: number; nick: string; component?: ItemComponent }[]>
-      >;
-    },
-  ];
+  start: [];
+  end: [{ reason: string | undefined; draw: boolean }];
   startOrders: [];
   endOrders: [];
   preKick: [{ reason: string; player: Player }];
   kick: [{ reason: string; player: Player }];
   startRound: [{ round: number; status: Record<string, GameStatus[]> }];
   endRound: [{ dead: Player[]; log: HistoryItem[] }];
+  players: [players: Player[]];
 }> {
   players: PlayersService;
   orders: OrderService;
-  statistic: StatisticsService;
-  ladder: LadderService;
   round = new RoundService();
   history = new HistoryService();
   longActions: Partial<Record<keyof typeof magics, LongItem[]>> = {};
@@ -71,8 +62,6 @@ export default class GameService extends EventEmitter<{
 
     this.players = new PlayersService(players);
     this.orders = new OrderService(this.players, this.round);
-    this.statistic = new StatisticsService(this.players, this.history);
-    this.ladder = new LadderService(this.players, this.round);
     this.flags = {
       noDamageRound: 0,
       global: {
@@ -81,10 +70,12 @@ export default class GameService extends EventEmitter<{
     };
   }
 
+  static emitter = new EventEmitter<{ start: [game: GameService] }>();
+
   /**
    * Функция проверки окончания игры
    */
-  get isGameEnd(): boolean {
+  isGameEnd(): boolean {
     return (
       this.isTeamWin ||
       this.players.alivePlayers.length === 0 ||
@@ -240,29 +231,10 @@ export default class GameService extends EventEmitter<{
     console.debug('GC debug:: endGame', this.info.id);
     // Отправляем статистику
     setTimeout(async () => {
-      const statistic = await this.statistic.giveRewards(!this.isTeamWin);
-      await this.ladder.saveGameStats();
-
       this.resetGameIds(this.players.players);
 
-      this.emit('end', { reason: this.getEndGameReason(), statistic });
+      this.emit('end', { reason: this.getEndGameReason(), draw: !this.isTeamWin });
       this.removeAllListeners();
-
-      arena.mm.cancel();
-
-      // FIXME move to client side
-      this.forAllPlayers((player: Player) => {
-        const char = arena.characters[player.id];
-        if (char.expEarnedToday >= char.expLimitToday) {
-          char.autoreg = false;
-        }
-        if (!char.autoreg) return;
-        arena.mm.push({
-          id: player.id,
-          psr: char.performance.psr,
-          startTime: Date.now(),
-        });
-      });
     }, 1000);
   }
 
@@ -298,6 +270,11 @@ export default class GameService extends EventEmitter<{
     // Обработка сообщений от Round Module
     this.round.subscribe(({ state, round }) => {
       switch (state) {
+        case RoundStatus.INIT: {
+          GameService.emitter.emit('start', this);
+          this.emit('start');
+          break;
+        }
         case RoundStatus.START_ROUND: {
           this.forAllPlayers(this.checkOrders);
           this.sendStatus(round);
@@ -309,7 +286,7 @@ export default class GameService extends EventEmitter<{
           this.players.reset();
           this.orders.reset();
           this.handleEndGameFlags();
-          if (this.isGameEnd) {
+          if (this.isGameEnd()) {
             this.round.unsubscribe();
             this.endGame();
           } else {
@@ -373,6 +350,11 @@ export default class GameService extends EventEmitter<{
    */
   forAllPlayers(f: (player: Player) => void): void {
     this.players.players.forEach((p) => f.call(this, p));
+  }
+
+  addPlayers(players: Player[]) {
+    players.forEach((player) => this.players.add(player));
+    this.emit('players', this.players.players);
   }
 
   getStatus() {

@@ -1,11 +1,11 @@
-import type { CharacterPublic } from '@/character/characterPublic';
 import type { Character } from '@/character';
-import type { Player } from './player';
-import type { GameStatus } from '@/game';
-import type { Action } from './action';
-import type { RPC } from './rpc';
-import type { Order } from './orderSchema';
+import type { CharacterPublic } from '@/character/characterPublic';
 import type { ClanPublic } from '@/clan';
+import type { GameStatus, GameType } from '@/game';
+import type { Action } from './action';
+import type { Order } from './orderSchema';
+import type { Player } from './player';
+import type { RPC } from './rpc';
 
 export type OrderResponse = RPC<{
   actions: Action[];
@@ -17,9 +17,9 @@ export type OrderResponse = RPC<{
 
 export type ClientToServerMessage = Message<{
   character: [callback: (character: Character) => void];
-  'lobby:enter': [callback: (characters: CharacterPublic[]) => void];
+  'lobby:enter': [callback: (characters: Record<GameType, CharacterPublic[]>) => void];
   'lobby:leave': [];
-  'lobby:start': [callback: (payload: RPC<{ success?: boolean }>) => void];
+  'lobby:start': [type: GameType, callback: (payload: RPC<{ success?: boolean }>) => void];
   'lobby:stop': [];
   'game:connected': [
     callback: (
@@ -40,6 +40,15 @@ export type ClientToServerMessage = Message<{
   'game:orderRepeat': [callback: (payload: OrderResponse) => void];
   'game:orderReset': [callback: (payload: OrderResponse) => void];
   'game:orderRemove': [id: string, callback: (payload: OrderResponse) => void];
+  'tower:connected': [
+    callback: (
+      payload: RPC<{
+        players: Record<string, CharacterPublic>;
+        timeSpent: number;
+        timeLeft: number;
+      }>,
+    ) => void,
+  ];
 }>;
 
 type Message<T extends Record<string, unknown[]>> = {
@@ -50,9 +59,9 @@ export type ServerToClientMessage = Message<{
   character: [character: Character];
   'lobby:enter': [character: CharacterPublic];
   'lobby:leave': [character: CharacterPublic];
-  'lobby:list': [characters: CharacterPublic[]];
-  'lobby:start': [character: CharacterPublic];
-  'lobby:stop': [character: CharacterPublic];
+  'lobby:list': [characters: Record<GameType, CharacterPublic[]>];
+  'lobby:start': [character: CharacterPublic, type: GameType];
+  'lobby:stop': [character: CharacterPublic, type: GameType];
   'lobby:help': [];
   'game:start': [gameID: string];
   'game:end': [];
@@ -76,4 +85,13 @@ export type ServerToClientMessage = Message<{
   ];
   'game:kick': [{ reason: string; player: Player }];
   'game:preKick': [{ reason: string; player: Player }];
+  'game:players': [
+    {
+      players: Record<string, Player>;
+      clans: Record<string, ClanPublic>;
+    },
+  ];
+  'tower:start': [towerID: string];
+  'tower:end': [];
+  'tower:updateTime': [timeSpent: number, timeLeft: number];
 }>;

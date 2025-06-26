@@ -33,18 +33,23 @@ export class CharacterService {
   /**
    * Конструктор игрока
    */
-  constructor(public charObj: Char) {
+  constructor(
+    public charObj: Char,
+    isBot = false,
+  ) {
     this.inventory = new CharacterInventory(this);
     this.resources = new CharacterResources(this);
     this.attributes = new CharacterAttributes(this);
     this.performance = new CharacterPerformance(this);
     this.charObj = charObj;
     this.mm = {};
-    this.resetExpLimit();
+    this.isBot = isBot;
   }
 
   wasLvlUp = false;
   autoreg = false;
+  towerID = '';
+  isBot = false;
 
   get id() {
     return this.charObj.id.toString();
@@ -114,6 +119,18 @@ export class CharacterService {
   /** @type {string[]} */
   set favoriteMagicList(value) {
     this.charObj.favoriteMagicList = value;
+  }
+
+  get lastFight() {
+    return this.charObj.lastFight;
+  }
+
+  get lastTower() {
+    return this.charObj.lastTower;
+  }
+
+  set lastTower(value: Date | null) {
+    this.charObj.lastTower = value;
   }
 
   async changeNickname(newNickname: string) {
@@ -193,6 +210,10 @@ export class CharacterService {
 
   get currentGame() {
     return arena.games[this.gameId];
+  }
+
+  get currentTower() {
+    return arena.towers[this.towerID];
   }
 
   /**
@@ -289,8 +310,11 @@ export class CharacterService {
    */
   async saveToDb() {
     try {
+      if (this.isBot) {
+        return;
+      }
       console.log('Saving char :: id', this.id);
-      const { magics, skills, passiveSkills, clan } = this;
+      const { magics, skills, passiveSkills, clan, lastFight, lastTower } = this;
       const { gold, components, exp, free, bonus } = this.resources;
       const { items, equipment } = this.inventory;
 
@@ -312,6 +336,8 @@ export class CharacterService {
         harks: this.charObj.harks,
         items,
         equipment,
+        lastFight,
+        lastTower,
       });
     } catch (e) {
       console.error('Fail on CharSave:', e);
@@ -349,6 +375,7 @@ export class CharacterService {
       psr: this.performance.psr,
       dynamicAttributes: this.attributes.getDynamicAttributes(),
       game: this.currentGame?.info.id,
+      tower: this.currentTower?.id,
       statistics: this.performance.statistics,
       components: Object.fromEntries(this.resources.components.entries()) as Record<
         ItemComponent,

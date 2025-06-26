@@ -1,8 +1,8 @@
+import CastError from '@/arena/errors/CastError';
 import { normalizeToArray } from '@/utils/array';
 import { BaseAction } from './BaseAction';
 import type { Affect, AffectFn } from './interfaces/Affect';
 import type { SuccessArgs } from './types';
-import CastError from '@/arena/errors/CastError';
 
 export abstract class AffectableAction extends BaseAction {
   private preAffects: Affect[] = [];
@@ -11,15 +11,15 @@ export abstract class AffectableAction extends BaseAction {
   private affects: SuccessArgs[] = [];
 
   registerPreAffects(preAffects: Affect[]) {
-    this.preAffects = preAffects;
+    this.preAffects = [...this.preAffects, ...preAffects];
   }
 
   registerPostAffects(postAffects: Affect[]) {
-    this.postAffects = postAffects;
+    this.postAffects = [...this.postAffects, ...postAffects];
   }
 
   registerAffectHandlers(affectHandlers: Affect[]) {
-    this.affectHandlers = affectHandlers;
+    this.affectHandlers = [...this.affectHandlers, ...affectHandlers];
   }
 
   clearAffects() {

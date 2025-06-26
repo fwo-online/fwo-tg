@@ -19,6 +19,7 @@
     "@hono/node-server": "^1.13.8",
     "@hono/valibot-validator": "^0.5.2",
     "@telegram-apps/init-data-node": "^2.0.3",
+    "cronbake": "^0.1.2",
     "es-toolkit": "^1.33.0",
     "grammy": "^1.35.1",
     "hono": "^4.7.4",

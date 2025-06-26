@@ -1,7 +1,6 @@
 import OrderError from '@/arena/errors/OrderError';
 import ValidationError from '@/arena/errors/ValidationError';
-import type GameService from '@/arena/GameService';
-import MatchMakingService from '@/arena/MatchMakingService';
+import GameService from '@/arena/GameService';
 import ActionsHelper from '@/helpers/actionsHelper';
 import type { Server, Socket } from '@/server/ws';
 import { keyBy } from 'es-toolkit';
@@ -22,7 +21,7 @@ const getRoom = (game: GameService, scope?: string) => {
 };
 
 export const onCreate = (io: Server) => {
-  MatchMakingService.on('start', async (game) => {
+  GameService.emitter.on('start', async (game) => {
     await Promise.all(
       game.players.nonBotPlayers.map(async (player) => {
         const socket = activeConnections.get(player.owner);
@@ -43,6 +42,21 @@ export const onCreate = (io: Server) => {
     game.on('startRound', (e) => {
       // fixme отправлять полный статус только союзникам
       io.to(getRoom(game)).emit('game:startRound', e);
+    });
+
+    game.on('players', () => {
+      const players = keyBy(
+        game.players.players.map((player) => player.toObject()),
+        ({ id }) => id,
+      );
+      const clans = Object.values(players).reduce<Record<string, ClanPublic>>((acc, { clan }) => {
+        if (clan) {
+          acc[clan.id] = clan;
+        }
+        return acc;
+      }, {});
+
+      io.to(getRoom(game)).emit('game:players', { players, clans });
     });
 
     game.on('endRound', ({ dead }) => {

@@ -1,8 +1,10 @@
+import { ItemWear, MonsterType } from '@fwo/shared';
 import arena from '@/arena';
+import { expToLevel } from '@/arena/CharacterService/utils/calculateLvl';
 import type GameService from '@/arena/GameService';
+import MiscService from '@/arena/MiscService';
 import { MonsterAI, MonsterService } from '@/arena/MonsterService/MonsterService';
 import { ItemModel } from '@/models/item';
-import { ItemWear, MonsterType } from '@fwo/shared';
 
 class WolfAI extends MonsterAI {
   makeOrder(game: GameService) {
@@ -26,45 +28,51 @@ class WolfAI extends MonsterAI {
 
   private chooseTarget(game: GameService) {
     const targets = game.players.alivePlayers.filter(({ isBot }) => !isBot);
-    if (targets.length) {
-      return targets.reduce((target, player) => {
-        if (target.stats.val('hp') < player.stats.val('hp')) {
-          return target;
-        }
-        return player;
-      });
+
+    if (!targets.length) {
+      return;
+    }
+
+    if (MiscService.dice('1d100') > 50) {
+      if (targets.length) {
+        return targets.reduce((target, player) => {
+          if (target.stats.val('hp') < player.stats.val('hp')) {
+            return target;
+          }
+          return player;
+        });
+      }
+    } else {
+      return targets.at(MiscService.randInt(0, targets.length));
     }
   }
 }
 
-export const createWolf = async (lvl = 1) => {
-  const fang = await ItemModel.findOneAndUpdate({ code: 'fang' }, arena.items.fang, {
-    upsert: true,
-    new: true,
-  }).orFail();
-  const claws = await ItemModel.findOneAndUpdate({ code: 'claws' }, arena.items.fang, {
-    upsert: true,
-    new: true,
-  }).orFail();
-
-  return MonsterService.create(
+export const createWolf = (lvl = 1, id: string | number = '') => {
+  const fang = new ItemModel(arena.items.fang);
+  const wolf = MonsterService.create(
     {
-      id: 'wolf',
-      nickname: '🐺Волк',
+      nickname: `🐺 Волк ${id.toString()}`.trimEnd(),
       harks: {
-        str: Math.round(lvl * 4 + 20),
-        dex: Math.round(lvl * 1 + 10),
-        int: Math.round(lvl * 0.5 + 3),
-        wis: Math.round(lvl * 0.5 + 3),
-        con: Math.round(lvl * 4 + 20),
+        str: Math.round(lvl * 6 + 10),
+        dex: Math.round(lvl * 1 + 15),
+        int: Math.round(lvl * 0.5 + 10),
+        wis: Math.round(lvl * 0.5 + 10),
+        con: Math.round(lvl * 6 + 15),
       },
-      magics: { bleeding: Math.min(Math.round(lvl / 10), 3) },
+      magics: { bleeding: 1 },
       skills: {},
-      passiveSkills: { lacerate: Math.min(Math.round(lvl / 10), 3) },
-      items: [fang, claws],
+      passiveSkills: { lacerate: 1, nightcall: 1 },
+      items: [fang],
       equipment: new Map([[ItemWear.TwoHands, fang]]),
+      exp: expToLevel(lvl),
     },
     MonsterType.Wolf,
     WolfAI,
   );
+  wolf.modifiers.chance.fail.paralysis = 90;
+  wolf.modifiers.chance.fail.madness = 30;
+  wolf.modifiers.chance.fail.disarm = 30;
+
+  return wolf;
 };

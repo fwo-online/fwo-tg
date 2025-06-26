@@ -32,6 +32,10 @@ const registerMagicAffects = () => {
   arena.magics.sleep.registerPreAffects([arena.actions.nightcall]);
 
   Object.values(arena.magics).forEach((magic) => {
+    if (magic.name === 'bleeding') {
+      return;
+    }
+
     magic.registerPreAffects([
       arena.actions.silence,
       arena.actions.paralysis,

@@ -1,6 +1,6 @@
+import { reservedClanName } from '@fwo/shared';
 import { keyBy } from 'lodash';
 import Player from './PlayerService';
-import { reservedClanName } from '@fwo/shared';
 
 export default class PlayersService {
   init: string[];
@@ -28,8 +28,16 @@ export default class PlayersService {
     return this.players.filter(({ alive }) => !alive);
   }
 
+  get botPlayers(): Player[] {
+    return this.players.filter(({ isBot }) => isBot);
+  }
+
   get nonBotPlayers(): Player[] {
     return this.players.filter(({ isBot }) => !isBot);
+  }
+
+  get aliveBotPlayers(): Player[] {
+    return this.botPlayers.filter(({ alive }) => alive);
   }
 
   get aliveNonBotPlayers(): Player[] {

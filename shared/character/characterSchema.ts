@@ -29,6 +29,7 @@ export type Character = {
   class: CharacterClass;
   dynamicAttributes: Attributes;
   game?: string;
+  tower?: string;
   clan?: ClanPublic;
   items: Item[];
   equipment: string[];

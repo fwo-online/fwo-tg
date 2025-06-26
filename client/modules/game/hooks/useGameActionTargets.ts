@@ -1,20 +1,16 @@
-import { useGameStore } from '@/modules/game/store/useGameStore';
-import { useMemo } from 'react';
-import { type Player, reservedClanName, type Action } from '@fwo/shared';
+import { type Action, type Player, reservedClanName } from '@fwo/shared';
 import { omit, pick } from 'es-toolkit';
 import { groupBy, isEmpty } from 'es-toolkit/compat';
+import { useMemo } from 'react';
 import { useCharacter } from '@/modules/character/store/character';
+import { useGameStore } from '@/modules/game/store/useGameStore';
 
-export const useGameActionTargets = ({
-  action,
-}: {
-  action: Action;
-}) => {
+export const useGameActionTargets = ({ action }: { action: Action }) => {
   const characterID = useCharacter((character) => character.id);
-  const clanID = useCharacter((character) => character.clan?.name ?? reservedClanName);
+  const clanID = useGameStore((state) => state.players[characterID].clan?.name ?? reservedClanName);
   const players = useGameStore((state) => state.players);
   const alivePlayers = Object.values(players).filter(({ alive }) => alive);
-  const playersByClan = groupBy(alivePlayers, ({ clan }) => clan?.name || reservedClanName);
+  const playersByClan = groupBy(alivePlayers, ({ clan }) => clan?.name ?? reservedClanName);
 
   const availableTargets: Record<string, Player[]> = useMemo(() => {
     switch (action.orderType) {

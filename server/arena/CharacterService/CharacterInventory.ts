@@ -1,15 +1,13 @@
+import type { ItemSet, Modifiers } from '@fwo/shared';
+import { type Attributes, attributesSchema, ItemWear } from '@fwo/shared';
+import { every } from 'es-toolkit/compat';
+import { array, parse } from 'valibot';
 import arena from '@/arena';
 import type { CharacterService } from '@/arena/CharacterService/CharacterService';
 import ValidationError from '@/arena/errors/ValidationError';
 import type { Char } from '@/models/character';
 import type { Item } from '@/models/item';
 import { assignWithSum } from '@/utils/assignWithSum';
-import { ItemWear } from '@fwo/shared';
-import { type Attributes, attributesSchema } from '@fwo/shared';
-import type { ItemSet } from '@fwo/shared';
-import type { Modifiers } from '@fwo/shared';
-import { every } from 'es-toolkit/compat';
-import { array, parse } from 'valibot';
 
 export class CharacterInventory {
   harksFromItems: Attributes;
@@ -72,11 +70,17 @@ export class CharacterInventory {
   }
 
   getEquippedWeapon() {
-    return this.equipment.get(ItemWear.MainHand) || this.equipment.get(ItemWear.TwoHands);
+    const item = this.equipment.get(ItemWear.MainHand) || this.equipment.get(ItemWear.TwoHands);
+    if (item) {
+      return this.getItem(item._id.toString());
+    }
   }
 
   getEquippedOffHand() {
-    return this.equipment.get(ItemWear.OffHand);
+    const item = this.equipment.get(ItemWear.OffHand);
+    if (item) {
+      return this.getItem(item._id.toString());
+    }
   }
 
   canEquip(itemToEquip: Item) {
@@ -170,8 +174,12 @@ export class CharacterInventory {
     this.updateHarkFromItems();
 
     for (const wear in this.equipment) {
-      const item = this.equipment.get(wear as ItemWear);
+      const equippedItem = this.equipment.get(wear as ItemWear);
+      if (!equippedItem) {
+        continue;
+      }
 
+      const item = this.getItem(equippedItem.id);
       if (item && (!this.hasRequiredAttributes(item) || !this.canEquip(item))) {
         return this.unEquipItem(item.id);
       }
@@ -190,11 +198,13 @@ export class CharacterInventory {
    * которые были получены от надетых вещей в инвентаре персонажа
    */
   updateHarkFromItems() {
-    const equippedItems = Array.from(this.equipment.values());
-    const itemAttriributes = parse(array(attributesSchema), equippedItems);
+    const items = Array.from(this.equipment.values())
+      .map((item) => this.getItem(item._id.toString()))
+      .filter((item) => !!item);
+    const itemAttriributes = parse(array(attributesSchema), items);
     const harksFromItems = itemAttriributes.reduce(assignWithSum, parse(attributesSchema, {}));
 
-    const itemsSets = CharacterInventory.getItemsSetsByInventory(equippedItems);
+    const itemsSets = CharacterInventory.getItemsSetsByInventory(items);
     const itemsSetsAttriributes = parse(array(attributesSchema), itemsSets);
     const harksFromItemsSets = itemsSetsAttriributes.reduce(assignWithSum, harksFromItems);
 

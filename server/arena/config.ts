@@ -60,7 +60,7 @@ export default {
     // 'sphere',
     // 'mana_burn',
     // 8ppa
-    ['blessing', 'curse', 'entangle'], // ???
+    ['blessing', 'curse', 'entangle', 'beastCall'], // ???
     ['blight', 'bodySpirit'],
     // 'mirror_reflection',
     ['smallAura', 'magicArmor', 'strongAura', 'dustShield', 'mediumAura', 'stoneSkin', 'magicWall'], // ???
@@ -85,9 +85,9 @@ export default {
       'regeneration',
     ],
     'attack',
-    'bleeding',
     //
     [
+      'bleeding',
       'fireBall',
       // 'ice_lance',
       'magicArrow',

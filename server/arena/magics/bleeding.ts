@@ -15,7 +15,7 @@ class Bleeding extends LongDmgMagic {
       orderType: 'enemy',
       aoeType: 'target',
       magType: 'bad',
-      chance: [100, 100, 100],
+      chance: ['200d200', '200d200', '200d200'],
       effect: ['1d3', '1d5', '1d9'],
       dmgType: 'physical',
       profList: ['w'],

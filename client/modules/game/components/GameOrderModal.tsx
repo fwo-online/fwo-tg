@@ -1,14 +1,14 @@
+import type { Action } from '@fwo/shared';
 import { useState } from 'react';
-import { useGameStore } from '@/modules/game/store/useGameStore';
-import { GameOrderList } from '@/modules/game//components/GameOrderList';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Modal } from '@/components/Modal';
-import { GameOrderProgress } from '@/modules/game/components/GameOrderProgress';
-import type { Action } from '@fwo/shared';
-import { useGameActionOrder } from '@/modules/game/hooks/useGameActionOrder';
+import { GameOrderList } from '@/modules/game//components/GameOrderList';
 import { GameAction } from '@/modules/game/components/GameAction';
 import { GameActionList } from '@/modules/game/components/GameActionList';
+import { GameOrderProgress } from '@/modules/game/components/GameOrderProgress';
+import { useGameActionOrder } from '@/modules/game/hooks/useGameActionOrder';
+import { useGameStore } from '@/modules/game/store/useGameStore';
 
 export function GameOrderModal() {
   const [open, setOpen] = useState(true);
@@ -42,7 +42,12 @@ export function GameOrderModal() {
           <GameOrderList isPending={isPending} onRemove={handleRemove} />
           <GameOrderProgress />
           {selectedAction ? (
-            <GameAction isPending={isPending} action={selectedAction} onOrder={handleOrder} />
+            <GameAction
+              isPending={isPending}
+              action={selectedAction}
+              onOrder={handleOrder}
+              onCancel={handleResetAction}
+            />
           ) : (
             <GameActionList
               isPending={isPending}

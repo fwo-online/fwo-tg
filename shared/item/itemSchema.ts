@@ -34,4 +34,4 @@ export const itemSchema = v.object({
 export type ItemInput = v.InferInput<typeof itemSchema>;
 export type ItemOutput = v.InferOutput<typeof itemSchema>;
 
-export type Item = ItemOutput & { id: string; _id: string };
+export type Item = ItemOutput & { id: string };

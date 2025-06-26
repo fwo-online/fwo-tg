@@ -1,9 +1,9 @@
-import { Placeholder } from '@/components/Placeholder';
-import type { FC } from 'react';
-import { reservedClanName, type CharacterPublic } from '@fwo/shared';
+import { type CharacterPublic, reservedClanName } from '@fwo/shared';
 import { groupBy } from 'es-toolkit';
+import type { FC } from 'react';
 import { Description } from '@/components/Description';
-import { CharacterImage } from '@/modules/character/components/CharacterImage';
+import { Placeholder } from '@/components/Placeholder';
+import { Player } from '@/components/Player';
 
 export const LobbyList: FC<{ searchers: CharacterPublic[] }> = ({ searchers }) => {
   const searchersByClan = groupBy(searchers, ({ clan }) => clan?.name ?? reservedClanName);
@@ -15,9 +15,7 @@ export const LobbyList: FC<{ searchers: CharacterPublic[] }> = ({ searchers }) =
           <Description key={clan} header={clan === reservedClanName ? 'Без клана' : clan}>
             {searchers?.map((searcher) => (
               <Description.Item key={searcher.id}>
-                <div className="flex">
-                  <CharacterImage characterClass={searcher.class} small /> {searcher.name}
-                </div>
+                <Player class={searcher.class} name={searcher.name} lvl={searcher.lvl} />
               </Description.Item>
             ))}
           </Description>
