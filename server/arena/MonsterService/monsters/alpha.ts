@@ -98,6 +98,7 @@ export const createAlpha = (lvl = 1) => {
   );
   alpha.modifiers.chance.fail.paralysis = 90;
   alpha.modifiers.chance.fail.madness = 50;
+  alpha.modifiers.chance.fail.disarm = 50;
 
   return alpha;
 };
