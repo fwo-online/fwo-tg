@@ -1,19 +1,20 @@
-import { useGameStore } from '@/modules/game/store/useGameStore';
+import { type Action, reservedClanName } from '@fwo/shared';
 import { type ChangeEventHandler, type FC, useState } from 'react';
-import { reservedClanName, type Action } from '@fwo/shared';
+import { Button } from '@/components/Button';
+import { Card } from '@/components/Card';
+import { Placeholder } from '@/components/Placeholder';
+import { Slider } from '@/components/Slider';
+import { useMountEffect } from '@/hooks/useMountEffect';
+import { useGameStore } from '@/modules/game/store/useGameStore';
 import { useGameActionTargets } from '../hooks/useGameActionTargets';
 import { GameActionTarget } from './GameActionTarget';
-import { Card } from '@/components/Card';
-import { Button } from '@/components/Button';
-import { Placeholder } from '@/components/Placeholder';
-import { useMountEffect } from '@/hooks/useMountEffect';
-import { Slider } from '@/components/Slider';
 
 export const GameAction: FC<{
   action: Action;
   isPending: boolean;
   onOrder: (action: string, target: string, power: number) => void;
-}> = ({ action, onOrder, isPending }) => {
+  onCancel: () => void;
+}> = ({ action, onOrder, onCancel, isPending }) => {
   const remainPower = useGameStore((state) => state.power);
   const [power, setPower] = useState(0);
   const { hasTargets, availableTargets } = useGameActionTargets({ action });
@@ -47,7 +48,7 @@ export const GameAction: FC<{
   });
 
   return (
-    <Card header={<>Выбери цель для {action.displayName}</>}>
+    <Card header={action.displayName}>
       {hasTargets ? (
         <Placeholder description="Нет доступных целей" />
       ) : (
@@ -60,7 +61,7 @@ export const GameAction: FC<{
           </div>
         ))
       )}
-      <div className="flex flex-col ga-2">
+      <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2 mb-4">
           <span>0</span>
           <Slider value={power} min={0} max={remainPower} step={1} onChange={handleSliderChange} />
@@ -73,9 +74,10 @@ export const GameAction: FC<{
           <Button disabled>Выбери силу</Button>
         ) : (
           <Button className="is-primary" type="submit" disabled={isPending} onClick={handleClick}>
-            Заказать {action.displayName} на {power}%
+            {action.displayName} на {power}%
           </Button>
         )}
+        <Button onClick={onCancel}>Отмена</Button>
       </div>
     </Card>
   );

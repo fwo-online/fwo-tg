@@ -1,8 +1,9 @@
+import type { Player as PlayerType } from '@fwo/shared';
 import { type FC, useCallback } from 'react';
-import type { Player } from '@fwo/shared';
+import { Player } from '@/components/Player';
 
 export const GameActionTarget: FC<{
-  player: Player;
+  player: PlayerType;
   onChange: (target: string) => void;
 }> = ({ player, onChange }) => {
   const handleChange = useCallback(() => {
@@ -12,7 +13,9 @@ export const GameActionTarget: FC<{
   return (
     <label>
       <input className="nes-radio" type="radio" name={player.id} onChange={handleChange} />
-      <span>{player.name}</span>
+      <span>
+        <Player class={player.class} name={player.name} isBot={player.isBot} />
+      </span>
     </label>
   );
 };

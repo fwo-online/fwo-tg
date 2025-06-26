@@ -1,14 +1,13 @@
-import { useGameStore } from '@/modules/game/store/useGameStore';
-import { Description } from '@/components/Description';
 import { type GameStatus as GameStatusSchema, reservedClanName } from '@fwo/shared';
-
-import { CharacterImage } from '@/modules/character/components/CharacterImage';
 import { mapValues, omit } from 'es-toolkit';
+import { Description } from '@/components/Description';
+import { Player } from '@/components/Player';
 import { useCharacter } from '@/modules/character/store/character';
+import { useGameStore } from '@/modules/game/store/useGameStore';
 
 export function GameStatus() {
-  const clan = useCharacter((character) => character.clan);
   const characterID = useCharacter((character) => character.id);
+  const clan = useGameStore((state) => state.players[characterID]?.clan);
   const players = useGameStore((state) => state.players);
   const statusByClan = useGameStore((state) => state.statusByClan);
   const alliesStatus = clan
@@ -37,9 +36,11 @@ export function GameStatus() {
             </>
           }
         >
-          <div className="flex">
-            <CharacterImage characterClass={players[status.id].class} small /> {status.name}
-          </div>
+          <Player
+            class={players[status.id].class}
+            name={status.name}
+            isBot={players[status.id].isBot}
+          />
         </Description.Item>
       ))}
       {Object.entries(enemiesStatus).map(([clan, statuses]) =>
@@ -48,10 +49,11 @@ export function GameStatus() {
             {statuses?.map((status) => (
               <Description.Item key={status.id} after={<>❤️{status.hp}</>}>
                 <div className="flex gap-2">
-                  {players[status.id].isBot ? null : (
-                    <CharacterImage characterClass={players[status.id].class} small />
-                  )}
-                  {status.name}
+                  <Player
+                    class={players[status.id].class}
+                    name={status.name}
+                    isBot={players[status.id].isBot}
+                  />
                 </div>
               </Description.Item>
             ))}
