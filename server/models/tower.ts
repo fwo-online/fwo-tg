@@ -1,4 +1,4 @@
-import mongoose, { Schema, type Model, type Types } from 'mongoose';
+import mongoose, { type Model, Schema, type Types } from 'mongoose';
 
 export interface Tower {
   _id: Types.ObjectId;
@@ -15,7 +15,7 @@ export interface Tower {
 export type TowerModel = Model<Tower> & typeof Tower;
 
 export class Tower {
-  async getMaxLvl(this: TowerModel) {
+  static async getMaxLvl(this: TowerModel) {
     const [tower] = await this.find({ win: true }).sort({ lvl: -1 }).limit(1).exec();
 
     return tower?.lvl ?? 0;

@@ -4,6 +4,7 @@ import {
   itemComponentName,
   reservedClanName,
 } from '@fwo/shared';
+import Baker from 'cronbake';
 import { mapValues } from 'es-toolkit';
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
@@ -15,6 +16,7 @@ import { LadderRewardService, TowerRewardService } from '@/arena/RewardService';
 import { TowerService } from '@/arena/TowerService/TowerService';
 import { broadcast, sendBattleLogMessages } from '@/helpers/channelHelper';
 import { DonationHelper } from '@/helpers/donationHelper';
+import { TowerModel } from '@/models/tower';
 import { bold } from '@/utils/formatString';
 
 export async function createGame(players: string[]) {
@@ -113,7 +115,8 @@ ${Object.entries(resultsByClan)
 }
 
 export async function createTower(players: string[]) {
-  const newTower = new TowerService(players, 1);
+  const lvl = await TowerModel.getMaxLvl();
+  const newTower = new TowerService(players, lvl + 1);
   const tower = await newTower.createTower();
   tower.on('end', async () => {
     arena.mm.reset('tower');
@@ -187,3 +190,16 @@ ${Object.entries(resultsByClan)
 
   return game;
 }
+
+const baker = Baker.create();
+
+baker.add({
+  name: 'resetTower',
+  cron: '@at_19:00',
+  callback: async () => {
+    await TowerModel.deleteMany({});
+    broadcast('Cо стороны башни доносятся крики. Башня открывает свои врата');
+  },
+});
+
+baker.bakeAll();

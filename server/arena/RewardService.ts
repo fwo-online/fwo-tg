@@ -135,7 +135,8 @@ export class TowerRewardService extends RewardService {
             const character = await CharacterService.getCharacterById(winner.id);
             const item = await ItemService.createRandomItem({
               createdBy: character.charObj,
-              filter: ({ price }) => price > this.tower.lvl * 500 && price < this.tower.lvl * 750,
+              filter: ({ price }) =>
+                price > this.tower.lvl * 500 + 1250 && price < this.tower.lvl * 750 + 1500,
             });
             await character.inventory.addItem(item.toObject());
 
