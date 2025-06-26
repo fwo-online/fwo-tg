@@ -71,6 +71,7 @@ export const createWolf = (lvl = 1, id: string | number = '') => {
     WolfAI,
   );
   wolf.modifiers.chance.fail.paralysis = 90;
+  wolf.modifiers.chance.fail.madness = 30;
 
   return wolf;
 };

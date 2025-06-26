@@ -97,6 +97,7 @@ export const createAlpha = (lvl = 1) => {
     AlfaAI,
   );
   alpha.modifiers.chance.fail.paralysis = 90;
+  alpha.modifiers.chance.fail.madness = 50;
 
   return alpha;
 };
