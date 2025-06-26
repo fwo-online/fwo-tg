@@ -156,6 +156,10 @@ export class TowerService extends EventEmitter<{
       this.sortDead(dead);
     });
 
+    game.on('kick', ({ player }) => {
+      this.sortDead([player]);
+    });
+
     this.emit('battleStart', game, isBoss);
   }
 
