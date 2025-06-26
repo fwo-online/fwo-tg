@@ -34,8 +34,9 @@ class BeastCall extends Skill {
     const effect = this.effect[initiatorMagicLvl - 1] || 1;
 
     const allies = game.players.getMyTeam(initiator.id);
+    console.log(initiator.lvl);
     const wolfs = times(effect).map((i) =>
-      createWolf(initiator.lvl - 5 + MiscService.randInt(-1, 2), i + 1 + (allies.length - 1)),
+      createWolf(initiator.lvl - 3 + MiscService.randInt(-1, 2), i + 1 + (allies.length - 1)),
     );
     wolfs.forEach((wolf) => {
       wolf.clan = initiator.clan;

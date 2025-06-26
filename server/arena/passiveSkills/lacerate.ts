@@ -10,7 +10,7 @@ class Lacerate extends PassiveSkillConstructor implements Affect {
       name: 'lacerate',
       displayName: '🩸Рассечение',
       description: 'Шанс на 🩸Кровотечение при атаке режущим оружием',
-      chance: [10, 20, 30],
+      chance: [7, 12, 20],
       effect: [1, 1, 1],
       bonusCost: [],
     });

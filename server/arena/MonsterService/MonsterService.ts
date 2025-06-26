@@ -23,7 +23,7 @@ export abstract class MonsterAI {
 
 export type MonsterParams = Pick<
   Char,
-  'nickname' | 'harks' | 'magics' | 'skills' | 'passiveSkills' | 'items' | 'equipment'
+  'nickname' | 'harks' | 'magics' | 'skills' | 'passiveSkills' | 'items' | 'equipment' | 'exp'
 >;
 
 export class MonsterService extends PlayerService {

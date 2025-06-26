@@ -1,9 +1,11 @@
 import { ItemWear, MonsterType } from '@fwo/shared';
 import arena from '@/arena';
+import { expToLevel } from '@/arena/CharacterService/utils/calculateLvl';
 import { isSuccessResult } from '@/arena/Constuructors/utils';
 import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
 import { MonsterAI, MonsterService } from '@/arena/MonsterService/MonsterService';
+import { beastCall } from '@/arena/skills';
 import { ItemModel } from '@/models/item';
 
 class AlfaAI extends MonsterAI {
@@ -14,15 +16,18 @@ class AlfaAI extends MonsterAI {
       return;
     }
 
-    const result = game.getLastRoundResults().find(({ action }) => action === 'beastCall');
-    if (result && isSuccessResult(result)) {
+    const beastCallUsed = game
+      .getLastRoundResults()
+      .some((result) => result.action === beastCall.displayName && isSuccessResult(result));
+    if (beastCallUsed) {
       this.beastCallUsed = true;
     }
 
     const randomChance = MiscService.dice('1d100') > 90;
     const isHalfHP = this.monster.stats.val('hp') < this.monster.stats.val('base.hp') / 2;
-    const isAlliesAlive = !game.players.getAliveAllies(this.monster).length;
+    const isAlliesAlive = game.players.getAliveAllies(this.monster).length > 0;
 
+    console.log(randomChance, isHalfHP, isAlliesAlive);
     if ((randomChance || isHalfHP || !isAlliesAlive) && !this.beastCallUsed) {
       game.orders.orderAction({
         action: 'beastCall',
@@ -75,17 +80,18 @@ export const createAlpha = (lvl = 1) => {
     {
       nickname: '🐺 Альфа',
       harks: {
-        str: Math.round(lvl * 12 + 20),
-        dex: Math.round(lvl * 1 + 10),
-        int: Math.round(lvl * 0.5 + 15),
-        wis: Math.round(lvl * 0.5 + 5),
-        con: Math.round(lvl * 8 + 20),
+        str: Math.round(lvl * 8 + 15),
+        dex: Math.round(lvl * 1 + 15),
+        int: Math.round(lvl * 1 + 10),
+        wis: Math.round(lvl * 0.5 + 10),
+        con: Math.round(lvl * 15 + 25),
       },
       magics: { bleeding: 3 },
       skills: { beastCall: Math.max(1, Math.min(Math.round(lvl / 15), 3)) },
       passiveSkills: { lacerate: 3, nightcall: 1 },
       items: [claws],
       equipment: new Map([[ItemWear.TwoHands, claws]]),
+      exp: expToLevel(lvl),
     },
     MonsterType.Wolf,
     AlfaAI,
