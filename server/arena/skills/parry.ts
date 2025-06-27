@@ -45,14 +45,13 @@ class Parry extends Skill implements Affect {
 
     if (target.flags.isParry && isParryable) {
       const initiatorDex = initiator.stats.val('attributes.dex');
+      target.flags.isParry -= initiatorDex;
 
-      if ((target.flags.isParry - initiatorDex) > 0) {
+      if (target.flags.isParry > 0) {
         this.calculateExp();
 
         throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
       }
-
-      target.flags.isParry -= initiatorDex;
     }
   };
 
