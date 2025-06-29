@@ -4,18 +4,15 @@ import { expToLevel } from '@/arena/CharacterService/utils/calculateLvl';
 import { isSuccessResult } from '@/arena/Constuructors/utils';
 import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
-import { MonsterAI, MonsterService } from '@/arena/MonsterService/MonsterService';
+import { MonsterService } from '@/arena/MonsterService/MonsterService';
+import { WolfAI } from '@/arena/MonsterService/monsters/wolf';
 import { beastCall } from '@/arena/skills';
 import { ItemModel } from '@/models/item';
 
-class AlfaAI extends MonsterAI {
+class AlfaAI extends WolfAI {
   beastCallUsed = false;
 
-  makeOrder(game: GameService) {
-    if (!this.monster.alive) {
-      return;
-    }
-
+  orderBeastCall(game: GameService) {
     const beastCallUsed = game
       .getLastRoundResults()
       .some((result) => result.action === beastCall.displayName && isSuccessResult(result));
@@ -27,49 +24,29 @@ class AlfaAI extends MonsterAI {
     const isHalfHP = this.monster.stats.val('hp') < this.monster.stats.val('base.hp') / 2;
     const isAlliesAlive = game.players.getAliveAllies(this.monster).length > 0;
 
-    console.log(randomChance, isHalfHP, isAlliesAlive);
     if ((randomChance || isHalfHP || !isAlliesAlive) && !this.beastCallUsed) {
+      try {
       game.orders.orderAction({
         action: 'beastCall',
         initiator: this.monster.id,
         target: this.monster.id,
         proc: 50,
       });
+        return true;
+      } catch {
+        return false;
     }
-
-    const target = this.chooseTarget(game);
-
-    if (!target) {
-      return;
     }
-
-    game.orders.orderAction({
-      action: 'attack',
-      initiator: this.monster.id,
-      target: target.id,
-      proc: this.monster.proc,
-    });
+    return false;
   }
 
-  private chooseTarget(game: GameService) {
-    const targets = game.players.alivePlayers.filter(({ isBot }) => !isBot);
-
-    if (!targets.length) {
+  makeOrder(game: GameService) {
+    if (!this.monster.alive) {
       return;
     }
 
-    if (MiscService.dice('1d100') > 50) {
-      if (targets.length) {
-        return targets.reduce((target, player) => {
-          if (target.stats.val('hp') < player.stats.val('hp')) {
-            return target;
-          }
-          return player;
-        });
-      }
-    } else {
-      return targets.at(MiscService.randInt(0, targets.length));
-    }
+    this.orderBeastCall(game);
+    super.makeOrder(game);
   }
 }
 
@@ -87,7 +64,7 @@ export const createAlpha = (lvl = 1) => {
         con: Math.round(lvl * 15 + 25),
       },
       magics: { bleeding: 3 },
-      skills: { beastCall: Math.max(1, Math.min(Math.round(lvl / 15), 3)) },
+      skills: { beastCall: Math.max(1, Math.min(Math.round(lvl / 15), 3)), terrifyingHowl: 3 },
       passiveSkills: { lacerate: 3, nightcall: 1 },
       items: [claws],
       equipment: new Map([[ItemWear.TwoHands, claws]]),
