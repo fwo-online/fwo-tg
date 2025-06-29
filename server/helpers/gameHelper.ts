@@ -4,19 +4,16 @@ import {
   itemComponentName,
   reservedClanName,
 } from '@fwo/shared';
-import Baker from 'cronbake';
 import { mapValues } from 'es-toolkit';
 import arena from '@/arena';
-import { CharacterService } from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
 import { LadderService } from '@/arena/LadderService';
 import { formatMessage } from '@/arena/LogService/utils';
 import { MonsterService } from '@/arena/MonsterService/MonsterService';
 import { LadderRewardService, TowerRewardService } from '@/arena/RewardService';
-import { TowerService } from '@/arena/TowerService/TowerService';
+import type { TowerService } from '@/arena/TowerService/TowerService';
 import { broadcast, sendBattleLogMessages } from '@/helpers/channelHelper';
 import { DonationHelper } from '@/helpers/donationHelper';
-import { TowerModel } from '@/models/tower';
 import { bold } from '@/utils/formatString';
 
 export async function createGame(players: string[]) {
@@ -114,41 +111,7 @@ ${Object.entries(resultsByClan)
   return game;
 }
 
-export async function createTower(players: string[]) {
-  const lvl = await TowerModel.getMaxLvl();
-  const newTower = new TowerService(players, lvl + 1);
-  const tower = await newTower.createTower();
-  tower.on('end', async () => {
-    arena.mm.reset('tower');
-    const date = new Date();
-    await Promise.all(
-      players.map(async (id) => {
-        const char = await CharacterService.getCharacterById(id);
-        char.lastTower = date;
-        await char.saveToDb();
-      }),
-    );
-
-    broadcast('Башня завершена');
-  });
-
-  tower.on('battleStart', async () => {
-    await broadcast('Монстры нападают на путников!');
-  });
-
-  tower.on('battleEnd', async (_, win) => {
-    if (win) {
-      await broadcast('Монстры побеждены!');
-    } else {
-      await broadcast('Монстры победили путников!');
-    }
-  });
-
-  return tower;
-}
-
 export async function createTowerGame(tower: TowerService, isBoss: boolean) {
-  /** @todo надо как-то нормально тут сделать */
   const game = await createGame(tower.init);
 
   if (!game) {
@@ -170,14 +133,6 @@ export async function createTowerGame(tower: TowerService, isBoss: boolean) {
       ({ player }) => player.clan?.name ?? reservedClanName,
     );
 
-    console.log(`${bold`Статистика игры`}
-${Object.entries(resultsByClan)
-  .map(([clan, players]) => {
-    console.log(players);
-    return `${bold(clan === reservedClanName ? 'Без клана' : clan)}:\n${players?.map(resultToString).join('\n')}`;
-  })
-  .join('\n')}`);
-
     await broadcast('Игра завершена');
     await broadcast(`${bold`Статистика игры`}
 ${Object.entries(resultsByClan)
@@ -190,16 +145,3 @@ ${Object.entries(resultsByClan)
 
   return game;
 }
-
-const baker = Baker.create();
-
-baker.add({
-  name: 'resetTower',
-  cron: '@at_19:00',
-  callback: async () => {
-    await TowerModel.deleteMany({});
-    broadcast('Cо стороны башни доносятся крики. Башня открывает свои врата');
-  },
-});
-
-baker.bakeAll();

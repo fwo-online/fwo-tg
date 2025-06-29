@@ -1,7 +1,7 @@
 import EventEmitter from 'node:events';
 import { monstersClanName, playersClanName } from '@fwo/shared';
 import { times } from 'es-toolkit/compat';
-import { Types } from 'mongoose';
+import { type HydratedDocument, Types } from 'mongoose';
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
 import type GameService from '@/arena/GameService';
@@ -26,7 +26,7 @@ export class TowerService extends EventEmitter<{
   timeSpent = 0;
   timeLeft = timeLeft;
   battlesCount = 0;
-  private tower!: Tower;
+  private tower!: HydratedDocument<Tower>;
 
   lvl: number;
   init: string[];
@@ -66,12 +66,12 @@ export class TowerService extends EventEmitter<{
   }
 
   getMonsterLvl(isBoss: boolean) {
+    const random = MiscService.randInt(-1, 2);
     if (isBoss) {
-      return 10 + this.lvl * 5;
+      return 10 + this.lvl * 15 + random;
     }
 
-    const random = MiscService.randInt(-1, 2);
-    return 5 + this.lvl * 5 + random;
+    return this.lvl * 10 + random;
   }
 
   createBoss(game: GameService) {
@@ -189,10 +189,13 @@ export class TowerService extends EventEmitter<{
     game.players.botPlayers.forEach(({ id }) => delete arena.characters[id]);
   }
 
-  resetTowerIds(characters: CharacterService[]) {
+  resetTowerIds(characters: CharacterService[], lose = true) {
     characters.forEach((character) => {
       character.towerID = '';
       character.lastTower = new Date();
+      if (lose) {
+        character.towerAvailable = false;
+      }
       void character.saveToDb();
     });
   }
@@ -235,18 +238,15 @@ export class TowerService extends EventEmitter<{
   }
 
   async endTower(win: boolean) {
-    this.characters.forEach((character) => {
-      character.towerID = '';
-      character.lastTower = new Date();
-      void character.saveToDb();
-    });
+    this.resetTowerIds(this.characters, !win);
 
-    const tower = await TowerModel.findByIdAndUpdate(this.tower._id, { win });
-    await tower?.save();
+    this.tower.win = win;
+    await this.tower.save();
 
     delete arena.towers?.[this.id];
 
     this.emit('end');
+    this.removeAllListeners();
   }
 
   static isPlayerInTower(playerId: string): boolean {

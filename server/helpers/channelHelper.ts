@@ -48,7 +48,7 @@ export const initGameChannel = async () => {
 
     if (queue === 'ladder') {
       broadcast(
-        `Игрок ${character.clan ? `\\[${character.clan.name}\] ` : ''}${bold(character.nickname)} (${profsData[character.prof].icon}${character.lvl}) начал поиск игры!`,
+        `Игрок ${character.clan ? `\\[${character.clan.name}\] ` : ''}${bold(character.nickname)} (${profsData[character.prof].icon}${character.lvl}) ищет игру!`,
       );
     }
 

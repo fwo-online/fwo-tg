@@ -1,7 +1,7 @@
+import type { CharacterAttributes, CharacterClass, ItemComponent, ItemWear } from '@fwo/shared';
+import mongoose, { type Model, Schema, type Types } from 'mongoose';
 import type { Clan } from '@/models/clan';
 import type { Item } from '@/models/item';
-import type { CharacterAttributes, CharacterClass, ItemComponent, ItemWear } from '@fwo/shared';
-import mongoose, { Schema, type Types, type Model } from 'mongoose';
 
 export interface Char {
   _id: Types.ObjectId;
@@ -49,6 +49,7 @@ export interface Char {
   items: Item[];
   equipment: Map<ItemWear, Item>;
   components: Map<ItemComponent, number>;
+  towerAvailable: boolean;
 }
 
 export type CharModel = Model<Char> & typeof Char;
@@ -140,6 +141,7 @@ const character = new Schema<Char, CharModel>({
     default: {},
   },
   lastTower: { type: Schema.Types.Date, default: null },
+  towerAvailable: { type: Schema.Types.Boolean, default: true },
 });
 
 character.loadClass(Char);

@@ -129,8 +129,16 @@ export class CharacterService {
     return this.charObj.lastTower;
   }
 
-  set lastTower(value: Date | null) {
+  set lastTower(value) {
     this.charObj.lastTower = value;
+  }
+
+  get towerAvailable() {
+    return this.charObj.towerAvailable;
+  }
+
+  set towerAvailable(value) {
+    this.charObj.towerAvailable = value;
   }
 
   async changeNickname(newNickname: string) {
@@ -314,7 +322,7 @@ export class CharacterService {
         return;
       }
       console.log('Saving char :: id', this.id);
-      const { magics, skills, passiveSkills, clan, lastFight, lastTower } = this;
+      const { magics, skills, passiveSkills, clan, lastFight, lastTower, towerAvailable } = this;
       const { gold, components, exp, free, bonus } = this.resources;
       const { items, equipment } = this.inventory;
 
@@ -338,6 +346,7 @@ export class CharacterService {
         equipment,
         lastFight,
         lastTower,
+        towerAvailable,
       });
     } catch (e) {
       console.error('Fail on CharSave:', e);
