@@ -32,7 +32,7 @@ export class WolfAI extends MonsterAI {
       return false;
     }
 
-    const cost = terrifyingHowl.cost[this.monster.skills.terrifyingHowl];
+    const cost = terrifyingHowl.cost[this.monster.skills.terrifyingHow + 1];
     console.debug('COST:: ', cost);
     if (this.monster.stats.val(terrifyingHowl.costType) < cost) {
       return false;
