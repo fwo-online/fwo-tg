@@ -151,6 +151,7 @@ export class TowerRewardService extends RewardService {
                   price > this.tower.lvl * 1000 && price < this.tower.lvl * 2000,
               });
               await character.inventory.addItem(item.toObject());
+              winner.stats.addItem(item);
             }),
         );
       }
