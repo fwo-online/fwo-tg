@@ -138,11 +138,11 @@ export const createWolf = (lvl = 1, id: string | number = '') => {
     {
       nickname: `🐺 Волк ${id.toString()}`.trimEnd(),
       harks: {
-        str: Math.round(lvl * 6 + 10),
-        dex: Math.round(lvl * 1 + 15),
-        int: Math.round(lvl * 0.5 + 10),
-        wis: Math.round(lvl * 0.5 + 10),
-        con: Math.round(lvl * 6 + 15),
+        str: Math.round(lvl * 3 + 10),
+        dex: Math.round(lvl * 1 + 10),
+        int: Math.round(lvl * 1 + 10),
+        wis: Math.round(lvl * 1 + 10),
+        con: Math.round(lvl * 5 + 10),
       },
       magics: { bleeding: 1 },
       skills: { terrifyingHowl: 1 },
