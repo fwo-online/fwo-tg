@@ -27,16 +27,20 @@ export class WolfAI extends MonsterAI {
   }
 
   private canHowl(game: GameService): boolean {
+    console.debug('PROC:: ', this.monster.proc);
     if (this.monster.proc < 50) {
       return false;
     }
 
     const cost = terrifyingHowl.cost[this.monster.skills.terrifyingHowl];
+    console.debug('COST:: ', cost);
     if (this.monster.stats.val(terrifyingHowl.costType) < cost) {
       return false;
     }
 
     const howlOrders = game.orders.ordersList.filter(({ action }) => action === 'terrifyingHowl');
+
+    console.debug('ORDERS:: ', howlOrders.length);
     if (howlOrders.length >= 2) {
       return false;
     }
@@ -45,6 +49,7 @@ export class WolfAI extends MonsterAI {
   }
 
   private orderHowl(game: GameService): boolean {
+    console.debug('CAN HOWL', this.canHowl(game));
     if (!this.canHowl(game)) {
       return false;
     }
@@ -59,6 +64,7 @@ export class WolfAI extends MonsterAI {
           !isString(result.reason),
       );
 
+    console.debug('WOLF_ORDER', blockedAttack);
     if (!blockedAttack || isSuccessResult(blockedAttack) || isString(blockedAttack.reason)) {
       return false;
     }
