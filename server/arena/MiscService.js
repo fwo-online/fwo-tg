@@ -8,7 +8,7 @@
  * @property {function} action
  */
 
-import { bold, italic } from "@/utils/formatString"
+import { bold, italic } from '@/utils/formatString';
 
 /** @type {Object.<string, weaponType>} */
 const WEAPON_TYPES = {
@@ -79,7 +79,7 @@ const STORES = {
 function randFloat(min, max) {
   const tempMax = +max;
   const tempMin = +min;
-  return (Math.random() * (tempMax - tempMin) + tempMin);
+  return Math.random() * (tempMax - tempMin) + tempMin;
 }
 /**
  * Рандомное целое значние между min - max
@@ -124,6 +124,15 @@ export default class MiscService {
     const max = +part[1];
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
-  static randFloat = randFloat
-  static randInt = randInt
-};
+  /**
+   * Функция рандома по формату "1d100" или 100 ;
+   * @param {string | number} chance параметры рандома в формате "1d100" или 100
+   * @return {boolean} результат броска
+   */
+  static chance(chance) {
+    const percent = typeof chance === 'string' ? this.rndm(chance) : +chance;
+    return this.rndm('1d100') <= percent;
+  }
+  static randFloat = randFloat;
+  static randInt = randInt;
+}
