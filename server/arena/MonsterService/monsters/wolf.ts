@@ -31,12 +31,13 @@ export class WolfAI extends MonsterAI {
       return false;
     }
 
-    const cost = terrifyingHowl.cost[this.monster.skills.terrifyingHowl];
+    const cost = terrifyingHowl.cost[this.monster.skills.terrifyingHow + 1];
     if (this.monster.stats.val(terrifyingHowl.costType) < cost) {
       return false;
     }
 
     const howlOrders = game.orders.ordersList.filter(({ action }) => action === 'terrifyingHowl');
+
     if (howlOrders.length >= 2) {
       return false;
     }
@@ -59,6 +60,7 @@ export class WolfAI extends MonsterAI {
           !isString(result.reason),
       );
 
+    console.debug('WOLF_ORDER', blockedAttack);
     if (!blockedAttack || isSuccessResult(blockedAttack) || isString(blockedAttack.reason)) {
       return false;
     }

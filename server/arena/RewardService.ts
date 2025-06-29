@@ -137,12 +137,12 @@ export class TowerRewardService extends RewardService {
 
       if (this.isBoss) {
         shuffle(winners)
-          .splice(0, this.tower.lvl * 2)
+          .splice(0, this.tower.lvl)
           .forEach((winner) => winner.stats.addComponent(ItemComponent.Arcanite));
 
         await Promise.all(
           shuffle(winners)
-            .splice(0, this.tower.lvl * 2)
+            .splice(0, this.tower.lvl)
             .map(async (winner) => {
               const character = await CharacterService.getCharacterById(winner.id);
               const item = await ItemService.createRandomItem({
@@ -151,6 +151,7 @@ export class TowerRewardService extends RewardService {
                   price > this.tower.lvl * 1000 && price < this.tower.lvl * 2000,
               });
               await character.inventory.addItem(item.toObject());
+              winner.stats.addItem(item);
             }),
         );
       }

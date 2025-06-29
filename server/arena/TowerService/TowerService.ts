@@ -241,6 +241,7 @@ export class TowerService extends EventEmitter<{
     this.resetTowerIds(this.characters, !win);
 
     this.tower.win = win;
+    this.tower.ended = true;
     await this.tower.save();
 
     delete arena.towers?.[this.id];
