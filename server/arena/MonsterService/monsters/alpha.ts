@@ -26,16 +26,16 @@ class AlfaAI extends WolfAI {
 
     if ((randomChance || isHalfHP || !isAlliesAlive) && !this.beastCallUsed) {
       try {
-      game.orders.orderAction({
-        action: 'beastCall',
-        initiator: this.monster.id,
-        target: this.monster.id,
-        proc: 50,
-      });
+        game.orders.orderAction({
+          action: 'beastCall',
+          initiator: this.monster.id,
+          target: this.monster.id,
+          proc: 50,
+        });
         return true;
       } catch {
         return false;
-    }
+      }
     }
     return false;
   }
@@ -57,11 +57,11 @@ export const createAlpha = (lvl = 1) => {
     {
       nickname: '🐺 Альфа',
       harks: {
-        str: Math.round(lvl * 8 + 15),
-        dex: Math.round(lvl * 1 + 15),
+        str: Math.round(lvl * 3 + 10),
+        dex: Math.round(lvl * 1 + 10),
         int: Math.round(lvl * 1 + 10),
-        wis: Math.round(lvl * 0.5 + 10),
-        con: Math.round(lvl * 15 + 25),
+        wis: Math.round(lvl * 1 + 10),
+        con: Math.round(lvl * 13 + 10),
       },
       magics: { bleeding: 3 },
       skills: { beastCall: Math.max(1, Math.min(Math.round(lvl / 15), 3)), terrifyingHowl: 3 },

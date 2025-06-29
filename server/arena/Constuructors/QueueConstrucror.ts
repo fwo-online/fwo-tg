@@ -1,13 +1,19 @@
+import type { GameType } from '@fwo/shared';
 import arena from '@/arena';
 import config from '@/arena/config';
-import { createLadderGame, createTower } from '@/helpers/gameHelper';
-import type { GameType } from '@fwo/shared';
+import ValidationError from '@/arena/errors/ValidationError';
+import { createLadderGame } from '@/helpers/gameHelper';
+import { createTower } from '@/helpers/towerHelper';
 
 export type QueueItem = {
   id: string;
   startTime: number;
   queue: GameType;
 };
+
+export interface Queue {
+  validate?(item: QueueItem): void;
+}
 
 export abstract class Queue {
   open = true;
@@ -50,6 +56,14 @@ export class LadderQueue extends Queue {
 export class TowerQueue extends Queue {
   checkStatus(): boolean {
     return this.items.length >= config.minPlayersLimit;
+  }
+
+  validate(item: QueueItem) {
+    const character = arena.characters[item.id];
+
+    if (!character.towerAvailable) {
+      throw new ValidationError('Сегодня врата башни закрыты для тебя');
+    }
   }
 
   override async start(): Promise<void> {

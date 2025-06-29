@@ -1,5 +1,5 @@
 import { type GameResult, ItemComponent, reservedClanName } from '@fwo/shared';
-import { differenceBy, mapValues, noop } from 'es-toolkit';
+import { differenceBy, mapValues, noop, shuffle } from 'es-toolkit';
 import { times } from 'lodash';
 import { CharacterService } from '@/arena/CharacterService';
 import type GameService from '@/arena/GameService';
@@ -128,27 +128,32 @@ export class TowerRewardService extends RewardService {
     const goldForGame = this.getGoldForGame();
 
     try {
-      await Promise.all(
-        winners.map(async (winner) => {
-          winner.stats.addGold(goldForGame);
-          if (this.isBoss) {
-            // const character = await CharacterService.getCharacterById(winner.id);
-            // const item = await ItemService.createRandomItem({
-            //   createdBy: character.charObj,
-            //   filter: ({ price }) =>
-            //     price > this.tower.lvl * 500 + 1000 && price < this.tower.lvl * 750 + 1500,
-            // });
-            // await character.inventory.addItem(item.toObject());
+      winners.forEach((winner) => {
+        winner.stats.addGold(goldForGame);
+        times(this.tower.battlesCount * this.tower.lvl, () =>
+          winner.stats.addComponent(getRandomComponent(45)),
+        );
+      });
 
-            winner.stats.addComponent(ItemComponent.Arcanite);
-            times(this.tower.battlesCount, () => winner.stats.addComponent(getRandomComponent(45)));
-            // winner.stats.addItem(item.toObject());
-          } else {
-            winner.stats.addGold(goldForGame);
-            times(this.tower.battlesCount, () => winner.stats.addComponent(getRandomComponent(45)));
-          }
-        }),
-      );
+      if (this.isBoss) {
+        shuffle(winners)
+          .splice(0, this.tower.lvl * 2)
+          .forEach((winner) => winner.stats.addComponent(ItemComponent.Arcanite));
+
+        await Promise.all(
+          shuffle(winners)
+            .splice(0, this.tower.lvl * 2)
+            .map(async (winner) => {
+              const character = await CharacterService.getCharacterById(winner.id);
+              const item = await ItemService.createRandomItem({
+                createdBy: character.charObj,
+                filter: ({ price }) =>
+                  price > this.tower.lvl * 1000 && price < this.tower.lvl * 2000,
+              });
+              await character.inventory.addItem(item.toObject());
+            }),
+        );
+      }
     } catch (e) {
       console.error('giveWinnerRewards::', e);
     }
