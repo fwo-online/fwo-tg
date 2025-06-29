@@ -23,7 +23,12 @@ class NightCall extends PassiveSkillConstructor implements Affect {
   preAffect: Affect['preAffect'] = (context) => {
     this.applyContext(context);
 
+    if (!this.isActive()) {
+      return undefined;
+    }
+
     const { initiator, target, game } = context.params;
+
     throw new CastError({
       ...this.getSuccessResult({ initiator, target, game }),
       actionType: 'passive',
