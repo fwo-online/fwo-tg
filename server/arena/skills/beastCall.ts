@@ -16,7 +16,7 @@ class BeastCall extends Skill {
       displayName: '🐺📣 Звериный клич',
       desc: 'Призывает волков на помощь',
       cost: [0, 0, 0],
-      proc: 50,
+      proc: 75,
       baseExp: 8,
       costType: 'en',
       orderType: 'self',

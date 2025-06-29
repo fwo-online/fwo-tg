@@ -65,9 +65,12 @@ class MatchMaking extends EventEmitter<{
   }
 
   validate(item: QueueItem) {
-    if (some(this.allQueue, (queue) => queue.items.some(({ id }) => id === item.id))) {
+    forEach(this.allQueue, (queue) => {
+      if (queue.items.some(({ id }) => id === item.id)) {
       throw new ValidationError('Ты уже стоишь в очереди');
     }
+      queue.validate?.(item);
+    });
 
     const now = Date.now();
 

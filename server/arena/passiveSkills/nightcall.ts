@@ -3,8 +3,6 @@ import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConst
 import CastError from '@/arena/errors/CastError';
 
 class NightCall extends PassiveSkillConstructor implements Affect {
-  weaponTypes = ['cut'];
-
   constructor() {
     super({
       name: 'nightcall',
@@ -22,6 +20,7 @@ class NightCall extends PassiveSkillConstructor implements Affect {
 
   preAffect: Affect['preAffect'] = (context) => {
     this.applyContext(context);
+    this.swapParams();
 
     if (!this.isActive()) {
       return undefined;
