@@ -1,8 +1,8 @@
 import { EventEmitter } from 'node:events';
-import ValidationError from '@/arena/errors/ValidationError';
 import type { GameType } from '@fwo/shared';
 import { mapValues } from 'es-toolkit';
-import { every, some } from 'es-toolkit/compat';
+import { every, forEach } from 'es-toolkit/compat';
+import ValidationError from '@/arena/errors/ValidationError';
 import {
   LadderQueue,
   type Queue,
@@ -67,8 +67,8 @@ class MatchMaking extends EventEmitter<{
   validate(item: QueueItem) {
     forEach(this.allQueue, (queue) => {
       if (queue.items.some(({ id }) => id === item.id)) {
-      throw new ValidationError('Ты уже стоишь в очереди');
-    }
+        throw new ValidationError('Ты уже стоишь в очереди');
+      }
       queue.validate?.(item);
     });
 
