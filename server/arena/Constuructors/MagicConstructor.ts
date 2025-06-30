@@ -1,12 +1,12 @@
+import type { CostType, Magic as MagicSchema } from '@fwo/shared';
 import { floatNumber } from '../../utils/floatNumber';
 import CastError from '../errors/CastError';
 import type Game from '../GameService';
-import type * as magics from '../magics';
 import MiscService from '../MiscService';
+import type * as magics from '../magics';
 import type { Player } from '../PlayersService';
 import { AffectableAction } from './AffectableAction';
 import type { ActionType, CustomMessage, OrderType } from './types';
-import type { CostType, Magic as MagicSchema } from '@fwo/shared';
 
 export interface MagicArgs {
   name: keyof typeof magics;
@@ -166,8 +166,8 @@ export abstract class Magic extends AffectableAction {
     // тут нужно взять получившийся шанс и проверить ещё отношение mga цели
     // @todo magics cast chance
     if (this.magType === 'bad') {
-      const x = (initiator.stats.val('magic.attack') / target.stats.val('magic.defence')) * 3;
-      result += x;
+      const x = (initiator.stats.val('magic.attack') / target.stats.val('magic.defence')) * 1.5;
+      result *= x;
     }
     console.debug(
       `${this.name} cast chance:: ${result * initiator.proc} (${result}), chance ${chance}, ratio (dmg): ${(initiator.stats.val('magic.attack') / target.stats.val('magic.defence')) * 3} initiator:: ${initiator.nick}, target:: ${target.nick}`,
