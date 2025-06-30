@@ -1,8 +1,8 @@
+import { useNavigate } from 'react-router';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { LobbyList } from '@/modules/lobby/components/LobbyList';
 import { useLobbyQueue } from '@/modules/lobby/hooks/useLobbyQueue';
-import { useNavigate } from 'react-router';
 
 export const LobbyArenaPage = () => {
   const { toggleSearch, isSearching, searchers } = useLobbyQueue('ladder');
@@ -14,7 +14,7 @@ export const LobbyArenaPage = () => {
 
   return (
     <div className="h-full overflow-hidden flex flex-col">
-      <Card header="Башня" className="m-4">
+      <Card header="Арена" className="m-4">
         <div className="flex flex-col mb-8">
           <Button onClick={navigateToLadder}>Рейтинг</Button>
         </div>
