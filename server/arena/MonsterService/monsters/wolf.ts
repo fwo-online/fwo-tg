@@ -63,7 +63,6 @@ export class WolfAI extends MonsterAI {
           !isString(result.reason),
       );
 
-    console.debug('WOLF_ORDER', blockedAttack);
     if (!blockedAttack || isSuccessResult(blockedAttack) || isString(blockedAttack.reason)) {
       return false;
     }

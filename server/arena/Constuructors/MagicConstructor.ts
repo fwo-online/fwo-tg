@@ -166,8 +166,11 @@ export abstract class Magic extends AffectableAction {
     // тут нужно взять получившийся шанс и проверить ещё отношение mga цели
     // @todo magics cast chance
     if (this.magType === 'bad') {
-      const x = (initiator.stats.val('magic.attack') / target.stats.val('magic.defence')) * 1.5;
-      result *= x;
+      const attack = initiator.stats.val('magic.attack');
+      const defence = target.stats.val('magic.defence');
+      const ratio = attack / defence;
+
+      result *= Math.round(1 - Math.exp(-1 * ratio));
     }
     console.debug(
       `${this.name} cast chance:: ${result * initiator.proc} (${result}), chance ${chance}, ratio (dmg): ${(initiator.stats.val('magic.attack') / target.stats.val('magic.defence')) * 3} initiator:: ${initiator.nick}, target:: ${target.nick}`,

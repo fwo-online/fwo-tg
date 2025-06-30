@@ -20,7 +20,7 @@ class TerrifyingHowl extends Skill {
       orderType: 'enemy',
       aoeType: 'target',
       chance: [80, 90, 100],
-      effect: [0, 1, 2],
+      effect: [2, 3, 4],
       profList: {},
       bonusCost: [0, 0, 0],
     });
