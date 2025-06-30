@@ -52,9 +52,8 @@ export abstract class BaseAction {
   }
 
   swapParams() {
-    const initiator = this.params.initiator;
-    this.params.initiator = this.params.target;
-    this.params.target = initiator;
+    const { initiator, target, game } = this.params;
+    this.params = { initiator: target, target: initiator, game };
   }
 
   applyContext(context: BaseActionContext) {
