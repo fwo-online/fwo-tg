@@ -10,7 +10,6 @@ import { MonsterAI, MonsterService } from '@/arena/MonsterService/MonsterService
 import { magicWall } from '@/arena/magics';
 import { terrifyingHowl } from '@/arena/skills';
 import { ItemModel } from '@/models/item';
-import { normalizeToArray } from '@/utils/array';
 
 export class WolfAI extends MonsterAI {
   makeOrder(game: GameService) {
@@ -78,7 +77,7 @@ export class WolfAI extends MonsterAI {
       game.orders.orderAction({
         action: 'terrifyingHowl',
         initiator: this.monster.id,
-        target: normalizeToArray(blockedAttack.reason)[0].initiator.id,
+        target: enemies[0].id,
         proc: 50,
       });
       return true;
