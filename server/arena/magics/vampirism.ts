@@ -1,6 +1,7 @@
 import type { SuccessArgs } from '@/arena/Constuructors/types';
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 import { bold, italic } from '@/utils/formatString';
+import { floatNumber } from '@/utils/floatNumber';
 
 /**
  * Вампиризм
@@ -39,7 +40,7 @@ class Vampirism extends DmgMagic {
   }
 
   customMessage({ initiator, target, effect, hp }: SuccessArgs): string {
-    const heal = Math.max(0, effect - Math.abs(Math.min(0, hp)));
+    const heal = floatNumber(Math.max(0, effect - Math.abs(Math.min(0, hp))));
     return `${bold(initiator.nick)} сотворил ${italic(this.displayName)} на ${bold(target.nick)} нанеся ${bold(effect.toString())} и восстановив себе ${bold(heal.toString())} здоровья`;
   }
 }
