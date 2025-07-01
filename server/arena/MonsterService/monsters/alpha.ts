@@ -60,7 +60,7 @@ export const createAlpha = (lvl = 1) => {
         str: Math.round(lvl * 3 + 10),
         dex: Math.round(lvl * 1 + 10),
         int: Math.round(lvl * 1 + 10),
-        wis: Math.round(lvl * 1 + 10),
+        wis: Math.round(lvl * 2 + 10),
         con: Math.round(lvl * 13 + 10),
       },
       magics: { bleeding: 3 },
