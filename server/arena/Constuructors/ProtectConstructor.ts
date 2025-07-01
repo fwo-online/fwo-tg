@@ -81,7 +81,7 @@ export abstract class ProtectConstructor extends AffectableAction implements Aff
     const protect = protectors.reduce((acc, { val }) => acc + val, 0);
     const chance = this.getProtectChance(params, protect);
 
-    if (chance < MiscService.rndm('1d100')) {
+    if (MiscService.chance(chance)) {
       this.calculateExp({ initiator, target, game }, status.effect);
 
       throw new CastError(this.getSuccessResult({ initiator, target, game }));
