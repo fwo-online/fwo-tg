@@ -1,16 +1,16 @@
+import type { CharacterClass, GameStatus, Player } from '@fwo/shared';
 import arena from '@/arena';
 import type { ActionKey } from '@/arena/ActionService';
 import type { CharacterService } from '@/arena/CharacterService';
+import { ClanService } from '@/arena/ClanService';
 import FlagsConstructor from '@/arena/Constuructors/FlagsConstructor';
 import type { DamageType } from '@/arena/Constuructors/types';
+import ValidationError from '@/arena/errors/ValidationError';
+import { PlayerOffHand } from '@/arena/PlayersService/PlayerOffHand';
 import StatsService from '@/arena/StatsService';
 import type { Clan } from '@/models/clan';
 import { PlayerWeapon } from './PlayerWeapon';
 import { convertItemModifiers } from './utils';
-import type { CharacterClass, GameStatus, Player } from '@fwo/shared';
-import { ClanService } from '@/arena/ClanService';
-import { PlayerOffHand } from '@/arena/PlayersService/PlayerOffHand';
-import ValidationError from '@/arena/errors/ValidationError';
 
 export type Resists = Record<DamageType, number>;
 
@@ -49,6 +49,7 @@ export default class PlayerService {
   weapon: PlayerWeapon;
   offHand: PlayerOffHand;
   isBot: boolean;
+  failStreak: Partial<Record<ActionKey, number>> = {};
 
   constructor(params: CharacterService, isBot = false) {
     this.nick = params.nickname;
@@ -186,6 +187,19 @@ export default class PlayerService {
     }
 
     return this.clan.id === player.clan.id;
+  }
+
+  getFailStreak(action: ActionKey) {
+    return this.failStreak[action] ?? 0;
+  }
+
+  addFailStreak(action: ActionKey) {
+    this.failStreak[action] ??= 0;
+    this.failStreak[action]++;
+  }
+
+  resetFailStreak(action: ActionKey) {
+    this.failStreak[action] = 0;
   }
 
   toObject(): Player {

@@ -132,10 +132,13 @@ export abstract class Magic extends AffectableAction {
   /**
    * Проверка прошла ли магия
    */
-  checkChance(): undefined {
-    if (!MiscService.chance(this.getChance())) {
+  checkChance({ initiator } = this.params): undefined {
+    if (!MiscService.pseudoRandomChance(this.getChance(), initiator.getFailStreak(this.name))) {
+      initiator.addFailStreak(this.name);
       throw new CastError('CHANCE_FAIL');
     }
+
+    initiator.resetFailStreak(this.name);
   }
 
   /**
