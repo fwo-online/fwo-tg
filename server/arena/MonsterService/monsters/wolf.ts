@@ -10,7 +10,6 @@ import { MonsterAI, MonsterService } from '@/arena/MonsterService/MonsterService
 import { magicWall } from '@/arena/magics';
 import { terrifyingHowl } from '@/arena/skills';
 import { ItemModel } from '@/models/item';
-import { normalizeToArray } from '@/utils/array';
 
 export class WolfAI extends MonsterAI {
   makeOrder(game: GameService) {
@@ -27,20 +26,21 @@ export class WolfAI extends MonsterAI {
   }
 
   private canHowl(game: GameService): boolean {
-    console.debug('PROC:: ', this.monster.proc);
     if (this.monster.proc < 50) {
       return false;
     }
 
-    const cost = terrifyingHowl.cost[this.monster.skills.terrifyingHowl];
-    console.debug('COST:: ', cost);
+    const cost = terrifyingHowl.cost[this.monster.skills.terrifyingHowl - 1];
     if (this.monster.stats.val(terrifyingHowl.costType) < cost) {
+      return false;
+    }
+
+    if (MiscService.chance(20)) {
       return false;
     }
 
     const howlOrders = game.orders.ordersList.filter(({ action }) => action === 'terrifyingHowl');
 
-    console.debug('ORDERS:: ', howlOrders.length);
     if (howlOrders.length >= 2) {
       return false;
     }
@@ -49,7 +49,6 @@ export class WolfAI extends MonsterAI {
   }
 
   private orderHowl(game: GameService): boolean {
-    console.debug('CAN HOWL', this.canHowl(game));
     if (!this.canHowl(game)) {
       return false;
     }
@@ -64,7 +63,6 @@ export class WolfAI extends MonsterAI {
           !isString(result.reason),
       );
 
-    console.debug('WOLF_ORDER', blockedAttack);
     if (!blockedAttack || isSuccessResult(blockedAttack) || isString(blockedAttack.reason)) {
       return false;
     }
@@ -78,7 +76,7 @@ export class WolfAI extends MonsterAI {
       game.orders.orderAction({
         action: 'terrifyingHowl',
         initiator: this.monster.id,
-        target: normalizeToArray(blockedAttack.reason)[0].initiator.id,
+        target: enemies[0].id,
         proc: 50,
       });
       return true;
@@ -147,7 +145,7 @@ export const createWolf = (lvl = 1, id: string | number = '') => {
         str: Math.round(lvl * 3 + 10),
         dex: Math.round(lvl * 1 + 10),
         int: Math.round(lvl * 1 + 10),
-        wis: Math.round(lvl * 1 + 10),
+        wis: Math.round(lvl * 1.5 + 10),
         con: Math.round(lvl * 5 + 10),
       },
       magics: { bleeding: 1 },

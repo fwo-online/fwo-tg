@@ -16,7 +16,7 @@ class BeastCall extends Skill {
       displayName: '🐺📣 Звериный клич',
       desc: 'Призывает волков на помощь',
       cost: [0, 0, 0],
-      proc: 50,
+      proc: 75,
       baseExp: 8,
       costType: 'en',
       orderType: 'self',
@@ -34,7 +34,6 @@ class BeastCall extends Skill {
     const effect = this.effect[initiatorMagicLvl - 1] || 1;
 
     const allies = game.players.getMyTeam(initiator.id);
-    console.log(initiator.lvl);
     const wolfs = times(effect).map((i) =>
       createWolf(initiator.lvl - 3 + MiscService.randInt(-1, 2), i + 1 + (allies.length - 1)),
     );

@@ -24,17 +24,17 @@ class Regeneration extends AffectableAction {
    */
   // eslint-disable-next-line class-methods-use-this
   cast(initiator: Player, target: Player, game: Game) {
-    this.createContext(initiator, target, game)
-    this.run(initiator, target, game)
+    this.createContext(initiator, target, game);
+    this.run(initiator, target, game);
   }
 
   run(initiator: Player, _target: Player, _game: Game) {
     if (initiator.prof === 'l' || initiator.prof === 'w') {
       const val = initiator.stats.val('regen.en') * initiator.proc; // размер восстан
-      initiator.stats.up('en', val);
+      initiator.stats.up('en', Math.min(val, initiator.stats.val('base.en')));
     } else {
       const val = initiator.stats.val('regen.mp') * initiator.proc; // размер восстан
-      initiator.stats.up('mp', val);
+      initiator.stats.up('mp', Math.min(val, initiator.stats.val('base.mp')));
     }
   }
 }

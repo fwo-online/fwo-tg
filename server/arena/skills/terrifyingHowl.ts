@@ -20,7 +20,7 @@ class TerrifyingHowl extends Skill {
       orderType: 'enemy',
       aoeType: 'target',
       chance: [80, 90, 100],
-      effect: [0, 1, 3],
+      effect: [1, 2, 3],
       profList: {},
       bonusCost: [0, 0, 0],
     });
@@ -29,7 +29,7 @@ class TerrifyingHowl extends Skill {
   run() {
     const { initiator, target, game } = this.params;
     const initiatorMagicLvl = initiator.skills[this.name];
-    const effect = this.effect[initiatorMagicLvl - 1] || 1;
+    const effect = this.effect[initiatorMagicLvl - 1] ?? 1;
 
     const enemies = shuffle(game.players.getAliveEnemies(initiator))
       .filter(({ id }) => id !== target.id)

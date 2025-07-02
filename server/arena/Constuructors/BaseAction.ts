@@ -1,10 +1,10 @@
+import type { EffectType, OrderType } from '@fwo/shared';
 import CastError from '@/arena/errors/CastError';
 import type GameService from '@/arena/GameService';
 import type { Player } from '@/arena/PlayersService';
 import { normalizeToArray } from '@/utils/array';
 import { floatNumber } from '@/utils/floatNumber';
 import type { ActionType, BreaksMessage, ExpArr, FailArgs, SuccessArgs } from './types';
-import type { EffectType, OrderType } from '@fwo/shared';
 
 export type BaseActionParams = {
   initiator: Player;
@@ -49,6 +49,11 @@ export abstract class BaseAction {
       params: this.params,
       status: this.status,
     };
+  }
+
+  swapParams() {
+    const { initiator, target, game } = this.params;
+    this.params = { initiator: target, target: initiator, game };
   }
 
   applyContext(context: BaseActionContext) {
