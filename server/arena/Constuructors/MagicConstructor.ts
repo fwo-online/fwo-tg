@@ -133,7 +133,7 @@ export abstract class Magic extends AffectableAction {
    * Проверка прошла ли магия
    */
   checkChance(): undefined {
-    if (MiscService.rndm('1d100') > this.getChance()) {
+    if (!MiscService.chance(this.getChance())) {
       throw new CastError('CHANCE_FAIL');
     }
   }
