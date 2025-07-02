@@ -1,8 +1,8 @@
 import type { CostType, Magic as MagicSchema } from '@fwo/shared';
+import MiscService from '@/arena/MiscService';
 import { floatNumber } from '../../utils/floatNumber';
 import CastError from '../errors/CastError';
 import type Game from '../GameService';
-import MiscService from '../MiscService';
 import type * as magics from '../magics';
 import type { Player } from '../PlayersService';
 import { AffectableAction } from './AffectableAction';
@@ -132,13 +132,17 @@ export abstract class Magic extends AffectableAction {
   /**
    * Проверка прошла ли магия
    */
-  checkChance({ initiator } = this.params): undefined {
-    if (!MiscService.pseudoRandomChance(this.getChance(), initiator.getFailStreak(this.name))) {
-      initiator.addFailStreak(this.name);
+  checkChance(): undefined {
+    const chance = this.getChance();
+    const failStreak = this.params.initiator.failStreak.get(this.name);
+    const success = MiscService.pseudoRandomChance(chance, failStreak);
+
+    if (!success) {
+      this.params.initiator.failStreak.add(this.name);
       throw new CastError('CHANCE_FAIL');
     }
 
-    initiator.resetFailStreak(this.name);
+    this.params.initiator.failStreak.delete(this.name);
   }
 
   /**

@@ -8,6 +8,7 @@ import type { DamageType } from '@/arena/Constuructors/types';
 import ValidationError from '@/arena/errors/ValidationError';
 import { PlayerOffHand } from '@/arena/PlayersService/PlayerOffHand';
 import StatsService from '@/arena/StatsService';
+import { StreakHelper } from '@/helpers/streakHelper';
 import type { Clan } from '@/models/clan';
 import { PlayerWeapon } from './PlayerWeapon';
 import { convertItemModifiers } from './utils';
@@ -49,7 +50,7 @@ export default class PlayerService {
   weapon: PlayerWeapon;
   offHand: PlayerOffHand;
   isBot: boolean;
-  failStreak: Partial<Record<ActionKey, number>> = {};
+  failStreak = new StreakHelper<ActionKey>();
 
   constructor(params: CharacterService, isBot = false) {
     this.nick = params.nickname;
@@ -187,19 +188,6 @@ export default class PlayerService {
     }
 
     return this.clan.id === player.clan.id;
-  }
-
-  getFailStreak(action: ActionKey) {
-    return this.failStreak[action] ?? 0;
-  }
-
-  addFailStreak(action: ActionKey) {
-    this.failStreak[action] ??= 0;
-    this.failStreak[action]++;
-  }
-
-  resetFailStreak(action: ActionKey) {
-    this.failStreak[action] = 0;
   }
 
   toObject(): Player {
