@@ -18,7 +18,7 @@ class Bleeding extends LongDmgMagic {
       chance: ['200d200', '200d200', '200d200'],
       effect: ['1d3', '1d5', '1d9'],
       dmgType: 'physical',
-      profList: ['w'],
+      profList: [],
     });
   }
 

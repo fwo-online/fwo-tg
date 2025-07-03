@@ -1,4 +1,4 @@
-import { ItemWear, MonsterType } from '@fwo/shared';
+import { CharacterClass, ItemWear, MonsterType } from '@fwo/shared';
 import arena from '@/arena';
 import { expToLevel } from '@/arena/CharacterService/utils/calculateLvl';
 import { isSuccessResult } from '@/arena/Constuructors/utils';
@@ -6,7 +6,6 @@ import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
 import { MonsterService } from '@/arena/MonsterService/MonsterService';
 import { WolfAI } from '@/arena/MonsterService/monsters/wolf';
-import { beastCall } from '@/arena/skills';
 import { ItemModel } from '@/models/item';
 
 class AlfaAI extends WolfAI {
@@ -15,7 +14,10 @@ class AlfaAI extends WolfAI {
   orderBeastCall(game: GameService) {
     const beastCallUsed = game
       .getLastRoundResults()
-      .some((result) => result.action === beastCall.displayName && isSuccessResult(result));
+      .some(
+        (result) =>
+          result.action === arena.actions.beastCall.displayName && isSuccessResult(result),
+      );
     if (beastCallUsed) {
       this.beastCallUsed = true;
     }
@@ -56,6 +58,7 @@ export const createAlpha = (lvl = 1) => {
   const alpha = MonsterService.create(
     {
       nickname: '🐺 Альфа',
+      prof: CharacterClass.Warrior,
       harks: {
         str: Math.round(lvl * 3 + 10),
         dex: Math.round(lvl * 1 + 10),

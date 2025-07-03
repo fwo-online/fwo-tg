@@ -69,6 +69,7 @@ export default {
     // 'vampiric_aura',
     'glitch',
     'madness',
+    'charm',
     // 'holy_weapon',
     //
     ['paralysis', 'eclipse'],

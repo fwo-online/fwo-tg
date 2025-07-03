@@ -41,6 +41,18 @@ export abstract class BaseAction {
 
   abstract run(initiator: Player, target: Player, game: GameService);
 
+  protected get initiator() {
+    return this.params.initiator;
+  }
+
+  protected get target() {
+    return this.params.target;
+  }
+
+  protected get game() {
+    return this.params.game;
+  }
+
   createContext(initiator: Player, target: Player, game: GameService) {
     this.reset();
     this.params = { initiator, target, game };

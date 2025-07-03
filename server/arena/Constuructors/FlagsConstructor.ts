@@ -24,6 +24,8 @@ export default class FlagsConstructor {
   isSleeping: Flag[] = [];
   isLightShielded: Flag[] = [];
   isBehindWall: Flag[] = [];
+  isCharmed: Flag[] = [];
+  isMarkedByDarkness: Flag[] = [];
 
   /**
    * Обнуление флагов
@@ -43,5 +45,7 @@ export default class FlagsConstructor {
     this.isShielded = 0;
     this.isLightShielded = [];
     this.isBehindWall = [];
+    this.isCharmed = [];
+    this.isMarkedByDarkness = [];
   }
 }

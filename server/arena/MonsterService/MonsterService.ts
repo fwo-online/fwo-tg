@@ -1,5 +1,6 @@
 import type { MonsterType } from '@fwo/shared';
 import arena from '@/arena';
+import { type ActionKey, ActionService } from '@/arena/ActionService';
 import { CharacterService } from '@/arena/CharacterService';
 import type GameService from '@/arena/GameService';
 import { stubParams } from '@/arena/MonsterService/utils/stubParams';
@@ -19,11 +20,28 @@ export abstract class MonsterAI {
   }
 
   abstract makeOrder(game: GameService): void;
+
+  protected orderRegeneration(game: GameService) {
+    game.orders.orderAction({
+      initiator: this.monster.id,
+      target: this.monster.id,
+      action: 'regeneration',
+      proc: this.monster.proc,
+    });
+  }
 }
 
 export type MonsterParams = Pick<
   Char,
-  'nickname' | 'harks' | 'magics' | 'skills' | 'passiveSkills' | 'items' | 'equipment' | 'exp'
+  | 'nickname'
+  | 'harks'
+  | 'magics'
+  | 'skills'
+  | 'passiveSkills'
+  | 'items'
+  | 'equipment'
+  | 'exp'
+  | 'prof'
 >;
 
 export class MonsterService extends PlayerService {
@@ -54,5 +72,19 @@ export class MonsterService extends PlayerService {
 
   static isMonster(player: PlayerService): player is MonsterService {
     return player.isBot;
+  }
+
+  checkCost(action: ActionKey) {
+    if (ActionService.isMagicAction(action)) {
+      const cost = arena.magics[action].cost;
+      return this.stats.val(arena.magics[action].costType) >= cost;
+    }
+
+    if (ActionService.isSkillAction(action)) {
+      const cost = arena.skills[action].cost[this.skills[action] - 1];
+      return this.stats.val(arena.skills[action].costType) >= cost;
+    }
+
+    return false;
   }
 }

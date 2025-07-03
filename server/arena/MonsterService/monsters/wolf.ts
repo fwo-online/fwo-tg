@@ -1,14 +1,11 @@
 import { CharacterClass, ItemWear, MonsterType } from '@fwo/shared';
 import { differenceBy, isString, shuffle } from 'es-toolkit';
 import arena from '@/arena';
-import { attack } from '@/arena/actions';
 import { expToLevel } from '@/arena/CharacterService/utils/calculateLvl';
 import { isSuccessResult } from '@/arena/Constuructors/utils';
 import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
 import { MonsterAI, MonsterService } from '@/arena/MonsterService/MonsterService';
-import { magicWall } from '@/arena/magics';
-import { terrifyingHowl } from '@/arena/skills';
 import { ItemModel } from '@/models/item';
 
 export class WolfAI extends MonsterAI {
@@ -30,8 +27,7 @@ export class WolfAI extends MonsterAI {
       return false;
     }
 
-    const cost = terrifyingHowl.cost[this.monster.skills.terrifyingHowl - 1];
-    if (this.monster.stats.val(terrifyingHowl.costType) < cost) {
+    if (!this.monster.checkCost('terrifyingHowl')) {
       return false;
     }
 
@@ -48,7 +44,7 @@ export class WolfAI extends MonsterAI {
     return true;
   }
 
-  private orderHowl(game: GameService): boolean {
+  protected orderHowl(game: GameService): boolean {
     if (!this.canHowl(game)) {
       return false;
     }
@@ -58,7 +54,7 @@ export class WolfAI extends MonsterAI {
       .find(
         (result) =>
           result.initiator.isBot &&
-          result.action === attack.displayName &&
+          result.action === arena.actions.attack.displayName &&
           !isSuccessResult(result) &&
           !isString(result.reason),
       );
@@ -85,7 +81,7 @@ export class WolfAI extends MonsterAI {
     }
   }
 
-  private orderAttack(game: GameService): boolean {
+  protected orderAttack(game: GameService): boolean {
     const target = this.chooseAttackTarget(game);
 
     if (!target) {
@@ -106,7 +102,7 @@ export class WolfAI extends MonsterAI {
     }
   }
 
-  private chooseAttackTarget(game: GameService) {
+  protected chooseAttackTarget(game: GameService) {
     const targets = shuffle(game.players.aliveNonBotPlayers);
 
     if (!targets.length) {
@@ -115,7 +111,7 @@ export class WolfAI extends MonsterAI {
 
     const playersBehindWall = game
       .getLastRoundResults()
-      .filter(({ action }) => action === magicWall.displayName)
+      .filter(({ action }) => action === 'Магическая стена')
       .map(({ target }) => target);
     const avaiableTargets = differenceBy(targets, playersBehindWall, ({ id }) => id);
 
@@ -141,6 +137,7 @@ export const createWolf = (lvl = 1, id: string | number = '') => {
   const wolf = MonsterService.create(
     {
       nickname: `🐺 Волк ${id.toString()}`.trimEnd(),
+      prof: CharacterClass.Warrior,
       harks: {
         str: Math.round(lvl * 3 + 10),
         dex: Math.round(lvl * 1 + 10),

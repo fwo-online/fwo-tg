@@ -45,7 +45,7 @@ export abstract class PassiveSkillConstructor extends AffectableAction {
   }
 
   checkChance({ initiator, target, game } = this.params) {
-    return MiscService.rndm('1d100') <= this.getChance({ initiator, target, game });
+    return MiscService.chance(this.getChance({ initiator, target, game }));
   }
 
   getChance({ initiator } = this.params) {

@@ -63,6 +63,7 @@ export abstract class Magic extends AffectableAction {
       this.checkPreAffects();
       this.handleAffect(this.checkChance.bind(this));
       this.run(initiator, target, game); // вызов кастомного обработчика
+      this.checkPostAffects();
       this.calculateExp();
       this.checkTargetIsDead();
 

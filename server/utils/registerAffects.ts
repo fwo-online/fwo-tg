@@ -2,6 +2,7 @@ import arena from '@/arena';
 
 const registerAttackAffects = () => {
   arena.actions.attack.registerPreAffects([
+    arena.magics.charm,
     arena.magics.glitch,
     arena.magics.madness,
     arena.magics.paralysis,
@@ -38,12 +39,16 @@ const registerMagicAffects = () => {
 
     magic.registerPreAffects([
       arena.actions.silence,
+      arena.actions.charm,
       arena.actions.paralysis,
       arena.actions.glitch,
       arena.actions.divineWill,
     ]);
     magic.registerAffectHandlers([arena.actions.divineWill]);
   });
+
+  arena.magics.vampirism.registerPreAffects([arena.actions.markOfDarkness]);
+  arena.magics.eclipse.registerPostAffects([arena.actions.markOfDarkness]);
 };
 
 const registerSkillAffects = () => {
