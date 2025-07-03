@@ -137,6 +137,9 @@ export abstract class Magic extends AffectableAction {
     const failStreak = this.params.initiator.failStreak.get(this.name);
     const success = MiscService.pseudoRandomChance(chance, failStreak);
 
+    console.debug(
+      `${this.name} check chance:: ${chance}, streak: ${failStreak}, success: ${success}`,
+    );
     if (!success) {
       this.params.initiator.failStreak.add(this.name);
       throw new CastError('CHANCE_FAIL');
