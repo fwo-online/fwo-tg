@@ -178,7 +178,11 @@ bot.on('message', async (ctx) => {
     return;
   }
 
-  await ctx.deleteMessage();
+  try {
+    await ctx.deleteMessage();
+  } catch {
+    //
+  }
   await ctx.reply(
     `[${ctx.from.first_name}](tg://user?id=${ctx.from.id}), зарегистрируй персонажа в @FightWorldBot, чтобы получить доступ к чату`,
     {
