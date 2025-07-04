@@ -126,12 +126,22 @@ export default class MiscService {
   }
   /**
    * Функция рандома по формату "1d100" или 100 ;
-   * @param {string | number} chance параметры рандома в формате "1d100" или 100
+   * @param {string | number} chance параметры рандома в формате "1d100" или 
    * @return {boolean} результат броска
    */
   static chance(chance) {
     const percent = typeof chance === 'string' ? this.rndm(chance) : +chance;
     return this.rndm('1d100') <= percent;
+  }
+  /**
+   * Функция рандома по формату "1d100" или 100 ;
+   * @param {string | number} chance параметры рандома в формате "1d100" или 
+   * @param {number} streak
+   * @return {boolean} результат броска
+   */
+  static pseudoRandomChance(chance, streak) {
+    const percent = typeof chance === 'string' ? this.rndm(chance) : +chance;
+    return this.chance((1 - (1 - Math.min(Math.max(percent / 100, 0), 1)) ** (streak + 1)) * 100);
   }
   static randFloat = randFloat;
   static randInt = randInt;
