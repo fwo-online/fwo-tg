@@ -1,10 +1,11 @@
 import { themeParams, useSignal } from '@telegram-apps/sdk-react';
-import type { HTMLAttributes, FC, ReactNode } from 'react';
+import type { HTMLAttributes, FC, ReactNode, Ref } from 'react';
 import cn from 'classnames';
 import './Card.css';
 
-type CardProps = HTMLAttributes<HTMLElement> & {
+type CardProps = HTMLAttributes<HTMLDivElement> & {
   header?: ReactNode;
+  ref?: Ref<HTMLDivElement>;
 };
 
 export const Card: FC<CardProps> = ({ children, header, className, ...restProps }) => {

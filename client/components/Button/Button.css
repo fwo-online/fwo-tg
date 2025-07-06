@@ -2,7 +2,7 @@
   border-image-repeat: stretch !important;
 }
 
-.nes-btn.is-dark:not(.is-primary) {
+.nes-btn.is-dark:not(.is-primary):not(.is-success):not(.is-warning):not(.is-error) {
   color: var(--tg-theme-text);
   background-color: var(--tg-theme-bg-color);
 }
