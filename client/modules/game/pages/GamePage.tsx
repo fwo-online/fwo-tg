@@ -1,17 +1,17 @@
-import { GameStatus } from '@/modules/game/components/GameStatus';
-import { useGameStore } from '@/modules/game/store/useGameStore';
-import { GameOrderModal } from '../components/GameOrderModal';
-import { useGameState } from '../hooks/useGameState';
-import { useGameClosingConfirmation } from '../hooks/useGameClosingConfirmation';
+import { useRef } from 'react';
+import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
-import { useUnmountEffect } from '@/hooks/useUnmountEffect';
 import { Placeholder } from '@/components/Placeholder';
+import { useHasScroll } from '@/hooks/useHasScroll';
+import { useUnmountEffect } from '@/hooks/useUnmountEffect';
 import { GameOrderList } from '@/modules/game/components/GameOrderList';
 import { GameOrderProgress } from '@/modules/game/components/GameOrderProgress';
 import { GameOrderReady } from '@/modules/game/components/GameOrderReady';
-import { useHasScroll } from '@/hooks/useHasScroll';
-import { useRef } from 'react';
-import { Button } from '@/components/Button';
+import { GameStatus } from '@/modules/game/components/GameStatus';
+import { useGameStore } from '@/modules/game/store/useGameStore';
+import { GameOrderModal } from '../components/GameOrderModal';
+import { useGameClosingConfirmation } from '../hooks/useGameClosingConfirmation';
+import { useGameState } from '../hooks/useGameState';
 
 export function GamePage() {
   const round = useGameStore((state) => state.round);
@@ -38,9 +38,6 @@ export function GamePage() {
             {canOrder ? <GameOrderProgress /> : null}
           </div>
           <Card className="basis-full overflow-auto" ref={statusRef}>
-            <GameStatus />
-            <GameStatus />
-            <GameStatus />
             <GameStatus />
             {hasScroll ? (
               <Button className="sticky bottom-0 w-full left-0 right-0 p-0" onClick={handleScroll}>
