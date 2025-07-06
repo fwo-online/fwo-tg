@@ -38,7 +38,12 @@ export const GameActionList: FC<{
           </Button>
         )}
         {actions.map((action) => (
-          <Button className="p-0 is-primary" key={action.name} onClick={() => onSelect(action)}>
+          <Button
+            className="p-0 is-primary"
+            key={action.name}
+            onClick={() => onSelect(action)}
+            disabled={isPending}
+          >
             {action.displayName}
           </Button>
         ))}
@@ -46,7 +51,12 @@ export const GameActionList: FC<{
           <>
             <h6>Магии</h6>
             {magics.map((action) => (
-              <Button key={action.name} className="p-0 is-primary" onClick={() => onSelect(action)}>
+              <Button
+                key={action.name}
+                className="p-0 is-primary"
+                onClick={() => onSelect(action)}
+                disabled={isPending}
+              >
                 <div className="flex w-full justify-between">
                   <span>{action.displayName}</span>
                   <span>{action.cost}💧</span>
@@ -63,7 +73,7 @@ export const GameActionList: FC<{
               <Button
                 key={action.name}
                 className="p-0 is-primary"
-                disabled={isActionDisabled(action)}
+                disabled={isActionDisabled(action) || isPending}
                 onClick={() => onSelect(action)}
               >
                 <div className="flex w-full justify-between">

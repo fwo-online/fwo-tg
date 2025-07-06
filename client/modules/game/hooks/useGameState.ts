@@ -24,6 +24,7 @@ export function useGameState() {
   const setRound = useGameStore((state) => state.setRound);
   const setPlayers = useGameStore((state) => state.setPlayers);
   const setClans = useGameStore((state) => state.setClans);
+  const setReady = useGameStore((state) => state.setReady);
 
   useGameKickState();
 
@@ -52,14 +53,16 @@ export function useGameState() {
       power,
       ordersTime,
       ordersStartTime,
+      ready,
     }: Parameters<ServerToClientMessage['game:startOrders']>[0]) => {
       setActions({ actions, magics, skills });
       setCanOrder(true);
       setOrders(orders);
       setRemainPower(power);
       setOrdersTime(ordersTime, ordersStartTime);
+      setReady(ready);
     },
-    [setActions, setCanOrder, setRemainPower, setOrders, setOrdersTime],
+    [setActions, setCanOrder, setRemainPower, setOrders, setOrdersTime, setReady],
   );
 
   const handleEndOrders = useCallback(() => {

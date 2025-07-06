@@ -36,6 +36,8 @@ export default class Orders {
   ordersList: OrderOutput[] = [];
   /** История заказов */
   hist: OrderOutput[][] = [];
+  readyIDs = new Set<string>();
+  readyTimer?: Timer;
 
   playersService: PlayersService;
   roundService: RoundService;
@@ -158,6 +160,7 @@ export default class Orders {
   reset(): void {
     this.hist.push(this.ordersList);
     this.ordersList = [];
+    this.readyIDs.clear();
   }
 
   /**
@@ -275,5 +278,25 @@ export default class Orders {
     const initialOrders = this.resetOrdersForPlayer(charId);
 
     return orders.reduce((_, order) => this.orderAction(order), initialOrders);
+  }
+
+  setReady(charID: string, ready: boolean) {
+    clearTimeout(this.readyTimer);
+
+    if (ready) {
+      this.readyIDs.add(charID);
+    } else {
+      this.readyIDs.delete(charID);
+    }
+
+    const isEveryReady = this.playersService.aliveNonBotPlayers.every(({ id }) =>
+      this.readyIDs.has(id),
+    );
+
+    this.readyTimer = setTimeout(() => {
+      if (isEveryReady) {
+        this.roundService.endOrders();
+      }
+    }, 2000);
   }
 }
