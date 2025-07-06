@@ -1,18 +1,26 @@
-import type { CreateCharacterDto, CharacterClass } from '@fwo/shared';
-import { type FC, useEffect, useRef, useState } from 'react';
-import { characterClassList, characterClassNameMap } from '@/constants/character';
-import styles from './CharacterSelect.module.css';
-import { Card } from '@/components/Card';
-import { Button } from '@/components/Button';
+import type { CharacterClass, CreateCharacterDto } from '@fwo/shared';
 import cn from 'classnames';
+import { type FC, useEffect, useRef, useState } from 'react';
+import { Button } from '@/components/Button';
+import { Card } from '@/components/Card';
+import {
+  characterClassList,
+  characterClassNameMap,
+  characterDescriptionMap,
+} from '@/constants/character';
 import { CharacterImage } from './CharacterImage';
+import styles from './CharacterSelect.module.css';
 
-const Slide = ({ value }: { value: CharacterClass }) => {
+const Slide: FC<{ characterClass: CharacterClass; selected: boolean }> = ({
+  characterClass,
+  selected,
+}) => {
   return (
-    <div className={styles.slide}>
-      <CharacterImage characterClass={value} />
+    <div className={styles.slide} data-selected={selected}>
+      <CharacterImage characterClass={characterClass} />
 
-      <h2 className="text-xl font-semibold">{characterClassNameMap[value]}</h2>
+      <h2 className="text-xl font-semibold my-4">{characterClassNameMap[characterClass]}</h2>
+      <h5>{characterDescriptionMap[characterClass]}</h5>
     </div>
   );
 };
@@ -20,26 +28,26 @@ const Slide = ({ value }: { value: CharacterClass }) => {
 export const SelectCharacter: FC<{ onSelect: (createCharacter: CreateCharacterDto) => void }> = ({
   onSelect,
 }) => {
-  const [selected, setSelected] = useState(0);
+  const [slideIndex, setSlideIndex] = useState(0);
   const [name, setName] = useState('');
   const slider = useRef<HTMLDivElement>(null);
 
   const next = () => {
-    setSelected((selected + 1) % characterClassList.length);
+    setSlideIndex((slideIndex + 1) % characterClassList.length);
   };
 
   const prev = () => {
-    setSelected((selected - 1 + characterClassList.length) % characterClassList.length);
+    setSlideIndex((slideIndex - 1 + characterClassList.length) % characterClassList.length);
   };
 
   useEffect(() => {
-    slider.current?.style.setProperty('--slide', selected.toString());
-  }, [selected]);
+    slider.current?.style.setProperty('--slide', slideIndex.toString());
+  }, [slideIndex]);
 
   const handleSelectCharacter = () => {
     onSelect({
       name,
-      class: characterClassList[selected],
+      class: characterClassList[slideIndex],
     });
   };
 
@@ -50,24 +58,32 @@ export const SelectCharacter: FC<{ onSelect: (createCharacter: CreateCharacterDt
           <div
             key={value}
             className={cn('w-2 h-2', {
-              'bg-(--tg-theme-text-color)': index !== selected,
-              'bg-(--tg-theme-accent-text-color)': index === selected,
+              'bg-(--tg-theme-text-color)': index !== slideIndex,
+              'bg-(--tg-theme-accent-text-color)': index === slideIndex,
             })}
           />
         ))}
       </div>
       <div className="flex flex-col gap-2">
         <div className={styles.slider}>
-          <Button onClick={prev}>◄</Button>
-          <div className={styles.slides} data-selected={selected} ref={slider}>
-            {characterClassList.map((value) => (
-              <Slide key={value} value={value} />
+          <Button className="absolute left-4 top-24 z-10" onClick={prev}>
+            ◄
+          </Button>
+          <div className={styles.slides} data-slide-index={slideIndex} ref={slider}>
+            {characterClassList.map((characterClass, i) => (
+              <Slide
+                key={characterClass}
+                characterClass={characterClass}
+                selected={slideIndex === i}
+              />
             ))}
           </div>
-          <Button onClick={next}>►</Button>
+          <Button className="absolute right-4 top-24 z-10" onClick={next}>
+            ►
+          </Button>
         </div>
         <input
-          className="nes-input"
+          className="nes-input bg-(--tg-theme-bg-color)"
           value={name}
           placeholder="Введите имя персонажа"
           onChange={(e) => setName(e.target.value)}

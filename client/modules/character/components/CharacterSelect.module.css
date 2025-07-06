@@ -10,6 +10,7 @@
 .slides {
   display: flex;
   overflow: hidden;
+  z-index: 0;
 }
 
 .slide {
@@ -18,4 +19,8 @@
   align-items: center;
   min-width: calc(100% - 44px);
   transform: translateX(calc(var(--slide, 0) * 100% * -1 + 20px));
+}
+
+.slide[data-selected=false] {
+  opacity: 0;
 }
