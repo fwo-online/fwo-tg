@@ -47,29 +47,6 @@ bot.command('help', async (ctx) => {
   ctx.reply('https://telegra.ph/Fight-Wold-Online-Help-11-05');
 });
 
-bot.command('monsters', async (ctx) => {
-  if (!ctx.from) {
-    return;
-  }
-  const lvl = Number.parseInt(ctx.match);
-  if (Number.isNaN(lvl)) {
-    return;
-  }
-
-  const isAdmin = await chechUserIsChannelAdmin(ctx.from.id, BOT_CHAT_ID);
-  if (!isAdmin) {
-    return;
-  }
-
-  if (lvl) {
-    arena.monsters.wolf = await createWolf(lvl);
-    ctx.reply(`Создан монстр ${lvl} уровня`);
-  } else {
-    arena.monsters = {};
-    ctx.reply('Монстры отключены');
-  }
-});
-
 bot.command('clan', async (ctx) => {
   if (!ctx.from) {
     return;
