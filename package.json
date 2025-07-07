@@ -12,7 +12,7 @@
   "scripts": {
     "start": "NODE_ENV=production bun server/fwo.ts",
     "dev": "bun run --filter '@fwo/*' dev",
-    "test": "bun server/cli/test.ts -i",
+    "test": "bun run --filter '@fwo/*' test",
     "generate:items": "bun server/cli/generateItems.ts",
     "reset-harks": "bun server/cli/resetHarks.ts",
     "reset-items": "bun server/cli/updateItems.ts",
