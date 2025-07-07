@@ -57,10 +57,11 @@ export abstract class BaseAction {
   }
 
   applyContext(context: BaseActionContext) {
-    this.status = context.status;
+    const status = structuredClone(context.status);
+    this.status = status;
     this.params = context.params;
 
-    this.context = context;
+    this.context = { ...context, status };
   }
 
   reset() {

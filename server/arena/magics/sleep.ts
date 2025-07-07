@@ -1,3 +1,5 @@
+import type { SuccessArgs } from '@/arena/Constuructors/types';
+import { bold, italic } from '@/utils/formatString';
 import type { Affect } from '../Constuructors/interfaces/Affect';
 import { LongMagic } from '../Constuructors/LongMagicConstructor';
 import CastError from '../errors/CastError';
@@ -27,12 +29,13 @@ class Sleep extends LongMagic implements Affect {
 
   run() {
     const { initiator, target } = this.params;
-    target.flags.isSleeping.push({ initiator, val: 0 });
+
+    target.flags.isSleeping.push({ initiator, val: this.effectVal() });
   }
 
   runLong() {
     const { initiator, target } = this.params;
-    target.flags.isSleeping.push({ initiator, val: 0 });
+    target.flags.isSleeping.push({ initiator, val: this.effectVal() });
   }
 
   preAffect: Affect['preAffect'] = ({ params: { initiator: target, game } }): undefined => {
@@ -54,6 +57,14 @@ class Sleep extends LongMagic implements Affect {
       );
     }
   };
+
+  customMessage({ initiator, target }: SuccessArgs): string {
+    return `${bold(initiator.nick)} заклинанием ${italic(this.displayName)} заставил ${bold(target.nick)} заснуть на этот раунд`;
+  }
+
+  customLongMessage({ initiator, target }: SuccessArgs): string {
+    return `${bold(initiator.nick)} заклинанием ${italic(this.displayName)} заставил ${bold(target.nick)} заснуть на этот раунд`;
+  }
 }
 
 export default new Sleep();

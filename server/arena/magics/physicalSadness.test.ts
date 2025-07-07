@@ -1,9 +1,8 @@
-import { describe, beforeAll, beforeEach, afterEach, it, spyOn, expect } from 'bun:test';
-import casual from 'casual';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { CharacterClass } from '@fwo/shared';
 import { attack } from '@/arena/actions';
-import GameService from '@/arena/GameService';
+import type GameService from '@/arena/GameService';
 import { profsData } from '@/data/profs';
-import type { Char } from '@/models/character';
 import TestUtils from '@/utils/testUtils';
 import physicalSadness from './physicalSadness';
 
@@ -11,29 +10,22 @@ import physicalSadness from './physicalSadness';
 
 describe('physicalSadness', () => {
   let game: GameService;
-  let initiator: Char;
-  let target: Char;
-
-  beforeAll(async () => {
-    casual.seed(1);
-    const harks = { ...profsData.m.hark, wis: 20 };
-
-    initiator = await TestUtils.createCharacter({
-      prof: 'm',
-      magics: { physicalSadness: 1 },
-      harks,
-    });
-    target = await TestUtils.createCharacter({}, { weapon: {} });
-  });
 
   beforeEach(async () => {
-    game = new GameService([initiator.id, target.id]);
+    game = await TestUtils.createGame([
+      {
+        prof: CharacterClass.Mage,
+        magics: { physicalSadness: 3 },
+        harks: { ...profsData.m.hark, wis: 20 },
+      },
+      { weapon: {} },
+    ]);
 
-    spyOn(global.Math, 'random').mockReturnValue(0.15);
+    TestUtils.mockRandom();
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   it('should hit target with single hit', () => {

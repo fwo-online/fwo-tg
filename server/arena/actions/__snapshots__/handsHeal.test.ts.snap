@@ -1,8 +1,8 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`handsHeal should heal 1`] = `
-"Игрок *quisquam* был вылечен 🤲 на *💖0.39*
-\\[ quisquam: 💖0.39/1.39 📖4 ]"
+"Игрок *quisquam* был вылечен 🤲 на *💖0.45*
+\\[ quisquam: 💖0.45/1.45 📖5 ]"
 `;
 
 exports[`handsHeal should not heal more than max hp 1`] = `
@@ -11,14 +11,14 @@ exports[`handsHeal should not heal more than max hp 1`] = `
 `;
 
 exports[`handsHeal should not get exp if players are not allies 1`] = `
-"Игрок *quisquam* был вылечен 🤲 на *💖1.04*
-\\[ labore: 💖1.04/2.04 📖0 ]"
+"Игрок *quisquam* был вылечен 🤲 на *💖1.2*
+\\[ corporis: 💖1.2/2.2 📖0 ]"
 `;
 
 exports[`handsHeal should be stopped by attack 1`] = `
-"*quisquam* рубанул *labore* _Оружием_ и нанёс *5* урона
-\\[ labore 💥 💔-5/3 📖40 ]
-*labore* пытался использовать _Лечение руками_ на *labore*, но у него не получилось
+"*quisquam* рубанул *corporis* _Оружием_ и нанёс *7.2* урона
+\\[ corporis 💥 💔-7.2/0.8 📖58 ]
+*corporis* пытался использовать _Лечение руками_ на *corporis*, но у него не получилось
 _Атака_ *quisquam*"
 `;
 

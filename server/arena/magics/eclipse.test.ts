@@ -1,37 +1,29 @@
-import { describe, beforeAll, beforeEach, afterEach, it, spyOn, expect } from 'bun:test';
-import casual from 'casual';
-import { CharacterService } from '@/arena/CharacterService';
-import GameService from '@/arena/GameService';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { CharacterClass } from '@fwo/shared';
+import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import attack from '../actions/attack';
 import eclipse from './eclipse';
+
 // npm t server/arena/magics/eclipse.test.ts
 
 describe('eclipse', () => {
   let game: GameService;
 
-  beforeAll(() => {
-    casual.seed(1);
-
-    attack.registerPreAffects([eclipse]);
-  });
-
   beforeEach(async () => {
-    const initiator1 = await TestUtils.createCharacter({ prof: 'm', magics: { eclipse: 1 } });
-    const initiator2 = await TestUtils.createCharacter({ prof: 'm', magics: { eclipse: 1 } });
-    const target = await TestUtils.createCharacter({ prof: 'w' }, { weapon: {} });
+    attack.registerPreAffects([eclipse]);
 
-    await Promise.all(
-      [initiator1.id, initiator2.id, target.id].map(CharacterService.getCharacterById),
-    );
+    game = await TestUtils.createGame([
+      { prof: CharacterClass.Mage, magics: { eclipse: 3 } },
+      { prof: CharacterClass.Mage, magics: { eclipse: 3 } },
+      { weapon: {} },
+    ]);
 
-    game = new GameService([initiator1.id, initiator2.id, target.id]);
-
-    spyOn(global.Math, 'random').mockReturnValue(0.5);
+    TestUtils.mockRandom();
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   it('initiator should be blinded by eclipse', async () => {

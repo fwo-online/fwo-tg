@@ -1,7 +1,6 @@
-import { describe, beforeEach, it, expect, beforeAll, spyOn, afterEach } from 'bun:test';
-import casual from 'casual';
-import { CharacterService } from '@/arena/CharacterService';
-import GameService from '@/arena/GameService';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { CharacterClass } from '@fwo/shared';
+import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import attack from '../actions/attack';
 import dodge from './dodge';
@@ -11,24 +10,24 @@ import dodge from './dodge';
 describe('dodge', () => {
   let game: GameService;
 
-  beforeAll(() => {
-    casual.seed(1);
-    attack.registerPreAffects([dodge]);
-  });
-
   beforeEach(async () => {
-    const initiator = await TestUtils.createCharacter({ prof: 'w' }, { weapon: { type: 'chop' } });
-    const target = await TestUtils.createCharacter({ prof: 'l', skills: { dodge: 1 } });
+    attack.registerPreAffects([dodge]);
 
-    await Promise.all([initiator.id, target.id].map(CharacterService.getCharacterById));
+    game = await TestUtils.createGame([
+      {
+        weapon: { type: 'chop' },
+      },
+      {
+        prof: CharacterClass.Archer,
+        skills: { dodge: 3 },
+      },
+    ]);
 
-    game = new GameService([initiator.id, target.id]);
-
-    spyOn(global.Math, 'random').mockReturnValue(0.15);
+    TestUtils.mockRandom();
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   it('target should dodge attack if has initiator more dex', async () => {

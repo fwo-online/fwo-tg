@@ -37,7 +37,7 @@ exports[`fireBall should hit 1 target 1`] = `
   8,
   8,
   8,
-  -5.59,
+  -5.56,
   8,
   8,
 ]
@@ -46,10 +46,10 @@ exports[`fireBall should hit 1 target 1`] = `
 exports[`fireBall should hit 1 target 2`] = `120`;
 
 exports[`fireBall should hit 1 target 3`] = `
-"*explicabo* сотворил _Огненный шар_ на *aperiam* нанеся 13.59 урона
-\\[ aperiam 🔥 💔-8.75/-5.59 📖80
-aperiam 🔥 💔-1.21/-1.96 📖10
-aperiam 🔥 💔-1.21/-3.17 📖10
-aperiam 🔥 💔-1.21/-4.38 📖10
-aperiam 🔥 💔-1.21/-5.59 📖10 ]"
+"*asperiores* сотворил _Огненный шар_ на *blanditiis* нанеся 13.56 урона
+\\[ blanditiis 🔥 💔-8.72/-5.56 📖80
+blanditiis 🔥 💔-1.21/-1.93 📖10
+blanditiis 🔥 💔-1.21/-3.14 📖10
+blanditiis 🔥 💔-1.21/-4.35 📖10
+blanditiis 🔥 💔-1.21/-5.56 📖10 ]"
 `;

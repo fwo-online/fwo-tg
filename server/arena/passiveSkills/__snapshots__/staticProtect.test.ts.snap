@@ -1,12 +1,12 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`staticProtect should passively block if target has a lot of pdef 1`] = `
-"*quisquam* пытался атаковать *labore*, но у него не получилось
-_Статичная защита_ *labore*
-*quisquam* рубанул *labore* _Оружием_ и нанёс *7.2* урона
-\\[ labore 💥 💔-7.2/0.8 📖58 ]
-*quisquam* рубанул *labore* _Оружием_ и нанёс *7.2* урона
-\\[ labore 💥 💔-7.2/-6.4 📖58 ]
-*quisquam* рубанул *labore* _Оружием_ и нанёс *7.2* урона
-\\[ labore 💥 💔-7.2/-13.6 📖58 ]"
+"*quisquam* пытался атаковать *corporis*, но у него не получилось
+_Статичная защита_ *corporis*
+*quisquam* рубанул *corporis* _Оружием_ и нанёс *7.2* урона
+\\[ corporis 💥 💔-7.2/0.8 📖58 ]
+*quisquam* рубанул *corporis* _Оружием_ и нанёс *7.2* урона
+\\[ corporis 💥 💔-7.2/-6.4 📖58 ]
+*quisquam* рубанул *corporis* _Оружием_ и нанёс *7.2* урона
+\\[ corporis 💥 💔-7.2/-13.6 📖58 ]"
 `;

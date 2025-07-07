@@ -1,38 +1,34 @@
-import { describe, beforeAll, beforeEach, afterEach, it, spyOn, expect } from 'bun:test';
-import casual from 'casual';
-import { CharacterService } from '@/arena/CharacterService';
-import GameService from '@/arena/GameService';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { CharacterClass } from '@fwo/shared';
+import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import attack from '../actions/attack';
 import lightShield from './lightShield';
+
 // npm t server/arena/magics/lightShield.test.ts
 
 describe('lightShield', () => {
   let game: GameService;
 
-  beforeAll(() => {
-    casual.seed(1);
-
-    attack.registerPostAffects([lightShield]);
-  });
-
   beforeEach(async () => {
-    const initiator = await TestUtils.createCharacter({ prof: 'm', magics: { lightShield: 2 } });
-    const target = await TestUtils.createCharacter();
-    const attacker = await TestUtils.createCharacter({ prof: 'w' }, { weapon: {} });
+    attack.registerPostAffects([lightShield]);
+    game = await TestUtils.createGame([
+      {
+        prof: CharacterClass.Mage,
+        magics: { lightShield: 2 },
+      },
+      {},
+      {
+        prof: CharacterClass.Warrior,
+        weapon: {},
+      },
+    ]);
 
-    const ids = [initiator.id, target.id, attacker.id];
-    await Promise.all(ids.map(CharacterService.getCharacterById));
-
-    game = new GameService(ids);
-  });
-
-  beforeEach(() => {
-    spyOn(global.Math, 'random').mockReturnValue(0.3);
+    TestUtils.mockRandom(0.3);
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   it('initiator should be hit by light shield', async () => {

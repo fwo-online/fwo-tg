@@ -1,28 +1,22 @@
-import { describe, beforeEach, it, expect, beforeAll, spyOn, afterEach } from 'bun:test';
-import casual from 'casual';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { CharacterClass, ItemWear } from '@fwo/shared';
+import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
-import attack from '../actions/attack';
 import shieldBlock from './shieldBlock';
-import { CharacterClass, ItemWear } from '@fwo/shared';
-import arena from '@/arena';
 
 // npm t server/arena/skills/shieldBlock.test.ts
 
 describe('shieldBlock', () => {
   let game: GameService;
 
-  beforeAll(() => {
-    attack.registerPreAffects([shieldBlock]);
-    casual.seed(1);
-  });
-
   beforeEach(async () => {
-    const initiator = await TestUtils.createCharacter(
-      { prof: CharacterClass.Warrior },
-      { weapon: { type: 'chop' } },
-    );
+    arena.actions.attack.registerPreAffects([shieldBlock]);
+    const initiator = await TestUtils.createCharacter({
+      prof: CharacterClass.Warrior,
+      weapon: { type: 'chop' },
+    });
     const target = await TestUtils.createCharacter({
       prof: CharacterClass.Warrior,
       skills: { shieldBlock: 1 },
@@ -43,11 +37,11 @@ describe('shieldBlock', () => {
 
     game = new GameService([initiator.id, target.id]);
 
-    spyOn(global.Math, 'random').mockReturnValue(0.5);
+    TestUtils.mockRandom();
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   it('should block attack if target has less attrs', async () => {
@@ -57,7 +51,7 @@ describe('shieldBlock', () => {
     shieldBlock.cast(game.players.players[1], game.players.players[1], game);
 
     expect(game.players.players[1].stats.val('magic.defence')).toBe(13.67);
-    attack.cast(game.players.players[0], game.players.players[1], game);
+    arena.actions.attack.cast(game.players.players[0], game.players.players[1], game);
 
     expect(game.players.players[1].stats.val('magic.defence')).toBe(4.87);
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
@@ -69,9 +63,9 @@ describe('shieldBlock', () => {
 
     shieldBlock.cast(game.players.players[1], game.players.players[1], game);
 
-    attack.cast(game.players.players[0], game.players.players[1], game);
-    attack.cast(game.players.players[0], game.players.players[1], game);
-    attack.cast(game.players.players[0], game.players.players[1], game);
+    arena.actions.attack.cast(game.players.players[0], game.players.players[1], game);
+    arena.actions.attack.cast(game.players.players[0], game.players.players[1], game);
+    arena.actions.attack.cast(game.players.players[0], game.players.players[1], game);
 
     expect(game.players.players[1].stats.val('magic.defence')).toBe(3);
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();

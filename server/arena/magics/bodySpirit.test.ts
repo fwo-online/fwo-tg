@@ -1,34 +1,27 @@
-import {
-  describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
-} from 'bun:test';
-import casual from 'casual';
-import GameService from '@/arena/GameService';
-import type { Char } from '@/models/character';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { CharacterClass } from '@fwo/shared';
+import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import bodySpirit from './bodySpirit';
+
 // npm t server/arena/magics/bodySpirit.test.ts
 
 describe('bodySpirit', () => {
   let game: GameService;
-  let initiator: Char;
-  let target: Char;
-
-  beforeAll(async () => {
-    casual.seed(1);
-    initiator = await TestUtils.createCharacter({ prof: 'm', magics: { bodySpirit: 3 } });
-    target = await TestUtils.createCharacter();
-  });
 
   beforeEach(async () => {
-    game = new GameService([initiator.id, target.id]);
+    game = await TestUtils.createGame([
+      { prof: CharacterClass.Mage, magics: { bodySpirit: 3 } },
+      {},
+    ]);
   });
 
   beforeEach(() => {
-    spyOn(global.Math, 'random').mockReturnValue(0.15);
+    TestUtils.mockRandom(0.15);
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   it('should hit target and get mp', () => {
@@ -37,9 +30,7 @@ describe('bodySpirit', () => {
 
     bodySpirit.cast(game.players.players[0], game.players.players[1], game);
 
-    expect(
-      game.players.players.map((player) => player.stats.val('hp')),
-    ).toMatchSnapshot();
+    expect(game.players.players.map((player) => player.stats.val('hp'))).toMatchSnapshot();
     expect(game.players.players[0].stats.val('mp')).toMatchSnapshot();
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
@@ -51,9 +42,7 @@ describe('bodySpirit', () => {
 
     bodySpirit.cast(game.players.players[0], game.players.players[1], game);
 
-    expect(
-      game.players.players.map((player) => player.stats.val('hp')),
-    ).toMatchSnapshot();
+    expect(game.players.players.map((player) => player.stats.val('hp'))).toMatchSnapshot();
     expect(game.players.players[0].stats.val('mp')).toMatchSnapshot();
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
@@ -65,9 +54,7 @@ describe('bodySpirit', () => {
 
     bodySpirit.cast(game.players.players[0], game.players.players[1], game);
 
-    expect(
-      game.players.players.map((player) => player.stats.val('hp')),
-    ).toMatchSnapshot();
+    expect(game.players.players.map((player) => player.stats.val('hp'))).toMatchSnapshot();
     expect(game.players.players[0].stats.val('mp')).toMatchSnapshot();
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });

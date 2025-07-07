@@ -34,7 +34,7 @@ export function formatExp(args: SuccessArgs): string {
       );
     case 'skill':
     case 'dodge':
-      return exp ? brackets(exp) : '';
+      return args.exp ? brackets(exp) : '';
     case 'passive':
       return '';
     default:

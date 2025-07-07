@@ -1,7 +1,6 @@
-import { describe, beforeEach, it, expect, beforeAll, spyOn, afterEach } from 'bun:test';
-import casual from 'casual';
-import { CharacterService } from '@/arena/CharacterService';
-import GameService from '@/arena/GameService';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { CharacterClass } from '@fwo/shared';
+import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import attack from '../actions/attack';
 import disarm from './disarm';
@@ -11,27 +10,29 @@ import disarm from './disarm';
 describe('disarm', () => {
   let game: GameService;
 
-  beforeAll(() => {
-    casual.seed(1);
-    attack.registerPreAffects([disarm]);
-  });
-
   beforeEach(async () => {
-    const initiator = await TestUtils.createCharacter({ prof: 'w' }, { weapon: {} });
-    const target1 = await TestUtils.createCharacter({ prof: 'l', skills: { disarm: 1 } });
-    const target2 = await TestUtils.createCharacter({ prof: 'l', skills: { disarm: 1 } });
+    attack.registerPreAffects([disarm]);
 
-    await Promise.all(
-      [initiator.id, target1.id, target2.id].map(CharacterService.getCharacterById),
-    );
+    game = await TestUtils.createGame([
+      {
+        prof: CharacterClass.Warrior,
+        weapon: {},
+      },
+      {
+        prof: CharacterClass.Archer,
+        skills: { disarm: 3 },
+      },
+      {
+        prof: CharacterClass.Archer,
+        skills: { disarm: 3 },
+      },
+    ]);
 
-    game = new GameService([initiator.id, target1.id, target2.id]);
-
-    spyOn(global.Math, 'random').mockReturnValue(0.15);
+    TestUtils.mockRandom();
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   it('target should be disarmed if initiator has more dex', async () => {

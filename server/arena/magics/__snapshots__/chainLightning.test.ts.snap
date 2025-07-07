@@ -30,13 +30,13 @@ ipsam ⚡ 💔-2.65/5.35 📖21 ]"
 exports[`chainLightning should hit 4 targets 1`] = `
 [
   8,
-  4.64,
+  4.61,
   8,
   5.28,
   5.65,
   8,
   8,
-  4.98,
+  4.94,
   8,
   8,
   8,
@@ -46,23 +46,23 @@ exports[`chainLightning should hit 4 targets 1`] = `
 exports[`chainLightning should hit 4 targets 2`] = `104`;
 
 exports[`chainLightning should hit 4 targets 3`] = `
-"*explicabo* сотворил _Цепь молний_ на *et* нанеся 11.45 урона
-\\[ et ⚡ 💔-3.36/4.64 📖39
-dolor ⚡ 💔-3.02/4.98 📖24
-veritatis ⚡ 💔-2.72/5.28 📖22
-deserunt ⚡ 💔-2.35/5.65 📖19 ]"
+"*asperiores* сотворил _Цепь молний_ на *magni* нанеся 11.49 урона
+\\[ magni ⚡ 💔-3.36/4.61 📖39
+sed ⚡ 💔-3.06/4.94 📖24
+iure ⚡ 💔-2.72/5.28 📖22
+recusandae ⚡ 💔-2.35/5.65 📖19 ]"
 `;
 
 exports[`chainLightning should hit 3 targets 1`] = `
 [
   8,
-  5.63,
+  5.64,
   8,
-  6.13,
+  6.1,
   8,
   8,
   8,
-  5.88,
+  5.87,
   8,
   8,
   8,
@@ -72,10 +72,10 @@ exports[`chainLightning should hit 3 targets 1`] = `
 exports[`chainLightning should hit 3 targets 2`] = `63`;
 
 exports[`chainLightning should hit 3 targets 3`] = `
-"*architecto* сотворил _Цепь молний_ на *aspernatur* нанеся 6.33 урона
-\\[ aspernatur ⚡ 💔-2.34/5.63 📖31
-voluptatem ⚡ 💔-2.12/5.88 📖17
-dicta ⚡ 💔-1.87/6.13 📖15 ]"
+"*asperiores* сотворил _Цепь молний_ на *magni* нанеся 6.4 урона
+\\[ magni ⚡ 💔-2.37/5.64 📖31
+sed ⚡ 💔-2.13/5.87 📖17
+iure ⚡ 💔-1.9/6.1 📖15 ]"
 `;
 
 exports[`chainLightning should hit 3 targets without clan 1`] = `
@@ -88,7 +88,7 @@ exports[`chainLightning should hit 3 targets without clan 1`] = `
   8,
   5.89,
   8,
-  5.66,
+  5.64,
   8,
   8,
 ]
@@ -97,8 +97,8 @@ exports[`chainLightning should hit 3 targets without clan 1`] = `
 exports[`chainLightning should hit 3 targets without clan 2`] = `63`;
 
 exports[`chainLightning should hit 3 targets without clan 3`] = `
-"*qui* сотворил _Цепь молний_ на *ex* нанеся 6.36 урона
-\\[ ex ⚡ 💔-2.36/5.66 📖31
-quidem ⚡ 💔-2.11/5.89 📖17
-ut ⚡ 💔-1.89/6.11 📖15 ]"
+"*asperiores* сотворил _Цепь молний_ на *blanditiis* нанеся 6.36 урона
+\\[ blanditiis ⚡ 💔-2.36/5.64 📖31
+dignissimos ⚡ 💔-2.11/5.89 📖17
+labore ⚡ 💔-1.89/6.11 📖15 ]"
 `;

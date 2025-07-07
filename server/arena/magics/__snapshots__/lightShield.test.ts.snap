@@ -7,10 +7,8 @@ exports[`lightShield initiator should be hit by light shield 1`] = `
 \\[ 📖0 ]
 *ratione* рубанул *magni* _Оружием_ и нанёс *5* урона
 \\[ magni 💥 💔-5/3 📖40 ]
-
-$*asperiores* сотворил _Световой щит_ на *ratione* нанеся 1.47 урона
+*asperiores* сотворил _Световой щит_ на *ratione* нанеся 1.47 урона
 \\[ ratione ✨ 💔-1.47/6.53 📖20 ]
-
-$*asperiores* сотворил _Световой щит_ на *ratione* нанеся 0.73 урона
+*asperiores* сотворил _Световой щит_ на *ratione* нанеся 0.73 урона
 \\[ ratione ✨ 💔-0.73/5.8 📖14 ]"
 `;

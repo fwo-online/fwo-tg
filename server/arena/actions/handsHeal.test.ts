@@ -1,7 +1,5 @@
-import { describe, beforeAll, beforeEach, afterEach, it, spyOn, expect } from 'bun:test';
-import casual from 'casual';
-import GameService from '@/arena/GameService';
-import type { Char } from '@/models/character';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import attack from './attack';
 import handsHeal from './handsHeal';
@@ -10,25 +8,16 @@ import handsHeal from './handsHeal';
 
 describe('handsHeal', () => {
   let game: GameService;
-  let initiator: Char;
-  let target: Char;
-
-  beforeAll(async () => {
-    casual.seed(1);
-    handsHeal.registerPreAffects([attack]);
-
-    initiator = await TestUtils.createCharacter({}, { weapon: {} });
-    target = await TestUtils.createCharacter();
-  });
 
   beforeEach(async () => {
-    game = new GameService([initiator.id, target.id]);
+    handsHeal.registerPreAffects([attack]);
 
-    spyOn(global.Math, 'random').mockReturnValue(0.3);
+    game = await TestUtils.createGame([{ weapon: {} }, {}]);
+    TestUtils.mockRandom();
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   it('should heal', () => {

@@ -1,7 +1,7 @@
+import { isString } from 'es-toolkit';
 import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
 import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConstructor';
 import type { ActionType, BreaksMessage, SuccessArgs } from '@/arena/Constuructors/types';
-import { isString } from 'es-toolkit';
 
 abstract class CounterEvasionSkill extends PassiveSkillConstructor implements Affect {
   abstract weaponTypes: string[];
@@ -43,7 +43,7 @@ abstract class CounterEvasionSkill extends PassiveSkillConstructor implements Af
       return;
     }
 
-    return this.getSuccessResult(this.context.params);
+    return this.getSuccessResult(this.params);
   };
 }
 

@@ -38,7 +38,7 @@ exports[`fireRain should hit single target if target has no clan 1`] = `
   8,
   8,
   8,
-  2.57,
+  2.59,
   8,
   8,
 ]
@@ -47,6 +47,6 @@ exports[`fireRain should hit single target if target has no clan 1`] = `
 exports[`fireRain should hit single target if target has no clan 2`] = `51`;
 
 exports[`fireRain should hit single target if target has no clan 3`] = `
-"*explicabo* сотворил _Огненный дождь_ на *aperiam* нанеся 5.43 урона
-\\[ aperiam 🔥 💔-5.43/2.57 📖51 ]"
+"*asperiores* сотворил _Огненный дождь_ на *blanditiis* нанеся 5.41 урона
+\\[ blanditiis 🔥 💔-5.41/2.59 📖51 ]"
 `;

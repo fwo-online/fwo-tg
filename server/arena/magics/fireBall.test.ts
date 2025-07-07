@@ -1,46 +1,46 @@
-import {
-  describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
-} from 'bun:test';
-import casual from 'casual';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { CharacterClass } from '@fwo/shared';
 import { times } from 'lodash';
-import { CharacterService } from '@/arena/CharacterService';
-import GameService from '@/arena/GameService';
+import type GameService from '@/arena/GameService';
 import { profsData } from '@/data/profs';
 import TestUtils from '@/utils/testUtils';
 import fireBall from './fireBall';
+
 // npm t server/arena/magics/fireBall.test.ts
 
 describe('fireBall', () => {
   let game: GameService;
 
-  beforeAll(() => {
-    casual.seed(1);
-  });
-
   beforeEach(async () => {
-    const harks = { ...profsData.m.hark, wis: 20 };
-    const initiator = await TestUtils.createCharacter({ prof: 'm', magics: { fireBall: 3 }, harks });
-    const chars = await Promise.all(times(10, () => TestUtils.createCharacter()));
-    const charIds = chars.map(({ id }) => id);
+    game = await TestUtils.createGame([
+      {
+        prof: CharacterClass.Mage,
+        magics: { fireBall: 3 },
+        harks: { ...profsData.m.hark, wis: 20 },
+      },
+      ...times(10, () => ({})),
+    ]);
 
-    await TestUtils.createClan(charIds[1], {
-      players: charIds.slice(0, 6),
+    const clan = await TestUtils.createClan(game.players.players[1].id, {
+      players: game.players.players.slice(1, 7).map(({ id }) => id),
     });
-    TestUtils.resetCharacterCache();
-    await Promise.all([initiator.id, ...charIds].map(CharacterService.getCharacterById));
 
-    game = new GameService([initiator.id, ...charIds]);
+    TestUtils.resetCharacterCache();
+
     game.players.players.forEach((player, index) => {
+      if (clan.players.some(({ id }) => id === player.id)) {
+        player.clan = clan;
+      }
       player.resists.fire = index % 3 ? 1 : 0.75;
     });
   });
 
   beforeEach(() => {
-    spyOn(global.Math, 'random').mockReturnValue(0.15);
+    TestUtils.mockRandom(0.15);
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   it('should hit 6 targets', () => {
@@ -48,9 +48,7 @@ describe('fireBall', () => {
 
     fireBall.cast(game.players.players[0], game.players.players[1], game);
 
-    expect(
-      game.players.players.map((player) => player.stats.val('hp')),
-    ).toMatchSnapshot();
+    expect(game.players.players.map((player) => player.stats.val('hp'))).toMatchSnapshot();
     expect(game.players.players[0].stats.val('exp')).toMatchSnapshot();
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
@@ -60,9 +58,7 @@ describe('fireBall', () => {
 
     fireBall.cast(game.players.players[0], game.players.players[8], game);
 
-    expect(
-      game.players.players.map((player) => player.stats.val('hp')),
-    ).toMatchSnapshot();
+    expect(game.players.players.map((player) => player.stats.val('hp'))).toMatchSnapshot();
     expect(game.players.players[0].stats.val('exp')).toMatchSnapshot();
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });

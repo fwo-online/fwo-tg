@@ -1,15 +1,15 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`dodge target should dodge attack if has initiator more dex 1`] = `
-"*repellat* использовал _🐍 Увертка_
+"*magni* использовал _🐍 Увертка_
 
-*asperiores* пытался атаковать *repellat*, но у него не получилось
-_🐍 Увертка_ *repellat*: 📖50"
+*quisquam* пытался атаковать *magni*, но у него не получилось
+_🐍 Увертка_ *magni*: 📖50"
 `;
 
 exports[`dodge target should not dodge attack if target has more dex 1`] = `
-"*qui* использовал _🐍 Увертка_
+"*magni* использовал _🐍 Увертка_
 
-*explicabo* рубанул *qui* _Оружием_ и нанёс *3.35* урона
-\\[ qui 💥 💔-3.35/4.65 📖27 ]"
+*quisquam* рубанул *magni* _Оружием_ и нанёс *7.2* урона
+\\[ magni 💥 💔-7.2/0.8 📖58 ]"
 `;
