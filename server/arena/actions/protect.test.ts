@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { CharacterClass } from '@fwo/shared';
 import arena from '@/arena';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
@@ -12,7 +13,7 @@ describe('protect', () => {
   beforeEach(async () => {
     arena.actions.attack.registerPreAffects([protect]);
 
-    game = await TestUtils.createGame([{}, { weapon: {} }]);
+    game = await TestUtils.createGame([{}, { prof: CharacterClass.Warrior, weapon: {} }]);
     TestUtils.mockRandom();
   });
 
