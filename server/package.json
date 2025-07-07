@@ -40,10 +40,5 @@
       "default": "./server/index.ts",
       "types": "./server/index.ts"
     }
-  },
-  "config": {
-    "mongodbMemoryServer": {
-      "version": "4.4.29"
-    }
   }
 }
