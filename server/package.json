@@ -5,7 +5,7 @@
   "scripts": {
     "start": "NODE_ENV=production bun fwo.ts",
     "dev": "bun cli/dev.ts",
-    "test": "bun test --preload ./test.setup.ts -i",
+    "test": "NODE_ENV=test bun test --preload ./test.setup.ts -i",
     "generate:items": "bun cli/generateItems.ts",
     "reset-harks": "bun cli/resetHarks.ts",
     "reset-items": "bun cli/updateItems.ts",
