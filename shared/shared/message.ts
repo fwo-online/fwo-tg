@@ -37,9 +37,10 @@ export type ClientToServerMessage = Message<{
     },
     callback: (payload: OrderResponse) => void,
   ];
-  'game:orderRepeat': [callback: (payload: OrderResponse) => void];
-  'game:orderReset': [callback: (payload: OrderResponse) => void];
-  'game:orderRemove': [id: string, callback: (payload: OrderResponse) => void];
+  'game:order:repeat': [callback: (payload: OrderResponse) => void];
+  'game:order:reset': [callback: (payload: OrderResponse) => void];
+  'game:order:remove': [id: string, callback: (payload: OrderResponse) => void];
+  'game:order:ready': [ready: boolean, callback: (payload: RPC<{ ready: boolean }>) => void];
   'tower:connected': [
     callback: (
       payload: RPC<{
@@ -74,6 +75,7 @@ export type ServerToClientMessage = Message<{
       orders: Order[];
       ordersTime: number;
       ordersStartTime: number;
+      ready: boolean;
     },
   ];
   'game:endOrders': [];

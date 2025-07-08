@@ -15,6 +15,7 @@ export type GameStoreState = {
   skills: Action[];
   ordersTime: number;
   ordersStartTime: number;
+  ready: boolean;
 };
 
 export type GameStoreActions = {
@@ -28,6 +29,7 @@ export type GameStoreActions = {
   setPlayers: (players: Record<string, Player>) => void;
   setClans: (clans: Record<string, ClanPublic>) => void;
   setOrdersTime: (ordersTime: number, ordersStartTime: number) => void;
+  setReady: (ready: boolean) => void;
   reset: () => void;
 };
 
@@ -47,6 +49,7 @@ const initialState: GameStoreState = {
   statusByClan: {},
   ordersTime: 0,
   ordersStartTime: 0,
+  ready: false,
 };
 
 export const useGameStore = create<GameStore>()((set) => ({
@@ -61,5 +64,6 @@ export const useGameStore = create<GameStore>()((set) => ({
   setPlayers: (players) => set({ players }),
   setClans: (clans) => set({ clans }),
   setOrdersTime: (ordersTime, ordersStartTime) => set({ ordersTime, ordersStartTime }),
+  setReady: (ready) => set({ ready }),
   reset: () => set(initialState),
 }));

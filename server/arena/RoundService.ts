@@ -29,6 +29,7 @@ export class RoundService {
   private emitter = new RoundEmitter();
   count = 0;
   status = RoundStatus.INIT;
+  timer?: Timer;
   timestamp = Date.now();
 
   /**
@@ -100,6 +101,9 @@ export class RoundService {
    */
   private onNextState(state: RoundStatus = RoundStatus.INIT): void {
     console.log('Round State:', state);
+
+    this.timestamp = Date.now();
+    clearTimeout(this.timer);
     switch (state) {
       case RoundStatus.INIT:
         this.write();
@@ -108,7 +112,7 @@ export class RoundService {
         break;
       case RoundStatus.START_ROUND:
         this.startRound();
-        this.nextState(RoundStatus.START_ORDERS);
+        this.nextState(RoundStatus.START_ORDERS, config.startRoundTime / 2);
         break;
       case RoundStatus.START_ORDERS:
         this.startOrders();
@@ -116,7 +120,7 @@ export class RoundService {
         break;
       case RoundStatus.END_ORDERS:
         this.engine();
-        this.nextState(RoundStatus.END_ROUND);
+        this.nextState(RoundStatus.END_ROUND, config.startRoundTime / 2);
         break;
       case RoundStatus.TIMEOUT:
         // code
@@ -138,11 +142,13 @@ export class RoundService {
    * @param timeout число в мс, через которое следует выполнить
    */
   private nextState(newState: RoundStatus, timeout = config.roundTimeout): void {
-    const timer = setTimeout(() => {
-      this.timestamp = Date.now();
-      this.onNextState(newState);
-      clearTimeout(timer);
-    }, timeout);
+    this.timer = setTimeout(() => this.onNextState(newState), timeout);
+  }
+
+  endOrders(): void {
+    if (this.status === RoundStatus.START_ORDERS) {
+      this.onNextState(RoundStatus.END_ORDERS);
+    }
   }
 
   initRound(): void {

@@ -1,16 +1,16 @@
-import { useGameStore } from '../store/useGameStore';
-import { useTransition } from 'react';
 import { pick } from 'es-toolkit';
 import { useSocket } from '@/stores/socket';
 import { usePopup } from '@/hooks/usePopup';
 import type { OrderResponse } from '@fwo/shared';
+import { useRequest } from '@/hooks/useRequest';
+import { useGameStore } from '@/modules/game/store/useGameStore';
 
 export const useGameActionOrder = (onSuccess: () => void) => {
   const socket = useSocket();
   const setOrders = useGameStore((state) => state.setOrders);
   const setRemainPower = useGameStore((state) => state.setPower);
   const setActions = useGameStore((state) => state.setActions);
-  const [isPending, startTransition] = useTransition();
+  const [isPending, makeRequest] = useRequest();
   const popup = usePopup();
 
   const handleOrderResponse = (res: OrderResponse) => {
@@ -29,7 +29,7 @@ export const useGameActionOrder = (onSuccess: () => void) => {
       return;
     }
 
-    startTransition(async () => {
+    makeRequest(async () => {
       const res = await socket.emitWithAck('game:order', {
         power,
         target,
@@ -40,22 +40,22 @@ export const useGameActionOrder = (onSuccess: () => void) => {
   };
 
   const handleRepeat = async () => {
-    startTransition(async () => {
-      const res = await socket.emitWithAck('game:orderRepeat');
+    makeRequest(async () => {
+      const res = await socket.emitWithAck('game:order:repeat');
       handleOrderResponse(res);
     });
   };
 
   const handleReset = async () => {
-    startTransition(async () => {
-      const res = await socket.emitWithAck('game:orderReset');
+    makeRequest(async () => {
+      const res = await socket.emitWithAck('game:order:reset');
       handleOrderResponse(res);
     });
   };
 
   const handleRemove = async (orderID: string) => {
-    startTransition(async () => {
-      const res = await socket.emitWithAck('game:orderRemove', orderID);
+    makeRequest(async () => {
+      const res = await socket.emitWithAck('game:order:remove', orderID);
       handleOrderResponse(res);
     });
   };

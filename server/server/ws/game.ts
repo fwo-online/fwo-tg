@@ -79,6 +79,7 @@ export const onCreate = (io: Server) => {
           power: player.proc,
           ordersTime: config.ordersTime,
           ordersStartTime: game.round.timestamp,
+          ready: false,
         });
       });
     });
@@ -131,6 +132,7 @@ export const onConnection = (_io: Server, socket: Socket) => {
         power: player.proc,
         ordersTime: config.ordersTime,
         ordersStartTime: game.round.timestamp,
+        ready: game.orders.readyIDs.has(player.id),
       });
     }
   });
@@ -159,16 +161,28 @@ export const onConnection = (_io: Server, socket: Socket) => {
     }
   };
 
-  socket.on('game:orderRepeat', (callback) => {
+  socket.on('game:order:repeat', (callback) => {
     callback(handleOrder((game, player) => game.orders.repeatLastOrder(player.id)));
   });
 
-  socket.on('game:orderReset', (callback) => {
+  socket.on('game:order:reset', (callback) => {
     callback(handleOrder((game, player) => game.orders.resetOrdersForPlayer(player.id)));
   });
 
-  socket.on('game:orderRemove', (orderID, callback) => {
+  socket.on('game:order:remove', (orderID, callback) => {
     callback(handleOrder((game, player) => game.orders.removeAction(player.id, orderID)));
+  });
+
+  socket.on('game:order:ready', (ready: boolean, callback) => {
+    const game = character.currentGame;
+    const player = game?.players.getById(character.id);
+    if (!game || !player) {
+      return { error: true, message: 'Вы не в игре' };
+    }
+
+    game.orders.setReady(player.id, ready);
+
+    callback({ ready: game.orders.readyIDs.has(player.id) });
   });
 
   socket.on('game:order', (order, callback) => {

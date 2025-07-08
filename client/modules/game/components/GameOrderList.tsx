@@ -1,52 +1,48 @@
 import type { FC } from 'react';
 import { useGameStore } from '@/modules/game/store/useGameStore';
 import type { Order } from '@fwo/shared';
-import { Card } from '@/components/Card';
 import { Placeholder } from '@/components/Placeholder';
 import { Button } from '@/components/Button';
 
-const GameOrderListItem: FC<{
-  order: Order;
-  isPending: boolean;
-  onRemove: (id: string) => void;
-}> = ({ order, isPending, onRemove }) => {
+type Props = {
+  isPending?: boolean;
+} & ({ readonly: true; onRemove?: never } | { readonly?: never; onRemove: (id: string) => void });
+
+const GameOrderListItem: FC<Props & { order: Order }> = ({
+  order,
+  isPending,
+  onRemove,
+  readonly,
+}) => {
   const target = useGameStore((state) => state.players[order.target]);
   const handleRemove = () => {
-    onRemove(order.id);
+    onRemove?.(order.id);
   };
 
   return (
     <div className="flex justify-between items-center text-sm">
-      <span>
+      <span className="mt-2">
         <i>{order.action.displayName}</i> на <b>{target.name}</b> ({order.power}%)
       </span>
-      <Button className="p-0 h-6 w-6 after:hidden" disabled={isPending} onClick={handleRemove}>
-        ✖
-      </Button>
+      {readonly ? null : (
+        <Button className="p-0 h-6 w-6 after:hidden" disabled={isPending} onClick={handleRemove}>
+          ✖
+        </Button>
+      )}
     </div>
   );
 };
 
-export const GameOrderList: FC<{ isPending: boolean; onRemove: (id: string) => void }> = ({
-  isPending,
-  onRemove,
-}) => {
+export const GameOrderList: FC<Props> = (props) => {
   const orders = useGameStore((state) => state.orders);
 
   return (
-    <Card header="Заказы">
+    <>
       {orders.length ? (
-        orders.map((order) => (
-          <GameOrderListItem
-            key={order.id}
-            order={order}
-            isPending={isPending}
-            onRemove={onRemove}
-          />
-        ))
+        orders.map((order) => <GameOrderListItem key={order.id} order={order} {...props} />)
       ) : (
-        <Placeholder description="Сделайте заказ" />
+        <Placeholder description="Выберите действия" />
       )}
-    </Card>
+    </>
   );
 };
