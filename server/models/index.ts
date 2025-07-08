@@ -15,9 +15,14 @@ export async function connect(onConnect?: () => void): Promise<void> {
 
     switch (process.env.NODE_ENV) {
       case 'production':
-      case 'test':
         await mongoose.connect(
           process.env.MONGO ?? 'mongodb://root:fworootpassword@db:27017/fwo',
+          options,
+        );
+        break;
+      case 'test':
+        await mongoose.connect(
+          process.env.MONGO ?? 'mongodb://root:fworootpassword@db:27017/test-fwo',
           options,
         );
         break;
