@@ -19,25 +19,25 @@ void connect(async () => {
 
   initGameChannel();
 
-  const server = serve({
-    fetch: app.fetch,
-    port: 3000,
-  });
-
-  const io = new Server(server, {
-    connectionStateRecovery: {},
-    pingInterval: 10000,
-    cors: { origin: [process.env.APP_URL].filter(isString) },
-  });
-
-  onCreate(io);
-  io.use(middleware(io));
-  io.on('connection', (socket) => {
-    onConnection(io, socket);
-  });
-
   await initBot();
 });
 
 registerGlobals();
 registerAffects();
+
+const server = serve({
+  fetch: app.fetch,
+  port: 3000,
+});
+
+const io = new Server(server, {
+  connectionStateRecovery: {},
+  pingInterval: 10000,
+  cors: { origin: [process.env.APP_URL].filter(isString) },
+});
+
+onCreate(io);
+io.use(middleware(io));
+io.on('connection', (socket) => {
+  onConnection(io, socket);
+});
