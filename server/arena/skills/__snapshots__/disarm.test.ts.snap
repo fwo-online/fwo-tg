@@ -1,24 +1,24 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`disarm target should be disarmed if initiator has more dex 1`] = `
-"*repellat* использовал _🥊 Обезоруживание_ на *asperiores*
+"*alias* использовал _🥊 Обезоруживание_ на *asperiores*
 \\[ 📖20 ]
-*asperiores* пытался атаковать *repellat*, но у него не получилось
-_🥊 Обезоруживание_ *repellat*: 📖0"
+*asperiores* пытался атаковать *alias*, но у него не получилось
+_🥊 Обезоруживание_ *alias*: 📖0"
 `;
 
 exports[`disarm target should not be disarmed if initiator has less dex 1`] = `
-"*nulla* пытался использовать умение _🥊 Обезоруживание_, но у него не вышло
-*iure* рубанул *nulla* _Оружием_ и нанёс *3.35* урона
-\\[ nulla 💥 💔-3.35/4.65 📖27 ]"
+"*alias* пытался использовать умение _🥊 Обезоруживание_, но у него не вышло
+*asperiores* рубанул *alias* _Оружием_ и нанёс *7.2* урона
+\\[ alias 💥 💔-7.2/0.8 📖58 ]"
 `;
 
 exports[`disarm should handle several casters 1`] = `
-"*repudiandae* использовал _🥊 Обезоруживание_ на *dignissimos*
+"*alias* использовал _🥊 Обезоруживание_ на *asperiores*
 \\[ 📖20 ]
-*natus* использовал _🥊 Обезоруживание_ на *dignissimos*
+*repellat* использовал _🥊 Обезоруживание_ на *asperiores*
 \\[ 📖20 ]
-*dignissimos* пытался атаковать *repudiandae*, но у него не получилось
-_🥊 Обезоруживание_ *repudiandae*: 📖0
-_🥊 Обезоруживание_ *natus*: 📖0"
+*asperiores* пытался атаковать *alias*, но у него не получилось
+_🥊 Обезоруживание_ *alias*: 📖0
+_🥊 Обезоруживание_ *repellat*: 📖0"
 `;

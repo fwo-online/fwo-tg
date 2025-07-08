@@ -1,3 +1,4 @@
+import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose, { type ConnectOptions } from 'mongoose';
 
 // MONGO - полный mongo uri:
@@ -7,6 +8,8 @@ mongoose.set('toObject', { virtuals: true });
 
 export async function connect(onConnect?: () => void): Promise<void> {
   try {
+    const mongod = await MongoMemoryServer.create();
+
     const options: ConnectOptions = {
       retryWrites: true,
       w: 'majority',
@@ -21,15 +24,18 @@ export async function connect(onConnect?: () => void): Promise<void> {
         );
         break;
       case 'development':
-      case 'test':
         await mongoose.connect(
           process.env.MONGO ?? 'mongodb://root:fworootpassword@localhost:27017/fwo',
           options,
         );
         break;
+      case 'test':
+        await mongoose.connect(mongod.getUri(), options);
+        break;
       default:
         console.log('unknown env', process.env.NODE_ENV);
     }
+
     onConnect?.();
   } catch (e) {
     console.log(e);

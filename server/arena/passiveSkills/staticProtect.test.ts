@@ -1,8 +1,6 @@
-import { describe, beforeAll, beforeEach, afterEach, it, spyOn, expect } from 'bun:test';
-import casual from 'casual';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { attack } from '@/arena/actions';
-import GameService from '@/arena/GameService';
-import type { Char } from '@/models/character';
+import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import staticProtect from './staticProtect';
 
@@ -10,24 +8,16 @@ import staticProtect from './staticProtect';
 
 describe('staticProtect', () => {
   let game: GameService;
-  let initiator: Char;
-  let target: Char;
-
-  beforeAll(async () => {
-    casual.seed(1);
-    attack.registerPreAffects([staticProtect]);
-
-    initiator = await TestUtils.createCharacter({ passiveSkills: { staticProtect: 1 }}, { weapon: {}, });
-    target = await TestUtils.createCharacter();
-  });
 
   beforeEach(async () => {
-    game = new GameService([initiator.id, target.id]);
-    spyOn(global.Math, 'random').mockReturnValue(0.5);
+    attack.registerPreAffects([staticProtect]);
+    game = await TestUtils.createGame([{ passiveSkills: { staticProtect: 1 }, weapon: {} }, {}]);
+
+    TestUtils.mockRandom();
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   it('should passively block if target has a lot of pdef', () => {

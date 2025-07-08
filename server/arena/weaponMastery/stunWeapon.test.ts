@@ -1,47 +1,38 @@
-import { describe, beforeAll, beforeEach, afterEach, it, spyOn, expect } from 'bun:test';
-import casual from 'casual';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { protect } from '@/arena/actions';
 import attack from '@/arena/actions/attack';
-import GameService from '@/arena/GameService';
-import type { Char } from '@/models/character';
+import type GameService from '@/arena/GameService';
+import stunWeapon from '@/arena/weaponMastery/stunWeapon';
 import TestUtils from '@/utils/testUtils';
-import stunWeapon from './stunWeapon';
 
 // npm t server/arena/weaponMastery/stunWeapon.test.ts
 
 describe('stunWeapon', () => {
   let game: GameService;
-  let initiator: Char;
-  let target: Char;
 
-  beforeAll(async () => {
-    casual.seed(1);
+  beforeEach(async () => {
     attack.registerPreAffects([protect]);
     attack.registerAffectHandlers([stunWeapon]);
 
-    initiator = await TestUtils.createCharacter(
+    game = await TestUtils.createGame([
       {
         passiveSkills: {
           stunWeapon: 1,
         },
+        weapon: { type: 'stun' },
       },
-      { weapon: { type: 'stun' } },
-    );
-    target = await TestUtils.createCharacter({
-      skills: {
-        dodge: 1,
+      {
+        skills: {
+          dodge: 1,
+        },
       },
-    });
-  });
+    ]);
 
-  beforeEach(async () => {
-    game = new GameService([initiator.id, target.id]);
-
-    spyOn(global.Math, 'random').mockReturnValue(0.25);
+    TestUtils.mockRandom(0.25);
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   it('should hit through protect', () => {
@@ -51,10 +42,10 @@ describe('stunWeapon', () => {
 
     protect.cast(game.players.players[1], game.players.players[1], game);
 
-    spyOn(global.Math, 'random').mockReturnValue(0.05);
+    TestUtils.mockRandom(0.05);
     attack.cast(game.players.players[0], game.players.players[1], game);
 
-    spyOn(global.Math, 'random').mockReturnValue(0.04);
+    TestUtils.mockRandom(0.04);
     attack.cast(game.players.players[0], game.players.players[1], game);
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();

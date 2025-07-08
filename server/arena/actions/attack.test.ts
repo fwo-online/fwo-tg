@@ -1,7 +1,5 @@
-import { describe, beforeAll, beforeEach, afterEach, it, spyOn, expect } from 'bun:test';
-import casual from 'casual';
-import GameService from '@/arena/GameService';
-import type { Char } from '@/models/character';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import attack from './attack';
 
@@ -9,24 +7,15 @@ import attack from './attack';
 
 describe('attack', () => {
   let game: GameService;
-  let initiator: Char;
-  let target: Char;
-
-  beforeAll(async () => {
-    casual.seed(1);
-
-    initiator = await TestUtils.createCharacter({}, { weapon: {} });
-    target = await TestUtils.createCharacter();
-  });
 
   beforeEach(async () => {
-    game = new GameService([initiator.id, target.id]);
+    game = await TestUtils.createGame([{ weapon: {} }, {}]);
 
-    spyOn(global.Math, 'random').mockReturnValue(0.5);
+    TestUtils.mockRandom();
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   it('should reduce damage by target resists', () => {

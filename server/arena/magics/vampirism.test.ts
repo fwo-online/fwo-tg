@@ -1,32 +1,25 @@
-import {
-  describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
-} from 'bun:test';
-import casual from 'casual';
-import GameService from '@/arena/GameService';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { CharacterClass } from '@fwo/shared';
+import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import vampirism from './vampirism';
-import { CharacterClass } from '@fwo/shared';
 
 describe('vampirism', () => {
   let game: GameService;
 
-  beforeAll(() => {
-    casual.seed(1);
-  });
-
   beforeEach(async () => {
-    const initiator = await TestUtils.createCharacter({ prof: CharacterClass.Mage, magics: { vampirism: 2 } });
-    const target = await TestUtils.createCharacter();
-
-    game = new GameService([initiator.id, target.id]);
+    game = await TestUtils.createGame([
+      { prof: CharacterClass.Mage, magics: { vampirism: 2 } },
+      {},
+    ]);
   });
 
   beforeEach(() => {
-    spyOn(global.Math, 'random').mockReturnValue(0.5);
+    TestUtils.mockRandom();
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   it('should take dmg and heal on same amount', () => {
@@ -34,8 +27,8 @@ describe('vampirism', () => {
 
     vampirism.cast(game.players.players[0], game.players.players[1], game);
 
-    expect(game.players.players[0].stats.val('hp')).toBe(11.63)
-    expect(game.players.players[1].stats.val('hp')).toBe(4.37)
+    expect(game.players.players[0].stats.val('hp')).toBe(11.63);
+    expect(game.players.players[1].stats.val('hp')).toBe(4.37);
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
@@ -46,8 +39,8 @@ describe('vampirism', () => {
 
     vampirism.cast(game.players.players[0], game.players.players[1], game);
 
-    expect(game.players.players[0].stats.val('hp')).toBe(9)
-    expect(game.players.players[1].stats.val('hp')).toBe(-2.63)
+    expect(game.players.players[0].stats.val('hp')).toBe(9);
+    expect(game.players.players[1].stats.val('hp')).toBe(-2.63);
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
@@ -58,8 +51,8 @@ describe('vampirism', () => {
 
     vampirism.cast(game.players.players[0], game.players.players[1], game);
 
-    expect(game.players.players[0].stats.val('hp')).toBe(8)
-    expect(game.players.players[1].stats.val('hp')).toBe(-4.63)
+    expect(game.players.players[0].stats.val('hp')).toBe(8);
+    expect(game.players.players[1].stats.val('hp')).toBe(-4.63);
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });

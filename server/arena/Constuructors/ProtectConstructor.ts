@@ -69,20 +69,21 @@ export abstract class ProtectConstructor extends AffectableAction implements Aff
     });
   }
 
-  preAffect: Affect['preAffect'] = ({ params, status }): undefined => {
+  preAffect: Affect['preAffect'] = (context): undefined => {
     this.reset();
+    this.applyContext(context);
 
-    const { initiator, target, game } = params;
-    const protectors = this.getTargetProtectors(params);
+    const { initiator, target, game } = this.params;
+    const protectors = this.getTargetProtectors(this.params);
     if (!protectors.length) {
       return;
     }
 
     const protect = protectors.reduce((acc, { val }) => acc + val, 0);
-    const chance = this.getProtectChance(params, protect);
+    const chance = this.getProtectChance(this.params, protect);
 
     if (MiscService.chance(chance)) {
-      this.calculateExp({ initiator, target, game }, status.effect);
+      this.calculateExp({ initiator, target, game }, this.status.effect);
 
       throw new CastError(this.getSuccessResult({ initiator, target, game }));
     }

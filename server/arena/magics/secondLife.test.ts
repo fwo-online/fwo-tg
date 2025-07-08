@@ -1,9 +1,6 @@
-import {
-  describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
-} from 'bun:test';
-import casual from 'casual';
-import { CharacterService } from '@/arena/CharacterService';
-import GameService from '@/arena/GameService';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { CharacterClass } from '@fwo/shared';
+import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import secondLife from './secondLife';
 
@@ -12,24 +9,19 @@ import secondLife from './secondLife';
 describe('secondLife', () => {
   let game: GameService;
 
-  beforeAll(() => {
-    casual.seed(1);
-  });
-
   beforeEach(async () => {
-    const initiator = await TestUtils.createCharacter({ prof: 'p', magics: { secondLife: 1 } });
+    game = await TestUtils.createGame([
+      {
+        prof: CharacterClass.Priest,
+        magics: { secondLife: 1 },
+      },
+    ]);
 
-    await CharacterService.getCharacterById(initiator.id);
-
-    game = new GameService([initiator.id]);
-  });
-
-  beforeEach(() => {
-    spyOn(global.Math, 'random').mockReturnValue(0.5);
+    TestUtils.mockRandom();
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   it('target should be alive', async () => {

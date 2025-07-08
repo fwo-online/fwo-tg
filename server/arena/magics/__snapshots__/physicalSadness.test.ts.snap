@@ -1,29 +1,29 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`physicalSadness should hit target with single hit 1`] = `2.7`;
+exports[`physicalSadness should hit target with single hit 1`] = `-2.2`;
 
-exports[`physicalSadness should hit target with single hit 2`] = `50`;
+exports[`physicalSadness should hit target with single hit 2`] = `90`;
 
 exports[`physicalSadness should hit target with single hit 3`] = `
-"*magni* рубанул *asperiores* _Оружием_ и нанёс *3.25* урона
-\\[ asperiores 💥 💔-3.25/4.75 📖26 ]
-*asperiores* сотворил _Вселенская скорбь_ на *magni* нанеся 5.3 урона
-\\[ magni 💥 💔-5.3/2.7 📖50 ]"
+"*magni* рубанул *asperiores* _Оружием_ и нанёс *7.1* урона
+\\[ asperiores 💥 💔-7.1/0.9 📖57 ]
+*asperiores* сотворил _Вселенская скорбь_ на *magni* нанеся 10.2 урона
+\\[ magni 💥 💔-10.2/-2.2 📖90 ]"
 `;
 
-exports[`physicalSadness should hit targets with multiple hit 1`] = `5.14`;
+exports[`physicalSadness should hit targets with multiple hit 1`] = `3.13`;
 
-exports[`physicalSadness should hit targets with multiple hit 2`] = `31`;
+exports[`physicalSadness should hit targets with multiple hit 2`] = `47`;
 
 exports[`physicalSadness should hit targets with multiple hit 3`] = `
-"*magni* рубанул *asperiores* _Оружием_ и нанёс *0.81* урона
-\\[ asperiores 💥 💔-0.81/7.19 📖6 ]
-*magni* рубанул *asperiores* _Оружием_ и нанёс *0.81* урона
-\\[ asperiores 💥 💔-0.81/6.38 📖6 ]
-*magni* рубанул *asperiores* _Оружием_ и нанёс *0.81* урона
-\\[ asperiores 💥 💔-0.81/5.57 📖6 ]
-*magni* рубанул *asperiores* _Оружием_ и нанёс *0.81* урона
-\\[ asperiores 💥 💔-0.81/4.76 📖6 ]
-*asperiores* сотворил _Вселенская скорбь_ на *magni* нанеся 2.86 урона
-\\[ magni 💥 💔-2.86/5.14 📖31 ]"
+"*magni* рубанул *asperiores* _Оружием_ и нанёс *1.77* урона
+\\[ asperiores 💥 💔-1.77/6.23 📖14 ]
+*magni* рубанул *asperiores* _Оружием_ и нанёс *1.77* урона
+\\[ asperiores 💥 💔-1.77/4.46 📖14 ]
+*magni* рубанул *asperiores* _Оружием_ и нанёс *1.77* урона
+\\[ asperiores 💥 💔-1.77/2.69 📖14 ]
+*magni* рубанул *asperiores* _Оружием_ и нанёс *1.77* урона
+\\[ asperiores 💥 💔-1.77/0.92 📖14 ]
+*asperiores* сотворил _Вселенская скорбь_ на *magni* нанеся 4.87 урона
+\\[ magni 💥 💔-4.87/3.13 📖47 ]"
 `;

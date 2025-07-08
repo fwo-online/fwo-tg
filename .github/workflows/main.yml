@@ -20,6 +20,8 @@ jobs:
         run: bun install
       - name: eslint
         run: bun run lint
+      - name: test
+        run: bun run test
   testContainerFrontend:
     environment: test
     needs: buildAndLint

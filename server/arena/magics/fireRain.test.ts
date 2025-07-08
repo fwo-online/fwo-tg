@@ -1,7 +1,5 @@
-import {
-  describe, beforeAll, beforeEach, afterEach, it, spyOn, expect,
-} from 'bun:test';
-import casual from 'casual';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { CharacterClass } from '@fwo/shared';
 import { times } from 'lodash';
 import { CharacterService } from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
@@ -14,13 +12,13 @@ import fireRain from './fireRain';
 describe('fireRain', () => {
   let game: GameService;
 
-  beforeAll(() => {
-    casual.seed(1);
-  });
-
   beforeEach(async () => {
     const harks = { ...profsData.m.hark, wis: 20 };
-    const initiator = await TestUtils.createCharacter({ prof: 'm', magics: { fireRain: 3 }, harks });
+    const initiator = await TestUtils.createCharacter({
+      prof: CharacterClass.Mage,
+      magics: { fireRain: 3 },
+      harks,
+    });
     const chars = await Promise.all(times(10, () => TestUtils.createCharacter()));
     const charIds = chars.map(({ id }) => id);
 
@@ -38,11 +36,11 @@ describe('fireRain', () => {
   });
 
   beforeEach(() => {
-    spyOn(global.Math, 'random').mockReturnValue(0.15);
+    TestUtils.mockRandom(0.15);
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   it('should hit clan targets', () => {
@@ -50,9 +48,7 @@ describe('fireRain', () => {
 
     fireRain.cast(game.players.players[0], game.players.players[1], game);
 
-    expect(
-      game.players.players.map((player) => player.stats.val('hp')),
-    ).toMatchSnapshot();
+    expect(game.players.players.map((player) => player.stats.val('hp'))).toMatchSnapshot();
     expect(game.players.players[0].stats.val('exp')).toMatchSnapshot();
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
@@ -62,9 +58,7 @@ describe('fireRain', () => {
 
     fireRain.cast(game.players.players[0], game.players.players[8], game);
 
-    expect(
-      game.players.players.map((player) => player.stats.val('hp')),
-    ).toMatchSnapshot();
+    expect(game.players.players.map((player) => player.stats.val('hp'))).toMatchSnapshot();
     expect(game.players.players[0].stats.val('exp')).toMatchSnapshot();
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });

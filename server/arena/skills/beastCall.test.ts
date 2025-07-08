@@ -1,41 +1,38 @@
-import { describe, beforeEach, it, expect, beforeAll, spyOn, afterEach } from 'bun:test';
-import casual from 'casual';
-import GameService from '@/arena/GameService';
-import TestUtils from '@/utils/testUtils';
-import attack from '../actions/attack';
-import disarm from './disarm';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { CharacterClass } from '@fwo/shared';
+import type GameService from '@/arena/GameService';
 import beastCall from '@/arena/skills/beastCall';
+import TestUtils from '@/utils/testUtils';
 
 // npm t server/arena/skills/beastCall.test.ts
 
 describe('beastCall', () => {
   let game: GameService;
 
-  beforeAll(() => {
-    casual.seed(1);
-    attack.registerPreAffects([disarm]);
-  });
-
   beforeEach(async () => {
-    const initiator = await TestUtils.createCharacter({ prof: 'w', skills: { beastCall: 2 } }, { weapon: {} });
+    game = await TestUtils.createGame([
+      { prof: CharacterClass.Warrior, skills: { beastCall: 2 }, weapon: {} },
+    ]);
 
-    game = new GameService([initiator.id]);
-
-    spyOn(global.Math, 'random').mockReturnValue(0.15);
+    TestUtils.mockRandom();
   });
 
   afterEach(async () => {
-    spyOn(global.Math, 'random').mockRestore();
-  })
+    TestUtils.restoreRandom();
+  });
 
   it('should create wolfs', async () => {
     game.players.players[0].proc = 0.5;
 
-    beastCall.cast(game.players.players[0], game.players.players[0], game)
+    beastCall.cast(game.players.players[0], game.players.players[0], game);
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
     expect(game.players.players.length).toBe(4);
-    expect(game.players.players).toMatchObject([{ nick: game.players.players[0].nick}, { nick: '🐺 Волк 1'}, { nick: '🐺 Волк 2'}, { nick: '🐺 Волк 3'}])
+    expect(game.players.players).toMatchObject([
+      { nick: game.players.players[0].nick },
+      { nick: '🐺 Волк 1' },
+      { nick: '🐺 Волк 2' },
+      { nick: '🐺 Волк 3' },
+    ]);
   });
-
 });

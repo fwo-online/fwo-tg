@@ -1,15 +1,15 @@
-import { MarketItemService } from './MarketItemService';
-import { MarketItemModel } from '@/models/market-item';
-import { CharacterService } from '@/arena/CharacterService';
 import { beforeEach, describe, expect, it } from 'bun:test';
+import { CharacterService } from '@/arena/CharacterService';
+import { MarketItemModel } from '@/models/market-item';
 import TestUtils from '@/utils/testUtils';
+import { MarketItemService } from './MarketItemService';
 
 describe('MarketItemService', () => {
   let seller: CharacterService;
   let buyer: CharacterService;
 
   beforeEach(async () => {
-    const initiator = await TestUtils.createCharacter({ gold: 0 }, { weapon: {} });
+    const initiator = await TestUtils.createCharacter({ gold: 0, weapon: {} });
     const target = await TestUtils.createCharacter({ gold: 1000 });
 
     seller = await CharacterService.getCharacterById(initiator.id);
@@ -22,9 +22,12 @@ describe('MarketItemService', () => {
         TestUtils.createItem({}),
         TestUtils.createItem({}),
       ]);
-      const [marketItem1, marketItem2] = await MarketItemModel.create([
-        { item: item1, seller: seller.id, price: 1000 },
+      const [marketItem2] = await MarketItemModel.create([
         { item: item2, seller: seller.id, price: 1000 },
+      ]);
+
+      const [marketItem1] = await MarketItemModel.create([
+        { item: item1, seller: seller.id, price: 1000 },
       ]);
 
       const result = await MarketItemService.getMarketItems();

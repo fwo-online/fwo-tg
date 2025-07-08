@@ -1,24 +1,23 @@
+import { spyOn } from 'bun:test';
+import { CharacterClass, type Item, ItemWear, itemSchema } from '@fwo/shared';
 import casual from 'casual';
 import type { AnyKeys } from 'mongoose';
+import { parse } from 'valibot';
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
 import { ClanService } from '@/arena/ClanService';
+import GameService from '@/arena/GameService';
 import type { HistoryItem } from '@/arena/HistoryService';
 import { formatMessage } from '@/arena/LogService/utils';
-import { profsList, profsData, type Prof } from '@/data/profs';
+import { type Prof, profsData, profsList } from '@/data/profs';
 import { type Char, CharModel } from '@/models/character';
 import { type Clan, ClanModel } from '@/models/clan';
-import { CharacterClass, itemSchema, ItemWear, type Item } from '@fwo/shared';
-import { parse } from 'valibot';
 import { ItemModel } from '@/models/item';
 
 const functions = casual.functions();
 
 export default class TestUtils {
-  static async createCharacter(
-    params?: Partial<Char>,
-    { weapon }: { weapon?: { type?: string } } = {},
-  ) {
+  static async createCharacter(params?: Partial<Char & { weapon?: { type?: string } }>) {
     const prof: Prof = params?.prof ?? casual.random_element([...profsList]);
     const char = await CharModel.create({
       owner: casual.integer(1_000_000, 9_999_999).toString(),
@@ -30,8 +29,8 @@ export default class TestUtils {
       ...params,
     });
 
-    if (weapon) {
-      const item = await this.getWeapon(weapon);
+    if (params?.weapon) {
+      const item = await this.getWeapon(params?.weapon);
 
       char.items.push(item);
       char.equipment.set(ItemWear.MainHand, item);
@@ -63,6 +62,12 @@ export default class TestUtils {
     const clan = await created.save();
     await CharModel.updateMany({ _id: { $in: players } }, { clan: clan.id });
     return ClanService.getClanById(clan.id);
+  }
+
+  static async createGame(params: Partial<Char & { weapon?: { type?: string } }>[]) {
+    const players = await Promise.all(params.map((params) => TestUtils.createCharacter(params)));
+
+    return new GameService(players.map(({ id }) => id));
   }
 
   static async getClan(id: string) {
@@ -119,5 +124,13 @@ export default class TestUtils {
         return formatMessage(item);
       })
       .join('\n');
+  }
+
+  static mockRandom(value = 0.5) {
+    spyOn(global.Math, 'random').mockReturnValue(value);
+  }
+
+  static restoreRandom() {
+    spyOn(global.Math, 'random').mockRestore();
   }
 }

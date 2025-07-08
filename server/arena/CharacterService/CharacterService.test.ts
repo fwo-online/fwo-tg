@@ -1,16 +1,13 @@
-import { describe, it, expect, beforeEach } from 'bun:test';
-import casual from 'casual';
-import TestUtils from '@/utils/testUtils';
-import { CharacterService } from './CharacterService';
+import { beforeEach, describe, expect, it } from 'bun:test';
 import { CharacterClass } from '@fwo/shared';
 import { profsData } from '@/data/profs';
+import TestUtils from '@/utils/testUtils';
+import { CharacterService } from './CharacterService';
 
 describe('CharacterService', () => {
   let character: CharacterService;
 
   beforeEach(async () => {
-    casual.seed(1);
-
     const char = await TestUtils.createCharacter({
       prof: CharacterClass.Warrior,
       harks: { str: 20, dex: 20, wis: 20, int: 20, con: 20 },
@@ -39,7 +36,7 @@ describe('CharacterService', () => {
   });
 
   it('should reset attributes', async () => {
-    await character.attributes.resetAttributes({});
+    await character.attributes.resetAttributes();
 
     expect(character.attributes.attributes).toMatchObject(profsData[character.class].hark);
   });

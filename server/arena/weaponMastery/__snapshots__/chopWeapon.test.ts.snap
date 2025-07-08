@@ -1,10 +1,9 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`chopWeapon should increase damage with chance 1`] = `
-"*quisquam* рубанул *labore* _Оружием_ и нанёс *2.36* урона
-\\[ labore 💥 💔-2.36/5.64 📖19 ]
-*quisquam* рубанул *labore* _Оружием_ и нанёс *2.2* урона
-\\[ labore 💥 💔-2.2/3.44 📖18 ]
-
+"*quisquam* рубанул *corporis* _Оружием_ и нанёс *2.36* урона
+\\[ corporis 💥 💔-2.36/5.64 📖19 ]
+*quisquam* рубанул *corporis* _Оружием_ и нанёс *2.14* урона
+\\[ corporis 💥 💔-2.14/3.5 📖17 ]
 _Владение рубящим оружием_ *quisquam*"
 `;

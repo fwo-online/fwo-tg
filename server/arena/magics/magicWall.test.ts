@@ -1,9 +1,8 @@
-import { describe, beforeAll, beforeEach, afterEach, it, spyOn, expect } from 'bun:test';
-import casual from 'casual';
-import { CharacterService } from '@/arena/CharacterService';
-import GameService from '@/arena/GameService';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { CharacterClass } from '@fwo/shared';
+import arena from '@/arena';
+import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
-import attack from '../actions/attack';
 import magicWall from './magicWall';
 
 // npm t server/arena/magics/magicWall.test.ts
@@ -11,28 +10,26 @@ import magicWall from './magicWall';
 describe('magicWall', () => {
   let game: GameService;
 
-  beforeAll(() => {
-    casual.seed(1);
-
-    attack.registerPreAffects([magicWall]);
-  });
-
   beforeEach(async () => {
-    const initiator1 = await TestUtils.createCharacter({ prof: 'm', magics: { magicWall: 1 } });
-    const initiator2 = await TestUtils.createCharacter({ prof: 'm', magics: { magicWall: 1 } });
-    const target = await TestUtils.createCharacter({ prof: 'w' }, { weapon: {} });
+    arena.actions.attack.registerPreAffects([magicWall]);
 
-    await Promise.all(
-      [initiator1.id, initiator2.id, target.id].map(CharacterService.getCharacterById),
-    );
+    game = await TestUtils.createGame([
+      {
+        prof: CharacterClass.Mage,
+        magics: { magicWall: 1 },
+      },
+      {
+        prof: CharacterClass.Mage,
+        magics: { magicWall: 1 },
+      },
+      { weapon: {} },
+    ]);
 
-    game = new GameService([initiator1.id, initiator2.id, target.id]);
-
-    spyOn(global.Math, 'random').mockReturnValue(0.1);
+    TestUtils.mockRandom();
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   it('should protect player behind wall', () => {
@@ -42,8 +39,8 @@ describe('magicWall', () => {
     game.players.players[2].proc = 1;
 
     magicWall.cast(game.players.players[0], game.players.players[0], game);
-    attack.cast(game.players.players[2], game.players.players[0], game);
-    attack.cast(game.players.players[2], game.players.players[0], game);
+    arena.actions.attack.cast(game.players.players[2], game.players.players[0], game);
+    arena.actions.attack.cast(game.players.players[2], game.players.players[0], game);
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
@@ -54,7 +51,7 @@ describe('magicWall', () => {
     game.players.players[1].proc = 1;
 
     magicWall.cast(game.players.players[0], game.players.players[2], game);
-    attack.cast(game.players.players[2], game.players.players[0], game);
+    arena.actions.attack.cast(game.players.players[2], game.players.players[0], game);
 
     expect(game.players.players[1].stats.val('phys.defence')).toMatchSnapshot();
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
@@ -69,7 +66,7 @@ describe('magicWall', () => {
 
     magicWall.cast(game.players.players[0], game.players.players[0], game);
     magicWall.cast(game.players.players[1], game.players.players[0], game);
-    attack.cast(game.players.players[2], game.players.players[0], game);
+    arena.actions.attack.cast(game.players.players[2], game.players.players[0], game);
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });

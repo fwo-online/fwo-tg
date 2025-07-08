@@ -1,10 +1,9 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`stunWeapon should hit through protect 1`] = `
-"*quisquam* пытался атаковать *labore*, но у него не получилось
-_Защита_ *labore*: 📖23
-*quisquam* дал по башке *labore* _Оружием_ и нанёс *2.14* урона
-\\[ labore 💥 💔-2.14/5.86 📖17 ]
-
+"*quisquam* пытался атаковать *corporis*, но у него не получилось
+_Защита_ *corporis*: 📖23
+*quisquam* дал по башке *corporis* _Оружием_ и нанёс *2.14* урона
+\\[ corporis 💥 💔-2.14/5.86 📖17 ]
 _Владение оглушающим оружием_ *quisquam*"
 `;

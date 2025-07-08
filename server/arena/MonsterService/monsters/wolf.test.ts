@@ -1,39 +1,38 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, spyOn } from 'bun:test';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { CharacterClass } from '@fwo/shared';
 import { engine } from '@/arena/EngineService';
-import GameService from '@/arena/GameService';
+import type GameService from '@/arena/GameService';
 import { createWolf } from '@/arena/MonsterService/monsters/wolf';
 import { eclipse } from '@/arena/magics';
 import { RoundStatus } from '@/arena/RoundService';
 import { registerAffects } from '@/utils/registerAffects';
-import { registerGlobals } from '@/utils/registerGlobals';
 import TestUtils from '@/utils/testUtils';
 
 describe('wolf', () => {
   let game: GameService;
 
   beforeEach(async () => {
-    spyOn(global.Math, 'random').mockReturnValue(0.5);
+    TestUtils.mockRandom();
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   describe('makeOrder', () => {
-    beforeAll(() => {
-      registerGlobals();
-      registerAffects();
-    });
-
     beforeEach(async () => {
-      const warrior = await TestUtils.createCharacter({ prof: CharacterClass.Warrior });
-      const mage = await TestUtils.createCharacter({
-        prof: CharacterClass.Mage,
-        magics: { eclipse: 1 },
-      });
+      registerAffects();
 
-      game = new GameService([warrior.id, mage.id]);
+      game = await TestUtils.createGame([
+        {
+          prof: CharacterClass.Warrior,
+        },
+        {
+          prof: CharacterClass.Mage,
+          magics: { eclipse: 1 },
+        },
+      ]);
+
       game.players.players[1].stats.set('mp', 999);
       game.round.status = RoundStatus.START_ORDERS;
     });

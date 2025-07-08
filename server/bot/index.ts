@@ -13,7 +13,7 @@ import { createWolf } from '@/arena/MonsterService/monsters/wolf';
 import { ClanService } from '@/arena/ClanService';
 import ValidationError from '@/arena/errors/ValidationError';
 
-const bot = new Bot(process.env.BOT_TOKEN ?? '', {
+const bot = new Bot((process.env.BOT_TOKEN ?? process.env.NODE_ENV === 'test') ? 'test' : '', {
   client: { environment: process.env.NODE_ENV === 'development' ? 'test' : 'prod' },
 });
 

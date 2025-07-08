@@ -1,9 +1,6 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, spyOn } from 'bun:test';
-import { CharacterClass, ItemWear } from '@fwo/shared';
-import casual from 'casual';
-import arena from '@/arena';
-import { CharacterService } from '@/arena/CharacterService';
-import GameService from '@/arena/GameService';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { CharacterClass } from '@fwo/shared';
+import type GameService from '@/arena/GameService';
 import { eclipse, paralysis } from '@/arena/magics';
 import TestUtils from '@/utils/testUtils';
 import attack from '../actions/attack';
@@ -14,30 +11,27 @@ import terrifyingHowl from './terrifyingHowl';
 describe('terrifyingHowl', () => {
   let game: GameService;
 
-  beforeAll(() => {
+  beforeEach(async () => {
     attack.registerPreAffects([paralysis]);
     eclipse.registerPreAffects([paralysis]);
-    casual.seed(1);
-  });
 
-  beforeEach(async () => {
-    const initiator = await TestUtils.createCharacter({
-      prof: CharacterClass.Warrior,
-      skills: { terrifyingHowl: 2 },
-    });
-    const target1 = await TestUtils.createCharacter({
-      prof: CharacterClass.Mage,
-      magics: { eclipse: 1 },
-    });
-    const target2 = await TestUtils.createCharacter({});
+    game = await TestUtils.createGame([
+      {
+        prof: CharacterClass.Warrior,
+        skills: { terrifyingHowl: 2 },
+      },
+      {
+        prof: CharacterClass.Mage,
+        magics: { eclipse: 1 },
+      },
+      {},
+    ]);
 
-    game = new GameService([initiator.id, target1.id, target2.id]);
-
-    spyOn(global.Math, 'random').mockReturnValue(0.5);
+    TestUtils.mockRandom();
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   it('should apply paralysis', async () => {

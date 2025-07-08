@@ -1,7 +1,6 @@
-import { describe, beforeAll, beforeEach, afterEach, it, spyOn, expect } from 'bun:test';
-import casual from 'casual';
-import { CharacterService } from '@/arena/CharacterService';
-import GameService from '@/arena/GameService';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { CharacterClass } from '@fwo/shared';
+import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import attack from '../actions/attack';
 import madness from './madness';
@@ -11,27 +10,26 @@ import madness from './madness';
 describe('madness', () => {
   let game: GameService;
 
-  beforeAll(() => {
-    casual.seed(1);
-
-    attack.registerPreAffects([madness]);
-  });
-
   beforeEach(async () => {
-    const initiator1 = await TestUtils.createCharacter({ prof: 'm', magics: { madness: 2 } });
-    const initiator2 = await TestUtils.createCharacter({ prof: 'm', magics: { madness: 2 } });
-    const target = await TestUtils.createCharacter({ prof: 'w' }, { weapon: {} });
+    attack.registerPreAffects([madness]);
 
-    const ids = [initiator1.id, initiator2.id, target.id];
-    await Promise.all(ids.map(CharacterService.getCharacterById));
+    game = await TestUtils.createGame([
+      {
+        prof: CharacterClass.Mage,
+        magics: { madness: 2 },
+      },
+      {
+        prof: CharacterClass.Mage,
+        magics: { madness: 2 },
+      },
+      { weapon: {} },
+    ]);
 
-    game = new GameService(ids);
-
-    spyOn(global.Math, 'random').mockReturnValue(0.5);
+    TestUtils.mockRandom();
   });
 
   afterEach(() => {
-    spyOn(global.Math, 'random').mockRestore();
+    TestUtils.restoreRandom();
   });
 
   it('should change target', async () => {
