@@ -1,19 +1,17 @@
-import { Bot, InlineKeyboard } from 'grammy';
-import * as loginHelper from '@/helpers/loginHelper';
-import { getInvoice } from '@/api/invoice';
-import { createPayment } from '@/api/payment';
 import { InvoiceType } from '@fwo/shared';
-import { CharacterService } from '@/arena/CharacterService';
-import { ServiceShop } from '@/arena/ServiceShop';
-import { BOT_CHAT_ID } from '@/helpers/channelHelper';
+import { Bot, InlineKeyboard } from 'grammy';
 import type { ChatMember } from 'grammy/types';
 import { hasCharacter } from '@/api/character';
-import arena from '@/arena';
-import { createWolf } from '@/arena/MonsterService/monsters/wolf';
+import { getInvoice } from '@/api/invoice';
+import { createPayment } from '@/api/payment';
+import { CharacterService } from '@/arena/CharacterService';
 import { ClanService } from '@/arena/ClanService';
 import ValidationError from '@/arena/errors/ValidationError';
+import { ServiceShop } from '@/arena/ServiceShop';
+import { BOT_CHAT_ID } from '@/helpers/channelHelper';
+import * as loginHelper from '@/helpers/loginHelper';
 
-const bot = new Bot((process.env.BOT_TOKEN ?? process.env.NODE_ENV === 'test') ? 'test' : '', {
+const bot = new Bot(process.env.BOT_TOKEN ?? (process.env.NODE_ENV === 'test' ? 'test' : ''), {
   client: { environment: process.env.NODE_ENV === 'development' ? 'test' : 'prod' },
 });
 
