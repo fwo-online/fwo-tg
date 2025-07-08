@@ -20,6 +20,16 @@ jobs:
         run: bun install
       - name: eslint
         run: bun run lint
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.0
+        with:
+          mongodb-version: '4.4'
+          mongodb-container-name: db
+          mongodb-db: test-fwo
+      - name: Run tests
+        run: bun run test
+        env:
+          NODE_ENV: test
   testContainerFrontend:
     environment: test
     needs: buildAndLint

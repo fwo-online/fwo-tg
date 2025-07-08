@@ -22,7 +22,7 @@ export async function connect(onConnect?: () => void): Promise<void> {
         break;
       case 'test':
         await mongoose.connect(
-          process.env.MONGO ?? 'mongodb://root:fworootpassword@db:27017/test-fwo',
+          process.env.MONGO ?? 'mongodb://db:27017/test-fwo',
           options,
         );
         break;
