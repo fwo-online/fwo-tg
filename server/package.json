@@ -32,8 +32,7 @@
     "@types/lodash": "^4.17.16",
     "@types/node": "^22.13.10",
     "casual": "^1.6.2",
-    "csvtojson": "^2.0.10",
-    "mongodb-memory-server": "^10.1.4"
+    "csvtojson": "^2.0.10"
   },
   "exports": {
     ".": {
