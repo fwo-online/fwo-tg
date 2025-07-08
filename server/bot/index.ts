@@ -15,6 +15,8 @@ const bot = new Bot(process.env.BOT_TOKEN ?? (process.env.NODE_ENV === 'test' ? 
   client: { environment: process.env.NODE_ENV === 'development' ? 'test' : 'prod' },
 });
 
+bot.catch((e) => console.error(e));
+
 bot.command('start', async (ctx) => {
   if (!ctx.from || ctx.chat?.type !== 'private') {
     return;
