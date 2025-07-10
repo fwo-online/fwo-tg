@@ -1,34 +1,29 @@
-import { describe, beforeEach, it, expect } from 'bun:test';
+import { beforeEach, describe, expect, it } from 'bun:test';
+import { reservedClanName } from '@fwo/shared';
 import { times } from 'lodash';
-import arena from '@/arena';
+import type { Char } from '@/models/character';
 import type { Clan } from '@/models/clan';
 import TestUtils from '@/utils/testUtils';
-import { CharacterService } from '../CharacterService';
 import Player from './PlayerService';
 import PlayersService from './PlayersService';
-import { reservedClanName } from '@fwo/shared';
 
 // npm t server/arena/PlayersService/PlayersService.test.ts
 
 describe('PlayerService', () => {
-  let characters: CharacterService[] = [];
+  let chars: Char[];
   let players: PlayersService;
   let clans: Clan[] = [];
 
   beforeEach(async () => {
-    const chars = await Promise.all(times(9, () => TestUtils.createCharacter()));
-    const charIds = chars.map(({ id }) => id);
-
-    arena.characters = {};
+    chars = await Promise.all(times(9, () => TestUtils.createCharacter({})));
 
     clans = await Promise.all([
-      await TestUtils.createClan(charIds[0], { players: [charIds[1], charIds[2]] }),
-      await TestUtils.createClan(charIds[3], { players: [charIds[4]] }),
-      await TestUtils.createClan(charIds[5]),
+      await TestUtils.createClan(chars[0], { players: [chars[1], chars[2]] }),
+      await TestUtils.createClan(chars[3], { players: [chars[4]] }),
+      await TestUtils.createClan(chars[5]),
     ]);
 
-    characters = await Promise.all(charIds.map((id) => CharacterService.getCharacterById(id)));
-    players = new PlayersService(characters.map(({ id }) => id));
+    players = new PlayersService(chars.map(({ id }) => id));
   });
 
   it('should get random alive', () => {
@@ -36,7 +31,7 @@ describe('PlayerService', () => {
   });
 
   it('should filter by dead/alive players', () => {
-    expect(players.alivePlayers).toHaveLength(characters.length);
+    expect(players.alivePlayers).toHaveLength(chars.length);
     expect(players.deadPlayers).toHaveLength(0);
   });
 
@@ -45,13 +40,9 @@ describe('PlayerService', () => {
 
     expect(withoutClan).toHaveLength(3);
     expect(withClan).toMatchObject({
-      [clans[0].name]: [
-        { id: characters[0].id },
-        { id: characters[1].id },
-        { id: characters[2].id },
-      ],
-      [clans[1].name]: [{ id: characters[3].id }, { id: characters[4].id }],
-      [clans[2].name]: [{ id: characters[5].id }],
+      [clans[0].name]: [{ id: chars[0].id }, { id: chars[1].id }, { id: chars[2].id }],
+      [clans[1].name]: [{ id: chars[3].id }, { id: chars[4].id }],
+      [clans[2].name]: [{ id: chars[5].id }],
     });
   });
 
@@ -67,8 +58,8 @@ describe('PlayerService', () => {
 
     expect(withoutClan).toHaveLength(2);
     expect(withClan).toMatchObject({
-      [clans[0].name]: [{ id: characters[0].id }, { id: characters[2].id }],
-      [clans[1].name]: [{ id: characters[4].id }],
+      [clans[0].name]: [{ id: chars[0].id }, { id: chars[2].id }],
+      [clans[1].name]: [{ id: chars[4].id }],
     });
   });
 

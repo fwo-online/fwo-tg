@@ -1,29 +1,29 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`physicalSadness should hit target with single hit 1`] = `-2.2`;
+exports[`physicalSadness should hit target with single hit 1`] = `-2.31`;
 
 exports[`physicalSadness should hit target with single hit 2`] = `90`;
 
 exports[`physicalSadness should hit target with single hit 3`] = `
-"*magni* рубанул *asperiores* _Оружием_ и нанёс *7.1* урона
-\\[ asperiores 💥 💔-7.1/0.9 📖57 ]
-*asperiores* сотворил _Вселенская скорбь_ на *magni* нанеся 10.2 урона
-\\[ magni 💥 💔-10.2/-2.2 📖90 ]"
+"*Игрок 2* рубанул *Игрок 1* _Оружием_ и нанёс *7.2* урона
+\\[ Игрок 1 💥 💔-7.2/0.8 📖58 ]
+*Игрок 1* сотворил _Вселенская скорбь_ на *Игрок 2* нанеся 10.31 урона
+\\[ Игрок 2 💥 💔-10.31/-2.31 📖90 ]"
 `;
 
-exports[`physicalSadness should hit targets with multiple hit 1`] = `3.13`;
+exports[`physicalSadness should hit targets with multiple hit 1`] = `3.09`;
 
 exports[`physicalSadness should hit targets with multiple hit 2`] = `47`;
 
 exports[`physicalSadness should hit targets with multiple hit 3`] = `
-"*magni* рубанул *asperiores* _Оружием_ и нанёс *1.77* урона
-\\[ asperiores 💥 💔-1.77/6.23 📖14 ]
-*magni* рубанул *asperiores* _Оружием_ и нанёс *1.77* урона
-\\[ asperiores 💥 💔-1.77/4.46 📖14 ]
-*magni* рубанул *asperiores* _Оружием_ и нанёс *1.77* урона
-\\[ asperiores 💥 💔-1.77/2.69 📖14 ]
-*magni* рубанул *asperiores* _Оружием_ и нанёс *1.77* урона
-\\[ asperiores 💥 💔-1.77/0.92 📖14 ]
-*asperiores* сотворил _Вселенская скорбь_ на *magni* нанеся 4.87 урона
-\\[ magni 💥 💔-4.87/3.13 📖47 ]"
+"*Игрок 2* рубанул *Игрок 1* _Оружием_ и нанёс *1.8* урона
+\\[ Игрок 1 💥 💔-1.8/6.2 📖14 ]
+*Игрок 2* рубанул *Игрок 1* _Оружием_ и нанёс *1.8* урона
+\\[ Игрок 1 💥 💔-1.8/4.4 📖14 ]
+*Игрок 2* рубанул *Игрок 1* _Оружием_ и нанёс *1.8* урона
+\\[ Игрок 1 💥 💔-1.8/2.6 📖14 ]
+*Игрок 2* рубанул *Игрок 1* _Оружием_ и нанёс *1.8* урона
+\\[ Игрок 1 💥 💔-1.8/0.8 📖14 ]
+*Игрок 1* сотворил _Вселенская скорбь_ на *Игрок 2* нанеся 4.91 урона
+\\[ Игрок 2 💥 💔-4.91/3.09 📖47 ]"
 `;

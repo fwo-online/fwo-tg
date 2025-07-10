@@ -1,8 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { CharacterClass, ItemWear } from '@fwo/shared';
 import arena from '@/arena';
-import { CharacterService } from '@/arena/CharacterService';
-import GameService from '@/arena/GameService';
+import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import shieldBlock from './shieldBlock';
 
@@ -13,29 +12,25 @@ describe('shieldBlock', () => {
 
   beforeEach(async () => {
     arena.actions.attack.registerPreAffects([shieldBlock]);
-    const initiator = await TestUtils.createCharacter({
-      prof: CharacterClass.Warrior,
-      weapon: { type: 'chop' },
-    });
-    const target = await TestUtils.createCharacter({
-      prof: CharacterClass.Warrior,
-      skills: { shieldBlock: 1 },
-    });
 
     const shield = await TestUtils.createItem({
       type: 'shield',
       wear: ItemWear.OffHand,
       phys: { defence: 10 },
     });
-    target.items.push(shield);
-    target.equipment.set(ItemWear.OffHand, shield);
-    target.harks.con = 10;
-    await target.save();
-    delete arena.characters[target.id];
 
-    await Promise.all([initiator.id, target.id].map(CharacterService.getCharacterById));
-
-    game = new GameService([initiator.id, target.id]);
+    game = await TestUtils.createGame([
+      {
+        prof: CharacterClass.Warrior,
+        weapon: { type: 'chop' },
+      },
+      {
+        prof: CharacterClass.Warrior,
+        skills: { shieldBlock: 1 },
+        items: [shield],
+        equipment: new Map([[ItemWear.OffHand, shield]]),
+      },
+    ]);
 
     TestUtils.mockRandom();
   });

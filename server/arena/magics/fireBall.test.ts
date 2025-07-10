@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { CharacterClass } from '@fwo/shared';
 import { times } from 'lodash';
-import type GameService from '@/arena/GameService';
+import GameService from '@/arena/GameService';
 import { profsData } from '@/data/profs';
 import TestUtils from '@/utils/testUtils';
 import fireBall from './fireBall';
@@ -12,25 +12,20 @@ describe('fireBall', () => {
   let game: GameService;
 
   beforeEach(async () => {
-    game = await TestUtils.createGame([
-      {
-        prof: CharacterClass.Mage,
-        magics: { fireBall: 3 },
-        harks: { ...profsData.m.hark, wis: 20 },
-      },
-      ...times(10, () => ({})),
-    ]);
+    const initiator = await TestUtils.createCharacter({
+      prof: CharacterClass.Mage,
+      magics: { fireBall: 3 },
+      harks: { ...profsData.m.hark, wis: 20 },
+    });
+    const chars = await Promise.all(times(10, () => TestUtils.createCharacter({})));
 
-    const clan = await TestUtils.createClan(game.players.players[1].id, {
-      players: game.players.players.slice(1, 7).map(({ id }) => id),
+    await TestUtils.createClan(chars[0], {
+      players: chars.slice(0, 6),
     });
 
-    TestUtils.resetCharacterCache();
+    game = new GameService([initiator.id, ...chars.map(({ id }) => id)]);
 
     game.players.players.forEach((player, index) => {
-      if (clan.players.some(({ id }) => id === player.id)) {
-        player.clan = clan;
-      }
       player.resists.fire = index % 3 ? 1 : 0.75;
     });
   });

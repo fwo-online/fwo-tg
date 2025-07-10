@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { CharacterClass } from '@fwo/shared';
 import { times } from 'lodash';
-import { CharacterService } from '@/arena/CharacterService';
 import GameService from '@/arena/GameService';
 import { profsData } from '@/data/profs';
 import TestUtils from '@/utils/testUtils';
@@ -19,17 +18,13 @@ describe('fireRain', () => {
       magics: { fireRain: 3 },
       harks,
     });
-    const chars = await Promise.all(times(10, () => TestUtils.createCharacter()));
-    const charIds = chars.map(({ id }) => id);
+    const chars = await Promise.all(times(10, () => TestUtils.createCharacter({})));
 
-    await TestUtils.createClan(charIds[1], {
-      players: charIds.slice(0, 6),
+    await TestUtils.createClan(chars[0], {
+      players: chars.slice(0, 6),
     });
 
-    TestUtils.resetCharacterCache();
-    await Promise.all([initiator.id, ...charIds].map(CharacterService.getCharacterById));
-
-    game = new GameService([initiator.id, ...charIds]);
+    game = new GameService([initiator.id, ...chars.map(({ id }) => id)]);
     game.players.players.forEach((player, index) => {
       player.resists.fire = index % 3 ? 1 : 0.75;
     });

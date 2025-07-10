@@ -1,6 +1,6 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`terrifyingHowl should apply paralysis 1`] = `
-"*asperiores* испустил _🐺🔊 Ужасающий вой_! *ratione* и *alias* не в силах двигаться от страха!
+"*Игрок 1* испустил _🐺🔊 Ужасающий вой_! *Игрок 3* и *Игрок 2* не в силах двигаться от страха!
 \\[ 📖8 ]"
 `;

@@ -1,15 +1,15 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`parry target should parry attack if initiator has more dex 1`] = `
-"*alias* использовал _🤺 Парирование_
+"*Игрок 2* использовал _🤺 Парирование_
 
-*asperiores* пытался атаковать *alias*, но у него не получилось
-_🤺 Парирование_ *alias*: 📖8"
+*Игрок 1* пытался атаковать *Игрок 2*, но у него не получилось
+_🤺 Парирование_ *Игрок 2*: 📖8"
 `;
 
 exports[`parry target should not parry attack if target has more dex 1`] = `
-"*alias* использовал _🤺 Парирование_
+"*Игрок 2* использовал _🤺 Парирование_
 
-*asperiores* рубанул *alias* _Оружием_ и нанёс *7.2* урона
-\\[ alias 💥 💔-7.2/0.8 📖58 ]"
+*Игрок 1* рубанул *Игрок 2* _Оружием_ и нанёс *7.2* урона
+\\[ Игрок 2 💥 💔-7.2/0.8 📖58 ]"
 `;

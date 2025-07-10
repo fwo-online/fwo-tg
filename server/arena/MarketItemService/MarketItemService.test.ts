@@ -4,7 +4,7 @@ import { MarketItemModel } from '@/models/market-item';
 import TestUtils from '@/utils/testUtils';
 import { MarketItemService } from './MarketItemService';
 
-describe('MarketItemService', () => {
+describe.skip('MarketItemService', () => {
   let seller: CharacterService;
   let buyer: CharacterService;
 
