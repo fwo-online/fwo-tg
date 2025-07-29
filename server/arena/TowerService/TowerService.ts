@@ -9,7 +9,7 @@ import MiscService from '@/arena/MiscService';
 import { createAlpha } from '@/arena/MonsterService/monsters/alpha';
 import { createWolf } from '@/arena/MonsterService/monsters/wolf';
 import type { Player } from '@/arena/PlayersService';
-import { createTowerGame } from '@/helpers/gameHelper';
+import { createTowerGame } from '@/arena/TowerService';
 import { ClanModel } from '@/models/clan';
 import { type Tower, TowerModel } from '@/models/tower';
 
@@ -33,7 +33,7 @@ export class TowerService extends EventEmitter<{
   currentGame?: GameService;
   checkInterval?: Timer;
 
-  constructor(init: string[], lvl: number) {
+  private constructor(init: string[], lvl: number) {
     super();
     this.init = init;
     this.lvl = lvl;
@@ -49,7 +49,7 @@ export class TowerService extends EventEmitter<{
     return this.init.map((id) => arena.characters[id]);
   }
 
-  async createTower() {
+  private async initTower() {
     this.tower = await TowerModel.create({ players: this.init, lvl: this.lvl });
     console.debug('Tower debug:: create tower', this.id, this.lvl);
     arena.towers[this.id] = this;
@@ -62,7 +62,13 @@ export class TowerService extends EventEmitter<{
     TowerService.emitter.emit('start', this);
     this.emit('start', this);
     this.initHandlers();
-    return this;
+  }
+
+  static async createTower(players: string[], lvl: number) {
+    const tower = new TowerService(players, lvl);
+    await tower.initTower();
+
+    return tower;
   }
 
   getMonsterLvl(isBoss: boolean) {

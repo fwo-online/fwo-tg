@@ -1,5 +1,6 @@
-import MiscService from '@/arena/MiscService';
 import { ItemComponent } from '@fwo/shared';
+import MiscService from '@/arena/MiscService';
+import { getRandomItemByWeight } from '@/utils/getRandomItemByWeight';
 
 const components = [
   { name: ItemComponent.Fabric, cost: 10 },
@@ -10,22 +11,10 @@ const components = [
   // { name: ItemComponent.Arcanite, cost: 500 },
 ];
 
-const weights = components.map((c) => 1 / c.cost);
-const totalWeight = weights.reduce((sum, w) => sum + w, 0);
-const probabilities = weights.map((w) => w / totalWeight);
-
 export function getRandomComponent(chance: number) {
   if (MiscService.randInt(0, 100) > chance) {
     return;
   }
 
-  const random = Math.random();
-  let sum = 0;
-
-  for (let i = 0; i < components.length; i++) {
-    sum += probabilities[i];
-    if (random <= sum) {
-      return components[i].name;
-    }
-  }
+  return getRandomItemByWeight(components, ({ cost }) => 1 / cost);
 }

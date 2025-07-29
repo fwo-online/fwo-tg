@@ -9,9 +9,7 @@ import arena from '@/arena';
 import GameService from '@/arena/GameService';
 import { LadderService } from '@/arena/LadderService';
 import { formatMessage } from '@/arena/LogService/utils';
-import { MonsterService } from '@/arena/MonsterService/MonsterService';
-import { LadderRewardService, TowerRewardService } from '@/arena/RewardService';
-import type { TowerService } from '@/arena/TowerService/TowerService';
+import { LadderRewardService } from '@/arena/RewardService';
 import { broadcast, sendBattleLogMessages } from '@/helpers/channelHelper';
 import { DonationHelper } from '@/helpers/donationHelper';
 import { bold } from '@/utils/formatString';
@@ -66,7 +64,7 @@ export async function createGame(players: string[]) {
   return game;
 }
 
-const componentsToString = (components?: Partial<Record<ItemComponent, number>>) => {
+export const componentsToString = (components?: Partial<Record<ItemComponent, number>>) => {
   return Object.values(
     mapValues(
       components ?? {},
@@ -75,7 +73,7 @@ const componentsToString = (components?: Partial<Record<ItemComponent, number>>)
   ).join(', ');
 };
 
-const resultToString = (result: GameResult) =>
+export const resultToString = (result: GameResult) =>
   `\t${result.winner ? '🏆' : '👤'} ${result.player.name} получает ${result.exp}📖, ${result.gold}💰 ${componentsToString(result.components)} ${result.item?.info.name ?? ''}`;
 
 export async function createLadderGame(players: string[]) {
@@ -108,40 +106,5 @@ ${Object.entries(resultsByClan)
   });
 
   await ladder.saveGameStats();
-  return game;
-}
-
-export async function createTowerGame(tower: TowerService, isBoss: boolean) {
-  const game = await createGame(tower.init);
-
-  if (!game) {
-    return;
-  }
-
-  game.on('startOrders', () => {
-    game.players.aliveBotPlayers.filter(MonsterService.isMonster).forEach((bot) => {
-      bot.ai.makeOrder(game);
-    });
-  });
-
-  const reward = new TowerRewardService(game, tower, isBoss);
-
-  game.on('end', async ({ draw }) => {
-    const rewards = await reward.giveRewards(draw);
-    const resultsByClan = Object.groupBy(
-      rewards,
-      ({ player }) => player.clan?.name ?? reservedClanName,
-    );
-
-    await broadcast('Игра завершена');
-    await broadcast(`${bold`Статистика игры`}
-${Object.entries(resultsByClan)
-  .map(
-    ([clan, players]) =>
-      `${bold(clan === reservedClanName ? 'Без клана' : clan)}:\n${players?.map(resultToString).join('\n')}`,
-  )
-  .join('\n\n')}`);
-  });
-
   return game;
 }

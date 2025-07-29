@@ -2,8 +2,8 @@ import type { GameType } from '@fwo/shared';
 import arena from '@/arena';
 import config from '@/arena/config';
 import ValidationError from '@/arena/errors/ValidationError';
+import { createTower } from '@/arena/TowerService';
 import { createLadderGame } from '@/helpers/gameHelper';
-import { createTower } from '@/helpers/towerHelper';
 
 export type QueueItem = {
   id: string;

@@ -139,9 +139,15 @@ export default class MiscService {
    * @param {number} streak
    * @return {boolean} результат броска
    */
-  static pseudoRandomChance(chance, streak) {
+  static pseudoRandomChance(chance, streak, inverse = false) {
     const percent = typeof chance === 'string' ? this.rndm(chance) : +chance;
-    return this.chance((1 - (1 - Math.min(Math.max(percent / 100, 0), 1)) ** (streak + 1)) * 100);
+    const baseChance = Math.min(Math.max(percent / 100, 0), 1);
+
+    if (inverse) {
+      return this.chance((baseChance ** (streak + 1)) * 100);
+    } else {
+      return this.chance((1 - (1 - baseChance) ** (streak + 1)) * 100)
+    }
   }
   static randFloat = randFloat;
   static randInt = randInt;
