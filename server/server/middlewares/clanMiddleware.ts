@@ -1,14 +1,6 @@
 import { createMiddleware } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
-import type { CharacterService } from '@/arena/CharacterService';
-import type { UserEnv } from '@/server/middlewares/userMiddleware';
-import type { Clan } from '@/models/clan';
-
-export type CharacterEnv = UserEnv & {
-  Variables: {
-    character: CharacterService & { clan: Clan };
-  };
-};
+import type { CharacterEnv } from '@/server/middlewares';
 
 export const clanMiddleware = ({ owner = false }: { owner?: boolean } = {}) =>
   createMiddleware<CharacterEnv>(async (c, next) => {

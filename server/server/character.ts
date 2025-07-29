@@ -8,10 +8,10 @@ import { profsData } from '@/data/profs';
 import { handleValidationError } from '@/server/utils/handleValidationError';
 import { withValidation } from '@/server/utils/withValidation';
 import { normalizeToArray } from '@/utils/array';
-import { characterMiddleware, userMiddleware } from './middlewares';
+import { characterMiddleware, chatMiddleware, userMiddleware } from './middlewares';
 
 export const character = new Hono()
-  .use(userMiddleware)
+  .use(userMiddleware, chatMiddleware)
   .post('/', vValidator('json', createCharacterSchema, handleValidationError), async (c) => {
     const createCharacterDto = await c.req.valid('json');
     const user = c.get('user');
@@ -32,6 +32,11 @@ export const character = new Hono()
   .use(characterMiddleware)
   .get('/', async (c) => {
     const character = c.get('character');
+    // await character.resources.addResources({
+    //   exp: 1000000,
+    //   bonus: 1000,
+    //   free: 1000,
+    // });
 
     return c.json(character.toObject(), 200);
   })

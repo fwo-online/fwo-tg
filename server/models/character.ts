@@ -8,6 +8,7 @@ export interface Char {
   id: string;
 
   owner: string;
+  chat: number;
   nickname: string;
   birthday: Date;
   prof: CharacterClass;
@@ -62,6 +63,9 @@ const character = new Schema<Char, CharModel>({
   owner: {
     type: String,
     required: true,
+  },
+  chat: {
+    type: Number,
   },
   nickname: {
     type: String,

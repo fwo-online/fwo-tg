@@ -14,7 +14,7 @@ import { broadcast, sendBattleLogMessages } from '@/helpers/channelHelper';
 import { DonationHelper } from '@/helpers/donationHelper';
 import { bold } from '@/utils/formatString';
 
-export async function createGame(players: string[]) {
+export async function createGame(players: string[], chat?: string | number) {
   const newGame = new GameService(players);
   const game = await newGame.createGame();
 
@@ -23,26 +23,26 @@ export async function createGame(players: string[]) {
   }
 
   game.on('start', () => {
-    broadcast('Игра начинается');
+    broadcast('Игра начинается', chat);
   });
 
   game.on('startOrders', () => {
-    broadcast('Пришло время делать заказы');
+    broadcast('Пришло время делать заказы', chat);
   });
 
   game.on('startRound', ({ round }) => {
-    broadcast(`⚡️ Раунд ${round} начинается ⚡`);
+    broadcast(`⚡️ Раунд ${round} начинается ⚡`, chat);
   });
 
   game.on('endRound', async ({ log, dead }) => {
     await sendBattleLogMessages(log.map((log) => formatMessage(log)));
     if (dead.length) {
-      await broadcast(`Погибшие в этом раунде: ${dead.map(({ nick }) => nick).join(', ')}`);
+      await broadcast(`Погибшие в этом раунде: ${dead.map(({ nick }) => nick).join(', ')}`, chat);
     }
   });
 
   game.on('kick', ({ player }) => {
-    broadcast(`Игрок ${bold(player.nick)} был выброшен из игры`);
+    broadcast(`Игрок ${bold(player.nick)} был выброшен из игры`, chat);
   });
 
   game.on('end', async () => {

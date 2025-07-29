@@ -18,10 +18,9 @@ const TIMEOUT = 2.5 * 1000; // 2.5s
 
 export class ForestService extends EventEmitter<{
   start: [forest: ForestService];
-  'battle:start': [game: GameService, isBoss: boolean];
-  'battle:end': [game: GameService, victory: boolean];
   'event:start': [event: ForestEvent];
   'event:end': [event: ForestEvent, reward?: Reward];
+  'event:fight': [event: ForestEvent, game: GameService];
   'update:time': [timeSpent: number, timeLeft: number];
   end: [];
 }> {
@@ -96,7 +95,7 @@ export class ForestService extends EventEmitter<{
 
     const [ForestEvent] = result;
 
-    this.currentEvent = new ForestEvent();
+    this.currentEvent = new ForestEvent(this.character);
 
     this.currentEvent.once('start', (event) => {
       this.emit('event:start', event);
@@ -105,6 +104,10 @@ export class ForestService extends EventEmitter<{
     this.currentEvent.once('end', (event, reward) => {
       this.emit('event:end', event, reward);
       this.currentEvent = undefined;
+    });
+
+    this.currentEvent.once('figth', (event, game) => {
+      this.emit('event:fight', event, game);
     });
 
     this.currentEvent.start();
