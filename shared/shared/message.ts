@@ -1,7 +1,8 @@
 import type { Character } from '@/character';
 import type { CharacterPublic } from '@/character/characterPublic';
 import type { ClanPublic } from '@/clan';
-import type { GameStatus, GameType } from '@/game';
+import type { GameStatus, GameType, Reward } from '@/game';
+import type { ForestEventType } from '@/shared/forest';
 import type { Action } from './action';
 import type { Order } from './orderSchema';
 import type { Player } from './player';
@@ -50,6 +51,7 @@ export type ClientToServerMessage = Message<{
       }>,
     ) => void,
   ];
+  'forest:connect': [callback: (payload: RPC<{ reward: Reward }>) => void];
 }>;
 
 type Message<T extends Record<string, unknown[]>> = {
@@ -96,4 +98,8 @@ export type ServerToClientMessage = Message<{
   'tower:start': [towerID: string];
   'tower:end': [];
   'tower:updateTime': [timeSpent: number, timeLeft: number];
+  'forest:start': [forestID: string];
+  'forest:event:start': [eventType: ForestEventType];
+  'forest:event:end': [eventType: ForestEventType, reward?: Reward];
+  'forest:end': [reward: Reward];
 }>;

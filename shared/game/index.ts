@@ -2,7 +2,7 @@ import type { Item, ItemComponent } from '@/item';
 import type { Player } from '@/shared';
 
 export type Reward = {
-  exp: number;
+  exp?: number;
   gold?: number;
   components?: Partial<Record<ItemComponent, number>>;
   item?: Item;

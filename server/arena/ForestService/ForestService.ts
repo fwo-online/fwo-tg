@@ -1,18 +1,13 @@
 import EventEmitter from 'node:events';
 import type { Reward } from '@fwo/shared';
+import { mapValues, mergeWith } from 'es-toolkit';
+import { add } from 'es-toolkit/compat';
 import type { HydratedDocument } from 'mongoose';
 import arena from '@/arena';
-import { DeerEvent } from '@/arena/ForestService/events/DeerEvent';
-import { TreeEvent } from '@/arena/ForestService/events/TreeEvent';
+import { getRandomEvent } from '@/arena/ForestService/events';
 import type { ForestEvent } from '@/arena/ForestService/ForestEvent';
 import type GameService from '@/arena/GameService';
 import { type Forest, ForestModel } from '@/models/forest';
-import { getRandomItemByWeight } from '@/utils/getRandomItemByWeight';
-
-const forestEventsWeights = new Map([
-  [DeerEvent, 1],
-  [TreeEvent, 1],
-]);
 
 const TIMEOUT = 2.5 * 1000; // 2.5s
 
@@ -24,10 +19,15 @@ export class ForestService extends EventEmitter<{
   'update:time': [timeSpent: number, timeLeft: number];
   end: [];
 }> {
-  public timeSpent = 0;
-  public readonly playerID: string;
-  public currentGame?: GameService;
-  public checkInterval?: Timer;
+  timeSpent = 0;
+  readonly playerID: string;
+  currentGame?: GameService;
+  checkInterval?: Timer;
+  rewards: Required<Omit<Reward, 'item'>> = {
+    exp: 0,
+    gold: 0,
+    components: {},
+  };
 
   private forest!: HydratedDocument<Forest>;
   private currentEvent?: ForestEvent;
@@ -45,14 +45,6 @@ export class ForestService extends EventEmitter<{
 
   get character() {
     return arena.characters[this.playerID];
-  }
-
-  get isEventActive(): boolean {
-    return this.currentEvent !== undefined;
-  }
-
-  get activeEvent(): ForestEvent | null {
-    return this.currentEvent || null;
   }
 
   private async start(): Promise<void> {
@@ -79,49 +71,63 @@ export class ForestService extends EventEmitter<{
     }, TIMEOUT);
   }
 
+  endForest(lose = false) {
+    clearInterval(this.checkInterval);
+
+    if (lose) {
+      this.rewards.components = mapValues(this.rewards.components, (value = 0) =>
+        Math.round(value * 0.5),
+      );
+      this.rewards.gold = Math.round(this.rewards.gold * 0.5);
+    }
+  }
+
+  private addRewards(reward: Reward) {
+    this.rewards.exp += reward.exp ?? 0;
+    this.rewards.gold += reward.gold ?? 0;
+    mergeWith(this.rewards.components, reward.components ?? {}, add);
+  }
+
+  async saveRevards() {
+    this.character.resources.addResources({
+      components: this.rewards.components,
+      gold: this.rewards.gold,
+      exp: this.rewards.exp,
+    });
+  }
+
   async startEvent(): Promise<void> {
-    if (this.isEventActive) {
+    if (this.currentEvent) {
       return;
     }
 
-    const result = getRandomItemByWeight(
-      Array.from(forestEventsWeights.entries()),
-      ([_, weight]) => weight,
-    );
+    this.currentEvent = getRandomEvent(this.character);
 
-    if (!result) {
+    if (!this.currentEvent) {
+      console.error('forest service::: no event created');
       return;
     }
-
-    const [ForestEvent] = result;
-
-    this.currentEvent = new ForestEvent(this.character);
 
     this.currentEvent.once('start', (event) => {
       this.emit('event:start', event);
     });
 
     this.currentEvent.once('end', (event, reward) => {
+      if (reward) {
+        this.addRewards(reward);
+      }
       this.emit('event:end', event, reward);
       this.currentEvent = undefined;
-    });
-
-    this.currentEvent.once('figth', (event, game) => {
-      this.emit('event:fight', event, game);
     });
 
     this.currentEvent.start();
   }
 
-  async acceptEvent(accept: boolean): Promise<void> {
-    if (!this.activeEvent) {
+  async performAction(action: string): Promise<void> {
+    if (!this.currentEvent) {
       return;
     }
 
-    if (accept) {
-      await this.activeEvent.accept();
-    } else {
-      this.activeEvent.skip();
-    }
+    await this.currentEvent.performAction(action);
   }
 }

@@ -1,15 +1,16 @@
 import EventEmitter from 'node:events';
-import type { Reward } from '@fwo/shared';
+import type { ForestEventType, Reward } from '@fwo/shared';
 import type { CharacterService } from '@/arena/CharacterService';
 import type GameService from '@/arena/GameService';
 
-export abstract class ForestEvent extends EventEmitter<{
-  start: [event: ForestEvent];
+export abstract class ForestEvent<Action extends string = string> extends EventEmitter<{
+  start: [event: ForestEvent, actions: Action[]];
   end: [event: ForestEvent, result?: Reward];
   figth: [event: ForestEvent, game: GameService];
 }> {
-  protected character: CharacterService;
+  abstract type: ForestEventType;
   abstract duration: number;
+  protected character: CharacterService;
   protected timer?: Timer;
 
   constructor(character: CharacterService) {
@@ -17,26 +18,21 @@ export abstract class ForestEvent extends EventEmitter<{
     this.character = character;
   }
 
+  abstract getActions(): Action[];
+  abstract performAction(action: Action): MaybePromise<void>;
+
   start() {
-    this.emit('start', this);
+    this.emit('start', this, this.getActions());
 
     this.timer = setTimeout(() => {
-      this.skip();
+      this.next();
     }, this.duration);
 
     return this;
   }
 
-  async accept() {
-    const reward = await this.getReward();
-
+  next(reward?: Reward) {
+    clearTimeout(this.timer);
     this.emit('end', this, reward);
   }
-
-  skip() {
-    clearTimeout(this.timer);
-    this.emit('end', this);
-  }
-
-  abstract getReward(): MaybePromise<Reward | undefined>;
 }
