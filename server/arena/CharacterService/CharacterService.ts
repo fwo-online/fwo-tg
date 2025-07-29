@@ -1,4 +1,10 @@
-import type { Character, CharacterClass, CharacterPublic, ItemComponent } from '@fwo/shared';
+import type {
+  Character,
+  CharacterClass,
+  CharacterPublic,
+  ItemComponent,
+  Player,
+} from '@fwo/shared';
 import type { UpdateQuery } from 'mongoose';
 import { findCharacter, removeCharacter, updateCharacter } from '@/api/character';
 import arena from '@/arena';
@@ -49,6 +55,7 @@ export class CharacterService {
   wasLvlUp = false;
   autoreg = false;
   towerID = '';
+  forestID = '';
   isBot = false;
 
   get id() {
@@ -222,6 +229,10 @@ export class CharacterService {
 
   get currentTower() {
     return arena.towers[this.towerID];
+  }
+
+  get currentForest() {
+    return arena.forests[this.forestID];
   }
 
   /**
@@ -400,5 +411,18 @@ export class CharacterService {
 
   static toPublicObject(charObj: Char): CharacterPublic {
     return toPublicObject(charObj);
+  }
+
+  toPlayerObject(): Player {
+    return {
+      id: this.id,
+      name: this.nickname,
+      class: this.prof,
+      lvl: this.lvl,
+      clan: this.clan ? ClanService.toPublicObject(this.clan) : undefined,
+      alive: true,
+      weapon: this.inventory.getEquippedWeapon()?.info,
+      isBot: this.isBot,
+    };
   }
 }

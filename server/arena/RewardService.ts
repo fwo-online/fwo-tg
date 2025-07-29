@@ -3,22 +3,17 @@ import { differenceBy, mapValues, noop, shuffle } from 'es-toolkit';
 import { times } from 'lodash';
 import { CharacterService } from '@/arena/CharacterService';
 import type GameService from '@/arena/GameService';
-import type { HistoryService } from '@/arena/HistoryService';
 import { ItemService } from '@/arena/ItemService';
 import type PlayersService from '@/arena/PlayersService';
 import type { Player } from '@/arena/PlayersService';
 import type { TowerService } from '@/arena/TowerService/TowerService';
 import { getRandomComponent } from '@/utils/getRandomComponent';
 
-export type RewardServiceFactory = (game: GameService) => RewardService;
-
 export abstract class RewardService {
   players: PlayersService;
-  history: HistoryService;
 
   constructor(game: GameService) {
     this.players = game.players;
-    this.history = game.history;
   }
 
   protected getGoldForGame() {

@@ -1,16 +1,16 @@
+import type { ItemOutput, ItemSet } from '@fwo/shared';
+import type { ForestService } from '@/arena/ForestService/ForestService';
+import type { MonsterService } from '@/arena/MonsterService/MonsterService';
+import type { TowerService } from '@/arena/TowerService/TowerService';
 import type { Clan } from '@/models/clan';
-import type { ItemOutput } from '@fwo/shared';
-import type { ItemSet } from '@fwo/shared';
+import type * as actions from './actions';
 import type { CharacterService } from './CharacterService';
 import type GameService from './GameService';
 import type MatchMaking from './MatchMakingService';
-import type * as actions from './actions';
 import type * as magics from './magics';
 import type * as passiveSkills from './passiveSkills';
 import type * as skills from './skills';
 import type * as weaponMastery from './weaponMastery';
-import type { MonsterService } from '@/arena/MonsterService/MonsterService';
-import type { TowerService } from '@/arena/TowerService/TowerService';
 
 export default {
   mm: null as unknown as typeof MatchMaking,
@@ -28,4 +28,5 @@ export default {
   clans: new Map<string, Clan>(),
   monsters: {} as Record<string, MonsterService>,
   towers: {} as Partial<Record<string, TowerService>>,
+  forests: {} as Partial<Record<string, ForestService>>,
 };

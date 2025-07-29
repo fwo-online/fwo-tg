@@ -1,13 +1,16 @@
 import type { Item, ItemComponent } from '@/item';
 import type { Player } from '@/shared';
 
-export type GameResult = {
-  player: Player;
+export type Reward = {
   exp: number;
-  winner: boolean;
   gold?: number;
   components?: Partial<Record<ItemComponent, number>>;
   item?: Item;
+};
+
+export type GameResult = Reward & {
+  player: Player;
+  winner: boolean;
 };
 
 export type GameStatus = PublicGameStatus & {
