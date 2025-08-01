@@ -170,18 +170,25 @@ export class PracticeRewardService extends RewardService {
     const goldForGame = this.getGoldForGame();
 
     winners.forEach((winner) => {
-      if (winner.lvl > 1) {
+      if (winner.lvl === 1) {
+        winner.stats.collect.exp *= 3;
+        winner.stats.addGold(goldForGame);
+        winner.stats.addComponent(getRandomComponent(75));
+      } else {
         winner.stats.collect.exp = 0;
         winner.stats.collect.gold = 0;
-      } else {
-        winner.stats.collect.exp *= 5;
-        winner.stats.addGold(goldForGame);
-        winner.stats.addComponent(getRandomComponent(50));
       }
     });
   }
 
-  protected giveLoserRewards(_losers: Player[]) {
-    // проигравшие не получают ничего
+  protected giveLoserRewards(losers: Player[]) {
+    losers.forEach((loser) => {
+      if (loser.lvl === 1) {
+        loser.stats.collect.exp *= 3;
+      } else {
+        loser.stats.collect.exp = 0;
+        loser.stats.collect.gold = 0;
+      }
+    });
   }
 }

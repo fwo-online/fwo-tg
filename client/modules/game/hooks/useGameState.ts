@@ -1,18 +1,20 @@
 import type { ServerToClientMessage } from '@fwo/shared';
 import { useCallback } from 'react';
-import { useGameStore } from '@/modules/game/store/useGameStore';
-import { useGameKickState } from './useGameKickState';
-import { useMountEffect } from '@/hooks/useMountEffect';
 import { useNavigate } from 'react-router';
-import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
-import { useSocket } from '@/stores/socket';
+import { useMountEffect } from '@/hooks/useMountEffect';
 import { usePopup } from '@/hooks/usePopup';
 import { useSocketListener } from '@/hooks/useSocketListener';
+import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
+import { useGameResult } from '@/modules/game/hooks/useGameResult';
+import { useGameStore } from '@/modules/game/store/useGameStore';
+import { useSocket } from '@/stores/socket';
+import { useGameKickState } from './useGameKickState';
 
 export function useGameState() {
   const socket = useSocket();
   const { syncCharacter } = useSyncCharacter();
   const popup = usePopup();
+  const { handleGameResult } = useGameResult();
 
   const navigate = useNavigate();
   const setOrders = useGameStore((state) => state.setOrders);
@@ -70,10 +72,10 @@ export function useGameState() {
     setOrders([]);
   }, [setOrders, setCanOrder]);
 
-  const handleEndGame = useCallback(() => {
+  const handleEndGame = (results: Parameters<ServerToClientMessage['game:end']>[0]) => {
     navigate('/');
-    popup.info({ message: 'Игра завершена' });
-  }, [navigate, popup.info]);
+    handleGameResult(results);
+  };
 
   const handleStartGame = () => {
     socket.emitWithAck('game:connected').then(async (res) => {

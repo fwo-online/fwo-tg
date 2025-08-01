@@ -1,7 +1,7 @@
 import type { Character } from '@/character';
 import type { CharacterPublic } from '@/character/characterPublic';
 import type { ClanPublic } from '@/clan';
-import type { GameStatus, GameType } from '@/game';
+import type { GameResult, GameStatus, GameType } from '@/game';
 import type { Action } from './action';
 import type { Order } from './orderSchema';
 import type { Player } from './player';
@@ -65,7 +65,7 @@ export type ServerToClientMessage = Message<{
   'lobby:stop': [character: CharacterPublic, type: GameType];
   'lobby:help': [];
   'game:start': [gameID: string];
-  'game:end': [];
+  'game:end': [results: GameResult[]];
   'game:startOrders': [
     data: {
       actions: Action[];

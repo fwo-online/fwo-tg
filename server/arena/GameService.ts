@@ -1,5 +1,5 @@
 import EventEmitter from 'node:events';
-import { type GameStatus, reservedClanName } from '@fwo/shared';
+import { type GameResult, type GameStatus, reservedClanName } from '@fwo/shared';
 import { mapValues } from 'es-toolkit';
 import { createGame } from '@/api/game';
 import arena from '@/arena';
@@ -37,7 +37,8 @@ export type GameOptions = {
  */
 export default class GameService extends EventEmitter<{
   start: [];
-  end: [{ reason: string | undefined; draw: boolean }];
+  beforeEnd: [{ reason: string | undefined; draw: boolean }];
+  end: [{ results: GameResult[] }];
   startOrders: [];
   endOrders: [];
   preKick: [{ reason: string; player: Player }];
@@ -231,17 +232,22 @@ export default class GameService extends EventEmitter<{
     return this.history.getHistoryForRound(this.round.count);
   }
 
+  beforeEnd() {
+    console.debug('GC debug:: beforeEnd', this.info.id);
+    this.emit('beforeEnd', { reason: this.getEndGameReason(), draw: !this.isTeamWin });
+  }
+
   /**
    * @description Завершение игры
    *
    */
-  endGame(): void {
+  end(results: GameResult[]): void {
     console.debug('GC debug:: endGame', this.info.id);
     // Отправляем статистику
-    setTimeout(async () => {
+    setTimeout(() => {
       this.resetGameIds(this.players.players);
 
-      this.emit('end', { reason: this.getEndGameReason(), draw: !this.isTeamWin });
+      this.emit('end', { results });
       this.removeAllListeners();
     }, 1000);
   }
@@ -294,7 +300,7 @@ export default class GameService extends EventEmitter<{
           this.handleEndGameFlags();
           if (this.isGameEnd()) {
             this.round.unsubscribe();
-            this.endGame();
+            this.beforeEnd();
           } else {
             this.refreshRoundFlags();
             this.round.nextRound();
