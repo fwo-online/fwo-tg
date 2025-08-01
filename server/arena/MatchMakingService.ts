@@ -5,6 +5,7 @@ import { every, forEach } from 'es-toolkit/compat';
 import ValidationError from '@/arena/errors/ValidationError';
 import {
   LadderQueue,
+  PracticeQueue,
   type Queue,
   type QueueItem,
   TowerQueue,
@@ -26,6 +27,7 @@ class MatchMaking extends EventEmitter<{
   pull: [player: QueueItem];
 }> {
   allQueue: Record<GameType, Queue> = {
+    practice: new PracticeQueue(),
     tower: new TowerQueue(),
     ladder: new LadderQueue(),
   };
@@ -57,8 +59,13 @@ class MatchMaking extends EventEmitter<{
     this.validate(item);
 
     const queue = this.allQueue[item.queue];
-
     queue.push(item);
+
+    if (item.queue === 'practice') {
+      /** @todo убрать хак, когда игры будут в отдельных каналах */
+      return queue.start();
+    }
+
     this.emit('push', item);
     this.list();
     this.main(item.queue);

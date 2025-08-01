@@ -1,4 +1,4 @@
-import { ItemWear, MonsterType } from '@fwo/shared';
+import { CharacterClass, ItemWear, MonsterType } from '@fwo/shared';
 import arena from '@/arena';
 import { expToLevel } from '@/arena/CharacterService/utils/calculateLvl';
 import { isSuccessResult } from '@/arena/Constuructors/utils';
@@ -56,6 +56,7 @@ export const createAlpha = (lvl = 1) => {
   const alpha = MonsterService.create(
     {
       nickname: '🐺 Альфа',
+      prof: CharacterClass.Warrior,
       harks: {
         str: Math.round(lvl * 3 + 10),
         dex: Math.round(lvl * 1 + 10),

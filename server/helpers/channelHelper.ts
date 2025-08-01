@@ -6,7 +6,7 @@ import { bold } from '@/utils/formatString';
 const MAX_MESSAGE_LENGTH = 2 ** 12;
 export const BOT_CHAT_ID = process.env.BOT_CHATID || -1001483444452;
 
-export async function sendBattleLogMessages(messages: string[]) {
+export async function sendBattleLogMessages(messages: string[], id: number | string = BOT_CHAT_ID) {
   let messageToSend = '';
 
   for await (const message of messages) {
@@ -24,7 +24,7 @@ export async function sendBattleLogMessages(messages: string[]) {
     return;
   }
 
-  await broadcast(messageToSend);
+  await broadcast(messageToSend, id);
 }
 /**
  * @param data - текст отправляемого сообщения

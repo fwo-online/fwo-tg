@@ -164,3 +164,24 @@ export class TowerRewardService extends RewardService {
     noop();
   }
 }
+
+export class PracticeRewardService extends RewardService {
+  protected giveWinnerRewards(winners: Player[]) {
+    const goldForGame = this.getGoldForGame();
+
+    winners.forEach((winner) => {
+      if (winner.lvl > 1) {
+        winner.stats.collect.exp = 0;
+        winner.stats.collect.gold = 0;
+      } else {
+        winner.stats.collect.exp *= 5;
+        winner.stats.addGold(goldForGame);
+        winner.stats.addComponent(getRandomComponent(50));
+      }
+    });
+  }
+
+  protected giveLoserRewards(_losers: Player[]) {
+    // проигравшие не получают ничего
+  }
+}

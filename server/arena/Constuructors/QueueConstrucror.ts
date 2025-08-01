@@ -2,7 +2,7 @@ import type { GameType } from '@fwo/shared';
 import arena from '@/arena';
 import config from '@/arena/config';
 import ValidationError from '@/arena/errors/ValidationError';
-import { createLadderGame } from '@/helpers/gameHelper';
+import { createLadderGame, createPracticeGame } from '@/helpers/gameHelper';
 import { createTower } from '@/helpers/towerHelper';
 
 export type QueueItem = {
@@ -69,5 +69,21 @@ export class TowerQueue extends Queue {
   override async start(): Promise<void> {
     await createTower(this.items.splice(0, config.maxPlayersLimit).map(({ id }) => id));
     await super.start();
+  }
+}
+
+export class PracticeQueue extends Queue {
+  checkStatus(): boolean {
+    return true;
+  }
+
+  override async start(): Promise<void> {
+    while (this.items.length) {
+      const player = this.items.pop();
+      if (!player) {
+        return;
+      }
+      await createPracticeGame(player.id);
+    }
   }
 }

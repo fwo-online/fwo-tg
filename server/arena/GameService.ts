@@ -1,22 +1,26 @@
 import EventEmitter from 'node:events';
+import { type GameStatus, reservedClanName } from '@fwo/shared';
+import { mapValues } from 'es-toolkit';
 import { createGame } from '@/api/game';
 import arena from '@/arena';
 import type { LongItem } from '@/arena/Constuructors/LongMagicConstructor';
 import { engine } from '@/arena/EngineService';
 import { type HistoryItem, HistoryService } from '@/arena/HistoryService';
+import type * as magics from '@/arena/magics';
 import OrderService from '@/arena/OrderService';
 import PlayersService, { type Player } from '@/arena/PlayersService';
-import { RoundService, RoundStatus } from '@/arena/RoundService';
-import type * as magics from '@/arena/magics';
+import { type RoundOptions, RoundService, RoundStatus } from '@/arena/RoundService';
 import type { Game } from '@/models/game';
-import { type GameStatus, reservedClanName } from '@fwo/shared';
-import { mapValues } from 'es-toolkit';
 
 export type KickReason = 'afk' | 'run';
 
 export interface GlobalFlags {
   isEclipsed: { initiator: Player }[];
 }
+
+export type GameOptions = {
+  round?: RoundOptions;
+};
 
 /**
  * GameService
@@ -44,7 +48,7 @@ export default class GameService extends EventEmitter<{
 }> {
   players: PlayersService;
   orders: OrderService;
-  round = new RoundService();
+  round: RoundService;
   history = new HistoryService();
   longActions: Partial<Record<keyof typeof magics, LongItem[]>> = {};
   info!: Game;
@@ -57,9 +61,10 @@ export default class GameService extends EventEmitter<{
    * Конструктор объекта игры
    * @param players массив игроков
    */
-  constructor(players: string[]) {
+  constructor(players: string[], options?: GameOptions) {
     super();
 
+    this.round = new RoundService(options?.round);
     this.players = new PlayersService(players);
     this.orders = new OrderService(this.players, this.round);
     this.flags = {
@@ -124,6 +129,9 @@ export default class GameService extends EventEmitter<{
    */
   startGame(): void {
     console.debug('GC debug:: startGame', 'gameId:', this.info.id);
+    GameService.emitter.emit('start', this);
+    this.emit('start');
+
     this.round.initRound();
   }
 
@@ -271,8 +279,6 @@ export default class GameService extends EventEmitter<{
     this.round.subscribe(({ state, round }) => {
       switch (state) {
         case RoundStatus.INIT: {
-          GameService.emitter.emit('start', this);
-          this.emit('start');
           break;
         }
         case RoundStatus.START_ROUND: {
@@ -295,16 +301,13 @@ export default class GameService extends EventEmitter<{
           }
           break;
         }
-        case RoundStatus.ENGINE: {
-          engine(this);
-          break;
-        }
         case RoundStatus.START_ORDERS: {
           this.emit('startOrders');
           break;
         }
         case RoundStatus.END_ORDERS: {
           this.emit('endOrders');
+          engine(this);
           break;
         }
         default: {

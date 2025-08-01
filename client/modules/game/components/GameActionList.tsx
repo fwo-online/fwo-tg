@@ -1,15 +1,17 @@
-import { useGameStore } from '@/modules/game/store/useGameStore';
-import type { FC } from 'react';
 import type { Action } from '@fwo/shared';
-import { Card } from '@/components/Card';
+import classNames from 'classnames';
+import type { FC } from 'react';
 import { Button } from '@/components/Button';
+import { Card } from '@/components/Card';
+import { useGameStore } from '@/modules/game/store/useGameStore';
 
 export const GameActionList: FC<{
   isPending: boolean;
   onSelect: (action: Action) => void;
   onRepeat: () => void;
   onReset: () => void;
-}> = ({ isPending, onSelect, onRepeat, onReset }) => {
+  onReady: () => void;
+}> = ({ isPending, onSelect, onRepeat, onReset, onReady }) => {
   const round = useGameStore((state) => state.round);
   const actions = useGameStore((state) => state.actions);
   const magics = useGameStore((state) => state.magics);
@@ -27,8 +29,11 @@ export const GameActionList: FC<{
   return (
     <Card header="Действия">
       <div className="flex flex-col gap-1 max-h-[300px] overflow-auto">
+        <Button onClick={onReady} className={classNames('is-success p-0')} disabled={isPending}>
+          Завершить ход
+        </Button>
         {power === 100 && round > 1 && (
-          <Button className="p-0  mb-4" onClick={onRepeat} disabled={isPending}>
+          <Button className="p-0 mb-4" onClick={onRepeat} disabled={isPending}>
             Повторить
           </Button>
         )}
