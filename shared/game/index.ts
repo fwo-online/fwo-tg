@@ -28,6 +28,6 @@ export type PublicGameStatus = {
   maxEN: number;
 };
 
-export type GameType = 'tower' | 'ladder';
+export type GameType = 'tower' | 'ladder' | 'practice';
 
 export const towerRequiredLvl = 5;

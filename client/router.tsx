@@ -1,35 +1,36 @@
 import { Navigate, Route, Routes } from 'react-router';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { AppLayout } from '@/components/AppLayout';
-import { withSettingsButton } from '@/hocs/withSettingsButton';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { withBackButton } from '@/hocs/withBackButton';
-import { CharacterAttributesPage } from '@/modules/character/pages/CharacterAttributesPage';
-import { CharacterPage } from '@/modules/character/pages/CharacterPage';
-import { CharacterCreatePage } from '@/modules/character/pages/CharacterCreatePage';
-import { CharacterSkillPage } from '@/modules/character/pages/CharacterSkillsPage';
-import { CharacterInventoryPage } from '@/modules/character/pages/CharacterInventoryPage';
-import { SettingsPage } from '@/modules/settings/pages/SettingsPage';
-import { CharacterMagicsPage } from '@/modules/character/pages/CharacterMagicsPage';
-import { ErrorPage } from '@/modules/error/pages/ErrorPage';
-import { LobbyPage } from '@/modules/lobby/pages/LobbyPage';
-import { GamePage } from '@/modules/game/pages/GamePage';
-import { ErrorConnectionPage } from './modules/error/pages/ErrorConnectionPage';
-import { PassiveSkillsPage } from './modules/passiveSkills/pages/PassiveSkillsPage';
-import { ForgePage } from './modules/forge/pages/ForgePage';
-import { ForgeListPage } from './modules/forge/pages/ForgeListPage';
-import { ClanListPage } from '@/modules/clan/pages/ClanListPage';
-import { ClanCreatePage } from '@/modules/clan/pages/ClanCreatePage';
-import { ClanPage } from '@/modules/clan/pages/ClanPage';
-import { ServiceShopPage } from '@/modules/serviceShop/pages/ServiceShopPage';
+import { withSettingsButton } from '@/hocs/withSettingsButton';
 import { AgoraPage } from '@/modules/agora/pages/AgoraPage';
-import { ClanForgePage } from '@/modules/clan/pages/ClanForgePage';
+import { CharacterAttributesPage } from '@/modules/character/pages/CharacterAttributesPage';
+import { CharacterCreatePage } from '@/modules/character/pages/CharacterCreatePage';
+import { CharacterInventoryPage } from '@/modules/character/pages/CharacterInventoryPage';
+import { CharacterMagicsPage } from '@/modules/character/pages/CharacterMagicsPage';
+import { CharacterPage } from '@/modules/character/pages/CharacterPage';
+import { CharacterSkillPage } from '@/modules/character/pages/CharacterSkillsPage';
+import { ClanCreatePage } from '@/modules/clan/pages/ClanCreatePage';
 import { ClanForgeListPage } from '@/modules/clan/pages/ClanForgeListPage';
-import { MarketPage } from '@/modules/market/pages/MarketPage';
-import { MarketCreatePage } from '@/modules/market/pages/MarketCreatePage';
-import { LobbyArenaPage } from '@/modules/lobby/pages/LobbyArenaPage';
-import { LobbyTowerPage } from '@/modules/lobby/pages/LobbyTowerPage';
+import { ClanForgePage } from '@/modules/clan/pages/ClanForgePage';
+import { ClanListPage } from '@/modules/clan/pages/ClanListPage';
+import { ClanPage } from '@/modules/clan/pages/ClanPage';
+import { ErrorPage } from '@/modules/error/pages/ErrorPage';
+import { GamePage } from '@/modules/game/pages/GamePage';
 import { LadderPage } from '@/modules/ladder/pages/LadderPage';
+import { LobbyArenaPage } from '@/modules/lobby/pages/LobbyArenaPage';
+import { LobbyPage } from '@/modules/lobby/pages/LobbyPage';
+import { LobbyPracticePage } from '@/modules/lobby/pages/LobbyPracticePage';
+import { LobbyTowerPage } from '@/modules/lobby/pages/LobbyTowerPage';
+import { MarketCreatePage } from '@/modules/market/pages/MarketCreatePage';
+import { MarketPage } from '@/modules/market/pages/MarketPage';
+import { ServiceShopPage } from '@/modules/serviceShop/pages/ServiceShopPage';
+import { SettingsPage } from '@/modules/settings/pages/SettingsPage';
 import { TowerPage } from '@/modules/tower/pages/TowerPage';
+import { ErrorConnectionPage } from './modules/error/pages/ErrorConnectionPage';
+import { ForgeListPage } from './modules/forge/pages/ForgeListPage';
+import { ForgePage } from './modules/forge/pages/ForgePage';
+import { PassiveSkillsPage } from './modules/passiveSkills/pages/PassiveSkillsPage';
 
 export function Router() {
   return (
@@ -57,6 +58,7 @@ export function Router() {
           <Route path="/lobby">
             <Route path="" element={<LobbyPage />} />
             <Route path="ladder" Component={withBackButton(LadderPage)} />
+            <Route path="practice" Component={withBackButton(LobbyPracticePage)} />
             <Route path="arena" Component={withBackButton(LobbyArenaPage)} />
             <Route path="tower" Component={withBackButton(LobbyTowerPage)} />
           </Route>

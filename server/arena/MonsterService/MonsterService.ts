@@ -19,11 +19,37 @@ export abstract class MonsterAI {
   }
 
   abstract makeOrder(game: GameService): void;
+
+  protected orderAttack(
+    game: GameService,
+    target: PlayerService,
+    proc = this.monster.proc,
+  ): boolean {
+    try {
+      game.orders.orderAction({
+        action: 'attack',
+        initiator: this.monster.id,
+        target: target.id,
+        proc,
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
 }
 
 export type MonsterParams = Pick<
   Char,
-  'nickname' | 'harks' | 'magics' | 'skills' | 'passiveSkills' | 'items' | 'equipment' | 'exp'
+  | 'nickname'
+  | 'harks'
+  | 'magics'
+  | 'skills'
+  | 'passiveSkills'
+  | 'items'
+  | 'equipment'
+  | 'exp'
+  | 'prof'
 >;
 
 export class MonsterService extends PlayerService {

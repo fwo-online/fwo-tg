@@ -1,16 +1,16 @@
+import type { ClanPublic, OrderResponse } from '@fwo/shared';
+import { keyBy } from 'es-toolkit';
+import config from '@/arena/config';
 import OrderError from '@/arena/errors/OrderError';
 import ValidationError from '@/arena/errors/ValidationError';
 import GameService from '@/arena/GameService';
-import ActionsHelper from '@/helpers/actionsHelper';
-import type { Server, Socket } from '@/server/ws';
-import { keyBy } from 'es-toolkit';
-import { activeConnections } from '@/server/utils/activeConnectons';
 import type { OrderResult } from '@/arena/OrderService';
 import type { Player } from '@/arena/PlayersService';
-import type { ClanPublic, OrderResponse } from '@fwo/shared';
 import { RoundStatus } from '@/arena/RoundService';
-import config from '@/arena/config';
+import ActionsHelper from '@/helpers/actionsHelper';
+import { activeConnections } from '@/server/utils/activeConnectons';
 import { normalizeGameOrders } from '@/server/utils/normalizeGameOrders';
+import type { Server, Socket } from '@/server/ws';
 
 const getRoom = (game: GameService, scope?: string) => {
   if (scope) {
@@ -61,7 +61,7 @@ export const onCreate = (io: Server) => {
 
     game.on('endRound', ({ dead }) => {
       dead.forEach((player) => {
-        io.in(getRoom(game, player.id)).emit('game:end');
+        io.in(getRoom(game, player.id)).emit('game:end', []);
 
         io.in(getRoom(game, player.id)).socketsLeave([getRoom(game), getRoom(game, player.id)]);
       });
@@ -88,8 +88,8 @@ export const onCreate = (io: Server) => {
       io.to(getRoom(game, player.id)).emit('game:preKick', { reason, player: player.toObject() });
     });
 
-    game.on('end', () => {
-      io.in(getRoom(game)).emit('game:end');
+    game.on('end', ({ results }) => {
+      io.in(getRoom(game)).emit('game:end', results);
       game.players.players.forEach((player) => {
         io.in(getRoom(game)).socketsLeave(getRoom(game, player.id));
       });

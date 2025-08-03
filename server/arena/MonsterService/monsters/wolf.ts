@@ -22,7 +22,12 @@ export class WolfAI extends MonsterAI {
       return;
     }
 
-    this.orderAttack(game);
+    const target = this.chooseAttackTarget(game);
+    if (!target) {
+      return;
+    }
+
+    this.orderAttack(game, target);
   }
 
   private canHowl(game: GameService): boolean {
@@ -85,27 +90,6 @@ export class WolfAI extends MonsterAI {
     }
   }
 
-  private orderAttack(game: GameService): boolean {
-    const target = this.chooseAttackTarget(game);
-
-    if (!target) {
-      return false;
-    }
-
-    try {
-      game.orders.orderAction({
-        action: 'attack',
-        initiator: this.monster.id,
-        target: target.id,
-        proc: this.monster.proc,
-      });
-
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
   private chooseAttackTarget(game: GameService) {
     const targets = shuffle(game.players.aliveNonBotPlayers);
 
@@ -141,6 +125,7 @@ export const createWolf = (lvl = 1, id: string | number = '') => {
   const wolf = MonsterService.create(
     {
       nickname: `🐺 Волк ${id.toString()}`.trimEnd(),
+      prof: CharacterClass.Warrior,
       harks: {
         str: Math.round(lvl * 3 + 10),
         dex: Math.round(lvl * 1 + 10),

@@ -15,3 +15,9 @@ export const itemComponentName: Record<ItemComponent, string> = {
   [ItemComponent.Steel]: 'Сталь',
   [ItemComponent.Arcanite]: 'Арканит',
 };
+
+export function componentsToString(components?: Partial<Record<ItemComponent, number>>): string {
+  return Object.entries(components ?? {})
+    .map(([component, value]) => `${value ?? 0} ${itemComponentName[component]}`)
+    .join(', ');
+}

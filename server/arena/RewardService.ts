@@ -164,3 +164,31 @@ export class TowerRewardService extends RewardService {
     noop();
   }
 }
+
+export class PracticeRewardService extends RewardService {
+  protected giveWinnerRewards(winners: Player[]) {
+    const goldForGame = this.getGoldForGame();
+
+    winners.forEach((winner) => {
+      if (winner.lvl === 1) {
+        winner.stats.collect.exp *= 3;
+        winner.stats.addGold(goldForGame);
+        winner.stats.addComponent(getRandomComponent(75));
+      } else {
+        winner.stats.collect.exp = 0;
+        winner.stats.collect.gold = 0;
+      }
+    });
+  }
+
+  protected giveLoserRewards(losers: Player[]) {
+    losers.forEach((loser) => {
+      if (loser.lvl === 1) {
+        loser.stats.collect.exp *= 3;
+      } else {
+        loser.stats.collect.exp = 0;
+        loser.stats.collect.gold = 0;
+      }
+    });
+  }
+}
