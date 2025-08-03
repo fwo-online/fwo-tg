@@ -122,6 +122,10 @@ export async function createLadderGame(players: string[]) {
     game.end(rewards);
   });
 
+  game.on('end', () => {
+    arena.mm.reset('ladder');
+  });
+
   return game;
 }
 
