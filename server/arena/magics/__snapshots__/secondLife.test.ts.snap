@@ -1,4 +1,4 @@
-// Bun Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`secondLife target should be alive 1`] = `
 "*Игрок 1* использовал _Вторая жизнь_ на *Игрок 1* с эффектом 10

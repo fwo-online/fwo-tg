@@ -1,4 +1,4 @@
-// Bun Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`sleep target should sleep and not be able to attack 1`] = `
 "*Игрок 1* заклинанием _Усыпление_ заставил *Игрок 2* заснуть на этот раунд

@@ -1,4 +1,4 @@
-// Bun Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`healingWeapon should increase damage with chance 1`] = `
 "*Игрок 1* атаковал _Оружие_ в *Игрок 2* и нанёс *2.25* урона

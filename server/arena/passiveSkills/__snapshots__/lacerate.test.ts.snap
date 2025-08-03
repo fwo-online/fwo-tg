@@ -1,4 +1,4 @@
-// Bun Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`lacerate should apply bleeding 1`] = `
 "*Игрок 1* пустил кровь *Игрок 2* _Оружием_ и нанёс *7.2* урона

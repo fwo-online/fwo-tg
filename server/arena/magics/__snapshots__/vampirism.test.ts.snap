@@ -1,4 +1,4 @@
-// Bun Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`vampirism should take dmg and heal on same amount 1`] = `
 "*Игрок 1* сотворил _Вампиризм_ на *Игрок 2* нанеся *3.63* и восстановив себе *3.63* здоровья

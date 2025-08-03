@@ -1,4 +1,4 @@
-// Bun Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`attack should reduce damage by target resists 1`] = `
 "*Игрок 1* рубанул *Игрок 2* _Оружием_ и нанёс *7.2* урона

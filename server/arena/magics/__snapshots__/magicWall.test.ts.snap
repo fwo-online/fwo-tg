@@ -1,4 +1,4 @@
-// Bun Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`magicWall should protect player behind wall 1`] = `
 "*Игрок 1* использовал _Магическая стена_ на *Игрок 1* с эффектом 150.7

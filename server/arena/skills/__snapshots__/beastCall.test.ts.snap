@@ -1,4 +1,4 @@
-// Bun Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`beastCall should create wolfs 1`] = `
 "*Игрок 1* использовал _🐺📣 Звериный клич_

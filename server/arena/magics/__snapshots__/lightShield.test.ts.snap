@@ -1,4 +1,4 @@
-// Bun Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`lightShield initiator should be hit by light shield 1`] = `
 "*Игрок 1* использовал _Световой щит_ на *Игрок 2*

@@ -1,4 +1,4 @@
-// Bun Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`divineWill should break success cast 1`] = `
 "*Игрок 1* выстреливает _Магической стрелой_ в *Игрок 2*

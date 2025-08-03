@@ -25,10 +25,7 @@ export default class TestUtils {
     TestUtils.clanCount = 0;
   }
 
-  static async createCharacter(
-    params?: Partial<Char & { weapon?: { type?: string } }>,
-    { save = false } = {},
-  ) {
+  static async createCharacter(params?: Partial<Char & { weapon?: { type?: string } }>) {
     const prof: Prof = params?.prof ?? CharacterClass.Warrior;
     const char = new CharModel({
       owner: MiscService.randInt(1_000_000, 9_999_999).toString(),
@@ -40,27 +37,15 @@ export default class TestUtils {
       ...params,
     });
 
-    /** @todo удалить полностью сохранение в db */
-    if (save) {
-      await char.save();
-    }
-
     if (params?.weapon) {
-      const item = await TestUtils.getWeapon(params?.weapon, { save });
+      const item = await TestUtils.getWeapon(params?.weapon);
 
       char.items.push(item);
       char.equipment.set(ItemWear.MainHand, item);
-
-      if (save) {
-        await char.save();
-      }
     }
 
-    if (save) {
-      await CharacterService.getCharacterById(char.id);
-    } else {
-      arena.characters[char.id] = new CharacterService(char);
-    }
+    arena.characters[char.id] = new CharacterService(char);
+    spyOn(arena.characters[char.id], 'saveToDb').mockImplementation(() => Promise.resolve());
 
     return char;
   }
@@ -74,7 +59,7 @@ export default class TestUtils {
     arena.characters = {};
   }
 
-  static async createClan(owner: Char, params?: AnyKeys<Clan>, { save = false } = {}) {
+  static async createClan(owner: Char, params?: AnyKeys<Clan>) {
     const players = params?.players?.concat([owner]) ?? [owner];
     const clan = await new ClanModel({
       owner,
@@ -83,16 +68,10 @@ export default class TestUtils {
       players,
     });
 
-    if (save) {
-      await clan.save();
-      await CharModel.updateMany({ _id: { $in: players } }, { clan: clan.id });
-      return ClanService.getClanById(clan.id);
-    } else {
-      arena.clans.set(clan.id, clan);
-      players.forEach((player: Char) => {
-        player.clan = clan;
-      });
-    }
+    arena.clans.set(clan.id, clan);
+    players.forEach((player: Char) => {
+      player.clan = clan;
+    });
 
     return clan;
   }
@@ -120,7 +99,7 @@ export default class TestUtils {
     arena;
   }
 
-  static async createItem(item: DeepPartial<Item>, { save = false } = {}) {
+  static async createItem(item: DeepPartial<Item>) {
     const createdItem = new ItemModel(
       parse(itemSchema, {
         code: `code_${++TestUtils.itemCount}`,
@@ -138,24 +117,17 @@ export default class TestUtils {
       }),
     );
 
-    if (save) {
-      await createdItem.save();
-    }
-
     arena.items[createdItem.code] = createdItem;
     return createdItem;
   }
 
-  static async getWeapon({ type }: { type?: string }, { save = false } = {}) {
-    return this.createItem(
-      {
-        info: { name: 'Оружие', case: 'Оружием' },
-        type: type || 'chop',
-        wear: ItemWear.MainHand,
-        hit: { min: 1, max: 12 },
-      },
-      { save },
-    );
+  static async getWeapon({ type }: { type?: string }) {
+    return this.createItem({
+      info: { name: 'Оружие', case: 'Оружием' },
+      type: type || 'chop',
+      wear: ItemWear.MainHand,
+      hit: { min: 1, max: 12 },
+    });
   }
 
   static normalizeRoundHistory(history: HistoryItem[]) {

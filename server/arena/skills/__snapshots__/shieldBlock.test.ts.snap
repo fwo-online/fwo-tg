@@ -1,4 +1,4 @@
-// Bun Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`shieldBlock should block attack if target has less attrs 1`] = `
 "*Игрок 2* использовал _🛡️ Блок щитом_ с эффектом 10.67
