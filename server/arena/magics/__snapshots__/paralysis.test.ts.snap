@@ -1,18 +1,18 @@
-// Bun Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`paralysis initiator should be paralysed 1`] = `
-"*asperiores* использовал _Паралич_ на *alias*
+"*Игрок 1* использовал _Паралич_ на *Игрок 2*
 \\[ 📖80 ]
-*alias* пытался атаковать *asperiores*, но у него не получилось
-_Паралич_ *asperiores*"
+*Игрок 2* пытался атаковать *Игрок 1*, но у него не получилось
+_Паралич_ *Игрок 1*"
 `;
 
 exports[`paralysis should handle several casters 1`] = `
-"*asperiores* использовал _Паралич_ на *alias*
+"*Игрок 1* использовал _Паралич_ на *Игрок 2*
 \\[ 📖80 ]
-*repellat* использовал _Паралич_ на *alias*
+*Игрок 3* использовал _Паралич_ на *Игрок 2*
 \\[ 📖80 ]
-*alias* пытался атаковать *asperiores*, но у него не получилось
-_Паралич_ *asperiores*
-_Паралич_ *repellat*"
+*Игрок 2* пытался атаковать *Игрок 1*, но у него не получилось
+_Паралич_ *Игрок 1*
+_Паралич_ *Игрок 3*"
 `;

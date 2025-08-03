@@ -1,6 +1,5 @@
 import { spyOn } from 'bun:test';
 import { CharacterClass, type Item, ItemWear, itemSchema } from '@fwo/shared';
-import casual from 'casual';
 import type { AnyKeys } from 'mongoose';
 import { parse } from 'valibot';
 import arena from '@/arena';
@@ -9,20 +8,29 @@ import { ClanService } from '@/arena/ClanService';
 import GameService from '@/arena/GameService';
 import type { HistoryItem } from '@/arena/HistoryService';
 import { formatMessage } from '@/arena/LogService/utils';
-import { type Prof, profsData, profsList } from '@/data/profs';
+import MiscService from '@/arena/MiscService';
+import { type Prof, profsData } from '@/data/profs';
 import { type Char, CharModel } from '@/models/character';
 import { type Clan, ClanModel } from '@/models/clan';
 import { ItemModel } from '@/models/item';
 
-const functions = casual.functions();
-
 export default class TestUtils {
+  static charCount = 0;
+  static itemCount = 0;
+  static clanCount = 0;
+
+  static resetCount() {
+    TestUtils.charCount = 0;
+    TestUtils.itemCount = 0;
+    TestUtils.clanCount = 0;
+  }
+
   static async createCharacter(params?: Partial<Char & { weapon?: { type?: string } }>) {
-    const prof: Prof = params?.prof ?? casual.random_element([...profsList]);
-    const char = await CharModel.create({
-      owner: casual.integer(1_000_000, 9_999_999).toString(),
-      nickname: functions.word(),
-      sex: casual.random_element(['m', 'f']),
+    const prof: Prof = params?.prof ?? CharacterClass.Warrior;
+    const char = new CharModel({
+      owner: MiscService.randInt(1_000_000, 9_999_999).toString(),
+      nickname: `Игрок ${++TestUtils.charCount}`,
+      sex: 'm',
       prof,
       harks: profsData[prof].hark,
       magics: profsData[prof].mag,
@@ -30,15 +38,15 @@ export default class TestUtils {
     });
 
     if (params?.weapon) {
-      const item = await this.getWeapon(params?.weapon);
+      const item = await TestUtils.getWeapon(params?.weapon);
 
       char.items.push(item);
       char.equipment.set(ItemWear.MainHand, item);
-
-      await char.save();
     }
 
-    await CharacterService.getCharacter(char.owner);
+    arena.characters[char.id] = new CharacterService(char);
+    spyOn(arena.characters[char.id], 'saveToDb').mockImplementation(() => Promise.resolve());
+
     return char;
   }
 
@@ -51,17 +59,21 @@ export default class TestUtils {
     arena.characters = {};
   }
 
-  static async createClan(charId: string, params?: AnyKeys<Clan>) {
-    const players = params?.players?.concat([charId]) ?? [charId];
-    const created = await ClanModel.create({
-      owner: charId,
-      name: functions.word(),
+  static async createClan(owner: Char, params?: AnyKeys<Clan>) {
+    const players = params?.players?.concat([owner]) ?? [owner];
+    const clan = await new ClanModel({
+      owner,
+      name: `Клан ${++TestUtils.clanCount}`,
       ...params,
       players,
     });
-    const clan = await created.save();
-    await CharModel.updateMany({ _id: { $in: players } }, { clan: clan.id });
-    return ClanService.getClanById(clan.id);
+
+    arena.clans.set(clan.id, clan);
+    players.forEach((player: Char) => {
+      player.clan = clan;
+    });
+
+    return clan;
   }
 
   static async createGame(params: Partial<Char & { weapon?: { type?: string } }>[]) {
@@ -88,10 +100,10 @@ export default class TestUtils {
   }
 
   static async createItem(item: DeepPartial<Item>) {
-    const createdItem = await ItemModel.create(
+    const createdItem = new ItemModel(
       parse(itemSchema, {
-        code: functions.word(),
-        info: { name: functions.word(), case: functions.word() },
+        code: `code_${++TestUtils.itemCount}`,
+        info: { name: `Оружие`, case: `Оружием` },
         class: [
           CharacterClass.Archer,
           CharacterClass.Mage,

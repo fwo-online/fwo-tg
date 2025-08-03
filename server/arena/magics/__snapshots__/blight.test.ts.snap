@@ -1,8 +1,8 @@
-// Bun Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`blight should hit percentage damage 1`] = `6.54`;
 
 exports[`blight should hit percentage damage 2`] = `
-"*asperiores* сотворил _Истощение_ на *magni* нанеся 1.46 урона
-\\[ magni 💥 💔-1.46/6.54 📖20 ]"
+"*Игрок 1* сотворил _Истощение_ на *Игрок 2* нанеся 1.46 урона
+\\[ Игрок 2 💥 💔-1.46/6.54 📖20 ]"
 `;

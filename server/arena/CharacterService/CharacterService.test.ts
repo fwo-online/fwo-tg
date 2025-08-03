@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'bun:test';
+import { beforeEach, describe, expect, it, spyOn } from 'bun:test';
 import { CharacterClass } from '@fwo/shared';
 import { profsData } from '@/data/profs';
 import TestUtils from '@/utils/testUtils';
@@ -12,7 +12,10 @@ describe('CharacterService', () => {
       prof: CharacterClass.Warrior,
       harks: { str: 20, dex: 20, wis: 20, int: 20, con: 20 },
     });
+
     character = await CharacterService.getCharacterById(char.id);
+    // @ts-expect-error
+    spyOn(character, 'saveToDb').mockImplementation(async () => character.charObj);
   });
 
   it('should add free correctly', async () => {

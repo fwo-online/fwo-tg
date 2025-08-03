@@ -1,17 +1,17 @@
-// Bun Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`bodySpirit should hit target and get mp 1`] = `
 [
   8,
-  3.12,
+  3.1,
 ]
 `;
 
-exports[`bodySpirit should hit target and get mp 2`] = `2.44`;
+exports[`bodySpirit should hit target and get mp 2`] = `2.45`;
 
 exports[`bodySpirit should hit target and get mp 3`] = `
-"*asperiores* сотворил _Дух тела_ на *magni* нанеся 4.88 урона
-\\[ magni 💥 💔-4.88/3.12 📖47 ]"
+"*Игрок 1* сотворил _Дух тела_ на *Игрок 2* нанеся 4.9 урона
+\\[ Игрок 2 💥 💔-4.9/3.1 📖47 ]"
 `;
 
 exports[`bodySpirit should not kill target 1`] = `
@@ -24,8 +24,8 @@ exports[`bodySpirit should not kill target 1`] = `
 exports[`bodySpirit should not kill target 2`] = `0`;
 
 exports[`bodySpirit should not kill target 3`] = `
-"*asperiores* сотворил _Дух тела_ на *magni* нанеся 0 урона
-\\[ magni 💥 💔-0/0.1 📖8 ]"
+"*Игрок 1* сотворил _Дух тела_ на *Игрок 2* нанеся 0 урона
+\\[ Игрок 2 💥 💔-0/0.1 📖8 ]"
 `;
 
 exports[`bodySpirit should take 0 damage if target hp less than 0.5 1`] = `
@@ -38,6 +38,6 @@ exports[`bodySpirit should take 0 damage if target hp less than 0.5 1`] = `
 exports[`bodySpirit should take 0 damage if target hp less than 0.5 2`] = `0`;
 
 exports[`bodySpirit should take 0 damage if target hp less than 0.5 3`] = `
-"*asperiores* сотворил _Дух тела_ на *magni* нанеся 0 урона
-\\[ magni 💥 💔-0/0.1 📖8 ]"
+"*Игрок 1* сотворил _Дух тела_ на *Игрок 2* нанеся 0 урона
+\\[ Игрок 2 💥 💔-0/0.1 📖8 ]"
 `;

@@ -1,11 +1,11 @@
-// Bun Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`protect should protect player 1`] = `
-"*magni* пытался атаковать *quisquam*, но у него не получилось
-_Защита_ *quisquam*: 📖72"
+"*Игрок 2* пытался атаковать *Игрок 1*, но у него не получилось
+_Защита_ *Игрок 1*: 📖72"
 `;
 
 exports[`protect should not get exp if protect enemy 1`] = `
-"*magni* пытался атаковать *quisquam*, но у него не получилось
-_Защита_ *quisquam*: 📖48,*magni*: 📖0"
+"*Игрок 2* пытался атаковать *Игрок 1*, но у него не получилось
+_Защита_ *Игрок 1*: 📖48,*Игрок 2*: 📖0"
 `;

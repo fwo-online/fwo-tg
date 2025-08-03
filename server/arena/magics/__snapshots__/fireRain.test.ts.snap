@@ -1,14 +1,14 @@
-// Bun Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`fireRain should hit clan targets 1`] = `
 [
   8,
-  2.59,
-  2.59,
+  2.57,
+  2.57,
   3.93,
-  2.63,
-  2.59,
-  3.97,
+  2.57,
+  2.57,
+  3.93,
   8,
   8,
   8,
@@ -16,16 +16,16 @@ exports[`fireRain should hit clan targets 1`] = `
 ]
 `;
 
-exports[`fireRain should hit clan targets 2`] = `245`;
+exports[`fireRain should hit clan targets 2`] = `246`;
 
 exports[`fireRain should hit clan targets 3`] = `
-"*asperiores* сотворил _Огненный дождь_ на *magni* нанеся 29.7 урона
-\\[ magni 🔥 💔-5.41/2.59 📖51
-iure 🔥 💔-4.07/3.93 📖33
-recusandae 🔥 💔-5.37/2.63 📖43
-ipsam 🔥 💔-5.41/2.59 📖43
-dignissimos 🔥 💔-4.03/3.97 📖32
-labore 🔥 💔-5.41/2.59 📖43 ]"
+"*Игрок 1* сотворил _Огненный дождь_ на *Игрок 2* нанеся 29.86 урона
+\\[ Игрок 2 🔥 💔-5.43/2.57 📖51
+Игрок 4 🔥 💔-4.07/3.93 📖33
+Игрок 5 🔥 💔-5.43/2.57 📖43
+Игрок 6 🔥 💔-5.43/2.57 📖43
+Игрок 7 🔥 💔-4.07/3.93 📖33
+Игрок 3 🔥 💔-5.43/2.57 📖43 ]"
 `;
 
 exports[`fireRain should hit single target if target has no clan 1`] = `
@@ -38,7 +38,7 @@ exports[`fireRain should hit single target if target has no clan 1`] = `
   8,
   8,
   8,
-  2.59,
+  2.57,
   8,
   8,
 ]
@@ -47,6 +47,6 @@ exports[`fireRain should hit single target if target has no clan 1`] = `
 exports[`fireRain should hit single target if target has no clan 2`] = `51`;
 
 exports[`fireRain should hit single target if target has no clan 3`] = `
-"*asperiores* сотворил _Огненный дождь_ на *blanditiis* нанеся 5.41 урона
-\\[ blanditiis 🔥 💔-5.41/2.59 📖51 ]"
+"*Игрок 1* сотворил _Огненный дождь_ на *Игрок 9* нанеся 5.43 урона
+\\[ Игрок 9 🔥 💔-5.43/2.57 📖51 ]"
 `;

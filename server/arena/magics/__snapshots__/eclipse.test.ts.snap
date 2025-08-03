@@ -1,17 +1,17 @@
-// Bun Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`eclipse initiator should be blinded by eclipse 1`] = `
-"*asperiores* использовал _Затмение_ на *asperiores*
+"*Игрок 1* использовал _Затмение_ на *Игрок 1*
 \\[ 📖80 ]
-*alias* пытался атаковать *asperiores*, но у него не оказалось оружия в руках"
+*Игрок 2* пытался атаковать *Игрок 1*, но у него не оказалось оружия в руках"
 `;
 
 exports[`eclipse should handle several casters 1`] = `
-"*asperiores* использовал _Затмение_ на *asperiores*
+"*Игрок 1* использовал _Затмение_ на *Игрок 1*
 \\[ 📖80 ]
-*alias* использовал _Затмение_ на *alias*
+*Игрок 2* использовал _Затмение_ на *Игрок 2*
 \\[ 📖80 ]
-*ratione* пытался атаковать *asperiores*, но у него не получилось
-_Затмение_ *asperiores*
-_Затмение_ *alias*"
+*Игрок 3* пытался атаковать *Игрок 1*, но у него не получилось
+_Затмение_ *Игрок 1*
+_Затмение_ *Игрок 2*"
 `;

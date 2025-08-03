@@ -1,28 +1,18 @@
-// Bun Snapshot v1, https://goo.gl/fbAQLP
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`handsHeal should heal 1`] = `
-"Игрок *asperiores* был вылечен 🤲 на *💖0.45*
-\\[ asperiores: 💖0.45/1.45 📖5 ]"
-`;
-
-exports[`handsHeal should not heal more than max hp 1`] = `
-"Игрок *asperiores* был вылечен 🤲 на *💖0*
-\\[ asperiores: 💖0/8 📖0 ]"
+"Игрок *Игрок 1* был вылечен 🤲 на *💖0.45*
+\\[ Игрок 1: 💖0.45/1.45 📖5 ]"
 `;
 
 exports[`handsHeal should not get exp if players are not allies 1`] = `
-"Игрок *asperiores* был вылечен 🤲 на *💖1.2*
-\\[ alias: 💖1.2/2.2 📖0 ]"
+"Игрок *Игрок 1* был вылечен 🤲 на *💖1.2*
+\\[ Игрок 2: 💖1.2/2.2 📖0 ]"
 `;
 
 exports[`handsHeal should be stopped by attack 1`] = `
-"*asperiores* рубанул *alias* _Оружием_ и нанёс *7.2* урона
-\\[ alias 💥 💔-7.2/0.8 📖58 ]
-*alias* пытался использовать _Лечение руками_ на *alias*, но у него не получилось
-_Атака_ *asperiores*"
-`;
-
-exports[`handsHeal should heal 0 if target has more than 100% HP 1`] = `
-"Игрок *asperiores* был вылечен 🤲 на *💖0*
-\\[ asperiores: 💖0/9 📖0 ]"
+"*Игрок 1* рубанул *Игрок 2* _Оружием_ и нанёс *7.2* урона
+\\[ Игрок 2 💥 💔-7.2/0.8 📖58 ]
+*Игрок 2* пытался использовать _Лечение руками_ на *Игрок 2*, но у него не получилось
+_Атака_ *Игрок 1*"
 `;
