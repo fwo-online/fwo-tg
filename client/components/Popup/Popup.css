@@ -4,6 +4,6 @@
   background-color: var(--tg-theme-secondary-bg-color);
   border-image-repeat: stretch !important;
   max-width: 85% !important;
-  white-space: pre;
+  white-space: pre-wrap;
   min-width: 50vw;
 }
