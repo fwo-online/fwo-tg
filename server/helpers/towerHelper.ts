@@ -33,13 +33,16 @@ export async function createTower(players: string[]) {
 }
 
 const resetTower = async () => {
-  await TowerModel.deleteMany({});
+  const res = await TowerModel.deleteMany({});
   await CharModel.updateMany({}, { lastTower: null, towerAvailable: true });
   Object.values(arena.characters).forEach((character) => {
     character.lastTower = null;
     character.towerAvailable = true;
   });
-  broadcast('Cо стороны башни доносятся крики. Башня открывает свои врата');
+
+  if (res.deletedCount) {
+    broadcast('Cо стороны башни доносятся крики. Башня открывает свои врата');
+  }
 };
 
 baker.add({
