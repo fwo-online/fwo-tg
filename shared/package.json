@@ -8,6 +8,9 @@
     "types": "tsc"
   },
   "types": "./out/index.d.ts",
+  "dependencies": {
+    "valibot": "catalog:"
+  },
   "exports": {
     ".": {
       "default": "./index.ts"

@@ -5,7 +5,7 @@
   "scripts": {
     "start": "NODE_ENV=production bun fwo.ts",
     "dev": "bun cli/dev.ts",
-    "test": "NODE_ENV=test bun test --preload ./test.setup.ts -i",
+    "test": "NODE_ENV=test bun test",
     "generate:items": "bun cli/generateItems.ts",
     "reset-harks": "bun cli/resetHarks.ts",
     "reset-items": "bun cli/updateItems.ts",
@@ -19,13 +19,14 @@
     "@hono/node-server": "^1.13.8",
     "@hono/valibot-validator": "^0.5.2",
     "@telegram-apps/init-data-node": "^2.0.3",
-    "cronbake": "^0.1.2",
-    "es-toolkit": "^1.33.0",
+    "cronbake": "^0.3.0",
+    "es-toolkit": "catalog:",
     "grammy": "^1.35.1",
-    "hono": "^4.7.4",
+    "hono": "catalog:",
     "lodash": "^4.17.21",
     "mongoose": "^8.12.1",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "valibot": "catalog:"
   },
   "devDependencies": {
     "@types/bun": "^1.2.19",

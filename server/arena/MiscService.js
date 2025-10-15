@@ -126,7 +126,7 @@ export default class MiscService {
   }
   /**
    * Функция рандома по формату "1d100" или 100 ;
-   * @param {string | number} chance параметры рандома в формате "1d100" или 
+   * @param {string | number} chance параметры рандома в формате "1d100" или
    * @return {boolean} результат броска
    */
   static chance(chance) {
@@ -135,7 +135,7 @@ export default class MiscService {
   }
   /**
    * Функция рандома по формату "1d100" или 100 ;
-   * @param {string | number} chance параметры рандома в формате "1d100" или 
+   * @param {string | number} chance параметры рандома в формате "1d100" или
    * @param {number} streak
    * @return {boolean} результат броска
    */
