@@ -7,7 +7,7 @@ export const CharacterAttributesEditor: FC<{
   disabled: boolean;
   onChange: (attribute: keyof CharacterAttributes) => void;
 }> = ({ attributes, disabled, onChange }) => {
-  // biome-ignore lint/nursery/noNestedComponentDefinitions: fixme
+  // biome-ignore lint/correctness/noNestedComponentDefinitions: fixme
   const AttributeButton: FC<{ attribute: keyof CharacterAttributes }> = ({ attribute }) => {
     const handleClick = () => {
       if (disabled) {
