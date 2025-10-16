@@ -27,7 +27,8 @@
       },
       "suspicious": {
         "noUnsafeDeclarationMerging": "off",
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "useIterableCallbackReturn": "off"
       },
       "style": {
         "recommended": true,

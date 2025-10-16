@@ -1,8 +1,7 @@
 import arena from '@/arena';
 import { type ActionKey, ActionService } from '@/arena/ActionService';
-import type Game from '@/arena/GameService';
 import config from '@/arena/config';
-import _ from 'lodash';
+import type Game from '@/arena/GameService';
 
 type Stages = Readonly<(ActionKey | Readonly<ActionKey[]>)[]>;
 
