@@ -11,8 +11,17 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
+    minify: false,
   },
-  plugins: [react(), tsconfigPaths({ projects: ['./tsconfig.json'] }), tailwindcss()],
+  plugins: [
+    react({
+      babel: {
+        plugins: [['babel-plugin-react-compiler', {}]],
+      },
+    }),
+    tsconfigPaths({ projects: ['./tsconfig.json'] }),
+    tailwindcss(),
+  ],
   server: {
     host: true,
   },

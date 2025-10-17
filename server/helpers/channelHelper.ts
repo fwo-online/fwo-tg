@@ -1,7 +1,7 @@
 import arena from '@/arena';
 import { bot } from '@/bot';
 import { profsData } from '@/data/profs';
-import { bold } from '@/utils/formatString';
+import { bold, brackets } from '@/utils/formatString';
 
 const MAX_MESSAGE_LENGTH = 2 ** 12;
 export const BOT_CHAT_ID = process.env.BOT_CHATID || -1001483444452;
@@ -48,7 +48,7 @@ export const initGameChannel = async () => {
 
     if (queue === 'ladder') {
       broadcast(
-        `Игрок ${character.clan ? `\\[${character.clan.name}\] ` : ''}${bold(character.nickname)} (${profsData[character.prof].icon}${character.lvl}) ищет игру!`,
+        `Игрок ${character.clan ? `${brackets(character.clan.name)} ` : ''}${bold(character.nickname)} (${profsData[character.prof].icon}${character.lvl}) ищет игру!`,
       );
     }
 
@@ -68,7 +68,7 @@ export const initGameChannel = async () => {
 
     if (queue === 'ladder') {
       broadcast(
-        `Игрок ${character.clan ? `\\[${character.clan.name}\] ` : ''}${bold(character.nickname)} (${profsData[character.prof].icon}${character.lvl}) передумал...`,
+        `Игрок ${character.clan ? `${brackets(character.clan.name)} ` : ''}${bold(character.nickname)} (${profsData[character.prof].icon}${character.lvl}) передумал...`,
       );
     }
 

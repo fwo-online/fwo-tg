@@ -39,11 +39,13 @@
     "url": "https://github.com/fwo-online/fwo-tg/issues"
   },
   "homepage": "https://github.com/fwo-online/fwo-tg#readme",
-  "dependencies": {
-    "valibot": "^1.0.0-rc.4"
-  },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.5",
-    "typescript": "^5.8.2"
+    "@biomejs/biome": "^2.2.5",
+    "typescript": "^5.9.3"
+  },
+  "catalog": {
+    "es-toolkit": "^1.40.0",
+    "hono": "^4.9.11",
+    "valibot": "^1.1.0"
   }
 }

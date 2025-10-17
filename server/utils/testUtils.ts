@@ -4,7 +4,6 @@ import type { AnyKeys } from 'mongoose';
 import { parse } from 'valibot';
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
-import { ClanService } from '@/arena/ClanService';
 import GameService from '@/arena/GameService';
 import type { HistoryItem } from '@/arena/HistoryService';
 import { formatMessage } from '@/arena/LogService/utils';
