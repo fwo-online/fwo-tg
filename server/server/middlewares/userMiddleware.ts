@@ -1,4 +1,4 @@
-import type { User } from '@telegram-apps/init-data-node';
+import type { User } from '@tma.js/init-data-node';
 import { createMiddleware } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
 import { getToken } from '@/server/utils/getToken';

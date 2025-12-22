@@ -5,7 +5,7 @@ import ValidationError from '@/arena/errors/ValidationError';
 import { checkNick } from '@/helpers/loginHelper';
 import { handleValidationError } from '@/server/utils/handleValidationError';
 import { InvoiceType, nameSchema } from '@fwo/shared';
-import type { User } from '@telegram-apps/init-data-node';
+import type { User } from '@tma.js/init-data-node';
 import { HTTPException } from 'hono/http-exception';
 import { safeParse } from 'valibot';
 

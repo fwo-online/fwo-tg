@@ -2,7 +2,7 @@ import { changeName, getChangeNameInvoice } from '@/api/serviceShop';
 import { usePopup } from '@/hooks/usePopup';
 import { useRequest } from '@/hooks/useRequest';
 import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
-import { invoice } from '@telegram-apps/sdk-react';
+import { invoice } from '@tma.js/sdk-react';
 
 export const useServiceShopChangeName = () => {
   const { syncCharacter } = useSyncCharacter();
@@ -13,7 +13,7 @@ export const useServiceShopChangeName = () => {
     makeRequest(async () => {
       const { url } = await getChangeNameInvoice(name);
 
-      invoice.open(url, 'url').then((status) => {
+      invoice.openUrl(url).then((status) => {
         if (status === 'paid') {
           syncCharacter();
           popup.info({ message: 'Имя успешно изменено' });

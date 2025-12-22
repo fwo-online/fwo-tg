@@ -1,4 +1,4 @@
-import { themeParams, useSignal } from '@telegram-apps/sdk-react';
+import { themeParams, useSignal } from '@tma.js/sdk-react';
 import type { HTMLAttributes, FC, ReactNode, Ref } from 'react';
 import cn from 'classnames';
 import './Card.css';

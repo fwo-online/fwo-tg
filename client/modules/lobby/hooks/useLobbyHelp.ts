@@ -1,5 +1,5 @@
 import { useSocketListener } from '@/hooks/useSocketListener';
-import { openTelegramLink } from '@telegram-apps/sdk-react';
+import { openTelegramLink } from '@tma.js/sdk-react';
 import { useCallback, useState } from 'react';
 
 export const useLobbyHelp = () => {

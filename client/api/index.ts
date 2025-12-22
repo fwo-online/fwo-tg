@@ -1,4 +1,4 @@
-import { initData } from '@telegram-apps/sdk-react';
+import { initData } from '@tma.js/sdk-react';
 import { type InferRequestType, hc, type InferResponseType } from 'hono/client';
 import type { Server } from '@fwo/server';
 import { io, type Socket } from 'socket.io-client';
