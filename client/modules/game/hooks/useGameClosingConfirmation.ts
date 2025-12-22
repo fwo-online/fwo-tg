@@ -1,4 +1,4 @@
-import { closingBehavior } from '@telegram-apps/sdk-react';
+import { closingBehavior } from '@tma.js/sdk-react';
 import { useEffect } from 'react';
 
 export const useGameClosingConfirmation = () => {

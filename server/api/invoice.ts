@@ -1,7 +1,7 @@
 import { bot } from '@/bot';
 import { InvoiceModel } from '@/models/invoice';
 import { type InvoiceType, invoiceTypes } from '@fwo/shared';
-import type { User } from '@telegram-apps/init-data-node';
+import type { User } from '@tma.js/init-data-node';
 
 export const createInvoice = async (
   user: User,

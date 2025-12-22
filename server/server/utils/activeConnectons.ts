@@ -1,5 +1,5 @@
 import type { Server, Socket } from '@/server/ws';
-import type { User } from '@telegram-apps/init-data-node';
+import type { User } from '@tma.js/init-data-node';
 
 export const activeConnections = new Map<string, Socket>();
 

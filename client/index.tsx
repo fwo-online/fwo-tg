@@ -1,4 +1,4 @@
-import { retrieveLaunchParams } from '@telegram-apps/sdk-react';
+import { retrieveLaunchParams } from '@tma.js/sdk-react';
 import { createRoot } from 'react-dom/client';
 
 import { EnvUnsupported } from './components/EnvUnsupported';

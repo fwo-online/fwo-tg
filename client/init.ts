@@ -7,7 +7,7 @@ import {
   setDebug,
   init as initSDK,
   closingBehavior,
-} from '@telegram-apps/sdk-react';
+} from '@tma.js/sdk-react';
 
 /**
  * Initializes the application and configures its dependencies.
@@ -27,7 +27,7 @@ export async function init(debug: boolean) {
 
   // Mount all components used in the project.
 
-  miniApp.mountSync();
+  miniApp.mount();
 
   miniApp.bindCssVars();
   themeParams.bindCssVars();

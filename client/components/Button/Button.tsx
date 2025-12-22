@@ -1,4 +1,4 @@
-import { themeParams, useSignal } from '@telegram-apps/sdk-react';
+import { themeParams, useSignal } from '@tma.js/sdk-react';
 import type { ButtonHTMLAttributes, FC } from 'react';
 import cn from 'classnames';
 import './Button.css';

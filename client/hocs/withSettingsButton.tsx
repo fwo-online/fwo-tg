@@ -1,4 +1,4 @@
-import { settingsButton } from '@telegram-apps/sdk-react';
+import { settingsButton } from '@tma.js/sdk-react';
 import type { ComponentType } from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';

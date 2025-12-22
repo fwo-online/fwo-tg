@@ -1,4 +1,4 @@
-import { parse, validate } from '@telegram-apps/init-data-node';
+import { parse, validate } from '@tma.js/init-data-node';
 
 export function validateToken(type: string, value: string) {
   if (type === 'tma') {
