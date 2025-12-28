@@ -30,6 +30,7 @@ export async function init(debug: boolean) {
   miniApp.mount();
 
   miniApp.bindCssVars();
+  themeParams.mount();
   themeParams.bindCssVars();
 
   backButton.mount();
