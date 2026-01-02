@@ -1,5 +1,5 @@
 import type { FC, InputHTMLAttributes } from 'react';
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 import { themeParams, useSignal } from '@tma.js/sdk-react';
 
 import './Slider.css';
@@ -30,7 +30,7 @@ export const Slider: FC<InputHTMLAttributes<HTMLInputElement>> = ({
       max={max}
       min={min}
       type="range"
-      className={classNames('nes-slider nes-input', className)}
+      className={clsx('nes-slider nes-input', className)}
       {...restProps}
     />
   );

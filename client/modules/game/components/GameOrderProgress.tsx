@@ -1,5 +1,5 @@
 import { useGameStore } from '@/modules/game/store/useGameStore';
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 import { useState } from 'react';
 import { useInterval } from 'react-use';
 
@@ -16,7 +16,7 @@ export const GameOrderProgress = () => {
 
   return (
     <progress
-      className={classNames('nes-progress h-4', {
+      className={clsx('nes-progress h-4', {
         'is-success': remainTime >= ordersTime * 0.25,
         'is-warning': remainTime < ordersTime * 0.25,
       })}

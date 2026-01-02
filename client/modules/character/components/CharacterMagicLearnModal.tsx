@@ -5,7 +5,7 @@ import { Button } from '@/components/Button';
 import { useCharacter } from '@/modules/character/store/character';
 import { Modal } from '@/components/Modal';
 import { canLearnMagic, getLearnMagicCost } from '@fwo/shared';
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 import type { FC } from 'react';
 
 export const CharacterMagicsLearnModal: FC<{ avaiableMagicLevels: Record<number, boolean> }> = ({
@@ -31,7 +31,7 @@ export const CharacterMagicsLearnModal: FC<{ avaiableMagicLevels: Record<number,
           {times(4, (i) => i + 1).map((lvl) => (
             <Button
               key={lvl}
-              className={classNames('flex-1', {
+              className={clsx('flex-1', {
                 'is-primary': !isDisabled(lvl),
               })}
               disabled={isDisabled(lvl)}

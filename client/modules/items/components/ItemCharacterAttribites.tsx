@@ -1,5 +1,5 @@
 import type { CharacterAttributes } from '@fwo/shared';
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 import type { FC } from 'react';
 
 const attributes: (keyof CharacterAttributes)[] = ['str', 'dex', 'con', 'int', 'wis'];
@@ -12,7 +12,7 @@ const ItemCharacterAttribute: FC<{
 }> = ({ name, value, isRequired, showPlus }) => {
   return (
     <div
-      className={classNames('flex gap-1', {
+      className={clsx('flex gap-1', {
         'text-red-500': isRequired,
       })}
     >

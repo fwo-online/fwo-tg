@@ -13,7 +13,7 @@
     "@fwo/server": "workspace:^",
     "@fwo/shared": "workspace:^",
     "@tma.js/sdk-react": "^3.0.11",
-    "classnames": "^2.5.1",
+    "clsx": "^2.1.1",
     "es-toolkit": "catalog:",
     "hono": "catalog:",
     "nes.css": "^2.3.0",

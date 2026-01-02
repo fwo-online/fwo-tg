@@ -1,7 +1,7 @@
 import { Button } from '@/components/Button';
 import { useGameOrderReady } from '@/modules/game/hooks/useGameOrderReady';
 import { useGameStore } from '@/modules/game/store/useGameStore';
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 
 export const GameOrderReady = () => {
   const { isReady, handleReady, isPending } = useGameOrderReady();
@@ -10,7 +10,7 @@ export const GameOrderReady = () => {
   return !isReady ? (
     <Button
       onClick={handleReady}
-      className={classNames('is-success mb-2', { invisible: !canOrder })}
+      className={clsx('is-success mb-2', { invisible: !canOrder })}
       disabled={isPending}
     >
       Завершить ход
@@ -18,7 +18,7 @@ export const GameOrderReady = () => {
   ) : (
     <Button
       onClick={handleReady}
-      className={classNames('is-error mb-2', { invisible: !canOrder })}
+      className={clsx('is-error mb-2', { invisible: !canOrder })}
       disabled={isPending}
     >
       Продолжить ход

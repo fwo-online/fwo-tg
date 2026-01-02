@@ -1,5 +1,5 @@
 import type { Action } from '@fwo/shared';
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 import type { FC } from 'react';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
@@ -30,7 +30,7 @@ export const GameActionList: FC<{
     <Card header="Действия">
       <div className="flex flex-col gap-1 max-h-[300px] overflow-auto">
         {power !== 100 && (
-          <Button onClick={onReady} className={classNames('is-success p-0')} disabled={isPending}>
+          <Button onClick={onReady} className={clsx('is-success p-0')} disabled={isPending}>
             Завершить ход
           </Button>
         )}

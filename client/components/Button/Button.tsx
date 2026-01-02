@@ -1,6 +1,6 @@
 import { themeParams, useSignal } from '@tma.js/sdk-react';
 import type { ButtonHTMLAttributes, FC } from 'react';
-import cn from 'classnames';
+import { clsx } from 'clsx';
 import './Button.css';
 
 const getButtonSvg = (textColor: `#${string}` | undefined) => {
@@ -22,7 +22,7 @@ export const Button: FC<ButtonHTMLAttributes<HTMLButtonElement>> = ({
       style={{
         borderImageSource: getButtonSvg(textColor),
       }}
-      className={cn(
+      className={clsx(
         'nes-btn',
         {
           'is-disabled': disabled,

@@ -1,5 +1,5 @@
 import { themeParams, useSignal } from '@tma.js/sdk-react';
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 import {
   cloneElement,
   type DialogHTMLAttributes,
@@ -72,7 +72,7 @@ export const PopupOverlay: FC<PopupOverlayProps> = ({ children, onClick, ref, ..
   return createPortal(
     <dialog
       ref={dialogRef}
-      className={classNames('nes-dialog is-rounded', {
+      className={clsx('nes-dialog is-rounded', {
         'is-dark': isDark,
       })}
       onClick={handleClick}

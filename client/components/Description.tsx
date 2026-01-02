@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 import type { FC, PropsWithChildren, ReactNode } from 'react';
 
 const DescriptionRoot: FC<{ header?: ReactNode; children: ReactNode }> = ({ children, header }) => {
@@ -17,7 +17,7 @@ const DescriptionItem: FC<PropsWithChildren<{ after?: ReactNode; disabled?: bool
 }) => {
   return (
     <div
-      className={classNames('flex items-center justify-between text-sm', {
+      className={clsx('flex items-center justify-between text-sm', {
         'opacity-50': disabled,
       })}
     >

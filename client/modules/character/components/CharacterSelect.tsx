@@ -4,7 +4,7 @@ import { characterClassList, characterClassNameMap } from '@/constants/character
 import styles from './CharacterSelect.module.css';
 import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
-import cn from 'classnames';
+import { clsx } from 'clsx';
 import { CharacterImage } from './CharacterImage';
 
 const Slide = ({ value }: { value: CharacterClass }) => {
@@ -49,7 +49,7 @@ export const SelectCharacter: FC<{ onSelect: (createCharacter: CreateCharacterDt
         {characterClassList.map((value, index) => (
           <div
             key={value}
-            className={cn('w-2 h-2', {
+            className={clsx('w-2 h-2', {
               'bg-(--tg-theme-text-color)': index !== selected,
               'bg-(--tg-theme-accent-text-color)': index === selected,
             })}
