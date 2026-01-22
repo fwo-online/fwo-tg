@@ -18,8 +18,9 @@ import {
 } from '@/arena/RewardService';
 import { RoundStatus } from '@/arena/RoundService';
 import type { TowerService } from '@/arena/TowerService/TowerService';
-import { broadcast as helperBroadcast, sendBattleLogMessages } from '@/helpers/channelHelper';
+import { broadcast as helperBroadcast, broadcastLevelUp, sendBattleLogMessages } from '@/helpers/channelHelper';
 import { DonationHelper } from '@/helpers/donationHelper';
+import { sendLevelUpCongratulations } from '@/bot';
 import { ClanModel } from '@/models/clan';
 import { bold } from '@/utils/formatString';
 
@@ -77,6 +78,34 @@ ${Object.entries(resultsByClan)
       `${bold(clan === reservedClanName ? 'Без клана' : clan)}:\n${players?.map(resultToString).join('\n')}`,
   )
   .join('\n\n')}`);
+
+    // Отправка поздравлений с новым уровнем
+    const levelUpPromises = results
+      .filter((result) => result.levelUp)
+      .map(async (result) => {
+        if (!result.levelUp) return;
+
+        const { newLevel, freePoints } = result.levelUp;
+
+        // Личное сообщение
+        await sendLevelUpCongratulations(
+          result.player.owner,
+          result.player.name,
+          newLevel,
+          freePoints
+        ).catch(e => console.error('Failed to send personal level up message:', e));
+
+        // Сообщение в канал
+        await broadcastLevelUp(
+          result.player.name,
+          newLevel,
+          result.player.class,
+          result.player.clan?.name
+        ).catch(e => console.error('Failed to broadcast level up:', e));
+      });
+
+    await Promise.all(levelUpPromises);
+
     setTimeout(async () => {
       if (DonationHelper.shouldAnnounce()) {
         const donators = await DonationHelper.getDonators();

@@ -60,42 +60,67 @@ export abstract class RewardService {
     await this.giveWinnerRewards(winners);
     await this.giveLoserRewards(losers);
 
-    await this.saveRewards();
+    const levelUpMap = await this.saveRewards();
 
-    return this.getStatistics(winners, losers);
+    return this.getStatistics(winners, losers, levelUpMap);
   }
 
-  getStatistics(winners: Player[], _losers: Player[]): GameResult[] {
+  getStatistics(
+    winners: Player[],
+    _losers: Player[],
+    levelUpMap: Map<string, { oldLevel: number; newLevel: number; freePoints: number }>
+  ): GameResult[] {
     const winnerIDs = new Set(winners.map(({ id }) => id));
-    return this.players.nonBotPlayers.map<GameResult>((player) => ({
-      player: player.toObject(),
-      exp: player.stats.collect.exp,
-      gold: player.stats.collect.gold,
-      components: player.stats.collect.components,
-      item: player.stats.collect.item,
-      winner: winnerIDs.has(player.id),
-    }));
+    return this.players.nonBotPlayers.map<GameResult>((player) => {
+      const result: GameResult = {
+        player: player.toObject(),
+        exp: player.stats.collect.exp,
+        gold: player.stats.collect.gold,
+        components: player.stats.collect.components,
+        item: player.stats.collect.item,
+        winner: winnerIDs.has(player.id),
+      };
+
+      const levelUp = levelUpMap.get(player.id);
+      if (levelUp) {
+        result.levelUp = levelUp;
+      }
+
+      return result;
+    });
   }
 
   /**
    * Метод сохраняющий накопленную статистику игроков в базу и сharObj
    */
-  async saveRewards() {
+  async saveRewards(): Promise<Map<string, { oldLevel: number; newLevel: number; freePoints: number }>> {
+    const levelUpMap = new Map<string, { oldLevel: number; newLevel: number; freePoints: number }>();
+
     try {
       await Promise.all(
         this.players.nonBotPlayers.map(async (player) => {
           const char = await CharacterService.getCharacterById(player.id);
 
-          await char.resources.addResources({
+          const levelUpInfo = await char.resources.addResources({
             gold: player.stats.collect.gold,
             exp: player.stats.collect.exp,
             components: player.stats.collect.components,
           });
+
+          if (levelUpInfo?.leveledUp) {
+            levelUpMap.set(player.id, {
+              oldLevel: levelUpInfo.oldLvl,
+              newLevel: levelUpInfo.newLvl,
+              freePoints: levelUpInfo.freeAdded
+            });
+          }
         }),
       );
     } catch (e) {
       console.error('save revards error:: ', e);
     }
+
+    return levelUpMap;
   }
 }
 
