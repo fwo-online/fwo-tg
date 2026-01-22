@@ -4,6 +4,7 @@ import type { ItemInfo } from '@/item/itemInfoSchema';
 
 export type Player = {
   id: string;
+  owner: string;
   name: string;
   class: CharacterClass;
   lvl: number;
