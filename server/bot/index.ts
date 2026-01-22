@@ -199,4 +199,38 @@ export const chechUserIsChannelAdmin = async (userID: string | number, chatID: s
   }
 };
 
+/**
+ * Отправка поздравления с новым уровнем в личные сообщения
+ * @param userID - ID пользователя Telegram
+ * @param nickname - Имя персонажа
+ * @param newLevel - Новый уровень персонажа
+ * @param freePoints - Количество полученных свободных очков
+ */
+export const sendLevelUpCongratulations = async (
+  userID: string | number,
+  nickname: string,
+  newLevel: number,
+  freePoints: number,
+) => {
+  try {
+    const congratsText = `
+🎉 *ПОЗДРАВЛЯЕМ\\!* 🎉
+
+*${nickname.replace(/[_*[\]()~`>#+\-=|{}.!]/g, '\\$&')}*, ты достиг *${newLevel} уровня*\\!
+
+⚔️ Ты становишься сильнее с каждым боем\\!
+
+💪 *\\+${freePoints} свободных очков характеристик*
+
+_Вперёд к новым победам\\!_
+    `.trim();
+
+    await bot.api.sendMessage(userID, congratsText, {
+      parse_mode: 'MarkdownV2',
+    });
+  } catch (e) {
+    console.error('Failed to send level up congratulations:', e);
+  }
+};
+
 export { bot };

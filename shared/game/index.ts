@@ -8,6 +8,11 @@ export type GameResult = {
   gold?: number;
   components?: Partial<Record<ItemComponent, number>>;
   item?: Item;
+  levelUp?: {
+    oldLevel: number;
+    newLevel: number;
+    freePoints: number;
+  };
 };
 
 export type GameStatus = PublicGameStatus & {

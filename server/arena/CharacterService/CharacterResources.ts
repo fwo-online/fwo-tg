@@ -41,12 +41,26 @@ export class CharacterResources {
     return this.charObj.free;
   }
 
-  private addExp(value: number) {
+  private addExp(value: number): { leveledUp: boolean; oldLvl: number; newLvl: number; freeAdded: number } {
     const oldLvl = this.character.lvl;
 
     this.charObj.bonus += Math.round(value / 100);
     this.charObj.exp += value;
-    this.addFree(Math.round(this.character.lvl - oldLvl) * 10);
+
+    const newLvl = this.character.lvl;
+    const lvlDifference = newLvl - oldLvl;
+    const freeAdded = Math.round(lvlDifference) * 10;
+
+    if (lvlDifference > 0) {
+      this.addFree(freeAdded);
+    }
+
+    return {
+      leveledUp: lvlDifference > 0,
+      oldLvl,
+      newLvl,
+      freeAdded
+    };
   }
 
   private addComponents(components: Partial<Record<ItemComponent, number>>) {
@@ -65,6 +79,8 @@ export class CharacterResources {
   }
 
   async addResources({ components, gold, exp, free }: Partial<Resources>) {
+    let levelUpInfo: { leveledUp: boolean; oldLvl: number; newLvl: number; freeAdded: number } | undefined;
+
     if (components) {
       this.addComponents(components);
     }
@@ -74,7 +90,7 @@ export class CharacterResources {
     }
 
     if (exp) {
-      this.addExp(exp);
+      levelUpInfo = this.addExp(exp);
     }
 
     if (free) {
@@ -82,6 +98,8 @@ export class CharacterResources {
     }
 
     await this.character.saveToDb();
+
+    return levelUpInfo;
   }
 
   /** @throws {ValidationError} */

@@ -38,6 +38,27 @@ export async function broadcast(data: string, id: number | string = BOT_CHAT_ID)
   }
 }
 
+/**
+ * Отправка поздравления с новым уровнем в канал
+ * @param nickname - Имя персонажа
+ * @param newLevel - Новый уровень
+ * @param prof - Профессия персонажа
+ * @param clanName - Название клана (опционально)
+ */
+export const broadcastLevelUp = async (
+  nickname: string,
+  newLevel: number,
+  prof: string,
+  clanName?: string
+) => {
+  const profIcon = profsData[prof]?.icon || '⚔️';
+  const clanPrefix = clanName ? `${brackets(clanName)} ` : '';
+
+  await broadcast(
+    `🎉 Игрок ${clanPrefix}${bold(nickname)} достиг ${bold(`${profIcon}${newLevel} уровня`)}! Поздравляем!`
+  );
+};
+
 export const initGameChannel = async () => {
   arena.mm.on('push', ({ id, queue }) => {
     const character = arena.characters[id];
