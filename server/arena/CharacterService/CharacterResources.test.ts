@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
 import { CharacterClass } from '@fwo/shared';
 import * as botModule from '@/bot';
 import TestUtils from '@/utils/testUtils';
+import { expToLevel } from './utils/calculateLvl';
 import { CharacterService } from './CharacterService';
 
 describe('CharacterResources - Level Up Congratulations', () => {
@@ -31,8 +32,10 @@ describe('CharacterResources - Level Up Congratulations', () => {
     const oldLevel = character.lvl;
     expect(oldLevel).toBe(1);
 
-    // Добавляем опыт для перехода на 2 уровень (нужно 1000 опыта)
-    await character.resources.addResources({ exp: 1000 });
+    // Добавляем опыт для перехода на 2 уровень
+    // С lvlRatio=3: expToLevel(2) = 2^(2-2) * 1000 * 3 = 3000 опыта
+    const expForLevel2 = expToLevel(2);
+    await character.resources.addResources({ exp: expForLevel2 });
 
     const newLevel = character.lvl;
     expect(newLevel).toBe(2);
@@ -48,11 +51,14 @@ describe('CharacterResources - Level Up Congratulations', () => {
 
   it('should send level up congratulations when leveling up from 2 to 3', async () => {
     // Устанавливаем персонажа на 2 уровень
-    character.charObj.exp = 1000;
+    const expForLevel2 = expToLevel(2);
+    character.charObj.exp = expForLevel2;
     expect(character.lvl).toBe(2);
 
-    // Добавляем опыт для перехода на 3 уровень (нужно еще 2000 опыта)
-    await character.resources.addResources({ exp: 2000 });
+    // Добавляем опыт для перехода на 3 уровень
+    // С lvlRatio=3: expToLevel(3) - expToLevel(2) = 9000 - 3000 = 6000 опыта
+    const expForLevel3 = expToLevel(3) - expForLevel2;
+    await character.resources.addResources({ exp: expForLevel3 });
 
     const newLevel = character.lvl;
     expect(newLevel).toBe(3);
@@ -66,13 +72,14 @@ describe('CharacterResources - Level Up Congratulations', () => {
     );
   });
 
-  it('should send congratulations multiple times when leveling up multiple levels at once', async () => {
+  it('should send congratulations once when leveling up multiple levels at once', async () => {
     const oldLevel = character.lvl;
     expect(oldLevel).toBe(1);
 
     // Добавляем большой опыт для перехода сразу на несколько уровней
-    // 1000 (2 lvl) + 2000 (3 lvl) + 4000 (4 lvl) = 7000
-    await character.resources.addResources({ exp: 7000 });
+    // С lvlRatio=3: expToLevel(4) = 3000 + 6000 + 12000 = 21000
+    const expForLevel4 = expToLevel(4);
+    await character.resources.addResources({ exp: expForLevel4 });
 
     const newLevel = character.lvl;
     expect(newLevel).toBe(4);
@@ -104,13 +111,15 @@ describe('CharacterResources - Level Up Congratulations', () => {
     const oldFree = character.resources.free;
 
     // Добавляем опыт для перехода на 2 уровень
-    await character.resources.addResources({ exp: 1000 });
+    const expForLevel2 = expToLevel(2);
+    await character.resources.addResources({ exp: expForLevel2 });
 
     expect(character.lvl).toBe(2);
     expect(character.resources.free).toBe(oldFree + 10);
 
     // Добавляем опыт для перехода на 3 уровень
-    await character.resources.addResources({ exp: 2000 });
+    const expForLevel3 = expToLevel(3) - expForLevel2;
+    await character.resources.addResources({ exp: expForLevel3 });
 
     expect(character.lvl).toBe(3);
     expect(character.resources.free).toBe(oldFree + 20);
@@ -124,7 +133,8 @@ describe('CharacterResources - Level Up Congratulations', () => {
     const consoleErrorSpy = spyOn(console, 'error').mockImplementation(() => {});
 
     // Добавляем опыт для повышения уровня
-    await character.resources.addResources({ exp: 1000 });
+    const expForLevel2 = expToLevel(2);
+    await character.resources.addResources({ exp: expForLevel2 });
 
     expect(character.lvl).toBe(2);
 
@@ -144,10 +154,11 @@ describe('CharacterResources - Level Up Congratulations', () => {
   it('should add bonus points when gaining experience', async () => {
     const oldBonus = character.resources.bonus;
 
-    // Добавляем 1000 опыта
-    await character.resources.addResources({ exp: 1000 });
+    // Добавляем опыт для перехода на 2 уровень
+    const expForLevel2 = expToLevel(2); // 3000 опыта
+    await character.resources.addResources({ exp: expForLevel2 });
 
-    // Проверяем, что бонус увеличился на 10 (1000 / 100)
-    expect(character.resources.bonus).toBe(oldBonus + 10);
+    // Проверяем, что бонус увеличился на 30 (3000 / 100)
+    expect(character.resources.bonus).toBe(oldBonus + 30);
   });
 });
