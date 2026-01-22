@@ -3,6 +3,7 @@ import ValidationError from '@/arena/errors/ValidationError';
 import type { ItemComponent } from '@fwo/shared';
 import type { CharacterService } from '@/arena/CharacterService/CharacterService';
 import { forEach } from 'es-toolkit/compat';
+import { sendLevelUpCongratulations } from '@/bot';
 
 export interface Resources {
   exp: number;
@@ -46,7 +47,22 @@ export class CharacterResources {
 
     this.charObj.bonus += Math.round(value / 100);
     this.charObj.exp += value;
-    this.addFree(Math.round(this.character.lvl - oldLvl) * 10);
+
+    const newLvl = this.character.lvl;
+    const lvlDifference = newLvl - oldLvl;
+
+    if (lvlDifference > 0) {
+      this.addFree(Math.round(lvlDifference) * 10);
+
+      // Отправляем поздравление с новым уровнем
+      sendLevelUpCongratulations(
+        this.character.owner,
+        this.character.nickname,
+        newLvl,
+      ).catch((e) => {
+        console.error('Failed to send level up congratulations:', e);
+      });
+    }
   }
 
   private addComponents(components: Partial<Record<ItemComponent, number>>) {

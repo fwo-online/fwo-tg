@@ -1,0 +1,87 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#16213e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ffed4e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffd700;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="glowGradient">
+      <stop offset="0%" style="stop-color:#ffed4e;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#ffd700;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#bgGradient)"/>
+
+  <!-- Glow effect -->
+  <circle cx="400" cy="300" r="200" fill="url(#glowGradient)" opacity="0.3"/>
+
+  <!-- Stars -->
+  <circle cx="150" cy="100" r="3" fill="#ffd700">
+    <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="650" cy="150" r="3" fill="#ffd700">
+    <animate attributeName="opacity" values="0.3;1;0.3" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="200" cy="450" r="3" fill="#ffd700">
+    <animate attributeName="opacity" values="1;0.3;1" dur="1.8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="700" cy="500" r="3" fill="#ffd700">
+    <animate attributeName="opacity" values="0.3;1;0.3" dur="2.2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="100" cy="300" r="2" fill="#ffffff">
+    <animate attributeName="opacity" values="1;0.5;1" dur="1.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="750" cy="350" r="2" fill="#ffffff">
+    <animate attributeName="opacity" values="0.5;1;0.5" dur="1.7s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Shield/Badge shape -->
+  <path d="M 400 150 L 480 180 L 480 320 Q 480 400 400 450 Q 320 400 320 320 L 320 180 Z"
+        fill="url(#goldGradient)" stroke="#b8860b" stroke-width="4"/>
+
+  <!-- Inner shield decoration -->
+  <path d="M 400 170 L 465 195 L 465 315 Q 465 385 400 430 Q 335 385 335 315 L 335 195 Z"
+        fill="#16213e" opacity="0.7"/>
+
+  <!-- Star in center -->
+  <polygon points="400,220 415,255 452,260 426,285 432,322 400,305 368,322 374,285 348,260 385,255"
+           fill="url(#goldGradient)" stroke="#b8860b" stroke-width="2">
+    <animateTransform attributeName="transform" type="rotate"
+                      from="0 400 270" to="360 400 270" dur="4s" repeatCount="indefinite"/>
+  </polygon>
+
+  <!-- Level Up text -->
+  <text x="400" y="510" font-family="Arial, sans-serif" font-size="60" font-weight="bold"
+        fill="url(#goldGradient)" text-anchor="middle" stroke="#b8860b" stroke-width="2">
+    LEVEL UP!
+  </text>
+
+  <!-- Sparkles -->
+  <circle cx="250" cy="250" r="4" fill="#ffed4e">
+    <animate attributeName="r" values="4;8;4" dur="1s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="550" cy="280" r="4" fill="#ffed4e">
+    <animate attributeName="r" values="4;8;4" dur="1.2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1;0;1" dur="1.2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="300" cy="380" r="3" fill="#ffffff">
+    <animate attributeName="r" values="3;6;3" dur="0.8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1;0;1" dur="0.8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="500" cy="370" r="3" fill="#ffffff">
+    <animate attributeName="r" values="3;6;3" dur="0.9s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1;0;1" dur="0.9s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Trophy handles -->
+  <rect x="360" y="340" width="15" height="40" fill="#b8860b" rx="3"/>
+  <rect x="425" y="340" width="15" height="40" fill="#b8860b" rx="3"/>
+</svg>
