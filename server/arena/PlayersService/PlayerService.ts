@@ -193,6 +193,7 @@ export default class PlayerService {
   toObject(): Player {
     return {
       id: this.id,
+      owner: this.owner,
       name: this.nick,
       class: this.prof,
       lvl: this.lvl,
