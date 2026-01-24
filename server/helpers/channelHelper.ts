@@ -99,4 +99,14 @@ export const initGameChannel = async () => {
       );
     }
   });
+
+  arena.mm.on('timeout', ({ id }) => {
+    const character = arena.characters[id];
+    if (!character) {
+      console.error('mm timeout error:::', id);
+      return;
+    }
+
+    broadcast(`${bold(character.nickname)} пытался найти себе противника, но никто не захотел с ним сражаться.`);
+  });
 };
