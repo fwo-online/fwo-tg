@@ -1,5 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import { Button } from './Button';
+import { SearchingBattleButton } from './SearchingBattleButton';
 import cn from 'classnames';
 
 const tabs = [
@@ -26,6 +27,7 @@ export function AppLayout() {
       <div className="overflow-auto flex-1">
         <Outlet />
       </div>
+      <SearchingBattleButton />
       <div className="gap-2 px-2 h-16 w-full flex">
         {tabs.map(({ path, text }) => (
           <Button
