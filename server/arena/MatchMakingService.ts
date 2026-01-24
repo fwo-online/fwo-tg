@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events';
 import type { GameType } from '@fwo/shared';
-import { mapValues } from 'es-toolkit';
+import { difference, mapValues } from 'es-toolkit';
 import { every, forEach } from 'es-toolkit/compat';
 import ValidationError from '@/arena/errors/ValidationError';
 import {
@@ -25,6 +25,7 @@ class MatchMaking extends EventEmitter<{
   list: [players: Record<GameType, QueueItem[]>];
   push: [player: QueueItem];
   pull: [player: QueueItem];
+  timeout: [player: QueueItem];
 }> {
   allQueue: Record<GameType, Queue> = {
     practice: new PracticeQueue(),
@@ -33,12 +34,16 @@ class MatchMaking extends EventEmitter<{
   };
   timers: Partial<Record<GameType, NodeJS.Timer>> = {};
   playerAttempts: Record<string, number[]> = {};
+  searchTimeoutTimers: Record<string, NodeJS.Timer> = {};
 
   /**
    * Удаление объекта игрока в очередь поиска
    * @param id id чара в поиске
    */
   pull(id: string) {
+    // Очищаем таймер поиска
+    this.clearSearchTimeout(id);
+
     Object.entries(this.allQueue).forEach(([type, queue]) => {
       const index = queue.items.findIndex((item) => id === item.id);
       if (index !== -1) {
@@ -66,6 +71,9 @@ class MatchMaking extends EventEmitter<{
       return queue.start();
     }
 
+    // Запускаем таймер на автоматический выход из очереди
+    this.startSearchTimeout(item);
+
     this.emit('push', item);
     this.list();
     this.main(item.queue);
@@ -92,6 +100,34 @@ class MatchMaking extends EventEmitter<{
     this.playerAttempts[item.id].push(now);
   }
 
+  /**
+   * Запускает таймер автоматического выхода из очереди
+   * @param item Объект игрока в очереди
+   */
+  private startSearchTimeout(item: QueueItem) {
+    this.searchTimeoutTimers[item.id] = setTimeout(() => {
+      // Проверяем, что игрок все еще в очереди
+      const queue = this.allQueue[item.queue];
+      const stillInQueue = queue.items.some(({ id }) => id === item.id);
+
+      if (stillInQueue) {
+        this.emit('timeout', item);
+        this.pull(item.id);
+      }
+    }, config.searchTimeout);
+  }
+
+  /**
+   * Очищает таймер автоматического выхода из очереди
+   * @param id id игрока
+   */
+  private clearSearchTimeout(id: string) {
+    if (this.searchTimeoutTimers[id]) {
+      clearTimeout(this.searchTimeoutTimers[id]);
+      delete this.searchTimeoutTimers[id];
+    }
+  }
+
   list() {
     this.emit(
       'list',
@@ -114,7 +150,18 @@ class MatchMaking extends EventEmitter<{
   async start(type: GameType) {
     const queue = this.allQueue[type];
     if (queue.checkStatus()) {
+      // Запоминаем игроков до старта
+      const playersBeforeStart = queue.items.map(({ id }) => id);
+
       await queue.start();
+
+      // Находим игроков, которые начали игру (их больше нет в очереди)
+      const playersAfterStart = queue.items.map(({ id }) => id);
+      const playersStartedGame = difference(playersBeforeStart, playersAfterStart);
+
+      // Очищаем таймеры для игроков, которые начали игру
+      playersStartedGame.forEach((id) => this.clearSearchTimeout(id));
+
       this.list();
     }
   }
