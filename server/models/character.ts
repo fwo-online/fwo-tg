@@ -50,6 +50,13 @@ export interface Char {
   equipment: Map<ItemWear, Item>;
   components: Map<ItemComponent, number>;
   towerAvailable: boolean;
+  notificationSettings?: {
+    gameStart: boolean;
+    gameEnd: boolean;
+    afkWarning: boolean;
+    dailyRewards: boolean;
+    levelUp: boolean;
+  };
 }
 
 export type CharModel = Model<Char> & typeof Char;
@@ -142,6 +149,16 @@ const character = new Schema<Char, CharModel>({
   },
   lastTower: { type: Schema.Types.Date, default: null },
   towerAvailable: { type: Schema.Types.Boolean, default: true },
+  notificationSettings: {
+    type: Object,
+    default: {
+      gameStart: true,
+      gameEnd: false,
+      afkWarning: false,
+      dailyRewards: false,
+      levelUp: false,
+    },
+  },
 });
 
 character.loadClass(Char);

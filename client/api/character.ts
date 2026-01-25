@@ -1,6 +1,6 @@
-import { client, createRequest } from '@/api';
-import type { CharacterAttributes, CreateCharacterDto } from '@fwo/shared';
+import type { CharacterAttributes, CreateCharacterDto, NotificationSettings } from '@fwo/shared';
 import { mapValues } from 'es-toolkit';
+import { client, createRequest } from '@/api';
 
 export const getCharacter = async () => {
   const res = await client.character.$get();
@@ -29,4 +29,8 @@ export const getCharacterDynamicAttributes = async (attributes: CharacterAttribu
   return createRequest(client.character['dynamic-attributes'].$get)({
     query: mapValues(attributes, (n) => n.toString()),
   });
+};
+
+export const updateNotificationSettings = async (settings: Partial<NotificationSettings>) => {
+  return createRequest(client.character['notification-settings'].$patch)({ json: settings });
 };

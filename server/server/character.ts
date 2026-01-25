@@ -56,6 +56,32 @@ export const character = new Hono()
 
     return c.json(dynamicAttributes, 200);
   })
+  .patch(
+    '/notification-settings',
+    vValidator(
+      'json',
+      v.object({
+        gameStart: v.optional(v.boolean()),
+        gameEnd: v.optional(v.boolean()),
+        afkWarning: v.optional(v.boolean()),
+        dailyRewards: v.optional(v.boolean()),
+        levelUp: v.optional(v.boolean()),
+      }),
+    ),
+    async (c) => {
+      const character = c.get('character');
+      const settings = c.req.valid('json');
+
+      character.charObj.notificationSettings = {
+        ...character.charObj.notificationSettings,
+        ...settings,
+      };
+
+      await withValidation(character.saveToDb());
+
+      return c.json(character.toObject(), 200);
+    },
+  )
   .get(
     '/list',
     vValidator('query', v.object({ ids: v.union([v.array(v.string()), v.string()]) })),
