@@ -347,6 +347,7 @@ export class CharacterService {
         lastFight,
         lastTower,
         towerAvailable,
+        notificationSettings: this.charObj.notificationSettings,
       });
     } catch (e) {
       console.error('Fail on CharSave:', e);
@@ -390,6 +391,7 @@ export class CharacterService {
         ItemComponent,
         number
       >,
+      notificationSettings: this.charObj.notificationSettings,
       ...this.inventory.toObject(),
     };
   }

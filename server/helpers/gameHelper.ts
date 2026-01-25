@@ -18,10 +18,15 @@ import {
 } from '@/arena/RewardService';
 import { RoundStatus } from '@/arena/RoundService';
 import type { TowerService } from '@/arena/TowerService/TowerService';
-import { broadcast as helperBroadcast, broadcastLevelUp, sendBattleLogMessages } from '@/helpers/channelHelper';
-import { DonationHelper } from '@/helpers/donationHelper';
 import { sendLevelUpCongratulations } from '@/bot';
+import {
+  broadcastLevelUp,
+  broadcast as helperBroadcast,
+  sendBattleLogMessages,
+} from '@/helpers/channelHelper';
+import { DonationHelper } from '@/helpers/donationHelper';
 import { ClanModel } from '@/models/clan';
+import { NotificationService } from '@/services/NotificationService';
 import { bold } from '@/utils/formatString';
 
 const createBroadcast = (chat?: string) => {
@@ -29,17 +34,21 @@ const createBroadcast = (chat?: string) => {
 };
 
 export async function createGame(players: string[], options?: GameOptions, chat?: string) {
-  const newGame = new GameService(players, options);
-  const game = await newGame.createGame();
-
-  if (!game) {
-    return;
-  }
-
+  const game = new GameService(players, options);
   const broadcast = createBroadcast(chat);
 
-  game.on('start', () => {
+  game.on('start', async () => {
     broadcast('Игра начинается');
+
+    // Отправка уведомлений отключенным игрокам
+    await Promise.all(
+      game.players.nonBotPlayers.map(async (player) => {
+        const character = arena.characters[player.id];
+        if (character) {
+          await NotificationService.sendGameStartNotification(character, game.info.id);
+        }
+      }),
+    ).catch((e) => console.error('[GameHelper] Failed to send game start notifications:', e));
   });
 
   game.on('startOrders', () => {
@@ -62,6 +71,13 @@ export async function createGame(players: string[], options?: GameOptions, chat?
 
   game.on('kick', ({ player }) => {
     broadcast(`Игрок ${bold(player.nick)} был выброшен из игры`);
+  });
+
+  game.on('preKick', async ({ player }) => {
+    const character = arena.characters[player.id];
+    if (character) {
+      await NotificationService.sendAfkWarningNotification(character, game.info.id);
+    }
   });
 
   game.on('end', async ({ results }) => {
@@ -92,16 +108,16 @@ ${Object.entries(resultsByClan)
           result.player.owner,
           result.player.name,
           newLevel,
-          freePoints
-        ).catch(e => console.error('Failed to send personal level up message:', e));
+          freePoints,
+        ).catch((e) => console.error('Failed to send personal level up message:', e));
 
         // Сообщение в канал
         await broadcastLevelUp(
           result.player.name,
           newLevel,
           result.player.class,
-          result.player.clan?.name
-        ).catch(e => console.error('Failed to broadcast level up:', e));
+          result.player.clan?.name,
+        ).catch((e) => console.error('Failed to broadcast level up:', e));
       });
 
     await Promise.all(levelUpPromises);
@@ -121,7 +137,7 @@ ${Object.entries(resultsByClan)
     }, 10000);
   });
 
-  return game;
+  return game.createGame();
 }
 
 const resultToString = (result: GameResult) =>

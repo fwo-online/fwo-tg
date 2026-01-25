@@ -1,8 +1,9 @@
+import type { ClanPublic } from '@/clan';
 import type { Item, ItemComponent } from '@/item';
+import type { NotificationSettings } from '@/notifications/notificationSettingsSchema';
+import type { Attributes } from '@/shared/attributes';
 import type { CharacterAttributes } from './characterAttributesSchema';
 import type { CharacterClass } from './characterClassSchema';
-import type { Attributes } from '@/shared/attributes';
-import type { ClanPublic } from '@/clan';
 
 export type Character = {
   id: string;
@@ -34,4 +35,5 @@ export type Character = {
   items: Item[];
   equipment: string[];
   components: Record<ItemComponent, number>;
+  notificationSettings?: NotificationSettings;
 };
