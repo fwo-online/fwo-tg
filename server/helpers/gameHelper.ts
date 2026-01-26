@@ -13,12 +13,15 @@ import { formatMessage } from '@/arena/LogService/utils';
 import { MonsterService } from '@/arena/MonsterService/MonsterService';
 import { createSkeleton } from '@/arena/MonsterService/monsters/skeleton';
 import {
+  ForestRewardService,
   LadderRewardService,
   PracticeRewardService,
   TowerRewardService,
 } from '@/arena/RewardService';
 import { RoundStatus } from '@/arena/RoundService';
 import type { TowerService } from '@/arena/TowerService/TowerService';
+import type { ForestService } from '@/arena/ForestService/ForestService';
+import { createWolf } from '@/arena/MonsterService/monsters/wolf';
 import { sendLevelUpCongratulations } from '@/bot';
 import {
   BOT_CHAT_ID,
@@ -261,3 +264,42 @@ export const createPracticeGame = async (player: string) => {
     game.end(rewards);
   });
 };
+
+export async function createForestGame(forest: ForestService) {
+  const game = await createGame([forest.player.id]);
+
+  if (!game) {
+    return;
+  }
+
+  // Создаём волка уровня игрока
+  const wolf = createWolf(forest.player.lvl);
+  game.addPlayers([wolf]);
+
+  // Создаём клан для монстра
+  const clan = new ClanModel({
+    owner: new Types.ObjectId(),
+    name: monstersClanName,
+  });
+
+  game.players.botPlayers.forEach((monster) => {
+    monster.clan = clan;
+    clan.players.push(arena.characters[monster.id].charObj);
+  });
+
+  // AI волка делает ходы
+  game.on('startOrders', () => {
+    game.players.aliveBotPlayers.filter(MonsterService.isMonster).forEach((bot) => {
+      bot.ai.makeOrder(game);
+    });
+  });
+
+  const reward = new ForestRewardService(game, forest);
+
+  game.on('beforeEnd', async ({ draw }) => {
+    const rewards = await reward.giveRewards(draw);
+    game.end(rewards);
+  });
+
+  return game;
+}

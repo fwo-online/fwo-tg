@@ -49,6 +49,7 @@ export class CharacterService {
   wasLvlUp = false;
   autoreg = false;
   towerID = '';
+  forestID = '';
   isBot = false;
 
   get id() {
@@ -222,6 +223,38 @@ export class CharacterService {
 
   get currentTower() {
     return arena.towers[this.towerID];
+  }
+
+  get currentForest() {
+    return arena.forests[this.forestID];
+  }
+
+  get forestAvailable() {
+    // Проверяем заблокирован ли лес
+    if (this.charObj.forestBlockedUntil && new Date() < this.charObj.forestBlockedUntil) {
+      return false;
+    }
+    return this.charObj.forestAvailable;
+  }
+
+  set forestAvailable(value: boolean) {
+    this.charObj.forestAvailable = value;
+  }
+
+  get forestBlockedUntil() {
+    return this.charObj.forestBlockedUntil;
+  }
+
+  set forestBlockedUntil(value: Date | null) {
+    this.charObj.forestBlockedUntil = value;
+  }
+
+  get lastForest() {
+    return this.charObj.lastForest;
+  }
+
+  set lastForest(value: Date | null) {
+    this.charObj.lastForest = value;
   }
 
   /**

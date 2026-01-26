@@ -8,6 +8,7 @@ import { ItemService } from '@/arena/ItemService';
 import type PlayersService from '@/arena/PlayersService';
 import type { Player } from '@/arena/PlayersService';
 import type { TowerService } from '@/arena/TowerService/TowerService';
+import type { ForestService } from '@/arena/ForestService/ForestService';
 import { getRandomComponent } from '@/utils/getRandomComponent';
 
 export type RewardServiceFactory = (game: GameService) => RewardService;
@@ -215,5 +216,30 @@ export class PracticeRewardService extends RewardService {
         loser.stats.collect.gold = 0;
       }
     });
+  }
+}
+
+export class ForestRewardService extends RewardService {
+  constructor(
+    game: GameService,
+    private forest: ForestService,
+  ) {
+    super(game);
+  }
+
+  protected giveWinnerRewards(winners: Player[]) {
+    winners.forEach((winner) => {
+      // Награда за победу в лесу - кожа от волка
+      winner.stats.addComponent(ItemComponent.Leather);
+
+      // Небольшой бонус золота
+      const goldBonus = winner.lvl * 2;
+      winner.stats.addGold(goldBonus);
+    });
+  }
+
+  protected giveLoserRewards(_losers: Player[]) {
+    // В лесу проигравшие не получают наград, они просто умирают
+    noop();
   }
 }
