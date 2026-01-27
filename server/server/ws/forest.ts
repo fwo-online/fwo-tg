@@ -1,8 +1,8 @@
 import type { ForestEventAction } from '@fwo/shared';
 import { ForestService } from '@/arena/ForestService/ForestService';
+import { broadcast } from '@/helpers/channelHelper';
 import { activeConnections } from '@/server/utils/activeConnectons';
 import type { Server, Socket } from '@/server/ws';
-import { broadcast } from '@/helpers/channelHelper';
 
 const getRoom = (forest: ForestService) => {
   return `forest:${forest.id}`;
@@ -21,8 +21,8 @@ export const onCreate = (io: Server) => {
 
     io.to(getRoom(forest)).emit('forest:start', forest.id);
 
-    forest.on('end', (_, reason) => {
-      io.to(getRoom(forest)).emit('forest:end', reason);
+    forest.on('end', (_, reason, result) => {
+      io.to(getRoom(forest)).emit('forest:end', reason, result);
     });
 
     forest.on('updateStatus', (status) => {
@@ -124,7 +124,10 @@ export const onConnection = (_io: Server, socket: Socket) => {
       return callback({ result });
     } catch (e) {
       console.error('forest:handleEvent error:', e);
-      return callback({ error: true, message: e instanceof Error ? e.message : 'Что-то пошло не так' });
+      return callback({
+        error: true,
+        message: e instanceof Error ? e.message : 'Что-то пошло не так',
+      });
     }
   });
 

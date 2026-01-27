@@ -53,7 +53,10 @@ export type ClientToServerMessage = Message<{
   ];
   'forest:enter': [callback: (payload: RPC<{ forestId: string }>) => void];
   'forest:connect': [callback: (payload: RPC<ForestStatus>) => void];
-  'forest:handleEvent': [action: ForestEventAction, callback: (payload: RPC<{ result: ForestEventResult }>) => void];
+  'forest:handleEvent': [
+    action: ForestEventAction,
+    callback: (payload: RPC<{ result: ForestEventResult }>) => void,
+  ];
   'forest:exit': [callback: (payload: RPC<{ success: boolean }>) => void];
 }>;
 
@@ -102,7 +105,7 @@ export type ServerToClientMessage = Message<{
   'tower:end': [];
   'tower:updateTime': [timeSpent: number, timeLeft: number];
   'forest:start': [forestID: string];
-  'forest:end': [reason: 'death' | 'maxTime' | 'exit'];
+  'forest:end': [reason: 'death' | 'maxTime' | 'exit', result: GameResult];
   'forest:updateStatus': [status: ForestStatus];
   'forest:event': [eventType: ForestEventType];
   'forest:eventResolved': [result: ForestEventResult];

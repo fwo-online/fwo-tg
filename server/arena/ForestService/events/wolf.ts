@@ -1,4 +1,4 @@
-import { ForestEventAction } from '@fwo/shared';
+import { ForestEventAction, MonsterType } from '@fwo/shared';
 import type { ForestEventHandler } from './types';
 
 export const handleWolfEvent: ForestEventHandler = async (action, forest) => {
@@ -28,6 +28,7 @@ export const handleWolfEvent: ForestEventHandler = async (action, forest) => {
         success: false,
         message: 'Ты хрустнул веткой! Волк заметил тебя и атакует!',
         startBattle: true,
+        monsterType: MonsterType.Wolf,
       };
     }
   }
@@ -37,6 +38,7 @@ export const handleWolfEvent: ForestEventHandler = async (action, forest) => {
       success: true,
       message: 'Ты решил атаковать волка!',
       startBattle: true,
+      monsterType: MonsterType.Wolf,
     };
   }
 

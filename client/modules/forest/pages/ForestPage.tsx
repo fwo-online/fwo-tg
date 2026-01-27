@@ -113,9 +113,11 @@ export const ForestPage = () => {
               )}
             </div>
           )}
-          <Button className="mt-2 text-xs" onClick={clearLastResult}>
-            OK
-          </Button>
+          {lastResult.startBattle ? null : (
+            <Button className="mt-2 text-xs" onClick={clearLastResult}>
+              OK
+            </Button>
+          )}
         </div>
       )}
 

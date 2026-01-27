@@ -1,5 +1,6 @@
 import type { GameStatus } from '@/game';
 import type { ItemComponent } from '@/item';
+import type { MonsterType } from '@/shared/monster';
 
 // Типы событий в лесу
 export enum ForestEventType {
@@ -62,6 +63,7 @@ export interface ForestEventResult {
     hp?: number; // Для костра и урона
   };
   startBattle?: boolean; // Нужно начать бой
+  monsterType?: MonsterType; // Тип монстра для боя
 }
 
 // Текущее событие

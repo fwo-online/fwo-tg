@@ -1,4 +1,4 @@
-import { ForestEventAction } from '@fwo/shared';
+import { ForestEventAction, MonsterType } from '@fwo/shared';
 import MiscService from '@/arena/MiscService';
 import type { ForestEventHandler } from './types';
 
@@ -16,12 +16,13 @@ export const handleChestEvent: ForestEventHandler = async (action, forest) => {
     if (Math.random() < enemyChance) {
       return {
         success: false,
-        message: 'Из сундука вылетел злой дух! (TODO: бой с духом)',
-        // startBattle: true, // Пока закомментировано
+        message: 'Из сундука вылетел злой дух!',
+        startBattle: true,
+        monsterType: MonsterType.Spirit,
       };
     }
 
-    // Награда по стандартной формуле (TODO: использовать RewardService)
+    // Награда по стандартной формуле
     const goldAmount = MiscService.randInt(10, 50) * forest.player.lvl;
     return {
       success: true,

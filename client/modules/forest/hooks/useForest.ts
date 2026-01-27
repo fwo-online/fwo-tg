@@ -1,15 +1,16 @@
-import { useMountEffect } from '@/hooks/useMountEffect';
-import { useSocketListener } from '@/hooks/useSocketListener';
-import { useSocket } from '@/stores/socket';
 import {
-  ForestEventAction,
+  type ForestEventAction,
   type ForestEventResult,
   type ForestEventType,
-  type ForestStatus,
   ForestState,
+  type ForestStatus,
 } from '@fwo/shared';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useMountEffect } from '@/hooks/useMountEffect';
+import { useSocketListener } from '@/hooks/useSocketListener';
+import { useGameResult } from '@/modules/game/hooks/useGameResult';
+import { useSocket } from '@/stores/socket';
 
 export const useForest = () => {
   const socket = useSocket();
@@ -17,6 +18,7 @@ export const useForest = () => {
   const [status, setStatus] = useState<ForestStatus | null>(null);
   const [lastResult, setLastResult] = useState<ForestEventResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const { handleGameResult } = useGameResult();
 
   useMountEffect(() => {
     socket.emitWithAck('forest:connect').then((res) => {
@@ -28,7 +30,10 @@ export const useForest = () => {
     });
   });
 
-  useSocketListener('forest:end', () => navigate('/'));
+  useSocketListener('forest:end', (_reason, result) => {
+    navigate('/');
+    handleGameResult([result]);
+  });
   useSocketListener('forest:updateStatus', setStatus);
 
   useSocketListener('forest:event', (_eventType: ForestEventType) => {

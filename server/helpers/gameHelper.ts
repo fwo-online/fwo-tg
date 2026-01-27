@@ -1,17 +1,25 @@
 import {
   componentsToString,
   type GameResult,
+  MonsterType,
   monstersClanName,
   reservedClanName,
 } from '@fwo/shared';
 import { createGame as createGameApi } from '@/api/game';
 import { Types } from 'mongoose';
 import arena from '@/arena';
+import type { ForestService } from '@/arena/ForestService/ForestService';
 import GameService, { type GameOptions } from '@/arena/GameService';
 import { LadderService } from '@/arena/LadderService';
 import { formatMessage } from '@/arena/LogService/utils';
 import { MonsterService } from '@/arena/MonsterService/MonsterService';
-import { createSkeleton } from '@/arena/MonsterService/monsters/skeleton';
+import {
+  createElemental,
+  createGhost,
+  createSkeleton,
+  createSpirit,
+  createWolf,
+} from '@/arena/MonsterService/monsters';
 import {
   ForestRewardService,
   LadderRewardService,
@@ -20,8 +28,6 @@ import {
 } from '@/arena/RewardService';
 import { RoundStatus } from '@/arena/RoundService';
 import type { TowerService } from '@/arena/TowerService/TowerService';
-import type { ForestService } from '@/arena/ForestService/ForestService';
-import { createWolf } from '@/arena/MonsterService/monsters/wolf';
 import { sendLevelUpCongratulations } from '@/bot';
 import {
   BOT_CHAT_ID,
@@ -265,16 +271,39 @@ export const createPracticeGame = async (player: string) => {
   });
 };
 
+function createMonsterByType(type: MonsterType | undefined, lvl: number) {
+  switch (type) {
+    case MonsterType.Ghost:
+      return createGhost(lvl);
+    case MonsterType.Spirit:
+      return createSpirit(lvl);
+    case MonsterType.Elemental:
+      return createElemental(lvl);
+    default:
+      return createWolf(lvl);
+  }
+}
+
 export async function createForestGame(forest: ForestService) {
-  const game = await createGame([forest.player.id]);
+  const game = await createGame(
+    [],
+    {
+      round: { timeouts: { [RoundStatus.INIT]: 1000, [RoundStatus.START_ROUND]: 3000 } },
+    },
+    forest.player.owner,
+  );
 
   if (!game) {
     return;
   }
 
-  // Создаём волка уровня игрока
-  const wolf = createWolf(forest.player.lvl);
-  game.addPlayers([wolf]);
+  // Создаём монстра в зависимости от типа события
+  const monsterType = forest.pendingMonsterType;
+  const monster = createMonsterByType(monsterType, forest.player.lvl);
+  game.addPlayers([forest.player, monster]);
+
+  // Сбрасываем тип монстра после создания
+  forest.pendingMonsterType = undefined;
 
   // Создаём клан для монстра
   const clan = new ClanModel({
@@ -282,12 +311,12 @@ export async function createForestGame(forest: ForestService) {
     name: monstersClanName,
   });
 
-  game.players.botPlayers.forEach((monster) => {
-    monster.clan = clan;
-    clan.players.push(arena.characters[monster.id].charObj);
+  game.players.botPlayers.forEach((bot) => {
+    bot.clan = clan;
+    clan.players.push(arena.characters[bot.id].charObj);
   });
 
-  // AI волка делает ходы
+  // AI монстра делает ходы
   game.on('startOrders', () => {
     game.players.aliveBotPlayers.filter(MonsterService.isMonster).forEach((bot) => {
       bot.ai.makeOrder(game);

@@ -9,7 +9,9 @@ import {
   type ForestEventType,
   ForestState,
   type ForestStatus,
+  type GameResult,
   keys,
+  type MonsterType,
 } from '@fwo/shared';
 import type { HydratedDocument } from 'mongoose';
 import arena from '@/arena';
@@ -31,7 +33,7 @@ export class ForestService extends EventEmitter<{
   battleStart: [game: GameService];
   battleEnd: [game: GameService, victory: boolean];
   updateStatus: [status: ForestStatus];
-  end: [forest: ForestService, reason: 'death' | 'maxTime' | 'exit'];
+  end: [forest: ForestService, reason: 'death' | 'maxTime' | 'exit', result: GameResult];
 }> {
   private forest!: HydratedDocument<Forest>;
   currentEvent?: ForestEventData;
@@ -41,6 +43,7 @@ export class ForestService extends EventEmitter<{
   private nextEventTime = 0; // Время до следующего события в миллисекундах
   currentGame?: GameService;
   timeInForest = 0;
+  pendingMonsterType?: MonsterType;
 
   constructor(private playerId: string) {
     super();
@@ -95,7 +98,7 @@ export class ForestService extends EventEmitter<{
 
     console.debug(
       'Forest debug:: next event in',
-      this.nextEventTime / 1000,
+      `${(this.nextEventTime / 1000).toFixed()}`,
       'seconds',
       'progress:',
       `${(timeProgress * 100).toFixed(1)}%`,
@@ -172,7 +175,8 @@ export class ForestService extends EventEmitter<{
     }
 
     if (result.startBattle) {
-      // Начинаем бой
+      // Сохраняем тип монстра и начинаем бой
+      this.pendingMonsterType = result.monsterType;
       await this.startBattle();
     } else {
       this.forest.state = ForestState.Waiting;
@@ -205,7 +209,9 @@ export class ForestService extends EventEmitter<{
       await this.handleBattleEnd(game);
     });
 
-    this.emit('battleStart', game);
+    setTimeout(() => {
+      this.emit('battleStart', game);
+    }, 3000);
   }
 
   async handleBattleEnd(game: GameService) {
@@ -367,11 +373,24 @@ export class ForestService extends EventEmitter<{
       this.character.forestAvailable = false;
     }
 
-    await this.character.saveToDb();
+    await this.character.resources.addResources({
+      gold: this.player.stats.collect.gold,
+      exp: this.player.stats.collect.exp,
+      components: this.player.stats.collect.components,
+    });
+
+    const result: GameResult = {
+      player: this.player.toObject(),
+      exp: this.player.stats.collect.exp,
+      gold: this.player.stats.collect.gold,
+      components: this.player.stats.collect.components,
+      item: this.player.stats.collect.item,
+      winner: reason === 'death',
+    };
 
     delete arena.forests?.[this.id];
 
-    this.emit('end', this, reason);
+    this.emit('end', this, reason, result);
     this.removeAllListeners();
   }
 

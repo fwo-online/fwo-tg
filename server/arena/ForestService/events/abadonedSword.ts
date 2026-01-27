@@ -1,4 +1,4 @@
-import { ForestEventAction } from '@fwo/shared';
+import { ForestEventAction, MonsterType } from '@fwo/shared';
 import type { ForestEventHandler } from '@/arena/ForestService/events/types';
 import MiscService from '@/arena/MiscService';
 
@@ -6,7 +6,7 @@ export const handleAbandonedSwordEvent: ForestEventHandler = async (action) => {
   if (action === ForestEventAction.PassBy) {
     return {
       success: true,
-      message: 'Ты прошёl мимо заброшенного меча.',
+      message: 'Ты прошёл мимо заброшенного меча.',
     };
   }
 
@@ -16,8 +16,9 @@ export const handleAbandonedSwordEvent: ForestEventHandler = async (action) => {
     if (Math.random() < ghostChance) {
       return {
         success: false,
-        message: 'Меч был проклят! Появился призрак владельца! (TODO: бой с призраком)',
-        // startBattle: true,
+        message: 'Меч был проклят! Появился призрак владельца!',
+        startBattle: true,
+        monsterType: MonsterType.Ghost,
       };
     }
 
