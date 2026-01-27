@@ -79,7 +79,6 @@ export interface ForestStatus {
   currentEvent?: ForestEvent;
   status: GameStatus;
   timeInForest: number; // Время в лесу в секундах
-  eventsEncountered: number; // Количество встреченных событий
 }
 
 // Константы

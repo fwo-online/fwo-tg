@@ -1,11 +1,7 @@
+import { FOREST_MAX_TIME, ForestEventAction, ForestEventType } from '@fwo/shared';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { useForest } from '@/modules/forest/hooks/useForest';
-import {
-  ForestEventAction,
-  ForestEventType,
-  FOREST_MAX_TIME,
-} from '@fwo/shared';
 
 const EVENT_TITLES: Record<ForestEventType, string> = {
   [ForestEventType.Wolf]: '🐺 Волк!',
@@ -73,11 +69,7 @@ export const ForestPage = () => {
           <span>Время в лесу</span>
           <span>{timeLeftMinutes} мин. осталось</span>
         </div>
-        <progress
-          className="nes-progress h-4"
-          value={status.timeInForest}
-          max={FOREST_MAX_TIME}
-        />
+        <progress className="nes-progress h-4" value={status.timeInForest} max={FOREST_MAX_TIME} />
       </div>
 
       {/* Статус игрока */}
@@ -93,11 +85,6 @@ export const ForestPage = () => {
           value={status.status.hp}
           max={status.status.maxHP}
         />
-      </div>
-
-      {/* Статистика */}
-      <div className="text-xs mb-4">
-        Событий встречено: {status.eventsEncountered}
       </div>
 
       {/* Последний результат */}
@@ -118,7 +105,9 @@ export const ForestPage = () => {
               {lastResult.reward.components && (
                 <span className="ml-2">
                   {Object.entries(lastResult.reward.components).map(([k, v]) => (
-                    <span key={k}>+{v} {k}</span>
+                    <span key={k}>
+                      +{v} {k}
+                    </span>
                   ))}
                 </span>
               )}
@@ -142,21 +131,15 @@ export const ForestPage = () => {
       {/* Событие */}
       {isEvent && status.currentEvent && (
         <div className="text-center">
-          <h3 className="text-lg mb-2">
-            {EVENT_TITLES[status.currentEvent.type]}
-          </h3>
-          <p className="text-sm mb-4">
-            {EVENT_DESCRIPTIONS[status.currentEvent.type]}
-          </p>
+          <h3 className="text-lg mb-2">{EVENT_TITLES[status.currentEvent.type]}</h3>
+          <p className="text-sm mb-4">{EVENT_DESCRIPTIONS[status.currentEvent.type]}</p>
 
           {/* Таймер события */}
           <div className="text-xs mb-4">
             Осталось времени:{' '}
             {Math.max(
               0,
-              Math.ceil(
-                (new Date(status.currentEvent.expiresAt).getTime() - Date.now()) / 1000,
-              ),
+              Math.ceil((new Date(status.currentEvent.expiresAt).getTime() - Date.now()) / 1000),
             )}{' '}
             сек
           </div>
