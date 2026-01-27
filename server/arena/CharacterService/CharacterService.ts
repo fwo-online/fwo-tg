@@ -419,6 +419,8 @@ export class CharacterService {
       dynamicAttributes: this.attributes.getDynamicAttributes(),
       game: this.currentGame?.info.id,
       tower: this.currentTower?.id,
+      forest: this.forestID || undefined,
+      forestBlockedUntil: this.forestBlockedUntil ?? undefined,
       statistics: this.performance.statistics,
       components: Object.fromEntries(this.resources.components.entries()) as Record<
         ItemComponent,

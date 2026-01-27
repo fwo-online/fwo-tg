@@ -381,8 +381,8 @@ export class ForestService extends EventEmitter<{
     }, CHECK_INTERVAL);
   }
 
-  private emitStatus() {
-    const status: ForestStatus = {
+  getStatus(): ForestStatus {
+    return {
       id: this.id,
       playerId: this.playerId,
       state: this.forest.state,
@@ -397,8 +397,10 @@ export class ForestService extends EventEmitter<{
       timeInForest: this.forest.timeInForest,
       eventsEncountered: this.forest.eventsEncountered,
     };
+  }
 
-    this.emit('updateStatus', status);
+  private emitStatus() {
+    this.emit('updateStatus', this.getStatus());
   }
 
   private getAvailableActions(eventType: ForestEventType): ForestEventAction[] {

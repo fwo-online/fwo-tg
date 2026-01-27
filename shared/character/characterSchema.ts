@@ -31,6 +31,8 @@ export type Character = {
   dynamicAttributes: Attributes;
   game?: string;
   tower?: string;
+  forest?: string;
+  forestBlockedUntil?: Date;
   clan?: ClanPublic;
   items: Item[];
   equipment: string[];

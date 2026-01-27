@@ -51,6 +51,7 @@ export type ClientToServerMessage = Message<{
       }>,
     ) => void,
   ];
+  'forest:enter': [callback: (payload: RPC<{ forestId: string }>) => void];
   'forest:connect': [callback: (payload: RPC<ForestStatus>) => void];
   'forest:handleEvent': [action: ForestEventAction, callback: (payload: RPC<{ result: ForestEventResult }>) => void];
   'forest:exit': [callback: (payload: RPC<{ success: boolean }>) => void];

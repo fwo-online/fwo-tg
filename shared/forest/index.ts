@@ -1,4 +1,4 @@
-import { GameStatus } from '@/game';
+import type { GameStatus } from '@/game';
 import type { ItemComponent } from '@/item';
 
 // Типы событий в лесу

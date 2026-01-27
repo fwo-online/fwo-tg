@@ -63,6 +63,35 @@ export const onCreate = (io: Server) => {
 export const onConnection = (_io: Server, socket: Socket) => {
   const { character } = socket.data;
 
+  // Вход в лес
+  socket.on('forest:enter', async (callback) => {
+    try {
+      // Проверяем, не в лесу ли уже игрок
+      if (character.forestID) {
+        return callback({ error: true, message: 'Вы уже в лесу' });
+      }
+
+      // Проверяем блокировку
+      if (character.forestBlockedUntil && new Date(character.forestBlockedUntil) > new Date()) {
+        return callback({ error: true, message: 'Лес временно заблокирован для вас' });
+      }
+
+      // Проверяем, не в игре ли игрок
+      if (character.gameId) {
+        return callback({ error: true, message: 'Вы в бою' });
+      }
+
+      // Создаём новый лес
+      const forestService = new ForestService(character.id);
+      await forestService.createForest();
+
+      return callback({ forestId: forestService.id });
+    } catch (e) {
+      console.error('forest:enter error:', e);
+      return callback({ error: true, message: 'Что-то пошло не так' });
+    }
+  });
+
   // Подключение к лесу
   socket.on('forest:connect', async (callback) => {
     try {
@@ -75,21 +104,7 @@ export const onConnection = (_io: Server, socket: Socket) => {
       await socket.join(getRoom(forest));
 
       // Возвращаем текущий статус леса
-      return callback({
-        id: forest.id,
-        state: forest.forest.state,
-        playerHP: forest.forest.playerHP,
-        playerMaxHP: forest.forest.playerMaxHP,
-        timeInForest: forest.forest.timeInForest,
-        eventsEncountered: forest.forest.eventsEncountered,
-        currentEvent: forest.forest.currentEvent
-          ? {
-              type: forest.forest.currentEvent.type,
-              expiresAt: forest.forest.currentEvent.expiresAt,
-              availableActions: forest['getAvailableActions'](forest.forest.currentEvent.type),
-            }
-          : undefined,
-      });
+      return callback(forest.getStatus());
     } catch (e) {
       console.error('forest:connect error:', e);
       return callback({ error: true, message: 'Что-то пошло не так' });
