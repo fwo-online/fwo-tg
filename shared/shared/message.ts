@@ -1,6 +1,7 @@
 import type { Character } from '@/character';
 import type { CharacterPublic } from '@/character/characterPublic';
 import type { ClanPublic } from '@/clan';
+import type { ForestEventAction, ForestEventResult, ForestEventType, ForestStatus } from '@/forest';
 import type { GameResult, GameStatus, GameType } from '@/game';
 import type { Action } from './action';
 import type { Order } from './orderSchema';
@@ -50,6 +51,9 @@ export type ClientToServerMessage = Message<{
       }>,
     ) => void,
   ];
+  'forest:connect': [callback: (payload: RPC<ForestStatus>) => void];
+  'forest:handleEvent': [action: ForestEventAction, callback: (payload: RPC<{ result: ForestEventResult }>) => void];
+  'forest:exit': [callback: (payload: RPC<{ success: boolean }>) => void];
 }>;
 
 type Message<T extends Record<string, unknown[]>> = {
@@ -96,4 +100,12 @@ export type ServerToClientMessage = Message<{
   'tower:start': [towerID: string];
   'tower:end': [];
   'tower:updateTime': [timeSpent: number, timeLeft: number];
+  'forest:start': [forestID: string];
+  'forest:end': [reason: 'death' | 'maxTime' | 'exit'];
+  'forest:updateStatus': [status: ForestStatus];
+  'forest:event': [eventType: ForestEventType];
+  'forest:eventResolved': [result: ForestEventResult];
+  'forest:eventTimeout': [];
+  'forest:battleStart': [gameID: string];
+  'forest:battleEnd': [data: { victory: boolean }];
 }>;

@@ -17,6 +17,9 @@ import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
 import { type Forest, type ForestEventData, ForestModel } from '@/models/forest';
 import { createForestGame } from '@/helpers/gameHelper';
+import { Player } from '@/arena/PlayersService';
+import { handleOldTrapEvent, handleAbandonedCampEvent, handleAbandonedSwordEvent, handleCampfireEvent, handleChestEvent, handleFallenTreeEvent, handleGlowingCrystalEvent, handleWolfEvent } from './events';
+
 
 const CHECK_INTERVAL = 1000; // Проверка каждую секунду
 
@@ -32,6 +35,7 @@ export class ForestService extends EventEmitter<{
 }> {
   private forest!: HydratedDocument<Forest>;
   private character!: CharacterService;
+  player!: Player;
   private checkInterval?: Timer;
   private nextEventTime = 0; // Время до следующего события в миллисекундах
   currentGame?: GameService;
@@ -46,24 +50,21 @@ export class ForestService extends EventEmitter<{
     return this.forest.id;
   }
 
-  get player() {
-    return arena.characters[this.playerId];
-  }
+  // get player() {
+  //   return arena.characters[this.playerId];
+  // }
 
   async createForest() {
     this.character = arena.characters[this.playerId];
+    this.player = new Player(this.character);
+
     if (!this.character) {
       throw new Error(`Character ${this.playerId} not found`);
     }
 
-    const playerMaxHP = this.character.stats.val('base.hp');
-    const playerHP = this.character.stats.val('hp');
-
     this.forest = await ForestModel.create({
       player: this.playerId,
       state: ForestState.Waiting,
-      playerHP,
-      playerMaxHP,
       startedAt: new Date(),
     });
 
@@ -134,8 +135,8 @@ export class ForestService extends EventEmitter<{
       { type: ForestEventType.Campfire, weight: 15 },
       { type: ForestEventType.AbandonedCamp, weight: 15 },
       { type: ForestEventType.OldTrap, weight: 10 },
-      { type: ForestEventType.AbandonedSword, weight: 8 },
-      { type: ForestEventType.GlowingCrystal, weight: 7 }, // Самое редкое
+      { type: ForestEventType.AbandonedSword, weight: 10 },
+      { type: ForestEventType.GlowingCrystal, weight: 5 }, // Самое редкое
     ];
 
     const totalWeight = events.reduce((sum, e) => sum + e.weight, 0);
@@ -193,28 +194,28 @@ export class ForestService extends EventEmitter<{
     // Обработка действия в зависимости от типа события
     switch (eventType) {
       case ForestEventType.Wolf:
-        result = await this.handleWolfEvent(action);
+        result = await handleWolfEvent(action, this);
         break;
       case ForestEventType.FallenTree:
-        result = await this.handleFallenTreeEvent(action);
+        result = await handleFallenTreeEvent(action, this);
         break;
       case ForestEventType.Chest:
-        result = await this.handleChestEvent(action);
+        result = await handleChestEvent(action, this);
         break;
       case ForestEventType.Campfire:
-        result = await this.handleCampfireEvent(action);
+        result = await handleCampfireEvent(action, this);
         break;
       case ForestEventType.AbandonedCamp:
-        result = await this.handleAbandonedCampEvent(action);
+        result = await handleAbandonedCampEvent(action, this);
         break;
       case ForestEventType.OldTrap:
-        result = await this.handleOldTrapEvent(action);
+        result = await handleOldTrapEvent(action, this);
         break;
       case ForestEventType.AbandonedSword:
-        result = await this.handleAbandonedSwordEvent(action);
+        result = await handleAbandonedSwordEvent(action, this);
         break;
       case ForestEventType.GlowingCrystal:
-        result = await this.handleGlowingCrystalEvent(action);
+        result = await handleGlowingCrystalEvent(action, this);
         break;
       default:
         throw new Error(`Unknown event type: ${eventType}`);
@@ -247,277 +248,6 @@ export class ForestService extends EventEmitter<{
     return result;
   }
 
-  private async handleWolfEvent(action: ForestEventAction): Promise<ForestEventResult> {
-    if (action === ForestEventAction.PassBy) {
-      return {
-        success: true,
-        message: 'Ты осторожно прошёл мимо, не привлекая внимания.',
-      };
-    }
-
-    if (action === ForestEventAction.Sneak) {
-      // Проверка ловкости
-      const playerDex = this.character.stats.val('harks.dex');
-      const wolfLevel = this.character.lvl;
-      const wolfDex = Math.round(wolfLevel * 1 + 10); // Формула из wolf.ts
-
-      const sneakChance = playerDex / (playerDex + wolfDex);
-      const success = Math.random() < sneakChance;
-
-      if (success) {
-        return {
-          success: true,
-          message: 'Ты бесшумно прокрался мимо волка!',
-        };
-      } else {
-        return {
-          success: false,
-          message: 'Ты хрустнул веткой! Волк заметил тебя и атакует!',
-          startBattle: true,
-        };
-      }
-    }
-
-    if (action === ForestEventAction.AttackWolf) {
-      return {
-        success: true,
-        message: 'Ты решил атаковать волка!',
-        startBattle: true,
-      };
-    }
-
-    throw new Error(`Invalid action for wolf event: ${action}`);
-  }
-
-  private async handleFallenTreeEvent(action: ForestEventAction): Promise<ForestEventResult> {
-    if (action === ForestEventAction.PassBy) {
-      return {
-        success: true,
-        message: 'Ты прошёл мимо упавшего дерева.',
-      };
-    }
-
-    if (action === ForestEventAction.ChopTree) {
-      // Шанс появления паука (пока заглушка)
-      const spiderChance = 0.3; // 30% шанс
-      if (Math.random() < spiderChance) {
-        return {
-          success: false,
-          message: 'Из дерева выполз огромный паук! (TODO: бой с пауком)',
-          // startBattle: true, // Пока закомментировано, т.к. паука нет
-        };
-      }
-
-      const woodAmount = MiscService.randInt(1, 2);
-      return {
-        success: true,
-        message: `Ты разрубил дерево и получил ${woodAmount} досок!`,
-        reward: {
-          components: {
-            wood: woodAmount,
-          },
-        },
-      };
-    }
-
-    throw new Error(`Invalid action for fallen tree event: ${action}`);
-  }
-
-  private async handleChestEvent(action: ForestEventAction): Promise<ForestEventResult> {
-    if (action === ForestEventAction.PassBy) {
-      return {
-        success: true,
-        message: 'Ты прошёл мимо сундука.',
-      };
-    }
-
-    if (action === ForestEventAction.OpenChest) {
-      // Маленький шанс встретить сильного врага
-      const enemyChance = 0.1; // 10% шанс
-      if (Math.random() < enemyChance) {
-        return {
-          success: false,
-          message: 'Из сундука вылетел злой дух! (TODO: бой с духом)',
-          // startBattle: true, // Пока закомментировано
-        };
-      }
-
-      // Награда по стандартной формуле (TODO: использовать RewardService)
-      const goldAmount = MiscService.randInt(10, 50) * this.character.lvl;
-      return {
-        success: true,
-        message: `Ты открыл сундук и нашёл ${goldAmount} золота!`,
-        reward: {
-          gold: goldAmount,
-        },
-      };
-    }
-
-    throw new Error(`Invalid action for chest event: ${action}`);
-  }
-
-  private async handleCampfireEvent(action: ForestEventAction): Promise<ForestEventResult> {
-    if (action === ForestEventAction.PassBy) {
-      return {
-        success: true,
-        message: 'Ты прошёл мимо костра.',
-      };
-    }
-
-    if (action === ForestEventAction.Rest) {
-      const healAmount = Math.floor(this.forest.playerMaxHP * 0.5); // 50% восстановления
-      return {
-        success: true,
-        message: `Ты отдохнул у костра и восстановил ${healAmount} HP!`,
-        reward: {
-          hp: healAmount,
-        },
-      };
-    }
-
-    throw new Error(`Invalid action for campfire event: ${action}`);
-  }
-
-  private async handleAbandonedCampEvent(action: ForestEventAction): Promise<ForestEventResult> {
-    if (action === ForestEventAction.PassBy) {
-      return {
-        success: true,
-        message: 'Ты прошёл мимо заброшенного лагеря.',
-      };
-    }
-
-    if (action === ForestEventAction.ScavengeCamp) {
-      // Шанс появления паука/крыс
-      const dangerChance = 0.25; // 25% шанс
-      if (Math.random() < dangerChance) {
-        return {
-          success: false,
-          message: 'Из палатки выскочил паук! (TODO: бой с пауком)',
-          // startBattle: true,
-        };
-      }
-
-      const fabricAmount = MiscService.randInt(1, 2);
-      return {
-        success: true,
-        message: `Ты разобрал палатку и получил ${fabricAmount} ткани!`,
-        reward: {
-          components: {
-            fabric: fabricAmount,
-          },
-        },
-      };
-    }
-
-    throw new Error(`Invalid action for abandoned camp event: ${action}`);
-  }
-
-  private async handleOldTrapEvent(action: ForestEventAction): Promise<ForestEventResult> {
-    if (action === ForestEventAction.PassBy) {
-      return {
-        success: true,
-        message: 'Ты осторожно обошёл старый капкан.',
-      };
-    }
-
-    if (action === ForestEventAction.DisarmTrap) {
-      // Шанс получить урон или встретить паука
-      const failChance = 0.3; // 30% шанс
-      if (Math.random() < failChance) {
-        const damage = Math.floor(this.forest.playerMaxHP * 0.1); // 10% урона
-        return {
-          success: false,
-          message: `Капкан сработал и нанёс тебе ${damage} урона!`,
-          reward: {
-            hp: -damage,
-          },
-        };
-      }
-
-      const ironAmount = MiscService.randInt(1, 2);
-      return {
-        success: true,
-        message: `Ты разобрал капкан и получил ${ironAmount} железа!`,
-        reward: {
-          components: {
-            iron: ironAmount,
-          },
-        },
-      };
-    }
-
-    throw new Error(`Invalid action for old trap event: ${action}`);
-  }
-
-  private async handleAbandonedSwordEvent(action: ForestEventAction): Promise<ForestEventResult> {
-    if (action === ForestEventAction.PassBy) {
-      return {
-        success: true,
-        message: 'Ты прошёl мимо заброшенного меча.',
-      };
-    }
-
-    if (action === ForestEventAction.TakeSword) {
-      // Шанс призрака
-      const ghostChance = 0.2; // 20% шанс
-      if (Math.random() < ghostChance) {
-        return {
-          success: false,
-          message: 'Меч был проклят! Появился призрак владельца! (TODO: бой с призраком)',
-          // startBattle: true,
-        };
-      }
-
-      const steelAmount = MiscService.randInt(1, 2);
-      return {
-        success: true,
-        message: `Ты забрал меч и получил ${steelAmount} стали!`,
-        reward: {
-          components: {
-            steel: steelAmount,
-          },
-        },
-      };
-    }
-
-    throw new Error(`Invalid action for abandoned sword event: ${action}`);
-  }
-
-  private async handleGlowingCrystalEvent(
-    action: ForestEventAction,
-  ): Promise<ForestEventResult> {
-    if (action === ForestEventAction.PassBy) {
-      return {
-        success: true,
-        message: 'Ты прошёл мимо мерцающего кристалла.',
-      };
-    }
-
-    if (action === ForestEventAction.TakeCrystal) {
-      // Шанс элементаля
-      const elementalChance = 0.15; // 15% шанс
-      if (Math.random() < elementalChance) {
-        return {
-          success: false,
-          message: 'Кристалл охранял элементаль! (TODO: бой с элементалем)',
-          // startBattle: true,
-        };
-      }
-
-      const arcaniteAmount = 1; // Редкий ресурс, всегда 1
-      return {
-        success: true,
-        message: `Ты забрал кристалл и получил ${arcaniteAmount} арканит!`,
-        reward: {
-          components: {
-            arcanite: arcaniteAmount,
-          },
-        },
-      };
-    }
-
-    throw new Error(`Invalid action for glowing crystal event: ${action}`);
-  }
 
   async startBattle() {
     console.debug('Forest debug:: starting battle');
@@ -532,7 +262,7 @@ export class ForestService extends EventEmitter<{
     }
 
     this.currentGame = game;
-    this.character.gameId = game.id;
+    this.character.gameId = game.info.id;
 
     game.on('end', async () => {
       await this.handleBattleEnd(game);
@@ -552,7 +282,6 @@ export class ForestService extends EventEmitter<{
     // Обновляем HP игрока после боя
     const player = game.players.getById(this.playerId);
     if (player) {
-      this.forest.playerHP = player.stats.val('hp');
       await this.forest.save();
     }
 
@@ -578,29 +307,22 @@ export class ForestService extends EventEmitter<{
     if (reward.components) {
       for (const [component, amount] of Object.entries(reward.components)) {
         if (amount > 0) {
-          const current = this.character.components.get(component as any) || 0;
-          this.character.components.set(component as any, current + amount);
-
-          // Обновляем статистику леса
-          this.forest.resourcesGathered[component] =
-            (this.forest.resourcesGathered[component] || 0) + amount;
+          this.player.stats.addComponent(component, amount)
         }
       }
     }
 
     // Применяем золото
     if (reward.gold) {
-      this.character.gold += reward.gold;
+      this.player.stats.addGold(reward.gold);
     }
 
     // Применяем HP
     if (reward.hp) {
-      const newHP = Math.max(0, Math.min(this.forest.playerHP + reward.hp, this.forest.playerMaxHP));
-      this.forest.playerHP = newHP;
-      this.character.stats.change('hp', reward.hp);
+      this.player.stats.up('hp', reward.hp);
 
       // Проверка на смерть
-      if (newHP <= 0) {
+      if (this.player.stats.val('hp') <= 0) {
         await this.endForest('death');
         return;
       }
@@ -671,8 +393,7 @@ export class ForestService extends EventEmitter<{
             expiresAt: this.forest.currentEvent.expiresAt,
           }
         : undefined,
-      playerHP: this.forest.playerHP,
-      playerMaxHP: this.forest.playerMaxHP,
+      status: this.player.getStatus(),
       timeInForest: this.forest.timeInForest,
       eventsEncountered: this.forest.eventsEncountered,
     };

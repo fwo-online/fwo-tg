@@ -18,10 +18,6 @@ export interface Forest {
   state: ForestState;
   ended: boolean;
 
-  // Статус игрока
-  playerHP: number; // Текущее HP игрока
-  playerMaxHP: number; // Максимальное HP
-
   // События
   events: ForestEventData[]; // История событий
   currentEvent?: ForestEventData; // Текущее событие
@@ -67,9 +63,6 @@ const schema = new Schema<Forest, ForestModel>(
     player: { type: Schema.Types.ObjectId, ref: 'Character', required: true },
     state: { type: String, default: ForestState.Waiting },
     ended: { type: Boolean, default: false },
-
-    playerHP: { type: Number, required: true },
-    playerMaxHP: { type: Number, required: true },
 
     events: [forestEventDataSchema],
     currentEvent: { type: forestEventDataSchema, default: undefined },

@@ -154,10 +154,10 @@ export default class StatsService {
     this.collect.gold += +n;
   }
 
-  addComponent(component: ItemComponent | undefined) {
+  addComponent(component: ItemComponent | undefined, count = 1) {
     if (component) {
       this.collect.components[component] ??= 0;
-      this.collect.components[component] += 1;
+      this.collect.components[component] += count;
     }
   }
 

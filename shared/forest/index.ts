@@ -1,3 +1,4 @@
+import { GameStatus } from '@/game';
 import type { ItemComponent } from '@/item';
 
 // Типы событий в лесу
@@ -76,8 +77,7 @@ export interface ForestStatus {
   playerId: string;
   state: ForestState;
   currentEvent?: ForestEvent;
-  playerHP: number;
-  playerMaxHP: number;
+  status: GameStatus;
   timeInForest: number; // Время в лесу в секундах
   eventsEncountered: number; // Количество встреченных событий
 }
