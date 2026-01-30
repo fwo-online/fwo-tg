@@ -1,4 +1,4 @@
-import { ForestEventAction } from '@fwo/shared';
+import { ForestEventAction, MonsterType } from '@fwo/shared';
 import MiscService from '@/arena/MiscService';
 import type { ForestEventHandler } from './types';
 
@@ -11,13 +11,14 @@ export const handleFallenTreeEvent: ForestEventHandler = async (action) => {
   }
 
   if (action === ForestEventAction.ChopTree) {
-    // Шанс появления паука (пока заглушка)
+    // Шанс появления паука
     const spiderChance = 0.3; // 30% шанс
     if (Math.random() < spiderChance) {
       return {
         success: false,
-        message: 'Из дерева выполз огромный паук! (TODO: бой с пауком)',
-        // startBattle: true, // Пока закомментировано, т.к. паука нет
+        message: 'Из дерева выполз огромный паук!',
+        startBattle: true,
+        monsterType: MonsterType.Spider,
       };
     }
 

@@ -1,4 +1,4 @@
-import { ForestEventAction } from '@fwo/shared';
+import { ForestEventAction, MonsterType } from '@fwo/shared';
 import MiscService from '@/arena/MiscService';
 import type { ForestEventHandler } from './types';
 
@@ -11,13 +11,14 @@ export const handleAbandonedCampEvent: ForestEventHandler = async (action) => {
   }
 
   if (action === ForestEventAction.ScavengeCamp) {
-    // Шанс появления паука/крыс
+    // Шанс появления паука
     const dangerChance = 0.25; // 25% шанс
     if (Math.random() < dangerChance) {
       return {
         success: false,
-        message: 'Из палатки выскочил паук! (TODO: бой с пауком)',
-        // startBattle: true,
+        message: 'Из палатки выскочил паук!',
+        startBattle: true,
+        monsterType: MonsterType.Spider,
       };
     }
 

@@ -17,6 +17,7 @@ import {
   createElemental,
   createGhost,
   createSkeleton,
+  createSpider,
   createSpirit,
   createWolf,
 } from '@/arena/MonsterService/monsters';
@@ -279,6 +280,8 @@ function createMonsterByType(type: MonsterType | undefined, lvl: number) {
       return createSpirit(lvl);
     case MonsterType.Elemental:
       return createElemental(lvl);
+    case MonsterType.Spider:
+      return createSpider(lvl);
     default:
       return createWolf(lvl);
   }
