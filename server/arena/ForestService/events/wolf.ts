@@ -1,14 +1,8 @@
 import { ForestEventAction, MonsterType } from '@fwo/shared';
-import type { ForestEventHandler } from './types';
+import type { ForestEventHandler } from './getEventHandler';
+import { startForestBattle } from './startForestBattle';
 
 export const handleWolfEvent: ForestEventHandler = async (action, forest) => {
-  if (action === ForestEventAction.PassBy) {
-    return {
-      success: true,
-      message: 'Ты осторожно прошёл мимо, не привлекая внимания.',
-    };
-  }
-
   if (action === ForestEventAction.Sneak) {
     // Проверка ловкости
     const playerDex = forest.player.stats.val('attributes.dex');
@@ -21,24 +15,27 @@ export const handleWolfEvent: ForestEventHandler = async (action, forest) => {
     if (success) {
       return {
         success: true,
+        resolved: true,
         message: 'Ты бесшумно прокрался мимо волка!',
       };
     } else {
+      await startForestBattle(forest, MonsterType.Wolf);
+
       return {
         success: false,
+        resolved: false,
         message: 'Ты хрустнул веткой! Волк заметил тебя и атакует!',
-        startBattle: true,
-        monsterType: MonsterType.Wolf,
       };
     }
   }
 
   if (action === ForestEventAction.AttackWolf) {
+    await startForestBattle(forest, MonsterType.Wolf);
+
     return {
       success: true,
+      resolved: false,
       message: 'Ты решил атаковать волка!',
-      startBattle: true,
-      monsterType: MonsterType.Wolf,
     };
   }
 

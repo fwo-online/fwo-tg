@@ -1,4 +1,4 @@
-import { type ForestEventAction, type ForestEventResult, ForestEventType } from '@fwo/shared';
+import { ForestEventAction, type ForestEventResult, ForestEventType } from '@fwo/shared';
 import { handleAbandonedCampEvent } from '@/arena/ForestService/events/abadonedCamp';
 import { handleAbandonedSwordEvent } from '@/arena/ForestService/events/abadonedSword';
 import { handleCampfireEvent } from '@/arena/ForestService/events/campfire';
@@ -8,6 +8,7 @@ import { handleGlowingCrystalEvent } from '@/arena/ForestService/events/glowingC
 import { handleOldTrapEvent } from '@/arena/ForestService/events/oldTrap';
 import { handleWolfEvent } from '@/arena/ForestService/events/wolf';
 import type { ForestService } from '@/arena/ForestService/ForestService';
+import { handleOtherPlayerEvent } from '@/arena/ForestService/events/otherPlayer';
 
 export type ForestEventHandler = (
   action: ForestEventAction,
@@ -23,6 +24,7 @@ const eventHandlerByTypeMap: Record<ForestEventType, ForestEventHandler> = {
   [ForestEventType.OldTrap]: handleOldTrapEvent,
   [ForestEventType.AbandonedSword]: handleAbandonedSwordEvent,
   [ForestEventType.GlowingCrystal]: handleGlowingCrystalEvent,
+  [ForestEventType.OtherPlayer]: handleOtherPlayerEvent,
 };
 
 export const getEventHandler = (eventType: ForestEventType) => eventHandlerByTypeMap[eventType];

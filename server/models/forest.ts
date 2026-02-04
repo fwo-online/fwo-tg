@@ -4,6 +4,7 @@ import mongoose, { type Model, Schema, type Types } from 'mongoose';
 export interface ForestEventData {
   type: ForestEventType;
   resolved: boolean;
+  success?: boolean;
   action?: string; // Действие игрока
   result?: string; // Результат события
 

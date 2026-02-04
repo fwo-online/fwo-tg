@@ -1,4 +1,4 @@
-import type { MonsterType } from '@fwo/shared';
+import { MonsterType } from '@fwo/shared';
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
 import type GameService from '@/arena/GameService';
@@ -76,6 +76,26 @@ export class MonsterService extends PlayerService {
     arena.characters[monster.id] = monster;
 
     return new MonsterService(monster, type, AIClass);
+  }
+
+  // Lazy-load monster creators to avoid circular dependency at module load time
+  static createByType(type: MonsterType | undefined, lvl: number) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const monsters = require('./monsters');
+    switch (type) {
+      case MonsterType.Skeleton:
+        return monsters.createSkeleton(lvl);
+      case MonsterType.Ghost:
+        return monsters.createGhost(lvl);
+      case MonsterType.Spirit:
+        return monsters.createSpirit(lvl);
+      case MonsterType.Elemental:
+        return monsters.createElemental(lvl);
+      case MonsterType.Spider:
+        return monsters.createSpider(lvl);
+      default:
+        return monsters.createWolf(lvl);
+    }
   }
 
   static isMonster(player: PlayerService): player is MonsterService {

@@ -12,6 +12,7 @@ const EVENT_TITLES: Record<ForestEventType, string> = {
   [ForestEventType.OldTrap]: '🪤 Старый капкан',
   [ForestEventType.AbandonedSword]: '⚔️ Заброшенный меч',
   [ForestEventType.GlowingCrystal]: '💎 Мерцающий кристалл',
+  [ForestEventType.OtherPlayer]: '⚔️ Другой игрок'
 };
 
 const EVENT_DESCRIPTIONS: Record<ForestEventType, string> = {
@@ -23,6 +24,7 @@ const EVENT_DESCRIPTIONS: Record<ForestEventType, string> = {
   [ForestEventType.OldTrap]: 'Старый ржавый капкан. Осторожно!',
   [ForestEventType.AbandonedSword]: 'В земле торчит старый меч.',
   [ForestEventType.GlowingCrystal]: 'Редкий мерцающий кристалл!',
+  [ForestEventType.OtherPlayer]: 'Ты встретился с другим игроком'
 };
 
 const ACTION_LABELS: Record<ForestEventAction, string> = {
@@ -36,6 +38,7 @@ const ACTION_LABELS: Record<ForestEventAction, string> = {
   [ForestEventAction.DisarmTrap]: 'Разобрать',
   [ForestEventAction.TakeSword]: 'Взять',
   [ForestEventAction.TakeCrystal]: 'Взять',
+  [ForestEventAction.Attack]: 'Атаковать',
 };
 
 export const ForestPage = () => {
@@ -113,11 +116,12 @@ export const ForestPage = () => {
               )}
             </div>
           )}
-          {lastResult.startBattle ? null : (
+          {lastResult.resolved ? (
             <Button className="mt-2 text-xs" onClick={clearLastResult}>
               OK
             </Button>
-          )}
+          ) : null
+          }
         </div>
       )}
 

@@ -1,5 +1,6 @@
 import type { GameStatus } from '@/game';
 import type { ItemComponent } from '@/item';
+import { Player } from '@/shared';
 import type { MonsterType } from '@/shared/monster';
 
 // Типы событий в лесу
@@ -12,6 +13,7 @@ export enum ForestEventType {
   OldTrap = 'old_trap', // Старый капкан (iron)
   AbandonedSword = 'abandoned_sword', // Заброшенный меч (steel)
   GlowingCrystal = 'glowing_crystal', // Мерцающий кристалл (arcanite)
+  OtherPlayer = 'other_player', // Встреча другого игрока
 }
 
 // Состояния леса
@@ -51,19 +53,22 @@ export enum ForestEventAction {
 
   // Мерцающий кристалл
   TakeCrystal = 'take_crystal', // Взять кристалл
+
+  // Другой игрок
+  Attack = 'attack', // Атаковать другого игрока
 }
 
 // Результат события
 export interface ForestEventResult {
   success: boolean;
+  resolved: boolean;
   message: string;
   reward?: {
+    exp?: number;
     components?: Partial<Record<ItemComponent, number>>;
     gold?: number;
     hp?: number; // Для костра и урона
   };
-  startBattle?: boolean; // Нужно начать бой
-  monsterType?: MonsterType; // Тип монстра для боя
 }
 
 // Текущее событие

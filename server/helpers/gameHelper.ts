@@ -8,19 +8,10 @@ import {
 import { createGame as createGameApi } from '@/api/game';
 import { Types } from 'mongoose';
 import arena from '@/arena';
-import type { ForestService } from '@/arena/ForestService/ForestService';
 import GameService, { type GameOptions } from '@/arena/GameService';
 import { LadderService } from '@/arena/LadderService';
 import { formatMessage } from '@/arena/LogService/utils';
 import { MonsterService } from '@/arena/MonsterService/MonsterService';
-import {
-  createElemental,
-  createGhost,
-  createSkeleton,
-  createSpider,
-  createSpirit,
-  createWolf,
-} from '@/arena/MonsterService/monsters';
 import {
   ForestRewardService,
   LadderRewardService,
@@ -41,6 +32,7 @@ import { DonationHelper } from '@/helpers/donationHelper';
 import { ClanModel } from '@/models/clan';
 import { NotificationService } from '@/services/NotificationService';
 import { bold } from '@/utils/formatString';
+import type { Player } from '@/arena/PlayersService';
 
 class Broadcast {
   chat: string | number;
@@ -248,7 +240,7 @@ export const createPracticeGame = async (player: string) => {
     return;
   }
 
-  const skeleton = createSkeleton(character.lvl);
+  const skeleton = MonsterService.createByType(MonsterType.Skeleton, character.lvl);
 
   game.addPlayers([skeleton]);
 
@@ -272,41 +264,20 @@ export const createPracticeGame = async (player: string) => {
   });
 };
 
-function createMonsterByType(type: MonsterType | undefined, lvl: number) {
-  switch (type) {
-    case MonsterType.Ghost:
-      return createGhost(lvl);
-    case MonsterType.Spirit:
-      return createSpirit(lvl);
-    case MonsterType.Elemental:
-      return createElemental(lvl);
-    case MonsterType.Spider:
-      return createSpider(lvl);
-    default:
-      return createWolf(lvl);
-  }
-}
-
-export async function createForestGame(forest: ForestService) {
+export async function createForestGame(player: Player, enemy: Player) {
   const game = await createGame(
     [],
     {
       round: { timeouts: { [RoundStatus.INIT]: 1000, [RoundStatus.START_ROUND]: 3000 } },
     },
-    forest.player.owner,
+    player.owner,
   );
 
   if (!game) {
     return;
   }
 
-  // Создаём монстра в зависимости от типа события
-  const monsterType = forest.pendingMonsterType;
-  const monster = createMonsterByType(monsterType, forest.player.lvl);
-  game.addPlayers([forest.player, monster]);
-
-  // Сбрасываем тип монстра после создания
-  forest.pendingMonsterType = undefined;
+  game.addPlayers([player, enemy]);
 
   // Создаём клан для монстра
   const clan = new ClanModel({
@@ -326,7 +297,7 @@ export async function createForestGame(forest: ForestService) {
     });
   });
 
-  const reward = new ForestRewardService(game, forest);
+  const reward = new ForestRewardService(game);
 
   game.on('beforeEnd', async ({ draw }) => {
     const rewards = await reward.giveRewards(draw);

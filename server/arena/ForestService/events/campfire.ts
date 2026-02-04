@@ -1,10 +1,11 @@
 import { ForestEventAction } from '@fwo/shared';
-import type { ForestEventHandler } from './types';
+import type { ForestEventHandler } from './getEventHandler';
 
 export const handleCampfireEvent: ForestEventHandler = async (action, forest) => {
   if (action === ForestEventAction.PassBy) {
     return {
       success: true,
+      resolved: true,
       message: 'Ты прошёл мимо костра.',
     };
   }
@@ -15,6 +16,7 @@ export const handleCampfireEvent: ForestEventHandler = async (action, forest) =>
     const healAmount = Math.min(baseHeal, maxHeal); // 50% восстановления
     return {
       success: true,
+      resolved: true,
       message: `Ты отдохнул у костра и восстановил ${healAmount} HP!`,
       reward: {
         hp: healAmount,

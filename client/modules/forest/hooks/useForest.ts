@@ -45,7 +45,7 @@ export const useForest = () => {
   });
 
   useSocketListener('forest:eventTimeout', () => {
-    setLastResult({ success: true, message: 'Ты прошёл мимо' });
+    setLastResult({ success: true, resolved: true, message: 'Ты прошёл мимо' });
   });
 
   useSocketListener('forest:battleStart', (gameID: string) => {

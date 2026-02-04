@@ -9,6 +9,7 @@ const actionsByTypeMap: Record<ForestEventType, ForestEventAction[]> = {
   [ForestEventType.OldTrap]: [ForestEventAction.DisarmTrap, ForestEventAction.PassBy],
   [ForestEventType.AbandonedSword]: [ForestEventAction.TakeSword, ForestEventAction.PassBy],
   [ForestEventType.GlowingCrystal]: [ForestEventAction.TakeCrystal, ForestEventAction.PassBy],
+  [ForestEventType.OtherPlayer]: [ForestEventAction.Attack, ForestEventAction.PassBy],
 };
 
 export const getActionByType = (eventType: ForestEventType) => actionsByTypeMap[eventType];

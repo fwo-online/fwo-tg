@@ -11,7 +11,6 @@ import {
   type ForestStatus,
   type GameResult,
   keys,
-  type MonsterType,
 } from '@fwo/shared';
 import type { HydratedDocument } from 'mongoose';
 import arena from '@/arena';
@@ -19,11 +18,11 @@ import { CharacterService } from '@/arena/CharacterService';
 import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
 import { Player } from '@/arena/PlayersService';
-import { createForestGame } from '@/helpers/gameHelper';
 import { type Forest, type ForestEventData, ForestModel } from '@/models/forest';
 import { getActionByType, getEventHandler, getRandomEvent } from './events';
+import ValidationError from '@/arena/errors/ValidationError';
 
-const CHECK_INTERVAL = 1000; // Проверка каждую секунду
+const CHECK_INTERVAL = 2000; // Проверка каждую секунду
 
 export class ForestService extends EventEmitter<{
   start: [forest: ForestService];
@@ -35,15 +34,14 @@ export class ForestService extends EventEmitter<{
   updateStatus: [status: ForestStatus];
   end: [forest: ForestService, reason: 'death' | 'maxTime' | 'exit', result: GameResult];
 }> {
-  private forest!: HydratedDocument<Forest>;
+  forest!: HydratedDocument<Forest>;
   currentEvent?: ForestEventData;
-  private character!: CharacterService;
+  character!: CharacterService;
   player!: Player;
   private checkInterval?: Timer;
   private nextEventTime = 0; // Время до следующего события в миллисекундах
   currentGame?: GameService;
   timeInForest = 0;
-  pendingMonsterType?: MonsterType;
 
   constructor(private playerId: string) {
     super();
@@ -113,22 +111,11 @@ export class ForestService extends EventEmitter<{
       return;
     }
 
-    // Проверяем, не слишком ли поздно для новых событий (последние 2 минуты)
-    const timeLeft = FOREST_MAX_TIME - this.timeInForest;
-    if (timeLeft < 2 * 60 * 1000) {
-      // Последние 2 минуты - редкие события или вообще нет
-      if (MiscService.chance(80)) {
-        // 80% шанс что событие не произойдёт
-        this.scheduleNextEvent();
-        return;
-      }
-    }
-
     const eventType = getRandomEvent();
     await this.createEvent(eventType);
   }
 
-  private async createEvent(eventType: ForestEventType) {
+  async createEvent(eventType: ForestEventType) {
     console.debug('Forest debug:: creating event', eventType);
 
     this.currentEvent = {
@@ -146,41 +133,36 @@ export class ForestService extends EventEmitter<{
 
   async handleEventAction(action: ForestEventAction): Promise<ForestEventResult> {
     if (!this.currentEvent) {
-      throw new Error('No current event');
+      throw new ValidationError('No current event');
     }
 
     if (this.forest.state !== ForestState.Event) {
-      throw new Error('Not in event state');
+      throw new ValidationError('Not in event state');
     }
 
     if (new Date() > this.currentEvent.expiresAt) {
-      throw new Error('Event expired');
+      throw new ValidationError('Event expired');
     }
 
     const eventType = this.currentEvent.type;
     console.debug('Forest debug:: handling event action', eventType, action);
 
-    const result = await getEventHandler(eventType)(action, this);
+    const handleEvent = getEventHandler(eventType);
+    const result = await handleEvent(action, this);
 
     // Сохраняем результат события
-    this.currentEvent.resolved = true;
-    this.currentEvent.action = action;
-    this.currentEvent.result = JSON.stringify(result);
-    this.forest.events.push(this.currentEvent);
+    this.forest.events.push({
+      ...this.currentEvent,
+      action: action,
+      result: JSON.stringify(result),
+    });
     this.currentEvent = undefined;
 
-    // Применяем награды (если есть и это не бой)
-    if (result.reward && !result.startBattle) {
+    if (result.reward) {
       await this.applyRewards(result.reward);
     }
 
-    if (result.startBattle) {
-      // Сохраняем тип монстра и начинаем бой
-      this.pendingMonsterType = result.monsterType;
-      await this.startBattle();
-    } else {
-      this.forest.state = ForestState.Waiting;
-      await this.forest.save();
+    if (result.resolved) {
       this.scheduleNextEvent();
     }
 
@@ -190,17 +172,11 @@ export class ForestService extends EventEmitter<{
     return result;
   }
 
-  async startBattle() {
+  async startBattle(game: GameService) {
     console.debug('Forest debug:: starting battle');
 
     this.forest.state = ForestState.Battle;
     await this.forest.save();
-
-    const game = await createForestGame(this);
-
-    if (!game) {
-      throw new Error('Failed to create forest game');
-    }
 
     this.currentGame = game;
     this.character.gameId = game.info.id;
@@ -348,6 +324,18 @@ export class ForestService extends EventEmitter<{
   async exitForest() {
     console.debug('Forest debug:: player exit forest');
     await this.endForest('exit');
+  }
+
+  pauseForest() {
+    if (this.checkInterval) {
+      clearInterval(this.checkInterval);
+      this.checkInterval = undefined;
+    }
+  }
+
+  resumeForest() {
+    this.forest.state = ForestState.Waiting;
+    this.scheduleNextEvent();
   }
 
   async endForest(reason: 'death' | 'maxTime' | 'exit') {

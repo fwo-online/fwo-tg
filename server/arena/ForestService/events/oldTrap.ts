@@ -1,12 +1,13 @@
 import { ForestEventAction } from '@fwo/shared';
-import type { ForestEventHandler } from '@/arena/ForestService/events/types';
 import MiscService from '@/arena/MiscService';
 import { floatNumber } from '@/utils/floatNumber';
+import type { ForestEventHandler } from './getEventHandler';
 
 export const handleOldTrapEvent: ForestEventHandler = async (action, forest) => {
   if (action === ForestEventAction.PassBy) {
     return {
       success: true,
+      resolved: true,
       message: 'Ты осторожно обошёл старый капкан.',
     };
   }
@@ -20,6 +21,7 @@ export const handleOldTrapEvent: ForestEventHandler = async (action, forest) => 
 
       return {
         success: false,
+        resolved: true,
         message: `Капкан сработал и нанёс тебе ${damage} урона!`,
         reward: {
           hp: -damage,
@@ -30,6 +32,7 @@ export const handleOldTrapEvent: ForestEventHandler = async (action, forest) => 
     const ironAmount = MiscService.randInt(1, 2);
     return {
       success: true,
+      resolved: true,
       message: `Ты разобрал капкан и получил ${ironAmount} железа!`,
       reward: {
         components: {

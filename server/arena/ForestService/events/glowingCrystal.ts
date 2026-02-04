@@ -1,10 +1,12 @@
 import { ForestEventAction, MonsterType } from '@fwo/shared';
-import type { ForestEventHandler } from './types';
+import type { ForestEventHandler } from './getEventHandler';
+import { startForestBattle } from './startForestBattle';
 
-export const handleGlowingCrystalEvent: ForestEventHandler = async (action) => {
+export const handleGlowingCrystalEvent: ForestEventHandler = async (action, forest) => {
   if (action === ForestEventAction.PassBy) {
     return {
       success: true,
+      resolved: true,
       message: 'Ты прошёл мимо мерцающего кристалла.',
     };
   }
@@ -13,17 +15,18 @@ export const handleGlowingCrystalEvent: ForestEventHandler = async (action) => {
     // Шанс элементаля
     const elementalChance = 0.5;
     if (Math.random() < elementalChance) {
+      await startForestBattle(forest, MonsterType.Elemental);
       return {
         success: false,
+        resolved: false,
         message: 'Кристалл охранял элементаль!',
-        startBattle: true,
-        monsterType: MonsterType.Elemental,
       };
     }
 
     const arcaniteAmount = 1; // Редкий ресурс, всегда 1
     return {
       success: true,
+      resolved: true,
       message: `Ты забрал кристалл и получил ${arcaniteAmount} арканит!`,
       reward: {
         components: {
