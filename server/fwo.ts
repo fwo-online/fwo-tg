@@ -41,3 +41,5 @@ io.use(middleware(io));
 io.on('connection', (socket) => {
   onConnection(io, socket);
 });
+
+await Bun.cron('./helpers/towerHelper.ts', '@daily', 'tower');

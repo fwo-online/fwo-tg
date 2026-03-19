@@ -1,7 +1,6 @@
-import { useGameStore } from '@/modules/game/store/useGameStore';
 import classNames from 'classnames';
-import { useState } from 'react';
-import { useInterval } from 'react-use';
+import { useEffect, useState } from 'react';
+import { useGameStore } from '@/modules/game/store/useGameStore';
 
 const threshold = 1000;
 
@@ -10,9 +9,14 @@ export const GameOrderProgress = () => {
   const ordersStartTime = useGameStore((state) => state.ordersStartTime);
   const [remainTime, setRemainTime] = useState(ordersTime);
 
-  useInterval(() => {
-    setRemainTime(ordersStartTime + ordersTime - Date.now() - threshold);
-  }, 100);
+  useEffect(() => {
+    const interval = setInterval(
+      () => setRemainTime(ordersStartTime + ordersTime - Date.now() - threshold),
+      100,
+    );
+
+    return () => clearInterval(interval);
+  });
 
   return (
     <progress
