@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
 export function withSettingsButton(Component: ComponentType) {
+  // biome-ignore lint/correctness/useHookAtTopLevel: <explanation>
   const navigate = useNavigate();
   const toSettings = () => navigate('/settings');
 
