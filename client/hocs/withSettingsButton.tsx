@@ -1,14 +1,16 @@
 import { settingsButton } from '@tma.js/sdk-react';
 import type { ComponentType } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 
 export function withSettingsButton(Component: ComponentType) {
-  // biome-ignore lint/correctness/useHookAtTopLevel: <explanation>
-  const navigate = useNavigate();
-  const toSettings = () => navigate('/settings');
+  return function WithSettingsButton() {
+    const navigate = useNavigate();
 
-  return () => {
+    const toSettings = useCallback(() => {
+      navigate('/settings');
+    }, [navigate]);
+
     useEffect(() => {
       if (settingsButton.isSupported()) {
         settingsButton.mount();
@@ -20,7 +22,7 @@ export function withSettingsButton(Component: ComponentType) {
           settingsButton.offClick(toSettings);
         };
       }
-    }, []);
+    }, [toSettings]);
 
     return <Component />;
   };
