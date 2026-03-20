@@ -4,7 +4,7 @@ async function dev() {
   try {
     await $`docker-compose up -d --build db`;
 
-    await $`bun --watch ./fwo.ts`.env({ NODE_ENV: 'development' });
+    await $`bun --watch ./fwo.ts`.env({ NODE_ENV: 'development', HOME: process.env.HOME });
 
     process.exit(0);
   } catch (e) {

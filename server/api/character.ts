@@ -1,4 +1,4 @@
-import type { FilterQuery, UpdateQuery } from 'mongoose';
+import type { QueryFilter, UpdateQuery } from 'mongoose';
 import type { Char } from '@/models/character';
 import { CharModel } from '@/models/character';
 import type { Clan } from '@/models/clan';
@@ -6,7 +6,7 @@ import { ItemModel, type Item } from '@/models/item';
 import { ItemWear } from '@fwo/shared';
 import ValidationError from '@/arena/errors/ValidationError';
 
-export async function findCharacter(query: FilterQuery<Char>) {
+export async function findCharacter(query: QueryFilter<Char>) {
   const character = await CharModel.findOne({ ...query, deleted: false })
     .orFail(new Error('Персонаж не найден'))
     .populate<{ items: Item[] }>('items')
@@ -18,7 +18,7 @@ export async function findCharacter(query: FilterQuery<Char>) {
   return char;
 }
 
-export async function hasCharacter(query: FilterQuery<Char>) {
+export async function hasCharacter(query: QueryFilter<Char>) {
   const character = await CharModel.exists({ ...query, deleted: false });
 
   return !!character;

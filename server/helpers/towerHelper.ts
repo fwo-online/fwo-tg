@@ -1,11 +1,8 @@
-import Baker from 'cronbake';
 import arena from '@/arena';
 import { TowerService } from '@/arena/TowerService/TowerService';
 import { broadcast } from '@/helpers/channelHelper';
 import { CharModel } from '@/models/character';
 import { TowerModel } from '@/models/tower';
-
-const baker = Baker.create();
 
 export async function createTower(players: string[]) {
   const lvl = await TowerModel.getMaxLvl();
@@ -45,10 +42,8 @@ const resetTower = async () => {
   }
 };
 
-baker.add({
-  name: 'resetTower',
-  cron: '@at_12:00',
-  callback: async () => {
+export default {
+  scheduled() {
     const [currentTower] = Object.values(arena.towers);
     if (currentTower) {
       currentTower.on('end', resetTower);
@@ -56,6 +51,4 @@ baker.add({
       resetTower();
     }
   },
-});
-
-baker.bakeAll();
+};

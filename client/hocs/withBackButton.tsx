@@ -4,7 +4,7 @@ import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
 export function withBackButton(Component: ComponentType) {
-  return () => {
+  function WithBackButton() {
     const navigate = useNavigate();
 
     const back = useCallback(() => navigate(-1), [navigate]);
@@ -22,5 +22,7 @@ export function withBackButton(Component: ComponentType) {
     }, [back]);
 
     return <Component />;
-  };
+  }
+
+  return WithBackButton;
 }
