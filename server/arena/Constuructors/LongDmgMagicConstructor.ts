@@ -56,7 +56,7 @@ export abstract class LongDmgMagic extends DmgMagic {
     // объект longActions и удалять касты связанные с трупами
     const longArray = game.longActions[this.name];
     if (!longArray) return;
-    // [ { initiator: 2, target: 1, duration: 1, round: 0, proc: 1 } ]
+    // [ { initiator: 2, target: 1, duration: 1, round: 0 } ]
     // выполняем обычный запуск магии
     longArray.forEach((item) => {
       if (game.round.count === item.round) return;
@@ -70,7 +70,6 @@ export abstract class LongDmgMagic extends DmgMagic {
           throw new CastError('NO_TARGET');
         }
         this.createContext(initiator, target, game);
-        this.params.initiator.proc = item.proc;
         this.checkChance();
         this.runLong(initiator, target, game); // вызов кастомного обработчика
         this.calculateExp();
@@ -104,7 +103,6 @@ export abstract class LongDmgMagic extends DmgMagic {
       duration:
         this.params.initiator.stats.val('spellLength') || initiator.stats.val('spellLength'),
       round: this.params.game.round.count || game.round.count,
-      proc: this.params.initiator.proc || initiator.proc,
     });
   }
 

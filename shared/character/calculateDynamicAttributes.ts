@@ -10,6 +10,7 @@ const floatNumber = (str: string | number): number => +Number.parseFloat(str.toS
 const calculateBaseAttributes = (
   { wis, int, con, dex, str }: CharacterAttributes,
   characterClass: CharacterClass,
+  characterLvl: number,
 ) => {
   const hp = floatNumber(6 + con / 3);
   const mp = floatNumber(wis * 1.5);
@@ -17,8 +18,9 @@ const calculateBaseAttributes = (
     characterClass === CharacterClass.Archer
       ? floatNumber(dex + int * 0.5 + con * 0.25)
       : floatNumber(dex + str * 0.5 + con * 0.25);
+  const ap = Math.max(characterLvl, 2);
 
-  return { hp, mp, en };
+  return { hp, mp, en, ap };
 };
 
 const calculatePhysAttributes = (
@@ -61,7 +63,7 @@ const calculateRegenAttributes = ({ wis, int, dex, con }: CharacterAttributes) =
   const mp = floatNumber(wis * 0.4 + int * 0.6);
   const en = floatNumber(con * 0.4 + dex * 0.6);
 
-  return { mp, en, hp: 0 };
+  return { mp, en, hp: 0, ap: 0 };
 };
 
 export const calculateDynamicAttributes = ({
@@ -74,7 +76,7 @@ export const calculateDynamicAttributes = ({
   return {
     phys: calculatePhysAttributes(attributes, charObj.class),
     magic: calculateMagicAttributes(attributes),
-    base: calculateBaseAttributes(attributes, charObj.class),
+    base: calculateBaseAttributes(attributes, charObj.class, charObj.lvl),
     regen: calculateRegenAttributes(attributes),
     attributes,
     heal: calculateHeal(attributes),

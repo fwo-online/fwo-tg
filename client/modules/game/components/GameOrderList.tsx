@@ -22,7 +22,7 @@ const GameOrderListItem: FC<Props & { order: Order }> = ({
   return (
     <div className="flex justify-between items-center text-sm">
       <span className="mt-2">
-        <i>{order.action.displayName}</i> на <b>{target.name}</b> ({order.power}%)
+        <i>{order.action.displayName}</i> на <b>{target.name}</b> ({order.action.ap} AP)
       </span>
       {readonly ? null : (
         <Button className="p-0 h-6 w-6 after:hidden" disabled={isPending} onClick={handleRemove}>

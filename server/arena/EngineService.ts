@@ -30,8 +30,6 @@ function runStage(stages: Stages, game: Game) {
       const initiator = game.players.getById(order.initiator);
       const target = game.players.getById(order.target);
       if (initiator && target) {
-        // FIXME прокидывать проценты в action вместо initiator
-        initiator.setProc(order.proc / 100);
         action.cast(initiator, target, game);
       } else {
         console.log('stage fail (no player):', initiator?.id, target?.id);

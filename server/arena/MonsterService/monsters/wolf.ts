@@ -1,6 +1,7 @@
 import { CharacterClass, ItemWear, MonsterType } from '@fwo/shared';
 import { differenceBy, isString, shuffle } from 'es-toolkit';
 import arena from '@/arena';
+import { ActionService } from '@/arena/ActionService';
 import { attack } from '@/arena/actions';
 import { expToLevel } from '@/arena/CharacterService/utils/calculateLvl';
 import { isSuccessResult } from '@/arena/Constuructors/utils';
@@ -31,7 +32,7 @@ export class WolfAI extends MonsterAI {
   }
 
   private canHowl(game: GameService): boolean {
-    if (this.monster.proc < 50) {
+    if (this.monster.ap < ActionService.getActionPointCost('terrifyingHowl')) {
       return false;
     }
 
@@ -44,9 +45,9 @@ export class WolfAI extends MonsterAI {
       return false;
     }
 
-    const howlOrders = game.orders.ordersList.filter(({ action }) => action === 'terrifyingHowl');
+    const howlOrders = game.orders.getNumberOfOrder(this.monster.id, 'terrifyingHowl');
 
-    if (howlOrders.length >= 2) {
+    if (howlOrders >= 2) {
       return false;
     }
 
@@ -82,7 +83,6 @@ export class WolfAI extends MonsterAI {
         action: 'terrifyingHowl',
         initiator: this.monster.id,
         target: enemies[0].id,
-        proc: 50,
       });
       return true;
     } catch {

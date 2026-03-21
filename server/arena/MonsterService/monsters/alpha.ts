@@ -30,7 +30,6 @@ class AlfaAI extends WolfAI {
           action: 'beastCall',
           initiator: this.monster.id,
           target: this.monster.id,
-          proc: 75,
         });
         return true;
       } catch {

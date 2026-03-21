@@ -39,7 +39,7 @@ export abstract class ProtectConstructor extends AffectableAction implements Aff
   }[];
 
   getProtectChance({ initiator, target } = this.params, protect = 0) {
-    const attack = initiator.stats.val('phys.attack') * initiator.proc;
+    const attack = initiator.stats.val('phys.attack');
     const ratio = attack / protect;
 
     const chance = Math.round(Math.exp(-0.33 * ratio) * 100);

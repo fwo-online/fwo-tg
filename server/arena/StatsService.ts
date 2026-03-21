@@ -30,6 +30,7 @@ export type Stats = CharacterDynamicAttributes & {
   hp: number;
   mp: number;
   en: number;
+  ap: number;
   exp: number;
   static: PhysAttributes;
 };
@@ -122,6 +123,7 @@ export default class StatsService {
       hp: oldData.hp ?? this.defStat.base.hp, // @todo hardcord
       mp: oldData.mp ?? this.defStat.base.mp,
       en: oldData.en ?? this.defStat.base.en,
+      ap: this.defStat.base.ap,
       exp: 0, // кол-во Exp на начало раунда
       static: structuredClone(this.defStat.phys),
     };
@@ -133,6 +135,7 @@ export default class StatsService {
       hp: this.defStat.base.hp,
       mp: this.defStat.base.mp,
       en: this.defStat.base.en,
+      ap: this.defStat.base.ap,
       exp: 0,
       static: structuredClone(this.defStat.phys),
     };

@@ -4,14 +4,12 @@ import OrderError from '@/arena/errors/OrderError';
 import type PlayersService from '@/arena/PlayersService';
 import type { Player } from '@/arena/PlayersService';
 import ValidationError from '@/arena/errors/ValidationError';
-import { isNumber } from 'es-toolkit/compat';
-import { randomBytes } from 'node:crypto';
+import { randomUUIDv7 } from 'bun';
 
 export interface Order {
   initiator: string;
   target: string;
   action: string;
-  proc: number;
 }
 
 export interface OrderOutput extends Order {
@@ -21,7 +19,7 @@ export interface OrderOutput extends Order {
 
 export interface OrderResult {
   orders: OrderOutput[];
-  proc: number;
+  ap: number;
 }
 /**
  * OrderService
@@ -58,59 +56,43 @@ export default class Orders {
    * {
    *  initiator: '123abc',
    *  target: 'abc123',
-   *  proc: 10,
    *  action: 'handsHeal',
    * }
    * @returns заказы игрока
    * @throws {OrderError}
    */
-  orderAction(order: Order): OrderResult {
+  orderAction(order: Order): OrderOutput[] {
     console.log('orderAction >', order.initiator);
 
     const initiator = this.playersService.getById(order.initiator);
     const target = this.playersService.getById(order.target);
 
-    this.validateOrder(initiator, target, order);
+    this.validateInitiator(initiator, order);
+    this.validateTarget(target, order);
+    this.validateAction(initiator, target, order);
+    this.validateOrder(initiator, order);
 
-    initiator.takeProc(order.proc);
+    const apCost = ActionService.getActionPointCost(order.action);
+    initiator.takeAP(apCost);
     console.log('order :::: ', order);
 
     this.ordersList.push({
       ...order,
-      id: randomBytes(8).toString('hex'),
+      id: randomUUIDv7(),
       action: order.action as ActionKey,
     });
 
-    return {
-      orders: this.ordersList.filter(({ initiator }) => initiator === order.initiator),
-      proc: initiator.proc,
-    };
+    return this.ordersList.filter(({ initiator }) => initiator === order.initiator);
   }
 
   /**
    * Валидация заказа
    * @throws {OrderError}
    */
-  private validateOrder(
-    initiator: Player | undefined,
-    target: Player | undefined,
-    order: Order,
-  ): asserts initiator {
+  private validateOrder(initiator: Player, order: Order) {
     // @todo Нужны константы для i18n
-    if (!initiator) {
-      throw new OrderError('Вы не в игре', order);
-    }
-    if (!initiator.alive) {
-      throw new OrderError('Вы мертвы', order);
-    }
     if (this.roundService.status !== RoundStatus.START_ORDERS) {
       throw new OrderError('Раунд ещё не начался', order);
-    }
-    if (!target || !target.alive) {
-      throw new OrderError('Нет цели или цель мертва', order);
-    }
-    if (Number(order.proc) > Number(initiator.proc)) {
-      throw new OrderError('Нет процентов', order);
     }
     if (this.isMaxTargets(order, initiator)) {
       throw new OrderError('Слишком много целей', order);
@@ -118,10 +100,36 @@ export default class Orders {
     if (this.isMaxActionOrders(order)) {
       throw new OrderError('Действие больше нельзя повторить', order);
     }
+  }
+
+  private validateInitiator(
+    initiator: Player | undefined,
+    order: Order,
+  ): asserts initiator is Player {
+    if (!initiator) {
+      throw new OrderError('Вы не в игре', order);
+    }
+    if (!initiator.alive) {
+      throw new OrderError('Вы мертвы', order);
+    }
+  }
+
+  private validateTarget(target: Player | undefined, order: Order): asserts target is Player {
+    if (!target || !target.alive) {
+      throw new OrderError('Нет цели или цель мертва', order);
+    }
+  }
+
+  private validateAction(
+    initiator: Player,
+    target: Player,
+    order: Order,
+  ): asserts order is OrderOutput {
     if (!this.isValidAction(order, initiator)) {
       console.warn(`action spoof: ${order.action} ${initiator.nick}`);
       throw new OrderError(`action spoof: ${order.action}`);
     }
+
     if (!this.isValidOrderType(order, initiator, target)) {
       console.warn(`order type spoof: ${order.action} ${initiator.nick} ${target.nick}`);
       throw new OrderError(`order type spoof: ${order.action}`);
@@ -197,11 +205,6 @@ export default class Orders {
       return false;
     }
 
-    const { power } = ActionService.toObject(order.action);
-    if (isNumber(power) && power !== order.proc) {
-      return false;
-    }
-
     return true;
   }
 
@@ -244,31 +247,31 @@ export default class Orders {
    * Повторяет заказ для игрока
    * @param charId идентификатор персонажа
    */
-  repeatLastOrder(charId: string): OrderResult {
-    if (!this.lastOrders) {
+  repeatLastOrder(charId: string): OrderOutput[] {
+    if (this.checkPlayerOrder(charId) || !this.checkPlayerOrderLastRound(charId)) {
       throw new ValidationError('Нельзя повторить заказ');
     }
 
-    return this.lastOrders.reduce<{ orders: OrderOutput[]; proc: number }>(
-      (prev, order) => {
-        if (order.initiator === charId) {
-          return this.orderAction(order);
-        }
-        return prev;
-      },
-      { orders: [], proc: 100 },
-    );
+    const lastOrders = this.lastOrders ?? [];
+    return lastOrders.reduce<OrderOutput[]>((prev, order) => {
+      if (order.initiator === charId) {
+        return this.orderAction(order);
+      }
+      return prev;
+    }, []);
   }
 
   /**
    * Сбрасывает заказ для игрока
    * @param charId идентификатор персонажа
    */
-  resetOrdersForPlayer(charId: string): OrderResult {
+  resetOrdersForPlayer(charId: string): OrderOutput[] {
     this.ordersList = this.ordersList.filter((o) => o.initiator !== charId);
-    this.playersService.getById(charId)?.setProc(100);
 
-    return { orders: [], proc: 100 };
+    const player = this.playersService.getById(charId);
+    player?.resetAP();
+
+    return [];
   }
 
   removeAction(charId: string, orderId: string) {

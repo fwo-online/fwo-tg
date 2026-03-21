@@ -11,8 +11,8 @@ export type OrderResponse = RPC<{
   actions: Action[];
   magics: Action[];
   skills: Action[];
-  power: number;
   orders: Order[];
+  status: GameStatus;
 }>;
 
 export type ClientToServerMessage = Message<{
@@ -31,7 +31,6 @@ export type ClientToServerMessage = Message<{
   ];
   'game:order': [
     order: {
-      power: number;
       action: string;
       target: string;
     },
@@ -71,8 +70,8 @@ export type ServerToClientMessage = Message<{
       actions: Action[];
       magics: Action[];
       skills: Action[];
-      power: number;
       orders: Order[];
+      status: GameStatus;
       ordersTime: number;
       ordersStartTime: number;
       ready: boolean;

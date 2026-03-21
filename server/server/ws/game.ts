@@ -4,7 +4,7 @@ import config from '@/arena/config';
 import OrderError from '@/arena/errors/OrderError';
 import ValidationError from '@/arena/errors/ValidationError';
 import GameService from '@/arena/GameService';
-import type { OrderResult } from '@/arena/OrderService';
+import type { OrderOutput } from '@/arena/OrderService';
 import type { Player } from '@/arena/PlayersService';
 import { RoundStatus } from '@/arena/RoundService';
 import ActionsHelper from '@/helpers/actionsHelper';
@@ -76,7 +76,7 @@ export const onCreate = (io: Server) => {
         io.to(getRoom(game, player.id)).emit('game:startOrders', {
           ...ActionsHelper.buildActions(player, game),
           orders: [],
-          power: player.proc,
+          status: player.getStatus(),
           ordersTime: config.ordersTime,
           ordersStartTime: game.round.timestamp,
           ready: false,
@@ -129,15 +129,15 @@ export const onConnection = (_io: Server, socket: Socket) => {
       socket.emit('game:startOrders', {
         ...ActionsHelper.buildActions(player, game),
         orders: normalizeGameOrders(game.orders.getPlayerOrders(player.id)),
-        power: player.proc,
         ordersTime: config.ordersTime,
         ordersStartTime: game.round.timestamp,
         ready: game.orders.readyIDs.has(player.id),
+        status: player.getStatus(),
       });
     }
   });
 
-  const handleOrder = (fn: (game: GameService, player: Player) => OrderResult): OrderResponse => {
+  const handleOrder = (fn: (game: GameService, player: Player) => OrderOutput[]): OrderResponse => {
     const game = character.currentGame;
     const player = game?.players.getById(character.id);
     if (!game || !player) {
@@ -145,11 +145,10 @@ export const onConnection = (_io: Server, socket: Socket) => {
     }
 
     try {
-      const { orders, proc } = fn(game, player);
       return {
         error: false,
-        power: proc,
-        orders: normalizeGameOrders(orders),
+        orders: normalizeGameOrders(fn(game, player)),
+        status: player.getStatus(),
         ...ActionsHelper.buildActions(player, game),
       } as const;
     } catch (e) {
@@ -191,7 +190,6 @@ export const onConnection = (_io: Server, socket: Socket) => {
         game.orders.orderAction({
           action: order.action,
           target: order.target,
-          proc: order.power,
           initiator: player.id,
         }),
       ),

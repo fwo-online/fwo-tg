@@ -79,7 +79,7 @@ export default abstract class PhysConstructor extends AffectableAction {
     const hit = MiscService.randFloat(min, max);
 
     const effect = this.applyResists(hit, target);
-    this.status.effect = floatNumber(effect * initiator.proc);
+    this.status.effect = floatNumber(effect);
   }
 
   applyResists(effect: number, target: Player): number {

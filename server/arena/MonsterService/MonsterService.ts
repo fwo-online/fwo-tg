@@ -20,17 +20,12 @@ export abstract class MonsterAI {
 
   abstract makeOrder(game: GameService): void;
 
-  protected orderAttack(
-    game: GameService,
-    target: PlayerService,
-    proc = this.monster.proc,
-  ): boolean {
+  protected orderAttack(game: GameService, target: PlayerService): boolean {
     try {
       game.orders.orderAction({
         action: 'attack',
         initiator: this.monster.id,
         target: target.id,
-        proc,
       });
       return true;
     } catch {

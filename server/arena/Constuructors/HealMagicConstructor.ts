@@ -64,12 +64,11 @@ export abstract class Heal extends AffectableAction {
    */
   effectVal(): number {
     const { initiator, target } = this.params;
-    const proc = initiator.proc ?? 0;
     const { min, max } = initiator.stats.val('heal');
     const maxHp = target.stats.val('base.hp');
     const curHp = target.stats.val('hp');
 
-    const allHeal = MiscService.randFloat(min, max) * proc;
+    const allHeal = MiscService.randFloat(min, max);
     const maxHeal = Math.max(maxHp - curHp, 0); // при вампиризме может быть больше 100% здоровья
     const healEffect = Math.min(maxHeal, allHeal);
 

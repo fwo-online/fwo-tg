@@ -8,7 +8,7 @@ import { useGameStore } from '@/modules/game/store/useGameStore';
 export const useGameActionOrder = (onSuccess: () => void) => {
   const socket = useSocket();
   const setOrders = useGameStore((state) => state.setOrders);
-  const setRemainPower = useGameStore((state) => state.setPower);
+  const setActionPoints = useGameStore((state) => state.setActionPoints);
   const setActions = useGameStore((state) => state.setActions);
   const [isPending, makeRequest] = useRequest();
   const popup = usePopup();
@@ -18,20 +18,19 @@ export const useGameActionOrder = (onSuccess: () => void) => {
       popup.info({ message: res.message });
     } else {
       setOrders(res.orders);
-      setRemainPower(res.power);
+      setActionPoints(res.status.ap, res.status.maxAP);
       setActions(pick(res, ['actions', 'magics', 'skills']));
       onSuccess();
     }
   };
 
-  const handleOrder = async (action: string, target: string, power: number) => {
+  const handleOrder = async (action: string, target: string) => {
     if (!action) {
       return;
     }
 
     makeRequest(async () => {
       const res = await socket.emitWithAck('game:order', {
-        power,
         target,
         action,
       });
