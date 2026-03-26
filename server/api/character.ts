@@ -47,7 +47,7 @@ export async function createCharacter(
 }
 
 export async function updateCharacter(id: string, query: UpdateQuery<Char>) {
-  return CharModel.findByIdAndUpdate(id, query, { new: true }).orFail(
+  return CharModel.findByIdAndUpdate(id, query, { returnDocument: 'after' }).orFail(
     new Error('Персонаж не найден'),
   );
 }
