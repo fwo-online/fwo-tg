@@ -11,6 +11,7 @@ import { middleware, onConnection, onCreate } from '@/server/ws';
 import { registerAffects } from '@/utils/registerAffects';
 import { registerGlobals } from '@/utils/registerGlobals';
 
+console.log(`Starting Bun v${Bun.version} with ${process.env.NODE_ENV} mode`);
 // DB connection
 void connect(async () => {
   console.log('db online');
