@@ -6,38 +6,61 @@ import { bold, brackets } from '@/utils/formatString';
 const MAX_MESSAGE_LENGTH = 2 ** 12;
 export const BOT_CHAT_ID = process.env.BOT_CHATID || -1001483444452;
 
-export async function sendBattleLogMessages(messages: string[], id: number | string = BOT_CHAT_ID) {
-  let messageToSend = '';
+function* chunkMessages(
+  messages: string[],
+  maxLength: number = MAX_MESSAGE_LENGTH,
+): Generator<string> {
+  let current = '';
 
-  for await (const message of messages) {
-    const nextMessageToSend = messageToSend.concat('\n\n', message);
+  for (const message of messages) {
+    const candidate = current ? `${current}\n\n${message}` : message;
 
-    if (messageToSend.length > MAX_MESSAGE_LENGTH) {
-      await broadcast(messageToSend);
-      messageToSend = message;
+    if (candidate.length > maxLength) {
+      if (current) {
+        yield current;
+      }
+      current = message;
     } else {
-      messageToSend = nextMessageToSend;
+      current = candidate;
     }
   }
 
-  if (!messageToSend.trim().length) {
-    return;
+  if (current.trim()) {
+    yield current;
   }
-
-  await broadcast(messageToSend, id);
 }
+
 /**
  * @param data - текст отправляемого сообщения
  * @param id - id чата
  */
-export async function broadcast(data: string, id: number | string = BOT_CHAT_ID): Promise<void> {
+export async function broadcast(
+  data: string | string[],
+  chat: number | string = BOT_CHAT_ID,
+  message_thread_id?: number,
+): Promise<void> {
   try {
-    await bot.api.sendMessage(id, data, { parse_mode: 'Markdown' });
+    if (Array.isArray(data)) {
+      for (const chunk of chunkMessages(data)) {
+        await bot.api.sendMessage(chat, chunk, { parse_mode: 'Markdown', message_thread_id });
+      }
+    } else {
+      await bot.api.sendMessage(chat, data, { parse_mode: 'Markdown', message_thread_id });
+    }
   } catch (e) {
-    console.error(`error: broadcast: ${e.message} for ${id}`);
+    console.error(`error: broadcast: ${e.message} for ${chat}`);
   }
 }
 
+export async function createTopic(name: string) {
+  const topic = await bot.api.createForumTopic(BOT_CHAT_ID, name);
+
+  return topic.message_thread_id;
+}
+
+export async function closeTopic(chat: string | number = BOT_CHAT_ID, thread: number) {
+  return bot.api.closeForumTopic(chat, thread);
+}
 /**
  * Отправка поздравления с новым уровнем в канал
  * @param nickname - Имя персонажа
@@ -49,13 +72,13 @@ export const broadcastLevelUp = async (
   nickname: string,
   newLevel: number,
   prof: string,
-  clanName?: string
+  clanName?: string,
 ) => {
   const profIcon = profsData[prof]?.icon || '⚔️';
   const clanPrefix = clanName ? `${brackets(clanName)} ` : '';
 
   await broadcast(
-    `🎉 Игрок ${clanPrefix}${bold(nickname)} достиг ${bold(`${profIcon}${newLevel} уровня`)}! Поздравляем!`
+    `🎉 Игрок ${clanPrefix}${bold(nickname)} достиг ${bold(`${profIcon}${newLevel} уровня`)}! Поздравляем!`,
   );
 };
 
@@ -107,6 +130,8 @@ export const initGameChannel = async () => {
       return;
     }
 
-    broadcast(`${bold(character.nickname)} пытался найти себе противника, но никто не захотел с ним сражаться.`);
+    broadcast(
+      `${bold(character.nickname)} пытался найти себе противника, но никто не захотел с ним сражаться.`,
+    );
   });
 };

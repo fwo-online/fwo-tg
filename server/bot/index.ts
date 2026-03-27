@@ -137,43 +137,43 @@ bot.on(':refunded_payment', async (ctx) => {
   await character.remove();
 });
 
-const knownIDs = new Set<number>();
+// const knownIDs = new Set<number>();
 
-bot.on('message', async (ctx) => {
-  if (ctx.chat.id.toString() !== BOT_CHAT_ID.toString()) {
-    return;
-  }
+// bot.on('message', async (ctx) => {
+//   if (ctx.chat.id.toString() !== BOT_CHAT_ID.toString()) {
+//     return;
+//   }
 
-  if (knownIDs.has(ctx.from?.id)) {
-    return;
-  }
+//   if (knownIDs.has(ctx.from?.id)) {
+//     return;
+//   }
 
-  const userHasCharacter = await checkUserHasCharacter(ctx.from?.id);
+//   const userHasCharacter = await checkUserHasCharacter(ctx.from?.id);
 
-  if (userHasCharacter) {
-    knownIDs.add(ctx.from?.id);
-    return;
-  }
+//   if (userHasCharacter) {
+//     knownIDs.add(ctx.from?.id);
+//     return;
+//   }
 
-  try {
-    await ctx.deleteMessage();
-  } catch {
-    //
-  }
-  await ctx.reply(
-    `[${ctx.from.first_name}](tg://user?id=${ctx.from.id}), зарегистрируй персонажа в @FightWorldBot, чтобы получить доступ к чату`,
-    {
-      parse_mode: 'MarkdownV2',
-    },
-  );
-});
+//   try {
+//     await ctx.deleteMessage();
+//   } catch {
+//     //
+//   }
+//   await ctx.reply(
+//     `[${ctx.from.first_name}](tg://user?id=${ctx.from.id}), зарегистрируй персонажа в @FightWorldBot, чтобы получить доступ к чату`,
+//     {
+//       parse_mode: 'MarkdownV2',
+//     },
+//   );
+// });
 
 export const initBot = () => {
   return bot.start();
 };
 
 export const checkUserHasCharacter = async (userID: string | number) => {
-  return await hasCharacter({ owner: userID });
+  return await hasCharacter({ owner: userID.toString() });
 };
 
 export const checkUserIsChannelMember = async (userID: string | number) => {
