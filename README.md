@@ -68,4 +68,3 @@ NodeJS реалзиация старой tcl IRC игры Arena [TypeScript/JS]
 ### Help Wanted
 
 Приветствуется помощь с проектом :)
-
