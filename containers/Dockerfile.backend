@@ -1,8 +1,8 @@
-FROM oven/bun:1
+FROM oven/bun:1.3.5
 
 WORKDIR /fwo
 COPY . ./
 RUN bun install
 
 EXPOSE 3000
-CMD ["bun", "run", "start"]
+CMD ["bun", ,"--smol","run", "start"]
