@@ -122,7 +122,7 @@ export const ForestPage = () => {
       {isWaiting && !lastResult && (
         <div className="text-center py-8">
           <div className="text-xl mb-4 -ml-8">{PHASE_LABELS[status.phase]}</div>
-          <p>Ты идёшь по лесу...</p>
+          {status.escaping ? <p>Ты ищещь выход из леса...</p> : <p>Ты идёшь по лесу...</p>}
           <p className="text-xs mt-2">Ожидание события</p>
         </div>
       )}
@@ -160,7 +160,7 @@ export const ForestPage = () => {
       )}
 
       {/* Кнопка выхода */}
-      {isWaiting && (
+      {isWaiting && !status.escaping && (
         <div className="mt-4">
           <Button onClick={handleExit} disabled={loading} className="w-full">
             Выйти из леса

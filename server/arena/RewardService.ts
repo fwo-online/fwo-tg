@@ -8,7 +8,6 @@ import { ItemService } from '@/arena/ItemService';
 import type PlayersService from '@/arena/PlayersService';
 import type { Player } from '@/arena/PlayersService';
 import type { TowerService } from '@/arena/TowerService/TowerService';
-import type { ForestService } from '@/arena/ForestService/ForestService';
 import { getRandomComponent } from '@/utils/getRandomComponent';
 
 export type RewardServiceFactory = (game: GameService) => RewardService;

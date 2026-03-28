@@ -90,6 +90,7 @@ export interface ForestStatus {
   currentEvent?: ForestEvent;
   status: GameStatus;
   phase: ForestPhase;
+  escaping: boolean;
 }
 
 // Константы

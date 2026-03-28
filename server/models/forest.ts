@@ -7,6 +7,7 @@ export interface ForestEventData {
   success?: boolean;
   action?: string; // Действие игрока
   result?: string; // Результат события
+  escaping: boolean;
 
   createdAt: Date;
   expiresAt: Date;
@@ -55,6 +56,7 @@ const forestEventDataSchema = new Schema<ForestEventData>({
   resolved: { type: Boolean, default: false },
   action: { type: String },
   result: { type: String },
+  escaping: { type: Boolean, default: false },
 });
 
 const schema = new Schema<Forest, ForestModel>(

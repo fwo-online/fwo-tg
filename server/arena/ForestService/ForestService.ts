@@ -42,6 +42,7 @@ export class ForestService extends EventEmitter<{
   private checkInterval?: Timer;
   private nextEventTime = 0; // Время до следующего события в миллисекундах
   currentGame?: GameService;
+  escaping = false;
 
   constructor(private playerId: string) {
     super();
@@ -109,13 +110,6 @@ export class ForestService extends EventEmitter<{
   }
 
   private async triggerRandomEvent() {
-    const eventsCount = this.getEventsCount();
-
-    if (eventsCount > FOREST_MAX_EVENTS) {
-      console.debug('Forest debug:: max time reached, ending forest');
-      return this.endForest('maxTime');
-    }
-
     const eventType = getRandomEvent(this.getPhase());
     await this.createEvent(eventType);
   }
@@ -128,6 +122,7 @@ export class ForestService extends EventEmitter<{
       createdAt: new Date(),
       expiresAt: new Date(Date.now() + FOREST_EVENT_TIMEOUT),
       resolved: false,
+      escaping: this.escaping,
     };
     this.forest.state = ForestState.Event;
     await this.forest.save();
@@ -299,10 +294,34 @@ export class ForestService extends EventEmitter<{
     this.nextEventTime -= CHECK_INTERVAL;
 
     if (this.nextEventTime <= 0) {
-      await this.triggerRandomEvent();
+      const isEnd = this.checkEndForest();
+
+      if (!isEnd) {
+        await this.triggerRandomEvent();
+      }
     }
 
     this.emitStatus();
+  }
+
+  private checkEndForest() {
+    const eventsCount = this.getEventsCount();
+    if (eventsCount > FOREST_MAX_EVENTS) {
+      console.debug('Forest debug:: max time reached, ending forest');
+      this.endForest('maxTime');
+      return true;
+    }
+
+    if (this.escaping) {
+      const escapingEvents = this.forest.events.filter(({ escaping }) => escaping);
+
+      if (escapingEvents.length) {
+        this.endForest('exit');
+        return true;
+      }
+    }
+
+    return false;
   }
 
   async tickEvent() {
@@ -326,6 +345,7 @@ export class ForestService extends EventEmitter<{
         : undefined,
       status: this.player.getStatus(),
       phase: this.getPhase(),
+      escaping: this.escaping,
     };
   }
 
@@ -335,7 +355,11 @@ export class ForestService extends EventEmitter<{
 
   async exitForest() {
     console.debug('Forest debug:: player exit forest');
-    await this.endForest('exit');
+    this.escaping = true;
+
+    this.scheduleNextEvent();
+    this.emitStatus();
+    // await this.endForest('exit');
   }
 
   pauseForest() {
