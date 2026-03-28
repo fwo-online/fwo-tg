@@ -373,7 +373,7 @@ export class ForestService extends EventEmitter<{
       gold: this.player.stats.collect.gold,
       components: this.player.stats.collect.components,
       item: this.player.stats.collect.item,
-      winner: reason === 'death',
+      winner: reason !== 'death',
     };
 
     delete arena.forests?.[this.id];
