@@ -24,6 +24,13 @@ class Protect extends ProtectConstructor {
   getTargetProtectors({ target } = this.params) {
     return target.flags.isProtected;
   }
+
+  setTargetProtectors(
+    { target } = this.params,
+    protectors: { initiator: Player; val: number }[],
+  ): void {
+    target.flags.isProtected = protectors;
+  }
 }
 
 export default new Protect();

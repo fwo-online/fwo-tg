@@ -4,6 +4,7 @@ import type { Affect } from '../Constuructors/interfaces/Affect';
 import { LongMagic } from '../Constuructors/LongMagicConstructor';
 import { ProtectConstructor } from '../Constuructors/ProtectConstructor';
 import { OrderType } from '@fwo/shared';
+import type { Player } from '@/arena/PlayersService';
 
 /**
  * Магическая стена
@@ -17,6 +18,13 @@ class MagicWall extends ProtectConstructor {
 
   getTargetProtectors({ target } = this.params) {
     return target.flags.isBehindWall;
+  }
+
+  setTargetProtectors(
+    { target } = this.params,
+    protectors: { initiator: Player; val: number }[],
+  ): void {
+    target.flags.isProtected = protectors;
   }
 
   run(): void {
