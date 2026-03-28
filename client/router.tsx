@@ -22,11 +22,13 @@ import { LobbyArenaPage } from '@/modules/lobby/pages/LobbyArenaPage';
 import { LobbyPage } from '@/modules/lobby/pages/LobbyPage';
 import { LobbyPracticePage } from '@/modules/lobby/pages/LobbyPracticePage';
 import { LobbyTowerPage } from '@/modules/lobby/pages/LobbyTowerPage';
+import { LobbyForestPage } from '@/modules/lobby/pages/LobbyForestPage';
 import { MarketCreatePage } from '@/modules/market/pages/MarketCreatePage';
 import { MarketPage } from '@/modules/market/pages/MarketPage';
 import { ServiceShopPage } from '@/modules/serviceShop/pages/ServiceShopPage';
 import { SettingsPage } from '@/modules/settings/pages/SettingsPage';
 import { TowerPage } from '@/modules/tower/pages/TowerPage';
+import { ForestPage } from '@/modules/forest/pages/ForestPage';
 import { ErrorConnectionPage } from './modules/error/pages/ErrorConnectionPage';
 import { ForgeListPage } from './modules/forge/pages/ForgeListPage';
 import { ForgePage } from './modules/forge/pages/ForgePage';
@@ -61,6 +63,7 @@ export function Router() {
             <Route path="practice" Component={withBackButton(LobbyPracticePage)} />
             <Route path="arena" Component={withBackButton(LobbyArenaPage)} />
             <Route path="tower" Component={withBackButton(LobbyTowerPage)} />
+            <Route path="forest" Component={withBackButton(LobbyForestPage)} />
           </Route>
           <Route path="/settings" Component={withBackButton(SettingsPage)} />
           <Route path="/agora">
@@ -78,6 +81,7 @@ export function Router() {
         </Route>
         <Route path="/game/:gameID" element={<GamePage />} />
         <Route path="/tower/:towerID" element={<TowerPage />} />
+        <Route path="/forest/:forestID" element={<ForestPage />} />
       </Route>
       <Route path="/connection-error" element={<ErrorConnectionPage />} />
       <Route path="/error" element={<ErrorPage />} />

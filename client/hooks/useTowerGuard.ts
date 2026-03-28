@@ -1,8 +1,8 @@
-import { useLocation, useNavigate } from 'react-router';
 import { useCallback } from 'react';
-import { useCharacterStore } from '@/modules/character/store/character';
+import { useLocation, useNavigate } from 'react-router';
 import { useMountEffect } from '@/hooks/useMountEffect';
 import { useSocketListener } from '@/hooks/useSocketListener';
+import { useCharacterStore } from '@/modules/character/store/character';
 
 export const useTowerGuard = () => {
   const navigate = useNavigate();

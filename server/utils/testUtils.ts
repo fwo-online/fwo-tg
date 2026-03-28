@@ -1,16 +1,19 @@
 import { spyOn } from 'bun:test';
-import { CharacterClass, type Item, ItemWear, itemSchema } from '@fwo/shared';
+import { CharacterClass, type Item, ItemWear, itemSchema, ForestState } from '@fwo/shared';
 import type { AnyKeys } from 'mongoose';
 import { parse } from 'valibot';
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
+import { ForestService } from '@/arena/ForestService/ForestService';
 import GameService from '@/arena/GameService';
 import type { HistoryItem } from '@/arena/HistoryService';
 import { formatMessage } from '@/arena/LogService/utils';
 import MiscService from '@/arena/MiscService';
+import { Player } from '@/arena/PlayersService';
 import { type Prof, profsData } from '@/data/profs';
 import { type Char, CharModel } from '@/models/character';
 import { type Clan, ClanModel } from '@/models/clan';
+import { ForestModel } from '@/models/forest';
 import { ItemModel } from '@/models/item';
 
 export default class TestUtils {
@@ -143,5 +146,37 @@ export default class TestUtils {
 
   static restoreRandom() {
     spyOn(global.Math, 'random').mockRestore();
+  }
+
+  static async createForest(charParams?: Partial<Char & { weapon?: { type?: string } }>) {
+    const char = await TestUtils.createCharacter(charParams);
+    const character = arena.characters[char.id];
+
+    const forest = new ForestModel({
+      player: char.id,
+      state: ForestState.Waiting,
+      startedAt: new Date(),
+    });
+
+    const forestService = new ForestService(char.id);
+    // @ts-expect-error - setting private property for testing
+    forestService.forest = forest;
+    // @ts-expect-error - setting private property for testing
+    forestService.character = character;
+    forestService.player = new Player(character);
+
+    // Mock save method to avoid database calls
+    spyOn(forest, 'save').mockImplementation(() => Promise.resolve(forest));
+
+    arena.forests[forest.id] = forestService;
+    character.forestID = forest.id;
+
+    return { char, character, forest, forestService };
+  }
+
+  static cleanupForests() {
+    for (const id of Object.keys(arena.forests)) {
+      delete arena.forests[id];
+    }
   }
 }

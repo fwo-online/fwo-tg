@@ -68,7 +68,7 @@ export abstract class RewardService {
   getStatistics(
     winners: Player[],
     _losers: Player[],
-    levelUpMap: Map<string, { oldLevel: number; newLevel: number; freePoints: number }>
+    levelUpMap: Map<string, { oldLevel: number; newLevel: number; freePoints: number }>,
   ): GameResult[] {
     const winnerIDs = new Set(winners.map(({ id }) => id));
     return this.players.nonBotPlayers.map<GameResult>((player) => {
@@ -93,8 +93,13 @@ export abstract class RewardService {
   /**
    * Метод сохраняющий накопленную статистику игроков в базу и сharObj
    */
-  async saveRewards(): Promise<Map<string, { oldLevel: number; newLevel: number; freePoints: number }>> {
-    const levelUpMap = new Map<string, { oldLevel: number; newLevel: number; freePoints: number }>();
+  async saveRewards(): Promise<
+    Map<string, { oldLevel: number; newLevel: number; freePoints: number }>
+  > {
+    const levelUpMap = new Map<
+      string,
+      { oldLevel: number; newLevel: number; freePoints: number }
+    >();
 
     try {
       await Promise.all(
@@ -111,7 +116,7 @@ export abstract class RewardService {
             levelUpMap.set(player.id, {
               oldLevel: levelUpInfo.oldLvl,
               newLevel: levelUpInfo.newLvl,
-              freePoints: levelUpInfo.freeAdded
+              freePoints: levelUpInfo.freeAdded,
             });
           }
         }),
@@ -215,5 +220,38 @@ export class PracticeRewardService extends RewardService {
         loser.stats.collect.gold = 0;
       }
     });
+  }
+}
+
+export class ForestRewardService extends RewardService {
+  reward: Partial<GameResult>;
+
+  constructor(game: GameService, reward: Partial<GameResult>) {
+    super(game);
+    this.reward = reward;
+  }
+
+  protected giveWinnerRewards(winners: Player[]) {
+    winners.forEach((winner) => {
+      Object.entries(this.reward.components ?? {}).forEach(([component, value]) => {
+        winner.stats.addComponent(component as ItemComponent, value);
+      });
+      if (this.reward.item) {
+        winner.stats.addItem(this.reward.item);
+      }
+
+      if (this.reward.gold) {
+        winner.stats.addGold(this.reward.gold);
+      }
+
+      // Небольшой бонус золота
+      const goldBonus = winner.lvl * 2;
+      winner.stats.addGold(goldBonus);
+    });
+  }
+
+  protected giveLoserRewards(_losers: Player[]) {
+    // В лесу проигравшие не получают наград, они просто умирают
+    noop();
   }
 }
