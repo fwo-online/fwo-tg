@@ -12,11 +12,15 @@ export const handleChestEvent: ForestEventHandler = async (action, forest) => {
     };
   }
 
+  const goldAmount = MiscService.randInt(10, 50) * forest.player.lvl;
+
   if (action === ForestEventAction.OpenChest) {
     // Маленький шанс встретить сильного врага
     const enemyChance = 0.1; // 10% шанс
     if (Math.random() < enemyChance) {
-      await startForestBattle(forest, MonsterType.Spirit);
+      await startForestBattle(forest, MonsterType.Spirit, {
+        gold: goldAmount * 2,
+      });
 
       return {
         success: false,
@@ -26,7 +30,6 @@ export const handleChestEvent: ForestEventHandler = async (action, forest) => {
     }
 
     // Награда по стандартной формуле
-    const goldAmount = MiscService.randInt(10, 50) * forest.player.lvl;
     return {
       success: true,
       resolved: true,

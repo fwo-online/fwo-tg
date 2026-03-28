@@ -80,7 +80,7 @@ class ForestEnemyPlayerHandler {
     }
     session.resolved = true;
 
-    const game = await createForestGame(session.forestA.player, session.forestB.player);
+    const game = await createForestGame(session.forestA.player, session.forestB.player, {});
 
     if (!game) {
       console.error('ForestEnemyPlayerHandler::game not created');

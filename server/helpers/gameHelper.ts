@@ -264,7 +264,7 @@ export const createPracticeGame = async (player: string) => {
   });
 };
 
-export async function createForestGame(player: Player, enemy: Player) {
+export async function createForestGame(player: Player, enemy: Player, result: Partial<GameResult>) {
   const game = await createGame(
     [],
     {
@@ -297,7 +297,7 @@ export async function createForestGame(player: Player, enemy: Player) {
     });
   });
 
-  const reward = new ForestRewardService(game);
+  const reward = new ForestRewardService(game, result);
 
   game.on('beforeEnd', async ({ draw }) => {
     const rewards = await reward.giveRewards(draw);

@@ -1,6 +1,7 @@
-import { ForestEventAction, MonsterType } from '@fwo/shared';
+import { ForestEventAction, ItemComponent, MonsterType } from '@fwo/shared';
 import type { ForestEventHandler } from './getEventHandler';
 import { startForestBattle } from './startForestBattle';
+import MiscService from '@/arena/MiscService';
 
 export const handleWolfEvent: ForestEventHandler = async (action, forest) => {
   if (action === ForestEventAction.Sneak) {
@@ -19,7 +20,9 @@ export const handleWolfEvent: ForestEventHandler = async (action, forest) => {
         message: 'Ты бесшумно прокрался мимо волка!',
       };
     } else {
-      await startForestBattle(forest, MonsterType.Wolf);
+      await startForestBattle(forest, MonsterType.Wolf, {
+        components: { [ItemComponent.Leather]: MiscService.randInt(1, forest.player.lvl) },
+      });
 
       return {
         success: false,

@@ -1,4 +1,4 @@
-import { ForestEventAction, MonsterType } from '@fwo/shared';
+import { ForestEventAction, ItemComponent, MonsterType } from '@fwo/shared';
 import MiscService from '@/arena/MiscService';
 import type { ForestEventHandler } from './getEventHandler';
 import { startForestBattle } from './startForestBattle';
@@ -16,7 +16,13 @@ export const handleAbandonedSwordEvent: ForestEventHandler = async (action, fore
     // Шанс призрака
     const ghostChance = 0.2; // 20% шанс
     if (Math.random() < ghostChance) {
-      await startForestBattle(forest, MonsterType.Ghost);
+      await startForestBattle(forest, MonsterType.Ghost, {
+        components: {
+          [ItemComponent.Iron]: MiscService.randInt(1, 4),
+          [ItemComponent.Steel]: MiscService.randInt(0, 1),
+          [ItemComponent.Wood]: MiscService.randInt(0, 2),
+        },
+      });
 
       return {
         success: false,

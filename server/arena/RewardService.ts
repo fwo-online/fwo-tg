@@ -225,10 +225,25 @@ export class PracticeRewardService extends RewardService {
 }
 
 export class ForestRewardService extends RewardService {
+  reward: Partial<GameResult>;
+
+  constructor(game: GameService, reward: Partial<GameResult>) {
+    super(game);
+    this.reward = reward;
+  }
+
   protected giveWinnerRewards(winners: Player[]) {
     winners.forEach((winner) => {
-      // Награда за победу в лесу - кожа от волка
-      winner.stats.addComponent(ItemComponent.Leather);
+      Object.entries(this.reward.components ?? {}).forEach(([component, value]) => {
+        winner.stats.addComponent(component as ItemComponent, value);
+      });
+      if (this.reward.item) {
+        winner.stats.addItem(this.reward.item);
+      }
+
+      if (this.reward.gold) {
+        winner.stats.addGold(this.reward.gold);
+      }
 
       // Небольшой бонус золота
       const goldBonus = winner.lvl * 2;
