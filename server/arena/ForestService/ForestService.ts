@@ -366,23 +366,24 @@ export class ForestService extends EventEmitter<{
     this.character.forestID = '';
     this.character.lastForest = new Date();
 
-    if (reason === 'death') {
-      this.character.updatePenalty('forest_death', 60);
+    const winner = reason !== 'death';
+
+    if (!winner) {
+      await this.character.updatePenalty('forest_death', 60);
     }
 
-    await this.character.resources.addResources({
-      gold: this.player.stats.collect.gold,
-      exp: this.player.stats.collect.exp,
-      components: this.player.stats.collect.components,
-    });
+    const gold = winner ? this.player.stats.collect.gold : 0;
+    const components = winner ? this.player.stats.collect.components : {};
+    const exp = this.player.stats.collect.exp;
+
+    await this.character.resources.addResources({ gold, exp, components });
 
     const result: GameResult = {
       player: this.player.toObject(),
-      exp: this.player.stats.collect.exp,
-      gold: this.player.stats.collect.gold,
-      components: this.player.stats.collect.components,
-      item: this.player.stats.collect.item,
-      winner: reason !== 'death',
+      exp,
+      gold,
+      components,
+      winner,
     };
 
     delete arena.forests?.[this.id];
