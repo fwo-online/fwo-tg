@@ -157,13 +157,12 @@ describe('ForestService', () => {
   });
 
   describe('endForest', () => {
-    it('should end forest with exit reason', async () => {
-      const { forestService, character } = await TestUtils.createForest();
+    it('should start escaping', async () => {
+      const { forestService } = await TestUtils.createForest();
 
       await forestService.exitForest();
 
-      expect(character.forestID).toBe('');
-      expect(arena.forests[forestService.id]).toBeUndefined();
+      expect(forestService.escaping).toBe(true);
     });
 
     it('should block forest on death', async () => {
