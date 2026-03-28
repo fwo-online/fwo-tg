@@ -70,7 +70,7 @@ class FireBall extends AoeDmgMagic {
   }
 
   aoeEffectVal({ initiator, target, game } = this.params): number {
-    const effect = MiscService.dice(this.aoeEffect) * initiator.proc;
+    const effect = MiscService.dice(this.aoeEffect);
     return this.modifyEffect(effect, { initiator, target, game });
   }
 }

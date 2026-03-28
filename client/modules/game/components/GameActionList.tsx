@@ -16,30 +16,28 @@ export const GameActionList: FC<{
   const actions = useGameStore((state) => state.actions);
   const magics = useGameStore((state) => state.magics);
   const skills = useGameStore((state) => state.skills);
-  const power = useGameStore((state) => state.power);
+  const actionPoints = useGameStore((state) => state.ap);
+  const maxActionPoints = useGameStore((state) => state.maxAP);
 
-  const isActionDisabled = (action: Action) => {
-    if (action.power) {
-      return action.power > power;
-    }
-
-    return false;
-  };
+  const isActionDisabled = (action: Action) => action.ap > actionPoints;
 
   return (
     <Card header="Действия">
-      <div className="flex flex-col gap-1 max-h-[300px] overflow-auto">
-        {power !== 100 && (
+      <div className="mb-2 text-sm">
+        ОД: {actionPoints}/{maxActionPoints}
+      </div>
+      <div className="flex flex-col gap-1 max-h-75 overflow-auto">
+        {actionPoints !== maxActionPoints && (
           <Button onClick={onReady} className={classNames('is-success p-0')} disabled={isPending}>
             Завершить ход
           </Button>
         )}
-        {power === 100 && round > 1 && (
+        {actionPoints === maxActionPoints && round > 1 && (
           <Button className="p-0 mb-4" onClick={onRepeat} disabled={isPending}>
             Повторить
           </Button>
         )}
-        {power !== 100 && (
+        {actionPoints !== maxActionPoints && (
           <Button className="p-0 mb-4" onClick={onReset} disabled={isPending}>
             Очистить
           </Button>
@@ -49,9 +47,12 @@ export const GameActionList: FC<{
             className="p-0 is-primary"
             key={action.name}
             onClick={() => onSelect(action)}
-            disabled={isPending}
+            disabled={isActionDisabled(action) || isPending}
           >
-            {action.displayName}
+            <div className="flex w-full justify-between">
+              <span>{action.displayName}</span>
+              <span>{action.ap} AP</span>
+            </div>
           </Button>
         ))}
         {magics.length ? (
@@ -62,11 +63,13 @@ export const GameActionList: FC<{
                 key={action.name}
                 className="p-0 is-primary"
                 onClick={() => onSelect(action)}
-                disabled={isPending}
+                disabled={isActionDisabled(action) || isPending}
               >
                 <div className="flex w-full justify-between">
                   <span>{action.displayName}</span>
-                  <span>{action.cost}💧</span>
+                  <span>
+                    {action.ap} AP · {action.cost}💧
+                  </span>
                 </div>
               </Button>
             ))}
@@ -85,7 +88,9 @@ export const GameActionList: FC<{
               >
                 <div className="flex w-full justify-between">
                   <span>{action.displayName}</span>
-                  <span>{action.cost}🔋</span>
+                  <span>
+                    {action.ap} AP · {action.cost}🔋
+                  </span>
                 </div>
               </Button>
             ))}

@@ -18,8 +18,10 @@ export type GameResult = {
 export type GameStatus = PublicGameStatus & {
   mp: number;
   en: number;
+  ap: number;
   maxMP: number;
   maxEN: number;
+  maxAP: number;
 };
 
 export type PublicGameStatus = {

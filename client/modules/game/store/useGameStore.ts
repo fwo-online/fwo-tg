@@ -9,7 +9,8 @@ export type GameStoreState = {
   canOrder: boolean;
   status: GameStatus[];
   statusByClan: Partial<Record<string, GameStatus[]>>;
-  power: number;
+  ap: number;
+  maxAP: number;
   actions: Action[];
   magics: Action[];
   skills: Action[];
@@ -21,7 +22,7 @@ export type GameStoreState = {
 export type GameStoreActions = {
   setRound: (round: number) => void;
   setCanOrder: (canOrder: boolean) => void;
-  setPower: (power: number) => void;
+  setActionPoints: (ap: number, maxAP: number) => void;
   setOrders: (orders: GameStoreState['orders']) => void;
   setStatus: (status: GameStatus[]) => void;
   setStatusByClan: (statusByClan: Partial<Record<string, GameStatus[]>>) => void;
@@ -43,7 +44,8 @@ const initialState: GameStoreState = {
   actions: [],
   magics: [],
   skills: [],
-  power: 0,
+  ap: 0,
+  maxAP: 0,
   orders: [],
   status: [],
   statusByClan: {},
@@ -56,7 +58,7 @@ export const useGameStore = create<GameStore>()((set) => ({
   ...initialState,
   setRound: (round) => set({ round }),
   setCanOrder: (canOrder) => set({ canOrder }),
-  setPower: (power) => set({ power }),
+  setActionPoints: (ap, maxAP) => set(() => ({ ap, maxAP })),
   setOrders: (orders) => set({ orders }),
   setStatus: (status) => set({ status }),
   setStatusByClan: (statusByClan) => set({ statusByClan }),

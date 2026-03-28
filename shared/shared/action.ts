@@ -4,5 +4,5 @@ export type Action = {
   orderType: 'all' | 'any' | 'enemy' | 'self' | 'team' | 'teamExceptSelf';
   cost?: number;
   costType?: 'mp' | 'en';
-  power?: number;
+  ap: number;
 };

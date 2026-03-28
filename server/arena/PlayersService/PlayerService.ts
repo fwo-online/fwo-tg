@@ -46,7 +46,6 @@ export default class PlayerService {
   passiveSkills: Record<string, number>;
   favoriteMagics: string[];
   alive: boolean;
-  proc: number;
   weapon: PlayerWeapon;
   offHand: PlayerOffHand;
   isBot: boolean;
@@ -68,11 +67,10 @@ export default class PlayerService {
       castChance: 0,
     }; // Объект модификаторов
     this.resists = {}; // Объект резистов
-    this.skills = params.skills || {}; // Обькт доступных скилов
-    this.magics = params.magics || {}; // объект изученых магий
+    this.skills = params.skills || {}; // Объект доступных скиллов
+    this.magics = params.magics || {}; // объект изученных магий
     this.passiveSkills = params.passiveSkills || {};
     this.alive = true;
-    this.proc = 100;
     this.weapon = new PlayerWeapon(params.inventory.getEquippedWeapon());
     this.offHand = new PlayerOffHand(params.inventory.getEquippedOffHand());
     this.isBot = isBot;
@@ -108,9 +106,11 @@ export default class PlayerService {
       hp: this.stats.val('hp'),
       mp: this.stats.val('mp'),
       en: this.stats.val('en'),
+      ap: this.stats.val('ap'),
       maxHP: this.stats.val('base.hp'),
       maxMP: this.stats.val('base.mp'),
       maxEN: this.stats.val('base.en'),
+      maxAP: this.stats.val('base.ap'),
     };
   }
 
@@ -139,21 +139,24 @@ export default class PlayerService {
     this.flags.isKilledBy = '';
   }
 
-  setProc(proc: number) {
-    this.proc = proc;
+  get ap() {
+    return this.stats.val('ap');
   }
 
   /** @throws {ValidationError} */
-  takeProc(proc: number) {
-    if (proc > this.proc) {
-      throw new ValidationError('Недостаточно процентов');
+  takeAP(ap: number) {
+    if (ap > this.ap) {
+      throw new ValidationError('Недостаточно очков действия');
     }
 
-    this.proc -= proc;
+    this.stats.down('ap', ap);
+  }
+
+  resetAP() {
+    this.stats.set('ap', this.stats.val('base.ap'));
   }
 
   reset() {
-    this.proc = 100;
     this.stats.refresh();
     this.flags.refresh();
   }

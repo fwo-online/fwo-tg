@@ -6,6 +6,7 @@ import type { SuccessArgs } from '@/arena/Constuructors/types';
 import type GameService from '@/arena/GameService';
 import type { Player } from '@/arena/PlayersService';
 import type { Affect } from '../Constuructors/interfaces/Affect';
+import type { BaseActionParams } from '@/arena/Constuructors/BaseAction';
 
 /**
  * Магический доспех
@@ -29,6 +30,8 @@ const params = {
 } satisfies MagicArgs;
 
 class LightShield extends DmgMagic {
+  modifier = 0;
+
   cast(initiator: Player, target: Player, game: GameService): void {
     this.createContext(initiator, target, game);
     this.run();
@@ -40,17 +43,22 @@ class LightShield extends DmgMagic {
     const { target } = this.params;
     target.stats.down('hp', this.effectVal());
   }
+
+  override modifyEffect(effect: number, params?: BaseActionParams): number {
+    const modifiedEffect = super.modifyEffect(effect, params);
+    return modifiedEffect * this.modifier * 0.01;
+  }
 }
 
 class LightShieldBuff extends LongMagic implements Affect {
   run() {
     const { target, initiator } = this.params;
-    target.flags.isLightShielded.push({ initiator, val: initiator.proc });
+    target.flags.isLightShielded.push({ initiator, val: 1 });
   }
 
   runLong(): void {
     const { target, initiator } = this.params;
-    target.flags.isLightShielded.push({ initiator, val: initiator.proc });
+    target.flags.isLightShielded.push({ initiator, val: 1 });
   }
 
   postAffect: Affect['postAffect'] = ({
@@ -59,8 +67,8 @@ class LightShieldBuff extends LongMagic implements Affect {
   }) => {
     const results: SuccessArgs[] = [];
 
-    target.flags.isLightShielded.forEach(({ initiator: shielder, val }) => {
-      shielder.setProc(effect * val * 0.01);
+    target.flags.isLightShielded.forEach(({ initiator: shielder }) => {
+      lightShield.modifier = effect;
       lightShield.cast(shielder, initiator, game);
       results.push(lightShield.getSuccessResult({ initiator: shielder, target: initiator, game }));
     });

@@ -18,7 +18,7 @@ export function useGameState() {
 
   const navigate = useNavigate();
   const setOrders = useGameStore((state) => state.setOrders);
-  const setRemainPower = useGameStore((state) => state.setPower);
+  const setActionPoints = useGameStore((state) => state.setActionPoints);
   const setOrdersTime = useGameStore((state) => state.setOrdersTime);
   const setActions = useGameStore((state) => state.setActions);
   const setCanOrder = useGameStore((state) => state.setCanOrder);
@@ -52,7 +52,7 @@ export function useGameState() {
       magics,
       skills,
       orders,
-      power,
+      status,
       ordersTime,
       ordersStartTime,
       ready,
@@ -60,11 +60,11 @@ export function useGameState() {
       setActions({ actions, magics, skills });
       setCanOrder(true);
       setOrders(orders);
-      setRemainPower(power);
+      setActionPoints(status.ap, status.maxAP);
       setOrdersTime(ordersTime, ordersStartTime);
       setReady(ready);
     },
-    [setActions, setCanOrder, setRemainPower, setOrders, setOrdersTime, setReady],
+    [setActionPoints, setActions, setCanOrder, setOrders, setOrdersTime, setReady],
   );
 
   const handleEndOrders = useCallback(() => {

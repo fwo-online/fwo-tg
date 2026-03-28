@@ -55,7 +55,7 @@ class ShieldBlock extends Skill {
     if (target.flags.isShielded) {
       const str = initiator.stats.val('attributes.str');
       const con = initiator.stats.val('attributes.con');
-      const value = (0.7 * str + 0.3 * con) * initiator.proc;
+      const value = 0.7 * str + 0.3 * con;
 
       if (value < target.flags.isShielded) {
         target.stats.down('magic.defence', value);

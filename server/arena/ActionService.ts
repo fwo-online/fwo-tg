@@ -6,6 +6,16 @@ import type { Action } from '@fwo/shared';
 export type ActionKey = keyof typeof arena.actions;
 
 export class ActionService {
+  static getActionPointCost(actionKey: ActionKey) {
+    if (this.isBaseAction(actionKey)) {
+      return 1;
+    }
+
+    const action = arena.actions[actionKey];
+
+    return action.lvl ?? 1;
+  }
+
   static isAction(maybeAction: string): maybeAction is ActionKey {
     return maybeAction in arena.actions;
   }
@@ -33,6 +43,7 @@ export class ActionService {
       name: action.name,
       displayName: action.displayName,
       orderType: action.orderType,
+      ap: ActionService.getActionPointCost(actionKey),
     };
 
     if ('cost' in action) {
@@ -41,10 +52,6 @@ export class ActionService {
 
     if ('costType' in action) {
       actionObject.costType = action.costType;
-    }
-
-    if ('proc' in action) {
-      actionObject.power = action.proc;
     }
 
     return actionObject;

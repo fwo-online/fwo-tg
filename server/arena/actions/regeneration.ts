@@ -30,10 +30,10 @@ class Regeneration extends AffectableAction {
 
   run(initiator: Player, _target: Player, _game: Game) {
     if (initiator.prof === 'l' || initiator.prof === 'w') {
-      const val = initiator.stats.val('regen.en') * initiator.proc; // размер восстан
+      const val = initiator.stats.val('regen.en'); // размер восстан
       initiator.stats.up('en', Math.min(val, initiator.stats.val('base.en')));
     } else {
-      const val = initiator.stats.val('regen.mp') * initiator.proc; // размер восстан
+      const val = initiator.stats.val('regen.mp'); // размер восстан
       initiator.stats.up('mp', Math.min(val, initiator.stats.val('base.mp')));
     }
   }

@@ -17,17 +17,14 @@ class SecondLife extends CommonMagic {
       orderType: 'team',
       aoeType: 'target',
       magType: 'good',
-      chance: [
-        '1d60+30',
-        '1d70+40',
-        '1d80+50'], //  effect: ['1d4+2', '1d3+3', '1d2+4'],
+      chance: ['1d60+30', '1d70+40', '1d80+50'], //  effect: ['1d4+2', '1d3+3', '1d2+4'],
       profList: ['p'],
       effect: [],
     });
   }
 
   getEffectExp(effect: number, baseExp = 0) {
-    return Math.round(effect * baseExp * this.params.initiator.proc);
+    return Math.round(effect * baseExp);
   }
 
   run() {

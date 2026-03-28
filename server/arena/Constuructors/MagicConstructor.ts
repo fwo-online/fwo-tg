@@ -100,7 +100,7 @@ export abstract class Magic extends AffectableAction {
   }
 
   getEffectExp(_effect: number, baseExp = 0) {
-    return Math.round(baseExp * this.params.initiator.proc);
+    return Math.round(baseExp);
   }
 
   /**
@@ -116,7 +116,7 @@ export abstract class Magic extends AffectableAction {
 
   getEffectVal({ initiator } = this.params): number {
     const initiatorMagicLvl = initiator.getMagicLevel(this.name);
-    return MiscService.dice(this.effect[initiatorMagicLvl - 1]) * initiator.proc;
+    return MiscService.dice(this.effect[initiatorMagicLvl - 1]);
   }
 
   modifyEffect(effect: number, { initiator } = this.params) {
@@ -183,9 +183,9 @@ export abstract class Magic extends AffectableAction {
       result *= 1 - Math.exp(-1 * ratio);
     }
     console.debug(
-      `${this.name} cast chance:: ${result * initiator.proc} (${result}), chance ${chance}, ratio (dmg): ${initiator.stats.val('magic.attack') / target.stats.val('magic.defence')} initiator:: ${initiator.nick}, target:: ${target.nick}, proc:: ${initiator.proc}`,
+      `${this.name} cast chance:: ${result}, chance ${chance}, ratio (dmg): ${initiator.stats.val('magic.attack') / target.stats.val('magic.defence')} initiator:: ${initiator.nick}, target:: ${target.nick}`,
     );
-    return result * initiator.proc;
+    return result;
   }
 
   /**

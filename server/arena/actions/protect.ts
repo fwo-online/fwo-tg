@@ -16,7 +16,7 @@ class Protect extends ProtectConstructor {
   actionType: ActionType = 'protect';
 
   run(initiator: Player, target: Player, _game: Game) {
-    const protectValue = initiator.stats.val('phys.defence') * initiator.proc;
+    const protectValue = initiator.stats.val('phys.defence');
     target.stats.up('phys.defence', protectValue);
     target.flags.isProtected.push({ initiator, val: protectValue });
   }
