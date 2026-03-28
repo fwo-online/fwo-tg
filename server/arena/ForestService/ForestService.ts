@@ -1,12 +1,13 @@
 import EventEmitter from 'node:events';
 import {
+  FOREST_EVENT_INTERVALS,
+  FOREST_EVENT_PER_PHASE,
   FOREST_EVENT_TIMEOUT,
-  FOREST_MAX_EVENT_INTERVAL,
-  FOREST_MAX_TIME,
-  FOREST_MIN_EVENT_INTERVAL,
+  FOREST_MAX_EVENTS,
   ForestEventAction,
   type ForestEventResult,
   type ForestEventType,
+  ForestPhase,
   ForestState,
   type ForestStatus,
   type GameResult,
@@ -41,7 +42,6 @@ export class ForestService extends EventEmitter<{
   private checkInterval?: Timer;
   private nextEventTime = 0; // Время до следующего события в миллисекундах
   currentGame?: GameService;
-  timeInForest = 0;
 
   constructor(private playerId: string) {
     super();
@@ -51,6 +51,22 @@ export class ForestService extends EventEmitter<{
 
   get id() {
     return this.forest.id;
+  }
+
+  private getPhase(): ForestPhase {
+    const eventsCount = this.getEventsCount();
+    if (eventsCount < FOREST_EVENT_PER_PHASE) {
+      return ForestPhase.Edge;
+    }
+    if (eventsCount < FOREST_EVENT_PER_PHASE * 2) {
+      return ForestPhase.Wilds;
+    }
+
+    return ForestPhase.Deep;
+  }
+
+  private getEventsCount() {
+    return this.forest.events.length;
   }
 
   // get player() {
@@ -85,32 +101,22 @@ export class ForestService extends EventEmitter<{
   }
 
   private scheduleNextEvent() {
-    // Рандомное время до следующего события (5-30 секунд)
-    const baseInterval = MiscService.randInt(FOREST_MIN_EVENT_INTERVAL, FOREST_MAX_EVENT_INTERVAL);
+    const phase = this.getPhase();
+    const interval = FOREST_EVENT_INTERVALS[phase];
+    this.nextEventTime = MiscService.randInt(interval.min, interval.max);
 
-    // Увеличиваем интервал по мере прохождения времени (события становятся реже)
-    const timeProgress = this.timeInForest / FOREST_MAX_TIME;
-    const multiplier = 1 + timeProgress * 2; // От 1x до 3x
-    this.nextEventTime = baseInterval * multiplier;
-
-    console.debug(
-      'Forest debug:: next event in',
-      `${(this.nextEventTime / 1000).toFixed()}`,
-      'seconds',
-      'progress:',
-      `${(timeProgress * 100).toFixed(1)}%`,
-    );
+    console.debug(`Forest debug:: next event in ${(this.nextEventTime / 1000).toFixed()} seconds`);
   }
 
   private async triggerRandomEvent() {
-    // Проверяем, не истекло ли максимальное время
-    if (this.timeInForest >= FOREST_MAX_TIME) {
+    const eventsCount = this.getEventsCount();
+
+    if (eventsCount > FOREST_MAX_EVENTS) {
       console.debug('Forest debug:: max time reached, ending forest');
-      await this.endForest('maxTime');
-      return;
+      return this.endForest('maxTime');
     }
 
-    const eventType = getRandomEvent(this.timeInForest / FOREST_MAX_TIME);
+    const eventType = getRandomEvent(this.getPhase());
     await this.createEvent(eventType);
   }
 
@@ -274,33 +280,36 @@ export class ForestService extends EventEmitter<{
   }
 
   private initHandlers() {
-    this.checkInterval = setInterval(async () => {
-      if (this.forest.state === ForestState.Waiting) {
-        // Увеличиваем время в лесу
-        this.timeInForest += CHECK_INTERVAL;
-        await this.forest.save();
+    this.checkInterval = setInterval(() => this.tick(), CHECK_INTERVAL);
+  }
 
-        // Уменьшаем время до следующего события
-        this.nextEventTime -= CHECK_INTERVAL;
+  tick() {
+    switch (this.forest.state) {
+      case ForestState.Waiting:
+        this.tickWaiting();
+        break;
+      case ForestState.Event:
+        this.tickEvent();
+        break;
+    }
+  }
 
-        if (this.nextEventTime <= 0) {
-          await this.triggerRandomEvent();
-        }
+  async tickWaiting() {
+    // Уменьшаем время до следующего события
+    this.nextEventTime -= CHECK_INTERVAL;
 
-        // Проверяем максимальное время
-        if (this.timeInForest >= FOREST_MAX_TIME) {
-          await this.endForest('maxTime');
-          return;
-        }
+    if (this.nextEventTime <= 0) {
+      await this.triggerRandomEvent();
+    }
 
-        this.emitStatus();
-      } else if (this.forest.state === ForestState.Event) {
-        // Проверяем timeout события
-        if (this.currentEvent && new Date() > this.currentEvent.expiresAt) {
-          await this.handleEventTimeout();
-        }
-      }
-    }, CHECK_INTERVAL);
+    this.emitStatus();
+  }
+
+  async tickEvent() {
+    // Проверяем timeout события
+    if (this.currentEvent && new Date() > this.currentEvent.expiresAt) {
+      await this.handleEventTimeout();
+    }
   }
 
   getStatus(): ForestStatus {
@@ -316,7 +325,7 @@ export class ForestService extends EventEmitter<{
           }
         : undefined,
       status: this.player.getStatus(),
-      timeInForest: this.timeInForest,
+      phase: this.getPhase(),
     };
   }
 

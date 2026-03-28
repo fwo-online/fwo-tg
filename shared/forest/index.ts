@@ -1,6 +1,12 @@
 import type { GameStatus } from '@/game';
 import type { ItemComponent } from '@/item';
 
+export enum ForestPhase {
+  Edge = 'edge',
+  Wilds = 'wilds',
+  Deep = 'deep',
+}
+
 // Типы событий в лесу
 export enum ForestEventType {
   Wolf = 'wolf', // Встреча с волком
@@ -83,12 +89,18 @@ export interface ForestStatus {
   state: ForestState;
   currentEvent?: ForestEvent;
   status: GameStatus;
-  timeInForest: number; // Время в лесу в секундах
+  phase: ForestPhase;
 }
 
 // Константы
 export const FOREST_MAX_TIME = 15 * 60 * 1000; // 15 минут в миллисекундах
 export const FOREST_EVENT_TIMEOUT = 30 * 1000; // 30 секунд на ответ
-export const FOREST_MIN_EVENT_INTERVAL = 5 * 1000; // Минимум 5 секунд между событиями
-export const FOREST_MAX_EVENT_INTERVAL = 30 * 1000; // Максимум 30 секунд между событиями
 export const FOREST_DEATH_BLOCK_TIME = 4 * 60 * 60 * 1000; // 4 часа блокировки после смерти
+export const FOREST_EVENT_PER_PHASE = 4;
+export const FOREST_MAX_EVENTS = FOREST_EVENT_PER_PHASE * 3;
+
+export const FOREST_EVENT_INTERVALS = {
+  [ForestPhase.Edge]: { min: 12000, max: 22000 },
+  [ForestPhase.Wilds]: { min: 10000, max: 18000 },
+  [ForestPhase.Deep]: { min: 8000, max: 15000 },
+};

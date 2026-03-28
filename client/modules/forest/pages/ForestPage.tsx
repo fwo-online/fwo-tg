@@ -1,4 +1,4 @@
-import { FOREST_MAX_TIME, ForestEventAction, ForestEventType } from '@fwo/shared';
+import { FOREST_MAX_TIME, ForestEventAction, ForestEventType, ForestPhase } from '@fwo/shared';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { useForest } from '@/modules/forest/hooks/useForest';
@@ -12,7 +12,7 @@ const EVENT_TITLES: Record<ForestEventType, string> = {
   [ForestEventType.OldTrap]: '🪤 Старый капкан',
   [ForestEventType.AbandonedSword]: '⚔️ Заброшенный меч',
   [ForestEventType.GlowingCrystal]: '💎 Мерцающий кристалл',
-  [ForestEventType.OtherPlayer]: '⚔️ Другой игрок'
+  [ForestEventType.OtherPlayer]: '⚔️ Другой игрок',
 };
 
 const EVENT_DESCRIPTIONS: Record<ForestEventType, string> = {
@@ -24,7 +24,7 @@ const EVENT_DESCRIPTIONS: Record<ForestEventType, string> = {
   [ForestEventType.OldTrap]: 'Старый ржавый капкан. Осторожно!',
   [ForestEventType.AbandonedSword]: 'В земле торчит старый меч.',
   [ForestEventType.GlowingCrystal]: 'Редкий мерцающий кристалл!',
-  [ForestEventType.OtherPlayer]: 'Ты встретился с другим игроком'
+  [ForestEventType.OtherPlayer]: 'Ты встретился с другим игроком',
 };
 
 const ACTION_LABELS: Record<ForestEventAction, string> = {
@@ -39,6 +39,12 @@ const ACTION_LABELS: Record<ForestEventAction, string> = {
   [ForestEventAction.TakeSword]: 'Взять',
   [ForestEventAction.TakeCrystal]: 'Взять',
   [ForestEventAction.Attack]: 'Атаковать',
+};
+
+const PHASE_LABELS: Record<ForestPhase, string> = {
+  [ForestPhase.Edge]: '🌿 Опушка',
+  [ForestPhase.Wilds]: '🌲 Чаща',
+  [ForestPhase.Deep]: '🌑 Глушь',
 };
 
 export const ForestPage = () => {
@@ -61,20 +67,8 @@ export const ForestPage = () => {
     );
   }
 
-  const timeProgress = status.timeInForest / FOREST_MAX_TIME;
-  const timeLeftMinutes = Math.ceil((FOREST_MAX_TIME - status.timeInForest) / 60000);
-
   return (
     <Card header="Лес" className="m-4">
-      {/* Прогресс времени */}
-      <div className="mb-4">
-        <div className="flex justify-between text-xs mb-1">
-          <span>Время в лесу</span>
-          <span>{timeLeftMinutes} мин. осталось</span>
-        </div>
-        <progress className="nes-progress h-4" value={status.timeInForest} max={FOREST_MAX_TIME} />
-      </div>
-
       {/* Статус игрока */}
       <div className="mb-4 p-2 border-2 border-dashed">
         <div className="flex justify-between items-center">
@@ -120,15 +114,14 @@ export const ForestPage = () => {
             <Button className="mt-2 text-xs" onClick={clearLastResult}>
               OK
             </Button>
-          ) : null
-          }
+          ) : null}
         </div>
       )}
 
       {/* Состояние ожидания */}
       {isWaiting && !lastResult && (
         <div className="text-center py-8">
-          <div className="text-4xl mb-4">🌲</div>
+          <div className="text-xl mb-4 -ml-8">{PHASE_LABELS[status.phase]}</div>
           <p>Ты идёшь по лесу...</p>
           <p className="text-xs mt-2">Ожидание события</p>
         </div>
@@ -137,7 +130,7 @@ export const ForestPage = () => {
       {/* Событие */}
       {isEvent && status.currentEvent && (
         <div className="text-center">
-          <h3 className="text-lg mb-2">{EVENT_TITLES[status.currentEvent.type]}</h3>
+          <h3 className="text-lg mb-2 -ml-8">{EVENT_TITLES[status.currentEvent.type]}</h3>
           <p className="text-sm mb-4">{EVENT_DESCRIPTIONS[status.currentEvent.type]}</p>
 
           {/* Таймер события */}
