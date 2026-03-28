@@ -1,26 +1,24 @@
-import type { FC, PropsWithChildren, ReactNode } from 'react';
-import { type DialogProps, Drawer } from 'vaul';
+import type { FC, PropsWithChildren, ReactElement } from 'react';
+import { Drawer, type DrawerRootProps } from '@base-ui/react';
 
-import './Modal.css';
+import styles from './Modal.module.css';
 
-export const ModalComponent: FC<PropsWithChildren<DialogProps & { trigger: ReactNode }>> = ({
+export const Modal: FC<PropsWithChildren<DrawerRootProps & { trigger: ReactElement }>> = ({
   trigger,
   children,
   ...dialogProps
 }) => {
   return (
-    <Drawer.Root repositionInputs={false} {...dialogProps}>
-      <Drawer.Trigger asChild>{trigger}</Drawer.Trigger>
+    <Drawer.Root swipeDirection="down" {...dialogProps}>
+      <Drawer.Trigger className={styles.button} render={trigger}></Drawer.Trigger>
       <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 z-50 bg-black/50" />
-        <Drawer.Content className="fixed -bottom-2 z-50 w-full">{children}</Drawer.Content>
+        <Drawer.Backdrop className={styles.backdrop} />
+        <Drawer.Viewport className={styles.viewport}>
+          <Drawer.Popup className={styles.popup}>
+            <Drawer.Content className={styles.content}>{children}</Drawer.Content>
+          </Drawer.Popup>
+        </Drawer.Viewport>
       </Drawer.Portal>
     </Drawer.Root>
   );
 };
-
-export const Modal = ModalComponent as typeof ModalComponent & {
-  Handle: typeof Drawer.Handle;
-};
-
-Modal.Handle = Drawer.Handle;

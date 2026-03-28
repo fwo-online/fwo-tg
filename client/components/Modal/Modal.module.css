@@ -1,0 +1,45 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: rgb(0 0 0 / 0.4);
+  opacity: calc(1 - var(--drawer-swipe-progress, 0));
+  transition: opacity 200ms ease;
+}
+
+.backdrop[data-starting-style],
+.backdrop[data-ending-style] {
+  opacity: 0;
+}
+
+.backdrop[data-swiping] {
+  transition: none;
+}
+
+.viewport {
+  position: fixed;
+  inset: 0;
+  z-index: 11;
+  display: flex;
+  align-items: flex-end;
+}
+
+.popup {
+  width: 100%;
+  max-height: 90dvh;
+  padding-top: 10px;
+  overflow: auto;
+  touch-action: pan-y;
+  transform: translateY(var(--drawer-swipe-movement-y, 0px));
+  transition: transform 200ms ease;
+  will-change: transform;
+}
+
+.popup[data-starting-style],
+.popup[data-ending-style] {
+  transform: translateY(100%);
+}
+
+.popup[data-swiping] {
+  transition: none;
+}

@@ -27,7 +27,6 @@ export function GameOrderModal() {
     <Modal
       open={canOrder && !isReady && open}
       onOpenChange={setOpen}
-      handleOnly
       trigger={
         <Button
           className="is-primary"
@@ -39,7 +38,6 @@ export function GameOrderModal() {
       }
     >
       <Card>
-        <Modal.Handle />
         <div className="flex flex-col gap-2">
           <Card header="Выбранные действия">
             <GameOrderList isPending={isPending} onRemove={handleRemove} />
