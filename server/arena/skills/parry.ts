@@ -8,6 +8,7 @@ const parryableWeaponTypes = [
   'thrust', // колющее
   'cut', // режущее
   'chop', // рубящее
+  'stun', // оглушающее
 ];
 
 /**
@@ -18,7 +19,7 @@ class Parry extends Skill implements Affect {
     super({
       name: 'parry',
       displayName: '🤺 Парирование',
-      desc: 'Шанс спарировать одну атаку. На 6 уровне обучения парирование будет отбивать несколько атак.',
+      desc: 'Шанс спарировать атаку (у вас и у вашего врага должно быть оружие ближнего боя).',
       cost: [8, 9, 10, 11, 12, 13],
       proc: 10,
       baseExp: 8,
