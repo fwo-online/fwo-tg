@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from 'react';
+import type { FC, ReactElement } from 'react';
 import type { Skill } from '@fwo/shared';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
@@ -8,7 +8,7 @@ import { Modal } from '@/components/Modal';
 export const CharacterSkillModal: FC<{
   skill: Skill;
   loading?: boolean;
-  trigger?: ReactNode;
+  trigger?: ReactElement;
   onLearn: (skill: Skill) => void;
 }> = ({ skill, loading, trigger, onLearn }) => {
   const character = useCharacter();

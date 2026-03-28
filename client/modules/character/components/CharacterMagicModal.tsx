@@ -2,9 +2,9 @@ import { Card } from '@/components/Card';
 import { Description } from '@/components/Description';
 import { Modal } from '@/components/Modal';
 import type { Magic } from '@fwo/shared';
-import type { FC, ReactNode } from 'react';
+import type { FC, ReactElement } from 'react';
 
-export const CharacterMagicModal: FC<{ magic: Magic; trigger?: ReactNode }> = ({
+export const CharacterMagicModal: FC<{ magic: Magic; trigger?: ReactElement }> = ({
   magic,
   trigger,
 }) => {

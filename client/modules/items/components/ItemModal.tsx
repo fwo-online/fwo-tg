@@ -8,11 +8,11 @@ import { ItemComponents } from '@/modules/items/components/ItemComponents';
 import { useItemType } from '@/modules/items/hooks/useItemType';
 import type { Item } from '@fwo/shared';
 import { sum } from 'es-toolkit/compat';
-import type { FC, ReactNode } from 'react';
+import type { FC, ReactElement, ReactNode } from 'react';
 
 export const ItemModal: FC<{
   item: Item;
-  trigger: ReactNode;
+  trigger: ReactElement;
   footer?: ReactNode;
   showComponents?: boolean;
 }> = ({ item, trigger, footer, showComponents }) => {
