@@ -2,8 +2,9 @@ import { CharacterClass, ItemWear, MonsterType } from '@fwo/shared';
 import arena from '@/arena';
 import { expToLevel } from '@/arena/CharacterService/utils/calculateLvl';
 import type GameService from '@/arena/GameService';
-import { MonsterAI, MonsterService } from '@/arena/MonsterService/MonsterService';
+import { MonsterService } from '@/arena/MonsterService/MonsterService';
 import { ItemModel } from '@/models/item';
+import { MonsterAI } from '@/arena/MonsterService/MonsterAI';
 
 export class SkeletonAI extends MonsterAI {
   makeOrder(game: GameService): void {

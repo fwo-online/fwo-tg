@@ -68,7 +68,6 @@ export class ForestService extends EventEmitter<{
     this.forest = await ForestModel.create({
       player: this.playerId,
       state: ForestState.Waiting,
-      startedAt: new Date(),
     });
 
     console.debug('Forest debug:: create forest', this.id, 'for player', this.playerId);
@@ -111,7 +110,7 @@ export class ForestService extends EventEmitter<{
       return;
     }
 
-    const eventType = getRandomEvent();
+    const eventType = getRandomEvent(this.timeInForest / FOREST_MAX_TIME);
     await this.createEvent(eventType);
   }
 
@@ -157,6 +156,10 @@ export class ForestService extends EventEmitter<{
       result: JSON.stringify(result),
     });
     this.currentEvent = undefined;
+
+    if (this.forest.state === ForestState.Event) {
+      this.forest.state = ForestState.Waiting;
+    }
 
     if (result.reward) {
       await this.applyRewards(result.reward);
@@ -355,10 +358,7 @@ export class ForestService extends EventEmitter<{
     this.character.lastForest = new Date();
 
     if (reason === 'death') {
-      // Блокируем лес на 4 часа
-      const FOUR_HOURS = 4 * 60 * 60 * 1000;
-      this.character.forestBlockedUntil = new Date(Date.now() + FOUR_HOURS);
-      this.character.forestAvailable = false;
+      this.character.updatePenalty('forest_death', 60);
     }
 
     await this.character.resources.addResources({

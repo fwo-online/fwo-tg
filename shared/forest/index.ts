@@ -1,7 +1,5 @@
 import type { GameStatus } from '@/game';
 import type { ItemComponent } from '@/item';
-import { Player } from '@/shared';
-import type { MonsterType } from '@/shared/monster';
 
 // Типы событий в лесу
 export enum ForestEventType {

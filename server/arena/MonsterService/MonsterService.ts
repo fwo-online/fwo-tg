@@ -1,44 +1,17 @@
 import { MonsterType } from '@fwo/shared';
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
-import type GameService from '@/arena/GameService';
 import { stubParams } from '@/arena/MonsterService/utils/stubParams';
 import PlayerService from '@/arena/PlayersService/PlayerService';
 import type { Char } from '@/models/character';
+import * as monsters from './monsters';
+import type { MonsterAI } from '@/arena/MonsterService/MonsterAI';
 
 /**
  * Monster Service
  * @description Класс для создание монстра
  * @module Service/Monster
  */
-
-export abstract class MonsterAI {
-  monster: MonsterService;
-  constructor(monster: MonsterService) {
-    this.monster = monster;
-  }
-
-  abstract makeOrder(game: GameService): void;
-
-  protected orderAttack(
-    game: GameService,
-    target: PlayerService,
-    proc = this.monster.proc,
-  ): boolean {
-    try {
-      game.orders.orderAction({
-        action: 'attack',
-        initiator: this.monster.id,
-        target: target.id,
-        proc,
-      });
-      return true;
-    } catch {
-      return false;
-    }
-  }
-}
-
 export type MonsterParams = Pick<
   Char,
   | 'nickname'
@@ -78,10 +51,7 @@ export class MonsterService extends PlayerService {
     return new MonsterService(monster, type, AIClass);
   }
 
-  // Lazy-load monster creators to avoid circular dependency at module load time
   static createByType(type: MonsterType | undefined, lvl: number) {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const monsters = require('./monsters');
     switch (type) {
       case MonsterType.Skeleton:
         return monsters.createSkeleton(lvl);

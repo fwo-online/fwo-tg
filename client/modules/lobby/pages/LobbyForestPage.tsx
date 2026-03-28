@@ -34,7 +34,7 @@ export const LobbyForestPage = () => {
       } else {
         navigate(`/forest/${res.forestId}`);
       }
-    } catch (e) {
+    } catch {
       setError('Ошибка соединения');
     } finally {
       setLoading(false);
@@ -54,8 +54,9 @@ export const LobbyForestPage = () => {
             <ul className="text-xs list-disc list-inside">
               <li>Здоровье сохраняется между боями</li>
               <li>Максимальное время: 15 минут</li>
-              <li>При смерти - блокировка на 4 часа</li>
-              <li>Можно выйти в любой момент ожидания</li>
+              <li>Чем глубже ты пробираешься в лес - тем опаснее</li>
+              <li>При смерти - дебафф на 1 час</li>
+              <li>Любой выбор может обернуться неожиданным последствием</li>
             </ul>
           </div>
 
@@ -79,9 +80,7 @@ export const LobbyForestPage = () => {
             </div>
           )}
 
-          {error && (
-            <div className="text-red-500 text-sm text-center">{error}</div>
-          )}
+          {error && <div className="text-red-500 text-sm text-center">{error}</div>}
         </div>
       </Card>
 

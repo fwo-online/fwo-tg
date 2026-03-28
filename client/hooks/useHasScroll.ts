@@ -10,7 +10,6 @@ export const useHasScroll = (ref: RefObject<HTMLElement | null>) => {
     }
 
     const checkScroll = () => {
-      console.log(el, el.scrollHeight, el.clientHeight);
       setHasScroll(el.scrollHeight > el.clientHeight);
     };
 

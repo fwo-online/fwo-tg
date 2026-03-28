@@ -1,4 +1,4 @@
-import { ForestEventAction, type ForestEventResult, ForestEventType } from '@fwo/shared';
+import { type ForestEventAction, type ForestEventResult, ForestEventType } from '@fwo/shared';
 import { handleAbandonedCampEvent } from '@/arena/ForestService/events/abadonedCamp';
 import { handleAbandonedSwordEvent } from '@/arena/ForestService/events/abadonedSword';
 import { handleCampfireEvent } from '@/arena/ForestService/events/campfire';

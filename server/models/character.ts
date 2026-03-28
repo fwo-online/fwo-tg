@@ -59,7 +59,6 @@ export interface Char {
     dailyRewards: boolean;
     levelUp: boolean;
   };
-  forestAvailable: boolean;
 }
 
 export type CharModel = Model<Char> & typeof Char;
@@ -163,8 +162,6 @@ const character = new Schema<Char, CharModel>({
     },
   },
   lastForest: { type: Schema.Types.Date, default: null },
-  forestAvailable: { type: Schema.Types.Boolean, default: true },
-  forestBlockedUntil: { type: Schema.Types.Date, default: null },
 });
 
 character.loadClass(Char);

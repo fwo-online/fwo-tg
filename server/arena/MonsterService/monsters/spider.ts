@@ -4,7 +4,8 @@ import arena from '@/arena';
 import { expToLevel } from '@/arena/CharacterService/utils/calculateLvl';
 import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
-import { MonsterAI, MonsterService } from '@/arena/MonsterService/MonsterService';
+import { MonsterAI } from '@/arena/MonsterService/MonsterAI';
+import { MonsterService } from '@/arena/MonsterService/MonsterService';
 import { ItemModel } from '@/models/item';
 
 export class SpiderAI extends MonsterAI {

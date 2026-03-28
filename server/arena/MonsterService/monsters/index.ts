@@ -1,8 +1,6 @@
-// wolf must be exported before alpha since alpha extends WolfAI
-export * from './wolf';
-export * from './alpha';
-export * from './elemental';
-export * from './ghost';
-export * from './skeleton';
-export * from './spider';
-export * from './spirit';
+export { createElemental } from './elemental';
+export { createGhost } from './ghost';
+export { createSkeleton } from './skeleton';
+export { createSpider } from './spider';
+export { createSpirit } from './spirit';
+export { createWolf } from './wolf';

@@ -1,4 +1,4 @@
-import { MonsterType } from '@fwo/shared';
+import type { MonsterType } from '@fwo/shared';
 import type { ForestService } from '@/arena/ForestService/ForestService';
 import { createForestGame } from '@/helpers/gameHelper';
 import { MonsterService } from '@/arena/MonsterService/MonsterService';
@@ -10,6 +10,6 @@ export const startForestBattle = async (forest: ForestService, monsterType: Mons
   );
 
   if (game) {
-    forest.startBattle(game);
+    await forest.startBattle(game);
   }
 };
