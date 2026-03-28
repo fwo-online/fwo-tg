@@ -1,7 +1,6 @@
 import EventEmitter from 'node:events';
 import { type GameResult, type GameStatus, reservedClanName } from '@fwo/shared';
 import { mapValues } from 'es-toolkit';
-import { createGame } from '@/api/game';
 import arena from '@/arena';
 import type { LongItem } from '@/arena/Constuructors/LongMagicConstructor';
 import { engine } from '@/arena/EngineService';
@@ -256,10 +255,9 @@ export default class GameService extends EventEmitter<{
    * Создание объекта в базе // потребуется для ведения истории
    * @return Объект созданный в базе
    */
-  async createGame() {
+  async createGame(game: Game) {
     try {
-      const dbGame = await createGame(this.players.init);
-      this.info = dbGame;
+      this.info = game;
       this.info.id = this.info._id.toString();
       return this;
     } catch (e) {

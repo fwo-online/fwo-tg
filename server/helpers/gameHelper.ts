@@ -4,6 +4,7 @@ import {
   monstersClanName,
   reservedClanName,
 } from '@fwo/shared';
+import { createGame as createGameApi } from '@/api/game';
 import { Types } from 'mongoose';
 import arena from '@/arena';
 import GameService, { type GameOptions } from '@/arena/GameService';
@@ -61,6 +62,7 @@ class Broadcast {
 }
 
 export async function createGame(players: string[], options?: GameOptions, chat?: string) {
+  const gameDoc = await createGameApi(players);
   const game = new GameService(players, options);
   const broadcast = await Broadcast.createBroadcast(chat);
 
@@ -163,7 +165,7 @@ ${Object.entries(resultsByClan)
     }, 10000);
   });
 
-  return game.createGame();
+  return game.createGame(gameDoc);
 }
 
 const resultToString = (result: GameResult) =>
