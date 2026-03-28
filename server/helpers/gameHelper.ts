@@ -4,6 +4,7 @@ import {
   monstersClanName,
   reservedClanName,
 } from '@fwo/shared';
+import { createGame as createGameApi } from '@/api/game';
 import { Types } from 'mongoose';
 import arena from '@/arena';
 import GameService, { type GameOptions } from '@/arena/GameService';
@@ -20,25 +21,53 @@ import { RoundStatus } from '@/arena/RoundService';
 import type { TowerService } from '@/arena/TowerService/TowerService';
 import { sendLevelUpCongratulations } from '@/bot';
 import {
+  BOT_CHAT_ID,
   broadcastLevelUp,
-  broadcast as helperBroadcast,
-  sendBattleLogMessages,
+  closeTopic,
+  createTopic,
+  broadcast,
 } from '@/helpers/channelHelper';
 import { DonationHelper } from '@/helpers/donationHelper';
 import { ClanModel } from '@/models/clan';
 import { NotificationService } from '@/services/NotificationService';
 import { bold } from '@/utils/formatString';
 
-const createBroadcast = (chat?: string) => {
-  return (data: string) => helperBroadcast(data, chat);
-};
+class Broadcast {
+  chat: string | number;
+  thread?: number;
+
+  private constructor(chat?: string | number, thread?: number) {
+    this.chat = chat ?? BOT_CHAT_ID;
+    this.thread = thread;
+  }
+
+  static async createBroadcast(chat?: string | number) {
+    if (!chat) {
+      const thread = await createTopic(`Game #${Date.now()}`);
+      return new Broadcast(chat, thread);
+    }
+
+    return new Broadcast(chat);
+  }
+
+  async close() {
+    if (this.thread) {
+      await closeTopic(this.chat, this.thread);
+    }
+  }
+
+  async send(data: string | string[]) {
+    return broadcast(data, this.chat, this.thread);
+  }
+}
 
 export async function createGame(players: string[], options?: GameOptions, chat?: string) {
+  const gameDoc = await createGameApi(players);
   const game = new GameService(players, options);
-  const broadcast = createBroadcast(chat);
+  const broadcast = await Broadcast.createBroadcast(chat);
 
   game.on('start', async () => {
-    broadcast('Игра начинается');
+    broadcast.send('Игра начинается');
 
     // Отправка уведомлений отключенным игрокам
     await Promise.all(
@@ -52,25 +81,22 @@ export async function createGame(players: string[], options?: GameOptions, chat?
   });
 
   game.on('startOrders', () => {
-    broadcast('Пришло время делать заказы');
+    broadcast.send('Пришло время делать заказы');
   });
 
   game.on('startRound', ({ round }) => {
-    broadcast(`⚡️ Раунд ${round} начинается ⚡`);
+    broadcast.send(`⚡️ Раунд ${round} начинается ⚡`);
   });
 
   game.on('endRound', async ({ log, dead }) => {
-    await sendBattleLogMessages(
-      log.map((log) => formatMessage(log)),
-      chat,
-    );
+    await broadcast.send(log.map((log) => formatMessage(log)));
     if (dead.length) {
-      await broadcast(`Погибшие в этом раунде: ${dead.map(({ nick }) => nick).join(', ')}`);
+      await broadcast.send(`Погибшие в этом раунде: ${dead.map(({ nick }) => nick).join(', ')}`);
     }
   });
 
   game.on('kick', ({ player }) => {
-    broadcast(`Игрок ${bold(player.nick)} был выброшен из игры`);
+    broadcast.send(`Игрок ${bold(player.nick)} был выброшен из игры`);
   });
 
   game.on('preKick', async ({ player }) => {
@@ -86,8 +112,8 @@ export async function createGame(players: string[], options?: GameOptions, chat?
       ({ player }) => player.clan?.name ?? reservedClanName,
     );
 
-    await broadcast('Игра завершена');
-    await broadcast(`${bold`Статистика игры`}
+    await broadcast.send('Игра завершена');
+    await broadcast.send(`${bold`Статистика игры`}
 ${Object.entries(resultsByClan)
   .map(
     ([clan, players]) =>
@@ -127,17 +153,19 @@ ${Object.entries(resultsByClan)
         const donators = await DonationHelper.getDonators();
 
         if (donators.length) {
-          await broadcast(`${bold('Поддержавшие проект в этом месяце:')}
+          await broadcast.send(`${bold('Поддержавшие проект в этом месяце:')}
   ${donators.map((donator) => `⭐ ${bold(donator.nickname)}`).join('\n')}
 
   Спасибо за поддержку!`);
           DonationHelper.resetLastAnnouncement();
         }
       }
+
+      await broadcast.close();
     }, 10000);
   });
 
-  return game.createGame();
+  return game.createGame(gameDoc);
 }
 
 const resultToString = (result: GameResult) =>
