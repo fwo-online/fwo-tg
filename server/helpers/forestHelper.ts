@@ -1,10 +1,6 @@
-import Baker from 'cronbake';
 import arena from '@/arena';
 import { ForestService } from '@/arena/ForestService/ForestService';
 import { broadcast } from '@/helpers/channelHelper';
-import { CharModel } from '@/models/character';
-
-const baker = Baker.create();
 
 export async function createForest(playerId: string) {
   const newForest = new ForestService(playerId);

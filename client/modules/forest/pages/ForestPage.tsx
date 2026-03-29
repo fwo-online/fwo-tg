@@ -1,4 +1,4 @@
-import { FOREST_MAX_TIME, ForestEventAction, ForestEventType, ForestPhase } from '@fwo/shared';
+import { ForestEventAction, ForestEventType, ForestPhase } from '@fwo/shared';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { useForest } from '@/modules/forest/hooks/useForest';

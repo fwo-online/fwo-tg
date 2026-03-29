@@ -6,15 +6,14 @@ import { MonsterService } from '@/arena/MonsterService/MonsterService';
 export const startForestBattle = async (
   forest: ForestService,
   monsterType: MonsterType,
-  reward?: Partial<GameResult>,
+  reward: Partial<GameResult>,
 ) => {
   const game = await createForestGame(
     forest.player,
     MonsterService.createByType(monsterType, forest.player.lvl),
-    reward ?? {},
   );
 
   if (game) {
-    await forest.startBattle(game);
+    await forest.startBattle(game, reward);
   }
 };

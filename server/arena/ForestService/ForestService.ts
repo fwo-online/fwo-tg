@@ -176,7 +176,7 @@ export class ForestService extends EventEmitter<{
     return result;
   }
 
-  async startBattle(game: GameService) {
+  async startBattle(game: GameService, reward: Partial<GameResult>) {
     console.debug('Forest debug:: starting battle');
 
     this.forest.state = ForestState.Battle;
@@ -186,7 +186,7 @@ export class ForestService extends EventEmitter<{
     this.character.gameId = game.info.id;
 
     game.on('end', async () => {
-      await this.handleBattleEnd(game);
+      await this.handleBattleEnd(game, reward);
     });
 
     setTimeout(() => {
@@ -194,7 +194,7 @@ export class ForestService extends EventEmitter<{
     }, 3000);
   }
 
-  async handleBattleEnd(game: GameService) {
+  async handleBattleEnd(game: GameService, reward: Partial<GameResult>) {
     console.debug('Forest debug:: battle ended');
 
     this.currentGame = undefined;
@@ -214,6 +214,7 @@ export class ForestService extends EventEmitter<{
       // Игрок умер
       await this.endForest('death');
     } else {
+      await this.applyRewards(reward);
       // Игрок выжил, увеличиваем счётчик побед
       this.forest.battlesWon++;
       this.forest.state = ForestState.Waiting;
@@ -375,6 +376,10 @@ export class ForestService extends EventEmitter<{
   }
 
   async endForest(reason: 'death' | 'maxTime' | 'exit') {
+    if (this.forest.state === ForestState.Finished) {
+      return;
+    }
+
     console.debug('Forest debug:: ending forest', reason);
 
     if (this.checkInterval) {
