@@ -6,6 +6,7 @@ export interface CharacterState {
   setCharacter: (character: Character | undefined) => void;
   setGame: (game: string | undefined) => void;
   setTower: (tower: string | undefined) => void;
+  setForest: (forest: string | undefined) => void;
   setClan: (clan: Clan) => void;
 }
 
@@ -23,6 +24,10 @@ export const useCharacterStore = create<CharacterState>((set) => ({
   setTower: (tower) =>
     set((state) =>
       state.character ? { character: { ...state.character, tower } } : { character: undefined },
+    ),
+  setForest: (forest) =>
+    set((state) =>
+      state.character ? { character: { ...state.character, forest } } : { character: undefined },
     ),
 }));
 

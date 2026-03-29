@@ -25,6 +25,8 @@ export interface Char {
   sex: 'm' | 'f';
   lastFight: Date | null;
   lastTower: Date | null;
+  lastForest: Date | null;
+  forestBlockedUntil: Date | null;
   psr: number;
   magics?: Record<string, number>;
   skills?: Record<string, number>;
@@ -159,6 +161,7 @@ const character = new Schema<Char, CharModel>({
       levelUp: false,
     },
   },
+  lastForest: { type: Schema.Types.Date, default: null },
 });
 
 character.loadClass(Char);

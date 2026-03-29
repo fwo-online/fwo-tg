@@ -6,12 +6,14 @@ import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
 import { useSocketStore } from '@/stores/socket';
 import { use } from 'react';
 import { useTowerGuard } from '@/hooks/useTowerGuard';
+import { useForestGuard } from '@/hooks/useForestGuard';
 
 const ProtectedRouteGuards = () => {
   use(useSocketStore().connect());
   useCharacterGuard();
   useGameGuard();
   useTowerGuard();
+  useForestGuard();
 
   return <Outlet />;
 };

@@ -49,6 +49,7 @@ export class CharacterService {
   wasLvlUp = false;
   autoreg = false;
   towerID = '';
+  forestID = '';
   isBot = false;
 
   get id() {
@@ -224,6 +225,18 @@ export class CharacterService {
     return arena.towers[this.towerID];
   }
 
+  get currentForest() {
+    return arena.forests[this.forestID];
+  }
+
+  get lastForest() {
+    return this.charObj.lastForest;
+  }
+
+  set lastForest(value: Date | null) {
+    this.charObj.lastForest = value;
+  }
+
   /**
    * Загрузка чара в память
    * @param {string} owner идентификатор пользователя в TG (tgId)
@@ -386,6 +399,8 @@ export class CharacterService {
       dynamicAttributes: this.attributes.getDynamicAttributes(),
       game: this.currentGame?.info.id,
       tower: this.currentTower?.id,
+      forest: this.forestID || undefined,
+      forestBlockedUntil: this.forestBlockedUntil ?? undefined,
       statistics: this.performance.statistics,
       components: Object.fromEntries(this.resources.components.entries()) as Record<
         ItemComponent,

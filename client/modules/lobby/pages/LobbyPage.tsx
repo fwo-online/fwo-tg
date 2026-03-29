@@ -21,6 +21,10 @@ export function LobbyPage() {
     navigate('/lobby/tower');
   };
 
+  const navigateToForest = () => {
+    navigate('/lobby/forest');
+  };
+
   return (
     <Card header="Мир" className="m-4">
       <h5>Выбери место, куда хотел бы направиться</h5>
@@ -33,6 +37,9 @@ export function LobbyPage() {
         </Button>
         <Button disabled={lvl < towerRequiredLvl} className="flex-1" onClick={navigateToTower}>
           Башня {lvl < towerRequiredLvl ? <>(требуется {towerRequiredLvl} ур.)</> : null}
+        </Button>
+        <Button className="flex-1" onClick={navigateToForest}>
+          Лес
         </Button>
       </div>
     </Card>

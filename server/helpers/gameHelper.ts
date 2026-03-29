@@ -1,6 +1,7 @@
 import {
   componentsToString,
   type GameResult,
+  MonsterType,
   monstersClanName,
   reservedClanName,
 } from '@fwo/shared';
@@ -11,8 +12,8 @@ import GameService, { type GameOptions } from '@/arena/GameService';
 import { LadderService } from '@/arena/LadderService';
 import { formatMessage } from '@/arena/LogService/utils';
 import { MonsterService } from '@/arena/MonsterService/MonsterService';
-import { createSkeleton } from '@/arena/MonsterService/monsters/skeleton';
 import {
+  ForestRewardService,
   LadderRewardService,
   PracticeRewardService,
   TowerRewardService,
@@ -31,6 +32,7 @@ import { DonationHelper } from '@/helpers/donationHelper';
 import { ClanModel } from '@/models/clan';
 import { NotificationService } from '@/services/NotificationService';
 import { bold } from '@/utils/formatString';
+import type { Player } from '@/arena/PlayersService';
 
 class Broadcast {
   chat: string | number;
@@ -238,7 +240,7 @@ export const createPracticeGame = async (player: string) => {
     return;
   }
 
-  const skeleton = createSkeleton(character.lvl);
+  const skeleton = MonsterService.createByType(MonsterType.Skeleton, character.lvl);
 
   game.addPlayers([skeleton]);
 
@@ -261,3 +263,46 @@ export const createPracticeGame = async (player: string) => {
     game.end(rewards);
   });
 };
+
+export async function createForestGame(player: Player, enemy: Player) {
+  const game = await createGame(
+    [],
+    {
+      round: { timeouts: { [RoundStatus.INIT]: 1000, [RoundStatus.START_ROUND]: 3000 } },
+    },
+    player.owner,
+  );
+
+  if (!game) {
+    return;
+  }
+
+  game.addPlayers([player, enemy]);
+
+  // Создаём клан для монстра
+  const clan = new ClanModel({
+    owner: new Types.ObjectId(),
+    name: monstersClanName,
+  });
+
+  game.players.botPlayers.forEach((bot) => {
+    bot.clan = clan;
+    clan.players.push(arena.characters[bot.id].charObj);
+  });
+
+  // AI монстра делает ходы
+  game.on('startOrders', () => {
+    game.players.aliveBotPlayers.filter(MonsterService.isMonster).forEach((bot) => {
+      bot.ai.makeOrder(game);
+    });
+  });
+
+  const reward = new ForestRewardService(game);
+
+  game.on('beforeEnd', async ({ draw }) => {
+    const rewards = await reward.giveRewards(draw);
+    game.end(rewards);
+  });
+
+  return game;
+}

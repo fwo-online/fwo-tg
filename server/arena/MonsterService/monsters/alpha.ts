@@ -4,8 +4,8 @@ import { expToLevel } from '@/arena/CharacterService/utils/calculateLvl';
 import { isSuccessResult } from '@/arena/Constuructors/utils';
 import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
-import { MonsterService } from '@/arena/MonsterService/MonsterService';
 import { WolfAI } from '@/arena/MonsterService/monsters/wolf';
+import { MonsterService } from '@/arena/MonsterService/MonsterService';
 import { beastCall } from '@/arena/skills';
 import { ItemModel } from '@/models/item';
 
