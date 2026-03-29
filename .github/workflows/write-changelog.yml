@@ -1,0 +1,63 @@
+name: Write changelog manually
+
+on:
+  workflow_dispatch:
+    inputs:
+      from_ref:
+        description: "Start tag/ref, for example v1.4.0"
+        required: true
+        type: string
+      commit_changes:
+        description: "Commit CHANGELOG.md after update"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+permissions:
+  contents: write
+
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
+
+      - name: Run Gemini to update CHANGELOG.md
+        uses: google-github-actions/run-gemini-cli@v0
+        with:
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          prompt: >
+            /release:changelog-write
+            ${{ inputs.from_ref }}
+            HEAD
+          settings: >
+            {
+              "sandbox": false
+            }
+
+      - name: Show diff
+        run: git diff -- CHANGELOG.md
+
+      - name: Commit updated changelog
+        if: ${{ inputs.commit_changes == 'true' }}
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet -- CHANGELOG.md; then
+            echo "No changes in CHANGELOG.md"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "docs(changelog): update release notes from ${{ inputs.from_ref }} to HEAD"
+          git push

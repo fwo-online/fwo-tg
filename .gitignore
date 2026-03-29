@@ -7,7 +7,9 @@ out
 dist
 
 # gemini-cli settings
-.gemini/
+.gemini/*
+!.gemini/commands/
+!.gemini/commands/**/*.toml
 
 # GitHub App credentials
 gha-creds-*.json
