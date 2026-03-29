@@ -54,7 +54,7 @@ export class ForestService extends EventEmitter<{
     return this.forest.id;
   }
 
-  private getPhase(): ForestPhase {
+  getPhase(): ForestPhase {
     const eventsCount = this.getEventsCount();
     if (eventsCount < FOREST_EVENT_PER_PHASE) {
       return ForestPhase.Edge;

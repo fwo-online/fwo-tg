@@ -14,7 +14,7 @@ export const handleGlowingCrystalEvent: ForestEventHandler = async (action, fore
 
   if (action === ForestEventAction.TakeCrystal) {
     // Шанс элементаля
-    const elementalChance = 0.8;
+    const elementalChance = 0.9;
     if (Math.random() < elementalChance) {
       await startForestBattle(forest, MonsterType.Elemental, {
         components: {
