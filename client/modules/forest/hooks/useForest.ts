@@ -68,14 +68,8 @@ export const useForest = () => {
   );
 
   const handleExit = useCallback(async () => {
-    setLoading(true);
-    try {
-      await socket.emitWithAck('forest:exit');
-      navigate('/');
-    } finally {
-      setLoading(false);
-    }
-  }, [socket, navigate]);
+    await socket.emitWithAck('forest:exit');
+  }, [socket]);
 
   const clearLastResult = useCallback(() => {
     setLastResult(null);
