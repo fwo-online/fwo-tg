@@ -11,7 +11,7 @@ export const handleCampfireEvent: ForestEventHandler = async (action, forest) =>
   }
 
   if (action === ForestEventAction.Rest) {
-    const maxHeal = forest.player.stats.val('base.hp') - forest.player.stats.val('hp');
+    const maxHeal = Math.max(forest.player.stats.val('base.hp') - forest.player.stats.val('hp'), 0);
     const baseHeal = Math.floor(forest.player.stats.val('base.hp') * 0.5);
     const healAmount = Math.min(baseHeal, maxHeal); // 50% восстановления
     return {
