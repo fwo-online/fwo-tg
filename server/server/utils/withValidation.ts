@@ -15,11 +15,11 @@ export const withValidation = async <T>(promise: T | Promise<T>): Promise<Awaite
 };
 
 export const withValidationRPC = async <T, P extends object>(
-  promise: T | Promise<T>,
+  fn: () => Promise<T>,
   callback: (payload: RPC<P>) => void,
 ): Promise<Awaited<T> | undefined> => {
   try {
-    return await promise;
+    return await fn();
   } catch (e) {
     if (isValidationError(e)) {
       callback({ error: true, message: e.message });
