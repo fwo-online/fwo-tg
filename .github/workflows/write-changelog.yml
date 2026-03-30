@@ -22,26 +22,24 @@ permissions:
 jobs:
   changelog:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.ref_name }}
 
-      - name: Run Gemini to update CHANGELOG.md
-        uses: google-github-actions/run-gemini-cli@v0
+      - name: Prepare prompt
+        run: |
+          sed 's|__ARGS__|${{ inputs.from_ref }}|g' \
+            .github/prompts/changelog.md > /tmp/changelog-prompt.md
+
+      - name: Run Claude to update CHANGELOG.md
+        uses: anthropics/claude-code-action@beta
         with:
-          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
-          prompt: >
-            /release:changelog-write
-            ${{ inputs.from_ref }}
-            HEAD
-          settings: >
-            {
-              "sandbox": false
-            }
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          allowed_tools: "Bash,Read,Write"
+          prompt_file: /tmp/changelog-prompt.md
 
       - name: Show diff
         run: git diff -- CHANGELOG.md
@@ -50,12 +48,10 @@ jobs:
         if: ${{ inputs.commit_changes == 'true' }}
         run: |
           set -euo pipefail
-
           if git diff --quiet -- CHANGELOG.md; then
             echo "No changes in CHANGELOG.md"
             exit 0
           fi
-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md
