@@ -1,9 +1,11 @@
 import { ForestEventAction, ItemComponent, MonsterType } from '@fwo/shared';
+import MiscService from '@/arena/MiscService';
 import type { ForestEventHandler } from './getEventHandler';
 import { startForestBattle } from './startForestBattle';
-import MiscService from '@/arena/MiscService';
 
 export const handleWolfEvent: ForestEventHandler = async (action, forest) => {
+  const leatherAmount = MiscService.randInt(1, forest.player.lvl);
+
   if (action === ForestEventAction.Sneak) {
     // Проверка ловкости
     const playerDex = forest.player.stats.val('attributes.dex');
@@ -21,7 +23,9 @@ export const handleWolfEvent: ForestEventHandler = async (action, forest) => {
       };
     } else {
       await startForestBattle(forest, MonsterType.Wolf, {
-        components: { [ItemComponent.Leather]: MiscService.randInt(1, forest.player.lvl) },
+        components: {
+          [ItemComponent.Leather]: leatherAmount,
+        },
       });
 
       return {
@@ -33,7 +37,11 @@ export const handleWolfEvent: ForestEventHandler = async (action, forest) => {
   }
 
   if (action === ForestEventAction.AttackWolf) {
-    await startForestBattle(forest, MonsterType.Wolf);
+    await startForestBattle(forest, MonsterType.Wolf, {
+      components: {
+        [ItemComponent.Leather]: leatherAmount,
+      },
+    });
 
     return {
       success: true,
