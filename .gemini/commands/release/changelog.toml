@@ -1,0 +1,83 @@
+description = "Generate a public Russian changelog for the RPG game from a git ref up to HEAD"
+
+prompt = '''
+You are preparing public release notes for an RPG game.
+
+The user passes exactly one git ref in this format:
+
+<from_ref>
+
+The changelog range must be:
+<from_ref>..HEAD
+
+User input:
+{{args}}
+
+First inspect the git range below.
+
+!{bash -lc '
+set -euo pipefail
+set -- {{args}}
+
+FROM="${1:-}"
+TO="HEAD"
+
+if [ -z "$FROM" ]; then
+  echo "ERROR: Expected one ref: <from_ref>"
+  exit 1
+fi
+
+git rev-parse --verify "$FROM^{commit}" >/dev/null
+git rev-parse --verify "$TO^{commit}" >/dev/null
+
+echo "=== RANGE ==="
+echo "$FROM..$TO"
+echo
+
+echo "=== COMMITS ==="
+git log "$FROM..$TO" \
+  --no-merges \
+  --reverse \
+  --pretty=format:"---COMMIT---%nHASH: %H%nSUBJECT: %s%nBODY:%n%b"
+
+echo
+echo "=== FILES CHANGED ==="
+git diff --name-only "$FROM..$TO" | sed "s/^/- /"
+'}
+
+Your job:
+1. Read the commit list for the requested range.
+2. Produce a human-readable public changelog in Markdown.
+3. Rewrite technical commit messages into player-facing language.
+4. Treat this as a public changelog for an RPG game update.
+5. Use specific RPG/game language where appropriate.
+6. Group related changes under useful headings such as:
+   - Новое
+   - Исправления
+   - Баланс
+   - Интерфейс
+   - Прочее
+   - Важные изменения
+7. Do not show Infrastructure, Developer Experience, CI/CD, internal Docs, refactoring-only, or other purely internal engineering changes.
+8. Omit or de-emphasize obvious noise when it is not meaningful for players:
+   - merge commits
+   - version bumps
+   - formatting-only changes
+   - lockfile-only updates
+   - trivial dependency churn
+   - internal maintenance
+9. Deduplicate related commits and summarize them together when appropriate.
+10. If commit messages are messy, infer intent carefully from commit text and changed file names only.
+11. Do not invent changes that are not supported by the commits.
+12. If there are no meaningful player-facing changes, say so clearly.
+13. Use Russian language.
+14. Use emojis, but do it moderately and tastefully.
+15. Keep the tone suitable for a public game patch note.
+
+Output format:
+- Title: Changelog
+- Then a short section: Кратко with 2 to 5 bullets
+- Then the detailed grouped changelog
+- Keep it concise but readable
+- Use Markdown only
+'''
