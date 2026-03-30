@@ -3,6 +3,7 @@ import { ForestService } from '@/arena/ForestService/ForestService';
 import { broadcast } from '@/helpers/channelHelper';
 import { activeConnections } from '@/server/utils/activeConnectons';
 import type { Server, Socket } from '@/server/ws';
+import { createForest } from '@/helpers/forestHelper';
 
 const getRoom = (forest: ForestService) => {
   return `forest:${forest.id}`;
@@ -71,21 +72,15 @@ export const onConnection = (_io: Server, socket: Socket) => {
         return callback({ error: true, message: 'Вы уже в лесу' });
       }
 
-      // Проверяем блокировку
-      if (character.forestBlockedUntil && new Date(character.forestBlockedUntil) > new Date()) {
-        return callback({ error: true, message: 'Лес временно заблокирован для вас' });
-      }
-
       // Проверяем, не в игре ли игрок
       if (character.gameId) {
         return callback({ error: true, message: 'Вы в бою' });
       }
 
       // Создаём новый лес
-      const forestService = new ForestService(character.id);
-      await forestService.createForest();
+      const forest = await createForest(character.id);
 
-      return callback({ forestId: forestService.id });
+      return callback({ forestId: forest.id });
     } catch (e) {
       console.error('forest:enter error:', e);
       return callback({ error: true, message: 'Что-то пошло не так' });
