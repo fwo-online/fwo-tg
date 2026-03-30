@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn } from 'bun:test';
-import { ForestEventAction, ForestEventType, ForestState } from '@fwo/shared';
+import { ForestEventAction, ForestEventType } from '@fwo/shared';
 import arena from '@/arena';
 import TestUtils from '@/utils/testUtils';
 import { ForestService } from './ForestService';
