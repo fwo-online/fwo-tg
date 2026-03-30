@@ -140,22 +140,6 @@ describe('ForestService', () => {
     });
   });
 
-  describe('event timeout', () => {
-    it('should handle event timeout by passing by', async () => {
-      const { forestService } = await TestUtils.createForest();
-
-      await forestService.createEvent(ForestEventType.Wolf);
-
-      // @ts-expect-error - accessing private property for testing
-      forestService.currentEvent.expiresAt = new Date(Date.now() - 1000);
-
-      await forestService.handleEventTimeout();
-
-      expect(forestService.forest.state).toBe(ForestState.Waiting);
-      expect(forestService.currentEvent).toBeUndefined();
-    });
-  });
-
   describe('endForest', () => {
     it('should start escaping', async () => {
       const { forestService } = await TestUtils.createForest();

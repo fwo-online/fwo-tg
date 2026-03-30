@@ -4,3 +4,7 @@ export default class ValidationError extends Error {
     this.name = 'ValidationError';
   }
 }
+
+export const isValidationError = (error: unknown): error is ValidationError => {
+  return error instanceof ValidationError;
+};

@@ -1,10 +1,10 @@
 import { ForestEventAction, ForestEventType, ForestState } from '@fwo/shared';
-import type { ForestEventHandler } from './getEventHandler';
-import type { ForestService } from '@/arena/ForestService/ForestService';
-import arena from '@/arena';
 import { isNotNil, shuffle } from 'es-toolkit';
+import arena from '@/arena';
+import type { ForestService } from '@/arena/ForestService/ForestService';
 import MiscService from '@/arena/MiscService';
 import { createForestGame } from '@/helpers/gameHelper';
+import type { ForestEventHandler } from './getEventHandler';
 
 type PvPSession = {
   id: string;
@@ -80,15 +80,15 @@ class ForestEnemyPlayerHandler {
     }
     session.resolved = true;
 
-    const game = await createForestGame(session.forestA.player, session.forestB.player, {});
+    const game = await createForestGame(session.forestA.player, session.forestB.player);
 
     if (!game) {
       console.error('ForestEnemyPlayerHandler::game not created');
       return;
     }
 
-    session.forestA.startBattle(game);
-    session.forestB.startBattle(game);
+    session.forestA.startBattle(game, session.forestB.player.stats.collect);
+    session.forestB.startBattle(game, session.forestA.player.stats.collect);
 
     this.cleanupSession(session);
   }
@@ -146,16 +146,6 @@ export const handleOtherPlayerEvent: ForestEventHandler = async (action, forest)
     }
 
     if (enemyAction === ForestEventAction.PassBy) {
-      if (MiscService.chance(50)) {
-        ForestEnemyPlayerHandler.startGame(session);
-
-        return {
-          success: true,
-          resolved: true,
-          message: 'Ты решаешь напасть на игрока! Игрок пытался сбежать, но ты нагнал его!',
-        };
-      }
-
       ForestEnemyPlayerHandler.endSession(session);
       return {
         success: false,

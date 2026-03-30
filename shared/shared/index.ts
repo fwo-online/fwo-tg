@@ -17,6 +17,7 @@ export * from './attributes';
 export * from './action';
 export * from './invoice';
 export * from './monster';
+export * from './rpc';
 
 declare global {
   type DeepPartial<T> = T extends object
