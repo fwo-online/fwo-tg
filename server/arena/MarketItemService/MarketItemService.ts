@@ -101,6 +101,8 @@ export class MarketItemService {
       throw new ValidationError('Вы не можете купить свой собственный лот');
     }
 
+    character.resources.validateResources({ gold: marketItem.price });
+
     try {
       const result = await marketItem.updateOne({ sold: true });
       if (result.modifiedCount === 0) {
