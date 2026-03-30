@@ -5,13 +5,14 @@ import {
   monstersClanName,
   reservedClanName,
 } from '@fwo/shared';
-import { createGame as createGameApi } from '@/api/game';
 import { Types } from 'mongoose';
+import { createGame as createGameApi } from '@/api/game';
 import arena from '@/arena';
 import GameService, { type GameOptions } from '@/arena/GameService';
 import { LadderService } from '@/arena/LadderService';
 import { formatDead, formatMessage } from '@/arena/LogService/utils';
 import { MonsterService } from '@/arena/MonsterService/MonsterService';
+import type { Player } from '@/arena/PlayersService';
 import {
   ForestRewardService,
   LadderRewardService,
@@ -23,16 +24,15 @@ import type { TowerService } from '@/arena/TowerService/TowerService';
 import { sendLevelUpCongratulations } from '@/bot';
 import {
   BOT_CHAT_ID,
+  broadcast,
   broadcastLevelUp,
   closeTopic,
   createTopic,
-  broadcast,
 } from '@/helpers/channelHelper';
 import { DonationHelper } from '@/helpers/donationHelper';
 import { ClanModel } from '@/models/clan';
 import { NotificationService } from '@/services/NotificationService';
 import { bold } from '@/utils/formatString';
-import type { Player } from '@/arena/PlayersService';
 
 class Broadcast {
   chat: string | number;
@@ -43,7 +43,7 @@ class Broadcast {
     this.thread = thread;
   }
 
-  static async createBroadcast(chat?: string | number) {
+  static async createBroadcast(chat?: string | number, gameId?: string) {
     if (!chat) {
       const thread = await createTopic(`Game #${Date.now()}`);
       return new Broadcast(chat, thread);
@@ -66,7 +66,7 @@ class Broadcast {
 export async function createGame(players: string[], options?: GameOptions, chat?: string) {
   const gameDoc = await createGameApi(players);
   const game = new GameService(players, options);
-  const broadcast = await Broadcast.createBroadcast(chat);
+  const broadcast = await Broadcast.createBroadcast(chat, gameDoc.gameId);
 
   game.on('start', async () => {
     broadcast.send('Игра начинается');
@@ -270,7 +270,7 @@ export async function createForestGame(player: Player, enemy: Player) {
     {
       round: { timeouts: { [RoundStatus.INIT]: 1000, [RoundStatus.START_ROUND]: 3000 } },
     },
-    player.owner,
+    enemy.isBot ? player.owner : undefined,
   );
 
   if (!game) {
