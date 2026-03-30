@@ -46,9 +46,9 @@ export abstract class RewardService {
 
   protected giveGoldForKill(): void {
     this.players.deadPlayers.forEach((player) => {
-      const killer = this.players.getById(player.getKiller());
-      if (killer && killer.id !== player.id) {
-        killer.stats.addGold(3 * player.lvl);
+      const info = player.getKiller();
+      if (info?.killer && info.killer.id !== player.id) {
+        info.killer.stats.addGold(3 * player.lvl);
       }
     });
   }

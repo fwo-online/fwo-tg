@@ -114,7 +114,7 @@ export default class PlayersService {
   }
 
   getKills(id: string): Player[] {
-    return this.players.filter((player) => player.getKiller() === id);
+    return this.players.filter((player) => player.getKiller()?.killer.id === id);
   }
 
   kick(id: string) {

@@ -196,7 +196,7 @@ export abstract class Magic extends AffectableAction {
   checkTargetIsDead({ initiator, target } = this.params): void {
     const hpNow = target.stats.val('hp');
     if (hpNow <= 0 && !target.getKiller()) {
-      target.setKiller(initiator);
+      target.setKiller(initiator, this.displayName);
     }
   }
 

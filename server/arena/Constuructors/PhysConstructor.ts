@@ -110,7 +110,7 @@ export default abstract class PhysConstructor extends AffectableAction {
     const { initiator, target } = this.params;
     const hpNow = target.stats.val('hp');
     if (hpNow <= 0 && !target.getKiller()) {
-      target.setKiller(initiator);
+      target.setKiller(initiator, this.displayName);
     }
   }
 }
