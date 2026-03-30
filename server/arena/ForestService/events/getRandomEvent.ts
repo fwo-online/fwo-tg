@@ -7,8 +7,12 @@ const eventsByPhase: Record<ForestPhase, Weighted<ForestEventType>[]> = {
     { value: ForestEventType.Campfire, weight: 10 },
     { value: ForestEventType.OldTrap, weight: 20 },
     { value: ForestEventType.AbandonedSword, weight: 5 },
+    { value: ForestEventType.FallenTree, weight: 10 },
+    { value: ForestEventType.AbandonedCamp, weight: 10 },
   ],
   [ForestPhase.Wilds]: [
+    { value: ForestEventType.FallenTree, weight: 5 },
+    { value: ForestEventType.AbandonedCamp, weight: 5 },
     { value: ForestEventType.Wolf, weight: 20 },
     { value: ForestEventType.Chest, weight: 10 },
     { value: ForestEventType.Campfire, weight: 10 },

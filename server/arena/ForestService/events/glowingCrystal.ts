@@ -1,7 +1,6 @@
 import { ForestEventAction, ItemComponent, MonsterType } from '@fwo/shared';
 import type { ForestEventHandler } from './getEventHandler';
 import { startForestBattle } from './startForestBattle';
-import MiscService from '@/arena/MiscService';
 
 export const handleGlowingCrystalEvent: ForestEventHandler = async (action, forest) => {
   if (action === ForestEventAction.PassBy) {
@@ -12,13 +11,14 @@ export const handleGlowingCrystalEvent: ForestEventHandler = async (action, fore
     };
   }
 
+  const arcaniteAmount = 1; // Редкий ресурс, всегда 1
   if (action === ForestEventAction.TakeCrystal) {
     // Шанс элементаля
     const elementalChance = 0.9;
     if (Math.random() < elementalChance) {
       await startForestBattle(forest, MonsterType.Elemental, {
         components: {
-          [ItemComponent.Arcanite]: MiscService.randInt(1, 2),
+          [ItemComponent.Arcanite]: arcaniteAmount,
         },
       });
       return {
@@ -28,7 +28,6 @@ export const handleGlowingCrystalEvent: ForestEventHandler = async (action, fore
       };
     }
 
-    const arcaniteAmount = 1; // Редкий ресурс, всегда 1
     return {
       success: true,
       resolved: true,

@@ -1,4 +1,4 @@
-import { ForestEventAction, MonsterType } from '@fwo/shared';
+import { ForestEventAction, ItemComponent, MonsterType } from '@fwo/shared';
 import MiscService from '@/arena/MiscService';
 import type { ForestEventHandler } from './getEventHandler';
 import { startForestBattle } from './startForestBattle';
@@ -12,11 +12,18 @@ export const handleAbandonedCampEvent: ForestEventHandler = async (action, fores
     };
   }
 
+  const fabricAmount = MiscService.randInt(1, 2);
+
   if (action === ForestEventAction.ScavengeCamp) {
     // Шанс появления паука
     const dangerChance = 0.25; // 25% шанс
     if (Math.random() < dangerChance) {
-      await startForestBattle(forest, MonsterType.Spider);
+      await startForestBattle(forest, MonsterType.Spider, {
+        components: {
+          [ItemComponent.Fabric]: fabricAmount,
+          [ItemComponent.Leather]: MiscService.randInt(0, 2),
+        },
+      });
 
       return {
         success: false,
@@ -25,7 +32,6 @@ export const handleAbandonedCampEvent: ForestEventHandler = async (action, fores
       };
     }
 
-    const fabricAmount = MiscService.randInt(1, 2);
     return {
       success: true,
       resolved: true,

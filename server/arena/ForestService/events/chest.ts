@@ -12,7 +12,7 @@ export const handleChestEvent: ForestEventHandler = async (action, forest) => {
     };
   }
 
-  const goldAmount = MiscService.randInt(10, 50) * forest.player.lvl;
+  const goldAmount = MiscService.randInt(1, 5) * forest.player.lvl;
 
   if (action === ForestEventAction.OpenChest) {
     // Маленький шанс встретить сильного врага

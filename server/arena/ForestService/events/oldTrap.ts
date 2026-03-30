@@ -17,7 +17,7 @@ export const handleOldTrapEvent: ForestEventHandler = async (action, forest) => 
     const failChance = 0.3; // 30% шанс
     if (Math.random() < failChance) {
       const maxHP = forest.player.stats.val('hp');
-      const damage = floatNumber(maxHP * 0.1); // 10% урона
+      const damage = floatNumber(maxHP * 0.15); // 15% урона
 
       return {
         success: false,
