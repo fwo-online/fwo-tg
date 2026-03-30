@@ -160,7 +160,7 @@ export class CharacterResources {
   }
 
   /** @throws {ValidationError} */
-  private validateResources({ gold, components, bonus, free }: Partial<Resources>) {
+  validateResources({ gold, components, bonus, free }: Partial<Resources>) {
     if (components) {
       this.validateComponents(components);
     }

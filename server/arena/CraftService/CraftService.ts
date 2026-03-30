@@ -32,13 +32,19 @@ export class CraftService {
       throw new ValidationError('Этот предмет нельзя скрафтить');
     }
 
+    character.resources.validateResources({
+      components: baseItem.craft.components,
+      gold: getItemPrice(baseItem.price, baseItem.tier),
+    });
+
     if (!this.checkChance(baseItem.tier, modifier)) {
       const resourcesModifier = this.getResourcesModifier(baseItem.tier, modifier);
+      console.debug('craft failed, resources modifier:', resourcesModifier);
       await character.resources.takeResources({
         components: mapValues(baseItem.craft.components, (val = 0) =>
           Math.ceil(val * resourcesModifier),
         ),
-        gold: Math.ceil(baseItem.price * resourcesModifier),
+        gold: Math.ceil(getItemPrice(baseItem.price, baseItem.tier) * resourcesModifier),
       });
 
       throw new ValidationError('Не удалось скрафтить предмет');
