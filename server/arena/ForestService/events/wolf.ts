@@ -6,7 +6,7 @@ import { startForestBattle } from './startForestBattle';
 export const handleWolfEvent: ForestEventHandler = async (action, forest) => {
   const leatherAmount = MiscService.randInt(1, forest.player.lvl);
 
-  if (action === ForestEventAction.Sneak) {
+  if (action === ForestEventAction.Sneak || action === ForestEventAction.PassBy) {
     // Проверка ловкости
     const playerDex = forest.player.stats.val('attributes.dex');
     const wolfLevel = forest.player.lvl;
