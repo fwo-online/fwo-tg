@@ -109,7 +109,6 @@ export type ServerToClientMessage = Message<{
   'forest:updateStatus': [status: ForestStatus];
   'forest:event': [eventType: ForestEventType];
   'forest:eventResolved': [result: ForestEventResult];
-  'forest:eventTimeout': [];
   'forest:battleStart': [gameID: string];
   'forest:battleEnd': [data: { victory: boolean }];
 }>;

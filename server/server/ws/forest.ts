@@ -1,9 +1,11 @@
 import type { ForestEventAction } from '@fwo/shared';
+import ValidationError from '@/arena/errors/ValidationError';
 import { ForestService } from '@/arena/ForestService/ForestService';
 import { broadcast } from '@/helpers/channelHelper';
-import { activeConnections } from '@/server/utils/activeConnectons';
-import type { Server, Socket } from '@/server/ws';
 import { createForest } from '@/helpers/forestHelper';
+import { activeConnections } from '@/server/utils/activeConnectons';
+import { withValidationRPC } from '@/server/utils/withValidation';
+import type { Server, Socket } from '@/server/ws';
 
 const getRoom = (forest: ForestService) => {
   return `forest:${forest.id}`;
@@ -39,7 +41,7 @@ export const onCreate = (io: Server) => {
         broadcast(
           `🌲 У вас произошло событие в лесу! У вас есть 30 секунд чтобы среагировать.`,
           character.owner,
-        ).catch((e) => console.error('Failed to send forest event notification:', e));
+        ).catch((e) => console.debug('Failed to send forest event notification:', e));
       }
     });
 
@@ -47,15 +49,11 @@ export const onCreate = (io: Server) => {
       io.to(getRoom(forest)).emit('forest:eventResolved', result);
     });
 
-    forest.on('eventTimeout', () => {
-      io.to(getRoom(forest)).emit('forest:eventTimeout');
-    });
-
     forest.on('battleStart', (game) => {
       io.to(getRoom(forest)).emit('forest:battleStart', game.info.id);
     });
 
-    forest.on('battleEnd', (game, victory) => {
+    forest.on('battleEnd', (_game, victory) => {
       io.to(getRoom(forest)).emit('forest:battleEnd', { victory });
     });
   });
@@ -66,81 +64,66 @@ export const onConnection = (_io: Server, socket: Socket) => {
 
   // Вход в лес
   socket.on('forest:enter', async (callback) => {
-    try {
+    withValidationRPC(async () => {
       // Проверяем, не в лесу ли уже игрок
       if (character.forestID) {
-        return callback({ error: true, message: 'Вы уже в лесу' });
+        throw new ValidationError('Вы уже в лесу');
       }
 
       // Проверяем, не в игре ли игрок
       if (character.gameId) {
-        return callback({ error: true, message: 'Вы в бою' });
+        throw new ValidationError('Вы в бою');
       }
 
       // Создаём новый лес
       const forest = await createForest(character.id);
 
       return callback({ forestId: forest.id });
-    } catch (e) {
-      console.error('forest:enter error:', e);
-      return callback({ error: true, message: 'Что-то пошло не так' });
-    }
+    }, callback);
   });
 
   // Подключение к лесу
   socket.on('forest:connect', async (callback) => {
-    try {
+    withValidationRPC(async () => {
       const forest = await ForestService.getForestByCharacterId(character.id);
 
       if (!forest) {
-        return callback({ error: true, message: 'Вы не в лесу' });
+        throw new ValidationError('Вы не в лесу');
       }
 
       await socket.join(getRoom(forest));
 
       // Возвращаем текущий статус леса
       return callback(forest.getStatus());
-    } catch (e) {
-      console.error('forest:connect error:', e);
-      return callback({ error: true, message: 'Что-то пошло не так' });
-    }
+    }, callback);
   });
 
   // Обработка действия на событие
   socket.on('forest:handleEvent', async (action: ForestEventAction, callback) => {
-    try {
+    withValidationRPC(async () => {
       const forest = await ForestService.getForestByCharacterId(character.id);
 
       if (!forest) {
-        return callback({ error: true, message: 'Вы не в лесу' });
+        throw new ValidationError('Вы не в лесу');
       }
 
       const result = await forest.handleEventAction(action);
       return callback({ result });
-    } catch (e) {
-      console.error('forest:handleEvent error:', e);
-      return callback({
-        error: true,
-        message: e instanceof Error ? e.message : 'Что-то пошло не так',
-      });
-    }
+    }, callback);
   });
 
   // Выход из леса
   socket.on('forest:exit', async (callback) => {
-    try {
+    withValidationRPC(async () => {
       const forest = await ForestService.getForestByCharacterId(character.id);
 
       if (!forest) {
-        return callback({ error: true, message: 'Вы не в лесу' });
+        throw new ValidationError('Вы не в лесу');
       }
 
       await forest.exitForest();
       return callback({ success: true });
-    } catch (e) {
-      console.error('forest:exit error:', e);
-      return callback({ error: true, message: 'Что-то пошло не так' });
-    }
+    }, callback);
   });
 
   // Автоматическое подключение к лесу если игрок там находится

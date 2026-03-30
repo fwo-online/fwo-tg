@@ -44,10 +44,6 @@ export const useForest = () => {
     setLastResult(result);
   });
 
-  useSocketListener('forest:eventTimeout', () => {
-    setLastResult({ success: true, resolved: true, message: 'Ты прошёл мимо' });
-  });
-
   useSocketListener('forest:battleStart', (gameID: string) => {
     navigate(`/game/${gameID}`);
   });

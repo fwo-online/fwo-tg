@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn } from 'bun:test';
-import { ForestEventAction, ForestEventType, ForestState } from '@fwo/shared';
+import { ForestEventAction, ForestEventType } from '@fwo/shared';
 import arena from '@/arena';
 import TestUtils from '@/utils/testUtils';
 import { ForestService } from './ForestService';
@@ -137,22 +137,6 @@ describe('ForestService', () => {
         expect(result.success).toBe(true);
         expect(result.reward?.gold).toBeGreaterThan(0);
       });
-    });
-  });
-
-  describe('event timeout', () => {
-    it('should handle event timeout by passing by', async () => {
-      const { forestService } = await TestUtils.createForest();
-
-      await forestService.createEvent(ForestEventType.Wolf);
-
-      // @ts-expect-error - accessing private property for testing
-      forestService.currentEvent.expiresAt = new Date(Date.now() - 1000);
-
-      await forestService.handleEventTimeout();
-
-      expect(forestService.forest.state).toBe(ForestState.Waiting);
-      expect(forestService.currentEvent).toBeUndefined();
     });
   });
 

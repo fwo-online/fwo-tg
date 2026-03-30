@@ -16,12 +16,12 @@ import {
 import type { HydratedDocument } from 'mongoose';
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
+import ValidationError from '@/arena/errors/ValidationError';
 import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
 import { Player } from '@/arena/PlayersService';
 import { type Forest, type ForestEventData, ForestModel } from '@/models/forest';
 import { getActionByType, getEventHandler, getRandomEvent } from './events';
-import ValidationError from '@/arena/errors/ValidationError';
 
 const CHECK_INTERVAL = 2000; // Проверка каждую секунду
 
@@ -29,7 +29,6 @@ export class ForestService extends EventEmitter<{
   start: [forest: ForestService];
   event: [forest: ForestService, eventType: ForestEventType];
   eventResolved: [forest: ForestService, result: ForestEventResult];
-  eventTimeout: [forest: ForestService];
   battleStart: [game: GameService];
   battleEnd: [game: GameService, victory: boolean];
   updateStatus: [status: ForestStatus];
@@ -106,7 +105,9 @@ export class ForestService extends EventEmitter<{
     const interval = FOREST_EVENT_INTERVALS[phase];
     this.nextEventTime = MiscService.randInt(interval.min, interval.max);
 
-    console.debug(`Forest debug:: next event in ${(this.nextEventTime / 1000).toFixed()} seconds`);
+    console.debug(
+      `Forest debug:: ${this.id} next event in ${(this.nextEventTime / 1000).toFixed()} seconds`,
+    );
   }
 
   private async triggerRandomEvent() {
@@ -115,7 +116,7 @@ export class ForestService extends EventEmitter<{
   }
 
   async createEvent(eventType: ForestEventType) {
-    console.debug('Forest debug:: creating event', eventType);
+    console.debug(`Forest debug:: ${this.id} creating event ${eventType}`);
 
     this.currentEvent = {
       type: eventType,
@@ -133,19 +134,15 @@ export class ForestService extends EventEmitter<{
 
   async handleEventAction(action: ForestEventAction): Promise<ForestEventResult> {
     if (!this.currentEvent) {
-      throw new ValidationError('No current event');
+      throw new ValidationError('Нет активного события');
     }
 
     if (this.forest.state !== ForestState.Event) {
-      throw new ValidationError('Not in event state');
-    }
-
-    if (new Date() > this.currentEvent.expiresAt) {
-      throw new ValidationError('Event expired');
+      throw new ValidationError('Не в состоянии события');
     }
 
     const eventType = this.currentEvent.type;
-    console.debug('Forest debug:: handling event action', eventType, action);
+    console.debug(`Forest debug:: ${this.id} handling event action ${eventType} ${action}`);
 
     const handleEvent = getEventHandler(eventType);
     const result = await handleEvent(action, this);
@@ -177,7 +174,7 @@ export class ForestService extends EventEmitter<{
   }
 
   async startBattle(game: GameService, reward: Partial<GameResult>) {
-    console.debug('Forest debug:: starting battle');
+    console.debug(`Forest debug:: ${this.id} starting battle`);
 
     this.forest.state = ForestState.Battle;
     await this.forest.save();
@@ -195,7 +192,7 @@ export class ForestService extends EventEmitter<{
   }
 
   async handleBattleEnd(game: GameService, reward: Partial<GameResult>) {
-    console.debug('Forest debug:: battle ended');
+    console.debug(`Forest debug:: ${this.id} battle ended`);
 
     this.currentGame = undefined;
     this.character.gameId = '';
@@ -259,20 +256,10 @@ export class ForestService extends EventEmitter<{
   async handleEventTimeout() {
     if (!this.currentEvent) return;
 
-    console.debug('Forest debug:: event timeout');
+    console.debug(`Forest debug:: ${this.id} event timeout`);
 
     // Игрок прошёл мимо
-    this.currentEvent.resolved = true;
-    this.currentEvent.action = ForestEventAction.PassBy;
-    this.currentEvent.result = JSON.stringify({ success: true, message: 'Прошёл мимо' });
-    this.forest.events.push(this.currentEvent);
-    this.currentEvent = undefined;
-    this.forest.state = ForestState.Waiting;
-    await this.forest.save();
-
-    this.emit('eventTimeout', this);
-    this.scheduleNextEvent();
-    this.emitStatus();
+    this.handleEventAction(ForestEventAction.PassBy);
   }
 
   private initHandlers() {
