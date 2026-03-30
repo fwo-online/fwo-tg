@@ -10,7 +10,7 @@ import { Types } from 'mongoose';
 import arena from '@/arena';
 import GameService, { type GameOptions } from '@/arena/GameService';
 import { LadderService } from '@/arena/LadderService';
-import { formatMessage } from '@/arena/LogService/utils';
+import { formatDead, formatMessage } from '@/arena/LogService/utils';
 import { MonsterService } from '@/arena/MonsterService/MonsterService';
 import {
   ForestRewardService,
@@ -93,7 +93,7 @@ export async function createGame(players: string[], options?: GameOptions, chat?
   game.on('endRound', async ({ log, dead }) => {
     await broadcast.send(log.map((log) => formatMessage(log)));
     if (dead.length) {
-      await broadcast.send(`Погибшие в этом раунде: ${dead.map(({ nick }) => nick).join(', ')}`);
+      await broadcast.send(formatDead(dead));
     }
   });
 

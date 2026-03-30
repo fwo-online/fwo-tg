@@ -117,26 +117,19 @@ export default class PlayerService {
   /**
    * Возвращает убийцу игрока если он записан
    */
-  getKiller(): string {
+  getKiller() {
     return this.flags.isDead;
-  }
-
-  kill(killer: PlayerService, action: string) {
-    this.flags.isDead = killer.id;
-    this.flags.isKilledBy = action;
   }
 
   /**
    * Устанавливает убийцу игрока
-   * @param player записывает id убийцы
    */
-  setKiller(player: PlayerService): void {
-    this.flags.isDead = player.id;
+  setKiller(killer: PlayerService, action: string): void {
+    this.flags.isDead = { killer, action };
   }
 
   resetKiller(): void {
-    this.flags.isDead = '';
-    this.flags.isKilledBy = '';
+    this.flags.isDead = undefined;
   }
 
   setProc(proc: number) {

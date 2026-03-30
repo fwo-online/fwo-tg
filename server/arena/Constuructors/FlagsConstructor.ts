@@ -4,6 +4,12 @@ type Flag = {
   initiator: Player;
   val: number;
 };
+
+type DeadFlag = {
+  killer: Player;
+  action: string;
+};
+
 /**
  * Класс флагов
  */
@@ -11,7 +17,7 @@ export default class FlagsConstructor {
   isProtected: Flag[] = [];
   isGlitched: Flag[] = [];
   isSilenced: Flag[] = [];
-  isDead = '';
+  isDead?: DeadFlag = undefined;
   isHealed: Flag[] = [];
   isHited?: Flag;
   isKicked?: 'run' | 'afk' = undefined;

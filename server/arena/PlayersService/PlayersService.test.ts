@@ -89,9 +89,9 @@ describe('PlayerService', () => {
 
   it('should get kills', () => {
     const killer = players.alivePlayers[0];
-    players.alivePlayers[1].setKiller(killer);
-    players.alivePlayers[4].setKiller(killer);
-    players.alivePlayers[6].setKiller(killer);
+    players.alivePlayers[1].setKiller(killer, 'Атака');
+    players.alivePlayers[4].setKiller(killer, 'Атака');
+    players.alivePlayers[6].setKiller(killer, 'Атака');
 
     expect(players.getKills(killer.id)).toHaveLength(3);
   });
