@@ -1,14 +1,21 @@
 import arena from '@/arena';
 import { ForestService } from '@/arena/ForestService/ForestService';
 import { broadcast } from '@/helpers/channelHelper';
+import { bold } from '@/utils/formatString';
 
 export async function createForest(playerId: string) {
-  const newForest = new ForestService(playerId);
-  const forest = await newForest.createForest();
+  const forest = new ForestService(playerId);
+  const nickname = arena.characters[playerId].nickname;
+
+  forest.on('start', async () => {
+    await broadcast(`🌲 Игрок ${bold(nickname)} отправляется в лес!`);
+  });
 
   forest.on('end', async (_, reason) => {
     if (reason === 'death') {
-      await broadcast(`🌲 Игрок ${arena.characters[playerId]?.nickname} погиб в лесу!`);
+      await broadcast(`🌲 Игрок ${bold(nickname)} погиб в лесу!`);
+    } else {
+      await broadcast(`🌲 Игрок ${bold(nickname)} вернулся из леса с добычей!`);
     }
   });
 
@@ -18,17 +25,17 @@ export async function createForest(playerId: string) {
   });
 
   forest.on('battleStart', async () => {
-    await broadcast(`⚔️ ${arena.characters[playerId]?.nickname} вступил в бой с волком в лесу!`);
+    await broadcast(`⚔️ ${bold(nickname)} вступил в бой с монстром в лесу!`);
   });
 
   forest.on('battleEnd', async (_, victory) => {
     if (victory) {
-      await broadcast(`✅ ${arena.characters[playerId]?.nickname} победил волка!`);
+      await broadcast(`✅ ${bold(nickname)} победил монстра!`);
     } else {
-      await broadcast(`💀 ${arena.characters[playerId]?.nickname} был побеждён волком!`);
+      await broadcast(`💀 ${bold(nickname)} был побеждён монстром!`);
     }
   });
 
-  return forest;
+  return forest.createForest();
 }
 // @TODO cleaup debuff
