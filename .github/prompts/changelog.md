@@ -1,25 +1,17 @@
-description = "Update CHANGELOG.md with a public Russian RPG changelog from a git ref up to HEAD"
-
-prompt = '''
-You are updating the project's CHANGELOG.md with public release notes for an RPG game.
-
+You are preparing public release notes for an RPG game.
 The user passes exactly one git ref in this format:
-
 <from_ref>
-
 The changelog range must be:
 <from_ref>..HEAD
 
-User input:
-{{args}}
+<user_input>
+__ARGS__
+</user_input>
 
-First inspect the git range below.
-
-!{bash -lc '
+First, inspect the git range by running this bash command:
+```bash
 set -euo pipefail
-set -- {{args}}
-
-FROM="${1:-}"
+FROM="__ARGS__"
 TO="HEAD"
 
 if [ -z "$FROM" ]; then
@@ -39,24 +31,15 @@ git log "$FROM..$TO" \
   --no-merges \
   --reverse \
   --pretty=format:"---COMMIT---%nHASH: %H%nSUBJECT: %s%nBODY:%n%b"
-
 echo
+
 echo "=== FILES CHANGED ==="
 git diff --name-only "$FROM..$TO" | sed "s/^/- /"
+```
 
-echo
-echo "=== CURRENT CHANGELOG ==="
-if [ -f CHANGELOG.md ]; then
-  cat CHANGELOG.md
-else
-  echo "__CHANGELOG_MISSING__"
-fi
-'}
-
-Your tasks:
-
+Your job:
 1. Read the commit list for the requested range.
-2. Generate a concise, human-readable public changelog in Markdown.
+2. Produce a human-readable public changelog in Markdown.
 3. Rewrite technical commit messages into player-facing language.
 4. Treat this as a public changelog for an RPG game update.
 5. Use specific RPG/game language where appropriate.
@@ -65,8 +48,8 @@ Your tasks:
    - Исправления
    - Баланс
    - Интерфейс
-   - Важные изменения
    - Прочее
+   - Важные изменения
 7. Do not show Infrastructure, Developer Experience, CI/CD, internal Docs, refactoring-only, or other purely internal engineering changes.
 8. Omit or de-emphasize obvious noise when it is not meaningful for players:
    - merge commits
@@ -78,25 +61,14 @@ Your tasks:
 9. Deduplicate related commits and summarize them together when appropriate.
 10. If commit messages are messy, infer intent carefully from commit text and changed file names only.
 11. Do not invent changes that are not supported by the commits.
-12. If there are no meaningful player-facing changes, write a short section that says so clearly in Russian.
+12. If there are no meaningful player-facing changes, say so clearly.
 13. Use Russian language.
-14. Use emojis, but moderately and tastefully.
-15. Keep the tone suitable for public game patch notes.
+14. Use emojis, but do it moderately and tastefully.
+15. Keep the tone suitable for a public game patch note.
 
-Then update CHANGELOG.md using these rules:
-
-16. If CHANGELOG.md does not exist, create it.
-17. Put the new release section at the top of the file.
-18. Keep the previous changelog content below the new section.
-19. Do not remove old entries unless they are exact duplicates caused by this update.
-20. Use this heading for the new section:
-
-## Обновление {{args}}
-
-21. Under that heading, include:
-   - a short "Кратко" section with 2 to 5 bullets
-   - then the detailed grouped changelog
-22. Use clean Markdown.
-23. Do not wrap the whole file in code fences.
-24. After editing the file, provide a very short confirmation stating that CHANGELOG.md was updated.
-'''
+Output format:
+- Title: Changelog
+- Then a short section: **Кратко** with 2 to 5 bullets
+- Then the detailed grouped changelog
+- Keep it concise but readable
+- Use Markdown only
