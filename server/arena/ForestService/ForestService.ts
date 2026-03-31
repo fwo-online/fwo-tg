@@ -86,7 +86,7 @@ export class ForestService extends EventEmitter<{
       state: ForestState.Waiting,
     });
 
-    console.debug('Forest debug:: create forest', this.id, 'for player', this.playerId);
+    console.debug(`Forest debug:: ${this.id} create forest for player ${this.playerId}`);
     arena.forests[this.id] = this;
 
     // Установить forestId у персонажа
@@ -295,7 +295,7 @@ export class ForestService extends EventEmitter<{
   private checkEndForest() {
     const eventsCount = this.getEventsCount();
     if (eventsCount > FOREST_MAX_EVENTS) {
-      console.debug('Forest debug:: max time reached, ending forest');
+      console.debug(`Forest debug:: ${this.id} max time reached, ending forest`);
       this.endForest('maxTime');
       return true;
     }
@@ -342,7 +342,7 @@ export class ForestService extends EventEmitter<{
   }
 
   async exitForest() {
-    console.debug('Forest debug:: player exit forest');
+    console.debug(`Forest debug:: ${this.id} player exit forest`);
     this.escaping = true;
 
     this.scheduleNextEvent();
@@ -368,7 +368,7 @@ export class ForestService extends EventEmitter<{
       return;
     }
 
-    console.debug('Forest debug:: ending forest', reason);
+    console.debug(`Forest debug:: ${this.id} ending forest`, reason);
 
     if (this.checkInterval) {
       clearInterval(this.checkInterval);
