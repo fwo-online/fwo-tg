@@ -1,4 +1,5 @@
 import { ForestEventAction } from '@fwo/shared';
+import { floatNumber } from '@/utils/floatNumber';
 import type { ForestEventHandler } from './getEventHandler';
 
 export const handleCampfireEvent: ForestEventHandler = async (action, forest) => {
@@ -13,7 +14,7 @@ export const handleCampfireEvent: ForestEventHandler = async (action, forest) =>
   if (action === ForestEventAction.Rest) {
     const maxHeal = Math.max(forest.player.stats.val('base.hp') - forest.player.stats.val('hp'), 0);
     const baseHeal = Math.floor(forest.player.stats.val('base.hp') * 0.5);
-    const healAmount = Math.min(baseHeal, maxHeal); // 50% восстановления
+    const healAmount = floatNumber(Math.min(baseHeal, maxHeal)); // 50% восстановления
     return {
       success: true,
       resolved: true,
