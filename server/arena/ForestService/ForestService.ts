@@ -358,6 +358,7 @@ export class ForestService extends EventEmitter<{
   }
 
   resumeForest() {
+    this.currentEvent = undefined;
     this.forest.state = ForestState.Waiting;
     this.scheduleNextEvent();
   }

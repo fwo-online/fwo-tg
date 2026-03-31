@@ -1,8 +1,8 @@
 import { ForestEventAction, ForestEventType, ForestState } from '@fwo/shared';
 import { isNotNil, shuffle } from 'es-toolkit';
 import arena from '@/arena';
+import ValidationError from '@/arena/errors/ValidationError';
 import type { ForestService } from '@/arena/ForestService/ForestService';
-import MiscService from '@/arena/MiscService';
 import { createForestGame } from '@/helpers/gameHelper';
 import type { ForestEventHandler } from './getEventHandler';
 
@@ -50,7 +50,7 @@ class ForestEnemyPlayerHandler {
           }
         }
       }
-    }, 10000);
+    }, 25000);
   }
 
   static startEvents([forestA, forestB]: [ForestService, ForestService]) {
@@ -114,6 +114,9 @@ class ForestEnemyPlayerHandler {
 
 export const handleOtherPlayerEvent: ForestEventHandler = async (action, forest) => {
   const session = ForestEnemyPlayerHandler.forestToSession.get(forest.id);
+  console.debug(
+    `Forest debug:: ${forest.id} handling other player event action ${action}, session: ${session?.id}`,
+  );
   if (!session) {
     return {
       success: false,
@@ -123,21 +126,11 @@ export const handleOtherPlayerEvent: ForestEventHandler = async (action, forest)
   }
 
   const enemyAction = session.enemyAction;
+  console.debug(`Forest debug:: ${forest.id} enemy action ${enemyAction}, session: ${session.id}`);
 
-  if (action === ForestEventAction.Attack) {
-    if (!enemyAction) {
-      session.enemyAction = ForestEventAction.Attack;
-
-      return {
-        success: true,
-        resolved: false,
-        message: 'Ты решаешь напасть на игрока!',
-      };
-    }
-
-    if (enemyAction === ForestEventAction.Attack) {
+  if (enemyAction === ForestEventAction.Attack) {
+    if (action === ForestEventAction.Attack) {
       ForestEnemyPlayerHandler.startGame(session);
-
       return {
         success: true,
         resolved: true,
@@ -145,7 +138,19 @@ export const handleOtherPlayerEvent: ForestEventHandler = async (action, forest)
       };
     }
 
-    if (enemyAction === ForestEventAction.PassBy) {
+    if (action === ForestEventAction.PassBy) {
+      ForestEnemyPlayerHandler.endSession(session);
+      return {
+        success: true,
+        resolved: true,
+        message:
+          'Ты решаешь пройти мимо. Игрок пытался атаковать тебя, но ты смог скрыться в чаще леса!',
+      };
+    }
+  }
+
+  if (enemyAction === ForestEventAction.PassBy) {
+    if (action === ForestEventAction.Attack) {
       ForestEnemyPlayerHandler.endSession(session);
       return {
         success: false,
@@ -155,45 +160,36 @@ export const handleOtherPlayerEvent: ForestEventHandler = async (action, forest)
       };
     }
 
-    return {
-      success: true,
-      resolved: false,
-      message: 'Ты решаешь напасть на игрока!',
-    };
-  }
-
-  if (enemyAction === ForestEventAction.Attack) {
-    if (MiscService.chance(50)) {
+    if (action === ForestEventAction.PassBy) {
       ForestEnemyPlayerHandler.endSession(session);
       return {
         success: true,
         resolved: true,
-        message:
-          'Ты решаешь пройти мимо. Ты замечаешь попытку игрока напасть на тебя, но скрываешься в чаще леса',
+        message: 'Ты решаешь пройти мимо. Каждый идёт своей дорогой',
       };
     }
-
-    ForestEnemyPlayerHandler.startGame(session);
-    return {
-      success: false,
-      resolved: true,
-      message:
-        'Ты решаешь пройти мимо. Ты пытаешься скрыться в чаще леса, но игрок догоняет тебя. Защищайся!',
-    };
   }
 
-  if (enemyAction === ForestEventAction.PassBy) {
-    ForestEnemyPlayerHandler.endSession(session);
+  session.enemyAction = action;
+
+  if (action === ForestEventAction.Attack) {
     return {
       success: true,
-      resolved: true,
-      message: 'Ты решаешь пройти мимо. Каждый идёт своей дорогой',
+      resolved: false,
+      message: 'Ты решаешь напасть на игрока! Игрок всё ещё оценивает ситуацию...',
     };
   }
 
-  return {
-    success: true,
-    resolved: false,
-    message: 'Ты решаешь пройти мимо. Игрок всё ещё оценивает ситуацию',
-  };
+  if (action === ForestEventAction.PassBy) {
+    return {
+      success: true,
+      resolved: false,
+      message: 'Ты решаешь пройти мимо. Игрок всё ещё оценивает ситуацию...',
+    };
+  }
+
+  console.warn(
+    `Forest warn:: unknown action ${action}, enemy action ${enemyAction}, session: ${session.id}`,
+  );
+  throw new ValidationError(`Неизвестное действие ${action}`);
 };
