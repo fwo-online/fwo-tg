@@ -10,8 +10,8 @@ type PvPSession = {
   id: string;
   forestA: ForestService;
   forestB: ForestService;
-
-  enemyAction?: ForestEventAction;
+  actionA?: ForestEventAction;
+  actionB?: ForestEventAction;
   resolved: boolean;
 };
 
@@ -24,7 +24,8 @@ class ForestEnemyPlayerHandler {
       const forests = shuffle(
         Object.values(arena.forests)
           .filter(isNotNil)
-          .filter((forest) => forest.forest.state === ForestState.Waiting),
+          .filter((forest) => forest.forest.state === ForestState.Waiting)
+          .filter((forest) => !this.forestToSession.has(forest.id)),
       );
       const used = new Set<string>();
 
@@ -54,6 +55,10 @@ class ForestEnemyPlayerHandler {
   }
 
   static startEvents([forestA, forestB]: [ForestService, ForestService]) {
+    if (this.forestToSession.has(forestA.id) || this.forestToSession.has(forestB.id)) {
+      return;
+    }
+
     const sessionId = crypto.randomUUID();
 
     const session: PvPSession = {
@@ -76,7 +81,7 @@ class ForestEnemyPlayerHandler {
 
   static async startGame(session: PvPSession) {
     if (session.resolved) {
-      return;
+      return false;
     }
     session.resolved = true;
 
@@ -84,13 +89,21 @@ class ForestEnemyPlayerHandler {
 
     if (!game) {
       console.error('ForestEnemyPlayerHandler::game not created');
-      return;
+
+      session.forestA.resumeForest();
+      session.forestB.resumeForest();
+
+      this.cleanupSession(session);
+      return false;
     }
 
-    session.forestA.startBattle(game, session.forestB.player.stats.collect);
-    session.forestB.startBattle(game, session.forestA.player.stats.collect);
+    await Promise.all([
+      session.forestA.startBattle(game, session.forestB.player.stats.collect),
+      session.forestB.startBattle(game, session.forestA.player.stats.collect),
+    ]);
 
     this.cleanupSession(session);
+    return true;
   }
 
   static endSession(session: PvPSession) {
@@ -125,12 +138,39 @@ export const handleOtherPlayerEvent: ForestEventHandler = async (action, forest)
     };
   }
 
-  const enemyAction = session.enemyAction;
-  console.debug(`Forest debug:: ${forest.id} enemy action ${enemyAction}, session: ${session.id}`);
+  const isA = session.forestA.id === forest.id;
+  const ownAction = isA ? session.actionA : session.actionB;
+  const enemyAction = isA ? session.actionB : session.actionA;
+
+  console.debug(
+    `Forest debug:: ${forest.id} action ${ownAction} enemy action ${enemyAction}, session: ${session.id}`,
+  );
+
+  if (ownAction) {
+    return {
+      success: false,
+      resolved: true,
+      message: 'Ты уже сделал свой выбор, жди решения другого игрока',
+    };
+  }
+
+  if (isA) {
+    session.actionA = action;
+  } else {
+    session.actionB = action;
+  }
 
   if (enemyAction === ForestEventAction.Attack) {
     if (action === ForestEventAction.Attack) {
-      ForestEnemyPlayerHandler.startGame(session);
+      const started = await ForestEnemyPlayerHandler.startGame(session);
+      if (!started) {
+        return {
+          success: false,
+          resolved: true,
+          message: 'Бой не состоялся. Другой игрок скрылся в чаще леса',
+        };
+      }
+
       return {
         success: true,
         resolved: true,
@@ -169,8 +209,6 @@ export const handleOtherPlayerEvent: ForestEventHandler = async (action, forest)
       };
     }
   }
-
-  session.enemyAction = action;
 
   if (action === ForestEventAction.Attack) {
     return {
