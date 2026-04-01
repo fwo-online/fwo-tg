@@ -37,10 +37,6 @@ function runStage(stages: Stages, game: Game) {
         console.log('stage fail (no player):', initiator?.id, target?.id);
       }
     });
-
-    if ('castLong' in action) {
-      action.castLong(game);
-    }
   });
   return game;
 }

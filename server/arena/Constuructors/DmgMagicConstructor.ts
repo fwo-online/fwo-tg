@@ -2,16 +2,13 @@ import { floatNumber } from '../../utils/floatNumber';
 import type { Player } from '../PlayersService';
 import type { MagicArgs } from './MagicConstructor';
 import { Magic } from './MagicConstructor';
-import type {
-  ActionType, DamageType,
-} from './types';
+import type { ActionType, DamageType } from './types';
 
 export interface DmgMagicArgs extends MagicArgs {
   dmgType: DamageType;
 }
 
-export interface DmgMagic extends DmgMagicArgs, Magic {
-}
+export interface DmgMagic extends DmgMagicArgs, Magic {}
 /**
  * Общий конструктор не длительных магий
  */

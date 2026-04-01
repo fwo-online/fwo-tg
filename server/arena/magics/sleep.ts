@@ -1,70 +1,82 @@
+import { OrderType } from '@fwo/shared';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
+import { CommonMagic } from '@/arena/Constuructors/CommonMagicConstructor';
+import { LongMagic } from '@/arena/Constuructors/LongMagicConstructor';
+import type { MagicArgs } from '@/arena/Constuructors/MagicConstructor';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
+import CastError from '@/arena/errors/CastError';
 import { bold, italic } from '@/utils/formatString';
-import type { Affect } from '../Constuructors/interfaces/Affect';
-import { LongMagic } from '../Constuructors/LongMagicConstructor';
-import CastError from '../errors/CastError';
 
 /**
  * Сон
  * Основное описание магии общее требовани есть в конструкторе
  */
-class Sleep extends LongMagic implements Affect {
-  constructor() {
-    super({
-      name: 'sleep',
-      displayName: 'Усыпление',
-      desc: 'Цель засыпает магическим сном и не может: атаковать, лечить, защищать, использовать скиллы',
-      cost: 16,
-      baseExp: 20,
-      costType: 'mp',
-      lvl: 4,
-      orderType: 'enemy',
-      aoeType: 'target',
-      magType: 'bad',
-      chance: ['1d80+20', '1d40+60', '1d20+80'],
-      profList: ['m'],
-      effect: ['1d1', '1d1', '1d1'],
-    });
-  }
+const params: MagicArgs = Object.freeze({
+  name: 'sleep',
+  displayName: 'Усыпление',
+  desc: 'Цель засыпает магическим сном и не может: атаковать, лечить, защищать, использовать скиллы',
+  cost: 16,
+  baseExp: 20,
+  costType: 'mp',
+  lvl: 4,
+  orderType: OrderType.Enemy,
+  aoeType: 'target',
+  magType: 'bad',
+  chance: ['1d80+20', '1d40+60', '1d20+80'],
+  profList: ['m'],
+  effect: ['1d1', '1d1', '1d1'],
+});
 
+class Sleep extends CommonMagic {
   run() {
     const { initiator, target } = this.params;
 
-    target.flags.isSleeping.push({ initiator, val: this.effectVal() });
+    target.effects.addEffect({
+      action: this.name,
+      duration: initiator.stats.val('spellLength'),
+      proc: initiator.proc,
+      initiator,
+      onBeforeRun({ params: { initiator, target, game } }): undefined {
+        sleepEffect.duration = this.duration;
+        sleepEffect.cast(initiator, target, game);
+      },
+      onDamageReceived(ctx, action) {
+        sleepEffect.onDamageReceived(ctx, action);
+      },
+    });
   }
+}
 
-  runLong() {
-    const { initiator, target } = this.params;
-    target.flags.isSleeping.push({ initiator, val: this.effectVal() });
-  }
+class SleepEffect extends LongMagic {
+  run(): void {
+    const { target, game } = this.params;
+    const effects = target.effects.getEffectsByAction(this.name);
 
-  preAffect: Affect['preAffect'] = ({ params: { initiator: target, game } }): undefined => {
-    if (target.flags.isHited) {
-      /** @todo сделать метод в конструкторе для очистки длительных бафов */
-      game.longActions.sleep = game.longActions.sleep?.filter((item) => item.target !== target.id);
-      target.flags.isSleeping = [];
+    if (!effects.length) {
+      return;
     }
 
-    if (target.flags.isSleeping.length) {
-      throw new CastError(
-        target.flags.isSleeping.map(({ initiator }) =>
-          this.getSuccessResult({
-            initiator,
-            target,
-            game,
-          }),
-        ),
-      );
+    throw new CastError(
+      effects.map(({ initiator }) =>
+        this.getSuccessResult({
+          initiator,
+          target,
+          game,
+        }),
+      ),
+    );
+  }
+
+  onDamageReceived({ params: { target } }: BaseActionContext, action: BaseAction) {
+    if (action.actionType === 'phys') {
+      target.effects.removeEffectsByAction(this.name);
     }
-  };
+  }
 
   customMessage({ initiator, target }: SuccessArgs): string {
     return `${bold(initiator.nick)} заклинанием ${italic(this.displayName)} заставил ${bold(target.nick)} заснуть на этот раунд`;
   }
-
-  customLongMessage({ initiator, target }: SuccessArgs): string {
-    return `${bold(initiator.nick)} заклинанием ${italic(this.displayName)} заставил ${bold(target.nick)} заснуть на этот раунд`;
-  }
 }
 
-export default new Sleep();
+export const sleep = new Sleep(params);
+export const sleepEffect = new SleepEffect(params);

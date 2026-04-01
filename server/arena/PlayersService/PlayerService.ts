@@ -6,6 +6,7 @@ import { ClanService } from '@/arena/ClanService';
 import FlagsConstructor from '@/arena/Constuructors/FlagsConstructor';
 import type { DamageType } from '@/arena/Constuructors/types';
 import ValidationError from '@/arena/errors/ValidationError';
+import { PlayerEffects } from '@/arena/PlayersService/PlayerEffects';
 import { PlayerOffHand } from '@/arena/PlayersService/PlayerOffHand';
 import StatsService from '@/arena/StatsService';
 import { StreakHelper } from '@/helpers/streakHelper';
@@ -51,6 +52,7 @@ export default class PlayerService {
   offHand: PlayerOffHand;
   isBot: boolean;
   failStreak = new StreakHelper<ActionKey>();
+  effects = new PlayerEffects();
 
   constructor(params: CharacterService, isBot = false) {
     this.nick = params.nickname;
@@ -149,6 +151,7 @@ export default class PlayerService {
     this.proc = 100;
     this.stats.refresh();
     this.flags.refresh();
+    this.effects.refresh();
   }
 
   setDead() {

@@ -1,10 +1,11 @@
+import { EffectType } from '@fwo/shared';
 import { floatNumber } from '@/utils/floatNumber';
 import CastError from '../errors/CastError';
 import type GameService from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import { AffectableAction } from './AffectableAction';
-import type { ActionType, DamageType, OrderType } from './types';
+import type { ActionType } from './types';
 
 /**
  * Конструктор физической атаки
@@ -13,13 +14,11 @@ import type { ActionType, DamageType, OrderType } from './types';
  * ???) Т.е если цель не защищается атака по ней на 95% удачна
  * */
 export default abstract class PhysConstructor extends AffectableAction {
-  name: string;
   displayName: string;
   desc: string;
   lvl: number;
-  orderType: OrderType;
   actionType: ActionType = 'phys';
-  effectType: DamageType = 'physical';
+  effectType = EffectType.Physical;
 
   constructor(atkAct) {
     super();
@@ -44,9 +43,10 @@ export default abstract class PhysConstructor extends AffectableAction {
     try {
       this.fitsCheck();
       this.calculateHit();
-      this.checkPreAffects();
+      initiator.effects.onBeforeRun(this.context, this);
 
       this.run(initiator, target, game);
+      target.effects.onDamageReceived(this.context, this);
       this.calculateExp();
 
       this.checkPostAffects();

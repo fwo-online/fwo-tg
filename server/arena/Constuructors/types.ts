@@ -33,10 +33,6 @@ export interface CustomMessage {
   customMessage?(args: SuccessArgs): string;
 }
 
-export interface LongCustomMessage extends CustomMessage {
-  longCustomMessage?(args: SuccessArgs): string;
-}
-
 export interface AoeMagic {
   runAoe?(initiator: Player, target: Player, game: GameService, index: number): void;
   getTargets?(): Player[];
