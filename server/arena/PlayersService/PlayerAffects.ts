@@ -47,20 +47,20 @@ export class PlayerAffects {
 
   onDamageReceived(ctx: BaseActionContext, action: BaseAction) {
     for (const affect of this.#affects) {
-      affect.onDamageReceived?.(ctx, action);
+      affect.onDamageReceived?.(ctx, action, affect);
     }
   }
 
   onBeforeRun(ctx: BaseActionContext, action: BaseAction) {
     for (const affect of this.#affects) {
-      affect.onBeforeRun?.(ctx, action);
+      affect.onBeforeRun?.(ctx, action, affect);
     }
   }
 
   onCast(params: BaseActionParams, action: ActionKey) {
     for (const affect of this.#affects) {
       if (action === affect.action) {
-        affect.onCast?.(params);
+        affect.onCast?.(params, affect);
       }
     }
   }

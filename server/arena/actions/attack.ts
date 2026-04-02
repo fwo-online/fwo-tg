@@ -1,6 +1,8 @@
+import { OrderType } from '@fwo/shared';
 import type { Affect } from '../Constuructors/interfaces/Affect';
 import PhysConstructor from '../Constuructors/PhysConstructor';
 import CastError from '../errors/CastError';
+
 /**
  * Физическая атака
  */
@@ -11,7 +13,7 @@ class Attack extends PhysConstructor implements Affect {
       displayName: 'Атака',
       desc: 'Атака',
       lvl: 0,
-      orderType: 'all',
+      orderType: OrderType.All,
     });
   }
 

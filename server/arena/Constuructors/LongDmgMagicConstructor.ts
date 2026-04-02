@@ -28,6 +28,9 @@ export abstract class LongDmgMagic extends DmgMagic {
       this.checkTargetIsDead(); // проверка трупов в длительных магиях
       this.next({ initiator, target, game });
     } catch (failMsg) {
+      if (this.isAffect) {
+        throw failMsg;
+      }
       this.handleCastError(failMsg);
     } finally {
       this.reset();

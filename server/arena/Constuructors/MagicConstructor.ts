@@ -33,7 +33,6 @@ export abstract class Magic extends AffectableAction {
   actionType: ActionType = 'magic';
 
   isLong = false;
-  isAffect = false;
 
   /**
    * Создание магии
@@ -102,7 +101,6 @@ export abstract class Magic extends AffectableAction {
   }
 
   getEffectExp(_effect: number, baseExp = 0) {
-    console.log('effect exp::', this.params.initiator.proc, baseExp);
     return Math.round(baseExp * this.params.initiator.proc);
   }
 

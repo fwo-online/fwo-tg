@@ -4,18 +4,23 @@ import type {
   BaseActionContext,
   BaseActionParams,
 } from '@/arena/Constuructors/BaseAction';
+import type { SuccessArgs } from '@/arena/Constuructors/types';
 import type { Player } from '@/arena/PlayersService';
 
 type BaseAffect = {
   initiator: Player;
   action: ActionKey;
   value?: number;
+  proc?: number;
 
-  onBeforeRun?: (ctx: BaseActionContext, action: BaseAction) => void;
-  onCast?: (params: BaseActionParams) => void;
-  onDamageDealt?: (ctx: BaseActionContext, action: BaseAction) => void;
-  onDamageReceived?: (ctx: BaseActionContext, action: BaseAction) => void;
-  onAffectCalculation?: (ctx: BaseActionContext) => void;
+  onBeforeRun?: (
+    ctx: BaseActionContext,
+    action: BaseAction,
+    affect: Affect,
+  ) => void | SuccessArgs | SuccessArgs[];
+  onCast?: (params: BaseActionParams, affect: Affect) => void;
+  onDamageDealt?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
+  onDamageReceived?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
   onHeal?: (ctx: BaseActionContext) => void;
 };
 
@@ -26,7 +31,6 @@ export type Passive = BaseAffect & {
 export type Effect = BaseAffect & {
   type: 'effect';
   duration: number;
-  proc: number;
 };
 
 export type Affect = Passive | Effect;

@@ -64,27 +64,15 @@ export abstract class AffectableAction extends BaseAction {
     throw error;
   }
 
-  private addAffects(affects: undefined | SuccessArgs | SuccessArgs[]) {
+  addAffects(affects: undefined | SuccessArgs | SuccessArgs[]) {
     if (!affects) {
       return;
     }
 
     if (Array.isArray(affects)) {
-      this.affects.push(...affects);
+      this.status.affects.push(...affects);
     } else {
-      this.affects.push(affects);
+      this.status.affects.push(affects);
     }
-  }
-
-  getSuccessResult(params = this.params): SuccessArgs {
-    return {
-      ...super.getSuccessResult(params),
-      affects: this.affects,
-    };
-  }
-
-  reset() {
-    super.reset();
-    this.affects = [];
   }
 }

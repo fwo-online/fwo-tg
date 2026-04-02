@@ -1,10 +1,11 @@
-import type { EffectType, OrderType } from '@fwo/shared';
+import type { ActionType, EffectType, OrderType } from '@fwo/shared';
+import type { ActionKey } from '@/arena/ActionService';
 import CastError from '@/arena/errors/CastError';
 import type GameService from '@/arena/GameService';
 import type { Player } from '@/arena/PlayersService';
 import { normalizeToArray } from '@/utils/array';
 import { floatNumber } from '@/utils/floatNumber';
-import type { ActionType, BreaksMessage, ExpArr, FailArgs, SuccessArgs } from './types';
+import type { BreaksMessage, ExpArr, FailArgs, SuccessArgs } from './types';
 
 export type BaseActionParams = {
   initiator: Player;
@@ -16,6 +17,7 @@ export type BaseActionStatus = {
   effect: number;
   exp: number;
   expArr: ExpArr;
+  affects: SuccessArgs[];
 };
 
 export type BaseActionContext = {
@@ -24,22 +26,21 @@ export type BaseActionContext = {
 };
 
 export abstract class BaseAction {
-  name: string;
-  displayName: string;
-  orderType: OrderType;
-  actionType: ActionType;
+  name!: ActionKey;
+  displayName!: string;
+  orderType!: OrderType;
+  actionType!: ActionType;
   effectType?: EffectType;
-  lvl: number;
 
-  context: BaseActionContext;
-  params: BaseActionParams;
+  context!: BaseActionContext;
+  params!: BaseActionParams;
+  isAffect = false;
 
-  status: BaseActionStatus = { effect: 0, exp: 0, expArr: [] };
-  results: SuccessArgs;
+  status: BaseActionStatus = { effect: 0, exp: 0, expArr: [], affects: [] };
 
-  abstract cast(initiator: Player, target: Player, game: GameService);
+  abstract cast(initiator: Player, target: Player, game: GameService): void;
 
-  abstract run(initiator: Player, target: Player, game: GameService);
+  abstract run(initiator: Player, target: Player, game: GameService): void;
 
   createContext(initiator: Player, target: Player, game: GameService) {
     this.reset();
@@ -65,7 +66,7 @@ export abstract class BaseAction {
   }
 
   reset() {
-    this.status = { effect: 0, exp: 0, expArr: [] };
+    this.status = { effect: 0, exp: 0, expArr: [], affects: [] };
   }
 
   getFailResult(
@@ -78,7 +79,6 @@ export abstract class BaseAction {
       action: this.displayName,
       initiator: params.initiator,
       target: params.target,
-      weapon: params.initiator.weapon.item,
     };
   }
 
@@ -91,10 +91,10 @@ export abstract class BaseAction {
       initiator,
       effect: floatNumber(this.status.effect),
       hp: target.stats.val('hp'),
-      weapon: initiator.weapon.item,
       effectType: this.effectType,
       orderType: this.orderType,
       expArr: this.status.expArr,
+      affects: this.status.affects,
       // @ts-expect-error todo вынести кастомные сообщения в отдельный сервис
       msg: this.customMessage?.bind(this),
     };
@@ -129,6 +129,8 @@ export abstract class BaseAction {
     const result = this.getSuccessResult({ initiator, target, game });
     this.giveExp(result);
 
-    game.recordOrderResult(result);
+    if (!this.isAffect) {
+      game.recordOrderResult(result);
+    }
   }
 }
