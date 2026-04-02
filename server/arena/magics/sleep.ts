@@ -1,4 +1,4 @@
-import { OrderType } from '@fwo/shared';
+import { type ActionType, OrderType } from '@fwo/shared';
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import { CommonMagic } from '@/arena/Constuructors/CommonMagicConstructor';
 import { LongMagic } from '@/arena/Constuructors/LongMagicConstructor';
@@ -7,6 +7,7 @@ import type { SuccessArgs } from '@/arena/Constuructors/types';
 import CastError from '@/arena/errors/CastError';
 import { bold, italic } from '@/utils/formatString';
 
+const actionTypes: ActionType[] = ['phys', 'protect', 'heal', 'skill'];
 /**
  * Сон
  * Основное описание магии общее требовани есть в конструкторе
@@ -31,50 +32,57 @@ class Sleep extends CommonMagic {
   run() {
     const { initiator, target } = this.params;
 
-    target.effects.addEffect({
+    target.affects.addEffect({
       action: this.name,
       duration: initiator.stats.val('spellLength'),
       proc: initiator.proc,
       initiator,
-      onBeforeRun({ params: { initiator, target, game } }): undefined {
+      onBeforeRun({ status, params: { initiator, game } }, action): undefined {
+        this.initiator.proc = this.proc;
         sleepEffect.duration = this.duration;
-        sleepEffect.cast(initiator, target, game);
+        sleepEffect.onBeforeRun(
+          { params: { initiator: this.initiator, target: initiator, game }, status },
+          action,
+        );
       },
       onDamageReceived(ctx, action) {
         sleepEffect.onDamageReceived(ctx, action);
       },
     });
   }
+
+  customMessage({ initiator, target }: SuccessArgs): string {
+    return `${bold(initiator.nick)} заклинанием ${italic(this.displayName)} заставил ${bold(target.nick)} усыпляет игрока`;
+  }
 }
 
 class SleepEffect extends LongMagic {
+  isAffect = true;
+
+  onBeforeRun(ctx: BaseActionContext, action: BaseAction) {
+    if (actionTypes.includes(action.actionType)) {
+      const { initiator, target, game } = ctx.params;
+      this.cast(initiator, target, game);
+    }
+  }
+
   run(): void {
     const { target, game } = this.params;
-    const effects = target.effects.getEffectsByAction(this.name);
+    const effects = target.affects.getEffectsByAction(this.name);
 
     if (!effects.length) {
       return;
     }
 
     throw new CastError(
-      effects.map(({ initiator }) =>
-        this.getSuccessResult({
-          initiator,
-          target,
-          game,
-        }),
-      ),
+      effects.map(({ initiator }) => this.getSuccessResult({ initiator, target, game })),
     );
   }
 
   onDamageReceived({ params: { target } }: BaseActionContext, action: BaseAction) {
     if (action.actionType === 'phys') {
-      target.effects.removeEffectsByAction(this.name);
+      target.affects.removeEffectsByAction(this.name);
     }
-  }
-
-  customMessage({ initiator, target }: SuccessArgs): string {
-    return `${bold(initiator.nick)} заклинанием ${italic(this.displayName)} заставил ${bold(target.nick)} заснуть на этот раунд`;
   }
 }
 

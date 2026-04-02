@@ -1,15 +1,15 @@
-import type { CostType, Magic as MagicSchema } from '@fwo/shared';
+import type { CostType, Magic as MagicSchema, OrderType } from '@fwo/shared';
+import type { ActionKey } from '@/arena/ActionService';
 import MiscService from '@/arena/MiscService';
 import { floatNumber } from '../../utils/floatNumber';
 import CastError from '../errors/CastError';
 import type Game from '../GameService';
-import type * as magics from '../magics';
 import type { Player } from '../PlayersService';
 import { AffectableAction } from './AffectableAction';
-import type { ActionType, CustomMessage, OrderType } from './types';
+import type { ActionType, CustomMessage } from './types';
 
 export interface MagicArgs {
-  name: keyof typeof magics;
+  name: ActionKey;
   displayName: string;
   desc: string;
   cost: number;
@@ -30,11 +30,10 @@ export interface MagicArgs {
 export interface Magic extends MagicArgs, CustomMessage {}
 
 export abstract class Magic extends AffectableAction {
-  declare name: keyof typeof magics;
-
   actionType: ActionType = 'magic';
 
   isLong = false;
+  isAffect = false;
 
   /**
    * Создание магии
@@ -61,7 +60,8 @@ export abstract class Magic extends AffectableAction {
     try {
       this.getCost(initiator);
       this.checkPreAffects();
-      this.handleAffect(this.checkChance.bind(this));
+      initiator.affects.onBeforeRun(this.context, this);
+      // this.handleAffect((ctx) => target.effects.onBeforeRun(ctx));
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.calculateExp();
       this.checkTargetIsDead();
@@ -69,7 +69,9 @@ export abstract class Magic extends AffectableAction {
       this.next();
     } catch (e) {
       // @fixme прокидываем ошибку выше для длительных кастов
-      if (this.isLong) throw e;
+      if (this.isLong || this.isAffect) {
+        throw e;
+      }
 
       this.handleCastError(e);
     } finally {
@@ -100,6 +102,7 @@ export abstract class Magic extends AffectableAction {
   }
 
   getEffectExp(_effect: number, baseExp = 0) {
+    console.log('effect exp::', this.params.initiator.proc, baseExp);
     return Math.round(baseExp * this.params.initiator.proc);
   }
 

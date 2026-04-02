@@ -43,10 +43,10 @@ export default abstract class PhysConstructor extends AffectableAction {
     try {
       this.fitsCheck();
       this.calculateHit();
-      initiator.effects.onBeforeRun(this.context, this);
+      this.handleAffect(() => initiator.affects.onBeforeRun(this.context, this));
 
       this.run(initiator, target, game);
-      target.effects.onDamageReceived(this.context, this);
+      target.affects.onDamageReceived(this.context, this);
       this.calculateExp();
 
       this.checkPostAffects();

@@ -1,3 +1,4 @@
+import type { ActionKey } from '@/arena/ActionService';
 import type GameService from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
@@ -5,7 +6,7 @@ import { AffectableAction } from './AffectableAction';
 import type { ActionType } from './types';
 
 export interface PassiveSkillAttributes {
-  name: string;
+  name: ActionKey;
   chance: number[];
   effect: number[];
   bonusCost: number[];
@@ -14,7 +15,7 @@ export interface PassiveSkillAttributes {
 }
 
 export abstract class PassiveSkillConstructor extends AffectableAction {
-  name: string;
+  name: ActionKey;
   displayName: string;
   description: string;
   chance: number[];

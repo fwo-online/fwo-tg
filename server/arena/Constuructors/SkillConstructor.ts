@@ -4,9 +4,7 @@ import type Game from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import { AffectableAction } from './AffectableAction';
-import type {
-  CostType, OrderType, AOEType, CustomMessage, ActionType,
-} from './types';
+import type { ActionType, AOEType, CostType, CustomMessage, OrderType } from './types';
 
 interface SkillArgs {
   name: string;
@@ -27,8 +25,7 @@ interface SkillArgs {
 /**
  * Основной конструктор класса скилов (войны/лучники)
  */
-export interface Skill extends SkillArgs, CustomMessage {
-}
+export interface Skill extends SkillArgs, CustomMessage {}
 
 export abstract class Skill extends AffectableAction {
   actionType: ActionType = 'skill';
@@ -52,6 +49,7 @@ export abstract class Skill extends AffectableAction {
       this.createContext(initiator, target, game);
       this.getCost();
       this.checkPreAffects();
+      initiator.affects.onBeforeRun(this.context, this);
       this.checkChance();
       this.run(initiator, target, game);
       this.next();

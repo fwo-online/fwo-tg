@@ -33,6 +33,7 @@ function runStage(stages: Stages, game: Game) {
         // FIXME прокидывать проценты в action вместо initiator
         initiator.setProc(order.proc / 100);
         action.cast(initiator, target, game);
+        target.affects.onCast({ initiator, target, game }, stage);
       } else {
         console.log('stage fail (no player):', initiator?.id, target?.id);
       }

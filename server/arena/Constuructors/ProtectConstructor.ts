@@ -23,6 +23,7 @@ export abstract class ProtectConstructor extends AffectableAction implements Aff
     this.createContext(initiator, target, game);
     try {
       this.checkPreAffects();
+      this.handleAffect(() => initiator.affects.onBeforeRun(this.context, this));
       this.run(initiator, target, game);
     } catch (e) {
       this.handleCastError(e);

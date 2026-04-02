@@ -39,6 +39,7 @@ export abstract class Heal extends AffectableAction {
 
     try {
       this.checkPreAffects();
+      this.handleAffect(() => initiator.affects.onBeforeRun(this.context, this));
       this.run(initiator, target, game);
       // Получение экспы за хил следует вынести в отдельный action следующий
       // за самим хилом, дабы выдать exp всем хиллерам после формирования
