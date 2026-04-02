@@ -3,7 +3,7 @@ import { CharacterClass } from '@fwo/shared';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import attack from '../actions/attack';
-import madness from './madness';
+import { madness } from './madness';
 
 // npm t server/arena/magics/madness.test.ts
 
@@ -11,8 +11,6 @@ describe('madness', () => {
   let game: GameService;
 
   beforeEach(async () => {
-    attack.registerPreAffects([madness]);
-
     game = await TestUtils.createGame([
       {
         prof: CharacterClass.Mage,

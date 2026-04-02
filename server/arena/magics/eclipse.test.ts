@@ -3,7 +3,7 @@ import { CharacterClass } from '@fwo/shared';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import attack from '../actions/attack';
-import eclipse from './eclipse';
+import { eclipse } from './eclipse';
 
 // npm t server/arena/magics/eclipse.test.ts
 
@@ -11,12 +11,10 @@ describe('eclipse', () => {
   let game: GameService;
 
   beforeEach(async () => {
-    attack.registerPreAffects([eclipse]);
-
     game = await TestUtils.createGame([
       { prof: CharacterClass.Mage, magics: { eclipse: 3 } },
       { prof: CharacterClass.Mage, magics: { eclipse: 3 } },
-      { weapon: {} },
+      { prof: CharacterClass.Warrior, weapon: { type: 'cut' } },
     ]);
 
     TestUtils.mockRandom();
@@ -31,9 +29,9 @@ describe('eclipse', () => {
     game.players.players[0].stats.set('mp', 99);
     game.players.players[2].proc = 1;
 
-    eclipse.cast(game.players.players[0], game.players.players[0], game);
+    eclipse.cast(game.players.players[0], game.players.players[2], game);
 
-    attack.cast(game.players.players[1], game.players.players[0], game);
+    attack.cast(game.players.players[2], game.players.players[0], game);
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
@@ -45,8 +43,8 @@ describe('eclipse', () => {
     game.players.players[1].stats.set('mp', 99);
     game.players.players[2].proc = 1;
 
-    eclipse.cast(game.players.players[0], game.players.players[0], game);
-    eclipse.cast(game.players.players[1], game.players.players[1], game);
+    eclipse.cast(game.players.players[0], game.players.players[2], game);
+    eclipse.cast(game.players.players[1], game.players.players[0], game);
 
     attack.cast(game.players.players[2], game.players.players[0], game);
 
