@@ -117,6 +117,7 @@ export class ForestService extends EventEmitter<{
     this.debuffLevel = Math.min(penalties.length, deathEcho.effect.length);
 
     if (this.debuffLevel) {
+      this.player.passiveSkills[deathEcho.name] = this.debuffLevel;
       deathEcho.cast(this.player);
     }
   }

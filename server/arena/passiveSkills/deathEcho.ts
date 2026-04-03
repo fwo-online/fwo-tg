@@ -35,14 +35,6 @@ class DeathEcho extends PassiveSkillConstructor {
     });
   }
 
-  isActive(): boolean {
-    return true;
-  }
-
-  getChance() {
-    return this.chance[0];
-  }
-
   onCast({ initiator, target, game }: BaseActionParams) {
     this.createContext(initiator, target, game);
     const effect = 1 - this.getEffect() / 100;
