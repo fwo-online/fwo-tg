@@ -43,7 +43,6 @@ class TerrifyingHowl extends Skill {
         action: 'paralysis',
         initiator,
         value: effect,
-        duration: 1,
         onBeforeAction(ctx) {
           paralysis.onBeforeAction(ctx);
         },

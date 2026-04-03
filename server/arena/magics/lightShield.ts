@@ -30,12 +30,11 @@ class LightShield extends CommonMagic {
   run() {
     const { initiator, target } = this.params;
 
-    target.affects.addEffect({
+    target.affects.addLongEffect({
       action: this.name,
       duration: initiator.stats.val('spellLength'),
       initiator,
       proc: initiator.proc,
-      value: 0,
       onDamageReceived(ctx, action, affect) {
         return lightShieldEffect.onDamageReceived(ctx, action, affect);
       },

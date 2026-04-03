@@ -44,7 +44,6 @@ class Parry extends Skill {
     initiator.affects.addEffect({
       action: this.name,
       initiator,
-      duration: 1,
       value,
       onBeforeReceive(ctx, action, affect) {
         parry.onBeforeReceive(ctx, action, affect);

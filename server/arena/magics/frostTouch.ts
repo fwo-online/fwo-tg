@@ -31,10 +31,9 @@ class FrostTouch extends CommonMagic {
 
   run() {
     const { initiator, target } = this.params;
-    target.affects.addEffect({
+    target.affects.addLongEffect({
       action: this.name,
       initiator,
-      value: 0,
       proc: initiator.proc,
       duration: initiator.stats.val('spellLength'),
       onCast({ initiator, target, game }) {

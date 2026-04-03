@@ -46,7 +46,6 @@ class Dodge extends Skill {
     initiator.affects.addEffect({
       action: this.name,
       initiator,
-      duration: 1,
       value,
       onBeforeReceive(ctx, action) {
         dodge.onBeforeReceive(ctx, action, value);

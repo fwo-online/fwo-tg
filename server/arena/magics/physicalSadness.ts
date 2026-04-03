@@ -1,3 +1,4 @@
+import { OrderType } from '@fwo/shared';
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 import { isPhysicalDamageResult } from '../Constuructors/utils';
 
@@ -11,7 +12,7 @@ class PhysicalSadness extends DmgMagic {
       baseExp: 8,
       costType: 'mp',
       lvl: 4,
-      orderType: 'enemy',
+      orderType: OrderType.Enemy,
       aoeType: 'target',
       magType: 'bad',
       chance: [95, 95, 95],

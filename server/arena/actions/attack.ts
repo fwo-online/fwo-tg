@@ -29,7 +29,6 @@ class Attack extends PhysConstructor {
 
     target.affects.addEffect({
       action: this.name,
-      duration: 1,
       initiator,
       value: this.status.effect,
       onBeforeAction(ctx, action, affect) {

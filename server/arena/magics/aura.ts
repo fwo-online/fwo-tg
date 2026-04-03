@@ -11,12 +11,13 @@ export abstract class Aura extends CommonMagic {
 
   run(): void {
     const { initiator, target } = this.params;
-    target.affects.addEffect({
+    target.affects.addLongEffect({
       action: this.name,
       initiator,
-      value: 0,
       duration: initiator.stats.val('spellLength'),
-      onCast: ({ initiator, target, game }) => {
+      onCast: ({ initiator, target, game }, affect) => {
+        // @ts-expect-error
+        this.effectInstanse.duration = affect.duration;
         this.effectInstanse.cast(initiator, target, game);
       },
     });

@@ -26,13 +26,12 @@ const params: MagicArgs = {
 };
 
 class DustShield extends Magic {
-  run(initiator: Player, target: Player, _game: GameService): void {
-    target.affects.addEffect({
+  run(initiator: Player, target: Player): void {
+    target.affects.addLongEffect({
       action: this.name,
       duration: initiator.stats.val('spellLength'),
       proc: initiator.proc,
       initiator,
-      value: 0,
       onCast({ initiator, target, game }) {
         initiator.proc = this.proc;
         dustShieldEffect.duration = this.duration;

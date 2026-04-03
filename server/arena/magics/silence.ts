@@ -30,10 +30,8 @@ class Silence extends CommonMagic {
 
     target.affects.addEffect({
       action: this.name,
-      duration: 1,
       proc: initiator.proc,
       initiator,
-      value: 0,
       onBeforeAction({ params: { initiator, target, game } }) {
         return silence.cast(initiator, target, game);
       },

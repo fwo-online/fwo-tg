@@ -53,7 +53,6 @@ class ShieldBlock extends Skill {
 
     initiator.affects.addEffect({
       action: this.name,
-      duration: 1,
       initiator,
       value: this.status.effect,
       onBeforeReceive(ctx, action, affect) {
@@ -64,6 +63,11 @@ class ShieldBlock extends Skill {
 
   onBeforeReceive(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
     if (action.actionType !== 'phys') {
+      return;
+    }
+
+    if (!affect.value) {
+      console.debug(`shieldBlock debug:: no value ${affect.value}`);
       return;
     }
 

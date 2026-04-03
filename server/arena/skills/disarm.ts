@@ -36,8 +36,6 @@ class Disarm extends Skill {
       target.affects.addEffect({
         action: this.name,
         initiator,
-        duration: 1,
-        value: 0,
         onBeforeAction(ctx, action) {
           disarm.onBeforeAction(ctx, action);
         },

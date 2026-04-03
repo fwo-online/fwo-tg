@@ -12,7 +12,7 @@ export function formatAction(msgObj: SuccessArgs): string {
     case 'heal':
       return `Игрок ${bold`${msgObj.target.nick}`} был вылечен 🤲 на ${bold`💖${msgObj.effect}`}`;
     case 'phys': {
-      return `${bold(msgObj.initiator.nick)} ${MiscService.getWeaponAction(msgObj.target, msgObj.weapon)} и нанёс ${bold(msgObj.effect.toString())} урона`;
+      return `${bold(msgObj.initiator.nick)} ${MiscService.getWeaponAction(msgObj.target, msgObj.initiator.weapon.item)} и нанёс ${bold(msgObj.effect.toString())} урона`;
     }
     case 'dmg-magic':
     case 'dmg-magic-long':

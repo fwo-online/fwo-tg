@@ -27,11 +27,10 @@ class Curse extends CommonMagic {
   run() {
     const { initiator, target } = this.params;
 
-    target.affects.addEffect({
+    target.affects.addLongEffect({
       action: this.name,
       duration: initiator.stats.val('spellLength'),
       initiator,
-      value: 0,
       proc: initiator.proc,
       onCast({ initiator, target, game }) {
         initiator.proc = this.proc;

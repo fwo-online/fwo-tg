@@ -8,6 +8,9 @@ import type { Affect } from '../Constuructors/interfaces/Affect';
  * Безумие
  * Основное описание магии общее требовани есть в конструкторе
  */
+
+const actionTypes: ActionType[] = ['phys'];
+
 const params: MagicArgs = Object.freeze({
   name: 'madness',
   displayName: 'Безумие',
@@ -29,23 +32,13 @@ class Madness extends CommonMagic {
     const { initiator, target } = this.params;
     target.affects.addEffect({
       action: this.name,
-      duration: 1,
-      value: 0,
       initiator,
       proc: initiator.proc,
       onBeforeAction(ctx, action, affect) {
-        return madnessEffect.onBeforeAction(ctx, action, affect);
+        return madness.onBeforeAction(ctx, action, affect);
       },
     });
   }
-}
-
-const actionTypes: ActionType[] = ['phys'];
-
-class MadnessEffect extends CommonMagic {
-  isAffect = true;
-
-  run(): void {}
 
   onBeforeAction(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
     if (!actionTypes.includes(action.actionType)) {
@@ -66,5 +59,4 @@ class MadnessEffect extends CommonMagic {
   }
 }
 
-export const madnessEffect = new MadnessEffect(params);
 export const madness = new Madness(params);

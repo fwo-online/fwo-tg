@@ -39,6 +39,7 @@ export abstract class ProtectConstructor extends BaseAction {
     const effects = this.getTargetProtectors(this.params);
 
     effects.forEach((effect) => {
+      effect.value ??= 0;
       effect.value *= ratio;
     });
   }
@@ -59,7 +60,7 @@ export abstract class ProtectConstructor extends BaseAction {
     const defence = target.stats.val('phys.defence'); // общий показатель защиты цели
     const effects = this.getTargetProtectors({ initiator, target, game });
 
-    effects.forEach(({ initiator: defender, value }) => {
+    effects.forEach(({ initiator: defender, value = 0 }) => {
       const protect = Math.floor(value * 100) / defence;
       const exp =
         defender.isAlly(target) && !defender.isAlly(initiator)
@@ -88,7 +89,7 @@ export abstract class ProtectConstructor extends BaseAction {
       return;
     }
 
-    const protect = protectors.reduce((acc, { value }) => acc + value, 0);
+    const protect = protectors.reduce((acc, { value = 0 }) => acc + value, 0);
     const chance = this.getProtectChance(ctx.params, protect);
 
     const ratio = Math.min(chance / 100, 0.5);

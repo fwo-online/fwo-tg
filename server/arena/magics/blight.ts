@@ -30,12 +30,11 @@ class Blight extends CommonMagic {
   run() {
     const { initiator, target } = this.params;
 
-    target.affects.addEffect({
+    target.affects.addLongEffect({
       action: this.name,
       duration: initiator.stats.val('spellLength'),
       proc: initiator.proc,
       initiator,
-      value: 0,
       onCast({ initiator, target, game }) {
         initiator.proc = this.proc;
         blightEffect.duration = this.duration;

@@ -1,3 +1,4 @@
+import { OrderType } from '@fwo/shared';
 import { bold, italic } from '../../utils/formatString';
 import type { SuccessArgs } from '../Constuructors/types';
 import { HealMagic } from './heal';
@@ -12,13 +13,13 @@ class LightHeal extends HealMagic {
       baseExp: 10,
       costType: 'mp',
       lvl: 1,
-      orderType: 'all',
+      orderType: OrderType.All,
       aoeType: 'target',
       magType: 'good',
       chance: [100, 100, 100],
       effect: ['1d2', '1d2+1', '1d2+2'],
       profList: ['m', 'p'],
-    })
+    });
   }
 
   customMessage(args: SuccessArgs) {

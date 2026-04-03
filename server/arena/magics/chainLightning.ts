@@ -1,8 +1,9 @@
+import { OrderType } from '@fwo/shared';
+import { shuffle } from 'es-toolkit';
 import { floatNumber } from '@/utils/floatNumber';
 import { AoeDmgMagic } from '../Constuructors/AoeDmgMagicConstructor';
 import type GameService from '../GameService';
 import type { Player } from '../PlayersService';
-import { shuffle } from 'es-toolkit';
 
 /**
  * Цепь молний
@@ -18,7 +19,7 @@ class ChainLightning extends AoeDmgMagic {
       baseExp: 12,
       costType: 'mp',
       lvl: 3,
-      orderType: 'any',
+      orderType: OrderType.Any,
       aoeType: 'targetAoe',
       magType: 'bad',
       chance: [92, 94, 95],

@@ -10,7 +10,7 @@ import type { Player } from '@/arena/PlayersService';
 type BaseAffect = {
   initiator: Player;
   action: ActionKey;
-  value: number;
+  value?: number;
   proc?: number;
 
   onBeforeAction?: (
@@ -40,7 +40,11 @@ export type Passive = BaseAffect & {
 
 export type Effect = BaseAffect & {
   type: 'effect';
+};
+
+export type LongEffect = BaseAffect & {
+  type: 'long-effect';
   duration: number;
 };
 
-export type Affect = Passive | Effect;
+export type Affect = Passive | Effect | LongEffect;

@@ -3,7 +3,6 @@ import { attack } from '@/arena/actions/attack';
 import type GameService from '@/arena/GameService';
 import { dodge } from '@/arena/skills';
 import TestUtils from '@/utils/testUtils';
-import rangeWeapon from './rangeWeapon';
 
 // npm t server/arena/weaponMastery/rangeWeapon.test.ts
 
@@ -25,7 +24,6 @@ describe('rangeWeapon', () => {
       },
     ]);
 
-    rangeWeapon.cast(game.players.players[0], game.players.players[0], game);
     TestUtils.mockRandom(0.25);
   });
 

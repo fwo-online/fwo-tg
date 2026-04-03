@@ -75,11 +75,6 @@ describe('sleep', () => {
 
     sleep.cast(game.players.players[0], game.players.players[1], game);
 
-    expect(game.players.players[1].affects.getEffectsByAction(sleep.name)).toMatchObject([
-      {
-        action: sleep.name,
-        duration: 1,
-      },
-    ]);
+    expect(game.players.players[1].affects.getEffectsByAction(sleep.name)).toHaveLength(1);
   });
 });

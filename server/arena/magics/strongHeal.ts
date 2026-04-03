@@ -1,3 +1,4 @@
+import { OrderType } from '@fwo/shared';
 import { bold, italic } from '../../utils/formatString';
 import type { SuccessArgs } from '../Constuructors/types';
 import { HealMagic } from './heal';
@@ -12,7 +13,7 @@ class StrongHeal extends HealMagic {
       baseExp: 10,
       costType: 'mp',
       lvl: 3,
-      orderType: 'all',
+      orderType: OrderType.All,
       aoeType: 'target',
       magType: 'good',
       chance: [100, 100, 100],

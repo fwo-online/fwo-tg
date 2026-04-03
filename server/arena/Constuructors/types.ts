@@ -1,4 +1,3 @@
-import type { Item } from '@fwo/shared';
 import type GameService from '../GameService';
 import type { Player } from '../PlayersService';
 
@@ -47,7 +46,6 @@ export type SuccessArgs = {
   effect: number;
   hp: number;
   expArr: ExpArr;
-  weapon: Item | undefined;
   effectType?: DamageType;
   orderType: OrderType;
   affects?: SuccessArgs[];
@@ -77,5 +75,4 @@ export interface FailArgs {
   action: string;
   initiator: Player;
   target: Player;
-  weapon: Item | undefined;
 }

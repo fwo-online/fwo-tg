@@ -49,11 +49,10 @@ class Lacerate extends PassiveSkillConstructor {
       return;
     }
 
-    target.affects.addEffect({
+    target.affects.addLongEffect({
       action: 'bleeding',
       duration: initiator.stats.val('spellLength'),
       proc: initiator.proc,
-      value: 0,
       initiator,
       onCast({ initiator, target, game }) {
         initiator.proc = this.proc;

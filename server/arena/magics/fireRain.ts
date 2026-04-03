@@ -1,3 +1,4 @@
+import { OrderType } from '@fwo/shared';
 import { shuffle } from 'es-toolkit';
 import { AoeDmgMagic } from '../Constuructors/AoeDmgMagicConstructor';
 import type GameService from '../GameService';
@@ -17,7 +18,7 @@ class FireRain extends AoeDmgMagic {
       baseExp: 8,
       costType: 'mp',
       lvl: 3,
-      orderType: 'enemy',
+      orderType: OrderType.Enemy,
       aoeType: 'team',
       magType: 'bad',
       chance: [92, 94, 95],

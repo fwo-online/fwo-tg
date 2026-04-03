@@ -1,3 +1,4 @@
+import { OrderType } from '@fwo/shared';
 import { times } from 'es-toolkit/compat';
 import arena from '@/arena';
 import MiscService from '@/arena/MiscService';
@@ -19,7 +20,7 @@ class BeastCall extends Skill {
       proc: 75,
       baseExp: 8,
       costType: 'en',
-      orderType: 'self',
+      orderType: OrderType.Self,
       aoeType: 'target',
       chance: [95, 98, 100],
       effect: [2, 3, 4],

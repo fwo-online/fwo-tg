@@ -31,8 +31,6 @@ class Glitch extends CommonMagic {
     const { initiator, target } = this.params;
     target.affects.addEffect({
       action: this.name,
-      duration: 1,
-      value: 0,
       initiator,
       proc: initiator.proc,
       onBeforeAction(ctx, action, affect) {

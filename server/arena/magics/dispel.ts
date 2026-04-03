@@ -1,3 +1,6 @@
+import { OrderType } from '@fwo/shared';
+import arena from '@/arena';
+import { Magic } from '@/arena/Constuructors/MagicConstructor';
 import { bold, italic } from '../../utils/formatString';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
@@ -16,7 +19,7 @@ class Dispel extends CommonMagic {
       baseExp: 80,
       costType: 'mp',
       lvl: 2,
-      orderType: 'all',
+      orderType: OrderType.All,
       aoeType: 'target',
       magType: 'bad',
       chance: ['1d60+30', '1d30+55', '1d10+75'],
@@ -26,11 +29,14 @@ class Dispel extends CommonMagic {
   }
 
   run() {
-    const { game, target } = this.params;
-    const entries = Object.entries(game.longActions);
+    const { target } = this.params;
+    target.affects.filterAffects((affect) => {
+      const action = arena.actions[affect.action];
+      if (action instanceof Magic) {
+        return affect.type !== 'long-effect';
+      }
 
-    entries.forEach(([key, items]) => {
-      game.longActions[key] = items?.filter((item) => item.target !== target.id);
+      return true;
     });
   }
 

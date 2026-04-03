@@ -30,9 +30,7 @@ class Paralysis extends CommonMagic {
     const { initiator, target } = this.params;
     target.affects.addEffect({
       action: this.name,
-      duration: 1,
       initiator,
-      value: 0,
       onBeforeAction(ctx) {
         paralysis.onBeforeAction(ctx);
       },

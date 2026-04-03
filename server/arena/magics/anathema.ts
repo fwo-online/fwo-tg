@@ -1,4 +1,6 @@
+import { OrderType } from '@fwo/shared';
 import arena from '@/arena';
+import { Magic } from '@/arena/Constuructors/MagicConstructor';
 import { bold, italic } from '../../utils/formatString';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
@@ -17,7 +19,7 @@ class Anathema extends CommonMagic {
       baseExp: 80,
       costType: 'mp',
       lvl: 4,
-      orderType: 'enemy',
+      orderType: OrderType.Enemy,
       aoeType: 'target',
       magType: 'bad',
       chance: ['1d60+30', '1d30+55', '1d10+75'],
@@ -27,14 +29,14 @@ class Anathema extends CommonMagic {
   }
 
   run() {
-    const { game, target } = this.params;
-    const entries = Object.entries(game.longActions);
-
-    entries.forEach(([key, items]) => {
-      const magic = arena.magics[key];
-      if (magic.magType === 'good') {
-        game.longActions[key] = items.filter((item) => item.target !== target.id);
+    const { target } = this.params;
+    target.affects.filterAffects((affect) => {
+      const action = arena.actions[affect.action];
+      if (action instanceof Magic) {
+        return action.magType !== 'good' || affect.type !== 'long-effect';
       }
+
+      return true;
     });
   }
 

@@ -33,12 +33,11 @@ class Blessing extends CommonMagic {
     const magicLvl = initiator.getMagicLevel(this.name);
 
     if (magicLvl >= longLevel) {
-      target.affects.addEffect({
+      target.affects.addLongEffect({
         action: this.name,
         duration: initiator.stats.val('spellLength'),
         proc: initiator.proc,
         initiator,
-        value: 0,
         onCast({ initiator, target, game }) {
           initiator.proc = this.proc;
           blessingEffect.duration = this.duration;

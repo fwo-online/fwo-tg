@@ -22,7 +22,6 @@ class Protect extends ProtectConstructor {
       action: this.name,
       initiator,
       value: protectValue,
-      duration: 1,
       proc: initiator.proc,
       onBeforeReceive(ctx, action) {
         protect.onBeforeReceive(ctx, action);

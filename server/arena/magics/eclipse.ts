@@ -31,8 +31,6 @@ class Eclipse extends CommonMagic {
     game.players.alivePlayers.forEach((player) => {
       player.affects.addEffect({
         action: this.name,
-        duration: 1,
-        value: 0,
         initiator,
         proc: initiator.proc,
         onBeforeAction({ params: { initiator, game }, status }, action) {

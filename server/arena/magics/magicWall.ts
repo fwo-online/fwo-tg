@@ -32,7 +32,7 @@ class MagicWall extends LongMagic {
     target.stats.up('phys.defence', value);
     this.duration = initiator.stats.val('spellLength');
 
-    target.affects.addEffect({
+    target.affects.addLongEffect({
       action: this.name,
       initiator,
       value,

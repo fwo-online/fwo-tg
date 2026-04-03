@@ -4,7 +4,7 @@ import type {
   BaseActionContext,
   BaseActionParams,
 } from '@/arena/Constuructors/BaseAction';
-import type { Affect, Effect, Passive } from '@/arena/Constuructors/interfaces/Affect';
+import type { Affect, Effect, LongEffect, Passive } from '@/arena/Constuructors/interfaces/Affect';
 import type { BreaksMessage, SuccessArgs } from '@/arena/Constuructors/types';
 import { isCastError } from '@/arena/errors/CastError';
 
@@ -19,6 +19,10 @@ export class PlayerAffects {
     this.#affects.push({ ...effect, type: 'effect' });
   }
 
+  addLongEffect<T extends Omit<LongEffect, 'type'>>(effect: T) {
+    this.#affects.push({ ...effect, type: 'long-effect' });
+  }
+
   addPassive<T extends Omit<Passive, 'type'>>(passive: T) {
     this.#affects.push({ ...passive, type: 'passive' });
   }
@@ -27,20 +31,28 @@ export class PlayerAffects {
     this.#affects = this.#affects.filter((effect) => effect.action !== action);
   }
 
-  getEffectsByAction(action: ActionKey): Affect[] {
+  filterAffects(predicate: (affect: Affect) => boolean) {
+    this.#affects = this.#affects.filter(predicate);
+  }
+
+  getEffectsByAction<T extends ActionKey>(action: T) {
     return this.#affects.filter((effect) => effect.action === action);
   }
 
   refresh() {
     this.#affects.forEach((affect) => {
-      if (affect.type === 'effect') {
+      if (affect.type === 'long-effect') {
         affect.duration--;
       }
     });
 
     this.#affects = this.#affects.filter((affect) => {
-      if (affect.type === 'effect') {
+      if (affect.type === 'long-effect') {
         return affect.duration > 0;
+      }
+
+      if (affect.type === 'effect') {
+        return false;
       }
 
       return true;
