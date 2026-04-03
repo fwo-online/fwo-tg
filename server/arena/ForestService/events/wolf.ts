@@ -15,12 +15,6 @@ export const handleWolfEvent: ForestEventHandler = async (action, forest) => {
     const sneakChance = playerDex / (playerDex + wolfDex);
 
     if (forest.checkEventChance(sneakChance)) {
-      return {
-        success: true,
-        resolved: true,
-        message: 'Ты бесшумно прокрался мимо волка!',
-      };
-    } else {
       await startForestBattle(forest, MonsterType.Wolf, {
         components: {
           [ItemComponent.Leather]: leatherAmount,
@@ -31,6 +25,12 @@ export const handleWolfEvent: ForestEventHandler = async (action, forest) => {
         success: false,
         resolved: false,
         message: 'Ты хрустнул веткой! Волк заметил тебя и атакует!',
+      };
+    } else {
+      return {
+        success: true,
+        resolved: true,
+        message: 'Ты бесшумно прокрался мимо волка!',
       };
     }
   }
