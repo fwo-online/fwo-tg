@@ -1,8 +1,8 @@
 import type { ActionKey } from '@/arena/ActionService';
+import { BaseAction } from '@/arena/Constuructors/BaseAction';
 import type GameService from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
-import { AffectableAction } from './AffectableAction';
 import type { ActionType } from './types';
 
 export interface PassiveSkillAttributes {
@@ -14,7 +14,11 @@ export interface PassiveSkillAttributes {
   description: string;
 }
 
-export abstract class PassiveSkillConstructor extends AffectableAction {
+/**
+ * Для пассивных навыков run вызывается один раз при инициализации игрока.
+ * В run должно происходить накладывание эффектов или изменение базовых статов игрока
+ */
+export abstract class PassiveSkillConstructor extends BaseAction {
   name: ActionKey;
   displayName: string;
   description: string;
@@ -40,8 +44,7 @@ export abstract class PassiveSkillConstructor extends AffectableAction {
     this.reset();
   }
 
-  isActive() {
-    const { initiator } = this.params;
+  isActive({ initiator } = this.params) {
     return Boolean(initiator.getPassiveSkillLevel(this.name));
   }
 
@@ -54,8 +57,7 @@ export abstract class PassiveSkillConstructor extends AffectableAction {
     return this.chance[initiatorSkillLvl - 1];
   }
 
-  getEffect() {
-    const { initiator } = this.params;
+  getEffect({ initiator } = this.params) {
     const initiatorSkillLvl = initiator.getPassiveSkillLevel(this.name);
     return this.effect[initiatorSkillLvl - 1];
   }

@@ -1,7 +1,6 @@
 import { OrderType } from '@fwo/shared';
-import type { MagicArgs } from '@/arena/Constuructors/MagicConstructor';
-import type GameService from '@/arena/GameService';
-import type { Player } from '@/arena/PlayersService';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
+import { Magic, type MagicArgs } from '@/arena/Constuructors/MagicConstructor';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 import CastError from '../errors/CastError';
 
@@ -34,21 +33,19 @@ class Silence extends CommonMagic {
       duration: 1,
       proc: initiator.proc,
       initiator,
-      onBeforeRun({ params: { initiator, target, game } }) {
-        return silenceEffect.cast(initiator, target, game);
+      value: 0,
+      onBeforeAction({ params: { initiator, target, game } }) {
+        return silence.cast(initiator, target, game);
       },
     });
   }
-}
 
-export class SilenceEffect extends CommonMagic {
-  override cast(initiator: Player, target: Player, game: GameService): undefined {
-    this.createContext(initiator, target, game);
-    this.run();
-  }
+  onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
+    if (!(action instanceof Magic)) {
+      return;
+    }
 
-  run() {
-    const { target, game } = this.params;
+    const { initiator: target, game } = ctx.params;
     const effects = target.affects.getEffectsByAction(this.name);
 
     if (!effects.length) {
@@ -61,5 +58,4 @@ export class SilenceEffect extends CommonMagic {
   }
 }
 
-export const silenceEffect = new SilenceEffect(params);
 export const silence = new Silence(params);

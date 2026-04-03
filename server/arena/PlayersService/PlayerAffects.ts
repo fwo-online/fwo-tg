@@ -5,6 +5,8 @@ import type {
   BaseActionParams,
 } from '@/arena/Constuructors/BaseAction';
 import type { Affect, Effect, Passive } from '@/arena/Constuructors/interfaces/Affect';
+import type { BreaksMessage, SuccessArgs } from '@/arena/Constuructors/types';
+import { isCastError } from '@/arena/errors/CastError';
 
 export class PlayerAffects {
   #affects: Affect[] = [];
@@ -13,11 +15,11 @@ export class PlayerAffects {
     return this.#affects;
   }
 
-  addEffect(effect: Omit<Effect, 'type'>) {
+  addEffect<T extends Omit<Effect, 'type'>>(effect: T) {
     this.#affects.push({ ...effect, type: 'effect' });
   }
 
-  addPassive(passive: Omit<Passive, 'type'>) {
+  addPassive<T extends Omit<Passive, 'type'>>(passive: T) {
     this.#affects.push({ ...passive, type: 'passive' });
   }
 
@@ -51,9 +53,21 @@ export class PlayerAffects {
     }
   }
 
-  onBeforeRun(ctx: BaseActionContext, action: BaseAction) {
+  onDamageDealt(ctx: BaseActionContext, action: BaseAction) {
     for (const affect of this.#affects) {
-      affect.onBeforeRun?.(ctx, action, affect);
+      affect.onDamageDealt?.(ctx, action, affect);
+    }
+  }
+
+  onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
+    for (const affect of this.#affects) {
+      this.withOnCastFail(() => affect.onBeforeAction?.(ctx, action, affect), ctx, action);
+    }
+  }
+
+  onBeforeReceive(ctx: BaseActionContext, action: BaseAction) {
+    for (const affect of this.#affects) {
+      this.withOnCastFail(() => affect.onBeforeReceive?.(ctx, action, affect), ctx, action);
     }
   }
 
@@ -62,6 +76,33 @@ export class PlayerAffects {
       if (action === affect.action) {
         affect.onCast?.(params, affect);
       }
+    }
+  }
+
+  onCastFail(
+    ctx: BaseActionContext,
+    action: BaseAction,
+    reason: SuccessArgs | SuccessArgs[] | BreaksMessage,
+  ) {
+    for (const affect of this.#affects) {
+      const result = affect.onCastFail?.(ctx, action, reason);
+      if (result) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  withOnCastFail(fn: () => void, ctx: BaseActionContext, action: BaseAction) {
+    try {
+      fn();
+    } catch (e) {
+      if (isCastError(e) && this.onCastFail(ctx, action, e.reason)) {
+        return;
+      }
+
+      throw e;
     }
   }
 }

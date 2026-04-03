@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { CharacterClass } from '@fwo/shared';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
-import attack from './attack';
+import { attack } from './attack';
 import handsHeal from './handsHeal';
 
 // npm t server/arena/actions/handsHeal.test.ts
@@ -11,8 +11,6 @@ describe('handsHeal', () => {
   let game: GameService;
 
   beforeEach(async () => {
-    handsHeal.registerPreAffects([attack]);
-
     game = await TestUtils.createGame([
       { prof: CharacterClass.Warrior, weapon: {} },
       { prof: CharacterClass.Archer },

@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { CharacterClass } from '@fwo/shared';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
-import attack from '../actions/attack';
+import { attack } from '../actions/attack';
 import { glitch } from './glitch';
 
 // npm t server/arena/magics/glitch.test.ts

@@ -1,0 +1,9 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`blessing should increase target's attack and defence 1`] = `12`;
+
+exports[`blessing should increase target's attack and defence 2`] = `6.8`;
+
+exports[`blessing should increase target's attack and defence 3`] = `17.18`;
+
+exports[`blessing should increase target's attack and defence 4`] = `11.98`;

@@ -32,10 +32,11 @@ class Eclipse extends CommonMagic {
       player.affects.addEffect({
         action: this.name,
         duration: 1,
+        value: 0,
         initiator,
         proc: initiator.proc,
-        onBeforeRun({ params: { initiator, game }, status }, action) {
-          eclipseEffect.onBeforeRun(
+        onBeforeAction({ params: { initiator, game }, status }, action) {
+          eclipse.onBeforeAction(
             {
               params: {
                 initiator: this.initiator,
@@ -50,14 +51,8 @@ class Eclipse extends CommonMagic {
       });
     });
   }
-}
 
-class EclipseEffect extends CommonMagic {
-  isAffect = true;
-
-  run(): void {}
-
-  onBeforeRun(ctx: BaseActionContext, action: BaseAction) {
+  onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
     if (action.actionType !== 'phys') {
       return;
     }
@@ -73,5 +68,4 @@ class EclipseEffect extends CommonMagic {
   }
 }
 
-export const eclipseEffect = new EclipseEffect(params);
 export const eclipse = new Eclipse(params);

@@ -1,6 +1,8 @@
+import { OrderType } from '@fwo/shared';
 import { shuffle } from 'es-toolkit';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
 import { joinWithAnd } from '@/arena/LogService/utils/join-with-and';
+import { paralysis } from '@/arena/magics';
 import { bold, italic } from '@/utils/formatString';
 import { Skill } from '../Constuructors/SkillConstructor';
 
@@ -17,7 +19,7 @@ class TerrifyingHowl extends Skill {
       proc: 50,
       baseExp: 8,
       costType: 'en',
-      orderType: 'enemy',
+      orderType: OrderType.Enemy,
       aoeType: 'target',
       chance: [80, 90, 100],
       effect: [0, 1, 2],
@@ -37,7 +39,16 @@ class TerrifyingHowl extends Skill {
       .concat(target);
 
     enemies.forEach((target) => {
-      target.flags.isParalysed.push({ initiator, val: effect });
+      target.affects.addEffect({
+        action: 'paralysis',
+        initiator,
+        value: effect,
+        duration: 1,
+        onBeforeAction(ctx) {
+          paralysis.onBeforeAction(ctx);
+        },
+      });
+
       this.status.expArr.push({ initiator, target });
     });
 

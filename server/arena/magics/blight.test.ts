@@ -34,6 +34,7 @@ describe('blight', () => {
 
     blight.cast(game.players.players[0], game.players.players[1], game);
 
+    expect(game.players.players[1].affects.affects).toHaveLength(1);
     game.players.players[1].affects.onCast(
       {
         initiator: game.players.players[0],

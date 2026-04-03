@@ -4,16 +4,21 @@ import type {
   BaseActionContext,
   BaseActionParams,
 } from '@/arena/Constuructors/BaseAction';
-import type { SuccessArgs } from '@/arena/Constuructors/types';
+import type { BreaksMessage, SuccessArgs } from '@/arena/Constuructors/types';
 import type { Player } from '@/arena/PlayersService';
 
 type BaseAffect = {
   initiator: Player;
   action: ActionKey;
-  value?: number;
+  value: number;
   proc?: number;
 
-  onBeforeRun?: (
+  onBeforeAction?: (
+    ctx: BaseActionContext,
+    action: BaseAction,
+    affect: Affect,
+  ) => void | SuccessArgs | SuccessArgs[];
+  onBeforeReceive?: (
     ctx: BaseActionContext,
     action: BaseAction,
     affect: Affect,
@@ -22,6 +27,11 @@ type BaseAffect = {
   onDamageDealt?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
   onDamageReceived?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
   onHeal?: (ctx: BaseActionContext) => void;
+  onCastFail?: (
+    ctx: BaseActionContext,
+    action: BaseAction,
+    reason: SuccessArgs | SuccessArgs[] | BreaksMessage,
+  ) => void | SuccessArgs | SuccessArgs[];
 };
 
 export type Passive = BaseAffect & {

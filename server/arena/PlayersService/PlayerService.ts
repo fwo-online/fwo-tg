@@ -150,7 +150,6 @@ export default class PlayerService {
   reset() {
     this.proc = 100;
     this.stats.refresh();
-    this.flags.refresh();
     this.affects.refresh();
   }
 

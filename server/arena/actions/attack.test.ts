@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
-import attack from './attack';
+import { attack } from './attack';
 
 // npm t server/arena/actions/attack.test.ts
 

@@ -5,7 +5,6 @@ import type GameService from '@/arena/GameService';
 import { createWolf } from '@/arena/MonsterService/monsters/wolf';
 import { eclipse } from '@/arena/magics';
 import { RoundStatus } from '@/arena/RoundService';
-import { registerAffects } from '@/utils/registerAffects';
 import TestUtils from '@/utils/testUtils';
 
 describe('wolf', () => {
@@ -21,8 +20,6 @@ describe('wolf', () => {
 
   describe('makeOrder', () => {
     beforeEach(async () => {
-      registerAffects();
-
       game = await TestUtils.createGame([
         {
           prof: CharacterClass.Warrior,

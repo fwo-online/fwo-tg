@@ -3,7 +3,7 @@ import { CharacterClass } from '@fwo/shared';
 import arena from '@/arena';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
-import magicWall from './magicWall';
+import { magicWall } from './magicWall';
 
 // npm t server/arena/magics/magicWall.test.ts
 
@@ -11,8 +11,6 @@ describe('magicWall', () => {
   let game: GameService;
 
   beforeEach(async () => {
-    arena.actions.attack.registerPreAffects([magicWall]);
-
     game = await TestUtils.createGame([
       {
         prof: CharacterClass.Mage,

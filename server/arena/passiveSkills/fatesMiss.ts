@@ -1,8 +1,8 @@
-import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConstructor';
 import CastError from '@/arena/errors/CastError';
 
-class FatesMiss extends PassiveSkillConstructor implements Affect {
+class FatesMiss extends PassiveSkillConstructor {
   constructor() {
     super({
       name: 'fatesMiss',
@@ -15,7 +15,16 @@ class FatesMiss extends PassiveSkillConstructor implements Affect {
   }
 
   run() {
-    //
+    const { initiator } = this.params;
+
+    initiator.affects.addPassive({
+      action: this.name,
+      initiator,
+      value: 0,
+      onBeforeAction(ctx, action) {
+        fatesMiss.onBeforeAction(ctx, action);
+      },
+    });
   }
 
   isActive(): boolean {
@@ -26,17 +35,21 @@ class FatesMiss extends PassiveSkillConstructor implements Affect {
     return this.chance[0];
   }
 
-  preAffect: Affect['preAffect'] = (context): undefined => {
-    this.applyContext(context);
+  onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
+    if (action.actionType !== 'phys') {
+      return;
+    }
 
-    const { initiator, target, game } = context.params;
+    const { initiator, target, game } = ctx.params;
+    this.createContext(initiator, target, game);
+
     if (this.checkChance()) {
       throw new CastError({
         ...this.getSuccessResult({ initiator, target, game }),
         actionType: 'miss',
       });
     }
-  };
+  }
 }
 
-export default new FatesMiss();
+export const fatesMiss = new FatesMiss();

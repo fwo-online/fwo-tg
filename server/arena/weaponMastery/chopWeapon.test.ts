@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
-import attack from '@/arena/actions/attack';
+import { attack } from '@/arena/actions/attack';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import chopWeapon from './chopWeapon';
@@ -10,7 +10,6 @@ describe('chopWeapon', () => {
   let game: GameService;
 
   beforeEach(async () => {
-    attack.registerPreAffects([chopWeapon]);
     game = await TestUtils.createGame([
       {
         passiveSkills: { chopWeapon: 1 },
@@ -18,6 +17,8 @@ describe('chopWeapon', () => {
       },
       {},
     ]);
+
+    chopWeapon.cast(game.players.players[0], game.players.players[0], game);
   });
 
   afterEach(() => {

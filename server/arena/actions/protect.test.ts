@@ -3,7 +3,7 @@ import { CharacterClass } from '@fwo/shared';
 import arena from '@/arena';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
-import protect from './protect';
+import { protect } from './protect';
 
 // npm t server/arena/actions/protect.test.ts
 
@@ -11,8 +11,6 @@ describe('protect', () => {
   let game: GameService;
 
   beforeEach(async () => {
-    arena.actions.attack.registerPreAffects([protect]);
-
     game = await TestUtils.createGame([{}, { prof: CharacterClass.Warrior, weapon: {} }]);
     TestUtils.mockRandom();
   });

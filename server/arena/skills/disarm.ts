@@ -1,11 +1,12 @@
-import type { Affect } from '../Constuructors/interfaces/Affect';
+import { OrderType } from '@fwo/shared';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import { Skill } from '../Constuructors/SkillConstructor';
 import CastError from '../errors/CastError';
 
 /**
  * Обезоруживание
  */
-class Disarm extends Skill implements Affect {
+class Disarm extends Skill {
   constructor() {
     super({
       name: 'disarm',
@@ -15,7 +16,7 @@ class Disarm extends Skill implements Affect {
       proc: 10,
       baseExp: 20,
       costType: 'en',
-      orderType: 'enemy',
+      orderType: OrderType.Enemy,
       aoeType: 'target',
       chance: [70, 75, 80, 85, 90, 95],
       effect: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6],
@@ -32,7 +33,15 @@ class Disarm extends Skill implements Affect {
     const iDex = initiator.stats.val('attributes.dex') * effect;
     const tDex = target.stats.val('attributes.dex');
     if (iDex >= tDex) {
-      target.flags.isDisarmed.push({ initiator, val: 0 });
+      target.affects.addEffect({
+        action: this.name,
+        initiator,
+        duration: 1,
+        value: 0,
+        onBeforeAction(ctx, action) {
+          disarm.onBeforeAction(ctx, action);
+        },
+      });
 
       this.calculateExp();
     } else {
@@ -40,15 +49,18 @@ class Disarm extends Skill implements Affect {
     }
   }
 
-  preAffect: Affect['preAffect'] = ({ params: { initiator: target, game } }): undefined => {
-    if (target.flags.isDisarmed.length) {
-      throw new CastError(
-        target.flags.isDisarmed.map(({ initiator }) =>
-          this.getSuccessResult({ initiator, target, game }),
-        ),
-      );
+  onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
+    if (action.actionType !== 'phys') {
+      return;
     }
-  };
+
+    const { initiator: target, game } = ctx.params;
+    const effect = target.affects.getEffectsByAction(this.name);
+
+    throw new CastError(
+      effect.map(({ initiator }) => this.getSuccessResult({ initiator, target, game })),
+    );
+  }
 }
 
-export default new Disarm();
+export const disarm = new Disarm();

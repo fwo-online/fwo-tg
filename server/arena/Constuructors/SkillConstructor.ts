@@ -1,13 +1,15 @@
+import type { OrderType } from '@fwo/shared';
+import type { ActionKey } from '@/arena/ActionService';
+import { BaseAction } from '@/arena/Constuructors/BaseAction';
 import type { Profs } from '../../data';
 import CastError from '../errors/CastError';
 import type Game from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
-import { AffectableAction } from './AffectableAction';
-import type { ActionType, AOEType, CostType, CustomMessage, OrderType } from './types';
+import type { ActionType, AOEType, CostType, CustomMessage } from './types';
 
 interface SkillArgs {
-  name: string;
+  name: ActionKey;
   displayName: string;
   desc: string;
   cost: number[];
@@ -27,7 +29,7 @@ interface SkillArgs {
  */
 export interface Skill extends SkillArgs, CustomMessage {}
 
-export abstract class Skill extends AffectableAction {
+export abstract class Skill extends BaseAction {
   actionType: ActionType = 'skill';
   /**
    * Создание скила
@@ -48,9 +50,8 @@ export abstract class Skill extends AffectableAction {
     try {
       this.createContext(initiator, target, game);
       this.getCost();
-      this.checkPreAffects();
-      initiator.affects.onBeforeRun(this.context, this);
       this.checkChance();
+      this.onBeforeRun();
       this.run(initiator, target, game);
       this.next();
     } catch (e) {

@@ -3,7 +3,7 @@ import { attack } from '@/arena/actions';
 import type GameService from '@/arena/GameService';
 import { bleeding } from '@/arena/magics';
 import TestUtils from '@/utils/testUtils';
-import lacerate from './lacerate';
+import { lacerate } from './lacerate';
 
 // npm t server/arena/passiveSkills/lacerate.test.ts
 
@@ -11,7 +11,6 @@ describe('lacerate', () => {
   let game: GameService;
 
   beforeEach(async () => {
-    attack.registerPostAffects([lacerate]);
     game = await TestUtils.createGame([
       {
         passiveSkills: { lacerate: 1 },
@@ -22,6 +21,7 @@ describe('lacerate', () => {
       {},
     ]);
 
+    lacerate.cast(game.players.players[0], game.players.players[0], game);
     TestUtils.mockRandom();
     lacerate.chance[0] = 100;
   });
@@ -34,11 +34,19 @@ describe('lacerate', () => {
     game.players.players[0].proc = 1;
 
     attack.cast(game.players.players[0], game.players.players[1], game);
-    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
 
-    game.round.count++;
-    bleeding.castLong(game);
+    expect(game.players.players[1].affects.affects[1]).toMatchObject({
+      action: bleeding.name,
+    });
 
+    game.players.players[1].affects.affects[1].onCast?.(
+      {
+        initiator: game.players.players[0],
+        target: game.players.players[1],
+        game,
+      },
+      game.players.players[1].affects.affects[0],
+    );
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
 });

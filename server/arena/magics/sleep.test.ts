@@ -3,7 +3,7 @@ import { CharacterClass } from '@fwo/shared';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import { handsHeal, protect } from '../actions';
-import attack from '../actions/attack';
+import { attack } from '../actions/attack';
 import { berserk } from '../skills';
 import { sleep } from './sleep';
 

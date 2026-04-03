@@ -12,7 +12,6 @@ beforeEach(() => {
 });
 
 afterEach(async () => {
-  Object.values(arena.actions).forEach((action) => action.clearAffects());
   arena.characters = {};
   arena.games = {};
   TestUtils.cleanupForests();

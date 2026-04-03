@@ -1,10 +1,10 @@
 import { EffectType } from '@fwo/shared';
+import { BaseAction } from '@/arena/Constuructors/BaseAction';
 import { floatNumber } from '@/utils/floatNumber';
 import CastError from '../errors/CastError';
 import type GameService from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
-import { AffectableAction } from './AffectableAction';
 import type { ActionType } from './types';
 
 /**
@@ -13,7 +13,7 @@ import type { ActionType } from './types';
  * @todo Сейчас при отсутствие защиты на цели, не учитывается статик протект(
  * ???) Т.е если цель не защищается атака по ней на 95% удачна
  * */
-export default abstract class PhysConstructor extends AffectableAction {
+export default abstract class PhysConstructor extends BaseAction {
   displayName: string;
   desc: string;
   lvl: number;
@@ -43,13 +43,14 @@ export default abstract class PhysConstructor extends AffectableAction {
     try {
       this.fitsCheck();
       this.calculateHit();
-      this.handleAffect(() => initiator.affects.onBeforeRun(this.context, this));
 
+      this.onBeforeRun();
       this.run(initiator, target, game);
-      target.affects.onDamageReceived(this.context, this);
       this.calculateExp();
 
-      this.checkPostAffects();
+      initiator.affects.onDamageDealt(this.context, this);
+      target.affects.onDamageReceived(this.context, this);
+
       this.checkTargetIsDead();
       this.next();
     } catch (e) {
@@ -67,11 +68,6 @@ export default abstract class PhysConstructor extends AffectableAction {
     }
   }
 
-  /**
-   * Проверка прохождения защиты цели
-   * Если проверка провалена, выставляем флаг isHited, означающий что
-   * атака прошла
-   */
   calculateHit() {
     const { initiator, target } = this.params;
 
@@ -94,7 +90,8 @@ export default abstract class PhysConstructor extends AffectableAction {
    * Рассчитываем полученный exp
    */
   calculateExp({ initiator, target } = this.params) {
-    if (initiator.isAlly(target) && !initiator.flags.isGlitched.length) {
+    const effects = initiator.affects.getEffectsByAction('glitch');
+    if (initiator.isAlly(target) && !effects.length) {
       this.status.exp = 0;
     } else {
       this.status.exp = Math.round(this.status.effect * 8);

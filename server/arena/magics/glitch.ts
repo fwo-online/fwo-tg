@@ -32,21 +32,16 @@ class Glitch extends CommonMagic {
     target.affects.addEffect({
       action: this.name,
       duration: 1,
+      value: 0,
       initiator,
       proc: initiator.proc,
-      onBeforeRun(ctx, action, affect) {
-        return glitchEffect.onBeforeRun(ctx, action, affect);
+      onBeforeAction(ctx, action, affect) {
+        return glitch.onBeforeAction(ctx, action, affect);
       },
     });
   }
-}
 
-class GlitchEffect extends CommonMagic {
-  isAffect = true;
-
-  run(): void {}
-
-  onBeforeRun(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
+  onBeforeAction(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
     if (!actionTypes.includes(action.actionType)) {
       return;
     }
@@ -68,5 +63,4 @@ class GlitchEffect extends CommonMagic {
   }
 }
 
-export const glitchEffect = new GlitchEffect(params);
 export const glitch = new Glitch(params);

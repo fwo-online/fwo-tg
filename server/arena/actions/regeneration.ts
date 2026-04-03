@@ -1,5 +1,6 @@
-import { AffectableAction } from '../Constuructors/AffectableAction';
-import type { ActionType, OrderType } from '../Constuructors/types';
+import { OrderType } from '@fwo/shared';
+import { BaseAction } from '@/arena/Constuructors/BaseAction';
+import type { ActionType } from '../Constuructors/types';
 import type Game from '../GameService';
 import type { Player } from '../PlayersService';
 
@@ -7,12 +8,12 @@ import type { Player } from '../PlayersService';
  * Класс регенерации
  */
 
-class Regeneration extends AffectableAction {
-  name = 'regeneration';
+class Regeneration extends BaseAction {
+  name = 'regeneration' as const;
   displayName = 'Восстановление';
   desc = 'Регенерация маны/энергии';
   lvl = 0;
-  orderType: OrderType = 'self';
+  orderType = OrderType.Self;
   actionType: ActionType = 'regeneration';
 
   /**

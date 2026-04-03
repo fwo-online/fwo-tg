@@ -57,14 +57,6 @@ export abstract class BaseAction {
     this.params = { initiator: target, target: initiator, game };
   }
 
-  applyContext(context: BaseActionContext) {
-    const status = structuredClone(context.status);
-    this.status = status;
-    this.params = context.params;
-
-    this.context = { ...context, status };
-  }
-
   reset() {
     this.status = { effect: 0, exp: 0, expArr: [], affects: [] };
   }
@@ -132,5 +124,16 @@ export abstract class BaseAction {
     if (!this.isAffect) {
       game.recordOrderResult(result);
     }
+  }
+
+  onBeforeRun() {
+    const { initiator, target } = this.context.params;
+
+    initiator.affects.onBeforeAction(this.context, this);
+    initiator.affects.withOnCastFail(
+      () => target.affects.onBeforeReceive(this.context, this),
+      this.context,
+      this,
+    );
   }
 }

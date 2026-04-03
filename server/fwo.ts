@@ -8,7 +8,6 @@ import { ItemModel } from '@/models/item';
 import { ItemSetModel } from '@/models/item-set';
 import { app } from '@/server';
 import { middleware, onConnection, onCreate } from '@/server/ws';
-import { registerAffects } from '@/utils/registerAffects';
 import { registerGlobals } from '@/utils/registerGlobals';
 
 console.log(`Starting Bun v${Bun.version} with ${process.env.NODE_ENV} mode`);
@@ -24,7 +23,6 @@ void connect(async () => {
 });
 
 registerGlobals();
-registerAffects();
 
 const server = serve({
   fetch: app.fetch,

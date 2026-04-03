@@ -1,12 +1,12 @@
-import type { BaseActionContext } from '@/arena/Constuructors/BaseAction';
-import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
+import { Magic } from '@/arena/Constuructors/MagicConstructor';
 import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConstructor';
 import type { BreaksMessage, SuccessArgs } from '@/arena/Constuructors/types';
 import CastError from '@/arena/errors/CastError';
 
 const affectName = 'CHANCE_FAIL';
 
-class DivineWill extends PassiveSkillConstructor implements Affect {
+class DivineWill extends PassiveSkillConstructor {
   constructor() {
     super({
       name: 'divineWill',
@@ -19,7 +19,19 @@ class DivineWill extends PassiveSkillConstructor implements Affect {
   }
 
   run() {
-    //
+    const { initiator } = this.params;
+
+    initiator.affects.addPassive({
+      action: this.name,
+      initiator,
+      value: 0,
+      onBeforeAction(ctx, action) {
+        divineWill.onBeforeAction(ctx, action);
+      },
+      onCastFail(ctx, action, reason) {
+        return divineWill.onCastFail(ctx, action, reason);
+      },
+    });
   }
 
   isActive(): boolean {
@@ -30,29 +42,41 @@ class DivineWill extends PassiveSkillConstructor implements Affect {
     return this.chance[0];
   }
 
-  preAffect: Affect['preAffect'] = (context): undefined => {
-    this.applyContext(context);
-
-    const { initiator, target, game } = context.params;
-    if (this.checkChance()) {
-      throw new CastError(this.getSuccessResult({ initiator, target, game }));
-    }
-  };
-
-  affectHandler(
-    params: BaseActionContext,
-    affect: SuccessArgs | BreaksMessage,
+  onCastFail(
+    ctx: BaseActionContext,
+    action: BaseAction,
+    reason: SuccessArgs | SuccessArgs[] | BreaksMessage,
   ): SuccessArgs | SuccessArgs[] | undefined {
-    this.applyContext(params);
-
-    if (affect !== affectName) {
+    if (!(action instanceof Magic)) {
       return;
     }
 
+    if (reason !== affectName) {
+      return;
+    }
+
+    const { initiator, target, game } = ctx.params;
+    this.createContext(initiator, target, game);
+
     if (this.checkChance()) {
-      return this.getSuccessResult(this.context.params);
+      const result = this.getSuccessResult(this.context.params);
+      ctx.status.affects.push(result);
+      return result;
+    }
+  }
+
+  onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
+    if (!(action instanceof Magic)) {
+      return;
+    }
+
+    const { initiator, target, game } = ctx.params;
+    this.createContext(initiator, target, game);
+
+    if (this.checkChance()) {
+      throw new CastError(this.getSuccessResult({ initiator, target, game }));
     }
   }
 }
 
-export default new DivineWill();
+export const divineWill = new DivineWill();

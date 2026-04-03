@@ -1,9 +1,11 @@
+import { OrderType } from '@fwo/shared';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
+import CastError from '@/arena/errors/CastError';
+import { floatNumber } from '@/utils/floatNumber';
 import { bold, italic } from '../../utils/formatString';
 import { Skill } from '../Constuructors/SkillConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
-import CastError from '@/arena/errors/CastError';
-import { floatNumber } from '@/utils/floatNumber';
 
 const shieldTypes = ['shield'];
 
@@ -24,7 +26,7 @@ class ShieldBlock extends Skill {
       proc: 10,
       baseExp: 40,
       costType: 'en',
-      orderType: 'self',
+      orderType: OrderType.Self,
       aoeType: 'target',
       chance: [70, 75, 80, 85, 90, 95],
       effect: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6],
@@ -47,33 +49,46 @@ class ShieldBlock extends Skill {
     const value = (0.3 * str + 0.7 * con + 0.25 * shield.phys.defence) * effect;
 
     this.status.effect = floatNumber(value);
-    initiator.flags.isShielded = this.status.effect;
     initiator.stats.up('magic.defence', this.status.effect);
+
+    initiator.affects.addEffect({
+      action: this.name,
+      duration: 1,
+      initiator,
+      value: this.status.effect,
+      onBeforeReceive(ctx, action, affect) {
+        shieldBlock.onBeforeReceive(ctx, action, affect);
+      },
+    });
   }
 
-  preAffect: Affect['postAffect'] = ({ params: { initiator, target, game } }): undefined => {
-    if (target.flags.isShielded) {
-      const str = initiator.stats.val('attributes.str');
-      const con = initiator.stats.val('attributes.con');
-      const value = (0.7 * str + 0.3 * con) * initiator.proc;
-
-      if (value < target.flags.isShielded) {
-        target.stats.down('magic.defence', value);
-        target.flags.isShielded -= value;
-      } else {
-        target.stats.down('magic.defence', target.flags.isShielded);
-        target.flags.isShielded = 0;
-      }
-
-      this.calculateExp();
-
-      throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
+  onBeforeReceive(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
+    if (action.actionType !== 'phys') {
+      return;
     }
-  };
+
+    const { initiator, target, game } = ctx.params;
+
+    const str = initiator.stats.val('attributes.str');
+    const con = initiator.stats.val('attributes.con');
+    const value = (0.7 * str + 0.3 * con) * initiator.proc;
+
+    if (value < affect.value) {
+      target.stats.down('magic.defence', value);
+      affect.value -= value;
+    } else {
+      target.stats.down('magic.defence', affect.value);
+      target.affects.removeEffectsByAction(this.name);
+    }
+
+    this.calculateExp();
+
+    throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
+  }
 
   customMessage(args: SuccessArgs) {
     return `${bold(args.initiator.nick)} использовал ${italic(this.displayName)} с эффектом ${args.effect}`;
   }
 }
 
-export default new ShieldBlock();
+export const shieldBlock = new ShieldBlock();

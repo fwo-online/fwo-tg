@@ -1,5 +1,5 @@
-export { default as staticProtect } from './staticProtect';
-export { default as divineWill } from './divineWill';
-export { default as fatesMiss } from './fatesMiss';
-export { default as lacerate } from './lacerate';
-export { default as nightcall } from './nightcall';
+export { divineWill } from './divineWill';
+export { fatesMiss } from './fatesMiss';
+export { lacerate } from './lacerate';
+export { nightcall } from './nightcall';
+export { staticProtect } from './staticProtect';

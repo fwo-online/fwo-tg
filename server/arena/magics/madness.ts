@@ -30,10 +30,11 @@ class Madness extends CommonMagic {
     target.affects.addEffect({
       action: this.name,
       duration: 1,
+      value: 0,
       initiator,
       proc: initiator.proc,
-      onBeforeRun(ctx, action, affect) {
-        return madnessEffect.onBeforeRun(ctx, action, affect);
+      onBeforeAction(ctx, action, affect) {
+        return madnessEffect.onBeforeAction(ctx, action, affect);
       },
     });
   }
@@ -46,7 +47,7 @@ class MadnessEffect extends CommonMagic {
 
   run(): void {}
 
-  onBeforeRun(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
+  onBeforeAction(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
     if (!actionTypes.includes(action.actionType)) {
       return;
     }

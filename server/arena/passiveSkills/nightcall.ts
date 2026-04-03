@@ -1,8 +1,8 @@
-import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConstructor';
 import CastError from '@/arena/errors/CastError';
 
-class NightCall extends PassiveSkillConstructor implements Affect {
+class NightCall extends PassiveSkillConstructor {
   constructor() {
     super({
       name: 'nightcall',
@@ -15,24 +15,30 @@ class NightCall extends PassiveSkillConstructor implements Affect {
   }
 
   run() {
-    //
+    const { initiator } = this.params;
+    initiator.affects.addPassive({
+      action: this.name,
+      initiator,
+      value: 0,
+      onBeforeAction(ctx, action) {
+        nightcall.onBeforeAction(ctx, action);
+      },
+    });
   }
 
-  preAffect: Affect['preAffect'] = (context) => {
-    this.applyContext(context);
-    this.swapParams();
-
-    if (!this.isActive()) {
-      return undefined;
+  onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
+    if (action.name !== 'sleep') {
+      return;
     }
 
-    const { initiator, target, game } = context.params;
+    const { initiator, target, game } = ctx.params;
+    this.createContext(initiator, target, game);
 
     throw new CastError({
       ...this.getSuccessResult({ initiator, target, game }),
       actionType: 'passive',
     });
-  };
+  }
 }
 
-export default new NightCall();
+export const nightcall = new NightCall();

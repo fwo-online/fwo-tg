@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { CharacterClass } from '@fwo/shared';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
-import attack from '../actions/attack';
-import dodge from './dodge';
+import { attack } from '../actions/attack';
+import { dodge } from './dodge';
 
 // npm t server/arena/skills/dodge.test.ts
 
@@ -11,8 +11,6 @@ describe('dodge', () => {
   let game: GameService;
 
   beforeEach(async () => {
-    attack.registerPreAffects([dodge]);
-
     game = await TestUtils.createGame([
       {
         weapon: { type: 'chop' },

@@ -1,4 +1,5 @@
 import { OrderType } from '@fwo/shared';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import type { Affect } from '../Constuructors/interfaces/Affect';
 import PhysConstructor from '../Constuructors/PhysConstructor';
 import CastError from '../errors/CastError';
@@ -6,7 +7,7 @@ import CastError from '../errors/CastError';
 /**
  * Физическая атака
  */
-class Attack extends PhysConstructor implements Affect {
+class Attack extends PhysConstructor {
   constructor() {
     super({
       name: 'attack',
@@ -26,20 +27,29 @@ class Attack extends PhysConstructor implements Affect {
     }
     const { initiator, target } = this.params;
 
-    target.flags.isHited = {
+    target.affects.addEffect({
+      action: this.name,
+      duration: 1,
       initiator,
-      val: this.status.effect,
-    };
+      value: this.status.effect,
+      onBeforeAction(ctx, action, affect) {
+        attack.onBeforeAction(ctx, action, affect);
+      },
+    });
 
     target.stats.down('hp', this.status.effect);
   }
 
-  preAffect: Affect['preAffect'] = ({ params: { initiator: target, game } }): undefined => {
-    if (target.flags.isHited) {
-      throw new CastError(
-        this.getSuccessResult({ initiator: target.flags.isHited.initiator, target, game }),
-      );
+  onBeforeAction(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
+    if (action.actionType !== 'heal') {
+      return;
     }
-  };
+
+    const { initiator, game } = ctx.params;
+    throw new CastError(
+      this.getSuccessResult({ initiator: affect.initiator, target: initiator, game }),
+    );
+  }
 }
-export default new Attack();
+
+export const attack = new Attack();

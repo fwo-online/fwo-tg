@@ -37,10 +37,10 @@ class Sleep extends CommonMagic {
       duration: initiator.stats.val('spellLength'),
       proc: initiator.proc,
       initiator,
-      onBeforeRun({ status, params: { initiator, game } }, action): undefined {
+      onBeforeAction({ status, params: { initiator, game } }, action): undefined {
         this.initiator.proc = this.proc;
         sleepEffect.duration = this.duration;
-        sleepEffect.onBeforeRun(
+        sleepEffect.onBeforeAction(
           { params: { initiator: this.initiator, target: initiator, game }, status },
           action,
         );
@@ -59,7 +59,7 @@ class Sleep extends CommonMagic {
 class SleepEffect extends LongMagic {
   isAffect = true;
 
-  onBeforeRun(ctx: BaseActionContext, action: BaseAction) {
+  onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
     if (actionTypes.includes(action.actionType)) {
       const { initiator, target, game } = ctx.params;
       this.cast(initiator, target, game);
