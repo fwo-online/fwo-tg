@@ -1,8 +1,8 @@
-import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConstructor';
 import CastError from '@/arena/errors/CastError';
 
-class StaticProtect extends PassiveSkillConstructor implements Affect {
+class StaticProtect extends PassiveSkillConstructor {
   constructor() {
     super({
       name: 'staticProtect',
@@ -15,7 +15,16 @@ class StaticProtect extends PassiveSkillConstructor implements Affect {
   }
 
   run() {
-    //
+    const { initiator } = this.params;
+
+    initiator.affects.addPassive({
+      action: this.name,
+      initiator,
+      value: 0,
+      onBeforeReceive(ctx, action) {
+        staticProtect.onBeforeAction(ctx, action);
+      },
+    });
   }
 
   getChance() {
@@ -28,18 +37,21 @@ class StaticProtect extends PassiveSkillConstructor implements Affect {
     return Math.round((1 - Math.exp(-2 * ratio)) * 100);
   }
 
-  preAffect: Affect['preAffect'] = (context): undefined => {
-    this.applyContext(context);
+  onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
+    if (action.actionType !== 'phys') {
+      return;
+    }
+    const { initiator, target, game } = ctx.params;
+    this.createContext(target, initiator, game);
 
     if (!this.isActive()) {
       return;
     }
 
-    const { initiator, target, game } = context.params;
     if (!this.checkChance()) {
       throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
     }
-  };
+  }
 }
 
-export default new StaticProtect();
+export const staticProtect = new StaticProtect();

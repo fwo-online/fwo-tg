@@ -1,7 +1,8 @@
+import type { Action } from '@fwo/shared';
 import arena from '@/arena';
 import MagicService from '@/arena/MagicService';
+import PassiveSkillService from '@/arena/PassiveSkillService';
 import SkillService from '@/arena/SkillService';
-import type { Action } from '@fwo/shared';
 
 export type ActionKey = keyof typeof arena.actions;
 
@@ -24,6 +25,10 @@ export class ActionService {
 
   static isMagicAction(action: string) {
     return MagicService.isMagic(action);
+  }
+
+  static isPassiveSkillAction(action: string) {
+    return PassiveSkillService.isPassiveSkill(action);
   }
 
   static toObject(actionKey: ActionKey, lvl = 1): Action {

@@ -1,3 +1,4 @@
+import { OrderType } from '@fwo/shared';
 import { bold } from '../../utils/formatString';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
@@ -16,7 +17,7 @@ class MagicDefense extends CommonMagic {
       baseExp: 40,
       costType: 'mp',
       lvl: 2,
-      orderType: 'all',
+      orderType: OrderType.All,
       aoeType: 'target',
       magType: 'good',
       chance: [100, 100, 100],

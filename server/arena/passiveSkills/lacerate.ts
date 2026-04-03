@@ -1,8 +1,8 @@
-import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConstructor';
 import { bleeding } from '@/arena/magics';
 
-class Lacerate extends PassiveSkillConstructor implements Affect {
+class Lacerate extends PassiveSkillConstructor {
   weaponTypes = ['cut'];
 
   constructor() {
@@ -17,13 +17,26 @@ class Lacerate extends PassiveSkillConstructor implements Affect {
   }
 
   run() {
-    //
+    const { initiator } = this.params;
+
+    initiator.affects.addPassive({
+      action: lacerate.name,
+      initiator,
+      value: 0,
+      onDamageDealt(ctx, action) {
+        lacerate.onDamageDealt(ctx, action);
+      },
+    });
   }
 
-  postAffect: Affect['preAffect'] = (context) => {
-    this.applyContext(context);
+  onDamageDealt(ctx: BaseActionContext, action: BaseAction) {
+    const { initiator, target, game } = ctx.params;
+    this.createContext(initiator, target, game);
 
-    const { initiator, target, game } = this.params;
+    if (action.actionType !== 'phys') {
+      return;
+    }
+
     if (!initiator.weapon.isOfType(this.weaponTypes)) {
       return;
     }
@@ -36,11 +49,20 @@ class Lacerate extends PassiveSkillConstructor implements Affect {
       return;
     }
 
-    bleeding.applyContext(context);
-    bleeding.postRun(initiator, target, game);
+    target.affects.addLongEffect({
+      action: 'bleeding',
+      duration: initiator.stats.val('spellLength'),
+      proc: initiator.proc,
+      initiator,
+      onCast({ initiator, target, game }) {
+        initiator.proc = this.proc;
+        bleeding.duration = this.duration;
+        bleeding.cast(initiator, target, game);
+      },
+    });
 
-    return this.getSuccessResult({ initiator, target, game });
-  };
+    ctx.status.affects.push(this.getSuccessResult({ initiator, target, game }));
+  }
 }
 
-export default new Lacerate();
+export const lacerate = new Lacerate();

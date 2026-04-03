@@ -1,3 +1,4 @@
+import { OrderType } from '@fwo/shared';
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 
 const damageToManaMultiplier = 0.5;
@@ -13,7 +14,7 @@ class Blessing extends DmgMagic {
       baseExp: 8,
       costType: 'mp',
       lvl: 4,
-      orderType: 'all',
+      orderType: OrderType.All,
       aoeType: 'target',
       magType: 'bad',
       dmgType: 'physical',

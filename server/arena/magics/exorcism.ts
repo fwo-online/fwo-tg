@@ -1,3 +1,5 @@
+import { OrderType } from '@fwo/shared';
+import { Magic } from '@/arena/Constuructors/MagicConstructor';
 import { bold, italic } from '../../utils/formatString';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
@@ -17,7 +19,7 @@ class Exorcism extends CommonMagic {
       baseExp: 80,
       costType: 'mp',
       lvl: 3,
-      orderType: 'team',
+      orderType: OrderType.Team,
       aoeType: 'target',
       magType: 'good',
       chance: ['1d60+30', '1d30+55', '1d10+70'],
@@ -27,14 +29,14 @@ class Exorcism extends CommonMagic {
   }
 
   run() {
-    const { game, target } = this.params;
-    const entries = Object.entries(game.longActions);
-
-    entries.forEach(([key, items]) => {
-      const magic = arena.magics[key];
-      if (magic.magType === 'bad') {
-        game.longActions[key] = items.filter((item) => item.target !== target.id);
+    const { target } = this.params;
+    target.affects.filterAffects((affect) => {
+      const action = arena.actions[affect.action];
+      if (action instanceof Magic) {
+        return action.magType !== 'bad' || affect.type !== 'long-effect';
       }
+
+      return true;
     });
   }
 

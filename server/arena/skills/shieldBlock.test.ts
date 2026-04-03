@@ -3,7 +3,7 @@ import { CharacterClass, ItemWear } from '@fwo/shared';
 import arena from '@/arena';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
-import shieldBlock from './shieldBlock';
+import { shieldBlock } from './shieldBlock';
 
 // npm t server/arena/skills/shieldBlock.test.ts
 
@@ -11,8 +11,6 @@ describe('shieldBlock', () => {
   let game: GameService;
 
   beforeEach(async () => {
-    arena.actions.attack.registerPreAffects([shieldBlock]);
-
     const shield = await TestUtils.createItem({
       type: 'shield',
       wear: ItemWear.OffHand,

@@ -27,7 +27,7 @@ describe('PlayerService', () => {
   });
 
   it('should get random alive', () => {
-    expect(players.randomAlive).toBeInstanceOf(Player);
+    expect(players.getRandomAlive()).toBeInstanceOf(Player);
   });
 
   it('should filter by dead/alive players', () => {
@@ -64,10 +64,9 @@ describe('PlayerService', () => {
   });
 
   it('should reset stats', () => {
-    const player = players.randomAlive;
+    const player = players.getRandomAlive();
     player.setProc(10);
     player.stats.set('exp', 10);
-    player.flags.isMad = [{ initiator: player, val: 0 }];
 
     expect(player.proc).toBe(10);
     expect(player.stats.val('exp')).toBe(10);
@@ -75,11 +74,10 @@ describe('PlayerService', () => {
     players.reset();
     expect(player.proc).toBe(100);
     expect(player.stats.val('exp')).toBe(0);
-    expect(player.flags.isMad).toHaveLength(0);
   });
 
   it('should kill player', () => {
-    const player = players.randomAlive;
+    const player = players.getRandomAlive();
     player.stats.set('hp', 0);
     expect(players.sortDead()).toMatchObject([player]);
 

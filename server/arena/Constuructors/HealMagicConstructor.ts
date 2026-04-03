@@ -1,13 +1,14 @@
 import type { OrderType } from '@fwo/shared';
+import type { ActionKey } from '@/arena/ActionService';
+import { BaseAction } from '@/arena/Constuructors/BaseAction';
 import { floatNumber } from '../../utils/floatNumber';
 import type Game from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
-import { AffectableAction } from './AffectableAction';
 import type { ActionType, CustomMessage } from './types';
 
 export interface HealArgs {
-  name: string;
+  name: ActionKey;
   displayName: string;
   desc: string;
   lvl: number;
@@ -18,7 +19,7 @@ export interface Heal extends HealArgs, CustomMessage {}
 /**
  * Heal Class
  */
-export abstract class Heal extends AffectableAction {
+export abstract class Heal extends BaseAction {
   actionType: ActionType = 'heal';
 
   constructor(params: HealArgs) {
@@ -38,7 +39,7 @@ export abstract class Heal extends AffectableAction {
     this.createContext(initiator, target, game);
 
     try {
-      this.checkPreAffects();
+      this.onBeforeRun();
       this.run(initiator, target, game);
       // Получение экспы за хил следует вынести в отдельный action следующий
       // за самим хилом, дабы выдать exp всем хиллерам после формирования

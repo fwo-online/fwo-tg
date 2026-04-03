@@ -1,5 +1,6 @@
+import { OrderType } from '@fwo/shared';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import { bold, italic } from '@/utils/formatString';
-import type { Affect } from '../Constuructors/interfaces/Affect';
 import { Skill } from '../Constuructors/SkillConstructor';
 import type { ActionType, SuccessArgs } from '../Constuructors/types';
 import CastError from '../errors/CastError';
@@ -16,7 +17,7 @@ const dodgeableWeaponTypes = [
 /**
  * Увертка
  */
-class Dodge extends Skill implements Affect {
+class Dodge extends Skill {
   actionType: ActionType = 'dodge';
 
   constructor() {
@@ -28,7 +29,7 @@ class Dodge extends Skill implements Affect {
       proc: 20,
       baseExp: 50,
       costType: 'en',
-      orderType: 'self',
+      orderType: OrderType.Self,
       aoeType: 'target',
       chance: [75, 80, 85, 90, 95, 99],
       effect: [1.2, 1.25, 1.3, 1.35, 1.4, 1.45],
@@ -40,16 +41,30 @@ class Dodge extends Skill implements Affect {
   run() {
     const { initiator } = this.params;
     const initiatorSkillLvl = initiator.skills[this.name];
-    initiator.flags.isDodging = this.effect[initiatorSkillLvl - 1] * initiator.stats.val('attributes.dex');
+    const value = this.effect[initiatorSkillLvl - 1] * initiator.stats.val('attributes.dex');
+
+    initiator.affects.addEffect({
+      action: this.name,
+      initiator,
+      value,
+      onBeforeReceive(ctx, action) {
+        dodge.onBeforeReceive(ctx, action, value);
+      },
+    });
   }
 
-  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }): undefined => {
+  onBeforeReceive(ctx: BaseActionContext, action: BaseAction, value: number) {
+    if (action.actionType !== 'phys') {
+      return;
+    }
+
+    const { initiator, target, game } = ctx.params;
     const isDodgeable = initiator.weapon.isOfType(dodgeableWeaponTypes);
 
-    if (target.flags.isDodging && isDodgeable) {
+    if (isDodgeable) {
       const initiatorDex = initiator.stats.val('attributes.dex');
-      const dodgeFactor = Math.round(target.flags.isDodging / initiatorDex);
-      const chance = Math.round(Math.sqrt(dodgeFactor) + (10 * dodgeFactor) + 5);
+      const dodgeFactor = Math.round(value / initiatorDex);
+      const chance = Math.round(Math.sqrt(dodgeFactor) + 10 * dodgeFactor + 5);
 
       if (chance > MiscService.rndm('1d100')) {
         this.calculateExp();
@@ -57,11 +72,11 @@ class Dodge extends Skill implements Affect {
         throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
       }
     }
-  };
+  }
 
   customMessage(args: SuccessArgs) {
     return `${bold(args.initiator.nick)} использовал ${italic(this.displayName)}`;
   }
 }
 
-export default new Dodge();
+export const dodge = new Dodge();

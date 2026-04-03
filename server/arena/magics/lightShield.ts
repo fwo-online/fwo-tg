@@ -1,39 +1,72 @@
-/* eslint-disable @typescript-eslint/no-use-before-define, max-classes-per-file */
-import { DmgMagic } from '@/arena/Constuructors/DmgMagicConstructor';
-import { LongMagic } from '@/arena/Constuructors/LongMagicConstructor';
-import type { MagicArgs } from '@/arena/Constuructors/MagicConstructor';
-import type { SuccessArgs } from '@/arena/Constuructors/types';
-import type GameService from '@/arena/GameService';
-import type { Player } from '@/arena/PlayersService';
+import { EffectType, OrderType } from '@fwo/shared';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
+import { CommonMagic } from '@/arena/Constuructors/CommonMagicConstructor';
+import type { DmgMagicArgs } from '@/arena/Constuructors/DmgMagicConstructor';
+import { LongDmgMagic } from '@/arena/Constuructors/LongDmgMagicConstructor';
 import type { Affect } from '../Constuructors/interfaces/Affect';
 
 /**
- * Магический доспех
+ * Световой щит
  * Основное описание магии общее требование есть в конструкторе
  */
-
-const params = {
+const params: DmgMagicArgs = Object.freeze({
   name: 'lightShield',
   displayName: 'Световой щит',
   desc: 'Возвращает часть физического урона в виде чистого, атакующему цель под действием щита',
   cost: 3,
-  baseExp: 6,
+  baseExp: 8,
   costType: 'mp',
   lvl: 4,
-  orderType: 'team',
+  orderType: OrderType.Team,
   aoeType: 'target',
   magType: 'good',
   chance: ['1d80+20', '1d40+60', '1d20+80'],
   effect: ['1d1+10', '1d1+20', '1d1+30'],
   profList: ['m'],
-} satisfies MagicArgs;
+  dmgType: EffectType.Clear,
+});
 
-class LightShield extends DmgMagic {
-  cast(initiator: Player, target: Player, game: GameService): void {
-    this.createContext(initiator, target, game);
+class LightShield extends CommonMagic {
+  run() {
+    const { initiator, target } = this.params;
+
+    target.affects.addLongEffect({
+      action: this.name,
+      duration: initiator.stats.val('spellLength'),
+      initiator,
+      proc: initiator.proc,
+      onDamageReceived(ctx, action, affect) {
+        return lightShieldEffect.onDamageReceived(ctx, action, affect);
+      },
+    });
+  }
+}
+
+class LightShieldEffect extends LongDmgMagic {
+  isAffect = true;
+
+  onDamageReceived(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
+    if (action.effectType !== EffectType.Physical) {
+      return;
+    }
+
+    const { effect } = ctx.status;
+
+    affect.initiator.setProc(effect * (affect.proc ?? 1) * 0.01);
+
+    this.createContext(affect.initiator, ctx.params.initiator, ctx.params.game);
     this.run();
     this.calculateExp();
     this.checkTargetIsDead();
+    this.next();
+
+    ctx.status.affects.push(
+      this.getSuccessResult({
+        initiator: affect.initiator,
+        target: ctx.params.initiator,
+        game: ctx.params.game,
+      }),
+    );
   }
 
   run() {
@@ -42,39 +75,9 @@ class LightShield extends DmgMagic {
   }
 }
 
-class LightShieldBuff extends LongMagic implements Affect {
-  run() {
-    const { target, initiator } = this.params;
-    target.flags.isLightShielded.push({ initiator, val: initiator.proc });
-  }
-
-  runLong(): void {
-    const { target, initiator } = this.params;
-    target.flags.isLightShielded.push({ initiator, val: initiator.proc });
-  }
-
-  postAffect: Affect['postAffect'] = ({
-    params: { initiator, target, game },
-    status: { effect },
-  }) => {
-    const results: SuccessArgs[] = [];
-
-    target.flags.isLightShielded.forEach(({ initiator: shielder, val }) => {
-      shielder.setProc(effect * val * 0.01);
-      lightShield.cast(shielder, initiator, game);
-      results.push(lightShield.getSuccessResult({ initiator: shielder, target: initiator, game }));
-    });
-
-    return results;
-  };
-}
-
-const lightShield = new LightShield({
+export const lightShield = new LightShield({
   ...params,
-  baseExp: 8,
-  dmgType: 'clear',
+  baseExp: 6,
 });
 
-const lightShieldBuff = new LightShieldBuff(params);
-
-export default lightShieldBuff;
+export const lightShieldEffect = new LightShieldEffect(params);

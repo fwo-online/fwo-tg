@@ -3,9 +3,9 @@ import { CharacterClass } from '@fwo/shared';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import { handsHeal, protect } from '../actions';
-import attack from '../actions/attack';
+import { attack } from '../actions/attack';
 import { berserk } from '../skills';
-import sleep from './sleep';
+import { sleep } from './sleep';
 
 // npm t server/arena/magics/sleep.test.ts
 
@@ -13,11 +13,6 @@ describe('sleep', () => {
   let game: GameService;
 
   beforeEach(async () => {
-    handsHeal.registerPreAffects([sleep]);
-    protect.registerPreAffects([sleep]);
-    berserk.registerPreAffects([sleep]);
-    attack.registerPreAffects([sleep]);
-
     game = await TestUtils.createGame([
       {
         prof: CharacterClass.Mage,
@@ -74,16 +69,12 @@ describe('sleep', () => {
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
 
-  it('should cast long', async () => {
+  it('should apply effect', async () => {
     game.players.players[0].proc = 1;
     game.players.players[0].stats.set('mp', 99);
 
     sleep.cast(game.players.players[0], game.players.players[1], game);
 
-    game.round.count++;
-
-    sleep.castLong(game);
-
-    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
+    expect(game.players.players[1].affects.getEffectsByAction(sleep.name)).toHaveLength(1);
   });
 });

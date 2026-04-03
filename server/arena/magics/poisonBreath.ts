@@ -1,3 +1,4 @@
+import { OrderType } from '@fwo/shared';
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 
 /**
@@ -14,7 +15,7 @@ class PoisonBreath extends DmgMagic {
       baseExp: 12,
       costType: 'mp',
       lvl: 1,
-      orderType: 'enemy',
+      orderType: OrderType.Enemy,
       aoeType: 'target',
       magType: 'bad',
       chance: [92, 94, 95],

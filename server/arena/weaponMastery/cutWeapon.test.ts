@@ -1,9 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { protect } from '@/arena/actions';
-import attack from '@/arena/actions/attack';
+import { attack } from '@/arena/actions/attack';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
-import cutWeapon from './cutWeapon';
 
 // npm t server/arena/weaponMastery/cutWeapon.test.ts
 
@@ -11,9 +10,6 @@ describe('cutWeapon', () => {
   let game: GameService;
 
   beforeEach(async () => {
-    attack.registerPreAffects([protect]);
-    attack.registerAffectHandlers([cutWeapon]);
-
     game = await TestUtils.createGame([
       {
         passiveSkills: { cutWeapon: 1 },
@@ -23,6 +19,8 @@ describe('cutWeapon', () => {
         skills: { dodge: 1 },
       },
     ]);
+
+    game.players.players[0].affects.removeEffectsByAction('fatesMiss');
   });
 
   afterEach(() => {

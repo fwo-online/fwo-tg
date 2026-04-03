@@ -1,3 +1,5 @@
+import { OrderType } from '@fwo/shared';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import { bold, italic } from '@/utils/formatString';
 import type { Affect } from '../Constuructors/interfaces/Affect';
 import { Skill } from '../Constuructors/SkillConstructor';
@@ -14,7 +16,7 @@ const parryableWeaponTypes = [
 /**
  * Парирование
  */
-class Parry extends Skill implements Affect {
+class Parry extends Skill {
   constructor() {
     super({
       name: 'parry',
@@ -24,7 +26,7 @@ class Parry extends Skill implements Affect {
       proc: 10,
       baseExp: 8,
       costType: 'en',
-      orderType: 'self',
+      orderType: OrderType.Self,
       aoeType: 'target',
       chance: [70, 75, 80, 85, 90, 95],
       effect: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6],
@@ -37,28 +39,42 @@ class Parry extends Skill implements Affect {
     const { initiator } = this.params;
     const initiatorSkillLvl = initiator.getSkillLevel(this.name);
     const effect = this.effect[initiatorSkillLvl - 1] || 1;
+    const value = initiator.stats.val('attributes.dex') * effect;
     // изменяем
-    initiator.flags.isParry = initiator.stats.val('attributes.dex') * effect;
+    initiator.affects.addEffect({
+      action: this.name,
+      initiator,
+      value,
+      onBeforeReceive(ctx, action, affect) {
+        parry.onBeforeReceive(ctx, action, affect);
+      },
+    });
   }
 
-  preAffect: Affect['preAffect'] = ({ params: { initiator, target, game } }): undefined => {
+  onBeforeReceive(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
+    if (action.actionType !== 'phys') {
+      return;
+    }
+
+    const { initiator, target, game } = ctx.params;
     const isParryable = initiator.weapon.isOfType(parryableWeaponTypes);
 
-    if (target.flags.isParry && isParryable) {
+    if (isParryable) {
       const initiatorDex = initiator.stats.val('attributes.dex');
-      target.flags.isParry -= initiatorDex;
+      affect.value ??= 0;
+      affect.value -= initiatorDex;
 
-      if (target.flags.isParry > 0) {
+      if (affect.value > 0) {
         this.calculateExp();
 
         throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
       }
     }
-  };
+  }
 
   customMessage(args: SuccessArgs) {
     return `${bold(args.initiator.nick)} использовал ${italic(this.displayName)}`;
   }
 }
 
-export default new Parry();
+export const parry = new Parry();

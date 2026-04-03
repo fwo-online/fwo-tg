@@ -1,3 +1,4 @@
+import { OrderType } from '@fwo/shared';
 import { bold, italic } from '../../utils/formatString';
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
@@ -18,7 +19,7 @@ class MagicArrow extends DmgMagic {
       baseExp: 8,
       costType: 'mp',
       lvl: 1,
-      orderType: 'enemy',
+      orderType: OrderType.Enemy,
       aoeType: 'target',
       magType: 'bad',
       chance: [92, 94, 95],

@@ -2,10 +2,8 @@ import EventEmitter from 'node:events';
 import { type GameResult, type GameStatus, reservedClanName } from '@fwo/shared';
 import { mapValues } from 'es-toolkit';
 import arena from '@/arena';
-import type { LongItem } from '@/arena/Constuructors/LongMagicConstructor';
 import { engine } from '@/arena/EngineService';
 import { type HistoryItem, HistoryService } from '@/arena/HistoryService';
-import type * as magics from '@/arena/magics';
 import OrderService from '@/arena/OrderService';
 import PlayersService, { type Player } from '@/arena/PlayersService';
 import { type RoundOptions, RoundService, RoundStatus } from '@/arena/RoundService';
@@ -50,7 +48,6 @@ export default class GameService extends EventEmitter<{
   orders: OrderService;
   round: RoundService;
   history = new HistoryService();
-  longActions: Partial<Record<keyof typeof magics, LongItem[]>> = {};
   info!: Game;
   flags: {
     noDamageRound: number;
@@ -176,7 +173,6 @@ export default class GameService extends EventEmitter<{
     char.autoreg = false;
     this.players.kick(id);
     this.info.players.splice(this.info.players.indexOf(id), 1);
-    this.cleanLongMagics();
     this.resetGameIds([player]);
   }
 
@@ -333,19 +329,7 @@ export default class GameService extends EventEmitter<{
   sortDead() {
     const dead = this.players.sortDead();
     this.resetGameIds(dead);
-    this.cleanLongMagics();
     return dead;
-  }
-
-  /**
-   * Очистка массива длительных магий от умерших
-   */
-  cleanLongMagics(): void {
-    this.longActions = mapValues(this.longActions, (longMagicType) => {
-      return longMagicType?.filter((act) => {
-        return this.players.getById(act.target)?.alive;
-      });
-    });
   }
 
   /**

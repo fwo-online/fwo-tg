@@ -1,3 +1,4 @@
+import { OrderType } from '@fwo/shared';
 import { bold, italic } from '@/utils/formatString';
 import { Skill } from '../Constuructors/SkillConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
@@ -15,7 +16,7 @@ class Berserk extends Skill {
       proc: 10,
       baseExp: 8,
       costType: 'en',
-      orderType: 'self',
+      orderType: OrderType.Self,
       aoeType: 'target',
       chance: [70, 75, 80, 85, 90, 95],
       effect: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6],

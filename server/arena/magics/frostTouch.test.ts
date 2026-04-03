@@ -1,40 +1,33 @@
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
-import { attack } from '@/arena/actions';
+import { CharacterClass } from '@fwo/shared';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
-import { lacerate } from './lacerate';
+import { frostTouch } from './frostTouch';
 
-// npm t server/arena/passiveSkills/lacerate.test.ts
+// npm t server/arena/magics/frostTouch.test.ts
 
-describe('lacerate', () => {
+describe('frostTouch', () => {
   let game: GameService;
 
   beforeEach(async () => {
     game = await TestUtils.createGame([
-      {
-        passiveSkills: { lacerate: 1 },
-        magics: { bleeding: 1 },
-        harks: { int: 20, str: 10, wis: 10, con: 10, dex: 10 },
-        weapon: { type: 'cut' },
-      },
-      {},
+      { prof: CharacterClass.Mage, magics: { frostTouch: 3 } },
+      { prof: CharacterClass.Warrior },
     ]);
 
     TestUtils.mockRandom();
-    lacerate.chance[0] = 100;
   });
 
   afterEach(() => {
     TestUtils.restoreRandom();
   });
 
-  it('should apply bleeding', () => {
+  it('initiator should be hitted by frostTouch', async () => {
     game.players.players[0].proc = 1;
+    game.players.players[0].stats.set('mp', 99);
 
-    attack.cast(game.players.players[0], game.players.players[1], game);
-
-    const effects = game.players.players[1].affects.getEffectsByAction('bleeding');
-    expect(effects).toHaveLength(1);
+    frostTouch.cast(game.players.players[0], game.players.players[1], game);
+    const effects = game.players.players[1].affects.getEffectsByAction(frostTouch.name);
 
     effects[0].onCast?.(
       {
@@ -42,8 +35,9 @@ describe('lacerate', () => {
         target: game.players.players[1],
         game,
       },
-      effects[0],
+      game.players.players[1].affects.affects[0],
     );
+
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
 });

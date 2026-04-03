@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { CharacterClass } from '@fwo/shared';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
-import attack from '../actions/attack';
-import paralysis from './paralysis';
+import { attack } from '../actions/attack';
+import { paralysis } from './paralysis';
 
 // npm t server/arena/magics/paralysis.test.ts
 
@@ -11,8 +11,6 @@ describe('paralysis', () => {
   let game: GameService;
 
   beforeEach(async () => {
-    attack.registerPreAffects([paralysis]);
-
     game = await TestUtils.createGame([
       {
         prof: CharacterClass.Mage,

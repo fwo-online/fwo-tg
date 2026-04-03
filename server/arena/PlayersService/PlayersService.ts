@@ -85,7 +85,7 @@ export default class PlayersService {
    * Функция возвращает рандомного игрока из массива живых
    * @return
    */
-  get randomAlive(): Player {
+  getRandomAlive(): Player {
     const alive = this.alivePlayers;
     return alive[Math.floor(Math.random() * alive.length)];
   }

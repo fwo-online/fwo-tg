@@ -1,46 +1,64 @@
+import { type ActionType, OrderType } from '@fwo/shared';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
+import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
+import type { MagicArgs } from '@/arena/Constuructors/MagicConstructor';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
-import type { Affect } from '../Constuructors/interfaces/Affect';
 
 /**
  * Глюки
  * Основное описание магии общее требовани есть в конструкторе
  */
-class Glitch extends CommonMagic implements Affect {
-  constructor() {
-    super({
-      name: 'glitch',
-      displayName: 'Глюки',
-      desc: 'Глюки, вводит цель в замешательство, цель атакуют любого из игроков',
-      cost: 12,
-      baseExp: 80,
-      costType: 'mp',
-      lvl: 2,
-      orderType: 'all',
-      aoeType: 'target',
-      magType: 'bad',
-      chance: ['1d80+20', '1d40+60', '1d20+80'],
-      profList: ['m'],
-      effect: [],
+const params: MagicArgs = Object.freeze({
+  name: 'glitch',
+  displayName: 'Глюки',
+  desc: 'Глюки, вводит цель в замешательство, цель атакуют любого из игроков',
+  cost: 12,
+  baseExp: 80,
+  costType: 'mp',
+  lvl: 2,
+  orderType: OrderType.All,
+  aoeType: 'target',
+  magType: 'bad',
+  chance: ['1d80+20', '1d40+60', '1d20+80'],
+  profList: ['m'],
+  effect: [],
+});
+
+const actionTypes: ActionType[] = ['phys', 'dmg-magic', 'dmg-magic-long', 'aoe-dmg-magic'];
+
+class Glitch extends CommonMagic {
+  run() {
+    const { initiator, target } = this.params;
+    target.affects.addEffect({
+      action: this.name,
+      initiator,
+      proc: initiator.proc,
+      onBeforeAction(ctx, action, affect) {
+        return glitch.onBeforeAction(ctx, action, affect);
+      },
     });
   }
 
-  run() {
-    const { initiator, target } = this.params;
-    target.flags.isGlitched.push({ initiator, val: 0 });
-  }
-
-  preAffect: Affect['preAffect'] = ({ params }) => {
-    if (params.initiator.flags.isGlitched.length) {
-      params.target = params.game.players.randomAlive;
-
-      return params.initiator.flags.isGlitched.map(({ initiator }) =>
-        this.getSuccessResult({
-          ...params,
-          initiator,
-        }),
-      );
+  onBeforeAction(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
+    if (!actionTypes.includes(action.actionType)) {
+      return;
     }
-  };
+
+    const { initiator, target, game } = ctx.params;
+
+    ctx.params.target = game.players.getRandomAlive();
+    console.debug(
+      `glitch debug:: new target: ${ctx.params.target.nick}, old target:: ${target.nick}`,
+    );
+
+    ctx.status.affects.push(
+      this.getSuccessResult({
+        initiator: affect.initiator,
+        target: initiator,
+        game,
+      }),
+    );
+  }
 }
 
-export default new Glitch();
+export const glitch = new Glitch(params);

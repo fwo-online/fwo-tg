@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { CharacterClass } from '@fwo/shared';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
-import attack from '../actions/attack';
-import lightShield from './lightShield';
+import { attack } from '../actions/attack';
+import { lightShield } from './lightShield';
 
 // npm t server/arena/magics/lightShield.test.ts
 
@@ -11,7 +11,6 @@ describe('lightShield', () => {
   let game: GameService;
 
   beforeEach(async () => {
-    attack.registerPostAffects([lightShield]);
     game = await TestUtils.createGame([
       {
         prof: CharacterClass.Mage,

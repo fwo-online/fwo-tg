@@ -1,44 +1,59 @@
+import { OrderType } from '@fwo/shared';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
+import { Magic, type MagicArgs } from '@/arena/Constuructors/MagicConstructor';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
-import type { Affect } from '../Constuructors/interfaces/Affect';
 import CastError from '../errors/CastError';
 
 /**
  * Безмолвие
  * Основное описание магии общее требовани есть в конструкторе
  */
-class Silence extends CommonMagic implements Affect {
-  constructor() {
-    super({
-      name: 'silence',
-      displayName: 'Безмолвие',
-      desc: '',
-      cost: 16,
-      baseExp: 80,
-      costType: 'mp',
-      lvl: 4,
-      orderType: 'all',
-      aoeType: 'target',
-      magType: 'bad',
-      chance: ['1d60+30', '1d30+55', '1d10+75'],
-      profList: ['m'],
-      effect: [],
+const params: MagicArgs = Object.freeze({
+  name: 'silence',
+  displayName: 'Безмолвие',
+  desc: '',
+  cost: 16,
+  baseExp: 80,
+  costType: 'mp',
+  lvl: 4,
+  orderType: OrderType.All,
+  aoeType: 'target',
+  magType: 'bad',
+  chance: ['1d60+30', '1d30+55', '1d10+75'],
+  profList: ['m'],
+  effect: [],
+});
+
+class Silence extends CommonMagic {
+  run() {
+    const { initiator, target } = this.params;
+
+    target.affects.addEffect({
+      action: this.name,
+      proc: initiator.proc,
+      initiator,
+      onBeforeAction({ params: { initiator, target, game } }) {
+        return silence.cast(initiator, target, game);
+      },
     });
   }
 
-  run() {
-    const { initiator, target } = this.params;
-    target.flags.isSilenced.push({ initiator, val: 0 });
-  }
-
-  preAffect: Affect['preAffect'] = ({ params: { initiator: target, game } }): undefined => {
-    if (target.flags.isSilenced.length) {
-      throw new CastError(
-        target.flags.isBehindWall.map(({ initiator }) =>
-          this.getSuccessResult({ initiator, target: initiator, game }),
-        ),
-      );
+  onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
+    if (!(action instanceof Magic)) {
+      return;
     }
-  };
+
+    const { initiator: target, game } = ctx.params;
+    const effects = target.affects.getEffectsByAction(this.name);
+
+    if (!effects.length) {
+      return;
+    }
+
+    throw new CastError(
+      effects.map(({ initiator }) => this.getSuccessResult({ initiator, target, game })),
+    );
+  }
 }
 
-export default new Silence();
+export const silence = new Silence(params);

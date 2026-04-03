@@ -1,11 +1,12 @@
 import type { CharacterService } from './CharacterService';
 import ValidationError from './errors/ValidationError';
+import * as passiveSkills from './passiveSkills';
 import * as weaponMastery from './weaponMastery';
 
-export type PassiveSkillNames = keyof typeof weaponMastery;
+export type PassiveSkillNames = keyof typeof weaponMastery | keyof typeof passiveSkills;
 
 export default class PassiveSkillService {
-  static passiveSkills = weaponMastery;
+  static passiveSkills = { ...weaponMastery, ...passiveSkills };
 
   static async learnPassiveSkill(char: CharacterService, id: string): Promise<CharacterService> {
     if (!this.isPassiveSkill(id)) {

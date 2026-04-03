@@ -1,4 +1,3 @@
-import type { Item } from '@fwo/shared';
 import type GameService from '../GameService';
 import type { Player } from '../PlayersService';
 
@@ -33,10 +32,6 @@ export interface CustomMessage {
   customMessage?(args: SuccessArgs): string;
 }
 
-export interface LongCustomMessage extends CustomMessage {
-  longCustomMessage?(args: SuccessArgs): string;
-}
-
 export interface AoeMagic {
   runAoe?(initiator: Player, target: Player, game: GameService, index: number): void;
   getTargets?(): Player[];
@@ -51,7 +46,6 @@ export type SuccessArgs = {
   effect: number;
   hp: number;
   expArr: ExpArr;
-  weapon: Item | undefined;
   effectType?: DamageType;
   orderType: OrderType;
   affects?: SuccessArgs[];
@@ -81,5 +75,4 @@ export interface FailArgs {
   action: string;
   initiator: Player;
   target: Player;
-  weapon: Item | undefined;
 }

@@ -1,4 +1,4 @@
-export { default as attack } from './attack';
+export { attack } from './attack';
 export { default as handsHeal } from './handsHeal';
-export { default as protect } from './protect';
+export { protect } from './protect';
 export { default as regeneration } from './regeneration';

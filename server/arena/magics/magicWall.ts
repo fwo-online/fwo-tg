@@ -1,86 +1,74 @@
-/* eslint-disable @typescript-eslint/no-use-before-define, max-classes-per-file */
-import CastError from '@/arena/errors/CastError';
-import type { Affect } from '../Constuructors/interfaces/Affect';
-import { LongMagic } from '../Constuructors/LongMagicConstructor';
-import { ProtectConstructor } from '../Constuructors/ProtectConstructor';
 import { OrderType } from '@fwo/shared';
-import type { Player } from '@/arena/PlayersService';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
+import { LongMagic } from '@/arena/Constuructors/LongMagicConstructor';
+import type { MagicArgs } from '@/arena/Constuructors/MagicConstructor';
+import CastError from '@/arena/errors/CastError';
+import { ProtectConstructor } from '../Constuructors/ProtectConstructor';
 
 /**
  * Магическая стена
  * Основное описание магии общее требовани есть в конструкторе
  */
+const params: MagicArgs = Object.freeze({
+  name: 'magicWall',
+  displayName: 'Магическая стена',
+  desc: 'Защищает цель, цель не может атаковать, нельзя использовать на себя',
+  cost: 30,
+  baseExp: 0.1,
+  costType: 'mp',
+  lvl: 4,
+  orderType: OrderType.TeamExceptSelf,
+  aoeType: 'target',
+  magType: 'good',
+  chance: [100, 100, 100],
+  profList: ['p'],
+  effect: ['1d25+125', '1d50+150', '1d100+200'],
+});
 
-class MagicWall extends ProtectConstructor {
-  name = 'magicWall';
-  displayName = 'Магическая стена';
-  orderType = OrderType.TeamExceptSelf;
-
-  getTargetProtectors({ target } = this.params) {
-    return target.flags.isBehindWall;
-  }
-
-  setTargetProtectors(
-    { target } = this.params,
-    protectors: { initiator: Player; val: number }[],
-  ): void {
-    target.flags.isProtected = protectors;
-  }
-
+class MagicWall extends LongMagic {
   run(): void {
-    // do nothing
-  }
-}
+    const { initiator, target } = this.params;
+    const value = this.effectVal();
+    target.stats.up('phys.defence', value);
+    this.duration = initiator.stats.val('spellLength');
 
-const magicWall = new MagicWall();
-
-class MagicWallBuff extends LongMagic {
-  constructor() {
-    super({
-      name: 'magicWall',
-      displayName: 'Магическая стена',
-      desc: 'Защищает цель, цель не может атаковать, нельзя использовать на себя',
-      cost: 30,
-      baseExp: 0.1,
-      costType: 'mp',
-      lvl: 4,
-      orderType: 'teamExceptSelf',
-      aoeType: 'target',
-      magType: 'good',
-      chance: [100, 100, 100],
-      profList: ['p'],
-      effect: ['1d25+125', '1d50+150', '1d100+200'],
+    target.affects.addLongEffect({
+      action: this.name,
+      initiator,
+      value,
+      duration: this.duration,
+      proc: initiator.proc,
+      onBeforeReceive(ctx, action) {
+        magicWallEffect.onBeforeReceive(ctx, action);
+      },
+      onBeforeAction(ctx, action) {
+        magicWall.onBeforeAction(ctx, action);
+      },
     });
   }
 
-  run() {
-    const { target, initiator } = this.params;
-    target.stats.up('phys.defence', this.effectVal());
-    target.flags.isBehindWall.push({ initiator, val: this.status.effect });
-  }
-
-  runLong() {
-    const { target, initiator } = this.params;
-    target.stats.up('phys.defence', this.effectVal());
-    target.flags.isBehindWall.push({ initiator, val: this.status.effect });
-  }
-
-  preAffect: Affect['preAffect'] = (context): undefined => {
-    const { initiator, target, game } = context.params;
-
-    if (initiator.flags.isBehindWall.length) {
-      throw new CastError(
-        initiator.flags.isBehindWall.map(({ initiator: wallCaster }) =>
-          this.getSuccessResult({ initiator: wallCaster, target: initiator, game }),
-        ),
-      );
+  onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
+    if (action.actionType !== 'phys') {
+      return;
     }
+    const { initiator, game } = ctx.params;
+    const effects = initiator.affects.getEffectsByAction(this.name);
 
-    if (target.flags.isBehindWall.length) {
-      magicWall.reset();
-      magicWall.preAffect?.(context);
-    }
-  };
+    throw new CastError(
+      effects.map(({ initiator: wallCaster }) =>
+        this.getSuccessResult({ initiator: wallCaster, target: initiator, game }),
+      ),
+    );
+  }
 }
 
-export default new MagicWallBuff();
+class MagicWallEffect extends ProtectConstructor {
+  name = params.name;
+  displayName = params.displayName;
+  orderType = params.orderType;
+
+  run() {}
+}
+
+export const magicWall = new MagicWall(params);
+export const magicWallEffect = new MagicWallEffect();

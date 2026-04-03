@@ -1,13 +1,50 @@
-import type { BaseActionContext } from '@/arena/Constuructors/BaseAction';
+import type { ActionKey } from '@/arena/ActionService';
+import type {
+  BaseAction,
+  BaseActionContext,
+  BaseActionParams,
+} from '@/arena/Constuructors/BaseAction';
 import type { BreaksMessage, SuccessArgs } from '@/arena/Constuructors/types';
+import type { Player } from '@/arena/PlayersService';
 
-type AffectResult = SuccessArgs | SuccessArgs[] | undefined;
+type BaseAffect = {
+  initiator: Player;
+  action: ActionKey;
+  value?: number;
+  proc?: number;
 
-export type AffectFn = (context: BaseActionContext) => AffectResult;
+  onBeforeAction?: (
+    ctx: BaseActionContext,
+    action: BaseAction,
+    affect: Affect,
+  ) => void | SuccessArgs | SuccessArgs[];
+  onBeforeReceive?: (
+    ctx: BaseActionContext,
+    action: BaseAction,
+    affect: Affect,
+  ) => void | SuccessArgs | SuccessArgs[];
+  onCast?: (params: BaseActionParams, affect: Affect) => void;
+  onDamageDealt?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
+  onDamageReceived?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
+  onHeal?: (ctx: BaseActionContext) => void;
+  onCastFail?: (
+    ctx: BaseActionContext,
+    action: BaseAction,
+    reason: SuccessArgs | SuccessArgs[] | BreaksMessage,
+  ) => void | SuccessArgs | SuccessArgs[];
+};
 
-export interface Affect {
-  preAffect?: AffectFn;
-  postAffect?: AffectFn;
+export type Passive = BaseAffect & {
+  type: 'passive';
+};
 
-  affectHandler?(params: BaseActionContext, affect: SuccessArgs | BreaksMessage): AffectResult;
-}
+export type Effect = BaseAffect & {
+  type: 'effect';
+};
+
+export type LongEffect = BaseAffect & {
+  type: 'long-effect';
+  duration: number;
+};
+
+export type Affect = Passive | Effect | LongEffect;

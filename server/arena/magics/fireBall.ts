@@ -1,9 +1,10 @@
+import { OrderType } from '@fwo/shared';
+import { shuffle } from 'es-toolkit';
 import { times } from 'lodash';
 import { AoeDmgMagic } from '../Constuructors/AoeDmgMagicConstructor';
 import type GameService from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
-import { shuffle } from 'es-toolkit';
 
 class FireBall extends AoeDmgMagic {
   bounces = 4;
@@ -18,7 +19,7 @@ class FireBall extends AoeDmgMagic {
       baseExp: 10,
       costType: 'mp',
       lvl: 5,
-      orderType: 'enemy',
+      orderType: OrderType.Enemy,
       aoeType: 'team',
       magType: 'bad',
       chance: [95, 95, 95],

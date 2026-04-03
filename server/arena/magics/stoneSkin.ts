@@ -1,3 +1,4 @@
+import { OrderType } from '@fwo/shared';
 import { bold } from '../../utils/formatString';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
@@ -17,7 +18,7 @@ class StoneSkin extends CommonMagic {
       baseExp: 6,
       costType: 'mp',
       lvl: 1,
-      orderType: 'all',
+      orderType: OrderType.All,
       aoeType: 'target',
       magType: 'good',
       chance: [100, 100, 100],

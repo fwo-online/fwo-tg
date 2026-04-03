@@ -1,7 +1,8 @@
+import { OrderType } from '@fwo/shared';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
-import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
-import { bold, italic } from '@/utils/formatString';
 import { floatNumber } from '@/utils/floatNumber';
+import { bold, italic } from '@/utils/formatString';
+import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 
 /**
  * Вампиризм
@@ -17,7 +18,7 @@ class Vampirism extends DmgMagic {
       baseExp: 10,
       costType: 'mp',
       lvl: 3,
-      orderType: 'enemy',
+      orderType: OrderType.Enemy,
       aoeType: 'target',
       magType: 'bad',
       chance: [92, 94, 95],

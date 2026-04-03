@@ -1,9 +1,10 @@
 import { spyOn } from 'bun:test';
-import { CharacterClass, type Item, ItemWear, itemSchema, ForestState } from '@fwo/shared';
+import { CharacterClass, ForestState, type Item, ItemWear, itemSchema } from '@fwo/shared';
 import type { AnyKeys } from 'mongoose';
 import { parse } from 'valibot';
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
+import type { BaseActionStatus } from '@/arena/Constuructors/BaseAction';
 import { ForestService } from '@/arena/ForestService/ForestService';
 import GameService from '@/arena/GameService';
 import type { HistoryItem } from '@/arena/HistoryService';
@@ -130,6 +131,10 @@ export default class TestUtils {
       wear: ItemWear.MainHand,
       hit: { min: 1, max: 12 },
     });
+  }
+
+  static getBaseStatus(): BaseActionStatus {
+    return { effect: 0, exp: 0, expArr: [] };
   }
 
   static normalizeRoundHistory(history: HistoryItem[]) {

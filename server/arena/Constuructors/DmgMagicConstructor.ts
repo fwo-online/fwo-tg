@@ -2,16 +2,13 @@ import { floatNumber } from '../../utils/floatNumber';
 import type { Player } from '../PlayersService';
 import type { MagicArgs } from './MagicConstructor';
 import { Magic } from './MagicConstructor';
-import type {
-  ActionType, DamageType,
-} from './types';
+import type { ActionType, DamageType } from './types';
 
 export interface DmgMagicArgs extends MagicArgs {
   dmgType: DamageType;
 }
 
-export interface DmgMagic extends DmgMagicArgs, Magic {
-}
+export interface DmgMagic extends DmgMagicArgs, Magic {}
 /**
  * Общий конструктор не длительных магий
  */
@@ -71,7 +68,8 @@ export abstract class DmgMagic extends Magic {
    * Если кастеру хватило mp/en продолжаем,если нет, то возвращаем false
    */
   calculateExp({ initiator, target } = this.params): void {
-    if (initiator.isAlly(target) && !initiator.flags.isGlitched.length) {
+    const effects = initiator.affects.getEffectsByAction('glitch');
+    if (initiator.isAlly(target) && !effects.length) {
       this.status.exp = 0;
     } else {
       const dmgExp = this.getEffectExp(this.status.effect, this.baseExp);

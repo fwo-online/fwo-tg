@@ -5,3 +5,5 @@ export default class CastError extends Error {
     super();
   }
 }
+
+export const isCastError = (e: unknown) => e instanceof CastError;

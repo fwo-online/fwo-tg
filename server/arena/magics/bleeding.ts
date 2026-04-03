@@ -1,5 +1,7 @@
+import { OrderType } from '@fwo/shared';
 import { LongDmgMagic } from '@/arena/Constuructors/LongDmgMagicConstructor';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
+import { floatNumber } from '@/utils/floatNumber';
 import { bold, italic } from '@/utils/formatString';
 
 class Bleeding extends LongDmgMagic {
@@ -10,16 +12,22 @@ class Bleeding extends LongDmgMagic {
       desc: 'Кровотечение наносит урон в течение нескольких ходов',
       cost: 0,
       baseExp: 8,
-      costType: 'mp',
+      costType: 'en',
       lvl: 4,
-      orderType: 'enemy',
+      orderType: OrderType.Any,
       aoeType: 'target',
       magType: 'bad',
-      chance: ['200d200', '200d200', '200d200'],
-      effect: ['1d3', '1d5', '1d9'],
+      chance: [100, 100, 100],
+      effect: ['1d2', '2d4', '3d9'],
       dmgType: 'physical',
       profList: ['w'],
     });
+  }
+
+  override modifyEffect(effect: number, { target } = this.params): number {
+    effect = this.applyResists(effect, target);
+
+    return floatNumber(effect);
   }
 
   run() {
@@ -28,11 +36,7 @@ class Bleeding extends LongDmgMagic {
     target.stats.down('hp', this.status.effect);
   }
 
-  runLong() {
-    this.run();
-  }
-
-  longCustomMessage(args: SuccessArgs): string {
+  customMessage(args: SuccessArgs): string {
     return `${bold(args.initiator.nick)} вызвал эффект ${italic(this.displayName)} на ${bold(args.target.nick)}, нанеся ${args.effect} урона`;
   }
 }
