@@ -19,8 +19,6 @@ describe('divineWill', () => {
     ]);
 
     chance = divineWill.chance[0];
-    divineWill.createContext(game.players.players[0], game.players.players[0], game);
-    divineWill.run();
 
     TestUtils.mockRandom();
   });

@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { attack } from '@/arena/actions';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
-import { fatesMiss } from './fatesMiss';
 
 // npm t server/arena/passiveSkills/fatesMiss.test.ts
 
@@ -12,7 +11,7 @@ describe('fatesMiss', () => {
   beforeEach(async () => {
     game = await TestUtils.createGame([{ weapon: { type: 'stun' } }, {}]);
 
-    fatesMiss.cast(game.players.players[0], game.players.players[0], game);
+    // fatesMiss.cast(game.players.players[0], game.players.players[0], game);
     TestUtils.mockRandom();
   });
 

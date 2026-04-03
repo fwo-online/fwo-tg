@@ -3,7 +3,6 @@ import { attack } from '@/arena/actions/attack';
 import type GameService from '@/arena/GameService';
 import { dodge } from '@/arena/skills';
 import TestUtils from '@/utils/testUtils';
-import thrustWeapon from './thrustWeapon';
 
 // npm t server/arena/weaponMastery/thrustWeapon.test.ts
 
@@ -21,7 +20,6 @@ describe('thrustWeapon', () => {
       { skills: { dodge: 1 } },
     ]);
 
-    thrustWeapon.cast(game.players.players[0], game.players.players[0], game);
     TestUtils.mockRandom(0.25);
   });
 

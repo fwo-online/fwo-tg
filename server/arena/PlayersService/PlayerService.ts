@@ -1,6 +1,6 @@
 import type { CharacterClass, GameStatus, Player } from '@fwo/shared';
 import arena from '@/arena';
-import type { ActionKey } from '@/arena/ActionService';
+import { type ActionKey, ActionService } from '@/arena/ActionService';
 import type { CharacterService } from '@/arena/CharacterService';
 import { ClanService } from '@/arena/ClanService';
 import FlagsConstructor from '@/arena/Constuructors/FlagsConstructor';
@@ -8,6 +8,7 @@ import type { DamageType } from '@/arena/Constuructors/types';
 import ValidationError from '@/arena/errors/ValidationError';
 import { PlayerAffects } from '@/arena/PlayersService/PlayerAffects';
 import { PlayerOffHand } from '@/arena/PlayersService/PlayerOffHand';
+import { divineWill, fatesMiss, staticProtect } from '@/arena/passiveSkills';
 import StatsService from '@/arena/StatsService';
 import { StreakHelper } from '@/helpers/streakHelper';
 import type { Clan } from '@/models/clan';
@@ -78,6 +79,8 @@ export default class PlayerService {
     this.weapon = new PlayerWeapon(params.inventory.getEquippedWeapon());
     this.offHand = new PlayerOffHand(params.inventory.getEquippedOffHand());
     this.isBot = isBot;
+
+    this.castPassiveSkills();
   }
 
   /**
@@ -86,6 +89,18 @@ export default class PlayerService {
    */
   static load(charId: string) {
     return new PlayerService(arena.characters[charId]);
+  }
+
+  castPassiveSkills() {
+    for (const key in this.passiveSkills) {
+      if (ActionService.isPassiveSkillAction(key)) {
+        arena.actions[key].cast(this);
+      }
+    }
+    // @todo тут надо подумать, может быть при содании персонажа по умолчанию класть эти пассивки
+    fatesMiss.cast(this);
+    divineWill.cast(this);
+    staticProtect.cast(this);
   }
 
   get performance() {

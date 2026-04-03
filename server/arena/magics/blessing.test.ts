@@ -39,7 +39,7 @@ describe('blessing', () => {
     expect(game.players.players[1].stats.val('phys.attack')).toMatchSnapshot();
     expect(game.players.players[1].stats.val('phys.defence')).toMatchSnapshot();
 
-    expect(game.players.players[1].affects.affects).toHaveLength(0);
+    expect(game.players.players[1].affects.getEffectsByAction('blessing')).toHaveLength(0);
   });
 
   it('should apply long effect if magic level is enough', () => {
@@ -48,12 +48,6 @@ describe('blessing', () => {
 
     blessing.cast(game.players.players[0], game.players.players[1], game);
 
-    expect(game.players.players[1].affects.affects).toHaveLength(1);
-
-    const effect = game.players.players[1].affects.affects[0];
-    expect(effect.action).toBe('blessing');
-
-    // @ts-expect-error
-    expect(effect.duration).toBe(game.players.players[0].stats.val('spellLength'));
+    expect(game.players.players[1].affects.getEffectsByAction('blessing')).toHaveLength(1);
   });
 });

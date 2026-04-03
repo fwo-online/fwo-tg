@@ -13,7 +13,6 @@ describe('staticProtect', () => {
     game = await TestUtils.createGame([{ passiveSkills: { staticProtect: 1 } }, { weapon: {} }]);
 
     TestUtils.mockRandom();
-    staticProtect.cast(game.players.players[0], game.players.players[0], game);
   });
 
   afterEach(() => {

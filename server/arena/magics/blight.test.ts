@@ -34,14 +34,15 @@ describe('blight', () => {
 
     blight.cast(game.players.players[0], game.players.players[1], game);
 
-    expect(game.players.players[1].affects.affects).toHaveLength(1);
-    game.players.players[1].affects.onCast(
+    const effects = game.players.players[1].affects.getEffectsByAction(blight.name);
+    expect(effects).toHaveLength(1);
+    effects[0].onCast?.(
       {
         initiator: game.players.players[0],
         target: game.players.players[1],
         game,
       },
-      blight.name,
+      effects[0],
     );
 
     expect(game.players.players[1].stats.val('hp')).toMatchSnapshot();

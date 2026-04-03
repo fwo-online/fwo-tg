@@ -1,6 +1,5 @@
 import type { ActionKey } from '@/arena/ActionService';
 import { BaseAction } from '@/arena/Constuructors/BaseAction';
-import type GameService from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import type { ActionType } from './types';
@@ -38,9 +37,12 @@ export abstract class PassiveSkillConstructor extends BaseAction {
     this.description = attributes.description;
   }
 
-  cast(initiator: Player, target: Player, game: GameService) {
-    this.createContext(initiator, target, game);
-    this.run(initiator, target, game);
+  override cast(initiator: Player) {
+    this.reset();
+    // @ts-expect-error
+    this.createContext(initiator);
+    // @ts-expect-error
+    this.run();
     this.reset();
   }
 

@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { protect } from '@/arena/actions';
 import { attack } from '@/arena/actions/attack';
 import type GameService from '@/arena/GameService';
-import cutWeapon from '@/arena/weaponMastery/cutWeapon';
 import TestUtils from '@/utils/testUtils';
 
 // npm t server/arena/weaponMastery/cutWeapon.test.ts
@@ -21,7 +20,7 @@ describe('cutWeapon', () => {
       },
     ]);
 
-    cutWeapon.cast(game.players.players[0], game.players.players[0], game);
+    game.players.players[0].affects.removeEffectsByAction('fatesMiss');
   });
 
   afterEach(() => {

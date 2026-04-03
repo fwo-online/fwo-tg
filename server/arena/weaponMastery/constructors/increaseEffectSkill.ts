@@ -20,8 +20,8 @@ abstract class IncreaseEffectSkill extends PassiveSkillConstructor {
       return;
     }
 
-    const { initiator } = ctx.params;
-
+    const { initiator, target, game } = ctx.params;
+    this.createContext(initiator, target, game);
     if (!this.isActive(ctx.params)) {
       return;
     }

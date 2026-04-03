@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { protect } from '@/arena/actions';
 import { attack } from '@/arena/actions/attack';
 import type GameService from '@/arena/GameService';
-import stunWeapon from '@/arena/weaponMastery/stunWeapon';
 import TestUtils from '@/utils/testUtils';
 
 // npm t server/arena/weaponMastery/stunWeapon.test.ts
@@ -24,7 +23,7 @@ describe('stunWeapon', () => {
         },
       },
     ]);
-    stunWeapon.cast(game.players.players[0], game.players.players[0], game);
+    game.players.players[0].affects.removeEffectsByAction('fatesMiss');
 
     TestUtils.mockRandom(0.25);
   });

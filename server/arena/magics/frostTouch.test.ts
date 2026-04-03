@@ -27,7 +27,9 @@ describe('frostTouch', () => {
     game.players.players[0].stats.set('mp', 99);
 
     frostTouch.cast(game.players.players[0], game.players.players[1], game);
-    game.players.players[1].affects.affects[0].onCast?.(
+    const effects = game.players.players[1].affects.getEffectsByAction(frostTouch.name);
+
+    effects[0].onCast?.(
       {
         initiator: game.players.players[0],
         target: game.players.players[1],

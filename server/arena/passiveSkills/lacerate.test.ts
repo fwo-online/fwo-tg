@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { attack } from '@/arena/actions';
 import type GameService from '@/arena/GameService';
-import { bleeding } from '@/arena/magics';
 import TestUtils from '@/utils/testUtils';
 import { lacerate } from './lacerate';
 
@@ -21,7 +20,6 @@ describe('lacerate', () => {
       {},
     ]);
 
-    lacerate.cast(game.players.players[0], game.players.players[0], game);
     TestUtils.mockRandom();
     lacerate.chance[0] = 100;
   });
@@ -35,17 +33,16 @@ describe('lacerate', () => {
 
     attack.cast(game.players.players[0], game.players.players[1], game);
 
-    expect(game.players.players[1].affects.affects[1]).toMatchObject({
-      action: bleeding.name,
-    });
+    const effects = game.players.players[1].affects.getEffectsByAction('bleeding');
+    expect(effects).toHaveLength(1);
 
-    game.players.players[1].affects.affects[1].onCast?.(
+    effects[0].onCast?.(
       {
         initiator: game.players.players[0],
         target: game.players.players[1],
         game,
       },
-      game.players.players[1].affects.affects[0],
+      effects[0],
     );
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
