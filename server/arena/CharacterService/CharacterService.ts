@@ -168,7 +168,9 @@ export class CharacterService {
   }
 
   getPenalties(reason: string) {
-    return this.charObj.penalty.filter((p) => p.reason === reason);
+    return this.charObj.penalty.filter(
+      (penalty) => penalty.reason === reason && penalty.date.valueOf() > Date.now(),
+    );
   }
 
   /**
@@ -187,14 +189,12 @@ export class CharacterService {
     } else {
       this.charObj.penalty[index] = penalty;
     }
-    await this.cleanUpPenalties();
+    this.cleanUpPenalties();
     await this.saveToDb();
   }
 
-  private async cleanUpPenalties() {
-    this.charObj.penalty = this.charObj.penalty.filter(({ date }) => date.valueOf() <= Date.now());
-
-    await this.saveToDb();
+  private cleanUpPenalties() {
+    this.charObj.penalty = this.charObj.penalty.filter(({ date }) => date.valueOf() > Date.now());
   }
 
   /**
