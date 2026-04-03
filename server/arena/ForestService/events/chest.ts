@@ -17,8 +17,7 @@ export const handleChestEvent: ForestEventHandler = async (action, forest) => {
 
   if (action === ForestEventAction.OpenChest) {
     // Маленький шанс встретить сильного врага
-    const enemyChance = 0.1; // 10% шанс
-    if (MiscService.chance(enemyChance)) {
+    if (forest.checkEventChance(0.1)) {
       await startForestBattle(forest, MonsterType.Spirit, {
         gold: goldAmount * 2,
       });
@@ -30,8 +29,7 @@ export const handleChestEvent: ForestEventHandler = async (action, forest) => {
       };
     }
 
-    const trapChance = 0.2; // 20% шанс
-    if (MiscService.chance(trapChance)) {
+    if (forest.checkEventChance(0.2)) {
       const maxHP = forest.player.stats.val('hp');
       const damage = floatNumber(maxHP * 0.1); // 10% урона
 

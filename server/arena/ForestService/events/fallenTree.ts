@@ -15,8 +15,7 @@ export const handleFallenTreeEvent: ForestEventHandler = async (action, forest) 
   const woodAmount = MiscService.randInt(1, 2);
   if (action === ForestEventAction.ChopTree) {
     // Шанс появления паука
-    const spiderChance = 0.3; // 30% шанс
-    if (Math.random() < spiderChance) {
+    if (forest.checkEventChance(0.3)) {
       await startForestBattle(forest, MonsterType.Spider, {
         components: {
           [ItemComponent.Wood]: woodAmount,

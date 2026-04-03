@@ -20,6 +20,7 @@ import ValidationError from '@/arena/errors/ValidationError';
 import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
 import { Player } from '@/arena/PlayersService';
+import { deathEcho } from '@/arena/passiveSkills';
 import { type Forest, type ForestEventData, ForestModel } from '@/models/forest';
 import { getActionByType, getEventHandler, getRandomEvent } from './events';
 
@@ -42,6 +43,7 @@ export class ForestService extends EventEmitter<{
   private nextEventTime = 0; // Время до следующего события в миллисекундах
   currentGame?: GameService;
   escaping = false;
+  debuffLevel = 0;
 
   constructor(private playerId: string) {
     super();
@@ -73,9 +75,19 @@ export class ForestService extends EventEmitter<{
   //   return arena.characters[this.playerId];
   // }
 
+  /** Повышает шанс в зависимости от уровня лесного дебаффа */
+  checkEventChance(chance: number) {
+    if (this.debuffLevel) {
+      return MiscService.chance(chance + deathEcho.chance[this.debuffLevel - 1] / 100);
+    }
+
+    return MiscService.chance(chance);
+  }
+
   async createForest() {
     this.character = arena.characters[this.playerId];
     this.player = new Player(this.character);
+    this.applyForestDebuff();
 
     if (!this.character) {
       throw new Error(`Character ${this.playerId} not found`);
@@ -98,6 +110,16 @@ export class ForestService extends EventEmitter<{
     this.initHandlers();
 
     return this;
+  }
+
+  private applyForestDebuff() {
+    const penalties = this.character.getPenalties('forest_death');
+    this.debuffLevel = Math.min(penalties.length, deathEcho.effect.length);
+
+    if (this.debuffLevel) {
+      this.player.passiveSkills[deathEcho.name] = this.debuffLevel;
+      deathEcho.cast(this.player);
+    }
   }
 
   private scheduleNextEvent() {

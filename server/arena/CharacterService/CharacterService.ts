@@ -167,6 +167,12 @@ export class CharacterService {
     return false;
   }
 
+  getPenalties(reason: string) {
+    return this.charObj.penalty.filter(
+      (penalty) => penalty.reason === reason && penalty.date.valueOf() > Date.now(),
+    );
+  }
+
   /**
    * @param {string} reason
    * @param {number} minutes
@@ -183,7 +189,12 @@ export class CharacterService {
     } else {
       this.charObj.penalty[index] = penalty;
     }
+    this.cleanUpPenalties();
     await this.saveToDb();
+  }
+
+  private cleanUpPenalties() {
+    this.charObj.penalty = this.charObj.penalty.filter(({ date }) => date.valueOf() > Date.now());
   }
 
   /**
