@@ -1,3 +1,4 @@
+export { deathEcho } from './deathEcho';
 export { divineWill } from './divineWill';
 export { fatesMiss } from './fatesMiss';
 export { lacerate } from './lacerate';

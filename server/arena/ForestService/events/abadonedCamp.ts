@@ -16,8 +16,7 @@ export const handleAbandonedCampEvent: ForestEventHandler = async (action, fores
 
   if (action === ForestEventAction.ScavengeCamp) {
     // Шанс появления паука
-    const dangerChance = 0.25; // 25% шанс
-    if (Math.random() < dangerChance) {
+    if (forest.checkEventChance(0.25)) {
       await startForestBattle(forest, MonsterType.Spider, {
         components: {
           [ItemComponent.Fabric]: fabricAmount,

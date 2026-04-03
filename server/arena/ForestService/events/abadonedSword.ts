@@ -14,8 +14,7 @@ export const handleAbandonedSwordEvent: ForestEventHandler = async (action, fore
 
   if (action === ForestEventAction.TakeSword) {
     // Шанс призрака
-    const ghostChance = 0.5; // 50% шанс
-    if (Math.random() < ghostChance) {
+    if (forest.checkEventChance(0.5)) {
       await startForestBattle(forest, MonsterType.Ghost, {
         components: {
           [ItemComponent.Iron]: MiscService.randInt(0, 2),

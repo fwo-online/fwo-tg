@@ -13,9 +13,8 @@ export const handleWolfEvent: ForestEventHandler = async (action, forest) => {
     const wolfDex = Math.round(wolfLevel * 1 + 10); // Формула из wolf.ts
 
     const sneakChance = playerDex / (playerDex + wolfDex);
-    const success = Math.random() < sneakChance;
 
-    if (success) {
+    if (forest.checkEventChance(sneakChance)) {
       return {
         success: true,
         resolved: true,

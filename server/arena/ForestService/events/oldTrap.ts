@@ -14,8 +14,7 @@ export const handleOldTrapEvent: ForestEventHandler = async (action, forest) => 
 
   if (action === ForestEventAction.DisarmTrap) {
     // Шанс получить урон или встретить паука
-    const failChance = 0.3; // 30% шанс
-    if (Math.random() < failChance) {
+    if (forest.checkEventChance(0.3)) {
       const maxHP = forest.player.stats.val('hp');
       const damage = floatNumber(maxHP * 0.15); // 15% урона
 

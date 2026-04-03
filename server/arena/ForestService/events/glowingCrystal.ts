@@ -14,8 +14,7 @@ export const handleGlowingCrystalEvent: ForestEventHandler = async (action, fore
   const arcaniteAmount = 1; // Редкий ресурс, всегда 1
   if (action === ForestEventAction.TakeCrystal) {
     // Шанс элементаля
-    const elementalChance = 0.9;
-    if (Math.random() < elementalChance) {
+    if (forest.checkEventChance(0.9)) {
       await startForestBattle(forest, MonsterType.Elemental, {
         components: {
           [ItemComponent.Arcanite]: arcaniteAmount,
