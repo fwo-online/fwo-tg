@@ -19,8 +19,10 @@ export async function createForest(playerId: string) {
     }
   });
 
-  forest.on('event', async (_, eventType) => {
-    console.debug('Forest event triggered:', eventType, 'for player:', playerId);
+  forest.on('event', async (forest, eventType) => {
+    console.debug(
+      `Forest debug:: ${forest.id} event triggered: ${eventType} for player: ${playerId}`,
+    );
     // Можно добавить broadcast для некоторых событий
   });
 
