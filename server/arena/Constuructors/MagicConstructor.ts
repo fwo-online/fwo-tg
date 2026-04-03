@@ -65,8 +65,7 @@ export abstract class Magic extends BaseAction {
 
       this.next();
     } catch (e) {
-      // @fixme прокидываем ошибку выше для длительных кастов
-      if (this.isLong || this.isAffect) {
+      if (this.isAffect) {
         throw e;
       }
 

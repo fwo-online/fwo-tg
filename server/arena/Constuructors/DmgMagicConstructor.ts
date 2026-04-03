@@ -69,7 +69,6 @@ export abstract class DmgMagic extends Magic {
    */
   calculateExp({ initiator, target } = this.params): void {
     const effects = initiator.affects.getEffectsByAction('glitch');
-
     if (initiator.isAlly(target) && !effects.length) {
       this.status.exp = 0;
     } else {

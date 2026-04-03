@@ -1,0 +1,8 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`frostTouch initiator should be hitted by frostTouch 1`] = `
+"*Игрок 1* поражает *Игрок 2* _Ледяным прикосновением_
+\\[ 📖16 ]
+⏳1 _Ледяное прикосновение_ (*Игрок 1*) отнимает жизни у игрока *Игрок 2*
+\\[ Игрок 2 ❄️ 💔-3.61/4.39 📖45 ]"
+`;

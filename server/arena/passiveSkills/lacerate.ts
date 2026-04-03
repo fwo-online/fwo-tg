@@ -55,7 +55,8 @@ class Lacerate extends PassiveSkillConstructor {
       proc: initiator.proc,
       value: 0,
       initiator,
-      onCast() {
+      onCast({ initiator, target, game }) {
+        initiator.proc = this.proc;
         bleeding.duration = this.duration;
         bleeding.cast(initiator, target, game);
       },

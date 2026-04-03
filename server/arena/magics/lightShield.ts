@@ -35,6 +35,7 @@ class LightShield extends CommonMagic {
       duration: initiator.stats.val('spellLength'),
       initiator,
       proc: initiator.proc,
+      value: 0,
       onDamageReceived(ctx, action, affect) {
         return lightShieldEffect.onDamageReceived(ctx, action, affect);
       },

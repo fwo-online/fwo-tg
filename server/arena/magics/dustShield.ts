@@ -32,7 +32,9 @@ class DustShield extends Magic {
       duration: initiator.stats.val('spellLength'),
       proc: initiator.proc,
       initiator,
+      value: 0,
       onCast({ initiator, target, game }) {
+        initiator.proc = this.proc;
         dustShieldEffect.duration = this.duration;
         dustShieldEffect.cast(initiator, target, game);
       },

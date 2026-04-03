@@ -37,6 +37,7 @@ class Sleep extends CommonMagic {
       duration: initiator.stats.val('spellLength'),
       proc: initiator.proc,
       initiator,
+      value: 0,
       onBeforeAction({ status, params: { initiator, game } }, action): undefined {
         this.initiator.proc = this.proc;
         sleepEffect.duration = this.duration;
