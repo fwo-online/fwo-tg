@@ -1,8 +1,14 @@
 import type { FailArgs, SuccessArgs } from '@/arena/Constuructors/types';
-import { isSuccessDamageResult, isSuccessHealResult } from '@/arena/Constuructors/utils';
+import {
+  isSuccessDamageResult,
+  isSuccessHealResult,
+  isSuccessResult,
+} from '@/arena/Constuructors/utils';
 import { calculateEffect } from '@/arena/HistoryService/utils/calculateEffect';
 
 export type HistoryItem = SuccessArgs | FailArgs;
+
+type PlayerPerformance = Record<string, { damage: number; heal: number }>;
 
 /**
  * Класс для хранения истории выполненных заказов
@@ -28,15 +34,29 @@ export class HistoryService {
 
   getPlayersPerformance() {
     const history = Array.from(this.roundsHistoryMap.values()).flat();
-    return history.reduce<Record<string, { damage: number; heal: number }>>((acc, item) => {
-      acc[item.initiator.id] ??= { damage: 0, heal: 0 };
-      if (isSuccessDamageResult(item)) {
-        acc[item.initiator.id].damage += calculateEffect(item);
+
+    return history.reduce<PlayerPerformance>((acc, historyItem) => {
+      this.applyPerformance(acc, historyItem);
+
+      if (isSuccessResult(historyItem)) {
+        historyItem.affects?.forEach((affectItem) => {
+          this.applyPerformance(acc, affectItem);
+        });
       }
-      if (isSuccessHealResult(item)) {
-        acc[item.initiator.id].heal += calculateEffect(item);
-      }
+
       return acc;
     }, {});
+  }
+
+  private applyPerformance(acc: PlayerPerformance, item: HistoryItem) {
+    acc[item.initiator.id] ??= { damage: 0, heal: 0 };
+
+    if (isSuccessDamageResult(item)) {
+      acc[item.initiator.id].damage += calculateEffect(item);
+    }
+
+    if (isSuccessHealResult(item)) {
+      acc[item.initiator.id].heal += calculateEffect(item);
+    }
   }
 }

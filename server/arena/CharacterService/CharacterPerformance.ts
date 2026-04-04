@@ -1,7 +1,7 @@
+import type { GameResult } from '@fwo/shared';
 import type { CharacterService } from '@/arena/CharacterService/CharacterService';
 import type { Char } from '@/models/character';
 import { LadderModel } from '@/models/ladder';
-import type { PlayerPerformance } from '@fwo/shared';
 
 export class CharacterPerformance {
   character: CharacterService;
@@ -20,7 +20,7 @@ export class CharacterPerformance {
     return structuredClone(this.charObj.statistics);
   }
 
-  async addGameStat(performance: PlayerPerformance, psr: number) {
+  async addGameStat(performance: GameResult, psr: number) {
     this.charObj.statistics.games += 1;
 
     if (!performance.alive) {
@@ -28,11 +28,19 @@ export class CharacterPerformance {
     }
 
     if (performance.kills) {
-      this.charObj.statistics.kills += 1;
+      this.charObj.statistics.kills += performance.kills;
     }
 
     if (performance.winner) {
       this.charObj.statistics.wins += 1;
+    }
+
+    if (performance.damage) {
+      this.charObj.statistics.damage += performance.damage;
+    }
+
+    if (performance.heal) {
+      this.charObj.statistics.heal += performance.heal;
     }
 
     this.charObj.psr = Math.max(0, psr);

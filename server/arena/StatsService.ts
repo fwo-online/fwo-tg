@@ -1,12 +1,6 @@
-import { floatNumber } from '@/utils/floatNumber';
-import type {
-  CharacterDynamicAttributes,
-  Item,
-  ItemComponent,
-  PlayerPerformance,
-} from '@fwo/shared';
-import type { PhysAttributes } from '@fwo/shared';
+import type { CharacterDynamicAttributes, Item, ItemComponent, PhysAttributes } from '@fwo/shared';
 import { get, set } from 'lodash';
+import { floatNumber } from '@/utils/floatNumber';
 
 type CombineAll<T> = T extends { [name in keyof T]: infer Type } ? Type : never;
 
@@ -46,13 +40,6 @@ export default class StatsService {
     exp: 0,
     gold: 0,
     components: {} as Partial<Record<ItemComponent, number>>,
-    performance: {
-      alive: true,
-      damage: 0,
-      heal: 0,
-      kills: 0,
-      winner: false,
-    } satisfies PlayerPerformance,
     item: undefined as Item | undefined,
     psr: 0,
   };
@@ -163,10 +150,6 @@ export default class StatsService {
 
   addItem(item: Item) {
     this.collect.item = item;
-  }
-
-  addPerformance(performance: PlayerPerformance) {
-    Object.assign(this.collect.performance, performance);
   }
 
   addPsr(psr: number) {
