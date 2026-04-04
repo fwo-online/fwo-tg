@@ -8,6 +8,10 @@ export type GameResult = {
   gold?: number;
   components?: Partial<Record<ItemComponent, number>>;
   item?: Item;
+  damage?: number;
+  heal?: number;
+  kills?: number;
+  alive: boolean;
   levelUp?: {
     oldLevel: number;
     newLevel: number;

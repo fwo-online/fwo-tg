@@ -8,15 +8,16 @@ export const nameSchema = v.pipe(
   v.regex(/^[а-яА-ЯёЁa-zA-Z0-9]+$/, 'Не должно содержать спецсимволов'),
 );
 
-export * from './id';
-export * from './modifiers';
-export * from './player';
-export * from './orderSchema';
-export * from './message';
-export * from './attributes';
 export * from './action';
+export * from './attributes';
+export * from './id';
 export * from './invoice';
+export * from './message';
+export * from './modifiers';
 export * from './monster';
+export * from './orderSchema';
+export * from './player';
+export * from './quest';
 export * from './rpc';
 
 declare global {

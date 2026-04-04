@@ -71,6 +71,7 @@ export abstract class RewardService {
     levelUpMap: Map<string, { oldLevel: number; newLevel: number; freePoints: number }>,
   ): GameResult[] {
     const winnerIDs = new Set(winners.map(({ id }) => id));
+    const playersPerformance = this.history.getPlayersPerformance();
     return this.players.nonBotPlayers.map<GameResult>((player) => {
       const result: GameResult = {
         player: player.toObject(),
@@ -78,6 +79,10 @@ export abstract class RewardService {
         gold: player.stats.collect.gold,
         components: player.stats.collect.components,
         item: player.stats.collect.item,
+        damage: playersPerformance[player.id].damage,
+        heal: playersPerformance[player.id].heal,
+        kills: this.players.getKills(player.id).length,
+        alive: player.alive,
         winner: winnerIDs.has(player.id),
       };
 

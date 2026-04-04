@@ -43,9 +43,9 @@ class Broadcast {
     this.thread = thread;
   }
 
-  static async createBroadcast(chat?: string | number, gameId?: string) {
+  static async createBroadcast(chat?: string | number, gameId?: number) {
     if (!chat) {
-      const thread = await createTopic(`Game #${Date.now()}`);
+      const thread = await createTopic(`Game #${gameId}`);
       return new Broadcast(chat, thread);
     }
 
@@ -123,6 +123,16 @@ ${Object.entries(resultsByClan)
   )
   .join('\n\n')}`);
 
+    try {
+      const promises = results.map((result) => {
+        const character = arena.characters[result.player.id];
+        return character.quests.updateQuestProgress(result);
+      });
+
+      await Promise.all(promises);
+    } catch (e) {
+      console.error('Failed to updateQuestProgress:', e);
+    }
     // Отправка поздравлений с новым уровнем
     const levelUpPromises = results
       .filter((result) => result.levelUp)
@@ -192,7 +202,7 @@ export async function createLadderGame(players: string[]) {
 
   game.on('beforeEnd', async ({ draw }) => {
     const rewards = await reward.giveRewards(draw);
-    await ladder.saveGameStats();
+    await ladder.saveGameStats(rewards);
 
     game.end(rewards);
   });

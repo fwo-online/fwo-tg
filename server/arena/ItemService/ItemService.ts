@@ -1,15 +1,27 @@
+import type { CharacterClass, ItemOutput } from '@fwo/shared';
+import { matches } from 'es-toolkit/compat';
 import arena from '@/arena';
+import { ActionService } from '@/arena/ActionService';
 import { filterByClass, filterByWear } from '@/arena/ItemService/utils';
 import MiscService from '@/arena/MiscService';
 import type { Char } from '@/models/character';
 import { ItemModel } from '@/models/item';
-import type { CharacterClass, ItemOutput } from '@fwo/shared';
-import { matches } from 'es-toolkit/compat';
 
 export class ItemService {
   static getItemsByClass(characterClass: CharacterClass, filter?: { wear: string; tier?: number }) {
     const visibleItems = Object.values(arena.items).filter(({ hidden }) => !hidden);
-    const itemsByClass = visibleItems.filter(filterByClass(characterClass));
+    const itemsByClass = visibleItems.filter(filterByClass(characterClass)).map((item) => {
+      if (item.passive?.name && ActionService.isAction(item.passive.name)) {
+        return {
+          ...item,
+          passive: {
+            ...item.passive,
+            name: arena.actions[item.passive.name].displayName,
+          },
+        };
+      }
+      return item;
+    });
 
     if (filter?.wear) {
       return itemsByClass.filter(filterByWear(filter.wear));

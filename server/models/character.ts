@@ -19,6 +19,8 @@ export interface Char {
     death: number;
     runs: number;
     wins: number;
+    damage: number;
+    heal: number;
   };
   gold: number;
   free: number;
@@ -26,7 +28,6 @@ export interface Char {
   lastFight: Date | null;
   lastTower: Date | null;
   lastForest: Date | null;
-  forestBlockedUntil: Date | null;
   psr: number;
   magics?: Record<string, number>;
   skills?: Record<string, number>;
@@ -77,7 +78,7 @@ const character = new Schema<Char, CharModel>({
     required: true,
   },
   birthday: { type: Date, default: Date.now },
-  prof: { type: String, default: 'w' },
+  prof: { type: String, required: true },
   exp: { type: Number, default: 0 },
   harks: {
     type: Object,
@@ -97,6 +98,8 @@ const character = new Schema<Char, CharModel>({
       death: 0,
       runs: 0,
       wins: 0,
+      damage: 0,
+      heal: 0,
     },
   },
   gold: { type: Number, default: 100 },
