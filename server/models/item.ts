@@ -67,6 +67,7 @@ const item = new Schema<Item, ItemModel>(
     modifiers: { type: Object },
     tier: { type: Number },
     createdBy: { type: Schema.Types.ObjectId, ref: 'Character' },
+    passive: { type: Object },
   },
   {
     versionKey: false,

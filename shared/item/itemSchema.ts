@@ -2,6 +2,7 @@ import * as v from 'valibot';
 import { characterAttributesSchema, characterClassSchema } from '@/character';
 import { itemInfoSchema } from '@/item/itemInfoSchema';
 import { attributesSchema } from '@/shared/attributes';
+import { questSchema } from '@/shared/quest';
 import { ItemComponent } from './itemComponent';
 import { ItemWear } from './itemWear';
 
@@ -29,6 +30,14 @@ export const itemSchema = v.object({
   modifiers: v.optional(v.record(v.string(), v.partial(attributesSchema))),
   tier: v.number(),
   hidden: v.optional(v.boolean(), false),
+  passive: v.optional(
+    v.object({
+      name: v.string(),
+      level: v.number(),
+      unlocked: v.optional(v.boolean(), false),
+      quest: v.optional(questSchema),
+    }),
+  ),
 });
 
 export type ItemInput = v.InferInput<typeof itemSchema>;

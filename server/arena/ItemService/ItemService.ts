@@ -1,6 +1,7 @@
-import type { CharacterClass, Item, ItemOutput, ItemWithID } from '@fwo/shared';
+import type { CharacterClass, Item, ItemWithID } from '@fwo/shared';
 import { matches } from 'es-toolkit/compat';
 import arena from '@/arena';
+import { ActionService } from '@/arena/ActionService';
 import { filterByClass, filterByWear } from '@/arena/ItemService/utils';
 import MiscService from '@/arena/MiscService';
 import type { Char } from '@/models/character';
@@ -12,7 +13,18 @@ export class ItemService {
     filter?: { wear: string; tier?: number },
   ): Item[] {
     const visibleItems = Object.values(arena.items).filter(({ hidden }) => !hidden);
-    const itemsByClass = visibleItems.filter(filterByClass(characterClass));
+    const itemsByClass = visibleItems.filter(filterByClass(characterClass)).map((item) => {
+      if (item.passive?.name && ActionService.isAction(item.passive.name)) {
+        return {
+          ...item,
+          passive: {
+            ...item.passive,
+            name: arena.actions[item.passive.name].displayName,
+          },
+        };
+      }
+      return item;
+    });
 
     if (filter?.wear) {
       return itemsByClass.filter(filterByWear(filter.wear));
@@ -25,7 +37,7 @@ export class ItemService {
     return arena.items[code];
   }
 
-  static async createItem(item: ItemOutput, createdBy: Char): Promise<ItemWithID> {
+  static async createItem(item: Item, createdBy: Char): Promise<ItemWithID> {
     return ItemModel.create({
       ...item,
       createdBy,
