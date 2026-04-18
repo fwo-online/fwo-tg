@@ -42,13 +42,13 @@ const resetTower = async () => {
   }
 };
 
-export default {
-  scheduled() {
+export const scheduleResetTower = async () => {
+  await Bun.cron('@dayly', () => {
     const [currentTower] = Object.values(arena.towers);
     if (currentTower) {
       currentTower.on('end', resetTower);
     } else {
       resetTower();
     }
-  },
+  });
 };

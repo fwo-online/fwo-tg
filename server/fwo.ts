@@ -3,6 +3,7 @@ import { isString } from 'es-toolkit';
 import { Server } from 'socket.io';
 import { initBot } from '@/bot';
 import { initGameChannel } from '@/helpers/channelHelper';
+import { scheduleResetTower } from '@/helpers/towerHelper';
 import { connect } from '@/models';
 import { ItemModel } from '@/models/item';
 import { ItemSetModel } from '@/models/item-set';
@@ -18,6 +19,7 @@ void connect(async () => {
   await ItemSetModel.load();
 
   initGameChannel();
+  scheduleResetTower();
 
   await initBot();
 });
@@ -40,5 +42,3 @@ io.use(middleware(io));
 io.on('connection', (socket) => {
   onConnection(io, socket);
 });
-
-// await Bun.cron('./helpers/towerHelper.ts', '@daily', 'tower');
