@@ -1,8 +1,8 @@
 import { vValidator } from '@hono/valibot-validator';
 import { Hono } from 'hono';
-import { characterMiddleware, userMiddleware } from '@/server/middlewares';
 import * as v from 'valibot';
 import { ItemService } from '@/arena/ItemService/ItemService';
+import { characterMiddleware, userMiddleware } from '@/server/middlewares';
 
 export const shop = new Hono()
   .use(userMiddleware, characterMiddleware)

@@ -1,0 +1,63 @@
+@import 'tailwindcss';
+
+@layer components {
+  @import 'nes.css/css/nes-core.css';
+
+  h5 {
+    margin-bottom: 4px;
+    color: var(--tg-theme-subtitle-text-color);
+  }
+}
+
+body {
+  height: var(--tg-viewport-height, 100dvh);
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  font-family: 'PixeloidMono', monospace;
+  color: var(--tg-theme-text-color);
+  background: var(--tg-theme-secondary-bg-color, white);
+}
+
+#root {
+  height: 100%;
+}
+
+blockquote {
+  margin-inline: 16px;
+}
+
+h6 {
+  min-width: max-content;
+}
+
+img {
+  image-rendering: pixelated;
+}
+
+progress {
+  width: calc(100% - 8px);
+  border-image-repeat: stretch !important;
+}
+
+pre,
+code {
+  font-family: 'PixeloidMono';
+}
+
+@font-face {
+  font-family: 'Pixeloid';
+  src: url('/fonts/PixeloidSans.woff2') format('woff2');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Pixeloid';
+  src: url('/fonts/PixeloidSans-Bold.woff2') format('woff2');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'PixeloidMono';
+  src: url('/fonts/PixeloidMono.woff2') format('woff2');
+}

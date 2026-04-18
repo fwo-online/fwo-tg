@@ -33,3 +33,5 @@ services:
       interval: 10s
       retries: 30
       start_period: 30s
+    ports:
+    - 27017:27017
