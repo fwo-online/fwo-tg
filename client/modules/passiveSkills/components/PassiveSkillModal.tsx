@@ -1,9 +1,10 @@
-import type { FC, ReactNode } from 'react';
 import type { PassiveSkill } from '@fwo/shared';
+import type { FC, ReactNode } from 'react';
+import { ActionLevelValues } from '@/components/ActionLevelValues';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
-import { useCharacter } from '@/modules/character/store/character';
 import { Modal } from '@/components/Modal';
+import { useCharacter } from '@/modules/character/store/character';
 
 export const PassiveSkillModal: FC<{
   passiveSkill: PassiveSkill;
@@ -14,8 +15,13 @@ export const PassiveSkillModal: FC<{
   const bonus = useCharacter((character) => character.bonus);
   const passiveSkillLvl = useCharacter((character) => character.passiveSkills[passiveSkill.name]);
 
+  const canLearn = passiveSkill.bonusCost.length;
   const hasMaxSkillLvl = passiveSkillLvl === passiveSkill.bonusCost.length;
   const hasRequiredBonus = bonus >= passiveSkill.bonusCost[passiveSkillLvl || 0];
+
+  if (!canLearn && !passiveSkillLvl) {
+    return;
+  }
 
   return (
     <Modal
@@ -30,20 +36,23 @@ export const PassiveSkillModal: FC<{
     >
       <Card header={passiveSkill.displayName} className="mt-1">
         <div className="flex flex-col gap-2">
-          <div className="flex gap-2 text-sm opacity-50">
-            <span>Шанс (%):</span>
-            <span>{passiveSkill.chance.join('/')}</span>
-          </div>
-          <div className="flex gap-2  text-sm opacity-50">
-            <span>Эффект (%):</span>
-            <span>{passiveSkill.effect.join('/')}</span>
-          </div>
+          <ActionLevelValues
+            label="Шанс"
+            values={passiveSkill.chance}
+            currentLevel={passiveSkillLvl}
+          />
+          <ActionLevelValues
+            label="Эффект"
+            values={passiveSkill.effect}
+            currentLevel={passiveSkillLvl}
+          />
           <span className="text-sm">{passiveSkill.description}</span>
+
           {hasMaxSkillLvl ? (
             <Button className="flex-1" disabled>
               Максимальный уровень
             </Button>
-          ) : (
+          ) : canLearn ? (
             <div className="flex gap-4 items-center">
               <Button
                 className="flex-1"
@@ -55,6 +64,10 @@ export const PassiveSkillModal: FC<{
 
               <div>У тебя {bonus}💡</div>
             </div>
+          ) : (
+            <Button className="flex-1" disabled>
+              Умение нельзя изучить
+            </Button>
           )}
         </div>
       </Card>

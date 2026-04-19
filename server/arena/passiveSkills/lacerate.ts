@@ -11,7 +11,7 @@ class Lacerate extends PassiveSkillConstructor {
       displayName: '🩸Рассечение',
       description: 'Шанс на 🩸Кровотечение при атаке режущим оружием',
       chance: [15, 20, 30],
-      effect: [1, 1, 1],
+      effect: [100, 100, 100],
       bonusCost: [],
     });
   }
