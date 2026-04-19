@@ -43,7 +43,7 @@ const resetTower = async () => {
 };
 
 export const scheduleResetTower = async () => {
-  await Bun.cron('@dayly', () => {
+  await Bun.cron('@daily', () => {
     const [currentTower] = Object.values(arena.towers);
     if (currentTower) {
       currentTower.on('end', resetTower);

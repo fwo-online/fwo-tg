@@ -28,7 +28,7 @@ export default class TestUtils {
     TestUtils.clanCount = 0;
   }
 
-  static async createCharacter(params?: Partial<Char & { weapon?: { type?: string } }>) {
+  static async createCharacter(params?: Partial<Char & { weapon?: Partial<Item> }>) {
     const prof: Prof = params?.prof ?? CharacterClass.Warrior;
     const char = new CharModel({
       owner: MiscService.randInt(1_000_000, 9_999_999).toString(),
@@ -124,17 +124,18 @@ export default class TestUtils {
     return createdItem;
   }
 
-  static async getWeapon({ type }: { type?: string }) {
+  static async getWeapon(weapon: Partial<Item>) {
     return this.createItem({
       info: { name: 'Оружие', case: 'Оружием' },
-      type: type || 'chop',
+      type: weapon.type || 'chop',
       wear: ItemWear.MainHand,
       hit: { min: 1, max: 12 },
+      ...weapon,
     });
   }
 
   static getBaseStatus(): BaseActionStatus {
-    return { effect: 0, exp: 0, expArr: [] };
+    return { effect: 0, exp: 0, expArr: [], affects: [] };
   }
 
   static normalizeRoundHistory(history: HistoryItem[]) {
@@ -164,9 +165,7 @@ export default class TestUtils {
     });
 
     const forestService = new ForestService(char.id);
-    // @ts-expect-error - setting private property for testing
     forestService.forest = forest;
-    // @ts-expect-error - setting private property for testing
     forestService.character = character;
     forestService.player = new Player(character);
 

@@ -1,8 +1,10 @@
 import { componentsToString, type GameResult } from '@fwo/shared';
 import { usePopup } from '@/hooks/usePopup';
+import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
 import { useCharacter } from '@/modules/character/store/character';
 
 export const useGameResult = () => {
+  const { syncCharacter } = useSyncCharacter();
   const charID = useCharacter((character) => character.id);
   const popup = usePopup();
 
@@ -31,6 +33,7 @@ export const useGameResult = () => {
       popup.info({
         title: result.winner ? 'Победа!' : 'Поражение',
         message: `Награда:\n${rewardsMessage}`,
+        onConfirm: () => syncCharacter(),
       });
     }
   };

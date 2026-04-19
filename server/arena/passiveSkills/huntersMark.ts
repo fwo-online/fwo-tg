@@ -1,17 +1,17 @@
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConstructor';
-import { bleeding } from '@/arena/magics';
+import { markedShot } from '@/arena/passiveSkills/markedShot';
 
-class Lacerate extends PassiveSkillConstructor {
-  weaponTypes = ['cut'];
+class HuntersMark extends PassiveSkillConstructor {
+  weaponTypes = ['range'];
 
   constructor() {
     super({
-      name: 'lacerate',
-      displayName: '🩸Рассечение',
-      description: 'Шанс на 🩸Кровотечение при атаке режущим оружием',
-      chance: [15, 20, 30],
-      effect: [100, 100, 100],
+      name: 'huntersMark',
+      displayName: '🎯 Метка охотника',
+      description: 'Атака по цели имеет шанс пометить цель, следующая атака наносит больше урона',
+      chance: [33, 50, 75],
+      effect: [10, 25, 50],
       bonusCost: [],
     });
   }
@@ -20,11 +20,11 @@ class Lacerate extends PassiveSkillConstructor {
     const { initiator } = this.params;
 
     initiator.affects.addPassive({
-      action: lacerate.name,
+      action: huntersMark.name,
       initiator,
       value: 0,
       onDamageDealt(ctx, action) {
-        lacerate.onDamageDealt(ctx, action);
+        huntersMark.onDamageDealt(ctx, action);
       },
     });
   }
@@ -50,14 +50,13 @@ class Lacerate extends PassiveSkillConstructor {
     }
 
     target.affects.addLongEffect({
-      action: 'bleeding',
-      duration: initiator.stats.val('spellLength'),
+      action: this.name,
       proc: initiator.proc,
+      duration: 2,
       initiator,
-      onCast({ initiator, target, game }) {
-        initiator.proc = this.proc;
-        bleeding.duration = this.duration;
-        bleeding.cast(initiator, target, game);
+      value: this.getEffect({ initiator, target, game }),
+      onBeforeReceive(ctx, action, affect) {
+        markedShot.onBeforeAction(ctx, action, affect);
       },
     });
 
@@ -65,4 +64,4 @@ class Lacerate extends PassiveSkillConstructor {
   }
 }
 
-export const lacerate = new Lacerate();
+export const huntersMark = new HuntersMark();

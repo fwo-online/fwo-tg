@@ -5,6 +5,7 @@ import { useCharacter } from '@/modules/character/store/character';
 import { ItemAttributes } from '@/modules/items/components/ItemAttributes';
 import { ItemCharacterAttributes } from '@/modules/items/components/ItemCharacterAttribites';
 import { ItemComponents } from '@/modules/items/components/ItemComponents';
+import { ItemPassive } from '@/modules/items/components/ItemPassive';
 import { useItemType } from '@/modules/items/hooks/useItemType';
 import type { Item } from '@fwo/shared';
 import { sum } from 'es-toolkit/compat';
@@ -64,7 +65,17 @@ export const ItemModal: FC<{
           {showComponents && (
             <div>
               <h5 className="text-sm">Требуемые компоненты</h5>
-              <ItemComponents item={item} />
+              {item.craft?.components ? <ItemComponents item={item} /> : '-'}
+            </div>
+          )}
+
+          {item.passive && (
+            <div>
+              <span className="flex justify-between">
+                <h5 className="text-sm">Пассивный эффект</h5>
+                <h5 className="text-sm">{item.passive.unlocked ? '🟢 Активен' : '⚪ Неактивен'}</h5>
+              </span>
+              <ItemPassive passive={item.passive} />
             </div>
           )}
 

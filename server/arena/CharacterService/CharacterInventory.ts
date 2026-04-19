@@ -3,8 +3,10 @@ import { type Attributes, attributesSchema, ItemWear } from '@fwo/shared';
 import { every } from 'es-toolkit/compat';
 import { array, parse } from 'valibot';
 import arena from '@/arena';
+import { ActionService } from '@/arena/ActionService';
 import type { CharacterService } from '@/arena/CharacterService/CharacterService';
 import ValidationError from '@/arena/errors/ValidationError';
+import { ItemService } from '@/arena/ItemService';
 import type { Char } from '@/models/character';
 import type { Item } from '@/models/item';
 import { assignWithSum } from '@/utils/assignWithSum';
@@ -26,6 +28,20 @@ export class CharacterInventory {
 
   get equipment() {
     return this.charObj.equipment;
+  }
+
+  get passiveSkills() {
+    return Array.from(this.equipment.values()).reduce<Record<string, number>>((acc, item) => {
+      if (item.passive?.unlocked) {
+        if (!ActionService.isAction(item.passive.name)) {
+          console.debug('CharacterInventory debug:: unknown passive', item.info.name, item.passive);
+        }
+
+        acc[item.passive.name] = item.passive.level;
+      }
+
+      return acc;
+    }, {});
   }
 
   static getItemsSetsByInventory(inventory: Item[], full = true): ItemSet[] {
@@ -66,7 +82,7 @@ export class CharacterInventory {
   }
 
   getItem(itemId: string) {
-    return this.charObj.items.find((item) => item._id.equals(itemId));
+    return this.items.find((item) => item._id.equals(itemId));
   }
 
   getEquippedWeapon() {
@@ -111,8 +127,30 @@ export class CharacterInventory {
     return true;
   }
 
+  async updateItems(updatedItems: Item[]) {
+    const promises = updatedItems.map((updatedItem) => {
+      return ItemService.updateItem(updatedItem);
+    });
+
+    const items = await Promise.all(promises);
+
+    items.forEach((updatedItem) => {
+      this.charObj.items = this.items.map((item) =>
+        item._id.equals(updatedItem.id) ? updatedItem : item,
+      );
+      if (this.isEquipped(updatedItem)) {
+        this.charObj.equipment.set(updatedItem.wear, updatedItem);
+      }
+    });
+
+    await this.character.saveToDb();
+    this.updateHarkFromItems();
+  }
+
   isEquipped(item: Item) {
-    return this.equipment.values().some((equippedItem) => equippedItem._id.equals(item.id));
+    return Array.from(this.equipment.values()).some((equippedItem) =>
+      equippedItem._id.equals(item.id),
+    );
   }
 
   async addItem(item: Item) {

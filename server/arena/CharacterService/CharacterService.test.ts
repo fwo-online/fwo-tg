@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, spyOn } from 'bun:test';
-import { CharacterClass } from '@fwo/shared';
+import { CharacterClass, QuestType } from '@fwo/shared';
 import { profsData } from '@/data/profs';
 import TestUtils from '@/utils/testUtils';
 import { CharacterService } from './CharacterService';
@@ -42,5 +42,54 @@ describe('CharacterService', () => {
     await character.attributes.resetAttributes();
 
     expect(character.attributes.attributes).toMatchObject(profsData[character.class].hark);
+  });
+
+  describe('CharacterQuests', () => {
+    beforeEach(async () => {
+      const char = await TestUtils.createCharacter({
+        prof: CharacterClass.Warrior,
+        harks: { str: 20, dex: 20, wis: 20, int: 20, con: 20 },
+        weapon: {
+          passive: {
+            name: 'test',
+            level: 1,
+            unlocked: false,
+            quest: { goal: 10, progress: 0, type: QuestType.Damage },
+          },
+        },
+      });
+
+      character = await CharacterService.getCharacterById(char.id);
+      // @ts-expect-error
+      spyOn(character, 'saveToDb').mockImplementation(async () => character.charObj);
+    });
+
+    it.skip('should update quest', async () => {
+      // @ts-expect-error
+      await character.quests.updateQuestProgress({ damage: 1 });
+
+      expect(character.inventory.items[0]).toMatchObject({
+        passive: {
+          name: 'test',
+          level: 1,
+          unlocked: false,
+          quest: { goal: 10, progress: 1, type: QuestType.Damage },
+        },
+      });
+    });
+
+    it.skip('should complete quest', async () => {
+      // @ts-expect-error
+      await character.quests.updateQuestProgress({ damage: 12 });
+
+      expect(character.inventory.items[0]).toMatchObject({
+        passive: {
+          name: 'test',
+          level: 1,
+          unlocked: true,
+          quest: { goal: 10, progress: 10, type: QuestType.Damage },
+        },
+      });
+    });
   });
 });

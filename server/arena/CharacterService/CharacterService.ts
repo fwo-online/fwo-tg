@@ -4,12 +4,14 @@ import { findCharacter, removeCharacter, updateCharacter } from '@/api/character
 import arena from '@/arena';
 import { CharacterAttributes } from '@/arena/CharacterService/CharacterAttributes';
 import { CharacterPerformance } from '@/arena/CharacterService/CharacterPerformance';
+import { CharacterQuests } from '@/arena/CharacterService/CharacterQuests';
 import { calculateLvl, calculateNextLvlExp } from '@/arena/CharacterService/utils/calculateLvl';
 import { toPublicObject } from '@/arena/CharacterService/utils/toPublicObject';
 import { ClanService } from '@/arena/ClanService';
 import config from '@/arena/config';
 import type { Char } from '@/models/character';
 import type { Item } from '@/models/item';
+import { mergeNumbersWith } from '@/utils/mergeNumbersWith';
 import { CharacterInventory } from './CharacterInventory';
 import { CharacterResources } from './CharacterResources';
 
@@ -29,6 +31,7 @@ export class CharacterService {
   resources: CharacterResources;
   attributes: CharacterAttributes;
   performance: CharacterPerformance;
+  quests: CharacterQuests;
 
   /**
    * Конструктор игрока
@@ -41,6 +44,7 @@ export class CharacterService {
     this.resources = new CharacterResources(this);
     this.attributes = new CharacterAttributes(this);
     this.performance = new CharacterPerformance(this);
+    this.quests = new CharacterQuests(this);
     this.charObj = charObj;
     this.mm = {};
     this.isBot = isBot;
@@ -89,15 +93,17 @@ export class CharacterService {
   }
 
   get magics() {
-    return this.charObj.magics || {};
+    return Object.freeze(this.charObj.magics);
   }
 
   get skills() {
-    return this.charObj.skills || {};
+    return Object.freeze(this.charObj.skills);
   }
 
   get passiveSkills() {
-    return this.charObj.passiveSkills || {};
+    const characterPassiveSkills = structuredClone(this.charObj.passiveSkills);
+    const itemPassiveSkills = structuredClone(this.inventory.passiveSkills);
+    return Object.freeze(mergeNumbersWith(characterPassiveSkills, itemPassiveSkills, Math.max));
   }
 
   get clan() {
@@ -302,7 +308,7 @@ export class CharacterService {
    * @param lvl уровень проученной магии
    */
   async learnMagic(magicId: string, lvl: number) {
-    this.magics[magicId] = lvl;
+    this.charObj.magics[magicId] = lvl;
     // опасный тест
     await this.saveToDb();
   }
@@ -313,12 +319,12 @@ export class CharacterService {
    * @param {number} lvl уровень проученного умения
    */
   async learnSkill(skillId: string, lvl: number) {
-    this.skills[skillId] = lvl;
+    this.charObj.skills[skillId] = lvl;
     await this.saveToDb();
   }
 
   async learnPassiveSkill(skillId: string, lvl: number) {
-    this.passiveSkills[skillId] = lvl;
+    this.charObj.passiveSkills[skillId] = lvl;
     await this.saveToDb();
   }
 
@@ -346,7 +352,7 @@ export class CharacterService {
         return;
       }
       console.log('Saving char :: id', this.id);
-      const { magics, skills, passiveSkills, clan, lastFight, lastTower, towerAvailable } = this;
+      const { clan, lastFight, lastTower, towerAvailable } = this;
       const { gold, components, exp, free, bonus } = this.resources;
       const { items, equipment } = this.inventory;
 
@@ -354,11 +360,11 @@ export class CharacterService {
         nickname: this.charObj.nickname,
         gold,
         exp,
-        magics,
+        magics: this.charObj.magics,
         bonus,
-        skills,
+        skills: this.charObj.skills,
         clan,
-        passiveSkills,
+        passiveSkills: this.charObj.passiveSkills,
         components,
         penalty: this.charObj.penalty,
         free,

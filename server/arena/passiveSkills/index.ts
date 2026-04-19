@@ -1,6 +1,8 @@
 export { deathEcho } from './deathEcho';
 export { divineWill } from './divineWill';
 export { fatesMiss } from './fatesMiss';
+export { huntersMark } from './huntersMark';
 export { lacerate } from './lacerate';
+export { markedShot } from './markedShot';
 export { nightcall } from './nightcall';
 export { staticProtect } from './staticProtect';

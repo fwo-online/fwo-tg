@@ -1,13 +1,13 @@
-import type { Player } from '@/arena/PlayersService';
-import type { CharacterClass, CharacterPublic, PlayerPerformance } from '@fwo/shared';
-import { LadderModel } from '@/models/ladder';
-import { CharacterService } from '@/arena/CharacterService';
-import { sumBy } from 'es-toolkit';
-import type PlayersService from '@/arena/PlayersService';
-import type { RoundService } from '@/arena/RoundService';
-import { toPublicObject } from '@/arena/CharacterService/utils/toPublicObject';
+import type { CharacterClass, CharacterPublic, GameResult } from '@fwo/shared';
+import { keyBy, sumBy } from 'es-toolkit';
 import { getCharactersByPSR } from '@/api/character';
+import { CharacterService } from '@/arena/CharacterService';
+import { toPublicObject } from '@/arena/CharacterService/utils/toPublicObject';
 import type GameService from '@/arena/GameService';
+import type PlayersService from '@/arena/PlayersService';
+import type { Player } from '@/arena/PlayersService';
+import type { RoundService } from '@/arena/RoundService';
+import { LadderModel } from '@/models/ladder';
 
 export class LadderService {
   players: PlayersService;
@@ -41,7 +41,7 @@ export class LadderService {
   async calculatePSR(
     playerPSR: number,
     prof: CharacterClass,
-    performance: PlayerPerformance,
+    performance: GameResult,
     winnersRatio: number,
   ): Promise<number> {
     const { avgDamagePerRound, avgKillsPerRound, avgHealPerRound } =
@@ -49,7 +49,7 @@ export class LadderService {
     const rounds = this.round.count;
 
     let basePSR = performance.winner ? (1 / winnersRatio) * 7.5 : -(winnersRatio * 20);
-    if (performance.alive) {
+    if (performance.winner) {
       basePSR += 2.5;
     } else {
       basePSR -= 2.5;
@@ -91,18 +91,19 @@ export class LadderService {
     return Math.max(Math.round(playerPSR + basePSR), 0);
   }
 
-  async setPSRForPlayers() {
+  async setPSRForPlayers(results: GameResult[]) {
     const winnersCount = sumBy(this.players.nonBotPlayers, (player) =>
       player.performance.winner ? 1 : 0,
     );
     const winnersRatio = winnersCount / this.players.nonBotPlayers.length;
+    const resultsByPlayer = keyBy(results, ({ player }) => player.id);
 
     await Promise.all(
       this.players.nonBotPlayers.map(async (player) => {
         const psr = await this.calculatePSR(
           Math.max(player.psr, 1),
           player.prof,
-          player.stats.collect.performance,
+          resultsByPlayer[player.id],
           winnersRatio,
         );
         player.stats.addPsr(psr);
@@ -110,9 +111,9 @@ export class LadderService {
     );
   }
 
-  async saveGameStats(): Promise<void> {
+  async saveGameStats(results: GameResult[]): Promise<void> {
     try {
-      await this.setPSRForPlayers();
+      await this.setPSRForPlayers(results);
 
       await LadderModel.create(
         this.players.nonBotPlayers.map((player) => ({

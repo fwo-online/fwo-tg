@@ -41,8 +41,8 @@ const middleware: MiddlewareFunction = async ({ context }) => {
       if (e.message === 'No multiple connections') {
         return redirect('/connection-error');
       }
-      if (e.message === 'Character not found') {
-        return redirect('/');
+      if (e.message === 'Character not found' || e.message === 'Персонаж не найден') {
+        return redirect('/create');
       }
     }
 
@@ -71,12 +71,15 @@ export const HydrateFallback = () => {
 export const ProtectedRoute = () => {
   const { socket, character } = useLoaderData<typeof loader>();
   const setCharacter = useCharacterStore((state) => state.setCharacter);
+  const characterID = useCharacterStore((state) => state.character?.id);
 
   if (!character) {
     return <Navigate to="/" />;
   }
 
-  setCharacter(character);
+  if (!characterID) {
+    setCharacter(character);
+  }
 
   return (
     <SocketContext.Provider value={socket}>
