@@ -18,12 +18,12 @@ export const CharacterInventoryList: FC = () => {
         wearList.map(
           (wear) =>
             inventoryByWear[wear] && (
-              <>
-                <h5 key={wear}>{wearListTranslations[wear]}</h5>
+							<Fragment key={wear}>
+								<h5>{wearListTranslations[wear]}</h5>
                 {inventoryByWear[wear]?.map((item) => (
                   <CharacterInventoryListItem key={item.id} item={item} />
                 ))}
-              </>
+							</Fragment>
             ),
         )
       ) : (

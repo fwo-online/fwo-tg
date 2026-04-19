@@ -1,5 +1,5 @@
 import type { ClanPublic } from '@/clan';
-import type { Item, ItemComponent } from '@/item';
+import type { ItemComponent, ItemWithID } from '@/item';
 import type { NotificationSettings } from '@/notifications/notificationSettingsSchema';
 import type { Attributes } from '@/shared/attributes';
 import type { CharacterAttributes } from './characterAttributesSchema';
@@ -32,9 +32,8 @@ export type Character = {
   game?: string;
   tower?: string;
   forest?: string;
-  forestBlockedUntil?: Date;
   clan?: ClanPublic;
-  items: Item[];
+  items: ItemWithID[];
   equipment: string[];
   components: Record<ItemComponent, number>;
   notificationSettings?: NotificationSettings;

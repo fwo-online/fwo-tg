@@ -26,7 +26,6 @@ export interface Char {
   lastFight: Date | null;
   lastTower: Date | null;
   lastForest: Date | null;
-  forestBlockedUntil: Date | null;
   psr: number;
   magics?: Record<string, number>;
   skills?: Record<string, number>;

@@ -3,8 +3,8 @@ import { Hono } from 'hono';
 import * as v from 'valibot';
 import MagicService from '@/arena/MagicService';
 import { characterMiddleware, userMiddleware } from '@/server/middlewares';
-import { normalizeToArray } from '@/utils/array';
 import { withValidation } from '@/server/utils/withValidation';
+import { normalizeToArray } from '@/utils/array';
 
 export const magic = new Hono()
   .use(userMiddleware, characterMiddleware)
@@ -21,12 +21,21 @@ export const magic = new Hono()
   )
   .get(
     '/',
-    vValidator('query', v.object({ ids: v.union([v.string(), v.array(v.string())]) })),
+    vValidator('query', v.object({ ids: v.optional(v.union([v.string(), v.array(v.string())])) })),
     async (c) => {
       const { ids } = c.req.valid('query');
-      const magics = MagicService.getMagicListByIds(normalizeToArray(ids));
+      if (ids) {
+        const magics = MagicService.getMagicListByIds(normalizeToArray(ids));
 
-      return c.json(magics);
+        return c.json(magics);
+      } else {
+        const character = c.get('character');
+        const ids = Object.keys(character.magics);
+
+        const magics = MagicService.getMagicListByIds(normalizeToArray(ids));
+
+        return c.json(magics);
+      }
     },
   )
   .get('/available', (c) => {

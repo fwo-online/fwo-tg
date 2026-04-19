@@ -4,7 +4,8 @@ import { validateToken } from '@/server/utils/validateToken';
 import { checkActiveConnection } from '@/server/utils/activeConnectons';
 
 export const middleware = async (io: Server, socket: Socket, next: (err?: Error) => void) => {
-  const [type, value] = socket.handshake.headers.authorization?.split(' ') ?? [];
+  const [type, value] = socket.handshake.auth.authorization?.split(' ') ?? [];
+
   try {
     const user = validateToken(type, value);
     if (!user) {

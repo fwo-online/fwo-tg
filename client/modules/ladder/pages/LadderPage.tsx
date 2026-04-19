@@ -1,22 +1,28 @@
+import { Suspense } from 'react';
+import { useLoaderData } from 'react-router';
 import { getLadderList } from '@/api/laddet';
 import { Card } from '@/components/Card';
 import { Placeholder } from '@/components/Placeholder';
 import { LadderList } from '@/modules/ladder/components/LadderList';
-import { Suspense, type FC } from 'react';
-import useSWR from 'swr';
 
-const LadderListLoader = () => {
-  const { data } = useSWR('ladder', getLadderList, { suspense: true });
+const loader = async () => {
+  const ladderList = await getLadderList();
 
-  return <LadderList ladderList={data} />;
+  return {
+    ladderList,
+  };
 };
 
-export const LadderPage: FC = () => {
+export const LadderPage = () => {
+  const { ladderList } = useLoaderData<typeof loader>();
+
   return (
     <Card header="Рейтинг" className="m-4">
       <Suspense fallback={<Placeholder description="Загружаем рейтинг..." />}>
-        <LadderListLoader />
+        <LadderList ladderList={ladderList} />
       </Suspense>
     </Card>
   );
 };
+
+LadderPage.loader = loader;

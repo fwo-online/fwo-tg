@@ -1,25 +1,28 @@
-import { getAvailableSkillList } from '@/api/skill';
-import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { CharacterSkillList } from '@/modules/character/components/CharacterSkillList';
 import { Suspense } from 'react';
+import { useLoaderData } from 'react-router';
+import { getAvailableSkillList } from '@/api/skill';
 import { Card } from '@/components/Card';
 import { Placeholder } from '@/components/Placeholder';
-import useSWR from 'swr';
+import { CharacterSkillList } from '@/modules/character/components/CharacterSkillList';
 
-const CharacterSkillLoader = () => {
-  const { data } = useSWR('skills', getAvailableSkillList, { suspense: true });
+const loader = async () => {
+  const skills = await getAvailableSkillList();
 
-  return <CharacterSkillList skills={data} />;
+  return {
+    skills,
+  };
 };
 
 export const CharacterSkillPage = () => {
+  const { skills } = useLoaderData<typeof loader>();
+
   return (
     <Card header="Умения" className="m-4!">
-      <ErrorBoundary fallback={<Placeholder description="Ошибка загрузки умений" />}>
-        <Suspense fallback={<Placeholder description="Ищем умения..." />}>
-          <CharacterSkillLoader />
-        </Suspense>
-      </ErrorBoundary>
+      <Suspense fallback={<Placeholder description="Ищем умения..." />}>
+        <CharacterSkillList skills={skills} />
+      </Suspense>
     </Card>
   );
 };
+
+CharacterSkillPage.loader = loader;

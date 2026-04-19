@@ -4,7 +4,7 @@ export const getAvailableMagicLevels = () => {
   return createRequest(client.magic.available.$get)({});
 };
 
-export const getMagicList = async (ids: string[]) => {
+export const getMagicList = async (ids?: string[]) => {
   return createRequest(client.magic.$get)({ query: { ids } });
 };
 

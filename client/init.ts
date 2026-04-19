@@ -1,18 +1,18 @@
 import {
   backButton,
-  viewport,
-  themeParams,
-  miniApp,
-  initData,
-  setDebug,
-  init as initSDK,
   closingBehavior,
+  initData,
+  init as initSDK,
+  miniApp,
+  setDebug,
+  themeParams,
+  viewport,
 } from '@tma.js/sdk-react';
 
 /**
  * Initializes the application and configures its dependencies.
  */
-export async function init(debug: boolean) {
+export function init(debug: boolean) {
   // Set @telegram-apps/sdk-react debug mode.
   setDebug(debug);
 

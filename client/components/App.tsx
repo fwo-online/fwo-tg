@@ -1,24 +1,22 @@
 import { Suspense } from 'react';
-import { HashRouter } from 'react-router';
-import { Router } from '@/router';
-import { Placeholder } from '@/components/Placeholder';
+import { RouterProvider } from 'react-router';
 import { Card } from '@/components/Card';
+import { Placeholder } from '@/components/Placeholder';
 import { PopupProvider } from '@/context/popup';
+import { router } from '@/router';
 
 export function App() {
   return (
-    <HashRouter>
-      <Suspense
-        fallback={
-          <Card className="m-4" header="Загрузка">
-            <Placeholder description="Ищем вашего персонажа..." />
-          </Card>
-        }
-      >
-        <PopupProvider>
-          <Router />
-        </PopupProvider>
-      </Suspense>
-    </HashRouter>
+    <Suspense
+      fallback={
+        <Card className="m-4" header="Загрузка">
+          <Placeholder description="Ищем вашего персонажа..." />
+        </Card>
+      }
+    >
+      <PopupProvider>
+        <RouterProvider router={router} />
+      </PopupProvider>
+    </Suspense>
   );
 }

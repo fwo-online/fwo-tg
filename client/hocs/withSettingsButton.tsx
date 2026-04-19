@@ -1,29 +1,26 @@
-import { settingsButton } from '@tma.js/sdk-react';
-import type { ComponentType } from 'react';
-import { useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router';
+import { settingsButton } from "@tma.js/sdk-react";
+import type { ComponentType } from "react";
+import { useNavigate } from "react-router";
+import { useMountEffect } from "@/hooks/useMountEffect";
 
 export function withSettingsButton(Component: ComponentType) {
-  return function WithSettingsButton() {
-    const navigate = useNavigate();
+	return () => {
+		const navigate = useNavigate();
+		const toSettings = () => navigate("/settings");
 
-    const toSettings = useCallback(() => {
-      navigate('/settings');
-    }, [navigate]);
+		useMountEffect(() => {
+			if (settingsButton.isSupported()) {
+				settingsButton.mount();
+				settingsButton.show();
+				settingsButton.onClick(toSettings);
 
-    useEffect(() => {
-      if (settingsButton.isSupported()) {
-        settingsButton.mount();
-        settingsButton.show();
-        settingsButton.onClick(toSettings);
+				return () => {
+					settingsButton.hide();
+					settingsButton.offClick(toSettings);
+				};
+			}
+		});
 
-        return () => {
-          settingsButton.hide();
-          settingsButton.offClick(toSettings);
-        };
-      }
-    }, [toSettings]);
-
-    return <Component />;
-  };
+		return <Component />;
+	};
 }

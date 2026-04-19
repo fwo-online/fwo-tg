@@ -1,16 +1,21 @@
+import type { CharacterPublic } from '@fwo/shared';
+import { type FC, Suspense } from 'react';
+import { Await } from 'react-router';
+import { Button } from '@/components/Button';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { Suspense, type FC } from 'react';
+import { Popup } from '@/components/Popup';
+import { ClanForge } from '@/modules/clan/components/ClanForge';
 import { ClanGold } from '@/modules/clan/components/ClanGold';
 import { ClanLevel } from '@/modules/clan/components/ClanLevel';
 import { ClanPlayers } from '@/modules/clan/components/ClanPlayers';
 import { ClanRequests } from '@/modules/clan/components/ClanRequests';
 import { useClanOwner } from '@/modules/clan/hooks/useClanOwner';
-import { ClanForge } from '@/modules/clan/components/ClanForge';
 import { useClan } from '@/modules/clan/store/clan';
-import { Button } from '@/components/Button';
-import { Popup } from '@/components/Popup';
 
-export const Clan: FC = () => {
+export const Clan: FC<{
+  playersPromise: Promise<CharacterPublic[]>;
+  requestsPromise: Promise<CharacterPublic[]>;
+}> = ({ playersPromise, requestsPromise }) => {
   const lvl = useClan((clan) => clan.lvl);
   const forgeLvl = useClan((clan) => clan.forge.lvl);
   const players = useClan((clan) => clan.players);
@@ -44,7 +49,9 @@ export const Clan: FC = () => {
 
         <ErrorBoundary fallback={'Что-то пошло не так'}>
           <Suspense fallback={'Загружаем игроков...'}>
-            <ClanPlayers players={players} />
+            <Await resolve={playersPromise}>
+              {(characters) => <ClanPlayers characters={characters} />}
+            </Await>
           </Suspense>
         </ErrorBoundary>
       </div>
@@ -54,7 +61,11 @@ export const Clan: FC = () => {
           <h5>Владелец</h5>
           <ErrorBoundary fallback={'Что-то пошло не так'}>
             <Suspense fallback={'Загружаем владельца...'}>
-              <ClanPlayers players={[owner]} />
+              <Await resolve={playersPromise}>
+                {(characters) => (
+                  <ClanPlayers characters={characters.filter(({ id }) => owner === id)} />
+                )}
+              </Await>
             </Suspense>
           </ErrorBoundary>
         </div>
@@ -65,10 +76,14 @@ export const Clan: FC = () => {
           <h5 className="-mb-3">Заявки</h5>
           <ErrorBoundary fallback={'Что-то пошло не так'}>
             <Suspense fallback={'Загружаем заявки...'}>
-              <ClanPlayers
-                players={requests}
-                after={(character) => <ClanRequests character={character} />}
-              />
+              <Await resolve={requestsPromise}>
+                {(characters) => (
+                  <ClanPlayers
+                    characters={characters}
+                    after={(character) => <ClanRequests character={character} />}
+                  />
+                )}
+              </Await>
             </Suspense>
           </ErrorBoundary>
         </div>

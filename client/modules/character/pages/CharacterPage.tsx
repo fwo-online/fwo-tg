@@ -1,13 +1,13 @@
-import type { FC } from 'react';
-import { CharacterImage } from '@/modules/character/components/CharacterImage';
-import { characterClassNameMap } from '@/constants/character';
-import { useNavigate } from 'react-router';
 import { CharacterClass } from '@fwo/shared';
-import { Card } from '@/components/Card';
+import type { FC } from 'react';
+import { useNavigate } from 'react-router';
 import { Button } from '@/components/Button';
+import { Card } from '@/components/Card';
+import { characterClassNameMap } from '@/constants/character';
+import { CharacterExp } from '@/modules/character/components/CharacterExp';
+import { CharacterImage } from '@/modules/character/components/CharacterImage';
 import { useCharacter } from '@/modules/character/store/character';
 import { formatNumber } from '@/utils/formatNumber';
-import { CharacterExp } from '@/modules/character/components/CharacterExp';
 
 export const CharacterPage: FC = () => {
   const navigate = useNavigate();
@@ -57,11 +57,11 @@ export const CharacterPage: FC = () => {
           )}
         </div>
 
-        <Button onClick={() => navigate('/character/passiveSkills')}>Пассивные навыки</Button>
+        <Button onClick={() => navigate('/character/passive-skills')}>Пассивные навыки</Button>
 
         <Button onClick={() => navigate('/character/inventory')}>Инвентарь</Button>
         {character.clan ? (
-          <Button onClick={() => navigate('/character/clan')}>Клан</Button>
+          <Button onClick={() => navigate(`/character/clan`)}>Клан</Button>
         ) : (
           <Button onClick={() => navigate('/character/clan/list')}>Кланы</Button>
         )}

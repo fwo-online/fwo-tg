@@ -1,15 +1,12 @@
-import { Description } from '@/components/Description';
-import { CharacterImage } from '@/modules/character/components/CharacterImage';
-import { useClanPlayers } from '@/modules/clan/hooks/useClanPlayers';
 import type { CharacterPublic } from '@fwo/shared';
 import type { FC, ReactNode } from 'react';
+import { Description } from '@/components/Description';
+import { CharacterImage } from '@/modules/character/components/CharacterImage';
 
 export const ClanPlayers: FC<{
-  players: string[];
+  characters: CharacterPublic[];
   after?: (character: CharacterPublic) => ReactNode;
-}> = ({ players, after }) => {
-  const characters = useClanPlayers(players);
-
+}> = ({ characters, after }) => {
   return (
     <Description>
       {characters.map((character) => (

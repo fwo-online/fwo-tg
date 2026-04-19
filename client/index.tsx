@@ -15,7 +15,7 @@ if (!container) {
 
 const root = createRoot(container);
 try {
-  await init(retrieveLaunchParams().startParam === 'debug' || import.meta.env.DEV);
+  init(retrieveLaunchParams().startParam === 'debug' || import.meta.env.DEV);
 
   root.render(<Root />);
 } catch {

@@ -1,47 +1,49 @@
+import type { Clan } from '@fwo/shared';
+import { Suspense } from 'react';
+import { Navigate, useLoaderData, useNavigate } from 'react-router';
+import { getClans } from '@/api/clan';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { useCharacter } from '@/modules/character/store/character';
 import { ClanList } from '@/modules/clan/components/ClanList';
 import { useClans } from '@/modules/clan/hooks/useClans';
-import type { Clan } from '@fwo/shared';
-import { Suspense, type FC } from 'react';
-import { Navigate, useNavigate } from 'react-router';
 
-const ClanListLoader = () => {
-  const { clans, isLoading, createRequest, cancelRequest } = useClans();
-  const characterID = useCharacter((character) => character.id);
+const loader = async () => {
+  const clans = await getClans();
 
-  if (!clans.length) {
-    return 'Кланов не найдено';
-  }
-
-  const isRequested = (clan: Clan) => {
-    return clan.requests.includes(characterID);
+  return {
+    clans,
   };
-
-  return (
-    <ClanList
-      clans={clans}
-      isLoading={isLoading}
-      isRequested={isRequested}
-      onCreateRequest={createRequest}
-      onCancelRequest={cancelRequest}
-    />
-  );
 };
 
-export const ClanListPage: FC = () => {
+export const ClanListPage = () => {
   const navigate = useNavigate();
   const character = useCharacter();
+  const { clans } = useLoaderData<typeof loader>();
+  const { isLoading, createRequest, cancelRequest } = useClans();
 
   if (character.clan) {
     return <Navigate to="/clan" />;
   }
 
+  const isRequested = (clan: Clan) => {
+    return clan.requests.includes(character.id);
+  };
+
   return (
     <Card header="Кланы" className="m-4">
       <Suspense fallback={'Ищем кланы...'}>
-        <ClanListLoader />
+        {clans.length ? (
+          <ClanList
+            clans={clans}
+            isLoading={isLoading}
+            isRequested={isRequested}
+            onCreateRequest={createRequest}
+            onCancelRequest={cancelRequest}
+          />
+        ) : (
+          'Кланов не найдено'
+        )}
 
         <div className="flex flex-col">
           <Button className="mt-4" onClick={() => navigate('/character/clan/create')}>
@@ -52,3 +54,5 @@ export const ClanListPage: FC = () => {
     </Card>
   );
 };
+
+ClanListPage.loader = loader;

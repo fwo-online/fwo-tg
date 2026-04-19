@@ -1,8 +1,8 @@
+import { invoice } from '@tma.js/sdk-react';
 import { getResetAttributesInvoice, resetAttributes } from '@/api/serviceShop';
 import { usePopup } from '@/hooks/usePopup';
 import { useRequest } from '@/hooks/useRequest';
 import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
-import { invoice } from '@tma.js/sdk-react';
 
 export const useServiceShopResetAttributes = () => {
   const { syncCharacter } = useSyncCharacter();
@@ -29,9 +29,11 @@ export const useServiceShopResetAttributes = () => {
     popup.confirm({
       message: 'Вы уверены, что хотите сбросить характеристики?',
       onConfirm: async () => {
-        await makeRequest(() => resetAttributes());
-        syncCharacter();
-        popup.info({ message: 'Характеристики успешно сброшены' });
+        const res = await makeRequest(() => resetAttributes());
+        if (res) {
+          popup.info({ message: 'Характеристики успешно сброшены' });
+          syncCharacter();
+        }
       },
     });
   };

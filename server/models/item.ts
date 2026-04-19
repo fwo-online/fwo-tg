@@ -1,15 +1,14 @@
+import type { CharacterClass, ItemWithID } from '@fwo/shared';
+import _ from 'lodash';
 import type { Model, Types } from 'mongoose';
 import mongoose, { Schema } from 'mongoose';
 import arena from '@/arena';
-import type { CharacterClass, ItemOutput } from '@fwo/shared';
-import _ from 'lodash';
+import config from '@/arena/config';
 import { generateItems } from '@/helpers/itemHelper';
 import type { Char } from '@/models/character';
-import config from '@/arena/config';
 
-export interface Item extends ItemOutput {
+export interface Item extends ItemWithID {
   _id: Types.ObjectId;
-  id: string;
 
   createdBy: Char;
 }
