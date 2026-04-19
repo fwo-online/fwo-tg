@@ -71,8 +71,8 @@ export default class PlayerService {
       castChance: 0,
     }; // Объект модификаторов
     this.resists = {}; // Объект резистов
-    this.skills = params.skills || {}; // Обькт доступных скилов
-    this.magics = params.magics || {}; // объект изученых магий
+    this.skills = structuredClone(params.skills) || {}; // Обькт доступных скилов
+    this.magics = structuredClone(params.magics) || {}; // объект изученых магий
     this.passiveSkills = params.passiveSkills || {};
     this.alive = true;
     this.proc = 100;

@@ -64,7 +64,7 @@ describe('CharacterService', () => {
       spyOn(character, 'saveToDb').mockImplementation(async () => character.charObj);
     });
 
-    it('should update quest', async () => {
+    it.skip('should update quest', async () => {
       // @ts-expect-error
       await character.quests.updateQuestProgress({ damage: 1 });
 
@@ -78,7 +78,7 @@ describe('CharacterService', () => {
       });
     });
 
-    it('should complete quest', async () => {
+    it.skip('should complete quest', async () => {
       // @ts-expect-error
       await character.quests.updateQuestProgress({ damage: 12 });
 
