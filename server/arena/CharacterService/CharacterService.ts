@@ -93,17 +93,18 @@ export class CharacterService {
   }
 
   get magics() {
-    return this.charObj.magics || {};
+    return Object.freeze(this.charObj.magics);
   }
 
   get skills() {
-    return this.charObj.skills || {};
+    return Object.freeze(this.charObj.skills);
   }
 
   get passiveSkills() {
-    const characterPassiveSkills = structuredClone(this.charObj.passiveSkills) || {};
+    const characterPassiveSkills = structuredClone(this.charObj.passiveSkills);
     const itemPassiveSkills = structuredClone(this.inventory.passiveSkills);
-    return mergeNumbersWith(characterPassiveSkills, itemPassiveSkills, Math.max);
+    console.log(itemPassiveSkills);
+    return Object.freeze(mergeNumbersWith(characterPassiveSkills, itemPassiveSkills, Math.max));
   }
 
   get clan() {
@@ -308,7 +309,7 @@ export class CharacterService {
    * @param lvl уровень проученной магии
    */
   async learnMagic(magicId: string, lvl: number) {
-    this.magics[magicId] = lvl;
+    this.charObj.magics[magicId] = lvl;
     // опасный тест
     await this.saveToDb();
   }
@@ -319,12 +320,12 @@ export class CharacterService {
    * @param {number} lvl уровень проученного умения
    */
   async learnSkill(skillId: string, lvl: number) {
-    this.skills[skillId] = lvl;
+    this.charObj.skills[skillId] = lvl;
     await this.saveToDb();
   }
 
   async learnPassiveSkill(skillId: string, lvl: number) {
-    this.passiveSkills[skillId] = lvl;
+    this.charObj.passiveSkills[skillId] = lvl;
     await this.saveToDb();
   }
 
@@ -352,7 +353,7 @@ export class CharacterService {
         return;
       }
       console.log('Saving char :: id', this.id);
-      const { magics, skills, passiveSkills, clan, lastFight, lastTower, towerAvailable } = this;
+      const { clan, lastFight, lastTower, towerAvailable } = this;
       const { gold, components, exp, free, bonus } = this.resources;
       const { items, equipment } = this.inventory;
 
@@ -360,11 +361,11 @@ export class CharacterService {
         nickname: this.charObj.nickname,
         gold,
         exp,
-        magics,
+        magics: this.charObj.magics,
         bonus,
-        skills,
+        skills: this.charObj.skills,
         clan,
-        passiveSkills,
+        passiveSkills: this.charObj.passiveSkills,
         components,
         penalty: this.charObj.penalty,
         free,

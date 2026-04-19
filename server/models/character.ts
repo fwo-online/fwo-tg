@@ -29,9 +29,9 @@ export interface Char {
   lastTower: Date | null;
   lastForest: Date | null;
   psr: number;
-  magics?: Record<string, number>;
-  skills?: Record<string, number>;
-  passiveSkills?: Record<string, number>;
+  magics: Record<string, number>;
+  skills: Record<string, number>;
+  passiveSkills: Record<string, number>;
   bonus: number;
   clan?: Clan;
   penalty: {

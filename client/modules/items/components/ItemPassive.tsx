@@ -1,4 +1,4 @@
-import { QuestType, type Item } from '@fwo/shared';
+import { type Item, QuestType } from '@fwo/shared';
 import type { FC } from 'react';
 
 const QUEST_DESCRIPTION = {
@@ -17,7 +17,7 @@ export const ItemPassive: FC<{ passive: Required<Item>['passive'] }> = ({ passiv
 
       {passive.quest && (
         <span className="text-sm">
-          {QUEST_DESCRIPTION[passive.quest.type]}: {passive.quest.progress}/{passive.quest.value}
+          {QUEST_DESCRIPTION[passive.quest.type]}: {passive.quest.progress}/{passive.quest.goal}
         </span>
       )}
     </div>

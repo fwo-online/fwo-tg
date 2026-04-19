@@ -44,6 +44,14 @@ export class ItemService {
     });
   }
 
+  static async updateItem(item: ItemWithID) {
+    const updatedItem = await ItemModel.findByIdAndUpdate(item.id, item, {
+      returnDocument: 'after',
+    }).orFail();
+
+    return updatedItem.toObject();
+  }
+
   static createRandomItem({
     createdBy,
     match,

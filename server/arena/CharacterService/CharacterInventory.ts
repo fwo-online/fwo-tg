@@ -6,6 +6,7 @@ import arena from '@/arena';
 import { ActionService } from '@/arena/ActionService';
 import type { CharacterService } from '@/arena/CharacterService/CharacterService';
 import ValidationError from '@/arena/errors/ValidationError';
+import { ItemService } from '@/arena/ItemService';
 import type { Char } from '@/models/character';
 import type { Item } from '@/models/item';
 import { assignWithSum } from '@/utils/assignWithSum';
@@ -127,7 +128,13 @@ export class CharacterInventory {
   }
 
   async updateItems(updatedItems: Item[]) {
-    updatedItems.forEach((updatedItem) => {
+    const promises = updatedItems.map((updatedItem) => {
+      return ItemService.updateItem(updatedItem);
+    });
+
+    const items = await Promise.all(promises);
+
+    items.forEach((updatedItem) => {
       this.charObj.items = this.items.map((item) =>
         item._id.equals(updatedItem.id) ? updatedItem : item,
       );
