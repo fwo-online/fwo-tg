@@ -1,10 +1,10 @@
+import type { ItemWithID } from '@fwo/shared';
 import type { FC } from 'react';
-import { ItemModal } from '@/modules/items/components/ItemModal';
 import { Button } from '@/components/Button';
+import { ItemModal } from '@/modules/items/components/ItemModal';
 import { useCharacterInventory } from '../hooks/useCharacterInventory';
-import type { Item } from '@fwo/shared';
 
-export const CharacterInventoryListItem: FC<{ item: Item }> = ({ item }) => {
+export const CharacterInventoryListItem: FC<{ item: ItemWithID }> = ({ item }) => {
   const { equipment, handleEquip, handleUnEquip } = useCharacterInventory();
   const isEquipped = equipment.includes(item.id);
 
@@ -22,9 +22,9 @@ export const CharacterInventoryListItem: FC<{ item: Item }> = ({ item }) => {
       }
       footer={
         isEquipped ? (
-          <Button onClick={() => handleUnEquip(item.id || item._id)}>Снять</Button>
+          <Button onClick={() => handleUnEquip(item.id)}>Снять</Button>
         ) : (
-          <Button onClick={() => handleEquip(item.id || item._id)}>Надеть</Button>
+          <Button onClick={() => handleEquip(item.id)}>Надеть</Button>
         )
       }
     />

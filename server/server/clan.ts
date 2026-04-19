@@ -1,17 +1,17 @@
+import { createClanSchema, idSchema } from '@fwo/shared';
 import { vValidator } from '@hono/valibot-validator';
 import { Hono } from 'hono';
-import { characterMiddleware, userMiddleware } from '@/server/middlewares';
-import { ClanService } from '@/arena/ClanService';
-import { createClanSchema, idSchema } from '@fwo/shared';
-import { withValidation } from './utils/withValidation';
-import { handleValidationError } from '@/server/utils/handleValidationError';
-import { clanMiddleware } from '@/server/middlewares/clanMiddleware';
 import * as v from 'valibot';
+import { ClanService } from '@/arena/ClanService';
 import { CraftService } from '@/arena/CraftService/CraftService';
+import { characterMiddleware, userMiddleware } from '@/server/middlewares';
+import { clanMiddleware } from '@/server/middlewares/clanMiddleware';
+import { handleValidationError } from '@/server/utils/handleValidationError';
+import { withValidation } from './utils/withValidation';
 
 export const clan = new Hono()
   .use(userMiddleware, characterMiddleware)
-  .get('/', async (c) => {
+  .get('/list', async (c) => {
     const clans = await ClanService.getClanList();
 
     return c.json(clans.map(ClanService.toObject), 200);
@@ -41,10 +41,10 @@ export const clan = new Hono()
     return c.json({}, 200);
   })
   .use(clanMiddleware())
-  .get('/:id', vValidator('param', idSchema), async (c) => {
-    const { id } = c.req.valid('param');
+  .get('', async (c) => {
+    const character = c.get('character');
 
-    const clan = await withValidation(ClanService.getClanById(id));
+    const clan = await withValidation(ClanService.getClanById(character.clan.id));
 
     return c.json(ClanService.toObject(clan), 200);
   })

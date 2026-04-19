@@ -14,17 +14,9 @@ export const useSessionGuard = () => {
 };
 
 export const useSessionReconnect = () => {
-  const socket = useSocket();
   const navigate = useNavigate();
 
   return () => {
-    if (!socket.connected) {
-      socket.once('connect', () => {
-        navigate('/');
-      });
-      socket.connect();
-    } else {
-      navigate('/');
-    }
+    navigate('/');
   };
 };

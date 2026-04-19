@@ -1,39 +1,35 @@
-import { getCharacter } from '@/api/character';
-import { useCharacterStore } from '@/modules/character/store/character';
 import type { Character } from '@fwo/shared';
-import useSWR from 'swr';
+import { getCharacter } from '@/api/character';
+import { useMountEffect } from '@/hooks/useMountEffect';
+import { useCharacterStore } from '@/modules/character/store/character';
 
 export const useSyncCharacter = () => {
+  const character = useCharacterStore((state) => state.character);
   const setCharacter = useCharacterStore((state) => state.setCharacter);
-
-  const { isLoading, mutate, error } = useSWR('character', getCharacter, {
-    onSuccess: (character) => {
-      if (character) {
-        setCharacter(character);
-      }
-    },
-    revalidateOnMount: false,
-    suspense: true,
-  });
 
   const syncCharacter = async (newCharacter?: Character | null) => {
     if (newCharacter) {
       setCharacter(newCharacter);
-      return mutate(newCharacter, { revalidate: false });
     }
 
-    return mutate();
+    const character = await getCharacter();
+    if (character) {
+      setCharacter(character);
+    }
   };
 
   const clearCharacter = async () => {
     setCharacter(undefined);
-    await mutate(undefined, { revalidate: false });
   };
+
+  useMountEffect(() => {
+    if (!character) {
+      syncCharacter();
+    }
+  });
 
   return {
     clearCharacter,
     syncCharacter,
-    isLoading,
-    error,
   };
 };

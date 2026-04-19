@@ -1,12 +1,11 @@
-import { type ChangeEventHandler, useState, type FC } from 'react';
-import { ItemModal } from '@/modules/items/components/ItemModal';
+import type { ItemWithID } from '@fwo/shared';
+import { type ChangeEventHandler, type FC, useState } from 'react';
 import { Button } from '@/components/Button';
-
-import type { Item } from '@fwo/shared';
 import { useCharacterInventory } from '@/modules/character/hooks/useCharacterInventory';
+import { ItemModal } from '@/modules/items/components/ItemModal';
 import { useMarketItemCreate } from '@/modules/market/hooks/useMarketItemCreate';
 
-export const MarketCreateListItem: FC<{ item: Item }> = ({ item }) => {
+export const MarketCreateListItem: FC<{ item: ItemWithID }> = ({ item }) => {
   const { equipment } = useCharacterInventory();
   const isEquipped = equipment.includes(item.id);
   const { createItem, isPending } = useMarketItemCreate();
@@ -19,7 +18,7 @@ export const MarketCreateListItem: FC<{ item: Item }> = ({ item }) => {
       return;
     }
 
-    createItem(item._id, Number(price));
+    createItem(item.id, Number(price));
   };
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {

@@ -1,8 +1,8 @@
+import { invoice } from '@tma.js/sdk-react';
 import { changeName, getChangeNameInvoice } from '@/api/serviceShop';
 import { usePopup } from '@/hooks/usePopup';
 import { useRequest } from '@/hooks/useRequest';
 import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
-import { invoice } from '@tma.js/sdk-react';
 
 export const useServiceShopChangeName = () => {
   const { syncCharacter } = useSyncCharacter();
@@ -29,9 +29,11 @@ export const useServiceShopChangeName = () => {
     popup.confirm({
       message: 'Вы уверены, что изменить имя?',
       onConfirm: async () => {
-        makeRequest(() => changeName(name));
-        await syncCharacter();
-        popup.info({ message: 'Имя успешно изменено' });
+        const res = await makeRequest(() => changeName(name));
+        if (res) {
+          await syncCharacter();
+          popup.info({ message: 'Имя успешно изменено' });
+        }
       },
     });
   };

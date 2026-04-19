@@ -2,8 +2,8 @@ import * as v from 'valibot';
 import { characterAttributesSchema, characterClassSchema } from '@/character';
 import { itemInfoSchema } from '@/item/itemInfoSchema';
 import { attributesSchema } from '@/shared/attributes';
-import { ItemWear } from './itemWear';
 import { ItemComponent } from './itemComponent';
+import { ItemWear } from './itemWear';
 
 export const itemSchema = v.object({
   code: v.string(),
@@ -34,4 +34,5 @@ export const itemSchema = v.object({
 export type ItemInput = v.InferInput<typeof itemSchema>;
 export type ItemOutput = v.InferOutput<typeof itemSchema>;
 
-export type Item = ItemOutput & { id: string };
+export type Item = ItemOutput;
+export type ItemWithID = ItemOutput & { id: string };

@@ -1,29 +1,48 @@
+import type { CharacterPublic } from '@fwo/shared';
+import { Suspense } from 'react';
+import { Navigate, useLoaderData } from 'react-router';
+import { getCharacterList } from '@/api/character';
+import { getClan } from '@/api/clan';
 import { Card } from '@/components/Card';
 import { Placeholder } from '@/components/Placeholder';
-import { useCharacter } from '@/modules/character/store/character';
 import { Clan } from '@/modules/clan/components/Clan';
-import { useSyncClan } from '@/modules/clan/hooks/useSyncClan';
-import { Suspense, type FC } from 'react';
-import { Navigate } from 'react-router';
+import { useClanStore } from '@/modules/clan/store/clan';
 
-const ClanLoader = () => {
-  useSyncClan();
+const loader = async () => {
+  const clan = await getClan();
+  const players = getCharacterList(clan.players);
+  let requests: Promise<CharacterPublic[]>;
 
-  return <Clan />;
+  if (clan.requests?.length) {
+    requests = getCharacterList(clan.requests);
+  } else {
+    requests = Promise.resolve([]);
+  }
+
+  return {
+    clan,
+    players,
+    requests,
+  };
 };
 
-export const ClanPage: FC = () => {
-  const clan = useCharacter((character) => character.clan);
+export const ClanPage = () => {
+  const { clan, players, requests } = useLoaderData<typeof loader>();
+  const setClan = useClanStore((state) => state.setClan);
 
   if (!clan) {
     return <Navigate to="/clan/list" />;
   }
 
+  setClan(clan);
+
   return (
     <Card header={clan.name} className="m-4">
       <Suspense fallback={<Placeholder description="Загружаем клан..." />}>
-        <ClanLoader />
+        <Clan playersPromise={players} requestsPromise={requests} />
       </Suspense>
     </Card>
   );
 };
+
+ClanPage.loader = loader;

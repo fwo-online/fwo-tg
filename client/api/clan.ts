@@ -2,10 +2,9 @@ import { client, createRequest } from '@/api';
 
 export const createClan = (name: string) => createRequest(client.clan.$post)({ json: { name } });
 
-export const getClans = () => createRequest(client.clan.$get)({});
+export const getClans = () => createRequest(client.clan.list.$get)({});
 
-export const getClanByID = (id: string) =>
-  createRequest(client.clan[':id'].$get)({ param: { id } });
+export const getClan = () => createRequest(client.clan.$get)({});
 
 export const createClanRequest = (id: string) =>
   createRequest(client.clan[':id']['create-request'].$post)({ param: { id } });

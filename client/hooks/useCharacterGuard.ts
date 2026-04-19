@@ -28,7 +28,7 @@ export const useCharacterGuard = () => {
   }, [setForest, syncCharacter]);
 
   useMountEffect(() => {
-    socket.io.on('reconnect', () => syncCharacter);
+    socket.io.on('reconnect', () => syncCharacter());
   });
 
   useSocketListener('game:end', handleGameEnd);

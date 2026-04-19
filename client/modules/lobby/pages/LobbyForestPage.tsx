@@ -1,28 +1,14 @@
-import { Button } from '@/components/Button';
-import { Card } from '@/components/Card';
-import { useCharacter } from '@/modules/character/store/character';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { Button } from '@/components/Button';
+import { Card } from '@/components/Card';
 import { useSocket } from '@/stores/socket';
 
 export const LobbyForestPage = () => {
   const navigate = useNavigate();
   const socket = useSocket();
-  const character = useCharacter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Проверка блокировки леса
-  const isForestBlocked = character.forestBlockedUntil
-    ? new Date(character.forestBlockedUntil) > new Date()
-    : false;
-
-  const blockedUntil = character.forestBlockedUntil
-    ? new Date(character.forestBlockedUntil).toLocaleTimeString('ru-RU', {
-        hour: '2-digit',
-        minute: '2-digit',
-      })
-    : null;
 
   const handleEnterForest = async () => {
     setLoading(true);
@@ -74,23 +60,13 @@ export const LobbyForestPage = () => {
             </ul>
           </div>
 
-          {isForestBlocked && (
-            <div className="text-red-500 text-sm text-center border-2 border-red-500 p-2">
-              Лес заблокирован до {blockedUntil}
-            </div>
-          )}
-
           {error && <div className="text-red-500 text-sm text-center">{error}</div>}
         </div>
       </Card>
 
       <div className="flex flex-col gap-2 mt-auto pb-8 px-4">
-        <Button
-          onClick={handleEnterForest}
-          disabled={loading || isForestBlocked}
-          className={isForestBlocked ? 'is-disabled' : 'is-primary'}
-        >
-          {loading ? 'Загрузка...' : isForestBlocked ? 'Заблокировано' : 'Войти в лес'}
+        <Button onClick={handleEnterForest} disabled={loading} className="is-primary">
+          {loading ? 'Загрузка...' : 'Войти в лес'}
         </Button>
       </div>
     </div>

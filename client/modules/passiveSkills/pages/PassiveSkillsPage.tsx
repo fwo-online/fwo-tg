@@ -1,25 +1,35 @@
-import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { PassiveSkillsList } from '@/modules/passiveSkills/components/PassiveSkillsList';
-import { Suspense } from 'react';
+import { useLoaderData } from 'react-router';
+import { getPassiveSkillsList } from '@/api/passiveSkills';
 import { Card } from '@/components/Card';
 import { Placeholder } from '@/components/Placeholder';
-import { getPassiveSkillsList } from '@/api/passiveSkills';
-import useSWR from 'swr';
+import { PassiveSkillsList } from '@/modules/passiveSkills/components/PassiveSkillsList';
 
-const PassiveSkillsListLoader = () => {
-  const { data } = useSWR('passiveSkills', () => getPassiveSkillsList(), { suspense: true });
+const loader = async () => {
+  const passiveSkills = await getPassiveSkillsList();
 
-  return <PassiveSkillsList skills={data} />;
+  return {
+    passiveSkills,
+  };
+};
+
+const handle = {
+  title: 'Пассивные умения',
+};
+
+const ErrorBoundary = () => {
+  return <Placeholder description="Ошибка загрузки пассивных умений" />;
 };
 
 export const PassiveSkillsPage = () => {
+  const { passiveSkills } = useLoaderData<typeof loader>();
+
   return (
     <Card header="Пассивные умения" className="m-4!">
-      <ErrorBoundary fallback={<Placeholder description="Ошибка загрузки пассивных умений" />}>
-        <Suspense fallback={<Placeholder description="Ищем пассивные умения..." />}>
-          <PassiveSkillsListLoader />
-        </Suspense>
-      </ErrorBoundary>
+      <PassiveSkillsList skills={passiveSkills} />
     </Card>
   );
 };
+
+PassiveSkillsPage.loader = loader;
+PassiveSkillsPage.ErrorBoundary = ErrorBoundary;
+PassiveSkillsPage.handle = handle;

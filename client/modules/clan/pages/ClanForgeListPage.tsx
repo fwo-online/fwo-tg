@@ -1,28 +1,31 @@
-import { Suspense, type FC } from 'react';
-import { useParams } from 'react-router';
-import { ForgeList } from '@/modules/forge/components/ForgeList';
+import { Suspense } from 'react';
+import { type LoaderFunctionArgs, useLoaderData, useParams } from 'react-router';
 import { getShopItems } from '@/api/shop';
-import { wearListTranslations } from '@/constants/inventory';
 import { Card } from '@/components/Card';
 import { Placeholder } from '@/components/Placeholder';
-import useSWR from 'swr';
+import { wearListTranslations } from '@/constants/inventory';
+import { ForgeList } from '@/modules/forge/components/ForgeList';
 
-const ClanForgeListLoader = () => {
-  const { wear } = useParams<{ wear: string }>();
+const loader = async ({ params }: LoaderFunctionArgs) => {
+  const { wear } = params;
+  const items = await getShopItems({ wear });
 
-  const { data = [] } = useSWR('clanForgeList', () => getShopItems({ wear }), { suspense: true });
-
-  return <ForgeList items={data} clanForge />;
+  return {
+    items,
+  };
 };
 
-export const ClanForgeListPage: FC = () => {
+export const ClanForgeListPage = () => {
   const { wear } = useParams<{ wear: string }>();
+  const { items } = useLoaderData<typeof loader>();
 
   return (
     <Card header={wearListTranslations[wear]} className="m-4!">
       <Suspense fallback={<Placeholder description="Ищем предметы..." />}>
-        <ClanForgeListLoader />
+        <ForgeList items={items} clanForge />
       </Suspense>
     </Card>
   );
 };
+
+ClanForgeListPage.loader = loader;
