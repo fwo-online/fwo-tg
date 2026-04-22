@@ -1,9 +1,9 @@
-import type { FC } from 'react';
+import { type FC, Fragment } from 'react';
 import { Placeholder } from '@/components/Placeholder';
-import { useCharacterInventory } from '@/modules/character/hooks/useCharacterInventory';
 import { wearList, wearListTranslations } from '@/constants/inventory';
-import { CharacterInventoryListItem } from '@/modules/character/components/CharacterInventoryListItem';
 import { CharacterInventoryComponents } from '@/modules/character/components/CharacterInventoryComponents';
+import { CharacterInventoryListItem } from '@/modules/character/components/CharacterInventoryListItem';
+import { useCharacterInventory } from '@/modules/character/hooks/useCharacterInventory';
 
 export const CharacterInventoryList: FC = () => {
   const { items, inventoryByWear } = useCharacterInventory();
@@ -18,12 +18,12 @@ export const CharacterInventoryList: FC = () => {
         wearList.map(
           (wear) =>
             inventoryByWear[wear] && (
-							<Fragment key={wear}>
-								<h5>{wearListTranslations[wear]}</h5>
+              <Fragment key={wear}>
+                <h5>{wearListTranslations[wear]}</h5>
                 {inventoryByWear[wear]?.map((item) => (
                   <CharacterInventoryListItem key={item.id} item={item} />
                 ))}
-							</Fragment>
+              </Fragment>
             ),
         )
       ) : (
