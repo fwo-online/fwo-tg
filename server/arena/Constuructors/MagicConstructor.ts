@@ -61,7 +61,6 @@ export abstract class Magic extends BaseAction {
       this.onBeforeRun();
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.calculateExp();
-      this.checkTargetIsDead();
 
       this.next();
     } catch (e) {
@@ -190,18 +189,6 @@ export abstract class Magic extends BaseAction {
       `${this.name} cast chance:: ${result * initiator.proc} (${result}), chance ${chance}, ratio (dmg): ${initiator.stats.val('magic.attack') / target.stats.val('magic.defence')} initiator:: ${initiator.nick}, target:: ${target.nick}, proc:: ${initiator.proc}`,
     );
     return result * initiator.proc;
-  }
-
-  /**
-   * Проверка убита ли цель
-   * @todo после того как был нанесен урон любым dmg action, следует производить
-   * общую проверку
-   */
-  checkTargetIsDead({ initiator, target } = this.params): void {
-    const hpNow = target.stats.val('hp');
-    if (hpNow <= 0 && !target.getKiller()) {
-      target.setKiller(initiator, this.displayName);
-    }
   }
 
   toObject(): MagicSchema {

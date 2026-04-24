@@ -1,8 +1,8 @@
 import { OrderType } from '@fwo/shared';
 import { shuffle } from 'es-toolkit';
 import { times } from 'lodash';
+import { effectService } from '@/arena/EffectService';
 import { AoeDmgMagic } from '../Constuructors/AoeDmgMagicConstructor';
-import type GameService from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 
@@ -45,28 +45,26 @@ class FireBall extends AoeDmgMagic {
     return targetAllies;
   }
 
-  run(initiator: Player, target: Player, game: GameService): void {
-    const effect = this.effectVal({ initiator, target, game });
-    target.stats.down('hp', effect);
+  run(): void {
+    const { initiator, game } = this.context;
+    this.status.effect = this.effectVal();
+    effectService.damage(this.context, this);
 
     const targets = this.getTargets();
 
     times(this.bounces).forEach((value) => {
       const target = targets[value % targets.length];
-      this.runAoe(initiator, target, game);
-    });
-  }
+      const context = this.context.cloneWith(target);
+      context.status.effect = this.aoeEffectVal({ initiator, target, game });
 
-  runAoe(initiator: Player, target: Player, game: GameService) {
-    const effect = this.aoeEffectVal({ initiator, target, game });
+      const val = effectService.rawDamage(context, this);
 
-    target.stats.down('hp', effect);
-
-    this.status.expArr.push({
-      initiator,
-      target,
-      val: effect,
-      hp: target.stats.val('hp'),
+      this.status.expArr.push({
+        initiator,
+        target,
+        val,
+        hp: target.stats.val('hp'),
+      });
     });
   }
 

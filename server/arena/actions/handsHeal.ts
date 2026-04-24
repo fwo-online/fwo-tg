@@ -1,7 +1,6 @@
 import { OrderType } from '@fwo/shared';
+import { effectService } from '@/arena/EffectService';
 import { Heal } from '../Constuructors/HealMagicConstructor';
-import type Game from '../GameService';
-import type { Player } from '../PlayersService';
 
 /**
  * Хил руками
@@ -19,9 +18,9 @@ class HandsHeal extends Heal {
     super(params);
   }
 
-  run(_initiator: Player, target: Player, _game: Game): void {
-    this.status.effect = this.effectVal();
-    target.stats.up('hp', this.status.effect);
+  run(): void {
+    this.effectVal();
+    effectService.heal(this.context);
   }
 }
 

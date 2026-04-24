@@ -1,9 +1,7 @@
 import { OrderType } from '@fwo/shared';
 import { shuffle } from 'es-toolkit';
-import { floatNumber } from '@/utils/floatNumber';
+import { effectService } from '@/arena/EffectService';
 import { AoeDmgMagic } from '../Constuructors/AoeDmgMagicConstructor';
-import type GameService from '../GameService';
-import type { Player } from '../PlayersService';
 
 /**
  * Цепь молний
@@ -47,28 +45,25 @@ class ChainLightning extends AoeDmgMagic {
   /**
    * Основная функция запуска магии
    */
-  run(initiator: Player, target: Player, game: GameService): void {
-    const effectVal = this.effectVal({ initiator, target, game });
-    target.stats.down('hp', effectVal);
+  run(): void {
+    const { initiator, game } = this.context;
+    this.status.effect = this.effectVal();
+    effectService.damage(this.context, this);
 
     const targets = this.getTargets();
     targets.forEach((target, index) => {
-      this.runAoe(initiator, target, game, index);
-    });
-  }
+      const multiplier = 1 - (index + 1) * 0.1; // -10% каждой следующей цели
+      const context = this.context.cloneWith(target);
 
-  runAoe(initiator: Player, target: Player, game: GameService, index: number) {
-    const multiplier = 1 - (index + 1) * 0.1; // -10% каждой следующей цели
-    const effectVal = this.effectVal({ initiator, target, game });
-    const hit = floatNumber(effectVal * multiplier);
+      context.status.effect = this.effectVal({ initiator, target, game }) * multiplier;
+      const val = effectService.rawDamage(context, this);
 
-    target.stats.down('hp', hit);
-
-    this.status.expArr.push({
-      initiator,
-      target,
-      val: hit,
-      hp: target.stats.val('hp'),
+      this.status.expArr.push({
+        initiator,
+        target,
+        val,
+        hp: target.stats.val('hp'),
+      });
     });
   }
 

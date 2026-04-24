@@ -1,4 +1,5 @@
 import { OrderType } from '@fwo/shared';
+import { effectService } from '@/arena/EffectService';
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 import { isPhysicalDamageResult } from '../Constuructors/utils';
 
@@ -23,7 +24,7 @@ class PhysicalSadness extends DmgMagic {
   }
 
   run(): void {
-    const { target, game } = this.params;
+    const { game } = this.params;
     const results = game.getRoundResults();
     const physicalDamageResults = results.filter(isPhysicalDamageResult);
 
@@ -34,11 +35,9 @@ class PhysicalSadness extends DmgMagic {
     const effect = this.effectVal();
 
     const totalHit = physicalDamageResults.reduce((sum, result) => sum + result.effect, 0);
-    const hit = effect + (totalHit / physicalDamageResults.length + 1);
+    this.status.effect = effect + (totalHit / physicalDamageResults.length + 1);
 
-    this.status.effect = hit;
-
-    target.stats.down('hp', hit);
+    effectService.damage(this.context, this);
   }
 }
 

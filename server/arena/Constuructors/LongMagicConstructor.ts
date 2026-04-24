@@ -37,7 +37,6 @@ export abstract class LongMagic extends CommonMagic {
       this.onBeforeRun();
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.calculateExp();
-      this.checkTargetIsDead(); // проверка трупов в длительных магиях
       this.next({ initiator, target, game });
     } catch (e) {
       if (this.isAffect) {

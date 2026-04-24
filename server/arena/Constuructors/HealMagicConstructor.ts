@@ -64,17 +64,15 @@ export abstract class Heal extends BaseAction {
    * @return размер хила
    */
   effectVal(): number {
-    const { initiator, target } = this.params;
+    const { initiator } = this.params;
     const proc = initiator.proc ?? 0;
     const { min, max } = initiator.stats.val('heal');
-    const maxHp = target.stats.val('base.hp');
-    const curHp = target.stats.val('hp');
 
     const allHeal = MiscService.randFloat(min, max) * proc;
-    const maxHeal = Math.max(maxHp - curHp, 0); // при вампиризме может быть больше 100% здоровья
-    const healEffect = Math.min(maxHeal, allHeal);
 
-    return floatNumber(healEffect);
+    this.status.effect = floatNumber(allHeal);
+
+    return this.status.effect;
   }
 
   calculateExp(initiator: Player, target: Player): void {
@@ -94,12 +92,5 @@ export abstract class Heal extends BaseAction {
         val: this.status.effect,
       },
     ];
-  }
-
-  checkTargetIsDead({ target } = this.params) {
-    const hpNow = target.stats.val('hp');
-    if (hpNow > 0 && target.getKiller()) {
-      target.resetKiller();
-    }
   }
 }

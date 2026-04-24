@@ -1,3 +1,4 @@
+import type { ActionType, EffectType } from '@fwo/shared';
 import type { ActionKey } from '@/arena/ActionService';
 import type {
   BaseAction,
@@ -6,6 +7,21 @@ import type {
 } from '@/arena/Constuructors/BaseAction';
 import type { BreaksMessage, SuccessArgs } from '@/arena/Constuructors/types';
 import type { Player } from '@/arena/PlayersService';
+import type PlayerService from '@/arena/PlayersService/PlayerService';
+
+export type AffectAction = {
+  actionType: ActionType;
+  effectType?: EffectType;
+  displayName: string;
+  name?: string;
+};
+
+export type AffectEvent = {
+  effect: number;
+  target: PlayerService;
+  ctx?: BaseActionContext;
+  action?: AffectAction;
+};
 
 type BaseAffect = {
   initiator: Player;
@@ -24,6 +40,8 @@ type BaseAffect = {
     affect: Affect,
   ) => void | SuccessArgs | SuccessArgs[];
   onCast?: (params: BaseActionParams, affect: Affect) => void;
+  onBeforeDamageDeal?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
+  onBeforeDamageRecieve?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
   onDamageDealt?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
   onDamageReceived?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
   onHeal?: (ctx: BaseActionContext) => void;

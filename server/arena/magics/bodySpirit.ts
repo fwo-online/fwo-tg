@@ -1,4 +1,5 @@
 import { OrderType } from '@fwo/shared';
+import { effectService } from '@/arena/EffectService';
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 
 const damageToManaMultiplier = 0.5;
@@ -30,11 +31,10 @@ class Blessing extends DmgMagic {
     const targetHp = target.stats.val('hp');
     const maxDamage = Math.max(targetHp - minimumTargetHeath, 0);
 
-    const effectVal = Math.min(this.effectVal(), maxDamage);
-    this.status.effect = effectVal;
+    this.status.effect = Math.min(this.effectVal(), maxDamage);
+    const value = effectService.damage(this.context, this);
 
-    target.stats.down('hp', effectVal);
-    initiator.stats.up('mp', effectVal * damageToManaMultiplier);
+    initiator.stats.up('mp', value * damageToManaMultiplier);
   }
 }
 

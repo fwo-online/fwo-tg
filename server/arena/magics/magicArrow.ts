@@ -1,4 +1,5 @@
 import { OrderType } from '@fwo/shared';
+import { effectService } from '@/arena/EffectService';
 import { bold, italic } from '../../utils/formatString';
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
@@ -33,8 +34,8 @@ class MagicArrow extends DmgMagic {
    * Основная функция запуска магии
    */
   run(): void {
-    const { target } = this.params;
-    target.stats.mode('down', 'hp', this.effectVal());
+    this.status.effect = this.effectVal();
+    effectService.damage(this.context, this);
   }
 
   customMessage(args: SuccessArgs): string {

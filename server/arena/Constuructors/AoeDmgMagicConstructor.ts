@@ -14,15 +14,4 @@ export abstract class AoeDmgMagic extends DmgMagic {
       item.exp = this.getEffectExp(item.val ?? 0);
     });
   }
-
-  checkTargetIsDead({ initiator, target, game } = this.params): void {
-    super.checkTargetIsDead({ initiator, target, game });
-    this.checkAoeTargetIsDead({ initiator, target, game });
-  }
-
-  checkAoeTargetIsDead({ initiator, game } = this.params): void {
-    this.status.expArr.forEach(({ target }) => {
-      super.checkTargetIsDead({ initiator, target, game });
-    });
-  }
 }

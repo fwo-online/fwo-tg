@@ -1,5 +1,6 @@
 import { OrderType } from '@fwo/shared';
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
+import { effectService } from '@/arena/EffectService';
 import type { Affect } from '../Constuructors/interfaces/Affect';
 import PhysConstructor from '../Constuructors/PhysConstructor';
 import CastError from '../errors/CastError';
@@ -36,7 +37,7 @@ class Attack extends PhysConstructor {
       },
     });
 
-    target.stats.down('hp', this.status.effect);
+    effectService.damage(this.context, this);
   }
 
   onBeforeAction(ctx: BaseActionContext, action: BaseAction, affect: Affect) {

@@ -25,7 +25,6 @@ export abstract class LongDmgMagic extends DmgMagic {
       this.checkChance();
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.calculateExp();
-      this.checkTargetIsDead(); // проверка трупов в длительных магиях
       this.next({ initiator, target, game });
     } catch (failMsg) {
       if (this.isAffect) {

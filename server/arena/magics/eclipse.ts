@@ -33,18 +33,8 @@ class Eclipse extends CommonMagic {
         action: this.name,
         initiator,
         proc: initiator.proc,
-        onBeforeAction({ params: { initiator, game }, status }, action) {
-          eclipse.onBeforeAction(
-            {
-              params: {
-                initiator: this.initiator,
-                target: initiator,
-                game,
-              },
-              status,
-            },
-            action,
-          );
+        onBeforeAction(ctx, action) {
+          eclipse.onBeforeAction(ctx, action);
         },
       });
     });
@@ -55,12 +45,12 @@ class Eclipse extends CommonMagic {
       return;
     }
 
-    const { target, game } = ctx.params;
+    const { game } = ctx.params;
 
     // @todo подумать как убрать глобальный флаг и нужно ли его убирать вообще
     throw new CastError(
       game.flags.global.isEclipsed.map(({ initiator }) =>
-        this.getSuccessResult({ initiator, target, game }),
+        this.getSuccessResult({ initiator, target: ctx.initiator, game }),
       ),
     );
   }

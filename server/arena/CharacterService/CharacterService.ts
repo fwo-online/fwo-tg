@@ -103,7 +103,13 @@ export class CharacterService {
   get passiveSkills() {
     const characterPassiveSkills = structuredClone(this.charObj.passiveSkills);
     const itemPassiveSkills = structuredClone(this.inventory.passiveSkills);
-    return Object.freeze(mergeNumbersWith(characterPassiveSkills, itemPassiveSkills, Math.max));
+
+    return Object.freeze({
+      fatesMiss: 1,
+      divineWill: 1,
+      staticProtect: 1,
+      ...mergeNumbersWith(characterPassiveSkills, itemPassiveSkills, Math.max),
+    });
   }
 
   get clan() {

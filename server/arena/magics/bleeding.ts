@@ -1,6 +1,7 @@
 import { OrderType } from '@fwo/shared';
 import { LongDmgMagic } from '@/arena/Constuructors/LongDmgMagicConstructor';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
+import { effectService } from '@/arena/EffectService';
 import { floatNumber } from '@/utils/floatNumber';
 import { bold, italic } from '@/utils/formatString';
 
@@ -24,16 +25,13 @@ class Bleeding extends LongDmgMagic {
     });
   }
 
-  override modifyEffect(effect: number, { target } = this.params): number {
-    effect = this.applyResists(effect, target);
-
+  override modifyEffect(effect: number): number {
     return floatNumber(effect);
   }
 
   run() {
-    const { target } = this.params;
     this.status.effect = this.effectVal();
-    target.stats.down('hp', this.status.effect);
+    effectService.damage(this.context, this);
   }
 
   customMessage(args: SuccessArgs): string {

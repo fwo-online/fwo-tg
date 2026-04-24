@@ -1,6 +1,7 @@
 import { EffectType, OrderType } from '@fwo/shared';
 import { CommonMagic } from '@/arena/Constuructors/CommonMagicConstructor';
 import type { DmgMagicArgs } from '@/arena/Constuructors/DmgMagicConstructor';
+import { effectService } from '@/arena/EffectService';
 import { bold, italic } from '../../utils/formatString';
 import { LongDmgMagic } from '../Constuructors/LongDmgMagicConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
@@ -52,8 +53,8 @@ class FrostTouch extends CommonMagic {
 
 class FrostTouchEffect extends LongDmgMagic {
   run() {
-    const { target } = this.params;
-    target.stats.down('hp', this.effectVal());
+    this.status.effect = this.effectVal();
+    effectService.damage(this.context, this);
   }
 
   customMessage(args: SuccessArgs): string {

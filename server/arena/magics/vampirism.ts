@@ -1,5 +1,6 @@
 import { OrderType } from '@fwo/shared';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
+import { effectService } from '@/arena/EffectService';
 import { floatNumber } from '@/utils/floatNumber';
 import { bold, italic } from '@/utils/formatString';
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
@@ -32,12 +33,8 @@ class Vampirism extends DmgMagic {
    * Основная функция запуска магии
    */
   run(): void {
-    const { target, initiator } = this.params;
-    const effect = this.effectVal();
-    const maxHeal = target.stats.val('hp');
-
-    target.stats.down('hp', effect);
-    initiator.stats.up('hp', Math.min(effect, Math.max(0, maxHeal))); // хилим только на урон до 0 хп
+    this.status.effect = this.effectVal();
+    effectService.lifesteal(this.context, this);
   }
 
   customMessage({ initiator, target, effect, hp }: SuccessArgs): string {

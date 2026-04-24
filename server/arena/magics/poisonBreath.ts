@@ -1,4 +1,5 @@
 import { OrderType } from '@fwo/shared';
+import { effectService } from '@/arena/EffectService';
 import { DmgMagic } from '../Constuructors/DmgMagicConstructor';
 
 /**
@@ -29,8 +30,8 @@ class PoisonBreath extends DmgMagic {
    * Основная функция запуска магии
    */
   run(): void {
-    const { target } = this.params;
-    target.stats.mode('down', 'hp', this.effectVal());
+    this.status.effect = this.effectVal();
+    effectService.damage(this.context, this);
   }
 }
 

@@ -40,7 +40,6 @@ export abstract class DmgMagic extends Magic {
 
     if (this.dmgType !== 'clear') {
       effect = this.applyTargetModifiers(effect, target);
-      effect = this.applyResists(effect, target);
     }
 
     return floatNumber(effect);
@@ -52,14 +51,6 @@ export abstract class DmgMagic extends Magic {
 
   applyTargetModifiers(effect: number, target: Player): number {
     return effect * (1 - 0.002 * target.stats.val('magic.defence'));
-  }
-
-  applyResists(effect: number, target: Player): number {
-    const resist = target.resists[this.dmgType];
-    if (resist) {
-      return effect * resist;
-    }
-    return effect;
   }
 
   /**
