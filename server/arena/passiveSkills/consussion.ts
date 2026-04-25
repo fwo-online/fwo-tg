@@ -12,7 +12,7 @@ class Consussion extends PassiveSkillConstructor {
       displayName: 'Сотрясение',
       description: 'Шанс оглушить цель, заставляя её пропустить следующее действие',
       chance: [10, 15, 25],
-      effect: [100],
+      effect: [100, 100, 100],
       bonusCost: [],
     });
   }
