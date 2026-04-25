@@ -1,14 +1,10 @@
-import { type ActionType, OrderType } from '@fwo/shared';
-import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
+import { OrderType } from '@fwo/shared';
 import { CommonMagic } from '@/arena/Constuructors/CommonMagicConstructor';
-import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
-import { LongMagic } from '@/arena/Constuructors/LongMagicConstructor';
 import type { MagicArgs } from '@/arena/Constuructors/MagicConstructor';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
-import CastError from '@/arena/errors/CastError';
+import { asleep } from '@/arena/effects';
 import { bold, italic } from '@/utils/formatString';
 
-const actionTypes: ActionType[] = ['phys', 'protect', 'heal', 'skill'];
 /**
  * Сон
  * Основное описание магии общее требовани есть в конструкторе
@@ -34,17 +30,17 @@ class Sleep extends CommonMagic {
     const { initiator, target } = this.params;
 
     target.affects.addLongEffect({
-      action: this.name,
+      action: asleep.name,
       duration: initiator.stats.val('spellLength'),
       proc: initiator.proc,
       initiator,
       onBeforeAction(ctx, action, affect): undefined {
-        this.initiator.proc = this.proc;
-        sleepEffect.duration = this.duration;
-        sleepEffect.onBeforeAction(ctx, action, affect);
+        affect.initiator.proc = this.proc;
+        asleep.duration = this.duration;
+        asleep.onBeforeAction(ctx, action, affect);
       },
       onDamageReceived(ctx, action) {
-        sleepEffect.onDamageReceived(ctx, action);
+        asleep.onDamageReceived(ctx, action);
       },
     });
   }
@@ -54,35 +50,4 @@ class Sleep extends CommonMagic {
   }
 }
 
-class SleepEffect extends LongMagic {
-  isAffect = true;
-
-  onBeforeAction(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
-    if (actionTypes.includes(action.actionType)) {
-      const { initiator, game } = ctx.params;
-      this.cast(affect.initiator, initiator, game);
-    }
-  }
-
-  run(): void {
-    const { target, game } = this.params;
-    const effects = target.affects.getEffectsByAction(this.name);
-
-    if (!effects.length) {
-      return;
-    }
-
-    throw new CastError(
-      effects.map(({ initiator }) => this.getSuccessResult({ initiator, target, game })),
-    );
-  }
-
-  onDamageReceived({ params: { target } }: BaseActionContext, action: BaseAction) {
-    if (action.actionType === 'phys') {
-      target.affects.removeEffectsByAction(this.name);
-    }
-  }
-}
-
 export const sleep = new Sleep(params);
-export const sleepEffect = new SleepEffect(params);
