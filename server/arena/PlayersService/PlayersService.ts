@@ -86,8 +86,11 @@ export default class PlayersService {
    * @return
    */
   getRandomAlive(): Player {
-    const alive = this.alivePlayers;
-    return alive[Math.floor(Math.random() * alive.length)];
+    return this.getRandom(this.alivePlayers);
+  }
+
+  getRandom(players: Player[]): Player {
+    return players[Math.floor(Math.random() * players.length)];
   }
 
   groupByClan(players = this.players) {

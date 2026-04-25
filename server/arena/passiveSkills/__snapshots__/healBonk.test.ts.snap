@@ -1,0 +1,7 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`healBonk should passively heal ally 1`] = `
+"*Игрок 1* атаковал _Оружием_ *Игрок 2* и нанёс *7.2* урона
+\\[ Игрок 2 💥 💔-7.2/0.8 📖58 ]
+_🔔 Целебный боньк_ *Игрок 1* бонькнул *Оружием* \\[ Игрок 1: 💖7/8 ]"
+`;

@@ -26,7 +26,7 @@ const WEAPON_TYPES = {
   },
   heal: {
     name: 'лечащее',
-    action: (target, weapon) => `атаковал ${italic(weapon.info.name)} в ${bold(target.nick)}`,
+    action: (target, weapon) => `атаковал ${italic(weapon.info.case)} ${bold(target.nick)}`,
   },
   range: {
     name: 'метательное',
