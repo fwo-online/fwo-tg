@@ -157,7 +157,8 @@ export abstract class Magic extends BaseAction {
    */
   getChance(): number {
     const { initiator, target } = this.params;
-    const initiatorMagicLvl = initiator.magics[this.name];
+    // FIXME временно fallback на 1 уровень для эффектов
+    const initiatorMagicLvl = initiator.magics[this.name] ?? 1;
     const imc = initiator.modifiers.castChance; // мод шанс прохождения
     const castChance = initiator.getCastChance(this.name); // мод action'а
     const failChance = target.getFailChance(this.name);

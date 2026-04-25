@@ -1,0 +1,6 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`sleep should block next action 1`] = `
+"*Игрок 1* пытался атаковать *Игрок 2*, но у него не получилось
+_💤 Сон_ *Игрок 3*"
+`;

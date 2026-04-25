@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { CharacterClass } from '@fwo/shared';
+import { asleep } from '@/arena/effects';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import { handsHeal, protect } from '../actions';
@@ -75,6 +76,6 @@ describe('sleep', () => {
 
     sleep.cast(game.players.players[0], game.players.players[1], game);
 
-    expect(game.players.players[1].affects.getEffectsByAction(sleep.name)).toHaveLength(1);
+    expect(game.players.players[1].affects.getEffectsByAction(asleep.name)).toHaveLength(1);
   });
 });

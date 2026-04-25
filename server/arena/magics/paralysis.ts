@@ -1,8 +1,8 @@
 import { OrderType } from '@fwo/shared';
-import type { BaseActionContext } from '@/arena/Constuructors/BaseAction';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
+import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
 import type { MagicArgs } from '@/arena/Constuructors/MagicConstructor';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
-
 import CastError from '../errors/CastError';
 
 /**
@@ -31,14 +31,15 @@ class Paralysis extends CommonMagic {
     target.affects.addEffect({
       action: this.name,
       initiator,
-      onBeforeAction(ctx) {
-        paralysis.onBeforeAction(ctx);
+      onBeforeAction(ctx, action, affect) {
+        paralysis.onBeforeAction(ctx, action, affect);
       },
     });
   }
 
-  onBeforeAction(ctx: BaseActionContext) {
+  onBeforeAction(ctx: BaseActionContext, _action: BaseAction, affect: Affect) {
     const { initiator: target, game } = ctx.params;
+    this.createContext(affect.initiator, target, game);
 
     const effects = target.affects.getEffectsByAction(this.name);
 
