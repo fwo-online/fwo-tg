@@ -8,7 +8,6 @@ import type { DamageType } from '@/arena/Constuructors/types';
 import ValidationError from '@/arena/errors/ValidationError';
 import { PlayerAffects } from '@/arena/PlayersService/PlayerAffects';
 import { PlayerOffHand } from '@/arena/PlayersService/PlayerOffHand';
-import { divineWill, fatesMiss, staticProtect } from '@/arena/passiveSkills';
 import StatsService from '@/arena/StatsService';
 import { StreakHelper } from '@/helpers/streakHelper';
 import type { Clan } from '@/models/clan';
@@ -97,10 +96,6 @@ export default class PlayerService {
         arena.actions[key].cast(this);
       }
     }
-    // @todo тут надо подумать, может быть при содании персонажа по умолчанию класть эти пассивки
-    fatesMiss.cast(this);
-    divineWill.cast(this);
-    staticProtect.cast(this);
   }
 
   get performance() {

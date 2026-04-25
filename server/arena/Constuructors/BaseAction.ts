@@ -1,11 +1,14 @@
 import type { ActionType, EffectType, OrderType } from '@fwo/shared';
 import type { ActionKey } from '@/arena/ActionService';
+import { BaseActionContext } from '@/arena/Constuructors/BaseActionContext';
 import CastError from '@/arena/errors/CastError';
 import type GameService from '@/arena/GameService';
 import type { Player } from '@/arena/PlayersService';
 import { normalizeToArray } from '@/utils/array';
 import { floatNumber } from '@/utils/floatNumber';
 import type { BreaksMessage, ExpArr, FailArgs, SuccessArgs } from './types';
+
+export type { BaseActionContext } from '@/arena/Constuructors/BaseActionContext';
 
 export type BaseActionParams = {
   initiator: Player;
@@ -20,11 +23,6 @@ export type BaseActionStatus = {
   affects: SuccessArgs[];
 };
 
-export type BaseActionContext = {
-  params: BaseActionParams;
-  status: BaseActionStatus;
-};
-
 export abstract class BaseAction {
   name!: ActionKey;
   displayName!: string;
@@ -32,33 +30,28 @@ export abstract class BaseAction {
   actionType!: ActionType;
   effectType?: EffectType;
 
-  context!: BaseActionContext;
-  params!: BaseActionParams;
+  context!: BaseActionContext = {};
   isAffect = false;
-
-  status: BaseActionStatus = { effect: 0, exp: 0, expArr: [], affects: [] };
 
   abstract cast(initiator: Player, target: Player, game: GameService): void;
 
   abstract run(initiator: Player, target: Player, game: GameService): void;
 
   createContext(initiator: Player, target: Player, game: GameService) {
-    this.reset();
-    this.params = { initiator, target, game };
-
-    this.context = {
-      params: this.params,
-      status: this.status,
-    };
+    this.context = new BaseActionContext({ initiator, target, game });
+    return this.context;
   }
 
-  swapParams() {
-    const { initiator, target, game } = this.params;
-    this.params = { initiator: target, target: initiator, game };
+  get params() {
+    return this.context.params;
+  }
+
+  get status() {
+    return this.context.status;
   }
 
   reset() {
-    this.status = { effect: 0, exp: 0, expArr: [], affects: [] };
+    this.context.reset?.();
   }
 
   getFailResult(
@@ -127,13 +120,8 @@ export abstract class BaseAction {
   }
 
   onBeforeRun() {
-    const { initiator, target } = this.context.params;
+    const { initiator } = this.context.params;
 
     initiator.affects.onBeforeAction(this.context, this);
-    initiator.affects.withOnCastFail(
-      () => target.affects.onBeforeReceive(this.context, this),
-      this.context,
-      this,
-    );
   }
 }

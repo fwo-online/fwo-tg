@@ -47,13 +47,13 @@ class Dodge extends Skill {
       action: this.name,
       initiator,
       value,
-      onBeforeReceive(ctx, action) {
-        dodge.onBeforeReceive(ctx, action, value);
+      onBeforeDamageRecieve(ctx, action) {
+        dodge.onBeforeDamageRecieve(ctx, action, value);
       },
     });
   }
 
-  onBeforeReceive(ctx: BaseActionContext, action: BaseAction, value: number) {
+  onBeforeDamageRecieve(ctx: BaseActionContext, action: BaseAction, value: number) {
     if (action.actionType !== 'phys') {
       return;
     }

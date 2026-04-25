@@ -59,6 +59,18 @@ export class PlayerAffects {
     });
   }
 
+  onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction) {
+    for (const affect of this.#affects) {
+      affect.onBeforeDamageDeal?.(ctx, action, affect);
+    }
+  }
+
+  onBeforeDamageRecieve(ctx: BaseActionContext, action: BaseAction) {
+    for (const affect of this.#affects) {
+      affect.onBeforeDamageRecieve?.(ctx, action, affect);
+    }
+  }
+
   onDamageReceived(ctx: BaseActionContext, action: BaseAction) {
     for (const affect of this.#affects) {
       affect.onDamageReceived?.(ctx, action, affect);
@@ -74,12 +86,6 @@ export class PlayerAffects {
   onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
     for (const affect of this.#affects) {
       this.withOnCastFail(() => affect.onBeforeAction?.(ctx, action, affect), ctx, action);
-    }
-  }
-
-  onBeforeReceive(ctx: BaseActionContext, action: BaseAction) {
-    for (const affect of this.#affects) {
-      this.withOnCastFail(() => affect.onBeforeReceive?.(ctx, action, affect), ctx, action);
     }
   }
 

@@ -34,13 +34,13 @@ class Madness extends CommonMagic {
       action: this.name,
       initiator,
       proc: initiator.proc,
-      onBeforeAction(ctx, action, affect) {
-        return madness.onBeforeAction(ctx, action, affect);
+      onBeforeDamageDeal(ctx, action, affect) {
+        return madness.onBeforeDamageDeal(ctx, action, affect);
       },
     });
   }
 
-  onBeforeAction(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
+  onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
     if (!actionTypes.includes(action.actionType)) {
       return;
     }
@@ -49,13 +49,11 @@ class Madness extends CommonMagic {
 
     ctx.params.target = initiator;
 
-    ctx.status.affects.push(
-      this.getSuccessResult({
-        initiator: affect.initiator,
-        target: initiator,
-        game,
-      }),
-    );
+    ctx.addAffect(this, {
+      initiator: affect.initiator,
+      target: initiator,
+      game,
+    });
   }
 }
 

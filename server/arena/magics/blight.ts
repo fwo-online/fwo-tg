@@ -2,6 +2,7 @@ import { OrderType } from '@fwo/shared';
 import { CommonMagic } from '@/arena/Constuructors/CommonMagicConstructor';
 import type { DmgMagicArgs } from '@/arena/Constuructors/DmgMagicConstructor';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
+import { effectService } from '@/arena/EffectService';
 import { bold, italic } from '@/utils/formatString';
 import { LongDmgMagic } from '../Constuructors/LongDmgMagicConstructor';
 
@@ -49,10 +50,8 @@ class BlightEffect extends LongDmgMagic {
     const { target } = this.params;
     const hp = target.stats.val('hp');
     const effectVal = this.effectVal();
-    const hit = hp * (effectVal / 100);
-
-    this.status.effect = hit;
-    target.stats.down('hp', hit);
+    this.status.effect = hp * (effectVal / 100);
+    effectService.damage(this.context, this);
   }
 
   customMessage(args: SuccessArgs): string {

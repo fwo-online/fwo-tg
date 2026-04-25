@@ -33,31 +33,30 @@ class Glitch extends CommonMagic {
       action: this.name,
       initiator,
       proc: initiator.proc,
-      onBeforeAction(ctx, action, affect) {
-        return glitch.onBeforeAction(ctx, action, affect);
+      onBeforeDamageDeal(ctx, action, affect) {
+        return glitch.onBeforeDamageDeal(ctx, action, affect);
       },
     });
   }
 
-  onBeforeAction(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
+  onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
     if (!actionTypes.includes(action.actionType)) {
       return;
     }
 
     const { initiator, target, game } = ctx.params;
 
-    ctx.params.target = game.players.getRandomAlive();
+    ctx.overrideTarget(game.players.getRandomAlive());
+
     console.debug(
       `glitch debug:: new target: ${ctx.params.target.nick}, old target:: ${target.nick}`,
     );
 
-    ctx.status.affects.push(
-      this.getSuccessResult({
-        initiator: affect.initiator,
-        target: initiator,
-        game,
-      }),
-    );
+    ctx.addAffect(this, {
+      initiator: affect.initiator,
+      target: initiator,
+      game,
+    });
   }
 }
 

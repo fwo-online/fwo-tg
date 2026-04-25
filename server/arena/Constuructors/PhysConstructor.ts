@@ -48,10 +48,6 @@ export default abstract class PhysConstructor extends BaseAction {
       this.run(initiator, target, game);
       this.calculateExp();
 
-      initiator.affects.onDamageDealt(this.context, this);
-      target.affects.onDamageReceived(this.context, this);
-
-      this.checkTargetIsDead();
       this.next();
     } catch (e) {
       this.handleCastError(e);
@@ -69,21 +65,12 @@ export default abstract class PhysConstructor extends BaseAction {
   }
 
   calculateHit() {
-    const { initiator, target } = this.params;
+    const { initiator } = this.params;
 
     const { min, max } = initiator.stats.val('hit');
     const hit = MiscService.randFloat(min, max);
 
-    const effect = this.applyResists(hit, target);
-    this.status.effect = floatNumber(effect * initiator.proc);
-  }
-
-  applyResists(effect: number, target: Player): number {
-    const resist = target.resists[this.effectType];
-    if (resist) {
-      return effect * resist;
-    }
-    return effect;
+    this.status.effect = floatNumber(hit * initiator.proc);
   }
 
   /**
@@ -95,19 +82,6 @@ export default abstract class PhysConstructor extends BaseAction {
       this.status.exp = 0;
     } else {
       this.status.exp = Math.round(this.status.effect * 8);
-    }
-  }
-
-  /**
-   * Проверка убита ли цель
-   * @todo после того как был нанесен урон любым dmg action, следует производить
-   * общую проверку
-   */
-  checkTargetIsDead() {
-    const { initiator, target } = this.params;
-    const hpNow = target.stats.val('hp');
-    if (hpNow <= 0 && !target.getKiller()) {
-      target.setKiller(initiator, this.displayName);
     }
   }
 }

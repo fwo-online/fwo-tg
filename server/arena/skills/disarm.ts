@@ -36,8 +36,8 @@ class Disarm extends Skill {
       target.affects.addEffect({
         action: this.name,
         initiator,
-        onBeforeAction(ctx, action) {
-          disarm.onBeforeAction(ctx, action);
+        onBeforeDamageDeal(ctx, action) {
+          disarm.onBeforeDamageDeal(ctx, action);
         },
       });
 
@@ -47,7 +47,7 @@ class Disarm extends Skill {
     }
   }
 
-  onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
+  onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction) {
     if (action.actionType !== 'phys') {
       return;
     }

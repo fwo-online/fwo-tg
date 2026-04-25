@@ -3,6 +3,7 @@ import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAc
 import { CommonMagic } from '@/arena/Constuructors/CommonMagicConstructor';
 import type { DmgMagicArgs } from '@/arena/Constuructors/DmgMagicConstructor';
 import { LongDmgMagic } from '@/arena/Constuructors/LongDmgMagicConstructor';
+import { effectService } from '@/arena/EffectService';
 import type { Affect } from '../Constuructors/interfaces/Affect';
 
 /**
@@ -50,28 +51,23 @@ class LightShieldEffect extends LongDmgMagic {
       return;
     }
 
-    const { effect } = ctx.status;
-
-    affect.initiator.setProc(effect * (affect.proc ?? 1) * 0.01);
+    affect.initiator.setProc(ctx.status.effect * (affect.proc ?? 1) * 0.01);
 
     this.createContext(affect.initiator, ctx.params.initiator, ctx.params.game);
     this.run();
     this.calculateExp();
-    this.checkTargetIsDead();
     this.next();
 
-    ctx.status.affects.push(
-      this.getSuccessResult({
-        initiator: affect.initiator,
-        target: ctx.params.initiator,
-        game: ctx.params.game,
-      }),
-    );
+    ctx.addAffect(this, {
+      initiator: affect.initiator,
+      target: ctx.params.initiator,
+      game: ctx.params.game,
+    });
   }
 
   run() {
-    const { target } = this.params;
-    target.stats.down('hp', this.effectVal());
+    this.status.effect = this.effectVal();
+    effectService.damage(this.context, this);
   }
 }
 

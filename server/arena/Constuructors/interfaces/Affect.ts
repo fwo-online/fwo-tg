@@ -24,6 +24,8 @@ type BaseAffect = {
     affect: Affect,
   ) => void | SuccessArgs | SuccessArgs[];
   onCast?: (params: BaseActionParams, affect: Affect) => void;
+  onBeforeDamageDeal?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
+  onBeforeDamageRecieve?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
   onDamageDealt?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
   onDamageReceived?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
   onHeal?: (ctx: BaseActionContext) => void;

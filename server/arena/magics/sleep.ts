@@ -1,6 +1,7 @@
 import { type ActionType, OrderType } from '@fwo/shared';
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import { CommonMagic } from '@/arena/Constuructors/CommonMagicConstructor';
+import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
 import { LongMagic } from '@/arena/Constuructors/LongMagicConstructor';
 import type { MagicArgs } from '@/arena/Constuructors/MagicConstructor';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
@@ -37,13 +38,10 @@ class Sleep extends CommonMagic {
       duration: initiator.stats.val('spellLength'),
       proc: initiator.proc,
       initiator,
-      onBeforeAction({ status, params: { initiator, game } }, action): undefined {
+      onBeforeAction(ctx, action, affect): undefined {
         this.initiator.proc = this.proc;
         sleepEffect.duration = this.duration;
-        sleepEffect.onBeforeAction(
-          { params: { initiator: this.initiator, target: initiator, game }, status },
-          action,
-        );
+        sleepEffect.onBeforeAction(ctx, action, affect);
       },
       onDamageReceived(ctx, action) {
         sleepEffect.onDamageReceived(ctx, action);
@@ -59,10 +57,10 @@ class Sleep extends CommonMagic {
 class SleepEffect extends LongMagic {
   isAffect = true;
 
-  onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
+  onBeforeAction(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
     if (actionTypes.includes(action.actionType)) {
-      const { initiator, target, game } = ctx.params;
-      this.cast(initiator, target, game);
+      const { initiator, game } = ctx.params;
+      this.cast(affect.initiator, initiator, game);
     }
   }
 

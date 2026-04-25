@@ -1,11 +1,11 @@
-import { ActionService, type ActionKey } from '@/arena/ActionService';
-import { type RoundService, RoundStatus } from '@/arena/RoundService';
+import { randomBytes } from 'node:crypto';
+import { isNumber } from 'es-toolkit/compat';
+import { type ActionKey, ActionService } from '@/arena/ActionService';
 import OrderError from '@/arena/errors/OrderError';
+import ValidationError from '@/arena/errors/ValidationError';
 import type PlayersService from '@/arena/PlayersService';
 import type { Player } from '@/arena/PlayersService';
-import ValidationError from '@/arena/errors/ValidationError';
-import { isNumber } from 'es-toolkit/compat';
-import { randomBytes } from 'node:crypto';
+import { type RoundService, RoundStatus } from '@/arena/RoundService';
 
 export interface Order {
   initiator: string;
@@ -29,7 +29,6 @@ export interface OrderResult {
  * @description Сервис обработки входящих заказов игроков
  * @module Service/Order
  * @todo Нужно доработать структуру и Error
- * @todo для скиллов нужна жесткая проверка заказанных процентов
  */
 export default class Orders {
   /** Текущий список заказов */

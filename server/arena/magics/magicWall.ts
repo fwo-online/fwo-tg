@@ -38,16 +38,16 @@ class MagicWall extends LongMagic {
       value,
       duration: this.duration,
       proc: initiator.proc,
-      onBeforeReceive(ctx, action) {
-        magicWallEffect.onBeforeReceive(ctx, action);
+      onBeforeDamageRecieve(ctx, action) {
+        magicWallEffect.onBeforeDamageRecieve(ctx, action);
       },
-      onBeforeAction(ctx, action) {
-        magicWall.onBeforeAction(ctx, action);
+      onBeforeDamageDeal(ctx, action) {
+        magicWall.onBeforeDamageDeal(ctx, action);
       },
     });
   }
 
-  onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
+  onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction) {
     if (action.actionType !== 'phys') {
       return;
     }

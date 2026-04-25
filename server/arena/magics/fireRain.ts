@@ -1,8 +1,7 @@
 import { OrderType } from '@fwo/shared';
 import { shuffle } from 'es-toolkit';
+import { effectService } from '@/arena/EffectService';
 import { AoeDmgMagic } from '../Constuructors/AoeDmgMagicConstructor';
-import type GameService from '../GameService';
-import type { Player } from '../PlayersService';
 
 /**
  * Огненный дождь
@@ -28,7 +27,7 @@ class FireRain extends AoeDmgMagic {
     });
   }
 
-  getTargets(): Player[] {
+  getTargets() {
     const { target, game } = this.params;
 
     return shuffle(game.players.getAliveAllies(target));
@@ -37,26 +36,25 @@ class FireRain extends AoeDmgMagic {
   /**
    * Основная функция запуска магии
    */
-  run(initiator: Player, target: Player, game: GameService): void {
-    const effect = this.effectVal();
-    target.stats.down('hp', effect);
+  run(): void {
+    const { initiator, game } = this.context;
+    this.status.effect = this.effectVal();
+    effectService.damage(this.context, this);
 
     const targets = this.getTargets();
 
     targets.forEach((target) => {
-      this.runAoe(initiator, target, game);
-    });
-  }
+      const context = this.context.cloneWith(target);
+      context.status.effect = this.effectVal({ initiator, target, game });
 
-  runAoe(initiator: Player, target: Player, game: GameService) {
-    const effect = this.effectVal({ initiator, target, game });
-    target.stats.down('hp', effect);
+      const val = effectService.rawDamage(context, this);
 
-    this.status.expArr.push({
-      initiator,
-      target,
-      val: effect,
-      hp: target.stats.val('hp'),
+      this.status.expArr.push({
+        initiator,
+        target: context.target,
+        val,
+        hp: context.target.stats.val('hp'),
+      });
     });
   }
 }
