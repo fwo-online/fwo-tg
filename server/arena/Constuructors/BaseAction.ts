@@ -120,13 +120,8 @@ export abstract class BaseAction {
   }
 
   onBeforeRun() {
-    const { initiator, target } = this.context.params;
+    const { initiator } = this.context.params;
 
     initiator.affects.onBeforeAction(this.context, this);
-    initiator.affects.withOnCastFail(
-      () => target.affects.onBeforeReceive(this.context, this),
-      this.context,
-      this,
-    );
   }
 }

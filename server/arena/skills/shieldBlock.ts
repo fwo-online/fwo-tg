@@ -55,13 +55,13 @@ class ShieldBlock extends Skill {
       action: this.name,
       initiator,
       value: this.status.effect,
-      onBeforeReceive(ctx, action, affect) {
-        shieldBlock.onBeforeReceive(ctx, action, affect);
+      onBeforeDamageRecieve(ctx, action, affect) {
+        shieldBlock.onBeforeDamageRecieve(ctx, action, affect);
       },
     });
   }
 
-  onBeforeReceive(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
+  onBeforeDamageRecieve(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
     if (action.actionType !== 'phys') {
       return;
     }

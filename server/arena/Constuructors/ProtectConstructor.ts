@@ -75,7 +75,7 @@ export abstract class ProtectConstructor extends BaseAction {
     });
   }
 
-  onBeforeReceive(ctx: BaseActionContext, action: BaseAction) {
+  onBeforeDamageRecieve(ctx: BaseActionContext, action: BaseAction) {
     if (action.actionType !== 'phys') {
       return;
     }

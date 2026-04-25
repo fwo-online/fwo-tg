@@ -21,8 +21,8 @@ class FatesMiss extends PassiveSkillConstructor {
       action: this.name,
       initiator,
       value: 0,
-      onBeforeAction(ctx, action) {
-        fatesMiss.onBeforeAction(ctx, action);
+      onBeforeDamageDeal(ctx, action) {
+        fatesMiss.onBeforeDamageDeal(ctx, action);
       },
     });
   }
@@ -35,7 +35,7 @@ class FatesMiss extends PassiveSkillConstructor {
     return this.chance[0];
   }
 
-  onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
+  onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction) {
     if (action.actionType !== 'phys') {
       return;
     }

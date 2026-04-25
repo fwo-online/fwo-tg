@@ -21,7 +21,7 @@ class MarkedShot extends PassiveSkillConstructor {
     //
   }
 
-  onBeforeAction(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
+  onBeforeDamageRecieve(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
     if (action.actionType !== 'phys') {
       return;
     }

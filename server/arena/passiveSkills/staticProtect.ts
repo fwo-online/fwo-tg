@@ -21,8 +21,8 @@ class StaticProtect extends PassiveSkillConstructor {
       action: this.name,
       initiator,
       value: 0,
-      onBeforeReceive(ctx, action) {
-        staticProtect.onBeforeAction(ctx, action);
+      onBeforeDamageRecieve(ctx, action) {
+        staticProtect.onBeforeDamageRecieve(ctx, action);
       },
     });
   }
@@ -37,7 +37,7 @@ class StaticProtect extends PassiveSkillConstructor {
     return Math.round((1 - Math.exp(-2 * ratio)) * 100);
   }
 
-  onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
+  onBeforeDamageRecieve(ctx: BaseActionContext, action: BaseAction) {
     if (action.actionType !== 'phys') {
       return;
     }

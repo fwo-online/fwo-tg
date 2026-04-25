@@ -33,14 +33,14 @@ class Eclipse extends CommonMagic {
         action: this.name,
         initiator,
         proc: initiator.proc,
-        onBeforeAction(ctx, action) {
-          eclipse.onBeforeAction(ctx, action);
+        onBeforeDamageDeal(ctx, action) {
+          eclipse.onBeforeDamageDeal(ctx, action);
         },
       });
     });
   }
 
-  onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
+  onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction) {
     if (action.actionType !== 'phys') {
       return;
     }

@@ -34,13 +34,13 @@ class Madness extends CommonMagic {
       action: this.name,
       initiator,
       proc: initiator.proc,
-      onBeforeAction(ctx, action, affect) {
-        return madness.onBeforeAction(ctx, action, affect);
+      onBeforeDamageDeal(ctx, action, affect) {
+        return madness.onBeforeDamageDeal(ctx, action, affect);
       },
     });
   }
 
-  onBeforeAction(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
+  onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
     if (!actionTypes.includes(action.actionType)) {
       return;
     }

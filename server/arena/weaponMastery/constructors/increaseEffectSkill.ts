@@ -9,13 +9,13 @@ abstract class IncreaseEffectSkill extends PassiveSkillConstructor {
       action: this.name,
       initiator: this.params.initiator,
       value: 0,
-      onBeforeAction: (ctx, action) => {
-        this.onBeforeAction(ctx, action);
+      onBeforeDamageDeal: (ctx, action) => {
+        this.onBeforeDamageDeal(ctx, action);
       },
     });
   }
 
-  onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
+  onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction) {
     if (action.actionType !== 'phys') {
       return;
     }

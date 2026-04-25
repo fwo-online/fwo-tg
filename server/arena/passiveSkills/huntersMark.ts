@@ -55,8 +55,8 @@ class HuntersMark extends PassiveSkillConstructor {
       duration: 2,
       initiator,
       value: this.getEffect({ initiator, target, game }),
-      onBeforeReceive(ctx, action, affect) {
-        markedShot.onBeforeAction(ctx, action, affect);
+      onBeforeDamageRecieve(ctx, action, affect) {
+        markedShot.onBeforeDamageRecieve(ctx, action, affect);
       },
     });
 

@@ -89,12 +89,6 @@ export class PlayerAffects {
     }
   }
 
-  onBeforeReceive(ctx: BaseActionContext, action: BaseAction) {
-    for (const affect of this.#affects) {
-      this.withOnCastFail(() => affect.onBeforeReceive?.(ctx, action, affect), ctx, action);
-    }
-  }
-
   onCast(params: BaseActionParams, action: ActionKey) {
     for (const affect of this.#affects) {
       if (action === affect.action) {
