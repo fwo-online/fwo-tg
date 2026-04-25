@@ -1,0 +1,16 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`nineLives should passively block if target has a lot of pdef 1`] = `
+"_🐱 Девять жизней_ *Игрок 1* ❤️+1/0.05
+"
+`;
+
+exports[`nineLives should  1`] = `
+"_🐱 Девять жизней_ *Игрок 1* ❤️+1/0.05
+"
+`;
+
+exports[`nineLives initiator should be revived 1`] = `
+"_🐱 Девять жизней_ *Игрок 1* ❤️+1/0.05
+"
+`;

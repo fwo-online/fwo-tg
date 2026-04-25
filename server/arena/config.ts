@@ -115,5 +115,6 @@ export default {
     // 'life_force',
     // 'spirit_unity',
     'secondLife',
+    'nineLives',
   ] as const,
 };
