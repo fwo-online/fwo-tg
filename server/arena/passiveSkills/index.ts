@@ -2,6 +2,7 @@ export { consussion } from './consussion';
 export { deathEcho } from './deathEcho';
 export { divineWill } from './divineWill';
 export { fatesMiss } from './fatesMiss';
+export { healBonk } from './healBonk';
 export { huntersMark } from './huntersMark';
 export { lacerate } from './lacerate';
 export { markedShot } from './markedShot';
