@@ -34,7 +34,13 @@ class StaticProtect extends PassiveSkillConstructor {
 
     const ratio = attack / protect;
 
-    return Math.round((1 - Math.exp(-2 * ratio)) * 100);
+    const chance = Math.round((1 - Math.exp(-2 * ratio)) * 100);
+
+    console.debug(
+      `staticProtect:: chance ${chance}, attack ${attack} protect ${protect} ratio ${ratio}`,
+    );
+
+    return chance;
   }
 
   onBeforeDamageRecieve(ctx: BaseActionContext, action: BaseAction) {
