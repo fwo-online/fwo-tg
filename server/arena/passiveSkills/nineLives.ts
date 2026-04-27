@@ -8,8 +8,8 @@ class NineLives extends PassiveSkillConstructor {
     super({
       name: 'nineLives',
       displayName: '🐱 Девять жизней',
-      description: 'Шанс остаться в живых при получении смертельного урона',
-      chance: [2.5, 5, 10],
+      description: 'Шанс остаться в живых при получении смертельного урона один раз за бой',
+      chance: [10, 20, 33],
       effect: [],
       bonusCost: [],
     });
@@ -48,7 +48,8 @@ class NineLives extends PassiveSkillConstructor {
 
     initiator.stats.set('hp', 0.05);
     this.status.effect = Math.abs(hp);
-    target.resetKiller();
+    initiator.resetKiller();
+    initiator.affects.removeEffectsByAction(this.name);
 
     this.next();
   }
