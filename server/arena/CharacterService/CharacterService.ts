@@ -107,7 +107,8 @@ export class CharacterService {
     return Object.freeze({
       fatesMiss: 1,
       divineWill: 1,
-      staticProtect: 1,
+      // @FIXME staticProtect:: chance 0, attack 0 protect 27 ratio 0
+      // staticProtect: 1,
       ...mergeNumbersWith(characterPassiveSkills, itemPassiveSkills, Math.max),
     });
   }
