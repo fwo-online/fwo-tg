@@ -72,7 +72,7 @@ export default class PlayerService {
     this.resists = {}; // Объект резистов
     this.skills = structuredClone(params.skills) || {}; // Обькт доступных скилов
     this.magics = structuredClone(params.magics) || {}; // объект изученых магий
-    this.passiveSkills = params.passiveSkills || {};
+    this.passiveSkills = structuredClone(params.passiveSkills || {});
     this.alive = true;
     this.proc = 100;
     this.weapon = new PlayerWeapon(params.inventory.getEquippedWeapon());
