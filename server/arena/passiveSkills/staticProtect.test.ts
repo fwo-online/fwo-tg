@@ -10,7 +10,7 @@ describe('staticProtect', () => {
   let game: GameService;
 
   beforeEach(async () => {
-    game = await TestUtils.createGame([{ passiveSkills: { staticProtect: 1 } }, { weapon: {} }]);
+    game = await TestUtils.createGame([{ weapon: {} }, { passiveSkills: { staticProtect: 1 } }]);
 
     TestUtils.mockRandom();
   });
@@ -26,19 +26,19 @@ describe('staticProtect', () => {
     game.players.players[0].proc = 1;
 
     game.players.players[0].stats.set('phys.attack', 10);
-    attack.cast(game.players.players[1], game.players.players[0], game);
+    attack.cast(game.players.players[0], game.players.players[1], game);
     expect(staticProtect.getChance()).toBe(33);
 
     game.players.players[0].stats.set('phys.attack', 25);
-    attack.cast(game.players.players[1], game.players.players[0], game);
+    attack.cast(game.players.players[0], game.players.players[1], game);
     expect(staticProtect.getChance()).toBe(63);
 
     game.players.players[0].stats.set('phys.attack', 50);
-    attack.cast(game.players.players[1], game.players.players[0], game);
+    attack.cast(game.players.players[0], game.players.players[1], game);
     expect(staticProtect.getChance()).toBe(86);
 
     game.players.players[0].stats.set('phys.attack', 100);
-    attack.cast(game.players.players[1], game.players.players[0], game);
+    attack.cast(game.players.players[0], game.players.players[1], game);
     expect(staticProtect.getChance()).toBe(98);
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
