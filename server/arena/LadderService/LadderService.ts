@@ -116,14 +116,14 @@ export class LadderService {
       await this.setPSRForPlayers(results);
 
       await LadderModel.create(
-        this.players.nonBotPlayers.map((player) => ({
-          player: player.id,
-          psr: player.stats.collect.psr,
-          winner: player.performance.winner,
-          alive: player.performance.alive,
-          kills: player.performance.kills,
-          damage: player.performance.damage,
-          heal: player.performance.heal,
+        results.map((result) => ({
+          player: result.player.id,
+          psr: this.players.getById(result.player.id)?.stats.collect.psr,
+          winner: result.winner,
+          alive: result.alive,
+          kills: result.kills,
+          damage: result.damage,
+          heal: result.heal,
           rounds: this.round.count,
         })),
       );
