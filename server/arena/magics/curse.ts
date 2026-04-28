@@ -32,7 +32,7 @@ class Curse extends CommonMagic {
       duration: initiator.stats.val('spellLength'),
       initiator,
       proc: initiator.proc,
-      onCast({ initiator, target, game }) {
+      onCast(game) {
         initiator.proc = this.proc;
         curseEffect.duration = this.duration;
         curseEffect.cast(initiator, target, game);

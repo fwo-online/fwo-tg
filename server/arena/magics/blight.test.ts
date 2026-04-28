@@ -37,11 +37,7 @@ describe('blight', () => {
     const effects = game.players.players[1].affects.getEffectsByAction(blight.name);
     expect(effects).toHaveLength(1);
     effects[0].onCast?.(
-      {
-        initiator: game.players.players[0],
-        target: game.players.players[1],
-        game,
-      },
+      game,
       effects[0],
     );
 

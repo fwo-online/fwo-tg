@@ -315,7 +315,10 @@ export class CharacterService {
    * @param lvl уровень проученной магии
    */
   async learnMagic(magicId: string, lvl: number) {
-    this.charObj.magics[magicId] = lvl;
+    this.charObj.magics = {
+      ...this.charObj.magics,
+      [magicId]: lvl,
+    };
     // опасный тест
     await this.saveToDb();
   }
@@ -326,12 +329,19 @@ export class CharacterService {
    * @param {number} lvl уровень проученного умения
    */
   async learnSkill(skillId: string, lvl: number) {
-    this.charObj.skills[skillId] = lvl;
+    this.charObj.skills = {
+      ...this.charObj.skills,
+      [skillId]: lvl,
+    };
     await this.saveToDb();
   }
 
   async learnPassiveSkill(skillId: string, lvl: number) {
-    this.charObj.passiveSkills[skillId] = lvl;
+    this.charObj.passiveSkills = {
+      ...this.charObj.passiveSkills,
+      [skillId]: lvl,
+    };
+
     await this.saveToDb();
   }
 

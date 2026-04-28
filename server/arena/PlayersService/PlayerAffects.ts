@@ -1,12 +1,9 @@
 import type { ActionKey } from '@/arena/ActionService';
-import type {
-  BaseAction,
-  BaseActionContext,
-  BaseActionParams,
-} from '@/arena/Constuructors/BaseAction';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import type { Affect, Effect, LongEffect, Passive } from '@/arena/Constuructors/interfaces/Affect';
 import type { BreaksMessage, SuccessArgs } from '@/arena/Constuructors/types';
 import { isCastError } from '@/arena/errors/CastError';
+import type GameService from '@/arena/GameService';
 
 export class PlayerAffects {
   #affects: Affect[] = [];
@@ -89,10 +86,10 @@ export class PlayerAffects {
     }
   }
 
-  onCast(params: BaseActionParams, action: ActionKey) {
+  onCast(game: GameService, action: ActionKey) {
     for (const affect of this.#affects) {
       if (action === affect.action) {
-        affect.onCast?.(params, affect);
+        affect.onCast?.(game, affect);
       }
     }
   }

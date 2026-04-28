@@ -24,11 +24,9 @@ describe('nineLives', () => {
     nineLives.cast(game.players.players[0]);
     game.players.players[0].stats.set('hp', -1);
     expect(game.players.players[0].stats.val('hp')).toBe(-1);
-    nineLives.onCast({
-      initiator: game.players.players[0],
-      target: game.players.players[0],
-      game: game,
-    });
+
+    const effects = game.players.players[0].affects.getEffectsByAction('nineLives');
+    effects[0]?.onCast?.(game, effects[0]);
 
     expect(game.players.players[0].stats.val('hp')).toBe(0.05);
     expect(game.players.players[0].getKiller()).toBeUndefined();
