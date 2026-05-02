@@ -34,14 +34,7 @@ describe('consussion', () => {
     const effects = game.players.players[1].affects.getEffectsByAction('stun');
     expect(effects).toHaveLength(1);
 
-    effects[0].onCast?.(
-      {
-        initiator: game.players.players[0],
-        target: game.players.players[1],
-        game,
-      },
-      effects[0],
-    );
+    effects[0].onCast?.(game, effects[0]);
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
 });
