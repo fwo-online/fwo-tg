@@ -1,5 +1,5 @@
 import EventEmitter from 'node:events';
-import { monstersClanName, playersClanName } from '@fwo/shared';
+import { monstersClanName, playersClanName, TowerState } from '@fwo/shared';
 import { times } from 'es-toolkit/compat';
 import { type HydratedDocument, Types } from 'mongoose';
 import arena from '@/arena';
@@ -13,8 +13,8 @@ import { createTowerGame } from '@/helpers/gameHelper';
 import { ClanModel } from '@/models/clan';
 import { type Tower, TowerModel } from '@/models/tower';
 
-const timeout = 2.5 * 1000; // 5s
-const timeLeft = timeout * 48; // 4m;
+const timeout = 2 * 1000; // 2s
+const timeLeft = 120 * 1000; // 60s;
 
 export class TowerService extends EventEmitter<{
   start: [tower: TowerService];
@@ -31,12 +31,15 @@ export class TowerService extends EventEmitter<{
   lvl: number;
   init: string[];
   currentGame?: GameService;
+  state: TowerState;
+  accepted = new Set<string>();
   checkInterval?: Timer;
 
   constructor(init: string[], lvl: number) {
     super();
     this.init = init;
     this.lvl = lvl;
+    this.state = TowerState.Waiting;
   }
 
   static emitter = new EventEmitter<{ start: [TowerService] }>();
@@ -56,12 +59,11 @@ export class TowerService extends EventEmitter<{
 
     this.characters.forEach((character) => {
       character.towerID = this.id;
-      character.gameId = this.id;
     });
 
     TowerService.emitter.emit('start', this);
     this.emit('start', this);
-    this.initHandlers();
+    this.startCountdownTimer();
     return this;
   }
 
@@ -130,8 +132,10 @@ export class TowerService extends EventEmitter<{
       throw new Error('Failed to create game');
     }
 
+    this.accepted.clear();
     this.battlesCount++;
     this.currentGame = game;
+    this.state = TowerState.Battle;
 
     if (isBoss) {
       this.createBoss(game);
@@ -181,7 +185,8 @@ export class TowerService extends EventEmitter<{
     if (wasBossBattle || !win) {
       await this.endTower(win);
     } else {
-      this.initHandlers();
+      this.state = TowerState.Waiting;
+      this.startCountdownTimer();
     }
   }
 
@@ -206,7 +211,29 @@ export class TowerService extends EventEmitter<{
     this.resetTowerIds(nonBotDead.map(({ id }) => arena.characters[id]));
   }
 
-  initHandlers() {
+  async handleAcceptNext(character: CharacterService, accept: boolean) {
+    if (accept) {
+      this.accepted.add(character.id);
+      await this.checkStartFight();
+    } else {
+      this.accepted.delete(character.id);
+    }
+  }
+
+  async checkStartFight(force = false) {
+    if (!force && this.accepted.size !== this.init.length) {
+      return;
+    }
+
+    if (this.state !== TowerState.Waiting) {
+      return;
+    }
+
+    clearInterval(this.checkInterval);
+    await this.startFight(this.battlesCount > 2);
+  }
+
+  startCountdownTimer() {
     this.checkInterval = setInterval(async () => {
       this.timeSpent += timeout;
       this.timeLeft -= timeout;
@@ -214,32 +241,17 @@ export class TowerService extends EventEmitter<{
 
       if (this.timeLeft <= 0) {
         clearInterval(this.checkInterval);
-        await this.startFight(true);
-        return;
-      }
-
-      if (this.battlesCount >= 2) {
+        await this.checkStartFight(true);
+      } else {
         this.emit('updateTime', this.timeSpent, this.timeLeft);
-        return;
       }
-
-      if (
-        MiscService.dice('1d100') >= 90 ||
-        (this.timeSpent > this.timeLeft && this.battlesCount === 0) ||
-        (this.timeSpent > this.timeLeft * 1.5 && this.battlesCount === 1)
-      ) {
-        clearInterval(this.checkInterval);
-        await this.startFight(false);
-        return;
-      }
-
-      this.emit('updateTime', this.timeSpent, this.timeLeft);
     }, timeout);
   }
 
   async endTower(win: boolean) {
     this.resetTowerIds(this.characters, !win);
 
+    this.state = TowerState.Finished;
     this.tower.win = win;
     this.tower.ended = true;
     await this.tower.save();
@@ -248,11 +260,6 @@ export class TowerService extends EventEmitter<{
 
     this.emit('end');
     this.removeAllListeners();
-  }
-
-  static isPlayerInTower(playerId: string): boolean {
-    const char = arena.characters[playerId];
-    return Boolean(char?.towerID);
   }
 
   static async getTowerByCharacterID(characterID: string): Promise<TowerService | undefined> {

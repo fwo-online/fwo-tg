@@ -1,7 +1,7 @@
+import { keyBy } from 'es-toolkit';
 import { TowerService } from '@/arena/TowerService/TowerService';
 import { activeConnections } from '@/server/utils/activeConnectons';
 import type { Server, Socket } from '@/server/ws';
-import { keyBy } from 'es-toolkit';
 
 const getRoom = (tower: TowerService) => {
   return `tower:${tower.id}`;
@@ -36,7 +36,7 @@ export const onConnection = (_io: Server, socket: Socket) => {
   const { character } = socket.data;
 
   socket.on('tower:connected', async (callback) => {
-    const tower = character.currentTower;
+    const tower = await TowerService.getTowerByCharacterID(character.id);
     if (!tower) {
       return callback({ error: true, message: 'Вы не в башне' });
     }
@@ -49,7 +49,24 @@ export const onConnection = (_io: Server, socket: Socket) => {
         ),
         timeSpent: tower.timeSpent,
         timeLeft: tower.timeLeft,
+        accepted: Array.from(tower.accepted),
       });
+    } catch (e) {
+      console.error(e);
+      return callback({ error: true, message: 'Что-то пошло не так' });
+    }
+  });
+
+  socket.on('tower:accept', async (accept, callback) => {
+    const tower = await TowerService.getTowerByCharacterID(character.id);
+
+    if (!tower) {
+      return callback({ error: true, message: 'Вы не в башне' });
+    }
+
+    try {
+      await tower.handleAcceptNext(character, accept);
+      return callback({ accepted: Array.from(tower.accepted) });
     } catch (e) {
       console.error(e);
       return callback({ error: true, message: 'Что-то пошло не так' });

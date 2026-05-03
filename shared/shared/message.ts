@@ -48,9 +48,11 @@ export type ClientToServerMessage = Message<{
         players: Record<string, CharacterPublic>;
         timeSpent: number;
         timeLeft: number;
+        accepted: string[];
       }>,
     ) => void,
   ];
+  'tower:accept': [accept: boolean, callback: (payload: RPC<{ accepted: string[] }>) => void];
   'forest:enter': [callback: (payload: RPC<{ forestId: string }>) => void];
   'forest:connect': [callback: (payload: RPC<ForestStatus>) => void];
   'forest:handleEvent': [
