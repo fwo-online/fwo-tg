@@ -38,7 +38,7 @@ class Blessing extends CommonMagic {
         duration: initiator.stats.val('spellLength'),
         proc: initiator.proc,
         initiator,
-        onCast({ initiator, target, game }) {
+        onCast(game) {
           initiator.proc = this.proc;
           blessingEffect.duration = this.duration;
           blessingEffect.cast(initiator, target, game);

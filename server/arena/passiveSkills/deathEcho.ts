@@ -29,8 +29,8 @@ class DeathEcho extends PassiveSkillConstructor {
       onBeforeAction(ctx, action) {
         deathEcho.onBeforeAction(ctx, action);
       },
-      onCast(params) {
-        deathEcho.onCast(params);
+      onCast(game) {
+        deathEcho.onCast({ initiator, target: initiator, game });
       },
     });
   }

@@ -37,7 +37,7 @@ class FrostTouch extends CommonMagic {
       initiator,
       proc: initiator.proc,
       duration: initiator.stats.val('spellLength'),
-      onCast({ initiator, target, game }) {
+      onCast(game) {
         initiator.proc = this.proc;
         frostTouchEffect.duration = this.duration;
         frostTouchEffect.cast(initiator, target, game);

@@ -30,11 +30,7 @@ describe('frostTouch', () => {
     const effects = game.players.players[1].affects.getEffectsByAction(frostTouch.name);
 
     effects[0].onCast?.(
-      {
-        initiator: game.players.players[0],
-        target: game.players.players[1],
-        game,
-      },
+      game,
       game.players.players[1].affects.affects[0],
     );
 

@@ -1,10 +1,7 @@
 import type { ActionKey } from '@/arena/ActionService';
-import type {
-  BaseAction,
-  BaseActionContext,
-  BaseActionParams,
-} from '@/arena/Constuructors/BaseAction';
+import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import type { BreaksMessage, SuccessArgs } from '@/arena/Constuructors/types';
+import type GameService from '@/arena/GameService';
 import type { Player } from '@/arena/PlayersService';
 
 type BaseAffect = {
@@ -23,7 +20,7 @@ type BaseAffect = {
     action: BaseAction,
     affect: Affect,
   ) => void | SuccessArgs | SuccessArgs[];
-  onCast?: (params: BaseActionParams, affect: Affect) => void;
+  onCast?: (game: GameService, affect: Affect) => void;
   onBeforeDamageDeal?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
   onBeforeDamageRecieve?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
   onDamageDealt?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;

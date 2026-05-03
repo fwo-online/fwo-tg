@@ -54,7 +54,7 @@ class Lacerate extends PassiveSkillConstructor {
       duration: initiator.stats.val('spellLength'),
       proc: initiator.proc,
       initiator,
-      onCast({ initiator, target, game }) {
+      onCast(game) {
         initiator.proc = this.proc;
         bleeding.duration = this.duration;
         bleeding.cast(initiator, target, game);

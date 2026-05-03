@@ -22,8 +22,8 @@ class NineLives extends PassiveSkillConstructor {
       action: this.name,
       initiator,
       value: 0,
-      onCast(params) {
-        nineLives.onCast(params);
+      onCast(game) {
+        nineLives.onCast({ initiator, target: initiator, game });
       },
     });
   }

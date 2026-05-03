@@ -36,7 +36,7 @@ class Blight extends CommonMagic {
       duration: initiator.stats.val('spellLength'),
       proc: initiator.proc,
       initiator,
-      onCast({ initiator, target, game }) {
+      onCast(game) {
         initiator.proc = this.proc;
         blightEffect.duration = this.duration;
         blightEffect.cast(initiator, target, game);
