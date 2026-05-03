@@ -7,4 +7,5 @@ export * from './item';
 export * from './itemSet';
 export * from './notifications';
 export * from './shared';
+export * from './tower';
 export * from './utils';

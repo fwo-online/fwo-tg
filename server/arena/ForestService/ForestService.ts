@@ -423,6 +423,7 @@ export class ForestService extends EventEmitter<{
       gold,
       components,
       winner,
+      alive: winner,
     };
 
     delete arena.forests?.[this.id];
