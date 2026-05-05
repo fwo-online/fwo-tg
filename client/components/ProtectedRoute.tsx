@@ -1,4 +1,5 @@
 import type { ClientToServerMessage, ServerToClientMessage } from '@fwo/shared';
+import { useState } from 'react';
 import {
   createContext,
   type LoaderFunctionArgs,
@@ -8,7 +9,6 @@ import {
   redirect,
   useLoaderData,
 } from 'react-router';
-import { useEffect, useState } from 'react';
 import type { Socket } from 'socket.io-client';
 import { createWebSocket } from '@/api';
 import { getCharacter } from '@/api/character';
@@ -18,6 +18,7 @@ import { SocketContext } from '@/context/socket';
 import { useCharacterGuard } from '@/hooks/useCharacterGuard';
 import { useForestGuard } from '@/hooks/useForestGuard';
 import { useGameGuard } from '@/hooks/useGameGuard';
+import { useMountEffect } from '@/hooks/useMountEffect';
 import { useTowerGuard } from '@/hooks/useTowerGuard';
 import { useCharacterStore } from '@/modules/character/store/character';
 
@@ -74,12 +75,12 @@ export const ProtectedRoute = () => {
   const setCharacter = useCharacterStore((state) => state.setCharacter);
   const [hydrated, setHydrated] = useState(false);
 
-  useEffect(() => {
+  useMountEffect(() => {
     if (character) {
       setCharacter(character);
     }
     setHydrated(true);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  });
 
   if (!character) {
     return <Navigate to="/" />;
