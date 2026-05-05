@@ -1,5 +1,6 @@
 import type { Character, CreateCharacterDto } from '@fwo/shared';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { createCharacter, getMyCharacters, activateCharacter } from '@/api/character';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
@@ -8,6 +9,7 @@ import { useRequest } from '@/hooks/useRequest';
 import { SelectCharacter } from '@/modules/character/components/CharacterSelect';
 
 export const CharacterCreatePage = () => {
+  const navigate = useNavigate();
   const [myCharacters, setMyCharacters] = useState<Character[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [_, makeRequest] = useRequest();
@@ -49,11 +51,10 @@ export const CharacterCreatePage = () => {
                 <span className="text-sm text-gray-500 ml-2">
                   {characterClassNameMap[char.class]} {char.lvl} ур.
                 </span>
-                {char.active && (
-                  <span className="text-xs text-green-500 ml-1">(активный)</span>
-                )}
               </div>
-              {!char.active && (
+              {char.active ? (
+                <Button onClick={() => navigate('/character')}>Войти</Button>
+              ) : (
                 <Button onClick={() => handleActivate(char.id)}>Переключить</Button>
               )}
             </div>
