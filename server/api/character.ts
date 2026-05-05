@@ -1,4 +1,5 @@
 import type { QueryFilter, UpdateQuery } from 'mongoose';
+import { Types } from 'mongoose';
 import type { Char } from '@/models/character';
 import { CharModel } from '@/models/character';
 import type { Clan } from '@/models/clan';
@@ -63,7 +64,7 @@ export async function updateCharacter(id: string, query: UpdateQuery<Char>) {
 
 export async function deactivateOtherCharacters(owner: string, excludeId: string) {
   return CharModel.updateMany(
-    { owner, _id: { $ne: excludeId }, deleted: false },
+    { owner, _id: { $ne: new Types.ObjectId(excludeId) }, deleted: false },
     { active: false },
   );
 }
