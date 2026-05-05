@@ -1,7 +1,7 @@
 import type { Character } from '@fwo/shared';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { getMyCharacters, activateCharacter } from '@/api/character';
+import { activateCharacter, getMyCharacters } from '@/api/character';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { characterClassNameMap } from '@/constants/character';
@@ -28,7 +28,9 @@ export function SettingsPage() {
   const isClanOwner = character.clan?.owner === character.id;
 
   useEffect(() => {
-    getMyCharacters().then(setMyCharacters).catch(() => {});
+    getMyCharacters()
+      .then(setMyCharacters)
+      .catch(() => {});
   }, []);
 
   const handleActivate = async (id: string) => {
@@ -74,21 +76,26 @@ export function SettingsPage() {
               </div>
             ))}
           </div>
-          <div className="mt-4">
-            <Button className="is-primary w-full" onClick={() => navigate('/create')}>
+          <div className="mt-4 flex flex-col gap-2">
+            <Button className="is-primary" onClick={() => navigate('/create')}>
               Создать нового
+            </Button>
+
+            <Button className="is-error" onClick={removeCharacter}>
+              Удалить текущего персонажа
             </Button>
           </div>
         </Card>
       )}
 
-      <Card header="Управление аккаунтом" className="m-4">
-        <div className="flex flex-col gap-2">
-          <Button className='is-error' onClick={removeCharacter}>Удалить персонажа</Button>
-          {isClanOwner && <Button onClick={removeClan}>Удалить клан</Button>}
-          {character.clan && !isClanOwner && <Button onClick={leaveClan}>Покинуть клан</Button>}
-        </div>
-      </Card>
+      {character.clan ? (
+        <Card header="Управление аккаунтом" className="m-4">
+          <div className="flex flex-col gap-2">
+            {isClanOwner && <Button onClick={removeClan}>Удалить клан</Button>}
+            {character.clan && !isClanOwner && <Button onClick={leaveClan}>Покинуть клан</Button>}
+          </div>
+        </Card>
+      ) : null}
     </>
   );
 }
