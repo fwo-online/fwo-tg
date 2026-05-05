@@ -67,13 +67,13 @@ export function SettingsPage() {
                   <span className="text-sm text-gray-500 ml-2">
                     {characterClassNameMap[char.class]} {char.lvl} ур.
                   </span>
-                  {char.active && (
-                    <span className="text-xs text-green-500 ml-1">(активный)</span>
-                  )}
                 </div>
-                {!char.active && (
-                  <Button onClick={() => handleActivate(char.id)}>Переключить</Button>
-                )}
+                <Button
+                  disabled={char.active}
+                  onClick={() => handleActivate(char.id)}
+                >
+                  {char.active ? 'Активен' : 'Сменить'}
+                </Button>
               </div>
             ))}
           </div>

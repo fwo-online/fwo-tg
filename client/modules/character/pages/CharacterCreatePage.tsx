@@ -55,7 +55,7 @@ export const CharacterCreatePage = () => {
               {char.active ? (
                 <Button onClick={() => navigate('/character')}>Войти</Button>
               ) : (
-                <Button onClick={() => handleActivate(char.id)}>Переключить</Button>
+                <Button onClick={() => handleActivate(char.id)}>Сменить</Button>
               )}
             </div>
           ))}
