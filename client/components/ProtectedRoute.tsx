@@ -8,6 +8,7 @@ import {
   redirect,
   useLoaderData,
 } from 'react-router';
+import { useEffect } from 'react';
 import type { Socket } from 'socket.io-client';
 import { createWebSocket } from '@/api';
 import { getCharacter } from '@/api/character';
@@ -73,12 +74,14 @@ export const ProtectedRoute = () => {
   const setCharacter = useCharacterStore((state) => state.setCharacter);
   const characterID = useCharacterStore((state) => state.character?.id);
 
+  useEffect(() => {
+    if (character && !characterID) {
+      setCharacter(character);
+    }
+  }, [character, characterID, setCharacter]);
+
   if (!character) {
     return <Navigate to="/" />;
-  }
-
-  if (!characterID) {
-    setCharacter(character);
   }
 
   return (
