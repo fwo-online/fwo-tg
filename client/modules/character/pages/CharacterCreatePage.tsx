@@ -22,7 +22,7 @@ export const CharacterCreatePage = () => {
     await makeRequest(async () => {
       const character = await createCharacter(createCharacterDto);
       if (character) {
-        window.location.reload();
+        window.location.href = '/';
       }
     });
   };
