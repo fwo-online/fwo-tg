@@ -288,7 +288,11 @@ export class CharacterService {
     return chars.map((char) => {
       const id = char._id.toString();
       const cached = arena.characters[id];
-      if (cached) return cached;
+      if (cached) {
+        // Обновить active из БД — кеш мог устареть после activate/create
+        cached.charObj.active = char.active;
+        return cached;
+      }
 
       const instance = new CharacterService(char as unknown as Char);
       arena.characters[id] = instance;
@@ -437,8 +441,15 @@ export class CharacterService {
    * Сделать этого персонажа активным (деактивирует остальных)
    */
   async activate() {
-    // Деактивировать всех остальных персонажей этого пользователя
+    // Деактивировать всех остальных персонажей этого пользователя в БД
     await deactivateOtherCharacters(this.owner, this.id);
+
+    // Удалить остальных персонажей из кеша, чтобы не отдавали устаревший active: true
+    for (const id of Object.keys(arena.characters)) {
+      if (arena.characters[id].owner === this.owner && id !== this.id) {
+        delete arena.characters[id];
+      }
+    }
 
     // Активировать текущего
     this.charObj.active = true;
