@@ -68,10 +68,7 @@ export function SettingsPage() {
                     {characterClassNameMap[char.class]} {char.lvl} ур.
                   </span>
                 </div>
-                <Button
-                  disabled={char.active}
-                  onClick={() => handleActivate(char.id)}
-                >
+                <Button onClick={() => handleActivate(char.id)}>
                   {char.active ? 'Активен' : 'Сменить'}
                 </Button>
               </div>
