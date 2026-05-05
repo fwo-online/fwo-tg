@@ -18,11 +18,12 @@ export async function findCharacter(query: QueryFilter<Char>) {
 }
 
 export async function findCharacters(query: QueryFilter<Char>) {
-  return CharModel.find({ ...query, deleted: false })
+  const characters = await CharModel.find({ ...query, deleted: false })
     .populate<{ items: Item[] }>('items')
     .populate<{ equipment: Map<ItemWear, Item> }>('equipment')
-    .populate<{ clan: Clan }>('clan')
-    .lean();
+    .populate<{ clan: Clan }>('clan');
+
+  return characters.map((c) => c.toObject({ minimize: false }));
 }
 
 export async function hasCharacter(query: QueryFilter<Char>) {
