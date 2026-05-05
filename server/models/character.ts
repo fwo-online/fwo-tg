@@ -49,6 +49,7 @@ export interface Char {
     expiresAt: Date;
   };
   deleted: boolean;
+  active: boolean;
   items: Item[];
   equipment: Map<ItemWear, Item>;
   components: Map<ItemComponent, number>;
@@ -146,6 +147,7 @@ const character = new Schema<Char, CharModel>({
     default: {},
   },
   deleted: { type: Boolean, default: false },
+  active: { type: Boolean, default: true },
   favoriteMagicList: [{ type: String }],
   components: {
     type: Schema.Types.Map,

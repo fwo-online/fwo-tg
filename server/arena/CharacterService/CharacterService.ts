@@ -1,6 +1,6 @@
 import type { Character, CharacterClass, CharacterPublic, ItemComponent } from '@fwo/shared';
 import type { UpdateQuery } from 'mongoose';
-import { findCharacter, removeCharacter, updateCharacter } from '@/api/character';
+import { findCharacter, findCharacters, removeCharacter, updateCharacter, deactivateOtherCharacters, activateCharacter, activateAnyCharacter } from '@/api/character';
 import arena from '@/arena';
 import { CharacterAttributes } from '@/arena/CharacterService/CharacterAttributes';
 import { CharacterPerformance } from '@/arena/CharacterService/CharacterPerformance';
@@ -266,7 +266,7 @@ export class CharacterService {
    * @param {string} owner идентификатор пользователя в TG (tgId)
    */
   static async getCharacter(owner: string) {
-    const charFromDb = await findCharacter({ owner });
+    const charFromDb = await findCharacter({ owner, active: true });
 
     const cachedChar = arena.characters[charFromDb.id];
     if (cachedChar) {
@@ -276,6 +276,24 @@ export class CharacterService {
     const char = new CharacterService(charFromDb);
     arena.characters[char.id] = char;
     return char;
+  }
+
+  /**
+   * Получить всех персонажей пользователя
+   * @param owner идентификатор пользователя в TG (tgId)
+   */
+  static async getAllCharacters(owner: string) {
+    const chars = await findCharacters({ owner });
+
+    return chars.map((char) => {
+      const id = char._id.toString();
+      const cached = arena.characters[id];
+      if (cached) return cached;
+
+      const instance = new CharacterService(char as unknown as Char);
+      arena.characters[id] = instance;
+      return instance;
+    });
   }
 
   /**
@@ -410,6 +428,21 @@ export class CharacterService {
 
     await removeCharacter(this.id);
     delete arena.characters[this.id];
+
+    // Авто-активация другого персонажа, если есть
+    await activateAnyCharacter(this.owner);
+  }
+
+  /**
+   * Сделать этого персонажа активным (деактивирует остальных)
+   */
+  async activate() {
+    // Деактивировать всех остальных персонажей этого пользователя
+    await deactivateOtherCharacters(this.owner, this.id);
+
+    // Активировать текущего
+    this.charObj.active = true;
+    await activateCharacter(this.id);
   }
 
   toObject(): Character {
@@ -440,6 +473,7 @@ export class CharacterService {
         number
       >,
       notificationSettings: this.charObj.notificationSettings,
+      active: this.charObj.active,
       ...this.inventory.toObject(),
     };
   }

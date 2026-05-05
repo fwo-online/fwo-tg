@@ -4,7 +4,6 @@ import { CharModel } from '@/models/character';
 import type { Clan } from '@/models/clan';
 import { ItemModel, type Item } from '@/models/item';
 import { ItemWear } from '@fwo/shared';
-import ValidationError from '@/arena/errors/ValidationError';
 
 export async function findCharacter(query: QueryFilter<Char>) {
   const character = await CharModel.findOne({ ...query, deleted: false })
@@ -18,8 +17,16 @@ export async function findCharacter(query: QueryFilter<Char>) {
   return char;
 }
 
+export async function findCharacters(query: QueryFilter<Char>) {
+  return CharModel.find({ ...query, deleted: false })
+    .populate<{ items: Item[] }>('items')
+    .populate<{ equipment: Map<ItemWear, Item> }>('equipment')
+    .populate<{ clan: Clan }>('clan')
+    .lean();
+}
+
 export async function hasCharacter(query: QueryFilter<Char>) {
-  const character = await CharModel.exists({ ...query, deleted: false });
+  const character = await CharModel.exists({ ...query, deleted: false, active: true });
 
   return !!character;
 }
@@ -36,9 +43,10 @@ export async function removeCharacter(_id?: string) {
 export async function createCharacter(
   charObj: Pick<Char, 'nickname' | 'prof' | 'sex' | 'owner' | 'harks' | 'magics'>,
 ) {
-  if (await CharModel.exists({ owner: charObj.owner, deleted: false })) {
-    throw new ValidationError('Для этого пользователя уже существует персонаж');
-  }
+  await CharModel.updateMany(
+    { owner: charObj.owner, deleted: false, active: true },
+    { active: false },
+  );
   const character = await CharModel.create(charObj);
   const item = await ItemModel.firstCreate(character);
   await updateCharacter(character.id, { items: [item], equipment: { [ItemWear.MainHand]: item } });
@@ -50,6 +58,26 @@ export async function updateCharacter(id: string, query: UpdateQuery<Char>) {
   return CharModel.findByIdAndUpdate(id, query, { returnDocument: 'after' }).orFail(
     new Error('Персонаж не найден'),
   );
+}
+
+export async function deactivateOtherCharacters(owner: string, excludeId: string) {
+  return CharModel.updateMany(
+    { owner, _id: { $ne: excludeId }, deleted: false },
+    { active: false },
+  );
+}
+
+export async function activateCharacter(id: string) {
+  return CharModel.findByIdAndUpdate(id, { active: true }).orFail(
+    new Error('Персонаж не найден'),
+  );
+}
+
+export async function activateAnyCharacter(owner: string) {
+  const character = await CharModel.findOne({ owner, deleted: false });
+  if (character) {
+    await CharModel.updateOne({ _id: character._id }, { active: true });
+  }
 }
 
 export async function getCharactersByPSR({ limit = 25, games = 25 } = {}) {
