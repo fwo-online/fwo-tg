@@ -68,7 +68,7 @@ export function SettingsPage() {
                     {characterClassNameMap[char.class]} {char.lvl} ур.
                   </span>
                 </div>
-                <Button onClick={() => handleActivate(char.id)}>
+                <Button disabled={char.active} onClick={() => handleActivate(char.id)}>
                   {char.active ? 'Активен' : 'Сменить'}
                 </Button>
               </div>
@@ -84,7 +84,7 @@ export function SettingsPage() {
 
       <Card header="Управление аккаунтом" className="m-4">
         <div className="flex flex-col gap-2">
-          <Button onClick={removeCharacter}>Удалить персонажа</Button>
+          <Button className='is-error' onClick={removeCharacter}>Удалить персонажа</Button>
           {isClanOwner && <Button onClick={removeClan}>Удалить клан</Button>}
           {character.clan && !isClanOwner && <Button onClick={leaveClan}>Покинуть клан</Button>}
         </div>
