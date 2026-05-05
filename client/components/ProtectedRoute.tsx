@@ -8,7 +8,7 @@ import {
   redirect,
   useLoaderData,
 } from 'react-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { Socket } from 'socket.io-client';
 import { createWebSocket } from '@/api';
 import { getCharacter } from '@/api/character';
@@ -72,16 +72,21 @@ export const HydrateFallback = () => {
 export const ProtectedRoute = () => {
   const { socket, character } = useLoaderData<typeof loader>();
   const setCharacter = useCharacterStore((state) => state.setCharacter);
-  const characterID = useCharacterStore((state) => state.character?.id);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    if (character && !characterID) {
+    if (character) {
       setCharacter(character);
     }
-  }, [character, characterID, setCharacter]);
+    setHydrated(true);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!character) {
     return <Navigate to="/" />;
+  }
+
+  if (!hydrated) {
+    return <HydrateFallback />;
   }
 
   return (
