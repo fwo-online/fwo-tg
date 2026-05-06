@@ -26,7 +26,6 @@ const params = Object.freeze({
 class Eclipse extends CommonMagic {
   run() {
     const { initiator, game } = this.params;
-    game.flags.global.isEclipsed.push({ initiator });
 
     game.players.alivePlayers.forEach((player) => {
       player.affects.addEffect({
@@ -45,11 +44,12 @@ class Eclipse extends CommonMagic {
       return;
     }
 
-    const { game } = ctx.params;
+    const { game, initiator } = ctx.params;
 
-    // @todo подумать как убрать глобальный флаг и нужно ли его убирать вообще
+    const effects = initiator.affects.getEffectsByAction(this.name);
+
     throw new CastError(
-      game.flags.global.isEclipsed.map(({ initiator }) =>
+      effects.map(({ initiator }) =>
         this.getSuccessResult({ initiator, target: ctx.initiator, game }),
       ),
     );

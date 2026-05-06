@@ -11,10 +11,6 @@ import type { Game } from '@/models/game';
 
 export type KickReason = 'afk' | 'run';
 
-export interface GlobalFlags {
-  isEclipsed: { initiator: Player }[];
-}
-
 export type GameOptions = {
   round?: RoundOptions;
 };
@@ -51,7 +47,6 @@ export default class GameService extends EventEmitter<{
   info!: Game;
   flags: {
     noDamageRound: number;
-    global: GlobalFlags;
   };
 
   /**
@@ -66,9 +61,6 @@ export default class GameService extends EventEmitter<{
     this.orders = new OrderService(this.players, this.round);
     this.flags = {
       noDamageRound: 0,
-      global: {
-        isEclipsed: [],
-      },
     };
   }
 
@@ -264,14 +256,6 @@ export default class GameService extends EventEmitter<{
   }
 
   /**
-   * Очищаем глобальные флаги в бою
-   * затмение, бунт богов, и т.п
-   */
-  refreshRoundFlags(): void {
-    this.flags.global.isEclipsed = [];
-  }
-
-  /**
    * Подвес
    */
   initHandlers(): void {
@@ -296,7 +280,6 @@ export default class GameService extends EventEmitter<{
             this.round.unsubscribe();
             this.beforeEnd();
           } else {
-            this.refreshRoundFlags();
             this.round.nextRound();
           }
           break;
