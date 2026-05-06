@@ -1,6 +1,7 @@
 import { characterAttributesSchema, createCharacterSchema } from '@fwo/shared';
 import { vValidator } from '@hono/valibot-validator';
 import { Hono } from 'hono';
+import { HTTPException } from 'hono/http-exception';
 import * as v from 'valibot';
 import { createCharacter } from '@/api/character';
 import { CharacterService } from '@/arena/CharacterService';
@@ -27,6 +28,26 @@ export const character = new Hono()
     );
 
     const character = await CharacterService.getCharacterById(id);
+    return c.json(character.toObject(), 200);
+  })
+  .get('/my', async (c) => {
+    const user = c.get('user');
+    const characters = await CharacterService.getAllCharacters(user.id.toString());
+    return c.json(
+      characters.map((char) => char.toObject()),
+      200,
+    );
+  })
+  .patch('/:id/activate', async (c) => {
+    const user = c.get('user');
+    const charId = c.req.param('id');
+
+    const character = await CharacterService.getCharacterById(charId);
+    if (character.owner !== user.id.toString()) {
+      throw new HTTPException(403, { message: 'Not your character' });
+    }
+
+    await character.activate();
     return c.json(character.toObject(), 200);
   })
   .use(characterMiddleware)

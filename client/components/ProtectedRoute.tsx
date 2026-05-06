@@ -1,4 +1,5 @@
 import type { ClientToServerMessage, ServerToClientMessage } from '@fwo/shared';
+import { useState } from 'react';
 import {
   createContext,
   type LoaderFunctionArgs,
@@ -17,6 +18,7 @@ import { SocketContext } from '@/context/socket';
 import { useCharacterGuard } from '@/hooks/useCharacterGuard';
 import { useForestGuard } from '@/hooks/useForestGuard';
 import { useGameGuard } from '@/hooks/useGameGuard';
+import { useMountEffect } from '@/hooks/useMountEffect';
 import { useTowerGuard } from '@/hooks/useTowerGuard';
 import { useCharacterStore } from '@/modules/character/store/character';
 
@@ -71,14 +73,21 @@ export const HydrateFallback = () => {
 export const ProtectedRoute = () => {
   const { socket, character } = useLoaderData<typeof loader>();
   const setCharacter = useCharacterStore((state) => state.setCharacter);
-  const characterID = useCharacterStore((state) => state.character?.id);
+  const [hydrated, setHydrated] = useState(false);
+
+  useMountEffect(() => {
+    if (character) {
+      setCharacter(character);
+    }
+    setHydrated(true);
+  });
 
   if (!character) {
     return <Navigate to="/" />;
   }
 
-  if (!characterID) {
-    setCharacter(character);
+  if (!hydrated) {
+    return <HydrateFallback />;
   }
 
   return (

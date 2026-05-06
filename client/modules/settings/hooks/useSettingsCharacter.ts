@@ -1,10 +1,8 @@
 import { deleteCharacter } from '@/api/character';
 import { usePopup } from '@/hooks/usePopup';
 import { useRequest } from '@/hooks/useRequest';
-import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
 
 export const useSettingsCharacter = () => {
-  const { clearCharacter } = useSyncCharacter();
   const [_, makeRequest] = useRequest();
   const popup = usePopup();
 
@@ -15,7 +13,7 @@ export const useSettingsCharacter = () => {
       onConfirm: () =>
         makeRequest(async () => {
           await deleteCharacter();
-          await clearCharacter();
+          window.location.reload();
         }),
     });
   };

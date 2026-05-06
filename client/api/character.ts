@@ -17,6 +17,14 @@ export const createCharacter = async (json: CreateCharacterDto) => {
   return createRequest(client.character.$post)({ json });
 };
 
+export const getMyCharacters = async () => {
+  return createRequest(client.character.my.$get)({});
+};
+
+export const activateCharacter = async (id: string) => {
+  return createRequest(client.character[':id'].activate.$patch)({ param: { id } });
+};
+
 export const changeCharacterAttributes = async (json: CharacterAttributes) => {
   return createRequest(client.character.attributes.$patch)({ json });
 };

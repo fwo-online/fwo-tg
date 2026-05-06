@@ -37,4 +37,5 @@ export type Character = {
   equipment: string[];
   components: Record<ItemComponent, number>;
   notificationSettings?: NotificationSettings;
+  active?: boolean;
 };

@@ -1,5 +1,11 @@
+import type { Character } from '@fwo/shared';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { activateCharacter, getMyCharacters } from '@/api/character';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
+import { characterClassNameMap } from '@/constants/character';
+import { useRequest } from '@/hooks/useRequest';
 import { useCharacter } from '@/modules/character/store/character';
 import { useNotificationSettings } from '@/modules/settings/hooks/useNotificationSettings';
 import { useSettingsCharacter } from '@/modules/settings/hooks/useSettingsCharacter';
@@ -11,12 +17,28 @@ const notificationTypes = [
 ];
 
 export function SettingsPage() {
+  const navigate = useNavigate();
   const character = useCharacter();
   const { removeCharacter } = useSettingsCharacter();
   const { removeClan, leaveClan } = useSettingsClan();
   const { toggleNotification, getNotificationEnabled, loading } = useNotificationSettings();
+  const [myCharacters, setMyCharacters] = useState<Character[]>([]);
+  const [_, makeRequest] = useRequest();
 
   const isClanOwner = character.clan?.owner === character.id;
+
+  useEffect(() => {
+    getMyCharacters()
+      .then(setMyCharacters)
+      .catch(() => {});
+  }, []);
+
+  const handleActivate = async (id: string) => {
+    await makeRequest(async () => {
+      await activateCharacter(id);
+      window.location.reload();
+    });
+  };
 
   return (
     <>
@@ -37,13 +59,43 @@ export function SettingsPage() {
         </div>
       </Card>
 
-      <Card header="Управление аккаунтом" className="m-4">
-        <div className="flex flex-col gap-2">
-          <Button onClick={removeCharacter}>Удалить персонажа</Button>
-          {isClanOwner && <Button onClick={removeClan}>Удалить клан</Button>}
-          {character.clan && !isClanOwner && <Button onClick={leaveClan}>Покинуть клан</Button>}
-        </div>
-      </Card>
+      {myCharacters.length > 0 && (
+        <Card header="Персонажи" className="m-4 mb-8">
+          <div className="flex flex-col gap-2">
+            {myCharacters.map((char) => (
+              <div key={char.id} className="flex items-center justify-between">
+                <div>
+                  <span className="font-semibold">{char.name}</span>
+                  <span className="text-sm text-gray-500 ml-2">
+                    {characterClassNameMap[char.class]} {char.lvl} ур.
+                  </span>
+                </div>
+                <Button disabled={char.active} onClick={() => handleActivate(char.id)}>
+                  {char.active ? 'Активен' : 'Сменить'}
+                </Button>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 flex flex-col gap-2">
+            <Button className="is-primary" onClick={() => navigate('/create')}>
+              Создать нового
+            </Button>
+
+            <Button className="is-error" onClick={removeCharacter}>
+              Удалить текущего персонажа
+            </Button>
+          </div>
+        </Card>
+      )}
+
+      {character.clan ? (
+        <Card header="Управление аккаунтом" className="m-4">
+          <div className="flex flex-col gap-2">
+            {isClanOwner && <Button onClick={removeClan}>Удалить клан</Button>}
+            {character.clan && !isClanOwner && <Button onClick={leaveClan}>Покинуть клан</Button>}
+          </div>
+        </Card>
+      ) : null}
     </>
   );
 }

@@ -10,6 +10,7 @@
     "reset-harks": "bun cli/resetHarks.ts",
     "reset-items": "bun cli/updateItems.ts",
     "add-items": "bun cli/addItems.ts",
+    "migrate-active": "bun cli/migrateActive.ts",
     "lint": "biome lint",
     "format": "biome format --fix",
     "types": "tsc"
