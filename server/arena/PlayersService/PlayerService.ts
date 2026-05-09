@@ -98,10 +98,6 @@ export default class PlayerService {
     }
   }
 
-  get performance() {
-    return this.stats.collect.performance;
-  }
-
   getFailChance(action: ActionKey) {
     return this.modifiers.chance.fail[action] ?? 0;
   }

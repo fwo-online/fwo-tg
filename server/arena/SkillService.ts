@@ -47,6 +47,8 @@ export default class SkillService {
       cost: skill.cost[0],
       costType: skill.costType as CostType,
       orderType: skill.orderType,
+      chance: skill.chance,
+      effect: skill.effect,
     };
   }
 

@@ -1,8 +1,7 @@
 import { useRef } from 'react';
-import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Placeholder } from '@/components/Placeholder';
-import { useHasScroll } from '@/hooks/useHasScroll';
+import { ScrollButton } from '@/components/ScrollButton';
 import { useUnmountEffect } from '@/hooks/useUnmountEffect';
 import { GameOrderList } from '@/modules/game/components/GameOrderList';
 import { GameOrderProgress } from '@/modules/game/components/GameOrderProgress';
@@ -18,11 +17,6 @@ export function GamePage() {
   const reset = useGameStore((state) => state.reset);
   const canOrder = useGameStore((state) => state.canOrder);
   const statusRef = useRef<HTMLDivElement>(null);
-  const hasScroll = useHasScroll(statusRef);
-
-  const handleScroll = () => {
-    statusRef.current?.scrollBy({ top: statusRef.current.clientHeight, behavior: 'smooth' });
-  };
 
   useGameState();
   useGameClosingConfirmation();
@@ -39,11 +33,7 @@ export function GamePage() {
           </div>
           <Card className="basis-full overflow-auto" ref={statusRef}>
             <GameStatus />
-            {hasScroll ? (
-              <Button className="sticky bottom-0 w-full left-0 right-0 p-0" onClick={handleScroll}>
-                ↓
-              </Button>
-            ) : null}
+            <ScrollButton scrollContainerRef={statusRef} />
           </Card>
         </div>
       ) : (

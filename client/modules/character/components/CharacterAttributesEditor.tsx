@@ -1,39 +1,56 @@
-import type { CharacterAttributes } from '@fwo/shared';
+import type { CharacterAttributeKey, CharacterAttributes } from '@fwo/shared';
 import type { FC } from 'react';
-import { Button } from '@/components/Button';
+import { CharacterAttributeButton } from '@/modules/character/components/CharacterAttributeButton';
+
+const ATTRIBUTES_MAP: Record<CharacterAttributeKey, { label: string }> = {
+  str: {
+    label: 'STR',
+  },
+  dex: {
+    label: 'DEX',
+  },
+  con: {
+    label: 'CON',
+  },
+  int: {
+    label: 'INT',
+  },
+  wis: {
+    label: 'WIS',
+  },
+};
+
+const ATTRIBUTES_KEYS: CharacterAttributeKey[] = ['str', 'dex', 'con', 'int', 'wis'];
 
 export const CharacterAttributesEditor: FC<{
+  baseAttributes: CharacterAttributes;
   attributes: CharacterAttributes;
   disabled: boolean;
-  onChange: (attribute: keyof CharacterAttributes) => void;
-}> = ({ attributes, disabled, onChange }) => {
-  // biome-ignore lint/correctness/noNestedComponentDefinitions: fixme
-  const AttributeButton: FC<{ attribute: keyof CharacterAttributes }> = ({ attribute }) => {
-    const handleClick = () => {
-      if (disabled) {
-        return;
-      }
-
-      onChange(attribute);
-    };
-    return (
-      <Button
-        className="flex flex-col justify-center items-center is-primary text-sm"
-        onClick={handleClick}
-      >
-        {attribute.toUpperCase()}
-        <span className="font-semibold"> {attributes[attribute].toString()}</span>
-      </Button>
-    );
-  };
-
+  free: number;
+  onIncrease: (attribute: keyof CharacterAttributes) => void;
+  onDecrease: (attribute: keyof CharacterAttributes) => void;
+}> = ({ baseAttributes, attributes, free, disabled, onIncrease, onDecrease }) => {
   return (
-    <div className="flex justify-between gap-2">
-      <AttributeButton attribute="str" />
-      <AttributeButton attribute="dex" />
-      <AttributeButton attribute="con" />
-      <AttributeButton attribute="int" />
-      <AttributeButton attribute="wis" />
+    <div className="flex justify-between gap-0">
+      {ATTRIBUTES_KEYS.map((attribute) => {
+        const value = attributes[attribute];
+
+        const canIncrease = !disabled && free > 0;
+
+        const canDecrease = !disabled && value > baseAttributes[attribute];
+
+        return (
+          <CharacterAttributeButton
+            key={attribute}
+            label={ATTRIBUTES_MAP[attribute].label}
+            value={attributes[attribute]}
+            canIncrease={canIncrease}
+            canDecrease={canDecrease}
+            onIncrease={() => onIncrease(attribute)}
+            onDecrease={() => onDecrease(attribute)}
+          />
+        );
+      })}
     </div>
   );
 };

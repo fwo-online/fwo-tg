@@ -23,6 +23,7 @@ export default [
   {
     path: 'skills',
     loader: CharacterSkillPage.loader,
+    ErrorBoundary: CharacterSkillPage.ErrorBoundary,
     Component: withBackButton(CharacterSkillPage),
   },
   {

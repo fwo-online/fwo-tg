@@ -26,7 +26,7 @@ export function LobbyPage() {
   };
 
   return (
-    <Card header="Мир" className="m-4">
+    <Card header="Режим боя" className="m-4">
       <h5>Выбери место, куда хотел бы направиться</h5>
       <div className="flex flex-col gap-2">
         <Button className="flex-1" onClick={navigateToPractice}>

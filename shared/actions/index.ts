@@ -21,6 +21,8 @@ export type Skill = {
   orderType: OrderType;
   cost: number;
   costType: CostType;
+  chance: number[];
+  effect: number[];
 };
 
 export type PassiveSkill = {
