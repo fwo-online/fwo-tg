@@ -8,7 +8,7 @@ import { usePopup } from '@/hooks/usePopup';
 import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
 
 const contractTypeNames: Record<string, string> = {
-  damage: 'Нанести урона',
+  damage: 'Нанести урон',
   kills: 'Убить противников',
   heal: 'Исцелить HP',
   useAbility: 'Использовать способности',
