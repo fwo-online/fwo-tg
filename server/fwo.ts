@@ -4,6 +4,7 @@ import { Server } from 'socket.io';
 import { initBot } from '@/bot';
 import { initGameChannel } from '@/helpers/channelHelper';
 import { scheduleResetTower } from '@/helpers/towerHelper';
+import { scheduleResetContracts } from '@/helpers/contractsHelper';
 import { connect } from '@/models';
 import { ItemModel } from '@/models/item';
 import { ItemSetModel } from '@/models/item-set';
@@ -20,6 +21,7 @@ void connect(async () => {
 
   initGameChannel();
   scheduleResetTower();
+  scheduleResetContracts();
 
   await initBot();
 });

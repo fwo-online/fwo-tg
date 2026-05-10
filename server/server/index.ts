@@ -12,6 +12,7 @@ import { clan } from './clan';
 import { serviceShop } from '@/server/serviceShop';
 import { ladder } from '@/server/ladder';
 import { market } from '@/server/market';
+import { contracts } from './contracts';
 
 const origin = [process.env.APP_URL].filter(isString);
 
@@ -27,7 +28,8 @@ export const app = new Hono()
   .route('/passiveSkill', passiveSkill)
   .route('/serviceShop', serviceShop)
   .route('/ladder', ladder)
-  .route('/market', market);
+  .route('/market', market)
+  .route('/contracts', contracts);
 
 export default app;
 

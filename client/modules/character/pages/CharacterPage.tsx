@@ -6,6 +6,7 @@ import { Card } from '@/components/Card';
 import { characterClassNameMap } from '@/constants/character';
 import { CharacterExp } from '@/modules/character/components/CharacterExp';
 import { CharacterImage } from '@/modules/character/components/CharacterImage';
+import { ContractsModal } from '@/modules/character/components/ContractsModal';
 import { useCharacter } from '@/modules/character/store/character';
 import { formatNumber } from '@/utils/formatNumber';
 
@@ -65,6 +66,8 @@ export const CharacterPage: FC = () => {
         ) : (
           <Button onClick={() => navigate('/character/clan/list')}>Кланы</Button>
         )}
+
+        <ContractsModal />
       </div>
     </div>
   );
