@@ -1,5 +1,5 @@
 import type { Contract } from '@fwo/shared';
-import { type FC, type ReactElement, useOptimistic, useState } from 'react';
+import { type FC, type ReactElement, useState } from 'react';
 import { claimContract, getContracts } from '@/api/contracts';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
@@ -71,7 +71,7 @@ export const ContractsModal: FC<{ trigger: ReactElement }> = ({ trigger }) => {
               const canClaim = contract.progress >= contract.goal && !contract.claimed;
 
               return (
-                <Card key={idx} className="text-sm">
+                <Card key={idx.toString()} className="text-sm">
                   <div className="flex items-center justify-between gap-2 mb-1">
                     <span>{contractTypeNames[contract.type] ?? contract.type}</span>
                     <span className="text-xs opacity-70">{tierLabels[contract.tier]}</span>
