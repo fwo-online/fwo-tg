@@ -1,5 +1,5 @@
-import type { Character, Contract } from '@fwo/shared';
-import { useEffect, useState } from 'react';
+import type { Contract } from '@fwo/shared';
+import { type FC, type ReactElement, useOptimistic, useState } from 'react';
 import { claimContract, getContracts } from '@/api/contracts';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
@@ -21,27 +21,26 @@ const tierLabels: Record<number, string> = {
   3: 'Сложный',
 };
 
-export function ContractsModal() {
-  const [open, setOpen] = useState(false);
+export const ContractsModal: FC<{ trigger: ReactElement }> = ({ trigger }) => {
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState(false);
   const [claimingIdx, setClaimingIdx] = useState<number | null>(null);
   const popup = usePopup();
   const { syncCharacter } = useSyncCharacter();
 
-  useEffect(() => {
+  const loadContracts = (open: boolean) => {
     if (open) {
       setLoading(true);
       getContracts()
         .then(setContracts)
         .finally(() => setLoading(false));
     }
-  }, [open]);
+  };
 
   const handleClaim = async (index: number) => {
     setClaimingIdx(index);
     try {
-      const result = await claimContract(index);
+      await claimContract(index);
       setContracts((prev) => {
         const updated = [...prev];
         updated[index] = { ...updated[index], claimed: true };
@@ -58,15 +57,7 @@ export function ContractsModal() {
   };
 
   return (
-    <Modal
-      open={open}
-      onOpenChange={setOpen}
-      trigger={
-        <Button className="flex-1" onClick={() => setOpen(!open)}>
-          Контракты
-        </Button>
-      }
-    >
+    <Modal onOpenChange={loadContracts} trigger={trigger}>
       <Card header="Ежедневные контракты">
         <div className="flex flex-col gap-2">
           {loading && <div className="text-sm text-center py-4">Загрузка...</div>}
@@ -125,4 +116,4 @@ export function ContractsModal() {
       </Card>
     </Modal>
   );
-}
+};

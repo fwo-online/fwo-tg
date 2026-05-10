@@ -1,4 +1,4 @@
-import { ContractType, type GameResult, QuestType } from '@fwo/shared';
+import { type Contract, ContractType, type GameResult, QuestType } from '@fwo/shared';
 import { isNotNil } from 'es-toolkit';
 import type { CharacterService } from '@/arena/CharacterService/CharacterService';
 import { ContractService } from '@/arena/ContractService/ContractService';
@@ -9,6 +9,11 @@ export class CharacterQuests {
 
   get contracts() {
     return this.character.charObj.contracts;
+  }
+
+  setContracts(contracts: Contract[], contractsGeneratedAt: Date) {
+    this.character.charObj.contracts = contracts;
+    this.character.charObj.contractsGeneratedAt = contractsGeneratedAt;
   }
 
   async updateQuestProgress(result: GameResult) {

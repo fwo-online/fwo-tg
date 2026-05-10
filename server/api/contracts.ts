@@ -9,15 +9,15 @@ export async function getContracts(characterId: string): Promise<Contract[]> {
   return character.contracts ?? [];
 }
 
-export async function saveContracts(
-  characterId: string,
-  contracts: Contract[],
-  generatedAt: Date,
-) {
-  return CharModel.findByIdAndUpdate(characterId, {
-    contracts,
-    contractsGeneratedAt: generatedAt,
-  });
+export async function saveContracts(characterId: string, contracts: Contract[], generatedAt: Date) {
+  return CharModel.findByIdAndUpdate(
+    characterId,
+    {
+      contracts,
+      contractsGeneratedAt: generatedAt,
+    },
+    { returnDocument: 'after' },
+  );
 }
 
 /**
@@ -77,8 +77,5 @@ export async function replaceContract(_characterId: string, _contractIndex: numb
 }
 
 export async function resetAllContracts() {
-  return CharModel.updateMany(
-    { deleted: false },
-    { contracts: [], contractsGeneratedAt: null },
-  );
+  return CharModel.updateMany({ deleted: false }, { contracts: [], contractsGeneratedAt: null });
 }

@@ -1,7 +1,13 @@
-import { ContractTier, ContractType, type Contract } from '@fwo/shared';
+import {
+  CharacterClass,
+  type Contract,
+  type ContractTier,
+  ContractType,
+  ForestPhase,
+} from '@fwo/shared';
+import { claimContract } from '@/api/contracts';
 import type { CharacterService } from '@/arena/CharacterService/CharacterService';
-import { CharacterClass } from '@fwo/shared';
-import { ForestPhase } from '@fwo/shared';
+import ValidationError from '@/arena/errors/ValidationError';
 
 export class ContractService {
   /** Pool типов контрактов, доступных классу */
@@ -19,7 +25,7 @@ export class ContractService {
     }
 
     // ForestLocations для уровней ≤ 8
-    if (character.lvl <= 8) {
+    if (character.lvl <= 3) {
       types.push(ContractType.ForestLocations);
     }
 
@@ -36,9 +42,12 @@ export class ContractService {
   /** Название фазы леса для UI */
   static getForestPhaseName(phase: ForestPhase): string {
     switch (phase) {
-      case ForestPhase.Edge: return 'Опушке';
-      case ForestPhase.Wilds: return 'Чаще';
-      case ForestPhase.Deep: return 'Глуши';
+      case ForestPhase.Edge:
+        return 'Опушке';
+      case ForestPhase.Wilds:
+        return 'Чаще';
+      case ForestPhase.Deep:
+        return 'Глуши';
     }
   }
 
@@ -64,7 +73,7 @@ export class ContractService {
     tier: ContractTier,
   ): Pick<Contract, 'exp' | 'gold' | 'components'> {
     const reward: Pick<Contract, 'exp' | 'gold' | 'components'> = {
-      exp: lvl * 100 * tier,
+      exp: lvl * 250 * tier,
       gold: lvl * 10 * tier,
       components: {},
     };
@@ -115,5 +124,31 @@ export class ContractService {
     }
 
     return contracts;
+  }
+
+  static async claimContract(character: CharacterService, idx: number) {
+    const charContracts = character.quests.contracts;
+    const contract = charContracts?.[idx];
+
+    if (!contract) {
+      throw new ValidationError('Контракт не найден');
+    }
+    if (contract.claimed) {
+      throw new ValidationError('Награда уже получена');
+    }
+    if (contract.progress < contract.goal) {
+      throw new ValidationError('Контракт не выполнен');
+    }
+
+    await claimContract(
+      character.id,
+      idx,
+      [...charContracts], // передаём копию in-memory контрактов (с актуальным прогрессом)
+      {
+        exp: contract.exp,
+        gold: contract.gold,
+        components: contract.components,
+      },
+    );
   }
 }
