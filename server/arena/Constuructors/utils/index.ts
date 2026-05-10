@@ -1,3 +1,4 @@
+import type { ActionType } from '@fwo/shared';
 import type { Player } from '@/arena/PlayersService';
 import type { FailArgs, SuccessArgs } from '../types';
 
@@ -26,6 +27,21 @@ export const isPhysicalDamageResult = (result: Result): result is SuccessArgs =>
 export const isSuccessHealResult = (result: Result): result is SuccessArgs => {
   if (isSuccessResult(result)) {
     return result.actionType === 'heal' || result.actionType === 'heal-magic';
+  }
+
+  return false;
+};
+
+export const isAbilityResult = (result: Result): result is SuccessArgs => {
+  if (isSuccessResult(result)) {
+    const actionTypes: ActionType[] = [
+      'aoe-dmg-magic',
+      'dmg-magic',
+      'heal-magic',
+      'magic',
+      'skill',
+    ];
+    return actionTypes.includes(result.actionType);
   }
 
   return false;

@@ -11,6 +11,7 @@ export type GameResult = {
   damage?: number;
   heal?: number;
   kills?: number;
+  abilitiesUsed?: number;
   alive: boolean;
   levelUp?: {
     oldLevel: number;

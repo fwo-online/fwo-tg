@@ -81,6 +81,7 @@ export abstract class RewardService {
         item: player.stats.collect.item,
         damage: playersPerformance[player.id]?.damage ?? 0,
         heal: playersPerformance[player.id]?.heal ?? 0,
+        abilitiesUsed: playersPerformance[player.id]?.abilitiesUsed ?? 0,
         kills: this.players.getKills(player.id).length,
         alive: player.alive,
         winner: winnerIDs.has(player.id),

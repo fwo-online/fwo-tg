@@ -6,6 +6,7 @@ import { Card } from '@/components/Card';
 import { characterClassNameMap } from '@/constants/character';
 import { CharacterExp } from '@/modules/character/components/CharacterExp';
 import { CharacterImage } from '@/modules/character/components/CharacterImage';
+import { ContractsModal } from '@/modules/character/components/ContractsModal';
 import { useCharacter } from '@/modules/character/store/character';
 import { formatNumber } from '@/utils/formatNumber';
 
@@ -45,6 +46,12 @@ export const CharacterPage: FC = () => {
             Характеристики
           </Button>
 
+          <Button className="flex-1" onClick={() => navigate('/character/inventory')}>
+            Инвентарь
+          </Button>
+        </div>
+
+        <div className="flex gap-2">
           {character.class === CharacterClass.Archer ||
           character.class === CharacterClass.Warrior ? (
             <Button className="flex-1" onClick={() => navigate('/character/skills')}>
@@ -55,11 +62,13 @@ export const CharacterPage: FC = () => {
               Магии
             </Button>
           )}
+          <Button className="flex-1" onClick={() => navigate('/character/passive-skills')}>
+            Эффекты
+          </Button>
         </div>
 
-        <Button onClick={() => navigate('/character/passive-skills')}>Пассивные навыки</Button>
+        <ContractsModal trigger={<Button>Контракты</Button>} />
 
-        <Button onClick={() => navigate('/character/inventory')}>Инвентарь</Button>
         {character.clan ? (
           <Button onClick={() => navigate(`/character/clan`)}>Клан</Button>
         ) : (

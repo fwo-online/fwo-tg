@@ -1,4 +1,4 @@
-import type { CharacterAttributes, CharacterClass, ItemComponent, ItemWear } from '@fwo/shared';
+import type { CharacterAttributes, CharacterClass, Contract, ItemComponent, ItemWear } from '@fwo/shared';
 import mongoose, { type Model, Schema, type Types } from 'mongoose';
 import type { Clan } from '@/models/clan';
 import type { Item } from '@/models/item';
@@ -61,6 +61,8 @@ export interface Char {
     dailyRewards: boolean;
     levelUp: boolean;
   };
+  contracts: Contract[];
+  contractsGeneratedAt: Date | null;
 }
 
 export type CharModel = Model<Char> & typeof Char;
@@ -167,6 +169,22 @@ const character = new Schema<Char, CharModel>({
     },
   },
   lastForest: { type: Schema.Types.Date, default: null },
+  contracts: {
+    type: [
+      new Schema({
+        type: { type: String, required: true },
+        tier: { type: Number, required: true },
+        goal: { type: Number, required: true },
+        progress: { type: Number, default: 0 },
+        claimed: { type: Boolean, default: false },
+        exp: { type: Number, required: true },
+        gold: { type: Number, required: true },
+        components: { type: Schema.Types.Map, of: Number, default: {} },
+      }, { _id: false }),
+    ],
+    default: [],
+  },
+  contractsGeneratedAt: { type: Schema.Types.Date, default: null },
 });
 
 character.loadClass(Char);

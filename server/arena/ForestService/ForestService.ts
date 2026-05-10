@@ -417,6 +417,9 @@ export class ForestService extends EventEmitter<{
 
     await this.character.resources.addResources({ gold, exp, components });
 
+    // Обновление лесных контрактов (после завершения, одним накопленным счётчиком)
+    await this.character.quests.updateForestContractProgress(this.getEventsCount());
+
     const result: GameResult = {
       player: this.player.toObject(),
       exp,

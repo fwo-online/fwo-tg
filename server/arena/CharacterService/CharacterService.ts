@@ -417,6 +417,8 @@ export class CharacterService {
         lastTower,
         towerAvailable,
         notificationSettings: this.charObj.notificationSettings,
+        contracts: this.charObj.contracts,
+        contractsGeneratedAt: this.charObj.contractsGeneratedAt,
       });
     } catch (e) {
       console.error('Fail on CharSave:', e);

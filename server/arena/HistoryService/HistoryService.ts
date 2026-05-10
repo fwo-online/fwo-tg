@@ -1,5 +1,6 @@
 import type { FailArgs, SuccessArgs } from '@/arena/Constuructors/types';
 import {
+  isAbilityResult,
   isSuccessDamageResult,
   isSuccessHealResult,
   isSuccessResult,
@@ -8,7 +9,7 @@ import { calculateEffect } from '@/arena/HistoryService/utils/calculateEffect';
 
 export type HistoryItem = SuccessArgs | FailArgs;
 
-type PlayerPerformance = Record<string, { damage: number; heal: number }>;
+type PlayerPerformance = Record<string, { damage: number; heal: number; abilitiesUsed: number }>;
 
 /**
  * Класс для хранения истории выполненных заказов
@@ -49,7 +50,7 @@ export class HistoryService {
   }
 
   private applyPerformance(acc: PlayerPerformance, item: HistoryItem) {
-    acc[item.initiator.id] ??= { damage: 0, heal: 0 };
+    acc[item.initiator.id] ??= { damage: 0, heal: 0, abilitiesUsed: 0 };
 
     if (isSuccessDamageResult(item)) {
       acc[item.initiator.id].damage += calculateEffect(item);
@@ -57,6 +58,11 @@ export class HistoryService {
 
     if (isSuccessHealResult(item)) {
       acc[item.initiator.id].heal += calculateEffect(item);
+    }
+
+    // Считаем успешные использования магии/скиллов (только isSuccessResult!)
+    if (isSuccessResult(item) && isAbilityResult(item)) {
+      acc[item.initiator.id].abilitiesUsed += 1;
     }
   }
 }
