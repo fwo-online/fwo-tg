@@ -16,7 +16,7 @@ export enum ForestEventType {
   AbandonedCamp = 'abandoned_camp', // Заброшенный лагерь (fabric)
   OldTrap = 'old_trap', // Старый капкан (iron)
   AbandonedSword = 'abandoned_sword', // Заброшенный меч (steel)
-  GlowingCrystal = 'glowing_crystal', // Мерцающий кристалл (arcanite)
+  // GlowingCrystal = 'glowing_crystal', // Мерцающий кристалл (arcanite)
   OtherPlayer = 'other_player', // Встреча другого игрока
 }
 

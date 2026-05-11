@@ -13,7 +13,6 @@ const EVENT_TITLES: Record<ForestEventType, string> = {
   [ForestEventType.AbandonedCamp]: '⛺ Заброшенный лагерь',
   [ForestEventType.OldTrap]: '🪤 Старый капкан',
   [ForestEventType.AbandonedSword]: '⚔️ Заброшенный меч',
-  [ForestEventType.GlowingCrystal]: '💎 Мерцающий кристалл',
   [ForestEventType.OtherPlayer]: '⚔️ Другой игрок',
 };
 
@@ -25,7 +24,6 @@ const EVENT_DESCRIPTIONS: Record<ForestEventType, string> = {
   [ForestEventType.AbandonedCamp]: 'Заброшенный лагерь охотников. Можно поискать полезное.',
   [ForestEventType.OldTrap]: 'Старый ржавый капкан. Осторожно!',
   [ForestEventType.AbandonedSword]: 'В земле торчит старый меч.',
-  [ForestEventType.GlowingCrystal]: 'Редкий мерцающий кристалл!',
   [ForestEventType.OtherPlayer]: 'Ты встретился с другим игроком',
 };
 

@@ -4,7 +4,6 @@ import { handleAbandonedSwordEvent } from '@/arena/ForestService/events/abadoned
 import { handleCampfireEvent } from '@/arena/ForestService/events/campfire';
 import { handleChestEvent } from '@/arena/ForestService/events/chest';
 import { handleFallenTreeEvent } from '@/arena/ForestService/events/fallenTree';
-import { handleGlowingCrystalEvent } from '@/arena/ForestService/events/glowingCrystal';
 import { handleOldTrapEvent } from '@/arena/ForestService/events/oldTrap';
 import { handleOtherPlayerEvent } from '@/arena/ForestService/events/otherPlayer';
 import { handleWolfEvent } from '@/arena/ForestService/events/wolf';
@@ -23,7 +22,6 @@ const eventHandlerByTypeMap: Record<ForestEventType, ForestEventHandler> = {
   [ForestEventType.AbandonedCamp]: handleAbandonedCampEvent,
   [ForestEventType.OldTrap]: handleOldTrapEvent,
   [ForestEventType.AbandonedSword]: handleAbandonedSwordEvent,
-  [ForestEventType.GlowingCrystal]: handleGlowingCrystalEvent,
   [ForestEventType.OtherPlayer]: handleOtherPlayerEvent,
 };
 
