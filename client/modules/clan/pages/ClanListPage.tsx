@@ -31,27 +31,29 @@ export const ClanListPage = () => {
   };
 
   return (
-    <Card header="Кланы" className="m-4">
-      <Suspense fallback={'Ищем кланы...'}>
-        {clans.length ? (
-          <ClanList
-            clans={clans}
-            isLoading={isLoading}
-            isRequested={isRequested}
-            onCreateRequest={createRequest}
-            onCancelRequest={cancelRequest}
-          />
-        ) : (
-          'Кланов не найдено'
-        )}
+    <div className="h-screen flex flex-col justify-between">
+      <Card header="Кланы" className="m-4">
+        <Suspense fallback={'Ищем кланы...'}>
+          {clans.length ? (
+            <ClanList
+              clans={clans}
+              isLoading={isLoading}
+              isRequested={isRequested}
+              onCreateRequest={createRequest}
+              onCancelRequest={cancelRequest}
+            />
+          ) : (
+            'Кланов не найдено'
+          )}
+        </Suspense>
+      </Card>
 
-        <div className="flex flex-col">
-          <Button className="mt-4" onClick={() => navigate('/character/clan/create')}>
-            Создать клан
-          </Button>
-        </div>
-      </Suspense>
-    </Card>
+      <div className="flex flex-col p-4">
+        <Button className="mt-4 is-primary" onClick={() => navigate('/character/clan/create')}>
+          Создать клан
+        </Button>
+      </div>
+    </div>
   );
 };
 

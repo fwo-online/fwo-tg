@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
+import { useMountEffect } from '@/hooks/useMountEffect';
+import { usePopup } from '@/hooks/usePopup';
 import { useSocket } from '@/stores/socket';
 
 export const LobbyForestPage = () => {
@@ -9,6 +11,8 @@ export const LobbyForestPage = () => {
   const socket = useSocket();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [debuffLevel, setDebuffLevel] = useState(0);
+  const popup = usePopup();
 
   const handleEnterForest = async () => {
     setLoading(true);
@@ -27,19 +31,32 @@ export const LobbyForestPage = () => {
     }
   };
 
+  useMountEffect(() => {
+    socket.emitWithAck('forest:lobby').then((res) => {
+      if (res.error) {
+        popup.info({ message: res.error });
+      } else {
+        setDebuffLevel(res.debuffLevel ?? 0);
+      }
+    });
+  });
+
   return (
     <div className="h-full overflow-hidden flex flex-col">
       <Card header="Лес" className="m-4">
-        <div className="flex flex-col gap-4">
-          <p className="text-sm">
-            Лес - это PvE режим, где ты можешь собирать ресурсы и сражаться с монстрами.
-          </p>
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-col">
+            <p className="text-sm">
+              Лес - это PvE режим, где ты можешь собирать ресурсы и сражаться с монстрами.
+            </p>
+
+            {debuffLevel ? <p className="text-sm text-red-500">Ты ослаблен после смерти</p> : null}
+          </div>
 
           <div className="border-2 border-dashed p-2">
-            <h5 className="mb-2">Правила:</h5>
+            <h5 className="mb-1 text-sm">Правила:</h5>
             <ul className="text-xs list-disc list-inside">
               <li>Здоровье сохраняется между боями</li>
-              <li>Максимальное время: 15 минут</li>
               <li>Чем глубже ты пробираешься в лес - тем опаснее</li>
               <li>При смерти - дебафф на 1 час</li>
               <li>Любой выбор может обернуться неожиданным последствием</li>
@@ -47,7 +64,7 @@ export const LobbyForestPage = () => {
           </div>
 
           <div className="border-2 border-dashed p-2">
-            <h5 className="mb-2">Награды:</h5>
+            <h5 className="mb-1 text-sm">Награды:</h5>
             <ul className="text-xs list-disc list-inside">
               <li>🐺 Волк - кожа</li>
               <li>🌳 Дерево - доски</li>

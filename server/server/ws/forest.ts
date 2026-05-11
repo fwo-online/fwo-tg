@@ -62,6 +62,12 @@ export const onCreate = (io: Server) => {
 export const onConnection = (_io: Server, socket: Socket) => {
   const { character } = socket.data;
 
+  socket.on('forest:lobby', async (callback) => {
+    callback({
+      debuffLevel: ForestService.getDebuffLevel(character),
+    });
+  });
+
   // Вход в лес
   socket.on('forest:enter', async (callback) => {
     withValidationRPC(async () => {

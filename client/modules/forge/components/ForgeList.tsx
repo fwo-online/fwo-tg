@@ -1,15 +1,15 @@
 import { getItemPrice, type Item } from '@fwo/shared';
+import { every } from 'es-toolkit/compat';
 import type { FC } from 'react';
+import { forgeClanItem } from '@/api/clan';
 import { forgeItem } from '@/api/inventory';
-import { ItemModal } from '@/modules/items/components/ItemModal';
-import { useRequest } from '@/hooks/useRequest';
 import { Button } from '@/components/Button';
 import { Placeholder } from '@/components/Placeholder';
-import { every } from 'es-toolkit/compat';
-import { forgeClanItem } from '@/api/clan';
-import { useCharacter } from '@/modules/character/store/character';
-import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
 import { usePopup } from '@/hooks/usePopup';
+import { useRequest } from '@/hooks/useRequest';
+import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
+import { useCharacter } from '@/modules/character/store/character';
+import { ItemModal } from '@/modules/items/components/ItemModal';
 
 export const ForgeList: FC<{ items: Item[]; clanForge?: boolean }> = ({ items, clanForge }) => {
   const gold = useCharacter((character) => character.gold);
@@ -49,7 +49,7 @@ export const ForgeList: FC<{ items: Item[]; clanForge?: boolean }> = ({ items, c
             <div className="flex items-center justify-between gap-4">
               <Button
                 className="flex-1"
-                disabled={!canForge(item)}
+                // disabled={!canForge(item)}
                 onClick={() => handleForge(item)}
               >
                 Создать за {getItemPrice(item.price, item.tier)}💰
