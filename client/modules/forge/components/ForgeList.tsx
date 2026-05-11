@@ -49,7 +49,7 @@ export const ForgeList: FC<{ items: Item[]; clanForge?: boolean }> = ({ items, c
             <div className="flex items-center justify-between gap-4">
               <Button
                 className="flex-1"
-                // disabled={!canForge(item)}
+                disabled={!canForge(item)}
                 onClick={() => handleForge(item)}
               >
                 Создать за {getItemPrice(item.price, item.tier)}💰
