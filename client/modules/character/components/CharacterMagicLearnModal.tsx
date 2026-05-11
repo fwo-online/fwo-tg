@@ -1,12 +1,12 @@
-import { times } from 'es-toolkit/compat';
-import { useCharacterLearnMagic } from '../hooks/useCharacterLearnMagic';
-import { Card } from '@/components/Card';
-import { Button } from '@/components/Button';
-import { useCharacter } from '@/modules/character/store/character';
-import { Modal } from '@/components/Modal';
 import { canLearnMagic, getLearnMagicCost } from '@fwo/shared';
 import classNames from 'classnames';
+import { times } from 'es-toolkit/compat';
 import type { FC } from 'react';
+import { Button } from '@/components/Button';
+import { Card } from '@/components/Card';
+import { Modal } from '@/components/Modal';
+import { useCharacter } from '@/modules/character/store/character';
+import { useCharacterLearnMagic } from '../hooks/useCharacterLearnMagic';
 
 export const CharacterMagicsLearnModal: FC<{ avaiableMagicLevels: Record<number, boolean> }> = ({
   avaiableMagicLevels,
@@ -22,7 +22,7 @@ export const CharacterMagicsLearnModal: FC<{ avaiableMagicLevels: Record<number,
     !hasBonus(lvl) || !canLearnMagic(character.lvl, lvl) || !avaiableMagicLevels[lvl] || isLearning;
 
   return (
-    <Modal trigger={<Button className="is-primary">Изучить</Button>} modal={false}>
+    <Modal trigger={<Button className="is-primary flex-1">Изучение магий</Button>} modal={false}>
       <Card header="Изучение магии">
         <h5 className="text-sm">Выбери уровень магии, который хочешь изучить</h5>
 

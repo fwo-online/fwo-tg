@@ -63,7 +63,7 @@ export const CharacterPage: FC = () => {
             </Button>
           )}
           <Button className="flex-1" onClick={() => navigate('/character/passive-skills')}>
-            Эффекты
+            Навыки
           </Button>
         </div>
 

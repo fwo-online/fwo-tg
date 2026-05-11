@@ -1,9 +1,10 @@
 import { Hono } from 'hono';
-import { characterMiddleware, userMiddleware } from '@/server/middlewares';
 import * as v from 'valibot';
-import { vValidator } from '@hono/valibot-validator';
-import { withValidation } from './utils/withValidation';
 import PassiveSkillService from '@/arena/PassiveSkillService';
+import { characterMiddleware, userMiddleware } from '@/server/middlewares';
+import { vValidator } from '@/server/utils/validatorWrapper';
+import { normalizeToArray } from '@/utils/array';
+import { withValidation } from './utils/withValidation';
 
 export const passiveSkill = new Hono()
   .use(userMiddleware, characterMiddleware)
@@ -13,7 +14,7 @@ export const passiveSkill = new Hono()
     async (c) => {
       const { ids } = c.req.valid('query');
       const passiveSkills = PassiveSkillService.getPassiveSkillList(
-        Array.isArray(ids) ? ids : ids ? [ids] : undefined,
+        ids ? normalizeToArray(ids) : undefined,
       );
 
       return c.json(passiveSkills);

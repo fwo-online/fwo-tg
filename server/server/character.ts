@@ -22,7 +22,7 @@ export const character = new Hono()
         nickname: createCharacterDto.name,
         prof: createCharacterDto.class,
         harks: profsData[createCharacterDto.class].hark,
-        magics: profsData[createCharacterDto.class].mag,
+        magics: profsData[createCharacterDto.class].mag ?? {},
         sex: 'm',
       }),
     );
@@ -62,21 +62,29 @@ export const character = new Hono()
 
     return c.json({}, 200);
   })
-  .patch('/attributes', vValidator('json', characterAttributesSchema), async (c) => {
-    const character = c.get('character');
-    const attributes = c.req.valid('json');
+  .patch(
+    '/attributes',
+    vValidator('json', characterAttributesSchema, handleValidationError),
+    async (c) => {
+      const character = c.get('character');
+      const attributes = c.req.valid('json');
 
-    await withValidation(character.attributes.increaseAttributes(attributes));
+      await withValidation(character.attributes.increaseAttributes(attributes));
 
-    return c.json(character.toObject(), 200);
-  })
-  .get('/dynamic-attributes', vValidator('query', characterAttributesSchema), async (c) => {
-    const character = c.get('character');
-    const attributes = c.req.valid('query');
-    const dynamicAttributes = character.attributes.getDynamicAttributes(attributes);
+      return c.json(character.toObject(), 200);
+    },
+  )
+  .get(
+    '/dynamic-attributes',
+    vValidator('query', characterAttributesSchema, handleValidationError),
+    async (c) => {
+      const character = c.get('character');
+      const attributes = c.req.valid('query');
+      const dynamicAttributes = character.attributes.getDynamicAttributes(attributes);
 
-    return c.json(dynamicAttributes, 200);
-  })
+      return c.json(dynamicAttributes, 200);
+    },
+  )
   .patch(
     '/notification-settings',
     vValidator(
@@ -88,6 +96,7 @@ export const character = new Hono()
         dailyRewards: v.optional(v.boolean()),
         levelUp: v.optional(v.boolean()),
       }),
+      handleValidationError,
     ),
     async (c) => {
       const character = c.get('character');
@@ -105,7 +114,11 @@ export const character = new Hono()
   )
   .get(
     '/list',
-    vValidator('query', v.object({ ids: v.union([v.array(v.string()), v.string()]) })),
+    vValidator(
+      'query',
+      v.object({ ids: v.union([v.array(v.string()), v.string()]) }),
+      handleValidationError,
+    ),
     async (c) => {
       const { ids } = c.req.valid('query');
 

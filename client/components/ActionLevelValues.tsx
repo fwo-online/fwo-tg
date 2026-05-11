@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import type { FC } from 'react';
+import { type FC, Fragment } from 'react';
 
 type ActionLevelValuesProps = {
   label: string;
@@ -20,8 +20,8 @@ export const ActionLevelValues: FC<ActionLevelValuesProps> = ({
 
       <span className="text-zinc-400">
         {values.map((value, index) => (
-          <>
-            {index ? <>/</> : null}
+          <Fragment key={index.toString()}>
+            {index ? '/' : null}
             {index === currentLevel - 1 ? (
               <span
                 className={classNames(
@@ -47,7 +47,7 @@ export const ActionLevelValues: FC<ActionLevelValuesProps> = ({
             {value}
             {suffix}
           </span> */}
-          </>
+          </Fragment>
         ))}
       </span>
     </div>

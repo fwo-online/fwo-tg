@@ -1,24 +1,20 @@
-import type { FC } from 'react';
 import type { Magic } from '@fwo/shared';
-import { Button } from '@/components/Button';
-import { useCharacter } from '@/modules/character/store/character';
-import { CharacterMagicModal } from '@/modules/character/components/CharacterMagicModal';
+import type { FC } from 'react';
+import { MagicButton } from '@/modules/character/components/MagicButton';
 
-export const CharacterMagicList: FC<{ magics: Magic[] }> = ({ magics }) => {
-  const character = useCharacter();
-
+export const CharacterMagicList: FC<{
+  magics: Magic[];
+  selectedMagic?: Magic;
+  onSelect: (magic: Magic) => void;
+}> = ({ magics, selectedMagic, onSelect }) => {
   return (
     <div className="flex flex-col gap-2">
       {magics.map((magic) => (
-        <CharacterMagicModal
+        <MagicButton
+          selected={selectedMagic?.name === magic.name}
           key={magic.name}
           magic={magic}
-          trigger={
-            <Button className="flex justify-between">
-              <span>{magic.displayName}</span>
-              <span className="opacity-50">{character.magics[magic.name]}</span>
-            </Button>
-          }
+          onClick={() => onSelect(magic)}
         />
       ))}
     </div>

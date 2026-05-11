@@ -3,6 +3,7 @@ import { Hono } from 'hono';
 import * as v from 'valibot';
 import MagicService from '@/arena/MagicService';
 import { characterMiddleware, userMiddleware } from '@/server/middlewares';
+import { handleValidationError } from '@/server/utils/handleValidationError';
 import { withValidation } from '@/server/utils/withValidation';
 import { normalizeToArray } from '@/utils/array';
 
@@ -10,7 +11,11 @@ export const magic = new Hono()
   .use(userMiddleware, characterMiddleware)
   .post(
     '/:lvl',
-    vValidator('param', v.object({ lvl: v.pipe(v.string(), v.decimal(), v.transform(Number)) })),
+    vValidator(
+      'param',
+      v.object({ lvl: v.pipe(v.string(), v.decimal(), v.transform(Number)) }),
+      handleValidationError,
+    ),
     async (c) => {
       const character = c.get('character');
       const { lvl } = c.req.valid('param');
@@ -21,7 +26,11 @@ export const magic = new Hono()
   )
   .get(
     '/',
-    vValidator('query', v.object({ ids: v.optional(v.union([v.string(), v.array(v.string())])) })),
+    vValidator(
+      'query',
+      v.object({ ids: v.optional(v.union([v.string(), v.array(v.string())])) }),
+      handleValidationError,
+    ),
     async (c) => {
       const { ids } = c.req.valid('query');
       if (ids) {

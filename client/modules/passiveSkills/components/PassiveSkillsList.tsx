@@ -1,31 +1,20 @@
 import type { PassiveSkill } from '@fwo/shared';
 import type { FC } from 'react';
-import { useRequest } from '@/hooks/useRequest';
-import { learnPassiveSkill } from '@/api/passiveSkills';
-import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
-import { PassiveSkillModal } from '@/modules/passiveSkills/components/PassiveSkillModal';
+import { PassiveSkillButton } from '@/modules/passiveSkills/components/PassiveSkillButton';
 
 export const PassiveSkillsList: FC<{
   skills: PassiveSkill[];
-}> = ({ skills }) => {
-  const { syncCharacter } = useSyncCharacter();
-  const [isPending, makeRequest] = useRequest();
-
-  const handleLearn = async (skill: PassiveSkill) => {
-    makeRequest(async () => {
-      await learnPassiveSkill(skill.name);
-      await syncCharacter();
-    });
-  };
-
+  selectedSkill?: PassiveSkill;
+  onSelect: (skill: PassiveSkill) => void;
+}> = ({ skills, selectedSkill, onSelect }) => {
   return (
     <div className="flex flex-col gap-2">
       {skills.map((skill) => (
-        <PassiveSkillModal
+        <PassiveSkillButton
+          selected={selectedSkill?.name === skill.name}
           key={skill.name}
           passiveSkill={skill}
-          loading={isPending}
-          onLearn={handleLearn}
+          onClick={() => onSelect(skill)}
         />
       ))}
     </div>

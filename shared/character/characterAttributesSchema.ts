@@ -10,3 +10,4 @@ export const characterAttributesSchema = v.object({
 
 export type CharacterAttributesInput = v.InferInput<typeof characterAttributesSchema>;
 export type CharacterAttributes = v.InferOutput<typeof characterAttributesSchema>;
+export type CharacterAttributeKey = keyof CharacterAttributes;

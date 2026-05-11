@@ -1,53 +1,64 @@
 import type { FC } from 'react';
-
-import { CharacterAttributesEditor } from '@/modules/character/components/CharacterAttributesEditor';
-import { useCharacterAttributes } from '@/modules/character/hooks/useCharacterAttributes';
-import { useCharacterDynamicAttributes } from '@/modules/character/hooks/useCharacterDynamicAttributes';
-import { CharacterAttributes } from '@/modules/character/components/CharacterDynamicAttributes';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
+import { CharacterAttributesEditor } from '@/modules/character/components/CharacterAttributesEditor';
+import { CharacterAttributes } from '@/modules/character/components/CharacterDynamicAttributes';
+import { useCharacterAttributes } from '@/modules/character/hooks/useCharacterAttributes';
+import { useCharacterAttributesEditor } from '@/modules/character/hooks/useCharacterAttributesEditor';
+import { useCharacterDynamicAttributes } from '@/modules/character/hooks/useCharacterDynamicAttributes';
+import { useCharacter } from '@/modules/character/store/character';
 
 export const CharacterAttributesPage: FC = () => {
-  const {
-    attributes,
-    free,
-    isPending,
-    hasChanges,
-    handleSave,
-    handleChangeAttribute,
-    handleReset,
-  } = useCharacterAttributes();
-  const { dynamicAttributes, loading } = useCharacterDynamicAttributes(attributes);
+  const attributes = useCharacter((character) => character.attributes);
+  const free = useCharacter((character) => character.free);
+  const baseDynamicAttributes = useCharacter((character) => character.dynamicAttributes);
+  const characterClass = useCharacter((character) => character.class);
+  const editor = useCharacterAttributesEditor(attributes, free);
+  const { dynamicAttributes, loading } = useCharacterDynamicAttributes(editor.attributes);
+  const { isPending, handleSave } = useCharacterAttributes();
 
   return (
-    <Card header="Характеристики" className="m-4">
-      <div className="flex flex-col gap-2">
-        <CharacterAttributes dynamicAttributes={dynamicAttributes} />
+    <div className="h-screen flex flex-col">
+      <Card header="Характеристики" className="flex-1 m-4 mb-1">
+        <CharacterAttributes
+          baseDynamicAttributes={baseDynamicAttributes}
+          dynamicAttributes={dynamicAttributes}
+          characterClass={characterClass}
+        />
+      </Card>
 
+      <Card className="m-4 mt-0 flex-0 flex flex-col">
         <div className="flex gap-2 font-bold">
           <span>Свободные очки:</span>
-          {free}
+          {editor.free}
         </div>
 
         <CharacterAttributesEditor
-          attributes={attributes}
+          baseAttributes={attributes}
+          free={editor.free}
+          attributes={editor.attributes}
           disabled={loading || !free}
-          onChange={handleChangeAttribute}
+          onIncrease={editor.increment}
+          onDecrease={editor.decrement}
         />
 
         <div className="flex gap-2 mt-4">
-          <Button className="flex-1" onClick={handleReset} disabled={!hasChanges || isPending}>
+          <Button
+            className="flex-1"
+            onClick={editor.reset}
+            disabled={!editor.hasChanges || isPending}
+          >
             Сбросить
           </Button>
           <Button
             className="flex-1 is-primary"
-            onClick={handleSave}
-            disabled={!hasChanges || isPending}
+            onClick={() => handleSave(editor.attributes)}
+            disabled={!editor.hasChanges || isPending}
           >
             Применить
           </Button>
         </div>
-      </div>
-    </Card>
+      </Card>
+    </div>
   );
 };
