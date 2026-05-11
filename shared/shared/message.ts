@@ -53,6 +53,7 @@ export type ClientToServerMessage = Message<{
     ) => void,
   ];
   'tower:accept': [accept: boolean, callback: (payload: RPC<{ accepted: string[] }>) => void];
+  'forest:lobby': [callback: (payload: RPC<{ debuffLevel: number }>) => void];
   'forest:enter': [callback: (payload: RPC<{ forestId: string }>) => void];
   'forest:connect': [callback: (payload: RPC<ForestStatus>) => void];
   'forest:handleEvent': [

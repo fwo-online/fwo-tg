@@ -1,6 +1,8 @@
 import { ForestEventAction, ForestEventType, ForestPhase } from '@fwo/shared';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
+import { Player } from '@/components/Player';
+import { useCharacter } from '@/modules/character/store/character';
 import { useForest } from '@/modules/forest/hooks/useForest';
 
 const EVENT_TITLES: Record<ForestEventType, string> = {
@@ -59,6 +61,9 @@ export const ForestPage = () => {
     isEvent,
   } = useForest();
 
+  const name = useCharacter((character) => character.name);
+  const characterClass = useCharacter((character) => character.class);
+
   if (!status) {
     return (
       <Card header="Лес" className="m-4">
@@ -71,6 +76,7 @@ export const ForestPage = () => {
     <Card header="Лес" className="m-4">
       {/* Статус игрока */}
       <div className="mb-4 p-2 border-2 border-dashed">
+        <Player name={name} class={characterClass} />
         <div className="flex justify-between items-center">
           <span>❤️ HP:</span>
           <span>

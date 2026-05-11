@@ -112,9 +112,13 @@ export class ForestService extends EventEmitter<{
     return this;
   }
 
+  static getDebuffLevel(character: CharacterService) {
+    const penalties = character.getPenalties('forest_death');
+    return Math.min(penalties?.length, deathEcho.effect.length);
+  }
+
   private applyForestDebuff() {
-    const penalties = this.character.getPenalties('forest_death');
-    this.debuffLevel = Math.min(penalties.length, deathEcho.effect.length);
+    this.debuffLevel = ForestService.getDebuffLevel(this.character);
 
     if (this.debuffLevel) {
       this.player.passiveSkills[deathEcho.name] = this.debuffLevel;

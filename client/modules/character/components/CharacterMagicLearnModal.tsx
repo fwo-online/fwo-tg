@@ -24,7 +24,10 @@ export const CharacterMagicsLearnModal: FC<{ avaiableMagicLevels: Record<number,
   return (
     <Modal trigger={<Button className="is-primary flex-1">Изучение магий</Button>} modal={false}>
       <Card header="Изучение магии">
-        <h5 className="text-sm">Выбери уровень магии, который хочешь изучить</h5>
+        <h5 className="text-sm">
+          Выбери уровень магии, который хочешь изучить. Будет изучена случайная магия выбранного
+          уровня
+        </h5>
 
         <div className="flex flex-col gap-2">
           <span className="self-end mr-4">У тебя {character.bonus}💡</span>
