@@ -9,7 +9,7 @@ const tabs = [
   },
   {
     path: '/lobby',
-    text: 'В бой!',
+    text: 'Бой',
     isError: true,
   },
   {
