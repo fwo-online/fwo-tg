@@ -39,9 +39,11 @@ class MagicWall extends LongMagic {
       duration: this.duration,
       proc: initiator.proc,
       onBeforeDamageRecieve(ctx, action) {
+        initiator.proc = this.proc;
         magicWallEffect.onBeforeDamageRecieve(ctx, action);
       },
       onBeforeDamageDeal(ctx, action) {
+        initiator.proc = this.proc;
         magicWall.onBeforeDamageDeal(ctx, action);
       },
     });
