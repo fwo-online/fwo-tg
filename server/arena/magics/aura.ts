@@ -15,7 +15,10 @@ export abstract class Aura extends CommonMagic {
       action: this.name,
       initiator,
       duration: initiator.stats.val('spellLength'),
+      proc: initiator.proc,
       onCast: (game, affect) => {
+        // @ts-expect-error
+        initiator.proc = affect.proc;
         // @ts-expect-error
         this.effectInstanse.duration = affect.duration;
         this.effectInstanse.cast(initiator, target, game);
