@@ -58,7 +58,8 @@ class Dodge extends Skill {
       return;
     }
 
-    const { initiator, target, game } = ctx.params;
+    const { initiator, target, game } = ctx;
+    this.createContext(target, initiator, game);
     const isDodgeable = initiator.weapon.isOfType(dodgeableWeaponTypes);
 
     if (isDodgeable) {
@@ -69,7 +70,7 @@ class Dodge extends Skill {
       if (chance > MiscService.rndm('1d100')) {
         this.calculateExp();
 
-        throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
+        throw new CastError(this.getSuccessResult(this.context));
       }
     }
   }

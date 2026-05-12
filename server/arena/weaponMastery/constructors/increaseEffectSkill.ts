@@ -36,7 +36,7 @@ abstract class IncreaseEffectSkill extends PassiveSkillConstructor {
 
     ctx.status.effect *= 1 + this.getEffect(ctx.params) / 100;
 
-    ctx.addAffect(this, this.params);
+    ctx.addAffect(this, this.context);
   }
 }
 

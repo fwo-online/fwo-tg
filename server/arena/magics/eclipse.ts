@@ -50,7 +50,7 @@ class Eclipse extends CommonMagic {
 
     throw new CastError(
       effects.map(({ initiator }) =>
-        this.getSuccessResult({ initiator, target: ctx.initiator, game }),
+        this.getSuccessResult(this.createContext(initiator, ctx.initiator, game)),
       ),
     );
   }

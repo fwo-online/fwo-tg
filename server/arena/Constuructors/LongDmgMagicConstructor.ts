@@ -1,4 +1,4 @@
-import type { BaseActionParams } from '@/arena/Constuructors/BaseAction';
+import type { BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import type Game from '../GameService';
 import type { Player } from '../PlayersService';
 import { DmgMagic } from './DmgMagicConstructor';
@@ -25,7 +25,7 @@ export abstract class LongDmgMagic extends DmgMagic {
       this.checkChance();
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.calculateExp();
-      this.next({ initiator, target, game });
+      this.next(this.context);
     } catch (failMsg) {
       if (this.isAffect) {
         throw failMsg;
@@ -36,9 +36,9 @@ export abstract class LongDmgMagic extends DmgMagic {
     }
   }
 
-  override getSuccessResult(params?: BaseActionParams): SuccessArgs {
+  override getSuccessResult(ctx?: BaseActionContext): SuccessArgs {
     return {
-      ...super.getSuccessResult(params),
+      ...super.getSuccessResult(ctx),
       duration: this.duration,
     };
   }

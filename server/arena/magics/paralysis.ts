@@ -44,7 +44,9 @@ class Paralysis extends CommonMagic {
     const effects = target.affects.getEffectsByAction(this.name);
 
     throw new CastError(
-      effects.map(({ initiator }) => this.getSuccessResult({ initiator, target, game })),
+      effects.map(({ initiator }) =>
+        this.getSuccessResult(this.createContext(initiator, target, game)),
+      ),
     );
   }
 }

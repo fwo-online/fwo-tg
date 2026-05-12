@@ -52,11 +52,7 @@ class Glitch extends CommonMagic {
       `glitch debug:: new target: ${ctx.params.target.nick}, old target:: ${target.nick}`,
     );
 
-    ctx.addAffect(this, {
-      initiator: affect.initiator,
-      target: initiator,
-      game,
-    });
+    ctx.addAffect(this, this.createContext(affect.initiator, initiator, game));
   }
 }
 

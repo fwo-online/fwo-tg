@@ -56,7 +56,7 @@ class MagicWall extends LongMagic {
 
     throw new CastError(
       effects.map(({ initiator: wallCaster }) =>
-        this.getSuccessResult({ initiator: wallCaster, target: initiator, game }),
+        this.getSuccessResult(this.createContext(wallCaster, initiator, game)),
       ),
     );
   }

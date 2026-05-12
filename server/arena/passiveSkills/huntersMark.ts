@@ -60,7 +60,7 @@ class HuntersMark extends PassiveSkillConstructor {
       },
     });
 
-    ctx.addAffect(this, { initiator, target, game });
+    ctx.addAffect(this, this.context);
   }
 }
 

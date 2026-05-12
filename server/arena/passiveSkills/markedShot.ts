@@ -30,12 +30,12 @@ class MarkedShot extends PassiveSkillConstructor {
       return;
     }
 
-    const { initiator, target, game } = ctx.params;
+    const { initiator, target, game } = ctx;
     this.createContext(initiator, target, game);
 
     ctx.status.effect += floatNumber((ctx.status.effect * (affect.value ?? 1)) / 100);
 
-    ctx.addAffect(this, { initiator, target, game });
+    ctx.addAffect(this, this.context);
   }
 }
 

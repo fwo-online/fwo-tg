@@ -55,11 +55,11 @@ class DivineWill extends PassiveSkillConstructor {
       return;
     }
 
-    const { initiator, target, game } = ctx.params;
+    const { initiator, target, game } = ctx;
     this.createContext(initiator, target, game);
 
     if (this.checkChance()) {
-      return ctx.addAffect(this, this.context.params);
+      return ctx.addAffect(this, this.context);
     }
   }
 
@@ -72,7 +72,7 @@ class DivineWill extends PassiveSkillConstructor {
     this.createContext(initiator, target, game);
 
     if (this.checkChance()) {
-      throw new CastError(this.getSuccessResult({ initiator, target, game }));
+      throw new CastError(this.getSuccessResult(this.context));
     }
   }
 }

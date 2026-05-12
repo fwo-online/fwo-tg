@@ -81,16 +81,16 @@ export abstract class ProtectConstructor extends BaseAction {
     }
 
     this.reset();
-    const { initiator, target, game } = ctx.params;
+    const { initiator, target, game } = ctx;
     this.createContext(initiator, target, game);
 
-    const protectors = this.getTargetProtectors(ctx.params);
+    const protectors = this.getTargetProtectors(ctx);
     if (!protectors.length) {
       return;
     }
 
     const protect = protectors.reduce((acc, { value = 0 }) => acc + value, 0);
-    const chance = this.getProtectChance(ctx.params, protect);
+    const chance = this.getProtectChance(ctx, protect);
 
     const ratio = Math.min(chance / 100, 0.5);
 
@@ -98,7 +98,7 @@ export abstract class ProtectConstructor extends BaseAction {
       this.calculateExp({ initiator, target, game }, ctx.status.effect);
       this.reduceProtection(ratio);
 
-      throw new CastError(this.getSuccessResult({ initiator, target, game }));
+      throw new CastError(this.getSuccessResult(this.context));
     } else {
       this.reduceProtection(ratio);
     }

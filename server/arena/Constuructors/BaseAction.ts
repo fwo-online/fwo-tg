@@ -67,19 +67,19 @@ export abstract class BaseAction {
     };
   }
 
-  getSuccessResult({ initiator, target } = this.params): SuccessArgs {
+  getSuccessResult({ initiator, target, status } = this.context): SuccessArgs {
     return {
-      exp: this.status.exp,
+      exp: status.exp,
       action: this.displayName,
       actionType: this.actionType,
       target,
       initiator,
-      effect: floatNumber(this.status.effect),
+      effect: floatNumber(status.effect),
       hp: target.stats.val('hp'),
       effectType: this.effectType,
       orderType: this.orderType,
-      expArr: this.status.expArr,
-      affects: this.status.affects,
+      expArr: status.expArr,
+      affects: status.affects,
       // @ts-expect-error todo вынести кастомные сообщения в отдельный сервис
       msg: this.customMessage?.bind(this),
     };
@@ -110,12 +110,12 @@ export abstract class BaseAction {
     }
   }
 
-  next({ initiator, target, game } = this.params): void {
-    const result = this.getSuccessResult({ initiator, target, game });
+  next(context = this.context): void {
+    const result = this.getSuccessResult(context);
     this.giveExp(result);
 
     if (!this.isAffect) {
-      game.recordOrderResult(result);
+      context.game.recordOrderResult(result);
     }
   }
 

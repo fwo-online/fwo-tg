@@ -56,7 +56,8 @@ class Parry extends Skill {
       return;
     }
 
-    const { initiator, target, game } = ctx.params;
+    const { initiator, target, game } = ctx;
+    this.createContext(target, initiator, game);
     const isParryable = initiator.weapon.isOfType(parryableWeaponTypes);
 
     if (isParryable) {
@@ -67,7 +68,7 @@ class Parry extends Skill {
       if (affect.value > 0) {
         this.calculateExp();
 
-        throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
+        throw new CastError(this.getSuccessResult(this.context));
       }
     }
   }
