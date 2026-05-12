@@ -1,0 +1,9 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`sweepingBlow should passively hit random enemy 1`] = `
+"*Игрок 1* пустил кровь *Игрок 2* _Оружием_ и нанёс *6.1* урона
+\\[ Игрок 2 💥 💔-6.1/1.9 📖49 ]
+_💥 Размашистый удар_ \\[ Игрок 3  💔-4.57/3.43 📖37 ]"
+`;
+
+exports[`sweepingBlow should passively hit random enemy 2`] = `86`;
