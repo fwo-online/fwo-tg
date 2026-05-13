@@ -3,6 +3,7 @@ import { brackets } from '@/utils/formatString';
 import { getDamageTypeIcon } from '@/utils/icons';
 
 export function formatExp(args: SuccessArgs): string {
+  console.log(args.action);
   const exp = args.initiator.isBot ? '' : `📖${args.exp}`;
   switch (args.actionType) {
     case 'phys':

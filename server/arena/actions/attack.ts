@@ -46,9 +46,9 @@ class Attack extends PhysConstructor {
     }
 
     const { initiator, game } = ctx.params;
-    throw new CastError(
-      this.getSuccessResult({ initiator: affect.initiator, target: initiator, game }),
-    );
+    this.createContext(affect.initiator, initiator, game);
+
+    throw new CastError(this.getSuccessResult(this.context));
   }
 }
 

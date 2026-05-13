@@ -53,7 +53,7 @@ class Consussion extends PassiveSkillConstructor {
       },
     });
 
-    ctx.status.affects.push(this.getSuccessResult({ initiator, target, game }));
+    ctx.addAffect(this, ctx);
   }
 }
 

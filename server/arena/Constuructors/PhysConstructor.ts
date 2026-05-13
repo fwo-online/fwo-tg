@@ -73,15 +73,19 @@ export default abstract class PhysConstructor extends BaseAction {
     this.status.effect = floatNumber(hit * initiator.proc);
   }
 
+  getEffectExp({ initiator, target } = this.params, effect: number) {
+    const effects = initiator.affects.getEffectsByAction('glitch');
+    if (initiator.isAlly(target) && !effects.length) {
+      return 0;
+    } else {
+      return Math.round(effect * 8);
+    }
+  }
+
   /**
    * Рассчитываем полученный exp
    */
-  calculateExp({ initiator, target } = this.params) {
-    const effects = initiator.affects.getEffectsByAction('glitch');
-    if (initiator.isAlly(target) && !effects.length) {
-      this.status.exp = 0;
-    } else {
-      this.status.exp = Math.round(this.status.effect * 8);
-    }
+  calculateExp(params = this.params) {
+    this.status.exp = this.getEffectExp(params, this.status.effect);
   }
 }

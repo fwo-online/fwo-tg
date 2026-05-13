@@ -9,3 +9,4 @@ export { markedShot } from './markedShot';
 export { nightcall } from './nightcall';
 export { nineLives } from './nineLives';
 export { staticProtect } from './staticProtect';
+export { sweepingBlow } from './sweepingBlow';

@@ -71,7 +71,8 @@ class ShieldBlock extends Skill {
       return;
     }
 
-    const { initiator, target, game } = ctx.params;
+    const { initiator, target, game } = ctx;
+    this.createContext(target, initiator, game);
 
     const str = initiator.stats.val('attributes.str');
     const con = initiator.stats.val('attributes.con');
@@ -87,7 +88,7 @@ class ShieldBlock extends Skill {
 
     this.calculateExp();
 
-    throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
+    throw new CastError(this.getSuccessResult(this.context));
   }
 
   customMessage(args: SuccessArgs) {

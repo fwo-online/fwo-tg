@@ -36,8 +36,8 @@ export class BaseActionContext {
     this.params.target = target;
   }
 
-  addAffect(action: BaseAction, params = this.params) {
-    const result = action.getSuccessResult(params);
+  addAffect(action: BaseAction, ctx = this) {
+    const result = action.getSuccessResult(ctx);
     this.rootCtx.status.affects.push(result);
 
     return result;

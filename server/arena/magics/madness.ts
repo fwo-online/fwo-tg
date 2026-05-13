@@ -49,11 +49,7 @@ class Madness extends CommonMagic {
 
     ctx.params.target = initiator;
 
-    ctx.addAffect(this, {
-      initiator: affect.initiator,
-      target: initiator,
-      game,
-    });
+    ctx.addAffect(this, this.createContext(affect.initiator, initiator, game));
   }
 }
 

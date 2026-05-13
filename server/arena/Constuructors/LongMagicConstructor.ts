@@ -1,5 +1,5 @@
 import type { ActionType } from '@fwo/shared';
-import type { BaseActionParams } from '@/arena/Constuructors/BaseAction';
+import type { BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
 import type Game from '../GameService';
 import type { Player } from '../PlayersService';
@@ -37,7 +37,7 @@ export abstract class LongMagic extends CommonMagic {
       this.onBeforeRun();
       this.run(initiator, target, game); // вызов кастомного обработчика
       this.calculateExp();
-      this.next({ initiator, target, game });
+      this.next(this.context);
     } catch (e) {
       if (this.isAffect) {
         throw e;
@@ -49,9 +49,9 @@ export abstract class LongMagic extends CommonMagic {
     }
   }
 
-  override getSuccessResult(params?: BaseActionParams): SuccessArgs {
+  override getSuccessResult(context?: BaseActionContext): SuccessArgs {
     return {
-      ...super.getSuccessResult(params),
+      ...super.getSuccessResult(context),
       duration: this.duration,
     };
   }

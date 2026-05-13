@@ -53,16 +53,12 @@ class LightShieldEffect extends LongDmgMagic {
 
     affect.initiator.setProc(ctx.status.effect * (affect.proc ?? 1) * 0.01);
 
-    this.createContext(affect.initiator, ctx.params.initiator, ctx.params.game);
+    const context = this.createContext(affect.initiator, ctx.params.initiator, ctx.params.game);
     this.run();
     this.calculateExp();
     this.next();
 
-    ctx.addAffect(this, {
-      initiator: affect.initiator,
-      target: ctx.params.initiator,
-      game: ctx.params.game,
-    });
+    ctx.addAffect(this, context);
   }
 
   run() {

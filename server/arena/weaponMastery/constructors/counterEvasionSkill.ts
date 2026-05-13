@@ -34,9 +34,9 @@ abstract class CounterEvasionSkill extends PassiveSkillConstructor {
   ) {
     this.reset();
 
-    const { initiator, target, game } = ctx.params;
+    const { initiator, target, game } = ctx;
     this.createContext(initiator, target, game);
-    if (!this.isActive(ctx.params)) {
+    if (!this.isActive(ctx)) {
       return;
     }
 
@@ -48,15 +48,15 @@ abstract class CounterEvasionSkill extends PassiveSkillConstructor {
       return;
     }
 
-    if (!this.checkChance(ctx.params)) {
+    if (!this.checkChance(ctx)) {
       return;
     }
 
-    if (!this.getEffect(ctx.params)) {
+    if (!this.getEffect(ctx)) {
       return;
     }
 
-    return ctx.addAffect(this, this.context.params);
+    return ctx.addAffect(this, this.context);
   }
 }
 

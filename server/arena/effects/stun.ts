@@ -39,7 +39,9 @@ class Stun extends LongMagic {
     }
 
     throw new CastError(
-      effects.map(({ initiator }) => this.getSuccessResult({ initiator, target: initiator, game })),
+      effects.map(({ initiator }) =>
+        this.getSuccessResult(this.createContext(initiator, initiator, game)),
+      ),
     );
   }
 

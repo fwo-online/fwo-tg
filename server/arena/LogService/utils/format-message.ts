@@ -14,6 +14,7 @@ export function formatMessage(msgObj: SuccessArgs | FailArgs, depth = 0): string
       return `${indent}${formatLong(msgObj)}${formatAction(msgObj)}\n${indent}${formatExp(msgObj)}`;
     }
 
+    console.log(msgObj.affects.length);
     const affects = msgObj.affects.map((msgObj) => formatCause(msgObj));
 
     return `${indent}${formatLong(msgObj)}${formatAction(msgObj)}\n${indent}${formatExp(msgObj)}\n${affects.join('\n')}`;

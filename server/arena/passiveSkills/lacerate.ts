@@ -30,7 +30,7 @@ class Lacerate extends PassiveSkillConstructor {
   }
 
   onDamageDealt(ctx: BaseActionContext, action: BaseAction) {
-    const { initiator, target, game } = ctx.params;
+    const { initiator, target, game } = ctx;
     this.createContext(initiator, target, game);
 
     if (action.actionType !== 'phys') {
@@ -41,11 +41,11 @@ class Lacerate extends PassiveSkillConstructor {
       return;
     }
 
-    if (!this.isActive()) {
+    if (!this.isActive(ctx)) {
       return;
     }
 
-    if (!this.checkChance()) {
+    if (!this.checkChance(ctx)) {
       return;
     }
 
@@ -61,7 +61,7 @@ class Lacerate extends PassiveSkillConstructor {
       },
     });
 
-    ctx.addAffect(this, { initiator, target, game });
+    ctx.addAffect(this, this.context);
   }
 }
 

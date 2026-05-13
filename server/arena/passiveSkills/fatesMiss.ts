@@ -1,8 +1,11 @@
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConstructor';
+import type { ActionType } from '@/arena/Constuructors/types';
 import CastError from '@/arena/errors/CastError';
 
 class FatesMiss extends PassiveSkillConstructor {
+  actionType: ActionType = 'miss';
+
   constructor() {
     super({
       name: 'fatesMiss',
@@ -44,10 +47,7 @@ class FatesMiss extends PassiveSkillConstructor {
     this.createContext(initiator, target, game);
 
     if (this.checkChance()) {
-      throw new CastError({
-        ...this.getSuccessResult({ initiator, target, game }),
-        actionType: 'miss',
-      });
+      throw new CastError(this.getSuccessResult(this.context));
     }
   }
 }

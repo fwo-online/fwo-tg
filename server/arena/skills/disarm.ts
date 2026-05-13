@@ -56,7 +56,9 @@ class Disarm extends Skill {
     const effect = target.affects.getEffectsByAction(this.name);
 
     throw new CastError(
-      effect.map(({ initiator }) => this.getSuccessResult({ initiator, target, game })),
+      effect.map(({ initiator }) =>
+        this.getSuccessResult(this.createContext(initiator, target, game)),
+      ),
     );
   }
 }
