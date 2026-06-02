@@ -13,17 +13,23 @@ services:
     env_file:
       - .env
     restart: always
-    links:
-      - "db"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
   db:
-    image: mongo:4.4
+    image: mongo:8.0
     mem_limit: 512M
     cpu_percent: 60
     restart: always
+    command: ["mongod", "--replSet", "rs0", "--auth"]
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: fworootpassword
     volumes:
     - db:/data/db
+    healthcheck:
+      test: |
+        mongosh --quiet --eval "try { rs.status().ok } catch(e) { 0 }" --authenticationDatabase admin -u root -p fworootpassword 2>/dev/null | grep -q 1
+      interval: 10s
+      retries: 30
+      start_period: 30s

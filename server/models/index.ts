@@ -1,7 +1,7 @@
 import mongoose, { type ConnectOptions } from 'mongoose';
 
 // MONGO - полный mongo uri:
-// "mongodb://user:password@db:27017/fwo?retryWrites=true&w=majority&authSource=admin
+// "mongodb://user:password@db:27017/fwo?retryWrites=true&w=majority&authSource=admin&replicaSet=rs0
 
 mongoose.set('toObject', { virtuals: true });
 
@@ -16,19 +16,18 @@ export async function connect(onConnect?: () => void): Promise<void> {
     switch (process.env.NODE_ENV) {
       case 'production':
         await mongoose.connect(
-          process.env.MONGO ?? 'mongodb://root:fworootpassword@db:27017/fwo',
+          process.env.MONGO ??
+            'mongodb://root:fworootpassword@db:27017/fwo?retryWrites=true&w=majority&authSource=admin&replicaSet=rs0',
           options,
         );
         break;
       case 'test':
-        await mongoose.connect(
-          process.env.MONGO ?? 'mongodb://localhost:27017/test-fwo',
-          options,
-        );
+        await mongoose.connect(process.env.MONGO ?? 'mongodb://localhost:27017/test-fwo', options);
         break;
       case 'development':
         await mongoose.connect(
-          process.env.MONGO ?? 'mongodb://root:fworootpassword@localhost:27017/fwo',
+          process.env.MONGO ??
+            'mongodb://root:fworootpassword@localhost:27017/fwo?retryWrites=true&w=majority&authSource=admin&replicaSet=rs0',
           options,
         );
         break;
