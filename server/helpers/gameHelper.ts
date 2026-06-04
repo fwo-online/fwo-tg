@@ -34,44 +34,105 @@ import { ClanModel } from '@/models/clan';
 import { NotificationService } from '@/services/NotificationService';
 import { bold } from '@/utils/formatString';
 
-class Broadcast {
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+export type BroadcastScope = 'global' | 'clan';
+
+interface ChannelConfig {
   chat: string | number;
   thread?: number;
+}
 
-  private constructor(chat?: string | number, thread?: number) {
-    this.chat = chat ?? BOT_CHAT_ID;
-    this.thread = thread;
+// ─── Broadcast ───────────────────────────────────────────────────────────────
+
+class GameBroadcast {
+  private mainChannels: ChannelConfig[];
+  private clanChannels: ChannelConfig[];
+
+  private constructor(mainChannels: ChannelConfig[], clanChannels: ChannelConfig[]) {
+    this.mainChannels = mainChannels;
+    this.clanChannels = clanChannels;
   }
 
-  static async createBroadcast(chat?: string | number, gameId?: number) {
-    if (!chat) {
-      const thread = await createTopic(`Game #${gameId}`);
-      return new Broadcast(chat, thread);
+  /**
+   * Создаёт Broadcast для игры.
+   * @param options.chat — Основной чат (личный ДМ или undefined для общего канала)
+   * @param options.gameId — ID игры (для создания треда)
+   * @param options.clanChannels — Telegram-ID каналов кланов участников
+   */
+  static async create(options: {
+    chat?: string | number;
+    gameId?: number;
+    clanChannels?: number[];
+  }): Promise<GameBroadcast> {
+    const mainChannels: ChannelConfig[] = [];
+    const clanChannels: ChannelConfig[] = [];
+
+    if (options.clanChannels) {
+      for (const ch of options.clanChannels) {
+        clanChannels.push({ chat: ch });
+      }
     }
 
-    return new Broadcast(chat);
+    if (!options.chat) {
+      const thread = await createTopic(`Game #${options.gameId}`);
+      mainChannels.push({ chat: BOT_CHAT_ID, thread });
+    } else {
+      mainChannels.push({ chat: options.chat });
+    }
+
+    return new GameBroadcast(mainChannels, clanChannels);
   }
 
-  async close() {
-    if (this.thread) {
-      await closeTopic(this.chat, this.thread);
+  async close(): Promise<void> {
+    if (this.mainChannels[0]?.thread) {
+      await closeTopic(this.mainChannels[0].chat, this.mainChannels[0].thread);
     }
   }
 
-  async send(data: string | string[]) {
-    return broadcast(data, this.chat, this.thread);
+  async send(data: string | string[], scope: BroadcastScope = 'global'): Promise<void> {
+    const targets =
+      scope === 'clan' ? this.clanChannels : [...this.mainChannels, ...this.clanChannels];
+
+    for (const channel of targets) {
+      await broadcast(data, channel.chat, channel.thread);
+    }
   }
 }
 
-export async function createGame(players: string[], options?: GameOptions, chat?: string) {
-  const gameDoc = await createGameApi(players);
-  const game = new GameService(players, options);
-  const broadcast = await Broadcast.createBroadcast(chat, gameDoc.gameId);
+// ─── Утилиты ─────────────────────────────────────────────────────────────────
 
+/** Собирает уникальные клановые каналы участников игры */
+function getClanChannelsFromPlayers(playerIds: string[]): number[] {
+  const channels = new Set<number>();
+  for (const id of playerIds) {
+    const character = arena.characters[id];
+    const channel = character?.charObj.clan?.channel;
+    if (channel) {
+      channels.add(channel);
+    }
+  }
+  return [...channels];
+}
+
+/** Форматирование строки результатов одного игрока */
+const formatResult = (result: GameResult): string =>
+  `\t${result.winner ? '🏆' : '👤'} ${result.player.name} получает ${[
+    `${result.exp}📖`,
+    `${result.gold}💰`,
+    `${result.components ? `${componentsToString(result.components)}` : ''}`,
+    `${result.item ? result.item.info.name : ''}`,
+  ]
+    .filter(Boolean)
+    .join(', ')}`;
+
+// ─── Game events ─────────────────────────────────────────────────────────────
+
+/** Подписка на события игры: уведомления, логи, донаты */
+function setupGameEvents(game: GameService, gameBroadcast: GameBroadcast): void {
   game.on('start', async () => {
-    broadcast.send('Игра начинается');
+    await gameBroadcast.send('Игра начинается');
 
-    // Отправка уведомлений отключенным игрокам
     await Promise.all(
       game.players.nonBotPlayers.map(async (player) => {
         const character = arena.characters[player.id];
@@ -83,22 +144,22 @@ export async function createGame(players: string[], options?: GameOptions, chat?
   });
 
   game.on('startOrders', () => {
-    broadcast.send('Пришло время делать заказы');
+    void gameBroadcast.send('Пришло время делать заказы');
   });
 
   game.on('startRound', ({ round }) => {
-    broadcast.send(`⚡️ Раунд ${round} начинается ⚡`);
+    void gameBroadcast.send(`⚡️ Раунд ${round} начинается ⚡`);
   });
 
   game.on('endRound', async ({ log, dead }) => {
-    await broadcast.send(log.map((log) => formatMessage(log)));
+    await gameBroadcast.send(log.map((log) => formatMessage(log)));
     if (dead.length) {
-      await broadcast.send(formatDead(dead));
+      await gameBroadcast.send(formatDead(dead));
     }
   });
 
   game.on('kick', ({ player }) => {
-    broadcast.send(`Игрок ${bold(player.nick)} был выброшен из игры`);
+    void gameBroadcast.send(`Игрок ${bold(player.nick)} был выброшен из игры`);
   });
 
   game.on('preKick', async ({ player }) => {
@@ -109,93 +170,119 @@ export async function createGame(players: string[], options?: GameOptions, chat?
   });
 
   game.on('end', async ({ results }) => {
-    const resultsByClan = Object.groupBy(
-      results,
-      ({ player }) => player.clan?.name ?? reservedClanName,
-    );
+    await sendGameResults(gameBroadcast, results);
+    await updatePlayerQuests(results);
+    await sendLevelUpNotifications(results);
+    await scheduleDonationAnnouncement(gameBroadcast);
+  });
+}
 
-    await broadcast.send('Игра завершена');
-    await broadcast.send(`${bold`Статистика игры`}
+/** Отправка результатов игры */
+async function sendGameResults(broadcast: GameBroadcast, results: GameResult[]): Promise<void> {
+  const resultsByClan = Object.groupBy(
+    results,
+    ({ player }) => player.clan?.name ?? reservedClanName,
+  );
+
+  await broadcast.send('Игра завершена');
+  await broadcast.send(`${bold`Статистика игры`}
 ${Object.entries(resultsByClan)
   .map(
     ([clan, players]) =>
-      `${bold(clan === reservedClanName ? 'Без клана' : clan)}:\n${players?.map(resultToString).join('\n')}`,
+      `${bold(clan === reservedClanName ? 'Без клана' : clan)}:\n${players?.map(formatResult).join('\n')}`,
   )
   .join('\n\n')}`);
+}
 
-    try {
-      const promises = results.map((result) => {
-        const character = arena.characters[result.player.id];
-        return character.quests.updateQuestProgress(result);
-      });
+/** Обновление прогресса квестов */
+async function updatePlayerQuests(results: GameResult[]): Promise<void> {
+  try {
+    const promises = results.map((result) => {
+      const character = arena.characters[result.player.id];
+      return character.quests.updateQuestProgress(result);
+    });
+    await Promise.all(promises);
+  } catch (e) {
+    console.error('Failed to updateQuestProgress:', e);
+  }
+}
 
-      await Promise.all(promises);
-    } catch (e) {
-      console.error('Failed to updateQuestProgress:', e);
-    }
-    // Отправка поздравлений с новым уровнем
-    const levelUpPromises = results
-      .filter((result) => result.levelUp)
-      .map(async (result) => {
-        if (!result.levelUp) return;
+/** Отправка поздравлений с новым уровнем */
+async function sendLevelUpNotifications(results: GameResult[]): Promise<void> {
+  const levelUpPromises = results
+    .filter((result) => result.levelUp)
+    .map(async (result) => {
+      if (!result.levelUp) return;
 
-        const { newLevel, freePoints } = result.levelUp;
+      const { newLevel, freePoints } = result.levelUp;
 
-        // Личное сообщение
-        await sendLevelUpCongratulations(
-          result.player.owner,
-          result.player.name,
-          newLevel,
-          freePoints,
-        ).catch((e) => console.error('Failed to send personal level up message:', e));
+      await sendLevelUpCongratulations(
+        result.player.owner,
+        result.player.name,
+        newLevel,
+        freePoints,
+      ).catch((e) => console.error('Failed to send personal level up message:', e));
 
-        // Сообщение в канал
-        await broadcastLevelUp(
-          result.player.name,
-          newLevel,
-          result.player.class,
-          result.player.clan?.name,
-        ).catch((e) => console.error('Failed to broadcast level up:', e));
-      });
+      await broadcastLevelUp(
+        result.player.name,
+        newLevel,
+        result.player.class,
+        result.player.clan?.name,
+      ).catch((e) => console.error('Failed to broadcast level up:', e));
+    });
 
-    await Promise.all(levelUpPromises);
+  await Promise.all(levelUpPromises);
+}
 
-    setTimeout(async () => {
-      if (DonationHelper.shouldAnnounce()) {
-        const donators = await DonationHelper.getDonators();
+/** Отложенная отправка сообщения о донатерах */
+async function scheduleDonationAnnouncement(broadcast: GameBroadcast): Promise<void> {
+  setTimeout(async () => {
+    if (!DonationHelper.shouldAnnounce()) return;
 
-        if (donators.length) {
-          await broadcast.send(`${bold('Поддержавшие проект в этом месяце:')}
-  ${donators.map((donator) => `⭐ ${bold(donator.nickname)}`).join('\n')}
+    const donators = await DonationHelper.getDonators();
+    if (!donators.length) return;
 
-  Спасибо за поддержку!`);
-          DonationHelper.resetLastAnnouncement();
-        }
-      }
+    await broadcast.send(`${bold('Поддержавшие проект в этом месяце:')}
+${donators.map((donator) => `⭐ ${bold(donator.nickname)}`).join('\n')}
 
-      await broadcast.close();
-    }, 10000);
-  });
+Спасибо за поддержку!`);
+    DonationHelper.resetLastAnnouncement();
+
+    await broadcast.close();
+  }, 10000);
+}
+
+// ─── Game factories ──────────────────────────────────────────────────────────
+
+/**
+ * Создаёт игру и настраивает общие игровые события (логи, уведомления, донаты).
+ *
+ * @param players — ID персонажей-участников
+ * @param options — Настройки игры (таймауты и т.д.)
+ * @param chat — Личный чат инициатора (если игра приватная)
+ * @param clanChannels — Telegram-ID каналов кланов участников
+ */
+export async function createGame(
+  players: string[],
+  options?: GameOptions,
+  chat?: string,
+  clanChannels?: number[],
+) {
+  const gameDoc = await createGameApi(players);
+  const game = new GameService(players, options);
+  const gameBroadcast = await GameBroadcast.create({ chat, gameId: gameDoc.gameId, clanChannels });
+
+  setupGameEvents(game, gameBroadcast);
 
   return game.createGame(gameDoc);
 }
 
-const resultToString = (result: GameResult) =>
-  `\t${result.winner ? '🏆' : '👤'} ${result.player.name} получает ${[
-    `${result.exp}📖`,
-    `${result.gold}💰`,
-    `${result.components ? `${componentsToString(result.components)}` : ''}`,
-    `${result.item ? result.item.info.name : ''}`,
-  ]
-    .filter(Boolean)
-    .join(', ')}`;
-
+/** Создание рейтинговой игры (Ladder) */
 export async function createLadderGame(players: string[]) {
-  const game = await createGame(players);
+  const clanChannels = getClanChannelsFromPlayers(players);
+  const game = await createGame(players, undefined, undefined, clanChannels);
 
-  if (!game) {
-    return;
-  }
+  if (!game) return;
 
   const reward = new LadderRewardService(game);
   const ladder = new LadderService(game);
@@ -203,7 +290,6 @@ export async function createLadderGame(players: string[]) {
   game.on('beforeEnd', async ({ draw }) => {
     const rewards = await reward.giveRewards(draw);
     await ladder.saveGameStats(rewards);
-
     game.end(rewards);
   });
 
@@ -214,12 +300,12 @@ export async function createLadderGame(players: string[]) {
   return game;
 }
 
+/** Создание боя в башне */
 export async function createTowerGame(tower: TowerService, isBoss: boolean) {
-  const game = await createGame(tower.init);
+  const clanChannels = getClanChannelsFromPlayers(tower.init);
+  const game = await createGame(tower.init, undefined, undefined, clanChannels);
 
-  if (!game) {
-    return;
-  }
+  if (!game) return;
 
   game.on('startOrders', () => {
     game.players.aliveBotPlayers.filter(MonsterService.isMonster).forEach((bot) => {
@@ -231,37 +317,39 @@ export async function createTowerGame(tower: TowerService, isBoss: boolean) {
 
   game.on('beforeEnd', async ({ draw }) => {
     const rewards = await reward.giveRewards(draw);
-
     game.end(rewards);
   });
 
   return game;
 }
 
-export const createPracticeGame = async (player: string) => {
+/** Создание тренировочного боя */
+export async function createPracticeGame(player: string) {
   const character = arena.characters[player];
+  const clanChannels = character.charObj.clan?.channel
+    ? [character.charObj.clan.channel]
+    : undefined;
+
   const game = await createGame(
     [player],
     { round: { timeouts: { [RoundStatus.INIT]: 2000, [RoundStatus.START_ROUND]: 5000 } } },
     character.owner,
+    clanChannels,
   );
 
-  if (!game) {
-    return;
-  }
+  if (!game) return;
 
   const skeleton = MonsterService.createByType(MonsterType.Skeleton, character.lvl);
-
   game.addPlayers([skeleton]);
 
-  const clan = new ClanModel({
+  const monsterClan = new ClanModel({
     owner: new Types.ObjectId(),
     name: monstersClanName,
   });
 
   game.players.botPlayers.forEach((monster) => {
-    monster.clan = clan;
-    clan.players.push(arena.characters[monster.id].charObj);
+    monster.clan = monsterClan;
+    monsterClan.players.push(arena.characters[monster.id].charObj);
   });
 
   game.on('startOrders', () => skeleton.ai.makeOrder(game));
@@ -272,35 +360,35 @@ export const createPracticeGame = async (player: string) => {
     const rewards = await reward.giveRewards(draw);
     game.end(rewards);
   });
-};
+}
 
+/** Создание боя в лесу */
 export async function createForestGame(player: Player, enemy: Player) {
+  const clanChannels = player.clan?.channel ? [player.clan.channel] : undefined;
+
   const game = await createGame(
     [],
     {
       round: { timeouts: { [RoundStatus.INIT]: 1000, [RoundStatus.START_ROUND]: 3000 } },
     },
     enemy.isBot ? player.owner : undefined,
+    clanChannels,
   );
 
-  if (!game) {
-    return;
-  }
+  if (!game) return;
 
   game.addPlayers([player, enemy]);
 
-  // Создаём клан для монстра
-  const clan = new ClanModel({
+  const monsterClan = new ClanModel({
     owner: new Types.ObjectId(),
     name: monstersClanName,
   });
 
   game.players.botPlayers.forEach((bot) => {
-    bot.clan = clan;
-    clan.players.push(arena.characters[bot.id].charObj);
+    bot.clan = monsterClan;
+    monsterClan.players.push(arena.characters[bot.id].charObj);
   });
 
-  // AI монстра делает ходы
   game.on('startOrders', () => {
     game.players.aliveBotPlayers.filter(MonsterService.isMonster).forEach((bot) => {
       bot.ai.makeOrder(game);

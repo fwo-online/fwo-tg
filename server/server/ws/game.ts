@@ -26,7 +26,11 @@ export const onCreate = (io: Server) => {
       game.players.nonBotPlayers.map(async (player) => {
         const socket = activeConnections.get(player.owner);
         if (socket) {
-          await socket.join([getRoom(game), getRoom(game, player.id)]);
+          const rooms = [getRoom(game), getRoom(game, player.id)];
+          if (player.clan) {
+            rooms.push(getRoom(game, `clan:${player.clan.id}`));
+          }
+          await socket.join(rooms);
         } else {
           console.log('no connections found: ', player.id);
         }
@@ -84,6 +88,19 @@ export const onCreate = (io: Server) => {
       });
     });
 
+    game.on('order', ({ order, player }) => {
+      if (player.clan) {
+        const clanRoom = getRoom(game, `clan:${player.clan.id}`);
+        io.to(clanRoom).emit('game:teammateOrder', {
+          playerId: player.id,
+          playerName: player.nick,
+          action: order.action,
+          target: order.target,
+          proc: order.proc,
+        });
+      }
+    });
+
     game.on('preKick', ({ reason, player }) => {
       io.to(getRoom(game, player.id)).emit('game:preKick', { reason, player: player.toObject() });
     });
@@ -91,7 +108,11 @@ export const onCreate = (io: Server) => {
     game.on('end', ({ results }) => {
       io.in(getRoom(game)).emit('game:end', results);
       game.players.players.forEach((player) => {
-        io.in(getRoom(game)).socketsLeave(getRoom(game, player.id));
+        const leaveRooms = [
+          getRoom(game, player.id),
+          ...(player.clan ? [getRoom(game, `clan:${player.clan.id}`)] : []),
+        ];
+        io.in(getRoom(game)).socketsLeave(leaveRooms);
       });
       io.socketsLeave(getRoom(game));
     });
@@ -201,7 +222,11 @@ export const onConnection = (_io: Server, socket: Socket) => {
   if (character.currentGame) {
     const player = character.currentGame.players.getById(character.id);
     if (player) {
-      socket.join([getRoom(character.currentGame), getRoom(character.currentGame, player.id)]);
+      const rooms = [getRoom(character.currentGame), getRoom(character.currentGame, player.id)];
+      if (player.clan) {
+        rooms.push(getRoom(character.currentGame, `clan:${player.clan.id}`));
+      }
+      socket.join(rooms);
     }
   }
 };

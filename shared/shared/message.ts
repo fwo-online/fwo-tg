@@ -98,6 +98,15 @@ export type ServerToClientMessage = Message<{
   ];
   'game:kick': [{ reason: string; player: Player }];
   'game:preKick': [{ reason: string; player: Player }];
+  'game:teammateOrder': [
+    {
+      playerId: string;
+      playerName: string;
+      action: string;
+      target: string;
+      proc: number;
+    },
+  ];
   'game:players': [
     {
       players: Record<string, Player>;

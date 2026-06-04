@@ -3,6 +3,7 @@ import { isNumber } from 'es-toolkit/compat';
 import { type ActionKey, ActionService } from '@/arena/ActionService';
 import OrderError from '@/arena/errors/OrderError';
 import ValidationError from '@/arena/errors/ValidationError';
+import type GameService from '@/arena/GameService';
 import type PlayersService from '@/arena/PlayersService';
 import type { Player } from '@/arena/PlayersService';
 import { type RoundService, RoundStatus } from '@/arena/RoundService';
@@ -40,10 +41,16 @@ export default class Orders {
 
   playersService: PlayersService;
   roundService: RoundService;
+  private gameService: GameService;
 
-  constructor(playersService: PlayersService, roundService: RoundService) {
+  constructor(
+    playersService: PlayersService,
+    roundService: RoundService,
+    gameService: GameService,
+  ) {
     this.playersService = playersService;
     this.roundService = roundService;
+    this.gameService = gameService;
   }
 
   get lastOrders() {
@@ -74,11 +81,15 @@ export default class Orders {
     initiator.takeProc(order.proc);
     console.log('order :::: ', order);
 
-    this.ordersList.push({
+    const orderOutput: OrderOutput = {
       ...order,
       id: randomBytes(8).toString('hex'),
       action: order.action as ActionKey,
-    });
+    };
+
+    this.ordersList.push(orderOutput);
+
+    this.gameService.emit('order', { order: orderOutput, player: initiator });
 
     return {
       orders: this.ordersList.filter(({ initiator }) => initiator === order.initiator),

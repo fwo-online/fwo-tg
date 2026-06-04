@@ -27,6 +27,8 @@ export function useGameState() {
   const setPlayers = useGameStore((state) => state.setPlayers);
   const setClans = useGameStore((state) => state.setClans);
   const setReady = useGameStore((state) => state.setReady);
+  const setTeammateOrder = useGameStore((state) => state.setTeammateOrder);
+  const clearTeammateOrders = useGameStore((state) => state.clearTeammateOrders);
 
   useGameKickState();
 
@@ -63,14 +65,24 @@ export function useGameState() {
       setRemainPower(power);
       setOrdersTime(ordersTime, ordersStartTime);
       setReady(ready);
+      clearTeammateOrders();
     },
-    [setActions, setCanOrder, setRemainPower, setOrders, setOrdersTime, setReady],
+    [
+      setActions,
+      setCanOrder,
+      setRemainPower,
+      setOrders,
+      setOrdersTime,
+      setReady,
+      clearTeammateOrders,
+    ],
   );
 
   const handleEndOrders = useCallback(() => {
     setCanOrder(false);
     setOrders([]);
-  }, [setOrders, setCanOrder]);
+    clearTeammateOrders();
+  }, [setOrders, setCanOrder, clearTeammateOrders]);
 
   const handleEndGame = (results: Parameters<ServerToClientMessage['game:end']>[0]) => {
     navigate('/');
@@ -103,4 +115,5 @@ export function useGameState() {
   useSocketListener('game:startOrders', handleStartOrders);
   useSocketListener('game:endOrders', handleEndOrders);
   useSocketListener('game:end', handleEndGame);
+  useSocketListener('game:teammateOrder', setTeammateOrder);
 }

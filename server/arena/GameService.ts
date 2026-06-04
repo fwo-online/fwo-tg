@@ -4,7 +4,7 @@ import { mapValues } from 'es-toolkit';
 import arena from '@/arena';
 import { engine } from '@/arena/EngineService';
 import { type HistoryItem, HistoryService } from '@/arena/HistoryService';
-import OrderService from '@/arena/OrderService';
+import OrderService, { type OrderOutput } from '@/arena/OrderService';
 import PlayersService, { type Player } from '@/arena/PlayersService';
 import { type RoundOptions, RoundService, RoundStatus } from '@/arena/RoundService';
 import type { Game } from '@/models/game';
@@ -30,6 +30,7 @@ export type GameOptions = {
  */
 export default class GameService extends EventEmitter<{
   start: [];
+  order: [{ order: OrderOutput; player: Player }];
   beforeEnd: [{ reason: string | undefined; draw: boolean }];
   end: [{ results: GameResult[] }];
   startOrders: [];
@@ -58,7 +59,7 @@ export default class GameService extends EventEmitter<{
 
     this.round = new RoundService(options?.round);
     this.players = new PlayersService(players);
-    this.orders = new OrderService(this.players, this.round);
+    this.orders = new OrderService(this.players, this.round, this);
     this.flags = {
       noDamageRound: 0,
     };

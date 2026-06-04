@@ -1,6 +1,14 @@
 import type { Action, ClanPublic, GameStatus, Order, Player } from '@fwo/shared';
 import { create } from 'zustand';
 
+export type TeammateOrder = {
+  playerId: string;
+  playerName: string;
+  action: string;
+  target: string;
+  proc: number;
+};
+
 export type GameStoreState = {
   round: number;
   orders: Order[];
@@ -16,6 +24,8 @@ export type GameStoreState = {
   ordersTime: number;
   ordersStartTime: number;
   ready: boolean;
+  /** Заказы соклановцев: playerId -> информация о заказе */
+  teammateOrders: Record<string, TeammateOrder>;
 };
 
 export type GameStoreActions = {
@@ -30,6 +40,8 @@ export type GameStoreActions = {
   setClans: (clans: Record<string, ClanPublic>) => void;
   setOrdersTime: (ordersTime: number, ordersStartTime: number) => void;
   setReady: (ready: boolean) => void;
+  setTeammateOrder: (order: TeammateOrder) => void;
+  clearTeammateOrders: () => void;
   reset: () => void;
 };
 
@@ -50,6 +62,7 @@ const initialState: GameStoreState = {
   ordersTime: 0,
   ordersStartTime: 0,
   ready: false,
+  teammateOrders: {},
 };
 
 export const useGameStore = create<GameStore>()((set) => ({
@@ -65,5 +78,10 @@ export const useGameStore = create<GameStore>()((set) => ({
   setClans: (clans) => set({ clans }),
   setOrdersTime: (ordersTime, ordersStartTime) => set({ ordersTime, ordersStartTime }),
   setReady: (ready) => set({ ready }),
+  setTeammateOrder: (order) =>
+    set((state) => ({
+      teammateOrders: { ...state.teammateOrders, [order.playerId]: order },
+    })),
+  clearTeammateOrders: () => set({ teammateOrders: {} }),
   reset: () => set(initialState),
 }));

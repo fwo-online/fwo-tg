@@ -5,6 +5,19 @@ import { Player } from '@/components/Player';
 import { useCharacter } from '@/modules/character/store/character';
 import { useGameStore } from '@/modules/game/store/useGameStore';
 
+function TeammateOrderBadge({ playerId }: { playerId: string }) {
+  const teammateOrder = useGameStore((state) => state.teammateOrders[playerId]);
+  if (!teammateOrder) return null;
+  return (
+    <span
+      className="text-green-400 text-xs ml-1"
+      title={`${teammateOrder.action} [${teammateOrder.proc}%]`}
+    >
+      ✅
+    </span>
+  );
+}
+
 export function GameStatus() {
   const characterID = useCharacter((character) => character.id);
   const clan = useGameStore((state) => state.players[characterID]?.clan);
@@ -41,6 +54,7 @@ export function GameStatus() {
             name={status.name}
             isBot={players[status.id].isBot}
           />
+          <TeammateOrderBadge playerId={status.id} />
         </Description.Item>
       ))}
       {Object.entries(enemiesStatus).map(([clan, statuses]) =>
