@@ -9,6 +9,18 @@
   }
 }
 
+@supports (height: -webkit-fill-available) {
+  :root {
+    --viewport-height: -webkit-fill-available;
+  }
+  .h-screen {
+    height: -webkit-fill-available;
+  }
+  .max-h-screen {
+    max-height: -webkit-fill-available;
+  }
+}
+
 body {
   height: var(--tg-viewport-height, 100dvh);
   padding: 0;

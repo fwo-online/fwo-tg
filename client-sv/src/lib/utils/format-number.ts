@@ -12,5 +12,5 @@ export function formatNumber(num: number): string {
     return formatter.format(num);
   }
 
-  return num.toString();
+  return num.toFixed(1);
 }

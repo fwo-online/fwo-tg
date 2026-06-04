@@ -2,24 +2,6 @@ import type { CharacterDynamicAttributes, Item, ItemComponent, PhysAttributes } 
 import { get, set } from 'lodash';
 import { floatNumber } from '@/utils/floatNumber';
 
-type CombineAll<T> = T extends { [name in keyof T]: infer Type } ? Type : never;
-
-type PropertyNameMap<T, IncludeIntermediate extends boolean> = {
-  [name in keyof T]: T[name] extends object
-    ? SubPathsOf<name, T, IncludeIntermediate> | (IncludeIntermediate extends true ? name : never)
-    : name;
-};
-
-type SubPathsOf<
-  key extends keyof T,
-  T,
-  IncludeIntermediate extends boolean,
-> = `${string & key}.${string & PathsOf<T[key], IncludeIntermediate>}`;
-
-export type PathsOf<T, IncludeIntermediate extends boolean = false> = CombineAll<
-  PropertyNameMap<T, IncludeIntermediate>
->;
-
 export type Stats = CharacterDynamicAttributes & {
   hp: number;
   mp: number;

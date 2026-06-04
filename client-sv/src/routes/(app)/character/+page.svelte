@@ -3,11 +3,10 @@
   import Card from "$lib/components/Card.svelte";
   import { characterClassNameMap } from "$lib/constants/character";
   import { getCharacterContext } from "$lib/constext/character";
-  import { CharacterClass } from "@fwo/shared";
+  import { isArcher, isWarrior } from "@fwo/shared";
   import characterBackground from "$lib/assets/images/characterBackground.png";
   import CharacterImage from "$lib/character/components/CharacterImage.svelte";
   import CharacterExp from "$lib/character/components/CharacterExp.svelte";
-  import { isArcher, isWarrior } from "$lib/character";
 
   const character = getCharacterContext();
 </script>

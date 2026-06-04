@@ -1,9 +1,7 @@
 <script lang="ts">
   import Button from "$lib/components/Button.svelte";
-  import Modal from "$lib/components/Modal.svelte";
   import { getCharacterContext } from "$lib/constext/character";
   import type { PassiveSkill, Skill } from "@fwo/shared";
-  import { useLearnSkill } from "$lib/skill/utils/use-learn-skill.svelte";
   import { useLearnPassiveSkill } from "$lib/passive-skill/utils/use-learn-passive-skill.svelte";
 
   type Props = {
@@ -26,20 +24,7 @@
   const canLearn = $derived(!isMaxLevel && canAfford && !isSubmitting);
 </script>
 
-<Modal>
-  {#snippet header()}
-    {skill.displayName}
-  {/snippet}
-
-  {#snippet trigger()}
-    <Button class="w-full">
-      <div class="flex justify-between">
-        <span>{skill.displayName}</span>
-        <span class="opacity-50">{currentLevel}</span>
-      </div>
-    </Button>
-  {/snippet}
-
+<div class="flex flex-col flex-1 justify-between">
   <div class="flex flex-col gap-2 mb-4">
     <div class="flex gap-2 text-sm opacity-50">
       <span>Шанс (%):</span>
@@ -53,7 +38,9 @@
   </div>
 
   <div class="flex items-center gap-4">
-    {#if isMaxLevel}
+    {#if !skill.bonusCost.length}
+      <Button class="flex-1" disabled>Умение нельзя изучить</Button>
+    {:else if isMaxLevel}
       <Button class="flex-1" disabled>Максимальный уровень</Button>
     {:else}
       <Button class="flex-1" onclick={learnPassiveSkill} disabled={!canLearn}>
@@ -64,7 +51,7 @@
         {/if}
       </Button>
 
-      <div>У тебя {character().bonus}💡</div>
+      <div class="whitespace-nowrap">У тебя {character().bonus}💡</div>
     {/if}
   </div>
-</Modal>
+</div>

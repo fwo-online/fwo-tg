@@ -1,3 +1,4 @@
+import { Character } from './characterSchema';
 import type { CharacterAttributes } from './characterAttributesSchema';
 import { CharacterClass } from './characterClassSchema';
 import type { Attributes } from '@/shared/attributes';
@@ -45,6 +46,11 @@ export type CharacterPerformance = {
   damage: number;
   heal: number;
 };
+
+export const isArcher = (character: Character) => character.class === CharacterClass.Archer;
+export const isMage = (character: Character) => character.class === CharacterClass.Mage;
+export const isPriest = (character: Character) => character.class === CharacterClass.Priest;
+export const isWarrior = (character: Character) => character.class === CharacterClass.Warrior;
 
 export * from './characterAttributesSchema';
 export * from './characterClassSchema';

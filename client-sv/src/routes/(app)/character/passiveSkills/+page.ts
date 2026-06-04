@@ -4,7 +4,7 @@ import type { PageLoad } from './$types';
 
 export const load: PageLoad = async () => {
   const passiveSkills: PassiveSkill[] = await createRequest(client.passiveSkill.$get)({
-    query: {},
+    query: { ids: []},
   });
 
   return {
