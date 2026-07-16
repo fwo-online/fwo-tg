@@ -1,7 +1,7 @@
 import { ForestPhase, type GameResult, type MonsterType } from '@fwo/shared';
 import type { ForestService } from '@/arena/ForestService/ForestService';
-import { createForestGame } from '@/helpers/gameHelper';
 import { MonsterService } from '@/arena/MonsterService/MonsterService';
+import { createForestGame } from '@/helpers/gameHelper';
 
 const depthByPhase = {
   [ForestPhase.Edge]: 0,
@@ -17,6 +17,9 @@ export const startForestBattle = async (
   const phase = forest.getPhase();
   const lvl = forest.player.lvl + depthByPhase[phase];
 
+  console.debug(
+    `Forest debug:: monster lvl: ${lvl} (player: ${forest.player.lvl}, depth: ${depthByPhase[phase]})`,
+  );
   const game = await createForestGame(forest.player, MonsterService.createByType(monsterType, lvl));
 
   if (game) {
