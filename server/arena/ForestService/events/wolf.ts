@@ -1,5 +1,7 @@
 import { ForestEventAction, ItemComponent, MonsterType } from '@fwo/shared';
 import MiscService from '@/arena/MiscService';
+import { resolveMonsterConfig } from '@/arena/MonsterService/balance/balance';
+import { FOREST_PHASE_DIFFICULTY } from './forestDifficulty';
 import type { ForestEventHandler } from './getEventHandler';
 import { startForestBattle } from './startForestBattle';
 
@@ -7,10 +9,15 @@ export const handleWolfEvent: ForestEventHandler = async (action, forest) => {
   const leatherAmount = MiscService.randInt(1, forest.player.lvl);
 
   if (action === ForestEventAction.Sneak || action === ForestEventAction.PassBy) {
-    // Проверка ловкости
+    // Проверка ловкости — согласована с реальным спавном волка
     const playerDex = forest.player.stats.val('attributes.dex');
-    const wolfLevel = forest.player.lvl;
-    const wolfDex = Math.round(wolfLevel * 1 + 10); // Формула из wolf.ts
+    const phase = forest.getPhase();
+    const { harks } = resolveMonsterConfig(
+      MonsterType.Wolf,
+      forest.player.lvl,
+      FOREST_PHASE_DIFFICULTY[phase],
+    );
+    const wolfDex = harks.dex;
 
     const sneakChance = playerDex / (playerDex + wolfDex);
 

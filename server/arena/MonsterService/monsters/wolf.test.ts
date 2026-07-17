@@ -35,7 +35,7 @@ describe('wolf', () => {
     });
 
     it('should attack without any conditions', () => {
-      const wolf = createWolf();
+      const wolf = createWolf(4);
       game.addPlayers([wolf]);
 
       wolf.ai.makeOrder(game);
@@ -44,7 +44,7 @@ describe('wolf', () => {
     });
 
     it('should howl if previous attack was blocked', () => {
-      const wolf = createWolf();
+      const wolf = createWolf(4);
       game.addPlayers([wolf]);
       wolf.stats.set('en', 100);
 
@@ -63,7 +63,7 @@ describe('wolf', () => {
     });
 
     it('should attack if not enough energy for howl', () => {
-      const wolf = createWolf();
+      const wolf = createWolf(4);
       game.addPlayers([wolf]);
 
       eclipse.cast(game.players.players[1], game.players.players[2], game);

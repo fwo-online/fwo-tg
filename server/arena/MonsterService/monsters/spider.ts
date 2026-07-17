@@ -4,6 +4,7 @@ import arena from '@/arena';
 import { expToLevel } from '@/arena/CharacterService/utils/calculateLvl';
 import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
+import { resolveMonsterConfig } from '@/arena/MonsterService/balance/balance';
 import { MonsterAI } from '@/arena/MonsterService/MonsterAI';
 import { MonsterService } from '@/arena/MonsterService/MonsterService';
 import { ItemModel } from '@/models/item';
@@ -62,21 +63,22 @@ export class SpiderAI extends MonsterAI {
   }
 }
 
-export const createSpider = (lvl = 1, id: string | number = '') => {
+export const createSpider = (lvl = 1, id: string | number = '', budgetScale = 1) => {
   const claws = new ItemModel(arena.items.claws);
+  const { harks, abilities } = resolveMonsterConfig(
+    MonsterType.Spider,
+    lvl,
+    budgetScale,
+  );
 
   const spider = MonsterService.create(
     {
       nickname: `🕷️ Паук ${id.toString()}`.trimEnd(),
       prof: CharacterClass.Warrior,
-      harks: {
-        str: Math.round(lvl * 1.5 + 6),
-        dex: Math.round(lvl * 3 + 15), // Очень быстрый
-        int: Math.round(lvl * 1 + 5),
-        wis: Math.round(lvl * 1 + 5),
-        con: Math.round(lvl * 1.5 + 6), // Хрупкий
-      },
-      magics: { paralysis: 1 },
+      harks,
+      magics: abilities.magics,
+      skills: abilities.skills,
+      passiveSkills: abilities.passiveSkills,
       items: [claws],
       equipment: new Map([[ItemWear.TwoHands, claws]]),
       exp: expToLevel(lvl),

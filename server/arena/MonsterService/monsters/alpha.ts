@@ -8,6 +8,9 @@ import { WolfAI } from '@/arena/MonsterService/monsters/wolf';
 import { MonsterService } from '@/arena/MonsterService/MonsterService';
 import { beastCall } from '@/arena/skills';
 import { ItemModel } from '@/models/item';
+import {
+  resolveMonsterConfig,
+} from '@/arena/MonsterService/balance/balance';
 
 class AlfaAI extends WolfAI {
   beastCallUsed = false;
@@ -50,28 +53,29 @@ class AlfaAI extends WolfAI {
   }
 }
 
-export const createAlpha = (lvl = 1) => {
+export const createAlpha = (lvl = 1, _id?: string | number, _budgetScale = 1) => {
   const claws = new ItemModel(arena.items.claws);
+  const { harks, abilities } = resolveMonsterConfig(MonsterType.Alpha, lvl, _budgetScale);
+
+  // Alpha's beastCall scales with level (1-3 based on lvl/15), terrifyingHowl always 3
+  if (abilities.skills.beastCall) {
+    abilities.skills.beastCall = Math.max(1, Math.min(Math.round(lvl / 15), 3));
+  }
+  abilities.skills.terrifyingHowl = 3;
 
   const alpha = MonsterService.create(
     {
       nickname: '🐺 Альфа',
       prof: CharacterClass.Warrior,
-      harks: {
-        str: Math.round(lvl * 3 + 10),
-        dex: Math.round(lvl * 1 + 10),
-        int: Math.round(lvl * 1 + 10),
-        wis: Math.round(lvl * 2 + 10),
-        con: Math.round(lvl * 13 + 10),
-      },
+      harks,
       magics: { bleeding: 3 },
-      skills: { beastCall: Math.max(1, Math.min(Math.round(lvl / 15), 3)), terrifyingHowl: 3 },
+      skills: abilities.skills,
       passiveSkills: { lacerate: 3, nightcall: 1 },
       items: [claws],
       equipment: new Map([[ItemWear.TwoHands, claws]]),
       exp: expToLevel(lvl),
     },
-    MonsterType.Wolf,
+    MonsterType.Alpha,
     AlfaAI,
   );
   alpha.modifiers.chance.fail.paralysis = 90;

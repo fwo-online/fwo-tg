@@ -1,8 +1,9 @@
-import type { Char } from '@/models/character';
-import ValidationError from '@/arena/errors/ValidationError';
 import type { ItemComponent } from '@fwo/shared';
-import type { CharacterService } from '@/arena/CharacterService/CharacterService';
 import { forEach } from 'es-toolkit/compat';
+import type { CharacterService } from '@/arena/CharacterService/CharacterService';
+import config from '@/arena/config';
+import ValidationError from '@/arena/errors/ValidationError';
+import type { Char } from '@/models/character';
 
 export interface Resources {
   exp: number;
@@ -41,7 +42,12 @@ export class CharacterResources {
     return this.charObj.free;
   }
 
-  private addExp(value: number): { leveledUp: boolean; oldLvl: number; newLvl: number; freeAdded: number } {
+  private addExp(value: number): {
+    leveledUp: boolean;
+    oldLvl: number;
+    newLvl: number;
+    freeAdded: number;
+  } {
     const oldLvl = this.character.lvl;
 
     this.charObj.bonus += Math.round(value / 100);
@@ -49,7 +55,7 @@ export class CharacterResources {
 
     const newLvl = this.character.lvl;
     const lvlDifference = newLvl - oldLvl;
-    const freeAdded = Math.round(lvlDifference) * 10;
+    const freeAdded = Math.round(lvlDifference) * config.freePerLvl;
 
     if (lvlDifference > 0) {
       this.addFree(freeAdded);
@@ -59,7 +65,7 @@ export class CharacterResources {
       leveledUp: lvlDifference > 0,
       oldLvl,
       newLvl,
-      freeAdded
+      freeAdded,
     };
   }
 
@@ -79,7 +85,9 @@ export class CharacterResources {
   }
 
   async addResources({ components, gold, exp, free }: Partial<Resources>) {
-    let levelUpInfo: { leveledUp: boolean; oldLvl: number; newLvl: number; freeAdded: number } | undefined;
+    let levelUpInfo:
+      | { leveledUp: boolean; oldLvl: number; newLvl: number; freeAdded: number }
+      | undefined;
 
     if (components) {
       this.addComponents(components);

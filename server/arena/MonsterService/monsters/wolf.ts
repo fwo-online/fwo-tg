@@ -6,6 +6,7 @@ import { expToLevel } from '@/arena/CharacterService/utils/calculateLvl';
 import { isSuccessResult } from '@/arena/Constuructors/utils';
 import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
+import { resolveMonsterConfig } from '@/arena/MonsterService/balance/balance';
 import { MonsterAI } from '@/arena/MonsterService/MonsterAI';
 import { MonsterService } from '@/arena/MonsterService/MonsterService';
 import { magicWall } from '@/arena/magics';
@@ -121,22 +122,22 @@ export class WolfAI extends MonsterAI {
   }
 }
 
-export const createWolf = (lvl = 1, id: string | number = '') => {
+export const createWolf = (lvl = 1, id: string | number = '', budgetScale = 1) => {
   const fang = new ItemModel(arena.items.fang);
+  const { harks, abilities } = resolveMonsterConfig(
+    MonsterType.Wolf,
+    lvl,
+    budgetScale,
+  );
+
   const wolf = MonsterService.create(
     {
       nickname: `🐺 Волк ${id.toString()}`.trimEnd(),
       prof: CharacterClass.Warrior,
-      harks: {
-        str: Math.round(lvl * 3 + 10),
-        dex: Math.round(lvl * 1 + 10),
-        int: Math.round(lvl * 1 + 10),
-        wis: Math.round(lvl * 1.5 + 10),
-        con: Math.round(lvl * 5 + 10),
-      },
-      magics: { bleeding: 1 },
-      skills: { terrifyingHowl: 1 },
-      passiveSkills: { lacerate: 1, nightcall: 1 },
+      harks,
+      magics: abilities.magics,
+      skills: abilities.skills,
+      passiveSkills: abilities.passiveSkills,
       items: [fang],
       equipment: new Map([[ItemWear.TwoHands, fang]]),
       exp: expToLevel(lvl),

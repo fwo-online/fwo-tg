@@ -4,9 +4,10 @@ import arena from '@/arena';
 import { expToLevel } from '@/arena/CharacterService/utils/calculateLvl';
 import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
+import { resolveMonsterConfig } from '@/arena/MonsterService/balance/balance';
+import { MonsterAI } from '@/arena/MonsterService/MonsterAI';
 import { MonsterService } from '@/arena/MonsterService/MonsterService';
 import { ItemModel } from '@/models/item';
-import { MonsterAI } from '@/arena/MonsterService/MonsterAI';
 
 export class GhostAI extends MonsterAI {
   makeOrder(game: GameService): void {
@@ -62,21 +63,22 @@ export class GhostAI extends MonsterAI {
   }
 }
 
-export const createGhost = (lvl = 1, id: string | number = '') => {
+export const createGhost = (lvl = 1, id: string | number = '', budgetScale = 1) => {
   const machete = new ItemModel(arena.items.machete);
+  const { harks, abilities } = resolveMonsterConfig(
+    MonsterType.Ghost,
+    lvl,
+    budgetScale,
+  );
 
   const ghost = MonsterService.create(
     {
       nickname: `👻 Призрак ${id.toString()}`.trimEnd(),
       prof: CharacterClass.Mage,
-      harks: {
-        str: Math.round(lvl * 1 + 5),
-        dex: Math.round(lvl * 2 + 10),
-        int: Math.round(lvl * 3 + 12),
-        wis: Math.round(lvl * 2 + 10),
-        con: Math.round(lvl * 2 + 8),
-      },
-      magics: { madness: 1 },
+      harks,
+      magics: abilities.magics,
+      skills: abilities.skills,
+      passiveSkills: abilities.passiveSkills,
       items: [machete],
       equipment: new Map([[ItemWear.MainHand, machete]]),
       exp: expToLevel(lvl),

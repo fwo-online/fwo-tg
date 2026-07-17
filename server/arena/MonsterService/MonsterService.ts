@@ -1,11 +1,12 @@
 import { MonsterType } from '@fwo/shared';
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
+import ValidationError from '@/arena/errors/ValidationError';
+import type { MonsterAI } from '@/arena/MonsterService/MonsterAI';
 import { stubParams } from '@/arena/MonsterService/utils/stubParams';
 import PlayerService from '@/arena/PlayersService/PlayerService';
 import type { Char } from '@/models/character';
 import * as monsters from './monsters';
-import type { MonsterAI } from '@/arena/MonsterService/MonsterAI';
 
 /**
  * Monster Service
@@ -51,20 +52,22 @@ export class MonsterService extends PlayerService {
     return new MonsterService(monster, type, AIClass);
   }
 
-  static createByType(type: MonsterType | undefined, lvl: number) {
+  static createByType(type: MonsterType | undefined, lvl: number, budgetScale = 1) {
     switch (type) {
       case MonsterType.Skeleton:
-        return monsters.createSkeleton(lvl);
+        return monsters.createSkeleton(lvl, '', budgetScale);
       case MonsterType.Ghost:
-        return monsters.createGhost(lvl);
+        return monsters.createGhost(lvl, '', budgetScale);
       case MonsterType.Spirit:
-        return monsters.createSpirit(lvl);
+        return monsters.createSpirit(lvl, '', budgetScale);
       case MonsterType.Elemental:
-        return monsters.createElemental(lvl);
+        return monsters.createElemental(lvl, '', budgetScale);
       case MonsterType.Spider:
-        return monsters.createSpider(lvl);
+        return monsters.createSpider(lvl, '', budgetScale);
+      case MonsterType.Wolf:
+        return monsters.createWolf(lvl, '', budgetScale);
       default:
-        return monsters.createWolf(lvl);
+        throw new ValidationError(`MonsterService:: unknown monster type: ${type}`);
     }
   }
 

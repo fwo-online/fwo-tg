@@ -4,9 +4,10 @@ import arena from '@/arena';
 import { expToLevel } from '@/arena/CharacterService/utils/calculateLvl';
 import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
+import { resolveMonsterConfig } from '@/arena/MonsterService/balance/balance';
+import { MonsterAI } from '@/arena/MonsterService/MonsterAI';
 import { MonsterService } from '@/arena/MonsterService/MonsterService';
 import { ItemModel } from '@/models/item';
-import { MonsterAI } from '@/arena/MonsterService/MonsterAI';
 
 export class ElementalAI extends MonsterAI {
   makeOrder(game: GameService): void {
@@ -62,21 +63,22 @@ export class ElementalAI extends MonsterAI {
   }
 }
 
-export const createElemental = (lvl = 1, id: string | number = '') => {
+export const createElemental = (lvl = 1, id: string | number = '', budgetScale = 1) => {
   const claws = new ItemModel(arena.items.claws);
+  const { harks, abilities } = resolveMonsterConfig(
+    MonsterType.Elemental,
+    lvl,
+    budgetScale,
+  );
 
   const elemental = MonsterService.create(
     {
       nickname: `⚡ Элементаль ${id.toString()}`.trimEnd(),
       prof: CharacterClass.Mage,
-      harks: {
-        str: Math.round(lvl * 2 + 8),
-        dex: Math.round(lvl * 1 + 5),
-        int: Math.round(lvl * 4 + 15),
-        wis: Math.round(lvl * 3 + 12),
-        con: Math.round(lvl * 3 + 10),
-      },
-      magics: { chainLightning: 1 },
+      harks,
+      magics: abilities.magics,
+      skills: abilities.skills,
+      passiveSkills: abilities.passiveSkills,
       items: [claws],
       equipment: new Map([[ItemWear.TwoHands, claws]]),
       exp: expToLevel(lvl),
