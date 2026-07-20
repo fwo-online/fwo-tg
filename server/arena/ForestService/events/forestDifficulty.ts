@@ -12,7 +12,7 @@ import { ForestPhase } from '@fwo/shared';
  *   Edge: ~85%  Wilds: ~70%  Deep: ~55%
  */
 export const FOREST_PHASE_DIFFICULTY: Record<ForestPhase, number> = {
-  [ForestPhase.Edge]: 0.75,
-  [ForestPhase.Wilds]: 0.9,
-  [ForestPhase.Deep]: 1.1,
+  [ForestPhase.Edge]: 0.66,
+  [ForestPhase.Wilds]: 0.75,
+  [ForestPhase.Deep]: 1,
 };

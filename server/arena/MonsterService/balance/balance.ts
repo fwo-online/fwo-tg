@@ -1,8 +1,4 @@
-import {
-  type CharacterAttributeKey,
-  type CharacterAttributes,
-  MonsterType,
-} from '@fwo/shared';
+import { type CharacterAttributeKey, type CharacterAttributes, MonsterType } from '@fwo/shared';
 import config from '@/arena/config';
 
 // ─── Player reference curve ──────────────────────────────────────
@@ -83,11 +79,7 @@ export const buildMonsterHarks = (
 };
 
 /** One-shot: resolve harks + abilities for a monster archetype at a given level. */
-export const resolveMonsterConfig = (
-  type: MonsterType,
-  lvl: number,
-  budgetScale = 1,
-) => {
+export const resolveMonsterConfig = (type: MonsterType, lvl: number, budgetScale = 1) => {
   const balance = MONSTER_BALANCE[type];
   return {
     harks: buildMonsterHarks(lvl, balance, budgetScale),
@@ -104,7 +96,7 @@ export const resolveMonsterConfig = (
 export const MONSTER_BALANCE: Record<MonsterType, MonsterBalanceConfig> = {
   [MonsterType.Wolf]: {
     budgetMultiplier: 0.75,
-    weights: { str: 3, dex: 1, int: 1, wis: 1.5, con: 5 },
+    weights: { str: 2, dex: 2, int: 1, wis: 1.5, con: 3 },
     abilities: {
       magics: { bleeding: 1 },
       skills: { terrifyingHowl: 4 },
