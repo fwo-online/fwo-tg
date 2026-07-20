@@ -35,7 +35,7 @@ class Consussion extends PassiveSkillConstructor {
       return;
     }
 
-    const { initiator, target, game } = ctx.params;
+    const { initiator, target } = ctx.params;
 
     if (!ctx.initiator.weapon.isOfType(this.weaponTypes)) {
       return;
