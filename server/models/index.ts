@@ -5,6 +5,7 @@ import mongoose, { type ConnectOptions } from 'mongoose';
 // "mongodb://user:password@db:27017/fwo?retryWrites=true&w=majority&authSource=admin&replicaSet=rs0
 
 mongoose.set('toObject', { virtuals: true });
+mongoose.set('transactionAsyncLocalStorage', true);
 
 export async function connect(onConnect?: () => void): Promise<void> {
   assert(process.env.MONGO, 'MONGO is not defined');

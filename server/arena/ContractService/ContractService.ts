@@ -5,9 +5,7 @@ import {
   ContractType,
   ForestPhase,
 } from '@fwo/shared';
-import { claimContract } from '@/api/contracts';
 import type { CharacterService } from '@/arena/CharacterService/CharacterService';
-import ValidationError from '@/arena/errors/ValidationError';
 
 export class ContractService {
   /** Pool типов контрактов, доступных классу */
@@ -124,31 +122,5 @@ export class ContractService {
     }
 
     return contracts;
-  }
-
-  static async claimContract(character: CharacterService, idx: number) {
-    const charContracts = character.quests.contracts;
-    const contract = charContracts?.[idx];
-
-    if (!contract) {
-      throw new ValidationError('Контракт не найден');
-    }
-    if (contract.claimed) {
-      throw new ValidationError('Награда уже получена');
-    }
-    if (contract.progress < contract.goal) {
-      throw new ValidationError('Контракт не выполнен');
-    }
-
-    await claimContract(
-      character.id,
-      idx,
-      [...charContracts], // передаём копию in-memory контрактов (с актуальным прогрессом)
-      {
-        exp: contract.exp,
-        gold: contract.gold,
-        components: contract.components,
-      },
-    );
   }
 }
