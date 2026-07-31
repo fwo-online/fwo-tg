@@ -1,7 +1,9 @@
 import { type Contract, ContractType, type GameResult, QuestType } from '@fwo/shared';
 import { isNotNil } from 'es-toolkit';
+import mongoose from 'mongoose';
 import type { CharacterService } from '@/arena/CharacterService/CharacterService';
 import { ContractService } from '@/arena/ContractService/ContractService';
+import ValidationError from '@/arena/errors/ValidationError';
 import type { Item } from '@/models/item';
 
 export class CharacterQuests {
@@ -140,5 +142,31 @@ export class CharacterQuests {
       this.character.charObj.contracts = this.contracts;
       await this.character.save({ contracts: this.contracts });
     }
+  }
+
+  async claimContract(idx: number) {
+    const contract = this.contracts?.[idx];
+
+    if (!contract) {
+      throw new ValidationError('Контракт не найден');
+    }
+    if (contract.claimed) {
+      throw new ValidationError('Награда уже получена');
+    }
+    if (contract.progress < contract.goal) {
+      throw new ValidationError('Контракт не выполнен');
+    }
+
+    await mongoose.connection.transaction(async () => {
+      await this.character.resources.addResources({
+        gold: contract.gold,
+        exp: contract.exp,
+        components: contract.components,
+      });
+
+      contract.claimed = true;
+
+      await this.character.save({ contracts: this.contracts });
+    });
   }
 }
