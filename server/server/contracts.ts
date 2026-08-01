@@ -38,7 +38,7 @@ export const contracts = new Hono()
       const character = c.get('character');
       const { idx } = c.req.valid('param');
 
-      withValidation(ContractService.claimContract(character, idx));
+      withValidation(character.quests.claimContract(idx));
 
       return c.json({}, 200);
     },
