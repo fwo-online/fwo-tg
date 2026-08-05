@@ -1,36 +1,41 @@
-import { themeParams, useSignal } from '@tma.js/sdk-react';
-import type { HTMLAttributes, FC, ReactNode, Ref } from 'react';
-import cn from 'classnames';
+import type { ComponentProps } from '@solidjs/web';
+import type { JSX } from '@solidjs/web/jsx-runtime';
+import { themeParams, useSignal } from '@tma.js/sdk-solid';
+import { type ParentProps, Show } from 'solid-js';
+
 import './Card.css';
 
-type CardProps = HTMLAttributes<HTMLDivElement> & {
-  header?: ReactNode;
-  ref?: Ref<HTMLDivElement>;
+type CardProps = ComponentProps<'div'> & {
+  header?: JSX.Element;
 };
 
-export const Card: FC<CardProps> = ({ children, header, className, ...restProps }) => {
+export const Card = (props: ParentProps<CardProps>) => {
   const isDark = useSignal(themeParams.isDark);
 
   return (
     <div
-      className={cn(
+      {...props}
+      class={[
         'nes-container is-rounded p-2',
-        { 'with-title': !!header, 'is-dark': isDark },
-        className,
-      )}
-      {...restProps}
+        {
+          'with-title': !!props.header,
+          'is-dark': isDark(),
+        },
+        props.class,
+      ]}
     >
-      {header && (
-        <svg viewBox="0 0 300 30" x="0" y="0" className="text-md font-semibold!">
-          <text className="nes-container__outline" x="10" y="50%">
-            {header}
+      <Show when={props.header}>
+        <svg viewBox="0 0 300 30" class="text-md font-semibold!">
+          <text class="nes-container__outline" x="10" y="50%">
+            {props.header}
           </text>
-          <text className="nes-container__text" x="10" y="50%">
-            {header}
+          <text class="nes-container__text" x="10" y="50%">
+            {props.header}
           </text>
         </svg>
-      )}
-      {children}
+      </Show>
+
+      {props.children}
     </div>
   );
 };

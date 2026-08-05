@@ -1,5 +1,7 @@
+import { Errored } from 'solid-js';
 import { App } from '../components/App';
-import { ErrorBoundary } from '../components/ErrorBoundary';
+
+// import { ErrorBoundary } from '../components/ErrorBoundary';
 
 function ErrorBoundaryError({ error }: { error: unknown }) {
   return (
@@ -23,8 +25,8 @@ function ErrorBoundaryError({ error }: { error: unknown }) {
 
 export function Root() {
   return (
-    <ErrorBoundary fallback={ErrorBoundaryError}>
+    <Errored fallback={(error) => <ErrorBoundaryError error={error} />}>
       <App />
-    </ErrorBoundary>
+    </Errored>
   );
 }

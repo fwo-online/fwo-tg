@@ -1,14 +1,19 @@
-import type { FC, PropsWithChildren, ReactNode } from 'react';
+import type { JSX } from '@solidjs/web/jsx-runtime';
+import { type ParentProps, Show } from 'solid-js';
 
-export const Placeholder: FC<
-  PropsWithChildren<{ header?: ReactNode; description?: ReactNode }>
-> = ({ header, description }) => {
+type PlaceholderProps = ParentProps<{
+  header?: JSX.Element;
+  description: JSX.Element;
+}>;
+
+export function Placeholder(props: PlaceholderProps) {
   return (
-    <div className="flex flex-col gap-2 p-4">
-      {header ? (
-        <div className="font-semibold flex items-center justify-center">{header}</div>
-      ) : null}
-      <div className="text-sm font-semibold flex items-center justify-center">{description}</div>
+    <div class="flex flex-col gap-2 p-4">
+      <Show when={props.header}>
+        <div class="flex items-center justify-center font-semibold">{props.header}</div>
+      </Show>
+      <div class="flex items-center justify-center text-sm font-semibold">{props.description}</div>
+      {props.children}
     </div>
   );
-};
+}

@@ -1,28 +1,35 @@
 import type { Character, CreateCharacterDto } from '@fwo/shared';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
-import { createCharacter, getMyCharacters, activateCharacter } from '@/api/character';
+import { createAsync, useNavigate } from '@solidjs/router';
+import { createSignal, For, Show } from 'solid-js';
+
+import { activateCharacter, createCharacter, getMyCharacters } from '@/api/character';
+
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
+
 import { characterClassNameMap } from '@/constants/character';
+
 import { useRequest } from '@/hooks/useRequest';
+
 import { SelectCharacter } from '@/modules/character/components/CharacterSelect';
 
-export const CharacterCreatePage = () => {
+export function CharacterCreatePage() {
   const navigate = useNavigate();
-  const [myCharacters, setMyCharacters] = useState<Character[]>([]);
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [_, makeRequest] = useRequest();
 
-  useEffect(() => {
-    getMyCharacters().then(setMyCharacters).catch(() => {});
-  }, []);
+  const [, makeRequest] = useRequest();
 
-  const onSelect = async (createCharacterDto: CreateCharacterDto) => {
+  const myCharacters = createAsync(() => getMyCharacters());
+
+  const [showCreateForm, setShowCreateForm] = createSignal(false);
+
+  const handleCreate = async (dto: CreateCharacterDto) => {
     await makeRequest(async () => {
-      const character = await createCharacter(createCharacterDto);
+      const character = await createCharacter(dto);
+
       if (character) {
-        window.location.href = '/';
+        navigate('/', {
+          replace: true,
+        });
       }
     });
   };
@@ -30,55 +37,57 @@ export const CharacterCreatePage = () => {
   const handleActivate = async (id: string) => {
     await makeRequest(async () => {
       await activateCharacter(id);
-      window.location.reload();
+
+      navigate('/', {
+        replace: true,
+      });
     });
   };
 
-  // No existing characters — show creation form directly
-  if (myCharacters.length === 0) {
-    return <SelectCharacter onSelect={onSelect} />;
-  }
-
-  // Has characters — show list + optional creation form
   return (
-    <>
-      <Card header="Твои персонажи" className="m-4">
-        <div className="flex flex-col gap-2">
-          {myCharacters.map((char) => (
-            <div key={char.id} className="flex items-center justify-between">
-              <div>
-                <span className="font-semibold">{char.name}</span>
-                <span className="text-sm text-gray-500 ml-2">
-                  {characterClassNameMap[char.class]} {char.lvl} ур.
-                </span>
+    <Show when={myCharacters()?.length} fallback={<SelectCharacter onSelect={handleCreate} />}>
+      <Card header="Твои персонажи" class="m-4">
+        <div class="flex flex-col gap-2">
+          <For each={myCharacters()}>
+            {(character) => (
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-semibold">{character.name}</span>
+
+                  <span class="ml-2 text-sm text-gray-500">
+                    {characterClassNameMap[character.class]} {character.lvl} ур.
+                  </span>
+                </div>
+
+                <Show
+                  when={!character.active}
+                  fallback={<Button onClick={() => navigate('/character')}>Войти</Button>}
+                >
+                  <Button onClick={() => handleActivate(character.id)}>Сменить</Button>
+                </Show>
               </div>
-              {char.active ? (
-                <Button onClick={() => navigate('/character')}>Войти</Button>
-              ) : (
-                <Button onClick={() => handleActivate(char.id)}>Сменить</Button>
-              )}
-            </div>
-          ))}
+            )}
+          </For>
         </div>
-        {!showCreateForm && (
-          <div className="mt-4">
-            <Button className="is-primary w-full" onClick={() => setShowCreateForm(true)}>
+
+        <Show when={!showCreateForm()}>
+          <div class="mt-4">
+            <Button class="is-primary w-full" onClick={() => setShowCreateForm(true)}>
               Создать нового
             </Button>
           </div>
-        )}
+        </Show>
       </Card>
 
-      {showCreateForm && (
-        <>
-          <SelectCharacter onSelect={onSelect} />
-          <div className="mx-4 mb-4">
-            <Button className="w-full" onClick={() => setShowCreateForm(false)}>
-              Отмена
-            </Button>
-          </div>
-        </>
-      )}
-    </>
+      <Show when={showCreateForm()}>
+        <SelectCharacter onSelect={handleCreate} />
+
+        <div class="mx-4 mb-4">
+          <Button class="w-full" onClick={() => setShowCreateForm(false)}>
+            Отмена
+          </Button>
+        </div>
+      </Show>
+    </Show>
   );
-};
+}

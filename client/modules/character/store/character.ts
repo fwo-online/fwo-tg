@@ -1,48 +1,58 @@
-import { create } from 'zustand';
 import type { Character, Clan } from '@fwo/shared';
+import { createStore } from 'solid-js';
 
-export interface CharacterState {
-  character: Character | undefined;
-  setCharacter: (character: Character | undefined) => void;
-  setGame: (game: string | undefined) => void;
-  setTower: (tower: string | undefined) => void;
-  setForest: (forest: string | undefined) => void;
-  setClan: (clan: Clan) => void;
-}
+// import { createStore } from 'solid-js/store';
 
-export const useCharacterStore = create<CharacterState>((set) => ({
-  character: undefined,
-  setCharacter: (character) => set({ character }),
-  setClan: (clan) =>
-    set((state) =>
-      state.character ? { character: { ...state.character, clan } } : { character: undefined },
-    ),
-  setGame: (game) =>
-    set((state) =>
-      state.character ? { character: { ...state.character, game } } : { character: undefined },
-    ),
-  setTower: (tower) =>
-    set((state) =>
-      state.character ? { character: { ...state.character, tower } } : { character: undefined },
-    ),
-  setForest: (forest) =>
-    set((state) =>
-      state.character ? { character: { ...state.character, forest } } : { character: undefined },
-    ),
-}));
+const [state, setState] = createStore<{
+  character?: Character;
+}>({});
 
-export function useCharacter(): Character;
-export function useCharacter<T>(selector: (c: Character) => T): T;
-export function useCharacter<T>(selector?: (c: Character) => T): T | Character {
-  return useCharacterStore((state) => {
-    if (!state.character) {
-      throw new Error('Character is not loaded');
-    }
+export const characterStore = {
+  state,
 
-    if (selector) {
-      return selector(state.character);
-    }
+  setCharacter(character?: Character) {
+    setState(() => {
+      character;
+    });
+  },
 
-    return state.character;
-  });
+  setGame(game?: string) {
+    if (!state.character) return;
+
+    setState((state) => {
+      state.character!.game = game;
+    });
+  },
+
+  setTower(tower?: string) {
+    if (!state.character) return;
+
+    setState((state) => {
+      state.character!.tower = tower;
+    });
+  },
+
+  setForest(forest?: string) {
+    if (!state.character) return;
+
+    setState((state) => {
+      state.character!.forest = forest;
+    });
+  },
+
+  setClan(clan: Clan) {
+    if (!state.character) return;
+
+    setState((state) => {
+      state.character!.clan = clan;
+    });
+  },
+};
+
+export function useCharacter(): Character {
+  if (!state.character) {
+    throw new Error('Character is not loaded');
+  }
+
+  return state.character;
 }

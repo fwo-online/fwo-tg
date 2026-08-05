@@ -1,7 +1,8 @@
-import { themeParams, useSignal } from '@tma.js/sdk-react';
-import type { ButtonHTMLAttributes, FC } from 'react';
-import cn from 'classnames';
+import { themeParams, useSignal } from '@tma.js/sdk-solid';
+import { createMemo, omit } from 'solid-js';
+
 import './Button.css';
+import type { ComponentProps } from '@solidjs/web';
 
 const getButtonSvg = (textColor: `#${string}` | undefined) => {
   const svg = `<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="${textColor}" /></svg>`;
@@ -9,31 +10,32 @@ const getButtonSvg = (textColor: `#${string}` | undefined) => {
   return `url('data:image/svg+xml;utf8,${encodeURIComponent(svg)}')`;
 };
 
-export const Button: FC<ButtonHTMLAttributes<HTMLButtonElement>> = ({
-  children,
-  className,
-  disabled,
-  ...restProps
-}) => {
+type ButtonProps = ComponentProps<'button'>;
+
+export function Button(props: ButtonProps) {
+  const rest = omit(props, 'class', 'children', 'disabled', 'style');
+
   const textColor = useSignal(themeParams.textColor);
   const isDark = useSignal(themeParams.isDark);
+
+  const borderImageSource = createMemo(() => getButtonSvg(textColor()));
+
   return (
     <button
-      style={{
-        borderImageSource: getButtonSvg(textColor),
-      }}
-      className={cn(
+      {...rest}
+      disabled={props.disabled}
+      class={[
         'nes-btn',
+        props.class,
         {
-          'is-disabled': disabled,
-          'is-dark': isDark,
+          'is-disabled': !!props.disabled,
+          'is-dark': isDark(),
         },
-        className,
-      )}
-      disabled={disabled}
-      {...restProps}
+      ]}
+      style={props.style}
+      style:border-image-source={borderImageSource()}
     >
-      {children}
+      {props.children}
     </button>
   );
-};
+}

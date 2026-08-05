@@ -1,102 +1,64 @@
-import type { ClientToServerMessage, ServerToClientMessage } from '@fwo/shared';
-import { useState } from 'react';
-import {
-  createContext,
-  type LoaderFunctionArgs,
-  type MiddlewareFunction,
-  Navigate,
-  Outlet,
-  redirect,
-  useLoaderData,
-} from 'react-router';
-import type { Socket } from 'socket.io-client';
+import { redirect } from '@solidjs/web';
+import { createMemo, Loading, type ParentProps } from 'solid-js';
 import { createWebSocket } from '@/api';
 import { getCharacter } from '@/api/character';
 import { Card } from '@/components/Card';
 import { Placeholder } from '@/components/Placeholder';
-import { SocketContext } from '@/context/socket';
+import { socketStore } from '@/context/socket';
 import { useCharacterGuard } from '@/hooks/useCharacterGuard';
 import { useForestGuard } from '@/hooks/useForestGuard';
 import { useGameGuard } from '@/hooks/useGameGuard';
-import { useMountEffect } from '@/hooks/useMountEffect';
 import { useTowerGuard } from '@/hooks/useTowerGuard';
-import { useCharacterStore } from '@/modules/character/store/character';
+import { characterStore, useCharacterStore } from '@/modules/character/store/character';
 
-const ProtectedRouteGuards = () => {
+// import { socketStore } from '@/stores/socket';
+
+const HydrateFallback = () => (
+  <Card class="m-4" header="Загрузка">
+    <Placeholder description="Ищем вашего персонажа..." />
+  </Card>
+);
+
+function ProtectedRouteGuards(props: ParentProps) {
   useCharacterGuard();
   useGameGuard();
   useTowerGuard();
   useForestGuard();
 
-  return <Outlet />;
-};
+  return props.children;
+}
 
-const socketContext = createContext<Socket<ServerToClientMessage, ClientToServerMessage>>();
+export function ProtectedRoute(props: ParentProps) {
+  const auth = createMemo(async () => {
+    try {
+      const socket = await createWebSocket();
+      socketStore.set(socket);
 
-const middleware: MiddlewareFunction = async ({ context }) => {
-  try {
-    const socket = await createWebSocket();
+      const character = await getCharacter();
 
-    context.set(socketContext, socket);
-  } catch (e) {
-    if (e instanceof Error) {
-      if (e.message === 'No multiple connections') {
-        return redirect('/connection-error');
+      characterStore.setCharacter(character);
+
+      return {
+        character,
+      };
+    } catch (e) {
+      if (e instanceof Error) {
+        if (e.message === 'No multiple connections') {
+          throw redirect('/connection-error');
+        }
+
+        if (e.message === 'Character not found' || e.message === 'Персонаж не найден') {
+          throw redirect('/create');
+        }
       }
-      if (e.message === 'Character not found' || e.message === 'Персонаж не найден') {
-        return redirect('/create');
-      }
+
+      throw redirect('/error');
     }
-
-    return redirect('/error');
-  }
-};
-
-const loader = async ({ context }: LoaderFunctionArgs) => {
-  const socket = context.get(socketContext);
-  const character = await getCharacter();
-
-  return {
-    socket,
-    character,
-  };
-};
-
-export const HydrateFallback = () => {
-  return (
-    <Card className="m-4" header="Загрузка">
-      <Placeholder description="Ищем вашего персонажа..." />
-    </Card>
-  );
-};
-
-export const ProtectedRoute = () => {
-  const { socket, character } = useLoaderData<typeof loader>();
-  const setCharacter = useCharacterStore((state) => state.setCharacter);
-  const [hydrated, setHydrated] = useState(false);
-
-  useMountEffect(() => {
-    if (character) {
-      setCharacter(character);
-    }
-    setHydrated(true);
   });
 
-  if (!character) {
-    return <Navigate to="/" />;
-  }
-
-  if (!hydrated) {
-    return <HydrateFallback />;
-  }
-
   return (
-    <SocketContext.Provider value={socket}>
-      <ProtectedRouteGuards />
-    </SocketContext.Provider>
+    <Loading on={auth()} fallback={<HydrateFallback />}>
+      <ProtectedRouteGuards>{props.children}</ProtectedRouteGuards>
+    </Loading>
   );
-};
-
-ProtectedRoute.loader = loader;
-ProtectedRoute.middleware = [middleware];
-ProtectedRoute.HydrateFallback = HydrateFallback;
+}
