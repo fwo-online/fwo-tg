@@ -1,16 +1,24 @@
-import { useSocket } from '@/stores/socket';
 import type { ServerToClientMessage } from '@fwo/shared';
-import { useEffect } from 'react';
+import { createEffect, onCleanup } from 'solid-js';
+import { socketStore } from '@/context/socket';
+// import { socketStore } from '@/stores/socket';
 
 export function useSocketListener<K extends keyof ServerToClientMessage>(
   event: K,
   handler: ServerToClientMessage[K],
 ) {
-  const socket = useSocket();
-  useEffect(() => {
-    socket.on(event, handler as any);
-    return () => {
-      socket.off(event, handler as any);
-    };
-  }, [socket.on, socket.off, event, handler]);
+  createEffect(
+    () => socketStore.socket(),
+    (socket) => {
+      if (!socket) return;
+
+      // @ts-expect-error
+      socket.on(event, handler);
+
+      onCleanup(() => {
+        // @ts-expect-error
+        socket.off(event, handler);
+      });
+    },
+  );
 }

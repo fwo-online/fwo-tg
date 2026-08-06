@@ -1,3 +1,4 @@
+import { defineRoutes, useParams } from '@solidjs/router';
 import { createBrowserRouter, Navigate } from 'react-router';
 import { AppLayout } from '@/components/AppLayout';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
@@ -13,54 +14,52 @@ import { SettingsPage } from '@/modules/settings/pages/SettingsPage';
 import { TowerPage } from '@/modules/tower/pages/TowerPage';
 import { ErrorConnectionPage } from './modules/error/pages/ErrorConnectionPage';
 
-export const router = createBrowserRouter([
-  {
-    index: true,
-    element: <Navigate to="/character" />,
-  },
+export const router = defineRoutes([
   {
     path: '/create',
-    Component: CharacterCreatePage,
+    component: CharacterCreatePage,
   },
   {
-    Component: ProtectedRoute,
-    middleware: ProtectedRoute.middleware,
-    loader: ProtectedRoute.loader,
-    HydrateFallback: ProtectedRoute.HydrateFallback,
+    path: '/',
+    component: ProtectedRoute,
+    // middleware: ProtectedRoute.middleware,
+    // loader: ProtectedRoute.loader,
+    // HydrateFallback: ProtectedRoute.HydrateFallback,
     children: [
       {
-        Component: withSettingsButton(AppLayout),
+        component: AppLayout,
+        path: '/',
         children: [
           { path: '/character', children: characterRoutes },
-          { path: '/lobby', children: lobbyRoutes },
-          { path: '/settings', Component: SettingsPage },
-          { path: '/agora', children: agoraRoutes },
+          // { path: '/lobby', children: lobbyRoutes },
+          // { path: '/settings', Component: SettingsPage },
+          // { path: '/agora', children: agoraRoutes },
         ],
       },
-      {
-        path: '/game/:gameID',
-        Component: GamePage,
-      },
-      {
-        path: '/tower/:towerID',
-        Component: TowerPage,
-      },
-      {
-        path: '/forest/:forestID',
-        Component: ForestPage,
-      },
+      // {
+      //   path: '/game/:gameID',
+      //   Component: GamePage,
+      // },
+      // {
+      //   path: '/tower/:towerID',
+      //   Component: TowerPage,
+      // },
+      // {
+      //   path: '/forest/:forestID',
+      //   Component: ForestPage,
+      // },
     ],
   },
-  {
-    path: '/error',
-    Component: ErrorPage,
-  },
-  {
-    path: '/connection-error',
-    Component: ErrorConnectionPage,
-  },
+  // {
+  //   path: '/error',
+  //   Component: ErrorPage,
+  // },
+  // {
+  //   path: '/connection-error',
+  //   Component: ErrorConnectionPage,
+  // },
   {
     path: '*',
-    element: <Navigate to="/character" />,
+    component: ErrorPage,
   },
 ]);

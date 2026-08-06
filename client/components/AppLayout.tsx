@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from '@solidjs/router';
+import { useLocation, useNavigate, useRouteMatches } from '@solidjs/router';
 import { For, type ParentProps } from 'solid-js';
 
 import { Button } from './Button';
@@ -24,6 +24,9 @@ const tabs = [
 export function AppLayout(props: ParentProps) {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const route = useRouteMatches();
+  console.log(route());
 
   return (
     <div class="flex h-full flex-1 flex-col overflow-hidden">

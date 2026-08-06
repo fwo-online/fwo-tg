@@ -3,8 +3,9 @@ import { isString } from 'es-toolkit';
 import { Server } from 'socket.io';
 import { initBot } from '@/bot';
 import { initGameChannel } from '@/helpers/channelHelper';
-import { scheduleResetTower } from '@/helpers/towerHelper';
 import { scheduleResetContracts } from '@/helpers/contractsHelper';
+import { regChar } from '@/helpers/loginHelper';
+import { scheduleResetTower } from '@/helpers/towerHelper';
 import { connect } from '@/models';
 import { ItemModel } from '@/models/item';
 import { ItemSetModel } from '@/models/item-set';
@@ -23,6 +24,7 @@ void connect(async () => {
   scheduleResetTower();
   scheduleResetContracts();
 
+  // regChar({ tgId: 5000047355, prof: 'w', nickname: 'Test', sex: 'm' });
   await initBot();
 });
 

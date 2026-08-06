@@ -1,9 +1,10 @@
-import { Errored } from 'solid-js';
+import { type Accessor, Errored } from 'solid-js';
 import { App } from '../components/App';
 
 // import { ErrorBoundary } from '../components/ErrorBoundary';
 
-function ErrorBoundaryError({ error }: { error: unknown }) {
+function ErrorBoundaryError({ error }: { error: Accessor<unknown> }) {
+  console.error(error());
   return (
     <div>
       <p>An unhandled error occurred:</p>

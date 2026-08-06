@@ -32,8 +32,10 @@ export function Button(props: ButtonProps) {
           'is-dark': isDark(),
         },
       ]}
-      style={props.style}
-      style:border-image-source={borderImageSource()}
+      style={{
+        ...(typeof props.style === 'object' ? props.style : {}),
+        'border-image-source': borderImageSource(),
+      }}
     >
       {props.children}
     </button>

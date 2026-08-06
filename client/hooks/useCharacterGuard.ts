@@ -1,35 +1,46 @@
-import { useCallback } from 'react';
-import { useMountEffect } from '@/hooks/useMountEffect';
+import { untrack } from '@solidjs/web';
+import { createEffect, onCleanup, onSettled } from 'solid-js';
+import { socketStore } from '@/context/socket';
 import { useSocketListener } from '@/hooks/useSocketListener';
-import { useSyncCharacter } from '@/modules/character/hooks/useSyncCharacter';
-import { useCharacterStore } from '@/modules/character/store/character';
-import { useSocket } from '@/stores/socket';
+import { syncCharacter } from '@/modules/character/hooks/useSyncCharacter';
+// import { characterStore } from '@/modules/character/store/character';
+import { getSocket } from '@/stores/socket';
 
 export const useCharacterGuard = () => {
-  const socket = useSocket();
-  const setGame = useCharacterStore((state) => state.setGame);
-  const setTower = useCharacterStore((state) => state.setTower);
-  const setForest = useCharacterStore((state) => state.setForest);
-  const { syncCharacter } = useSyncCharacter();
+  // const socket = untrack(() => getSocket());
 
-  const handleGameEnd = useCallback(() => {
-    setGame(undefined);
+  const handleGameEnd = () => {
+    // characterStore.setGame(undefined);
     syncCharacter();
-  }, [setGame, syncCharacter]);
+  };
 
-  const handleTowerEnd = useCallback(() => {
-    setTower(undefined);
+  const handleTowerEnd = () => {
+    // characterStore.setTower(undefined);
     syncCharacter();
-  }, [setTower, syncCharacter]);
+  };
 
-  const handleForestEnd = useCallback(() => {
-    setForest(undefined);
+  const handleForestEnd = () => {
+    // characterStore.setForest(undefined);
     syncCharacter();
-  }, [setForest, syncCharacter]);
+  };
+  createEffect(
+    () => socketStore.socket(),
+    () => {
+      const socket = socketStore.socket();
 
-  useMountEffect(() => {
-    socket.io.on('reconnect', () => syncCharacter());
-  });
+      if (!socket) return;
+
+      syncCharacter();
+      socket.io.on('reconnect', () => syncCharacter());
+
+      // onCleanup(() => socket.off(...));
+    },
+  );
+
+  // onSettled(() => {
+  //   syncCharacter();
+  //   socket.io.on('reconnect', () => syncCharacter());
+  // });
 
   useSocketListener('game:end', handleGameEnd);
   useSocketListener('tower:end', handleTowerEnd);

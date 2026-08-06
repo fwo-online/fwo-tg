@@ -1,16 +1,15 @@
-import { useCharacter } from '@/modules/character/store/character';
+import { getCharacter } from '@/modules/character/store/character';
 import { formatNumber } from '@/utils/formatNumber';
 
 import styles from './CharacterExp.module.css';
 
 export const CharacterExp = () => {
-  const exp = useCharacter((character) => character.exp);
-  const nextLvlExp = useCharacter((character) => character.nextLvlExp);
-  const progress = Math.ceil((exp / nextLvlExp) * 100);
+  const character = () => getCharacter();
+  const progress = () => Math.ceil((character().exp / character().nextLvlExp) * 100);
 
   return (
-    <div style={{ '--exp-progress': `${progress}%` }} className={styles.exp}>
-      {formatNumber(exp)}/{formatNumber(nextLvlExp)}
+    <div style={{ '--exp-progress': `${progress()}%` }} class={styles.exp}>
+      {formatNumber(character().exp)}/{formatNumber(character().nextLvlExp)}
     </div>
   );
 };

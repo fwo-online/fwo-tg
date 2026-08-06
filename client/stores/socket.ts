@@ -1,12 +1,11 @@
-import { useContext } from 'react';
-import { SocketContext } from '@/context/socket';
+import { socketStore } from '@/context/socket';
 
-export const useSocket = () => {
-  const socket = useContext(SocketContext);
+export function getSocket() {
+  const value = socketStore.socket();
 
-  if (!socket) {
-    throw new Error('WebSocket must be connected');
+  if (!value) {
+    throw new Error('Socket is not initialized');
   }
 
-  return socket;
-};
+  return value;
+}

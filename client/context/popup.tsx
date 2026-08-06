@@ -1,5 +1,4 @@
-import { Button } from '@/components/Button';
-import { type PopupHandle, PopupOverlay } from '@/components/Popup';
+// import { type PopupHandle, PopupOverlay } from '@/components/Popup';
 import {
   createContext,
   type FC,
@@ -10,6 +9,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { Button } from '@/components/Button';
 
 type PopupOptions = {
   title?: string;

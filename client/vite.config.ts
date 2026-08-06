@@ -1,7 +1,7 @@
 import tailwindcss from '@tailwindcss/vite';
-import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
+import { analyzer } from 'vite-bundle-analyzer';
+import solid from 'vite-plugin-solid';
 
 export default defineConfig({
   css: {
@@ -9,7 +9,10 @@ export default defineConfig({
       localsConvention: 'camelCaseOnly',
     },
   },
-  plugins: [react(), tsconfigPaths({ projects: ['./tsconfig.json'] }), tailwindcss()],
+  plugins: [solid(), tailwindcss(), analyzer()],
+  resolve: {
+    tsconfigPaths: true,
+  },
   server: {
     host: true,
   },

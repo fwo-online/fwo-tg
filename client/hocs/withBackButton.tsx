@@ -1,15 +1,14 @@
+import { useNavigate } from '@solidjs/router';
 import { backButton } from '@tma.js/sdk-react';
-import type { ComponentType } from 'react';
-import { useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { type Component, onSettled } from 'solid-js';
 
-export function withBackButton(Component: ComponentType) {
-  function WithBackButton() {
+export function withBackButton(Component: Component) {
+  return () => {
     const navigate = useNavigate();
 
-    const back = useCallback(() => navigate(-1), [navigate]);
+    const back = () => navigate(-1);
 
-    useEffect(() => {
+    onSettled(() => {
       if (backButton.isSupported()) {
         backButton.show();
         backButton.onClick(back);
@@ -19,10 +18,8 @@ export function withBackButton(Component: ComponentType) {
           backButton.offClick(back);
         };
       }
-    }, [back]);
+    });
 
     return <Component />;
-  }
-
-  return WithBackButton;
+  };
 }

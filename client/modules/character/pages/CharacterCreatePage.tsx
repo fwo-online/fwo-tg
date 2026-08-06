@@ -1,6 +1,6 @@
 import type { Character, CreateCharacterDto } from '@fwo/shared';
-import { createAsync, useNavigate } from '@solidjs/router';
-import { createSignal, For, Show } from 'solid-js';
+import { useNavigate } from '@solidjs/router';
+import { createMemo, createSignal, For, Show } from 'solid-js';
 
 import { activateCharacter, createCharacter, getMyCharacters } from '@/api/character';
 
@@ -18,7 +18,7 @@ export function CharacterCreatePage() {
 
   const [, makeRequest] = useRequest();
 
-  const myCharacters = createAsync(() => getMyCharacters());
+  const myCharacters = createMemo(() => getMyCharacters());
 
   const [showCreateForm, setShowCreateForm] = createSignal(false);
 
