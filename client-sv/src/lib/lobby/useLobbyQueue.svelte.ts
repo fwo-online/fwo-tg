@@ -8,7 +8,7 @@ export const useLobbyQueue = (queue: GameType) => {
   const socket = getSocketContext();
   const character = getCharacterContext();
 
-  let searchers = $state<CharacterPublic[]>([]);
+  let searchers = $state.raw<CharacterPublic[]>([]);
   const characterID = $derived(character().id);
   const isSearching = $derived(searchers.some(({ id }) => id === characterID));
 
