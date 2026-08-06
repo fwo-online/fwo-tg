@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { getGameContext } from "$lib/constext/game";
+  import { game } from "$lib/game/utils/state.svelte";
 
-  const game = getGameContext();
   const ordersTime = $derived(game.ordersTime);
   const ordersStartTime = $derived(game.ordersStartTime);
   const threshold = 1000;
+  // svelte-ignore state_referenced_locally
   let remainTime = $state(ordersTime);
 
   $effect(() => {

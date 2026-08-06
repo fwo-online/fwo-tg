@@ -1,30 +1,17 @@
 <script lang="ts">
   import Button from "$lib/components/Button.svelte";
-  import type { PopupOptions } from "$lib/constext/popup";
+  import {
+    state,
+    dialog,
+    setDialog,
+    close,
+  } from "$lib/components/Popup/popup.svelte";
   import { themeParams, useSignal } from "@tma.js/sdk-svelte";
   import type { MouseEventHandler, SvelteHTMLElements } from "svelte/elements";
 
   const { children, ...restProps }: SvelteHTMLElements["dialog"] = $props();
 
-  let dialog: HTMLDialogElement;
-  let state = $state<PopupOptions | null>(null);
   const isDark = useSignal(themeParams.isDark);
-
-  export const show = (options: PopupOptions) => {
-    state = options;
-    dialog?.showModal();
-  };
-
-  export const close = () => {
-    dialog?.close();
-    state = null;
-  };
-
-  export const info = (options: Omit<PopupOptions, "type">) =>
-    show({ type: "info", ...options });
-
-  export const confirm = (options: Omit<PopupOptions, "type">) =>
-    show({ type: "confirm", ...options });
 
   const handleClick: MouseEventHandler<HTMLDialogElement> = (e) => {
     e.preventDefault();
@@ -56,7 +43,7 @@
 </script>
 
 <dialog
-  bind:this={dialog}
+  bind:this={() => dialog, (v) => setDialog(v)}
   class={[
     "nes-dialog is-rounded",
     {

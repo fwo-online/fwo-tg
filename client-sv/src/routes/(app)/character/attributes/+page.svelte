@@ -48,7 +48,7 @@
   const dynamicAttributes = $derived(await loadAttributes(attributes));
 </script>
 
-{#snippet stat(path: PathsOf<Attributes>)}
+{#snippet stat(path: PathsOf)}
   {@const value = get(dynamicAttributes, path)}
   {@const base = get(baseDynamicAttributes, path) ?? 0}
   {@const diff = value - base}
@@ -75,7 +75,7 @@
 {/snippet}
 
 <div class="h-screen flex flex-col">
-  <Card header="Характеристики" class="flex-1 m-4 mb-1">
+  <Card header="Характеристики" class="flex-1 mb-1">
     <Description.Group>
       <Description.Item>
         Урон
@@ -164,7 +164,7 @@
     </Description.Group>
   </Card>
 
-  <Card class="m-4 mt-0 flex-0 flex flex-col">
+  <Card class="flex-0 flex flex-col">
     <div class="flex gap-2 font-bold">
       <span>Свободные очки:</span>
       {free}

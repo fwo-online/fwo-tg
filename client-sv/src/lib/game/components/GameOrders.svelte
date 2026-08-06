@@ -1,6 +1,6 @@
 <script lang="ts">
   import Button from "$lib/components/Button.svelte";
-  import { getGameContext } from "$lib/constext/game";
+  import { game } from "$lib/game/utils/state.svelte";
 
   type Props = {
     isPending?: boolean;
@@ -10,7 +10,7 @@
   );
 
   const props: Props = $props();
-  const game = getGameContext();
+
   const orders = $derived(game.orders);
 </script>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { CharacterClass } from "@fwo/shared";
+  import type { CharacterClass } from "@fwo/shared";
   import CharacterImage from "$lib/character/components/CharacterImage.svelte";
 
   const props: {
@@ -16,8 +16,7 @@
     {props.lvl}
   {/if}
   {#if !props.isBot}
-    <CharacterImage characterClass={props.characterClass} />
+    <CharacterImage characterClass={props.characterClass} small />
   {/if}
-  <div class="flex-1">{props.name}</div>
   <div class="flex-1">{props.name}</div>
 </div>

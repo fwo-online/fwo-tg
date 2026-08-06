@@ -10,7 +10,7 @@ const getToken = () => {
 
 const socket = io(import.meta.env.VITE_API_URL, {
   autoConnect: false,
-  extraHeaders: { authorization: getToken() },
+  auth: (cb) => cb({ authorization: getToken() }),
 });
 
 export const createWebSocket = async () => {

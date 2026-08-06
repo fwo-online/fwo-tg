@@ -5,7 +5,6 @@
   import type { PageProps } from "./$types";
   import { getCharacterContext } from "$lib/constext/character";
   import Button from "$lib/components/Button.svelte";
-  import { onMount } from "svelte";
 
   const { data }: PageProps = $props();
   let selectedSkill = $state(data.passiveSkills[0]);
@@ -19,7 +18,7 @@
 </script>
 
 <div class="h-screen flex flex-col">
-  <Card header="Пассивные умения" class="m-4 mb-1">
+  <Card header="Пассивные умения" class="mb-1">
     <div class="max-h-[45vh] overflow-y-auto">
       <div class="flex flex-col gap-2">
         {#each visibleSkills as passiveSkill (passiveSkill.name)}
@@ -34,19 +33,11 @@
               </div>
             </div>
           </Button>
-          <!-- <div class="max-h-[45vh] overflow-y-auto">
-        <PassiveSkillsList
-          skills={passiveSkills}
-          {selectedSkill}
-          onSelect={setSelectedSkill}
-        />
-      </div> -->
-          <!-- <PassiveSkillModal skill={passiveSkill} /> -->
         {/each}
       </div>
     </div>
   </Card>
-  <Card class="m-4 mt-0 flex-1 flex flex-col">
+  <Card class="flex-1 flex flex-col">
     {#if selectedSkill}
       <PassiveSkillModal skill={selectedSkill} />
     {/if}

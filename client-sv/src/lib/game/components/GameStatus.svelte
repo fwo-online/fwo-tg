@@ -1,14 +1,13 @@
 <script lang="ts">
   import { Description } from "$lib/components/Description";
   import { getCharacterContext } from "$lib/constext/character";
-  import { getGameContext } from "$lib/constext/game";
   import GamePlayer from "$lib/game/components/GamePlayer.svelte";
+  import { game } from "$lib/game/utils/state.svelte";
   import { reservedClanName, type GameStatus } from "@fwo/shared";
   import { mapValues, omit } from "es-toolkit";
 
   const character = getCharacterContext();
   const characterID = character().id;
-  const game = getGameContext();
   const clan = $derived(game.players[character().id].clan);
 
   const alliesStatus = $derived(
@@ -30,6 +29,8 @@
   );
 
   const enemiesStatusEntries = $derived(Object.entries(enemiesStatus));
+
+  $inspect(enemiesStatusEntries);
 </script>
 
 <Description.Group>
@@ -54,23 +55,25 @@
   {/each}
 
   {#each enemiesStatusEntries as [clan, statuses] (clan)}
-    <Description.Group>
-      {#snippet header()}
-        {clan === reservedClanName ? "Без клана" : clan}
-      {/snippet}
-      {#each statuses as status (status.name)}
-        <Description.Item>
-          {@const player = game.players[status.id]}
-          <GamePlayer
-            characterClass={player.class}
-            name={player.name}
-            isBot={player.isBot}
-          />
-          {#snippet after()}
-            {#if status.hp}❤️{status.hp}{/if}
-          {/snippet}
-        </Description.Item>
-      {/each}
-    </Description.Group>
+    {#if statuses.length}
+      <Description.Group>
+        {#snippet header()}
+          {clan === reservedClanName ? "Без клана" : clan}
+        {/snippet}
+        {#each statuses as status (status.name)}
+          <Description.Item>
+            {@const player = game.players[status.id]}
+            <GamePlayer
+              characterClass={player.class}
+              name={player.name}
+              isBot={player.isBot}
+            />
+            {#snippet after()}
+              {#if status.hp}❤️{status.hp}{/if}
+            {/snippet}
+          </Description.Item>
+        {/each}
+      </Description.Group>
+    {/if}
   {/each}
 </Description.Group>

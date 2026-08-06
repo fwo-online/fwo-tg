@@ -1,23 +1,30 @@
 <script lang="ts">
   import favicon from "$lib/assets/favicon.svg";
   import type { LayoutProps } from "./$types";
-  import { setSocketContext } from "$lib/constext/socket";
+  import { setSocket, setSocketContext, socket } from "$lib/constext/socket";
   import { setCharactertContext } from "$lib/constext/character";
   import { setPopupContext } from "$lib/constext/popup";
-  import Popup from "$lib/components/Popup.svelte";
+  import PopupHost from "$lib/components/Popup/PopupHost.svelte";
+  import { popup } from "$lib/components/Popup/popup.svelte";
   import { navigating } from "$app/state";
 
   import "./layout.css";
+  // import { popup } from "$lib/components/Popup/popup.svelte";
 
   let { children, data }: LayoutProps = $props();
-  let popup: Popup;
+  // let popup: Popup;
 
+  setSocket(data.socket);
   setSocketContext(() => data.socket);
   setCharactertContext(() => data.character);
   setPopupContext(() => popup);
 
   let showLoader = $state(true);
   let timeout: ReturnType<typeof setTimeout> | null = null;
+
+  $effect(() => {
+    setSocket(data.socket);
+  });
 
   $effect(() => {
     if (navigating.to) {
@@ -44,6 +51,6 @@
   </div>
 {/if}
 
-<Popup bind:this={popup} />
+<PopupHost />
 
 {@render children()}
