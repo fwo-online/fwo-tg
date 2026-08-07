@@ -12,13 +12,11 @@
 </script>
 
 <div class="flex flex-col gap-2">
-  <Card class="relative bg-transparent!">
-    {#snippet header()}
-      {character.name}
-    {/snippet}
+  <Card header={character.name} class="relative bg-transparent!">
     <img
       src={characterBackground}
       class="absolute top-0 left-0 right-0 bottom-0 w-full h-full object-cover object-bottom"
+      alt="background"
     />
     <div class="mt-20 mb-2 relative">
       <CharacterImage characterClass={character().class} />

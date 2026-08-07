@@ -9,11 +9,7 @@
   const { exp, lvl } = $derived(character());
 </script>
 
-<Card class="m-4">
-  {#snippet header()}
-    Мир
-  {/snippet}
-
+<Card header="Мир">
   <h5>Выбери место, куда хотел бы направиться</h5>
   <div class="flex flex-col gap-2">
     <Button href="/lobby/practice" class="flex-1">Тренировка</Button>

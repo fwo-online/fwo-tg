@@ -33,11 +33,7 @@
   $inspect(enemiesStatusEntries);
 </script>
 
-<Description.Group>
-  {#snippet header()}
-    {clan?.name ?? ""}
-  {/snippet}
-
+<Description.Group header={clan?.name ?? ""}>
   {#each alliesStatus as status (status.name)}
     <Description.Item>
       {@const player = game.players[status.id]}
@@ -56,10 +52,9 @@
 
   {#each enemiesStatusEntries as [clan, statuses] (clan)}
     {#if statuses.length}
-      <Description.Group>
-        {#snippet header()}
-          {clan === reservedClanName ? "Без клана" : clan}
-        {/snippet}
+      <Description.Group
+        header={clan === reservedClanName ? "Без клана" : clan}
+      >
         {#each statuses as status (status.name)}
           <Description.Item>
             {@const player = game.players[status.id]}

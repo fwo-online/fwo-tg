@@ -3,10 +3,8 @@
   let { children } = $props();
 </script>
 
-<!-- <Card class="m-4"> -->
 {#snippet header()}
   {document.title}
 {/snippet}
 
 {@render children()}
-<!-- </Card> -->

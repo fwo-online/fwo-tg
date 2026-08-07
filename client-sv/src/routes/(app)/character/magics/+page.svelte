@@ -36,10 +36,15 @@
       onConfirm: async () => {
         isLearning = true;
         await makeRequest(async () => {
-          const magic = await createRequest(client.magic[':lvl'].$post)({ param: { lvl: String(lvl) } });
-          await invalidate('app:character');
+          const magic = await createRequest(client.magic[":lvl"].$post)({
+            param: { lvl: String(lvl) },
+          });
+          await invalidate("app:character");
           if (magic) {
-            popup.info({ title: 'Успешное изучение', message: magic.displayName });
+            popup.info({
+              title: "Успешное изучение",
+              message: magic.displayName,
+            });
           }
         });
         isLearning = false;
@@ -49,8 +54,8 @@
 </script>
 
 <div class="h-screen flex flex-col">
-  <Card header="Магии" class="m-4 mb-1">
-    <div class="max-h-[45vh] overflow-y-auto">
+  <Card header="Магии" class="mb-1">
+    <div class="h-[45vh] overflow-y-auto">
       <div class="flex flex-col gap-2">
         {#each data.magics as magic (magic.name)}
           <Button
@@ -69,38 +74,39 @@
     </div>
   </Card>
 
-  <Card class="m-4 mt-0 flex-1 flex flex-col">
+  <Card class="flex-1 flex flex-col">
     {#if selectedMagic}
       <MagicModal magic={selectedMagic} />
     {/if}
   </Card>
 
   <div class="flex p-4">
-    <Modal>
+    <Modal header="Изучение магии">
       {#snippet trigger()}
         <Button class="is-primary flex-1">Изучение магий</Button>
       {/snippet}
 
-      <Card header="Изучение магии">
-        <h5 class="text-sm mb-4">
-          Выбери уровень магии, который хочешь изучить. Будет изучена случайная магия выбранного уровня
-        </h5>
-        <div class="flex flex-col gap-2">
-          <span class="self-end">У тебя {character().bonus}💡</span>
-          {#each times(4, (i) => i + 1) as lvl (lvl)}
-            <Button
-              class={['flex-1', { 'is-primary': !isDisabled(lvl) }]}
-              disabled={isDisabled(lvl)}
-              onclick={() => handleLearn(lvl)}
-            >
-              <div class="flex justify-between">
-                <span>Уровень {lvl}</span>
-                {data.availableMagicLevels[lvl] ? `${getLearnMagicCost(lvl)}💡` : '✅'}
-              </div>
-            </Button>
-          {/each}
-        </div>
-      </Card>
+      <h5 class="text-sm mb-4">
+        Выбери уровень магии, который хочешь изучить. Будет изучена случайная
+        магия выбранного уровня
+      </h5>
+      <div class="flex flex-col gap-2">
+        <span class="self-end">У тебя {character().bonus}💡</span>
+        {#each times(4, (i) => i + 1) as lvl (lvl)}
+          <Button
+            class={["flex-1", { "is-primary": !isDisabled(lvl) }]}
+            disabled={isDisabled(lvl)}
+            onclick={() => handleLearn(lvl)}
+          >
+            <div class="flex justify-between">
+              <span>Уровень {lvl}</span>
+              {data.availableMagicLevels[lvl]
+                ? `${getLearnMagicCost(lvl)}💡`
+                : "✅"}
+            </div>
+          </Button>
+        {/each}
+      </div>
     </Modal>
   </div>
 </div>

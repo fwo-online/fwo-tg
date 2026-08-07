@@ -2,11 +2,15 @@
   import type { Snippet } from "svelte";
   import { BottomSheet } from "svelte-bottom-sheet";
   import Card from "$lib/components/Card.svelte";
+  import {
+    renderable,
+    type Renderable,
+  } from "$lib/components/Renderable.svelte";
 
   type Props = {
     trigger: Snippet;
     children: Snippet;
-    header?: Snippet;
+    header?: Renderable;
   };
   const { trigger, children, header }: Props = $props();
 </script>
@@ -20,7 +24,7 @@
       <BottomSheet.Content>
         <Card class="w-[calc(100vw-8px)]">
           {#snippet header()}
-            {@render header?.()}
+            {@render renderable(header)}
           {/snippet}
           {@render children()}
         </Card>

@@ -29,7 +29,10 @@
     } catch {}
   });
 
-  const toggleNotification = async (type: NotificationType, enabled: boolean) => {
+  const toggleNotification = async (
+    type: NotificationType,
+    enabled: boolean,
+  ) => {
     loading = true;
     await makeRequest(async () => {
       await createRequest(client.character["notification-settings"].$patch)({
@@ -42,7 +45,9 @@
 
   const handleActivate = async (id: string) => {
     await makeRequest(async () => {
-      await createRequest(client.character[':id'].activate.$patch)({ param: { id } });
+      await createRequest(client.character[":id"].activate.$patch)({
+        param: { id },
+      });
       window.location.reload();
     });
   };
@@ -92,15 +97,26 @@
   <div class="flex flex-col gap-2">
     {#each notificationTypes as { key, label } (key)}
       {@const enabled = character().notificationSettings?.[key] ?? false}
-      <div class="flex items-center justify-between">
-        <span>{label}</span>
-        <Button
+      <div class="grid grid-cols-3">
+        <span class="col-start-1 col-end-3">{label}</span>
+
+        <label class="col-start-3">
+          <input
+            type="checkbox"
+            class="nes-checkbox is-dark"
+            checked={enabled}
+            disabled={loading}
+            onchange={() => toggleNotification(key, !enabled)}
+          />
+          <span>{enabled ? "Вкл" : "Выкл"}</span>
+        </label>
+        <!-- <Button
           class="p-0"
           disabled={loading}
           onclick={() => toggleNotification(key, !enabled)}
         >
           {enabled ? "Вкл" : "Выкл"}
-        </Button>
+        </Button> -->
       </div>
     {/each}
   </div>
@@ -114,19 +130,21 @@
           <div>
             <span class="font-semibold">{char.name}</span>
             <span class="text-sm opacity-50 ml-2">
-              {characterClassNameMap[char.class]} {char.lvl} ур.
+              {characterClassNameMap[char.class]}
+              {char.lvl} ур.
             </span>
           </div>
-          <Button disabled={char.active} onclick={() => handleActivate(char.id)}>
+          <Button
+            disabled={char.active}
+            onclick={() => handleActivate(char.id)}
+          >
             {char.active ? "Активен" : "Сменить"}
           </Button>
         </div>
       {/each}
     </div>
     <div class="mt-4 flex flex-col gap-2">
-      <Button class="is-primary" href="/create">
-        Создать нового
-      </Button>
+      <Button class="is-primary" href="/create">Создать нового</Button>
       <Button class="is-error" onclick={removeCharacter}>
         Удалить текущего персонажа
       </Button>

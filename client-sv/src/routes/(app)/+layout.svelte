@@ -28,7 +28,7 @@
 </script>
 
 <div class="h-full overflow-hidden flex flex-col flex-1">
-  <div class="overflow-auto flex-1 m-4">
+  <div class="flex-1 m-4">
     {@render children()}
   </div>
   <div class="gap-4 px-2 w-full flex">

@@ -17,21 +17,21 @@
     loading = true;
     error = null;
     try {
-      const res = await socket().emitWithAck('forest:enter');
+      const res = await socket().emitWithAck("forest:enter");
       if (res.error) {
-        error = res.message || 'Не удалось войти в лес';
+        error = res.message || "Не удалось войти в лес";
       } else {
         goto(`/forest/${res.forestId}`);
       }
     } catch {
-      error = 'Ошибка соединения';
+      error = "Ошибка соединения";
     } finally {
       loading = false;
     }
   };
 
   onMount(async () => {
-    const res = await socket().emitWithAck('forest:lobby');
+    const res = await socket().emitWithAck("forest:lobby");
     if (res.error) {
       popup.info({ message: res.error });
     } else {
@@ -40,12 +40,13 @@
   });
 </script>
 
-<div class="h-full overflow-hidden flex flex-col">
+<div class="h-full flex flex-col">
   <Card header="Лес">
     <div class="flex flex-col gap-2">
       <div class="flex flex-col">
         <p class="text-sm">
-          Лес - это PvE режим, где ты можешь собирать ресурсы и сражаться с монстрами.
+          Лес - это PvE режим, где ты можешь собирать ресурсы и сражаться с
+          монстрами.
         </p>
         {#if debuffLevel}
           <p class="text-sm text-red-500">Ты ослаблен после смерти</p>
@@ -70,7 +71,6 @@
           <li>⛺ Лагерь - ткань</li>
           <li>🪤 Капкан - железо</li>
           <li>⚔️ Меч - сталь</li>
-          <li>💎 Кристалл - арканит</li>
           <li>📦 Сундук - золото</li>
           <li>🔥 Костёр - восстановление HP</li>
         </ul>
@@ -84,7 +84,7 @@
 
   <div class="flex flex-col gap-2 mt-auto pb-8 px-4">
     <Button onclick={handleEnterForest} disabled={loading} class="is-primary">
-      {loading ? 'Загрузка...' : 'Войти в лес'}
+      {loading ? "Загрузка..." : "Войти в лес"}
     </Button>
   </div>
 </div>

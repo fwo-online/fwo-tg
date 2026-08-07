@@ -1,11 +1,9 @@
 <script lang="ts">
   import { client, createRequest } from "$lib/api";
-  import Button from "$lib/components/Button.svelte";
   import { mapValues } from "es-toolkit";
   import { Description } from "$lib/components/Description";
   import { getCharacterContext } from "$lib/constext/character";
   import {
-    type Attributes,
     type CharacterAttributes,
     isArcher,
     isMage,
@@ -15,6 +13,8 @@
   import { formatNumber } from "$lib/utils/format-number";
   import { get } from "es-toolkit/compat";
   import Card from "$lib/components/Card.svelte";
+  import CharacterAttributesEditor from "$lib/character/components/CharacterAttributesEditor.svelte";
+  import { invalidate } from "$app/navigation";
 
   const character = getCharacterContext();
 
@@ -28,22 +28,13 @@
     await createRequest(client.character.attributes.$patch)({
       json: attributes,
     });
+    await invalidate("app:character");
   };
 
-  let free = $state(character().free);
-  let attributes = $state(character().attributes);
+  let free = $derived(character().free);
+  let baseAttributes = $derived(character().attributes);
+  let attributes = $state({ ...character().attributes });
   const baseDynamicAttributes = $derived(character().dynamicAttributes);
-  const hasChanges = $derived(free !== character().free);
-
-  const increaseAttribute = (attritubute: keyof CharacterAttributes) => {
-    attributes[attritubute]++;
-    free--;
-  };
-
-  const reset = () => {
-    attributes = character().attributes;
-    free = character().free;
-  };
 
   const dynamicAttributes = $derived(await loadAttributes(attributes));
 </script>
@@ -60,18 +51,6 @@
       ({diff > 0 ? "+" : ""}{formatNumber(diff)})
     </span>
   {/if}
-{/snippet}
-
-{#snippet attributeButton(attribute: keyof CharacterAttributes)}
-  {@const loading = $effect.pending() > 0}
-  <Button
-    class="flex flex-col justify-center items-center is-primary text-sm"
-    onclick={() => increaseAttribute(attribute)}
-    disabled={loading || free <= 0}
-  >
-    {attribute.toUpperCase()}
-    <span class="font-semibold"> {attributes[attribute].toString()}</span>
-  </Button>
 {/snippet}
 
 <div class="h-screen flex flex-col">
@@ -165,30 +144,12 @@
   </Card>
 
   <Card class="flex-0 flex flex-col">
-    <div class="flex gap-2 font-bold">
-      <span>Свободные очки:</span>
+    <CharacterAttributesEditor
+      bind:attributes
+      {baseAttributes}
       {free}
-    </div>
-
-    <div class="flex justify-between gap-2">
-      {@render attributeButton("str")}
-      {@render attributeButton("dex")}
-      {@render attributeButton("con")}
-      {@render attributeButton("int")}
-      {@render attributeButton("wis")}
-    </div>
-
-    <div class="flex gap-2 mt-4">
-      <Button class="flex-1" onclick={reset} disabled={!hasChanges}>
-        Сбросить
-      </Button>
-      <Button
-        class="flex-1 is-primary"
-        onclick={() => save(attributes)}
-        disabled={!hasChanges}
-      >
-        Применить
-      </Button>
-    </div>
+      disabled={$effect.pending() > 0}
+      {save}
+    />
   </Card>
 </div>

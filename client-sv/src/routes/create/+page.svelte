@@ -26,7 +26,8 @@
   };
 
   const prev = () => {
-    selected = (selected - 1 + characterClassList.length) % characterClassList.length;
+    selected =
+      (selected - 1 + characterClassList.length) % characterClassList.length;
   };
 
   const onCreate = async () => {
@@ -35,14 +36,16 @@
         json: { name, class: characterClassList[selected] },
       });
       if (character) {
-        window.location.href = '/';
+        window.location.href = "/";
       }
     });
   };
 
   const handleActivate = async (id: string) => {
     await makeRequest(async () => {
-      await createRequest(client.character[':id'].activate.$patch)({ param: { id } });
+      await createRequest(client.character[":id"].activate.$patch)({
+        param: { id },
+      });
       window.location.reload();
     });
   };
@@ -53,7 +56,13 @@
     <div class="flex justify-center gap-4 mb-4">
       {#each characterClassList as charClass, index}
         <div
-          class={["w-2 h-2 rounded-full", { 'bg-(--tg-theme-accent-text-color)': index === selected, 'bg-(--tg-theme-text-color)': index !== selected }]}
+          class={[
+            "w-2 h-2 rounded-full",
+            {
+              "bg-(--tg-theme-accent-text-color)": index === selected,
+              "bg-(--tg-theme-text-color)": index !== selected,
+            },
+          ]}
         ></div>
       {/each}
     </div>
@@ -63,12 +72,18 @@
         <div class="flex-1 flex justify-center">
           <div class="flex flex-col items-center">
             <CharacterImage characterClass={characterClassList[selected]} />
-            <h2 class="text-xl font-semibold">{characterClassNameMap[characterClassList[selected]]}</h2>
+            <h2 class="text-xl font-semibold">
+              {characterClassNameMap[characterClassList[selected]]}
+            </h2>
           </div>
         </div>
         <Button onclick={next}>►</Button>
       </div>
-      <input class="nes-input" bind:value={name} placeholder="Введите имя персонажа" />
+      <input
+        class="nes-input"
+        bind:value={name}
+        placeholder="Введите имя персонажа"
+      />
       <Button class="is-primary" disabled={!name} onclick={onCreate}>
         Создать
       </Button>
@@ -82,7 +97,8 @@
           <div>
             <span class="font-semibold">{char.name}</span>
             <span class="text-sm opacity-50 ml-2">
-              {characterClassNameMap[char.class]} {char.lvl} ур.
+              {characterClassNameMap[char.class]}
+              {char.lvl} ур.
             </span>
           </div>
           {#if char.active}
@@ -95,7 +111,10 @@
     </div>
     {#if !showCreateForm}
       <div class="mt-4">
-        <Button class="is-primary w-full" onclick={() => (showCreateForm = true)}>
+        <Button
+          class="is-primary w-full"
+          onclick={() => (showCreateForm = true)}
+        >
           Создать нового
         </Button>
       </div>
@@ -103,11 +122,17 @@
   </Card>
 
   {#if showCreateForm}
-    <Card header="Создание персонажа">
+    <Card header="Создание персонажа" class="m-4">
       <div class="flex justify-center gap-4 mb-4">
         {#each characterClassList as charClass, index}
           <div
-            class={["w-2 h-2 rounded-full", { 'bg-(--tg-theme-accent-text-color)': index === selected, 'bg-(--tg-theme-text-color)': index !== selected }]}
+            class={[
+              "w-2 h-2 rounded-full",
+              {
+                "bg-(--tg-theme-accent-text-color)": index === selected,
+                "bg-(--tg-theme-text-color)": index !== selected,
+              },
+            ]}
           ></div>
         {/each}
       </div>
@@ -117,19 +142,27 @@
           <div class="flex-1 flex justify-center">
             <div class="flex flex-col items-center">
               <CharacterImage characterClass={characterClassList[selected]} />
-              <h2 class="text-xl font-semibold">{characterClassNameMap[characterClassList[selected]]}</h2>
+              <h2 class="text-xl font-semibold">
+                {characterClassNameMap[characterClassList[selected]]}
+              </h2>
             </div>
           </div>
           <Button onclick={next}>►</Button>
         </div>
-        <input class="nes-input" bind:value={name} placeholder="Введите имя персонажа" />
+        <input
+          class="nes-input"
+          bind:value={name}
+          placeholder="Введите имя персонажа"
+        />
         <Button class="is-primary" disabled={!name} onclick={onCreate}>
           Создать
         </Button>
       </div>
     </Card>
     <div class="mx-4 mb-4">
-      <Button class="w-full" onclick={() => (showCreateForm = false)}>Отмена</Button>
+      <Button class="w-full" onclick={() => (showCreateForm = false)}
+        >Отмена</Button
+      >
     </div>
   {/if}
 {/if}

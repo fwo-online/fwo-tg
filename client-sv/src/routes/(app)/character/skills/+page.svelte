@@ -14,21 +14,29 @@
   let isSubmitting = $state(false);
 
   const currentLevel = $derived(character().skills[selectedSkill.name] ?? 0);
-  const requiredLevel = $derived(selectedSkill.classList[character().class] ?? 0);
+  const requiredLevel = $derived(
+    selectedSkill.classList[character().class] ?? 0,
+  );
   const nextCost = $derived(selectedSkill.bonusCost[currentLevel]);
   const isMaxLevel = $derived(currentLevel >= selectedSkill.bonusCost.length);
   const isUnlocked = $derived(character().lvl >= requiredLevel);
-  const canAfford = $derived(nextCost !== undefined && character().bonus >= nextCost);
-  const canLearn = $derived(!isMaxLevel && isUnlocked && canAfford && !isSubmitting);
+  const canAfford = $derived(
+    nextCost !== undefined && character().bonus >= nextCost,
+  );
+  const canLearn = $derived(
+    !isMaxLevel && isUnlocked && canAfford && !isSubmitting,
+  );
 
   const learnSkill = async () => {
     if (isSubmitting) return;
     isSubmitting = true;
     try {
       await makeRequest(() =>
-        createRequest(client.skill[':id'].$post)({ param: { id: selectedSkill.name } }),
+        createRequest(client.skill[":id"].$post)({
+          param: { id: selectedSkill.name },
+        }),
       );
-      await invalidate('app:character');
+      await invalidate("app:character");
     } finally {
       isSubmitting = false;
     }
@@ -36,7 +44,7 @@
 </script>
 
 <div class="h-screen flex flex-col">
-  <Card header="Умения" class="m-4 mb-1">
+  <Card header="Умения" class="mb-1">
     <div class="max-h-[45vh] overflow-y-auto">
       <div class="flex flex-col gap-2">
         {#each data.skills as skill (skill.name)}
@@ -56,7 +64,7 @@
     </div>
   </Card>
 
-  <Card class="m-4 mt-0 flex-1 flex flex-col">
+  <Card class="flex-1 flex flex-col">
     <div class="flex flex-col flex-1 justify-between">
       <div class="flex flex-col gap-2 mb-4">
         <span class="text-sm">{selectedSkill.description}</span>

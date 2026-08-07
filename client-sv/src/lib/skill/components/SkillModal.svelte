@@ -29,11 +29,7 @@
   );
 </script>
 
-<Modal>
-  {#snippet header()}
-    {skill.displayName}
-  {/snippet}
-
+<Modal header={skill.displayName}>
   {#snippet trigger()}
     <Button class="w-full">
       <div class="flex justify-between">
