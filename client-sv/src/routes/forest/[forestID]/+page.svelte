@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { onMount, onDestroy } from "svelte";
-  import { ForestEventAction, ForestEventType, ForestPhase } from "@fwo/shared";
+  import { onMount } from "svelte";
+  import { ForestEventAction, ForestEventType, ForestPhase, ForestState } from "@fwo/shared";
   import { getSocketContext } from "$lib/constext/socket";
   import { getCharacterContext } from "$lib/constext/character";
   import { onSocket } from "$lib/utils/on-socket";
@@ -60,28 +60,38 @@
   let lastResult = $state.raw<any>(null);
   let loading = $state(false);
 
-  const isWaiting = $derived(status?.phase === "idle" || (status && !status.currentEvent));
-  const isEvent = $derived(status?.currentEvent != null);
+  const isWaiting = $derived(status?.state === ForestState.Waiting);
+  const isEvent = $derived(status?.state === ForestState.Event);
 
-  onSocket('forest:update', (s: any) => {
+  onSocket('forest:end', (_reason: any, result: any) => {
+    goto('/');
+    // game result handled by game guard
+  });
+
+  onSocket('forest:updateStatus', (s: any) => {
     status = s;
   });
 
-  onSocket('forest:result', (result: any) => {
+  onSocket('forest:eventResolved', (result: any) => {
     lastResult = result;
     loading = false;
   });
 
-  onSocket('forest:end', () => goto('/'));
+  onSocket('forest:battleStart', (gameID: string) => {
+    goto(`/game/${gameID}`);
+  });
 
   const handleAction = async (action: ForestEventAction) => {
     loading = true;
     lastResult = null;
-    await socket().emitWithAck('forest:action', action);
+    const res = await socket().emitWithAck('forest:handleEvent', action);
+    if (!res.error && res.result) {
+      lastResult = res.result;
+    }
+    loading = false;
   };
 
   const handleExit = async () => {
-    loading = true;
     await socket().emitWithAck('forest:exit');
     goto('/');
   };
@@ -91,11 +101,11 @@
   };
 
   onMount(async () => {
-    const res = await socket().emitWithAck('forest:connected');
+    const res = await socket().emitWithAck('forest:connect');
     if (res.error) {
       goto('/');
     } else {
-      status = res.status;
+      status = res;
     }
   });
 </script>
