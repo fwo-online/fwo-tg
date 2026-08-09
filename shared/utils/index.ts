@@ -1,2 +1,2 @@
 export * from './array';
-export * from './keys';
+export * from './object';

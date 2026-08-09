@@ -4,11 +4,9 @@
   import { makeRequest } from "$lib/utils/make-request.svelte";
   import { client, createRequest } from "$lib/api";
   import { invalidate } from "$app/navigation";
-  import { getPopupContext } from "$lib/constext/popup";
   import { InvoiceType, invoiceTypes } from "@fwo/shared";
   import { invoice } from "@tma.js/sdk-svelte";
-
-  const popup = getPopupContext()();
+  import { popup } from "$lib/components/Popup/popup.svelte";
 
   let resetLoading = $state(false);
   let nameLoading = $state(false);
@@ -20,12 +18,14 @@
   const resetAttributesByStars = async () => {
     resetLoading = true;
     await makeRequest(async () => {
-      const inv = await createRequest(client.serviceShop['reset-attributes'].invoice.$post)({});
+      const inv = await createRequest(
+        client.serviceShop["reset-attributes"].invoice.$post,
+      )({});
       if (inv?.url) {
         const status = await invoice.openUrl(inv.url);
-        if (status === 'paid') {
-          await invalidate('app:character');
-          popup.info({ message: 'Характеристики успешно сброшены' });
+        if (status === "paid") {
+          await invalidate("app:character");
+          popup.info({ message: "Характеристики успешно сброшены" });
         }
       }
     });
@@ -34,15 +34,15 @@
 
   const resetAttributesByComponents = () => {
     popup.confirm({
-      message: 'Вы уверены, что хотите сбросить характеристики?',
+      message: "Вы уверены, что хотите сбросить характеристики?",
       onConfirm: async () => {
         resetLoading = true;
         const res = await makeRequest(() =>
-          createRequest(client.serviceShop['reset-attributes'].$post)({}),
+          createRequest(client.serviceShop["reset-attributes"].$post)({}),
         );
         if (res) {
-          popup.info({ message: 'Характеристики успешно сброшены' });
-          await invalidate('app:character');
+          popup.info({ message: "Характеристики успешно сброшены" });
+          await invalidate("app:character");
         }
         resetLoading = false;
       },
@@ -54,12 +54,14 @@
     if (!nickname) return;
     nameLoading = true;
     await makeRequest(async () => {
-      const inv = await createRequest(client.serviceShop['change-name'].invoice.$post)({ json: { name: nickname } });
+      const inv = await createRequest(
+        client.serviceShop["change-name"].invoice.$post,
+      )({ json: { name: nickname } });
       if (inv?.url) {
         const status = await invoice.openUrl(inv.url);
-        if (status === 'paid') {
-          await invalidate('app:character');
-          popup.info({ message: 'Имя успешно изменено' });
+        if (status === "paid") {
+          await invalidate("app:character");
+          popup.info({ message: "Имя успешно изменено" });
         }
       }
     });
@@ -69,15 +71,17 @@
   const changeNameByComponents = () => {
     if (!nickname) return;
     popup.confirm({
-      message: 'Вы уверены, что хотите изменить имя?',
+      message: "Вы уверены, что хотите изменить имя?",
       onConfirm: async () => {
         nameLoading = true;
         const res = await makeRequest(() =>
-          createRequest(client.serviceShop['change-name'].$post)({ json: { name: nickname } }),
+          createRequest(client.serviceShop["change-name"].$post)({
+            json: { name: nickname },
+          }),
         );
         if (res) {
-          await invalidate('app:character');
-          popup.info({ message: 'Имя успешно изменено' });
+          await invalidate("app:character");
+          popup.info({ message: "Имя успешно изменено" });
         }
         nameLoading = false;
       },
@@ -90,12 +94,14 @@
     if (Number.isNaN(amount) || !amount) return;
     donateLoading = true;
     await makeRequest(async () => {
-      const inv = await createRequest(client.serviceShop.donate.invoice.$post)({ json: { amount } });
+      const inv = await createRequest(client.serviceShop.donate.invoice.$post)({
+        json: { amount },
+      });
       if (inv?.url) {
         const status = await invoice.openUrl(inv.url);
-        if (status === 'paid') {
-          await invalidate('app:character');
-          popup.info({ message: 'Пожертвование успешно отправлено!' });
+        if (status === "paid") {
+          await invalidate("app:character");
+          popup.info({ message: "Пожертвование успешно отправлено!" });
         }
       }
     });
@@ -113,12 +119,20 @@
   <div class="flex flex-col gap-8">
     <Card header={resetCfg.title}>
       <div class="flex gap-2">
-        <Button class="flex-1" disabled={resetLoading} onclick={resetAttributesByComponents}>
+        <Button
+          class="flex-1"
+          disabled={resetLoading}
+          onclick={resetAttributesByComponents}
+        >
           <div class="flex justify-center">
             {resetCfg.components.arcanite} 🪨
           </div>
         </Button>
-        <Button class="flex-1" disabled={resetLoading} onclick={resetAttributesByStars}>
+        <Button
+          class="flex-1"
+          disabled={resetLoading}
+          onclick={resetAttributesByStars}
+        >
           {resetCfg.stars}⭐
         </Button>
       </div>
@@ -126,7 +140,11 @@
 
     <Card header={nameCfg.title}>
       <div class="flex flex-col gap-2">
-        <input class="nes-input" placeholder="Введите имя" bind:value={nickname} />
+        <input
+          class="nes-input"
+          placeholder="Введите имя"
+          bind:value={nickname}
+        />
         <div class="flex gap-2">
           <Button
             class="flex-1"
@@ -150,7 +168,8 @@
 
     <Card header={donateCfg.title}>
       <h5>
-        Ваше имя будет периодически появляться в боевом чате и навсегда останется в наших сердцах!
+        Ваше имя будет периодически появляться в боевом чате и навсегда
+        останется в наших сердцах!
       </h5>
       <div class="flex flex-col gap-2">
         <input
@@ -162,7 +181,11 @@
           bind:value={donateAmount}
         />
         <div class="flex gap-2">
-          <Button class="flex-1" disabled={donateLoading || !donateAmount} onclick={donateByStars}>
+          <Button
+            class="flex-1"
+            disabled={donateLoading || !donateAmount}
+            onclick={donateByStars}
+          >
             {donateAmount}⭐
           </Button>
         </div>

@@ -3,11 +3,10 @@
   import { onMount } from "svelte";
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
-  import { getSocketContext } from "$lib/constext/socket";
-  import { getPopupContext } from "$lib/constext/popup";
+  import { getSocket } from "$lib/constext/socket";
+  import { popup } from "$lib/components/Popup/popup.svelte";
 
-  const socket = getSocketContext();
-  const popup = getPopupContext()();
+  const socket = getSocket();
 
   let loading = $state(false);
   let error = $state<string | null>(null);
@@ -17,7 +16,7 @@
     loading = true;
     error = null;
     try {
-      const res = await socket().emitWithAck("forest:enter");
+      const res = await socket.emitWithAck("forest:enter");
       if (res.error) {
         error = res.message || "Не удалось войти в лес";
       } else {
@@ -31,7 +30,7 @@
   };
 
   onMount(async () => {
-    const res = await socket().emitWithAck("forest:lobby");
+    const res = await socket.emitWithAck("forest:lobby");
     if (res.error) {
       popup.info({ message: res.error });
     } else {

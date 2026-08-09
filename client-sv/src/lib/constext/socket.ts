@@ -1,6 +1,5 @@
 import type { ClientToServerMessage, ServerToClientMessage } from '@fwo/shared';
 import type { Socket } from 'socket.io-client';
-import { createContext } from 'svelte';
 
 export let socket: Socket<ServerToClientMessage, ClientToServerMessage> | undefined;
 
@@ -15,6 +14,3 @@ export const getSocket = () => {
 
   return socket;
 };
-
-export const [getSocketContext, setSocketContext] =
-  createContext<() => Socket<ServerToClientMessage, ClientToServerMessage>>();

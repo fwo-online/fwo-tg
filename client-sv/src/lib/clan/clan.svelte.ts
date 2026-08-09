@@ -1,10 +1,10 @@
 import type { Clan } from '@fwo/shared';
 import { clanAcceptCostPerLvl, clanForgeCostMultiplier, clanLvlCost } from '@fwo/shared';
-import { client, createRequest } from '$lib/api';
-import { makeRequest } from '$lib/utils/make-request.svelte';
 import { invalidate } from '$app/navigation';
-import { getPopupContext } from '$lib/constext/popup';
+import { client, createRequest } from '$lib/api';
+import { popup } from '$lib/components/Popup/popup.svelte';
 import { getCharacterContext } from '$lib/constext/character';
+import { makeRequest } from '$lib/utils/make-request.svelte';
 
 let clanState = $state<Clan | undefined>(undefined);
 
@@ -33,16 +33,16 @@ export const useSyncClan = () => {
 
 export const useClanOwner = () => {
   const characterCtx = getCharacterContext();
-  const isOwner = $derived(
-    characterCtx().id === clanState?.owner,
-  );
+  const isOwner = $derived(characterCtx().id === clanState?.owner);
 
-  return { get isOwner() { return isOwner; } };
+  return {
+    get isOwner() {
+      return isOwner;
+    },
+  };
 };
 
 export const useClanCreate = () => {
-  const popup = getPopupContext()();
-
   const create = async (name: string) => {
     await makeRequest(async () => {
       const clan = await createRequest(client.clan.$post)({ json: { name } });
@@ -57,7 +57,6 @@ export const useClanCreate = () => {
 };
 
 export const useClans = () => {
-  const popup = getPopupContext()();
   let isLoading = $state(false);
 
   const createRequestAction = async (id: string) => {
@@ -103,7 +102,6 @@ export const useClanGold = () => {
 
 export const useClanLvl = () => {
   const { syncClan } = useSyncClan();
-  const popup = getPopupContext()();
 
   const upgradeLvl = (lvl: number) => {
     popup.confirm({
@@ -122,7 +120,6 @@ export const useClanLvl = () => {
 
 export const useClanForgeOpen = () => {
   const { syncClan } = useSyncClan();
-  const popup = getPopupContext()();
 
   const openForge = () => {
     const c = clanState;
@@ -131,9 +128,7 @@ export const useClanForgeOpen = () => {
       title: 'Открыть кузницу?',
       message: `Стоимость открытия ${clanLvlCost[c.lvl - 1] * clanForgeCostMultiplier}💰. Кузница закроется через месяц`,
       onConfirm: async () => {
-        const updated = await makeRequest(() =>
-          createRequest(client.clan.forge.open.$post)({}),
-        );
+        const updated = await makeRequest(() => createRequest(client.clan.forge.open.$post)({}));
         if (updated) syncClan(updated);
       },
     });
@@ -144,7 +139,6 @@ export const useClanForgeOpen = () => {
 
 export const useClanRequest = () => {
   const { syncClan } = useSyncClan();
-  const popup = getPopupContext()();
 
   const acceptRequest = (requester: { id: string; lvl: number }) => {
     popup.confirm({

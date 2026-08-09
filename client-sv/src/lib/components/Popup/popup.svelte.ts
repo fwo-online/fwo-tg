@@ -1,4 +1,12 @@
-import type { PopupOptions } from '$lib/constext/popup';
+import type { Renderable } from '$lib/components/Renderable.svelte';
+
+export type PopupOptions = {
+  title?: string;
+  message: Renderable;
+  onConfirm?: (done: () => void) => void;
+  onCancel?: () => void;
+  type?: 'confirm' | 'info';
+};
 
 const createState = (): PopupOptions => ({
   message: '',

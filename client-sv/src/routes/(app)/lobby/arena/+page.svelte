@@ -3,21 +3,21 @@
   import Card from "$lib/components/Card.svelte";
   import LobbyList from "$lib/lobby/components/LobbyList.svelte";
   import { useLobbyQueue } from "$lib/lobby/useLobbyQueue.svelte";
-  import { getSocketContext } from "$lib/constext/socket";
   import { onSocket } from "$lib/utils/on-socket";
   import { openTelegramLink } from "@tma.js/sdk-svelte";
 
-  const { toggleSearch, isSearching, searchers } = useLobbyQueue('ladder');
+  const { toggleSearch, isSearching, searchers } = useLobbyQueue("ladder");
 
   let channelLinkVisible = $state(false);
 
-  const socket = getSocketContext();
-  onSocket('lobby:help', () => {
+  onSocket("lobby:help", () => {
     channelLinkVisible = true;
   });
 
   const openChannelLink = () => {
-    openTelegramLink(import.meta.env.VITE_CHANNEL_URL || 'https://t.me/fwoarena');
+    openTelegramLink(
+      import.meta.env.VITE_CHANNEL_URL || "https://t.me/fwoarena",
+    );
   };
 </script>
 

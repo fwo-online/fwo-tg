@@ -6,29 +6,28 @@
   import { makeRequest } from "$lib/utils/make-request.svelte";
   import { client, createRequest } from "$lib/api";
   import { invalidate } from "$app/navigation";
-  import { getPopupContext } from "$lib/constext/popup";
-  import { itemMarketRequiredLevel, type ItemMarket } from "@fwo/shared";
+  import { itemMarketRequiredLevel } from "@fwo/shared";
   import { wearList, wearListTranslations } from "$lib/constants/item";
   import { groupBy } from "es-toolkit";
   import type { PageProps } from "./$types";
+  import { popup } from "$lib/components/Popup/popup.svelte";
 
   let { data }: PageProps = $props();
   const character = getCharacterContext();
-  const popup = getPopupContext()();
 
   let isBuying = $state(false);
   let isDeleting = $state(false);
 
   const buyItem = (itemId: string) => {
     popup.confirm({
-      message: 'Вы уверены, что хотите купить этот предмет?',
+      message: "Вы уверены, что хотите купить этот предмет?",
       onConfirm: async () => {
         isBuying = true;
         await makeRequest(() =>
-          createRequest(client.market[':id'].$post)({ param: { id: itemId } }),
+          createRequest(client.market[":id"].$post)({ param: { id: itemId } }),
         );
         isBuying = false;
-        await invalidate('app:character');
+        await invalidate("app:character");
       },
     });
   };
@@ -39,10 +38,12 @@
       createRequest(client.market.$delete)({ json: { marketItemID: itemId } }),
     );
     isDeleting = false;
-    await invalidate('app:character');
+    await invalidate("app:character");
   };
 
-  const inventoryByWear = $derived(groupBy(data.marketItems, ({ item }) => item.wear));
+  const inventoryByWear = $derived(
+    groupBy(data.marketItems, ({ item }) => item.wear),
+  );
 </script>
 
 <Card header="Барахолка">

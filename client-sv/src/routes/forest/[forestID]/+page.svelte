@@ -6,7 +6,7 @@
     ForestPhase,
     ForestState,
   } from "@fwo/shared";
-  import { getSocketContext } from "$lib/constext/socket";
+  import { getSocket } from "$lib/constext/socket";
   import { getCharacterContext } from "$lib/constext/character";
   import { onSocket } from "$lib/utils/on-socket";
   import { goto } from "$app/navigation";
@@ -58,7 +58,7 @@
     [ForestPhase.Deep]: "🌑 Глушь",
   };
 
-  const socket = getSocketContext();
+  const socket = getSocket();
   const character = getCharacterContext();
   const name = $derived(character().name);
   const characterClass = $derived(character().class);
@@ -91,7 +91,7 @@
   const handleAction = async (action: ForestEventAction) => {
     loading = true;
     lastResult = null;
-    const res = await socket().emitWithAck("forest:handleEvent", action);
+    const res = await socket.emitWithAck("forest:handleEvent", action);
     if (!res.error && res.result) {
       lastResult = res.result;
     }
@@ -99,7 +99,7 @@
   };
 
   const handleExit = async () => {
-    await socket().emitWithAck("forest:exit");
+    await socket.emitWithAck("forest:exit");
     goto("/");
   };
 
@@ -108,7 +108,7 @@
   };
 
   onMount(async () => {
-    const res = await socket().emitWithAck("forest:connect");
+    const res = await socket.emitWithAck("forest:connect");
     if (res.error) {
       goto("/");
     } else {

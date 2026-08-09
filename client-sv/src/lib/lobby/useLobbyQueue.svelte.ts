@@ -1,11 +1,11 @@
 import type { CharacterPublic, GameType } from '@fwo/shared';
 import { onMount } from 'svelte';
 import { getCharacterContext } from '$lib/constext/character';
-import { getSocketContext } from '$lib/constext/socket';
+import { getSocket } from '$lib/constext/socket';
 import { onSocket } from '$lib/utils/on-socket';
 
 export const useLobbyQueue = (queue: GameType) => {
-  const socket = getSocketContext();
+  const socket = getSocket();
   const character = getCharacterContext();
 
   let searchers = $state.raw<CharacterPublic[]>([]);
@@ -19,18 +19,18 @@ export const useLobbyQueue = (queue: GameType) => {
   onSocket('lobby:list', updateSearchers);
 
   onMount(() => {
-    socket().emitWithAck('lobby:enter').then(updateSearchers);
+    socket.emitWithAck('lobby:enter').then(updateSearchers);
 
     return () => {
-      socket().emit('lobby:leave');
+      socket.emit('lobby:leave');
     };
   });
 
   const toggleSearch = async () => {
     if (isSearching) {
-      socket().emit('lobby:stop');
+      socket.emit('lobby:stop');
     } else {
-      const res = await socket().emitWithAck('lobby:start', queue);
+      const res = await socket.emitWithAck('lobby:start', queue);
       if (res.error) {
         console.error(res.message);
         // popup.info({ message: res.message });

@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import type { CharacterPublic } from "@fwo/shared";
   import { playersClanName } from "@fwo/shared";
-  import { getSocketContext } from "$lib/constext/socket";
+  import { getSocket } from "$lib/constext/socket";
   import { getCharacterContext } from "$lib/constext/character";
   import { onSocket } from "$lib/utils/on-socket";
   import { goto } from "$app/navigation";
@@ -10,7 +10,7 @@
   import Card from "$lib/components/Card.svelte";
   import Player from "$lib/lobby/components/Player.svelte";
 
-  const socket = getSocketContext();
+  const socket = getSocket();
   const character = getCharacterContext();
   const characterID = character().id;
 
@@ -20,28 +20,28 @@
   let acceptedList = $state.raw<string[]>([]);
   let accepted = $derived(acceptedList.includes(characterID));
 
-  onSocket('tower:end', () => goto('/'));
-  onSocket('tower:updateTime', (t: number, l: number) => {
+  onSocket("tower:end", () => goto("/"));
+  onSocket("tower:updateTime", (t: number, l: number) => {
     timeSpent = t;
     timeLeft = l;
   });
 
   const handleAccept = async () => {
-    const res = await socket().emitWithAck('tower:accept', !accepted);
+    const res = await socket.emitWithAck("tower:accept", !accepted);
     if (!res.error) {
       acceptedList = res.accepted;
     }
   };
 
   onMount(async () => {
-    const res = await socket().emitWithAck('tower:connected');
+    const res = await socket.emitWithAck("tower:connected");
     if (!res.error) {
       players = res.players;
       acceptedList = res.accepted;
       timeSpent = res.timeSpent;
       timeLeft = res.timeLeft;
     } else {
-      goto('/');
+      goto("/");
     }
   });
 </script>
@@ -64,14 +64,19 @@
   <div class="flex flex-col gap-2 mt-auto">
     <span>Стадия подготовки</span>
     <h5 class="text-sm">
-      У вас есть 2 минуты на планирование. Подтвердите готовность, чтобы начать бой раньше
+      У вас есть 2 минуты на планирование. Подтвердите готовность, чтобы начать
+      бой раньше
     </h5>
-    <progress class="nes-progress h-4" value={timeSpent} max={timeLeft + timeSpent} />
+    <progress
+      class="nes-progress h-4"
+      value={timeSpent}
+      max={timeLeft + timeSpent}
+    />
     <Button
-      class={accepted ? 'is-warning' : 'is-success'}
+      class={accepted ? "is-warning" : "is-success"}
       onclick={handleAccept}
     >
-      {accepted ? 'Не готов' : 'Готов'}
+      {accepted ? "Не готов" : "Готов"}
     </Button>
   </div>
 </Card>

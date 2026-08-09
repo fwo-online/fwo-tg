@@ -7,15 +7,14 @@
   import { makeRequest } from "$lib/utils/make-request.svelte";
   import { client, createRequest } from "$lib/api";
   import { invalidate } from "$app/navigation";
-  import { getPopupContext } from "$lib/constext/popup";
   import { canLearnMagic, getLearnMagicCost } from "@fwo/shared";
   import type { Magic } from "@fwo/shared";
   import { times } from "es-toolkit/compat";
   import type { PageProps } from "./$types";
+  import { popup } from "$lib/components/Popup/popup.svelte";
 
   const { data }: PageProps = $props();
   const character = getCharacterContext();
-  const popup = getPopupContext()();
 
   let selectedMagic = $state<Magic | undefined>(data.magics[0]);
   let isLearning = $state(false);

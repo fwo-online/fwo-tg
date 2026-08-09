@@ -7,13 +7,12 @@
   import { client, createRequest } from "$lib/api";
   import { getItemPrice, type Item } from "@fwo/shared";
   import { invalidate } from "$app/navigation";
-  import { getPopupContext } from "$lib/constext/popup";
+  import { popup } from "$lib/components/Popup/popup.svelte";
 
   let { items, clanForge = false }: { items: Item[]; clanForge?: boolean } =
     $props();
 
   const character = getCharacterContext();
-  const popup = getPopupContext()();
 
   const canForge = (item: Item) => {
     const c = character();
