@@ -41,6 +41,7 @@
             "is-primary": page.url.pathname.startsWith(tab.path),
           },
         ]}
+        replace
       >
         {tab.text}
       </Button>

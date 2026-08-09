@@ -1,13 +1,15 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { themeParams, useSignal } from "@tma.js/sdk-svelte";
-  import type { SvelteHTMLElements } from "svelte/elements";
+  import type { MouseEventHandler, SvelteHTMLElements } from "svelte/elements";
   import type { Writable } from "svelte/store";
 
   type Props = SvelteHTMLElements["button"] & {
     href?: string;
+    replace?: boolean;
   };
 
-  const { children, ...props }: Props = $props();
+  const { children, href, replace, ...props }: Props = $props();
   const textColor = useSignal(themeParams.textColor);
   const isDark = useSignal(themeParams.isDark);
 
@@ -16,10 +18,19 @@
 
     return `url('data:image/svg+xml;utf8,${encodeURIComponent(svg)}')`;
   };
+
+  const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+
+    if (href) {
+      goto(href, { replaceState: replace });
+    } else {
+      props.onclick?.(e);
+    }
+  };
 </script>
 
-<svelte:element
-  this={props.href ? "a" : "button"}
+<button
   {...props}
   style:border-image-source={getButtonSvg(textColor)}
   class={[
@@ -27,9 +38,10 @@
     { "is-disabled": props.disabled, "is-dark": $isDark },
     props.class,
   ]}
+  onclick={handleClick}
 >
   {@render children?.()}
-</svelte:element>
+</button>
 
 <style>
   .nes-btn {

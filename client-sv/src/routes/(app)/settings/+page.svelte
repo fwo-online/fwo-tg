@@ -1,14 +1,15 @@
 <script lang="ts">
-  import type { Character, NotificationType } from "@fwo/shared";
-  import { onMount } from "svelte";
   import { invalidate } from "$app/navigation";
   import { client, createRequest } from "$lib/api";
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
+  import { popup } from "$lib/components/Popup/popup.svelte";
   import { characterClassNameMap } from "$lib/constants/character";
   import { getCharacterContext } from "$lib/constext/character";
-  import { getPopupContext } from "$lib/constext/popup";
   import { makeRequest } from "$lib/utils/make-request.svelte";
+  import type { Character, NotificationType } from "@fwo/shared";
+  import { themeParams, useSignal } from "@tma.js/sdk-svelte";
+  import { onMount } from "svelte";
 
   const notificationTypes = [
     { key: "gameStart" as const, label: "Начало игры" },
@@ -16,7 +17,7 @@
   ];
 
   const character = getCharacterContext();
-  const popup = getPopupContext()();
+  const isDark = useSignal(themeParams.isDark);
 
   let loading = $state(false);
   let myCharacters = $state.raw<Character[]>([]);
@@ -93,7 +94,7 @@
   };
 </script>
 
-<Card header="Уведомления" class="m-4 mb-8">
+<Card header="Уведомления" class="mb-8">
   <div class="flex flex-col gap-2">
     {#each notificationTypes as { key, label } (key)}
       {@const enabled = character().notificationSettings?.[key] ?? false}
@@ -103,28 +104,21 @@
         <label class="col-start-3">
           <input
             type="checkbox"
-            class="nes-checkbox is-dark"
+            class={["nes-checkbox", { "is-dark": isDark }]}
             checked={enabled}
             disabled={loading}
             onchange={() => toggleNotification(key, !enabled)}
           />
           <span>{enabled ? "Вкл" : "Выкл"}</span>
         </label>
-        <!-- <Button
-          class="p-0"
-          disabled={loading}
-          onclick={() => toggleNotification(key, !enabled)}
-        >
-          {enabled ? "Вкл" : "Выкл"}
-        </Button> -->
       </div>
     {/each}
   </div>
 </Card>
 
 {#if myCharacters.length > 0}
-  <Card header="Персонажи" class="m-4 mb-8">
-    <div class="flex flex-col gap-2">
+  <Card header="Персонажи" class="mb-8">
+    <div class="flex flex-col gap-2 mb-4">
       {#each myCharacters as char (char.id)}
         <div class="flex items-center justify-between">
           <div>
@@ -143,7 +137,7 @@
         </div>
       {/each}
     </div>
-    <div class="mt-4 flex flex-col gap-2">
+    <div class="flex flex-col gap-2">
       <Button class="is-primary" href="/create">Создать нового</Button>
       <Button class="is-error" onclick={removeCharacter}>
         Удалить текущего персонажа
@@ -153,7 +147,7 @@
 {/if}
 
 {#if character().clan}
-  <Card header="Управление аккаунтом" class="m-4">
+  <Card header="Управление аккаунтом">
     <div class="flex flex-col gap-2">
       {#if isClanOwner}
         <Button onclick={removeClan}>Удалить клан</Button>

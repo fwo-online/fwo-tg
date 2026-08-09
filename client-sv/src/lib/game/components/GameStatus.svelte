@@ -7,14 +7,13 @@
   import { mapValues, omit } from "es-toolkit";
 
   const character = getCharacterContext();
-  const characterID = character().id;
   const clan = $derived(game.players[character().id].clan);
 
   const alliesStatus = $derived(
     clan
       ? game.statusByClan[clan.name]
       : game.statusByClan[reservedClanName]?.filter(
-          ({ id }) => characterID === id,
+          ({ id }) => character().id === id,
         ),
   );
   const enemiesStatus: Record<string, GameStatus[]> = $derived(
@@ -22,7 +21,7 @@
       ? omit(game.statusByClan, [clan.name])
       : mapValues(game.statusByClan, (statuses, clan) => {
           if (clan === reservedClanName) {
-            return statuses?.filter(({ id }) => id !== characterID);
+            return statuses?.filter(({ id }) => id !== character().id);
           }
           return statuses;
         }),

@@ -45,7 +45,7 @@
 
 <div class="h-screen flex flex-col">
   <Card header="Умения" class="mb-1">
-    <div class="max-h-[45vh] overflow-y-auto">
+    <div class="h-[45vh] overflow-y-auto">
       <div class="flex flex-col gap-2">
         {#each data.skills as skill (skill.name)}
           <Button
@@ -67,6 +67,7 @@
   <Card class="flex-1 flex flex-col">
     <div class="flex flex-col flex-1 justify-between">
       <div class="flex flex-col gap-2 mb-4">
+        <span>{selectedSkill.displayName}</span>
         <span class="text-sm">{selectedSkill.description}</span>
       </div>
 

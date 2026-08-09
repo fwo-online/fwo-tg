@@ -12,7 +12,7 @@
 </script>
 
 <div class="flex flex-col gap-2">
-  <Card header={character.name} class="relative bg-transparent!">
+  <Card header={character().name} class="relative bg-transparent!">
     <img
       src={characterBackground}
       class="absolute top-0 left-0 right-0 bottom-0 w-full h-full object-cover object-bottom"

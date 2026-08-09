@@ -7,19 +7,16 @@
   import { characterClassNameMap } from "$lib/constants/character";
   import { CharacterClass, type Character } from "@fwo/shared";
   import { onMount } from "svelte";
+  import { noop } from "es-toolkit";
+  import type { PageProps } from "./$types";
+
+  const { data }: PageProps = $props();
 
   const characterClassList = Object.values(CharacterClass);
 
-  let myCharacters = $state.raw<Character[]>([]);
   let showCreateForm = $state(false);
   let selected = $state(0);
   let name = $state("");
-
-  onMount(async () => {
-    try {
-      myCharacters = await createRequest(client.character.my.$get)({});
-    } catch {}
-  });
 
   const next = () => {
     selected = (selected + 1) % characterClassList.length;
@@ -51,7 +48,7 @@
   };
 </script>
 
-{#if myCharacters.length === 0}
+{#if data.characters?.length === 0}
   <Card header="Создание персонажа" class="m-4!">
     <div class="flex justify-center gap-4 mb-4">
       {#each characterClassList as charClass, index}
@@ -92,7 +89,7 @@
 {:else}
   <Card header="Твои персонажи" class="m-4!">
     <div class="flex flex-col gap-2">
-      {#each myCharacters as char (char.id)}
+      {#each data.characters as char (char.id)}
         <div class="flex items-center justify-between">
           <div>
             <span class="font-semibold">{char.name}</span>

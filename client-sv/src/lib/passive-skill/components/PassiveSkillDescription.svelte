@@ -26,6 +26,7 @@
 
 <div class="flex flex-col flex-1 justify-between">
   <div class="flex flex-col gap-2 mb-4">
+    <span>{skill.displayName}</span>
     <div class="flex gap-2 text-sm opacity-50">
       <span>Шанс (%):</span>
       <span>{skill.chance.join("/")}</span>

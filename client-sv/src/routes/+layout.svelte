@@ -9,10 +9,17 @@
   import { navigating } from "$app/state";
 
   import "./layout.css";
-  // import { popup } from "$lib/components/Popup/popup.svelte";
+  import { goto } from "$app/navigation";
 
   let { children, data }: LayoutProps = $props();
-  // let popup: Popup;
+  let redirecting = $state(false);
+
+  if (!data.character) {
+    redirecting = true;
+    goto("/create", { replaceState: true }).finally(() => {
+      redirecting = false;
+    });
+  }
 
   setSocket(data.socket);
   setSocketContext(() => data.socket);
@@ -53,4 +60,6 @@
 
 <PopupHost />
 
-{@render children()}
+{#if !redirecting}
+  {@render children()}
+{/if}

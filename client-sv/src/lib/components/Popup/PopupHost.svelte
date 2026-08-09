@@ -24,18 +24,19 @@
   };
 
   const handleConfirm = async () => {
+    console.log(state);
     if (state?.onConfirm) {
-      close();
       await state.onConfirm(close);
+      close();
     } else {
       close();
     }
   };
 
-  const handleCancel = () => {
+  const handleCancel = async () => {
     if (state?.onCancel) {
+      await state.onCancel();
       close();
-      state.onCancel();
     } else {
       close();
     }
