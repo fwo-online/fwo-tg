@@ -4,6 +4,7 @@ import { invalidate } from '$app/navigation';
 import { client, createRequest } from '$lib/api';
 import { popup } from '$lib/components/Popup/popup.svelte';
 import { getCharacterContext } from '$lib/constext/character';
+import { createRequestRunner } from '$lib/utils/create-request.svelte';
 import { makeRequest } from '$lib/utils/make-request.svelte';
 
 let clanState = $state<Clan | undefined>(undefined);
@@ -42,19 +43,13 @@ export const useClanOwner = () => {
   };
 };
 
-export const useClanCreate = () => {
-  const create = async (name: string) => {
-    await makeRequest(async () => {
-      const clan = await createRequest(client.clan.$post)({ json: { name } });
-      if (clan) {
-        popup.info({ message: 'Клан создан' });
-        await invalidate('app:character');
-      }
-    });
-  };
-
-  return { createClan: create };
-};
+export const createClan = createRequestRunner(async (name: string) => {
+  const clan = await createRequest(client.clan.$post)({ json: { name } });
+  if (clan) {
+    popup.info({ message: 'Клан создан' });
+    await invalidate('app:character');
+  }
+});
 
 export const useClans = () => {
   let isLoading = $state(false);

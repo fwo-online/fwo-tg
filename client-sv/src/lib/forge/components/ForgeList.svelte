@@ -1,6 +1,5 @@
 <script lang="ts">
   import Button from "$lib/components/Button.svelte";
-  import Card from "$lib/components/Card.svelte";
   import Modal from "$lib/components/Modal.svelte";
   import { getCharacterContext } from "$lib/constext/character";
   import { makeRequest } from "$lib/utils/make-request.svelte";
@@ -31,10 +30,11 @@
           param: { code: item.code },
         });
       } else {
-        await createRequest(client.inventory[":id"].forge.$post)({
-          param: { id: item.code },
+        await createRequest(client.inventory.forge[":code"].$post)({
+          param: { code: item.code },
         });
       }
+
       popup.info({ message: `Ты создал ${item.info.name}` });
     });
     await invalidate("app:character");

@@ -13,7 +13,7 @@
   const character = getCharacterContext();
   const { isLoading, createRequest, cancelRequest } = useClans();
 
-  const isRequested = (clan: typeof data.clans[0]) => {
+  const isRequested = (clan: (typeof data.clans)[0]) => {
     return clan.requests.includes(character().id);
   };
 
@@ -30,10 +30,10 @@
       {#if data.clans.length}
         <ClanList
           clans={data.clans}
-          isLoading={isLoading}
+          {isLoading}
           {isRequested}
-          {createRequest}
-          {cancelRequest}
+          onCreateRequest={createRequest}
+          onCancelRequest={cancelRequest}
         />
       {:else}
         Кланов не найдено

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Button from "$lib/components/Button.svelte";
-  import { getCharacterContext } from "$lib/constext/character";
   import type { Magic } from "@fwo/shared";
+
+  import { getCharacterContext } from "$lib/constext/character";
 
   type Props = {
     magic: Magic;

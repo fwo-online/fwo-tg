@@ -3,7 +3,6 @@
   import CharacterImage from "$lib/character/components/CharacterImage.svelte";
   import DescriptionGroup from "$lib/components/Description/description-group.svelte";
   import DescriptionItem from "$lib/components/Description/description-item.svelte";
-  import type { Renderable } from "$lib/components/Renderable.svelte";
 
   const { characters }: { characters: CharacterPublic[] } = $props();
 </script>

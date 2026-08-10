@@ -1,10 +1,11 @@
 <script lang="ts">
+  import { entries, getItemPrice, type Item } from "@fwo/shared";
+
   import Button from "$lib/components/Button.svelte";
-  import { getItemPrice, type Item } from "@fwo/shared";
-  import type { PageData, PageProps } from "./$types";
-  import { getCharacterContext } from "$lib/constext/character";
-  import { every } from "es-toolkit/compat";
   import Modal from "$lib/components/Modal.svelte";
+  import { getCharacterContext } from "$lib/constext/character";
+
+  import type { PageProps } from "./$types";
 
   const { data }: PageProps = $props();
   const character = getCharacterContext();
@@ -14,9 +15,8 @@
       return false;
     }
 
-    return every(
-      item.craft?.components,
-      (value, key) => (character().components[key] ?? 0) >= (value ?? 0),
+    return entries(item.craft?.components ?? {}).every(
+      ([key, value]) => (character().components[key] ?? 0) >= (value ?? 0),
     );
   };
 </script>

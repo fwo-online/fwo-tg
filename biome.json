@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.8/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.7/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -17,9 +17,13 @@
   },
   "assist": { "actions": { "source": { "organizeImports": "on", "useSortedProperties": "on" } } },
   "linter": {
+    "domains": {
+      "project": "recommended",
+      "svelte": "recommended",
+      "types": "recommended"
+    },
     "enabled": true,
     "rules": {
-      "recommended": true,
       "complexity": {
         "noForEach": "off",
         "noStaticOnlyClass": "off",

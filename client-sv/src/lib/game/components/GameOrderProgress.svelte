@@ -4,8 +4,8 @@
   const ordersTime = $derived(game.ordersTime);
   const ordersStartTime = $derived(game.ordersStartTime);
   const threshold = 1000;
-  // svelte-ignore state_referenced_locally
-  let remainTime = $state(ordersTime);
+
+  let remainTime = $derived(ordersTime);
 
   $effect(() => {
     const interval = setInterval(

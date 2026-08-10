@@ -5,7 +5,7 @@
   const character = getCharacterContext();
   const exp = $derived(character().exp);
   const nextLvlExp = $derived(character().nextLvlExp);
-  const progress = Math.ceil((exp / nextLvlExp) * 100);
+  const progress = $derived(Math.ceil((exp / nextLvlExp) * 100));
 </script>
 
 <div style="--exp-progress: {progress}%" class="exp">

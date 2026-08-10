@@ -6,6 +6,7 @@
   import { popup } from "$lib/components/Popup/popup.svelte";
   import { characterClassNameMap } from "$lib/constants/character";
   import { getCharacterContext } from "$lib/constext/character";
+  import { createRequestRunner } from "$lib/utils/create-request.svelte";
   import { makeRequest } from "$lib/utils/make-request.svelte";
   import type { Character, NotificationType } from "@fwo/shared";
   import { themeParams, useSignal } from "@tma.js/sdk-svelte";
@@ -19,7 +20,6 @@
   const character = getCharacterContext();
   const isDark = useSignal(themeParams.isDark);
 
-  let loading = $state(false);
   let myCharacters = $state.raw<Character[]>([]);
 
   const isClanOwner = $derived(character().clan?.owner === character().id);
@@ -30,19 +30,14 @@
     } catch {}
   });
 
-  const toggleNotification = async (
-    type: NotificationType,
-    enabled: boolean,
-  ) => {
-    loading = true;
-    await makeRequest(async () => {
+  const toggleNotification = createRequestRunner(
+    async (type: NotificationType, enabled: boolean) => {
       await createRequest(client.character["notification-settings"].$patch)({
         json: { [type]: enabled },
       });
       await invalidate("app:character");
-    });
-    loading = false;
-  };
+    },
+  );
 
   const handleActivate = async (id: string) => {
     await makeRequest(async () => {
@@ -106,8 +101,8 @@
             type="checkbox"
             class={["nes-checkbox", { "is-dark": isDark }]}
             checked={enabled}
-            disabled={loading}
-            onchange={() => toggleNotification(key, !enabled)}
+            disabled={toggleNotification.pending}
+            onchange={() => toggleNotification.run(key, !enabled)}
           />
           <span>{enabled ? "Вкл" : "Выкл"}</span>
         </label>

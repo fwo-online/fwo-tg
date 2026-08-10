@@ -2,15 +2,13 @@
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
   import { getCharacterContext } from "$lib/constext/character";
-  import { makeRequest } from "$lib/utils/make-request.svelte";
-  import { client, createRequest } from "$lib/api";
-  import { invalidate } from "$app/navigation";
   import type { PageProps } from "./$types";
+  import { learnSkill } from "$lib/skill/utils/learn-skill.svelte";
 
   const { data }: PageProps = $props();
   const character = getCharacterContext();
 
-  let selectedSkill = $state(data.skills[0]);
+  let selectedSkill = $derived(data.skills[0]);
   let isSubmitting = $state(false);
 
   const currentLevel = $derived(character().skills[selectedSkill.name] ?? 0);
@@ -26,21 +24,6 @@
   const canLearn = $derived(
     !isMaxLevel && isUnlocked && canAfford && !isSubmitting,
   );
-
-  const learnSkill = async () => {
-    if (isSubmitting) return;
-    isSubmitting = true;
-    try {
-      await makeRequest(() =>
-        createRequest(client.skill[":id"].$post)({
-          param: { id: selectedSkill.name },
-        }),
-      );
-      await invalidate("app:character");
-    } finally {
-      isSubmitting = false;
-    }
-  };
 </script>
 
 <div class="h-screen flex flex-col">
@@ -79,8 +62,12 @@
             Откроется на уровне {requiredLevel}
           </Button>
         {:else}
-          <Button class="flex-1" onclick={learnSkill} disabled={!canLearn}>
-            {#if isSubmitting}
+          <Button
+            class="flex-1"
+            onclick={() => learnSkill.run(selectedSkill)}
+            disabled={!canLearn || learnSkill.pending}
+          >
+            {#if learnSkill.pending}
               Изучение...
             {:else}
               Изучить за {nextCost}💡

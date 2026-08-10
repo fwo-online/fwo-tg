@@ -1,5 +1,6 @@
 import type { CharacterPublic, GameType } from '@fwo/shared';
 import { onMount } from 'svelte';
+import { popup } from '$lib/components/Popup/popup.svelte';
 import { getCharacterContext } from '$lib/constext/character';
 import { getSocket } from '$lib/constext/socket';
 import { onSocket } from '$lib/utils/on-socket';
@@ -32,8 +33,7 @@ export const useLobbyQueue = (queue: GameType) => {
     } else {
       const res = await socket.emitWithAck('lobby:start', queue);
       if (res.error) {
-        console.error(res.message);
-        // popup.info({ message: res.message });
+        popup.info({ message: res.message });
       }
     }
   };

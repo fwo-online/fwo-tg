@@ -15,7 +15,12 @@
         !characterComponents[component] && "opacity-50",
       ]}
     >
-      <img height={20} width={20} src={componentsImageMap[component]} />
+      <img
+        height={20}
+        width={20}
+        src={componentsImageMap[component]}
+        alt={component.toString()}
+      />
       <span>{characterComponents[component] ?? 0}</span>
     </div>
   {/each}

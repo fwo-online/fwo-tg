@@ -32,7 +32,7 @@
   onMount(async () => {
     const res = await socket.emitWithAck("forest:lobby");
     if (res.error) {
-      popup.info({ message: res.error });
+      popup.info({ message: res.message });
     } else {
       debuffLevel = res.debuffLevel ?? 0;
     }

@@ -1,8 +1,9 @@
 <script lang="ts">
+  import type { PassiveSkill } from "@fwo/shared";
+
   import Button from "$lib/components/Button.svelte";
   import { getCharacterContext } from "$lib/constext/character";
-  import type { PassiveSkill, Skill } from "@fwo/shared";
-  import { useLearnPassiveSkill } from "$lib/passive-skill/utils/use-learn-passive-skill.svelte";
+  import { learnPassiveSkill } from "$lib/passive-skill/utils/learn-passive-skill.svelte";
 
   type Props = {
     skill: PassiveSkill;
@@ -11,8 +12,6 @@
   const { skill }: Props = $props();
 
   const character = getCharacterContext();
-  // svelte-ignore state_referenced_locally
-  const { isSubmitting, learnPassiveSkill } = useLearnPassiveSkill(skill);
 
   const currentLevel = $derived(character().skills[skill.name] ?? 0);
   const nextCost = $derived(skill.bonusCost[currentLevel]);
@@ -21,7 +20,9 @@
   const canAfford = $derived(
     nextCost !== undefined && character().bonus >= nextCost,
   );
-  const canLearn = $derived(!isMaxLevel && canAfford && !isSubmitting);
+  const canLearn = $derived(
+    !isMaxLevel && canAfford && !learnPassiveSkill.pending,
+  );
 </script>
 
 <div class="flex flex-col flex-1 justify-between">
@@ -44,8 +45,12 @@
     {:else if isMaxLevel}
       <Button class="flex-1" disabled>Максимальный уровень</Button>
     {:else}
-      <Button class="flex-1" onclick={learnPassiveSkill} disabled={!canLearn}>
-        {#if isSubmitting}
+      <Button
+        class="flex-1"
+        onclick={() => learnPassiveSkill.run(skill)}
+        disabled={!canLearn || learnPassiveSkill.pending}
+      >
+        {#if learnPassiveSkill.pending}
           Изучение...
         {:else}
           Изучить за {nextCost}💡

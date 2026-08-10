@@ -4,20 +4,17 @@
   import Modal from "$lib/components/Modal.svelte";
   import MagicModal from "$lib/magic/components/MagicModal.svelte";
   import { getCharacterContext } from "$lib/constext/character";
-  import { makeRequest } from "$lib/utils/make-request.svelte";
-  import { client, createRequest } from "$lib/api";
-  import { invalidate } from "$app/navigation";
   import { canLearnMagic, getLearnMagicCost } from "@fwo/shared";
   import type { Magic } from "@fwo/shared";
   import { times } from "es-toolkit/compat";
   import type { PageProps } from "./$types";
   import { popup } from "$lib/components/Popup/popup.svelte";
+  import { learnMagic } from "$lib/magic/utils/learn-magic.svelte";
 
   const { data }: PageProps = $props();
   const character = getCharacterContext();
 
-  let selectedMagic = $state<Magic | undefined>(data.magics[0]);
-  let isLearning = $state(false);
+  let selectedMagic = $derived<Magic | undefined>(data.magics[0]);
 
   const hasBonus = (lvl: number) => {
     return character().bonus >= getLearnMagicCost(lvl);
@@ -27,26 +24,19 @@
     !hasBonus(lvl) ||
     !canLearnMagic(character().lvl, lvl) ||
     !data.availableMagicLevels[lvl] ||
-    isLearning;
+    learnMagic.pending;
 
   const handleLearn = async (lvl: number) => {
     popup.confirm({
       message: `Стоимость изучения ${getLearnMagicCost(lvl)}💡`,
       onConfirm: async () => {
-        isLearning = true;
-        await makeRequest(async () => {
-          const magic = await createRequest(client.magic[":lvl"].$post)({
-            param: { lvl: String(lvl) },
+        const magic = await learnMagic.run(lvl);
+        if (magic) {
+          popup.info({
+            title: "Успешное изучение",
+            message: magic.displayName,
           });
-          await invalidate("app:character");
-          if (magic) {
-            popup.info({
-              title: "Успешное изучение",
-              message: magic.displayName,
-            });
-          }
-        });
-        isLearning = false;
+        }
       },
     });
   };

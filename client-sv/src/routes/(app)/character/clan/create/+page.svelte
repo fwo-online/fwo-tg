@@ -1,9 +1,8 @@
 <script lang="ts">
   import Card from "$lib/components/Card.svelte";
   import Button from "$lib/components/Button.svelte";
-  import { useClanCreate } from "$lib/clan/clan.svelte";
+  import { createClan } from "$lib/clan/clan.svelte";
 
-  const { createClan } = useClanCreate();
   let name = $state("");
 </script>
 
@@ -15,7 +14,11 @@
   />
 
   <div class="mt-4 flex flex-col">
-    <Button class="is-primary" onclick={() => createClan(name)}>
+    <Button
+      class="is-primary"
+      disabled={createClan.pending}
+      onclick={() => createClan.run(name)}
+    >
       Создать клан за 100💰
     </Button>
   </div>
