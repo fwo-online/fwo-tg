@@ -1,5 +1,5 @@
-import { nameSchema } from '@/shared';
 import * as v from 'valibot';
+import { nameSchema } from '@/shared';
 
 export const reservedClanName = '__clan';
 export const monstersClanName = 'Монстры';
@@ -32,3 +32,5 @@ export const createClanSchema = v.object({
 export const clanLvlCost = [100, 250, 750, 1500, 3000];
 export const clanAcceptCostPerLvl = 50;
 export const clanForgeCostMultiplier = 3;
+
+export const getClanName = (clan?: ClanPublic) => clan?.name ?? reservedClanName;
