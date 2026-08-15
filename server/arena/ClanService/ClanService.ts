@@ -1,4 +1,15 @@
 import {
+  type ClanPublic,
+  type Clan as ClanSchema,
+  clanAcceptCostPerLvl,
+  clanForgeCostMultiplier,
+  clanLvlCost,
+  monstersClanName,
+  playersClanName,
+  reservedClanName,
+} from '@fwo/shared';
+import type { UpdateQuery } from 'mongoose';
+import {
   createClan,
   deleteClan,
   getClanById,
@@ -10,17 +21,6 @@ import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
 import ValidationError from '@/arena/errors/ValidationError';
 import type { Clan } from '@/models/clan';
-import {
-  type ClanPublic,
-  type Clan as ClanSchema,
-  clanAcceptCostPerLvl,
-  clanForgeCostMultiplier,
-  clanLvlCost,
-  monstersClanName,
-  playersClanName,
-  reservedClanName,
-} from '@fwo/shared';
-import type { UpdateQuery } from 'mongoose';
 
 /**
  * Clan Service

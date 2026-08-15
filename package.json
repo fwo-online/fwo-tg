@@ -7,7 +7,6 @@
   "workspaces": [
     "server",
     "client",
-    "client-sv",
     "shared"
   ],
   "scripts": {

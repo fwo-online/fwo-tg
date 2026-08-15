@@ -1,16 +1,24 @@
+import adapter from '@sveltejs/adapter-auto';
+import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
-import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
-  css: {
-    modules: {
-      localsConvention: 'camelCaseOnly',
-    },
-  },
-  plugins: [react(), tsconfigPaths({ projects: ['./tsconfig.json'] }), tailwindcss()],
-  server: {
-    host: true,
+  plugins: [
+    tailwindcss(),
+    sveltekit({
+      compilerOptions: {
+        experimental: {
+          async: true,
+        },
+        // Force runes mode for the project, except for libraries. Can be removed in svelte 6.
+        runes: ({ filename }) =>
+          filename.split(/[/\\]/).includes('node_modules') ? undefined : true,
+      },
+      adapter: adapter(),
+    }),
+  ],
+  resolve: {
+    tsconfigPaths: true,
   },
 });
