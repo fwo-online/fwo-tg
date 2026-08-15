@@ -142,11 +142,13 @@
   </Button>
 {/snippet}
 
-<Card header="Седой торговец">
-  <h5 class="mb-4">Продавец необычных услуг и уникальных возможностей</h5>
+<Card header="Седой торговец" class="h-full flex flex-col">
+  <h5 class="mb-2 text-sm">
+    Продавец необычных услуг и уникальных возможностей
+  </h5>
 
-  <div class="flex flex-col gap-8">
-    <Card header={resetCfg.title}>
+  <div class="flex-1 overflow-y-auto flex flex-col gap-4 mt-2 pt-2">
+    <Card header={resetCfg.title} class="mt-0">
       <div class="flex gap-2">
         {@render arcanitesButton(
           resetCfg.components.arcanite,
@@ -161,7 +163,7 @@
       </div>
     </Card>
 
-    <Card header={nameCfg.title}>
+    <Card header={nameCfg.title} class="mt-0">
       <div class="flex flex-col gap-2">
         <input
           class="nes-input"
@@ -179,7 +181,7 @@
       </div>
     </Card>
 
-    <Card header={donateCfg.title}>
+    <Card header={donateCfg.title} class="mt-0">
       <h5>
         Ваше имя будет периодически появляться в боевом чате и навсегда
         останется в наших сердцах!

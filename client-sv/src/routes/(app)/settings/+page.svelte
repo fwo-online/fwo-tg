@@ -89,67 +89,69 @@
   };
 </script>
 
-<Card header="Уведомления" class="mb-8">
-  <div class="flex flex-col gap-2">
-    {#each notificationTypes as { key, label } (key)}
-      {@const enabled = character().notificationSettings?.[key] ?? false}
-      <div class="grid grid-cols-3">
-        <span class="col-start-1 col-end-3">{label}</span>
+<div class="h-full overflow-y-auto flex flex-col gap-4">
+  <Card header="Уведомления">
+    <div class="flex flex-col gap-2">
+      {#each notificationTypes as { key, label } (key)}
+        {@const enabled = character().notificationSettings?.[key] ?? false}
+        <div class="grid grid-cols-3">
+          <span class="col-start-1 col-end-3">{label}</span>
 
-        <label class="col-start-3">
-          <input
-            type="checkbox"
-            class={["nes-checkbox", { "is-dark": isDark }]}
-            checked={enabled}
-            disabled={toggleNotification.pending}
-            onchange={() => toggleNotification.run(key, !enabled)}
-          />
-          <span>{enabled ? "Вкл" : "Выкл"}</span>
-        </label>
-      </div>
-    {/each}
-  </div>
-</Card>
-
-{#if myCharacters.length > 0}
-  <Card header="Персонажи" class="mb-8">
-    <div class="flex flex-col gap-2 mb-4">
-      {#each myCharacters as char (char.id)}
-        <div class="flex items-center justify-between">
-          <div>
-            <span class="font-semibold">{char.name}</span>
-            <span class="text-sm opacity-50 ml-2">
-              {characterClassNameMap[char.class]}
-              {char.lvl} ур.
-            </span>
-          </div>
-          <Button
-            disabled={char.active}
-            onclick={() => handleActivate(char.id)}
-          >
-            {char.active ? "Активен" : "Сменить"}
-          </Button>
+          <label class="col-start-3">
+            <input
+              type="checkbox"
+              class={["nes-checkbox", { "is-dark": isDark }]}
+              checked={enabled}
+              disabled={toggleNotification.pending}
+              onchange={() => toggleNotification.run(key, !enabled)}
+            />
+            <span>{enabled ? "Вкл" : "Выкл"}</span>
+          </label>
         </div>
       {/each}
     </div>
-    <div class="flex flex-col gap-2">
-      <Button class="is-primary" href="/create">Создать нового</Button>
-      <Button class="is-error" onclick={removeCharacter}>
-        Удалить текущего персонажа
-      </Button>
-    </div>
   </Card>
-{/if}
 
-{#if character().clan}
-  <Card header="Управление аккаунтом">
-    <div class="flex flex-col gap-2">
-      {#if isClanOwner}
-        <Button onclick={removeClan}>Удалить клан</Button>
-      {/if}
-      {#if !isClanOwner}
-        <Button onclick={leaveClan}>Покинуть клан</Button>
-      {/if}
-    </div>
-  </Card>
-{/if}
+  {#if myCharacters.length > 0}
+    <Card header="Персонажи">
+      <div class="flex flex-col gap-2 mb-4">
+        {#each myCharacters as char (char.id)}
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="font-semibold">{char.name}</span>
+              <span class="text-sm opacity-50 ml-2">
+                {characterClassNameMap[char.class]}
+                {char.lvl} ур.
+              </span>
+            </div>
+            <Button
+              disabled={char.active}
+              onclick={() => handleActivate(char.id)}
+            >
+              {char.active ? "Активен" : "Сменить"}
+            </Button>
+          </div>
+        {/each}
+      </div>
+      <div class="flex flex-col gap-2">
+        <Button class="is-primary" href="/create">Создать нового</Button>
+        <Button class="is-error" onclick={removeCharacter}>
+          Удалить текущего персонажа
+        </Button>
+      </div>
+    </Card>
+  {/if}
+
+  {#if character().clan}
+    <Card header="Управление аккаунтом">
+      <div class="flex flex-col gap-2">
+        {#if isClanOwner}
+          <Button onclick={removeClan}>Удалить клан</Button>
+        {/if}
+        {#if !isClanOwner}
+          <Button onclick={leaveClan}>Покинуть клан</Button>
+        {/if}
+      </div>
+    </Card>
+  {/if}
+</div>

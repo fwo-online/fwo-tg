@@ -25,23 +25,25 @@
 </script>
 
 {#if !character().clan}
-  <div class="flex flex-col justify-between">
-    <Card header="Кланы">
+  <div class="h-full flex flex-col">
+    <Card header="Кланы" class="flex-1 flex flex-col min-h-0">
       {#if data.clans.length}
-        <ClanList
-          clans={data.clans}
-          {isLoading}
-          {isRequested}
-          onCreateRequest={createRequest}
-          onCancelRequest={cancelRequest}
-        />
+        <div class="flex-1 overflow-y-auto">
+          <ClanList
+            clans={data.clans}
+            {isLoading}
+            {isRequested}
+            onCreateRequest={createRequest}
+            onCancelRequest={cancelRequest}
+          />
+        </div>
       {:else}
         Кланов не найдено
       {/if}
     </Card>
 
-    <div class="flex flex-col p-4">
-      <Button class="mt-4 is-primary" href="/character/clan/create">
+    <div class="flex flex-col pt-2">
+      <Button class="is-primary" href="/character/clan/create">
         Создать клан
       </Button>
     </div>

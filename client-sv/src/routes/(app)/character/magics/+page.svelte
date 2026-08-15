@@ -44,7 +44,7 @@
   };
 </script>
 
-<div class="h-screen flex flex-col">
+<div class="h-full flex flex-col">
   <Card header="Магии" class="mb-1">
     <div class="h-[45vh] overflow-y-auto">
       <div class="flex flex-col gap-2">

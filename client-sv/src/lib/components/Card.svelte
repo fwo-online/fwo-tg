@@ -54,6 +54,7 @@
     z-index: 1;
     font-size: 14px;
     font-weight: bold;
+    overflow: visible;
   }
 
   .nes-container.with-title .nes-container__outline {

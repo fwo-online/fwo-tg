@@ -5,7 +5,53 @@
 
   h5 {
     margin-bottom: 4px;
+    font-size: 14px;
     color: var(--tg-theme-subtitle-text-color);
+  }
+
+  .nes-badge {
+    position: relative;
+    display: inline-block;
+    font-size: 10px;
+    white-space: nowrap;
+    vertical-align: top;
+    user-select: none;
+  }
+
+  .nes-badge > span {
+    display: block;
+    padding: 2px 6px;
+    text-align: center;
+  }
+
+  .nes-badge span.is-error {
+    color: #fff;
+    background-color: #e76e55;
+    box-shadow: 0 3px #e76e55, 0 -3px #e76e55, 3px 0 #e76e55, -3px 0 #e76e55;
+  }
+
+  .nes-badge span.is-primary {
+    color: #fff;
+    background-color: #209cee;
+    box-shadow: 0 3px #209cee, 0 -3px #209cee, 3px 0 #209cee, -3px 0 #209cee;
+  }
+
+  .nes-badge span.is-success {
+    color: #fff;
+    background-color: #92cc41;
+    box-shadow: 0 3px #92cc41, 0 -3px #92cc41, 3px 0 #92cc41, -3px 0 #92cc41;
+  }
+
+  .nes-badge span.is-warning {
+    color: #212529;
+    background-color: #f7d51d;
+    box-shadow: 0 3px #f7d51d, 0 -3px #f7d51d, 3px 0 #f7d51d, -3px 0 #f7d51d;
+  }
+
+  .nes-badge span.is-dark {
+    color: #fff;
+    background-color: #212529;
+    box-shadow: 0 3px #212529, 0 -3px #212529, 3px 0 #212529, -3px 0 #212529;
   }
 }
 

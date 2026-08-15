@@ -17,7 +17,7 @@
   );
 </script>
 
-<div class="h-screen flex flex-col">
+<div class="h-full flex flex-col">
   <Card header="Пассивные умения" class="mb-1">
     <div class="h-[45vh] overflow-y-auto">
       <div class="flex flex-col gap-2">
@@ -37,7 +37,7 @@
       </div>
     </div>
   </Card>
-  <Card class="flex-1 flex flex-col">
+  <Card header={selectedSkill?.displayName} class="flex-1 flex flex-col mt-0">
     {#if selectedSkill}
       <PassiveSkillDescription skill={selectedSkill} />
     {/if}

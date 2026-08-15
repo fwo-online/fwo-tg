@@ -1,7 +1,7 @@
 <script lang="ts">
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
-  import Modal from "$lib/components/Modal.svelte";
+  import ItemInfo from "$lib/item/components/ItemInfo.svelte";
   import { getCharacterContext } from "$lib/constext/character";
   import { makeRequest } from "$lib/utils/make-request.svelte";
   import { client, createRequest } from "$lib/api";
@@ -9,86 +9,126 @@
   import { wearList, wearListTranslations } from "$lib/constants/item";
   import { groupBy } from "es-toolkit";
   import type { ItemWithID } from "@fwo/shared";
+  import { goto } from "$app/navigation";
 
   const character = getCharacterContext();
 
   const items = $derived(
-    character().inventory?.filter((item: ItemWithID) => item.tier > 0) ?? [],
+    character().items?.filter((item: ItemWithID) => item.tier > 0) ?? [],
   );
-  const equipment = $derived(
-    Object.values(character().equipment ?? {})
-      .flat()
-      .filter(Boolean)
-      .map((e: any) => e?.id ?? e),
+  const equipment = $derived(character().equipment ?? []);
+  const inventoryByWear = $derived(
+    groupBy(items, (item: ItemWithID) => item.wear),
   );
-  const inventoryByWear = $derived(groupBy(items, (item: ItemWithID) => item.wear));
+
+  let selectedItemId = $state<string | undefined>(items[0]?.id);
+  const selectedItem = $derived<ItemWithID | undefined>(
+    items.find((i) => i.id === selectedItemId) ?? items[0],
+  );
 
   let isPending = $state(false);
   let prices: Record<string, string> = $state({});
+
+  const isEquipped = (item: ItemWithID) => equipment.includes(item.id);
 
   const handleCreateItem = async (itemId: string) => {
     const price = Number(prices[itemId]);
     if (Number.isNaN(price) || !price) return;
     isPending = true;
-    await makeRequest(() =>
-      createRequest(client.market.$post)({ json: { itemID: itemId, price } }),
-    );
-    isPending = false;
-    await invalidate('app:character');
+    try {
+      await makeRequest(() =>
+        createRequest(client.market.$post)({ json: { itemID: itemId, price } }),
+      );
+      await invalidate("app:character");
+      goto("/agora/market");
+    } finally {
+      isPending = false;
+    }
   };
 </script>
 
-<Card header="Продажа предмета">
-  {#if items.length}
-    <div class="flex flex-col gap-2">
-      {#each wearList as wear (wear)}
-        {#if inventoryByWear[wear]}
-          <h5>{wearListTranslations[wear]}</h5>
-          {#each inventoryByWear[wear] as item (item.id)}
-            {@const isEquipped = equipment.includes(item.id)}
-            {@const minPrice = Math.ceil(item.price * 0.25)}
-            {@const maxPrice = Math.ceil(item.price * 2)}
-            {@const price = prices[item.id] ?? ''}
-            <Modal>
-              {#snippet trigger()}
-                <Button disabled={isEquipped}>
-                  <div class="flex justify-between">
-                    {item.info.name}
-                    {#if isEquipped}
-                      <div class="opacity-50">Надето</div>
+<div class="h-full flex flex-col">
+  <Card header="Продажа предмета" class="mb-1">
+    <div class="h-[42vh] overflow-y-auto">
+      {#if items.length}
+        <div class="flex flex-col gap-1.5">
+          {#each wearList as wear (wear)}
+            {#if inventoryByWear[wear]?.length}
+              <span class="text-[11px] font-semibold opacity-75 mt-0.5">
+                {wearListTranslations[wear]}
+              </span>
+              {#each inventoryByWear[wear] as item (item.id)}
+                {@const equipped = isEquipped(item)}
+                <Button
+                  class={[
+                    "w-full py-1! px-2!",
+                    { "is-primary": selectedItem?.id === item.id },
+                  ]}
+                  onclick={() => (selectedItemId = item.id)}
+                >
+                  <div class="flex justify-between items-center text-xs">
+                    <span>{item.info.name}</span>
+                    {#if equipped}
+                      <span class="opacity-50">Надето</span>
                     {/if}
                   </div>
                 </Button>
-              {/snippet}
-              <div class="flex flex-col gap-2">
-                {#if price}
-                  <h5>Ты получишь {Math.round(Number(price) * 0.8)}💰</h5>
-                {:else}
-                  <h5>Ты получишь 80% от указанной цены</h5>
-                {/if}
-                <input
-                  class="nes-input"
-                  inputmode="numeric"
-                  type="number"
-                  min={minPrice}
-                  max={maxPrice}
-                  placeholder={`Введите цену от ${minPrice} до ${maxPrice}`}
-                  value={prices[item.id] ?? ''}
-                  oninput={(e) => (prices[item.id] = e.currentTarget.value)}
-                />
-                <Button
-                  disabled={isPending || !price || Number.isNaN(Number(price))}
-                  onclick={() => handleCreateItem(item.id)}
-                >
-                  Выставить на продажу
-                </Button>
-              </div>
-            </Modal>
+              {/each}
+            {/if}
           {/each}
-        {/if}
-      {/each}
+        </div>
+      {:else}
+        <p class="text-sm opacity-50">Ничего не найдено</p>
+      {/if}
     </div>
-  {:else}
-    <p class="opacity-50">Ничего не найдено</p>
-  {/if}
-</Card>
+  </Card>
+
+  <Card header={selectedItem?.info.name} class="flex-1 flex flex-col">
+    {#if selectedItem}
+      {@const equipped = isEquipped(selectedItem)}
+      {@const minPrice = Math.ceil(selectedItem.price * 0.25)}
+      {@const maxPrice = Math.ceil(selectedItem.price * 2)}
+      {@const price = prices[selectedItem.id] ?? ""}
+      <ItemInfo item={selectedItem}>
+        {#snippet footer(item)}
+          <div class="flex flex-col gap-1.5 mt-1">
+            {#if equipped}
+              <Button disabled class="w-full py-1.5!">
+                Снимите предмет перед продажей
+              </Button>
+            {:else}
+              {#if price}
+                <span class="text-xs">
+                  Ты получишь {Math.round(Number(price) * 0.8)}💰
+                </span>
+              {:else}
+                <span class="text-[11px] opacity-75">
+                  Ты получишь 80% от указанной цены
+                </span>
+              {/if}
+              <input
+                class="nes-input text-xs py-1!"
+                inputmode="numeric"
+                type="number"
+                min={minPrice}
+                max={maxPrice}
+                placeholder={`Введите цену от ${minPrice} до ${maxPrice}`}
+                value={prices[item.id] ?? ""}
+                oninput={(e) => (prices[item.id] = e.currentTarget.value)}
+              />
+              <Button
+                class="w-full is-primary py-1.5!"
+                disabled={isPending || !price || Number.isNaN(Number(price))}
+                onclick={() => handleCreateItem(item.id)}
+              >
+                Выставить на продажу
+              </Button>
+            {/if}
+          </div>
+        {/snippet}
+      </ItemInfo>
+    {:else}
+      <div class="text-sm opacity-50">Выбери предмет</div>
+    {/if}
+  </Card>
+</div>

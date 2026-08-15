@@ -8,7 +8,7 @@ export const load: PageLoad = async ({ params }) => {
   const items = await createRequest(client.shop.$get)({ query: { wear: slug } });
 
   if (items) {
-    return { items };
+    return { items, wear: slug };
   }
 
   error(404, 'Not found');

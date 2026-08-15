@@ -6,6 +6,8 @@
   let { data }: PageProps = $props();
 </script>
 
-<Card header="Рейтинг">
-  <LadderList ladderList={data.ladderList} />
+<Card header="Рейтинг" class="h-full flex flex-col">
+  <div class="flex-1 overflow-y-auto">
+    <LadderList ladderList={data.ladderList} />
+  </div>
 </Card>

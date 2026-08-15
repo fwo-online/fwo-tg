@@ -11,7 +11,6 @@ export const useSettingsButton = () => {
     if (!settingsButton.isSupported()) {
       return;
     }
-    console.log('Mounting settings button', settingsButton.isSupported());
 
     settingsButton.mount();
     settingsButton.show();

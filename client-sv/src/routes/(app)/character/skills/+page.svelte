@@ -26,7 +26,7 @@
   );
 </script>
 
-<div class="h-screen flex flex-col">
+<div class="h-full flex flex-col">
   <Card header="Умения" class="mb-1">
     <div class="h-[45vh] overflow-y-auto">
       <div class="flex flex-col gap-2">
@@ -47,7 +47,7 @@
     </div>
   </Card>
 
-  <Card class="flex-1 flex flex-col">
+  <Card class="flex-1 flex flex-col mt-0">
     <div class="flex flex-col flex-1 justify-between">
       <div class="flex flex-col gap-2 mb-4">
         <span>{selectedSkill.displayName}</span>

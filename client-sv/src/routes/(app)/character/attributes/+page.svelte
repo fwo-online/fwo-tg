@@ -53,7 +53,7 @@
   {/if}
 {/snippet}
 
-<div class="h-screen flex flex-col">
+<div class="h-full flex flex-col">
   <Card header="Характеристики" class="flex-1 mb-1">
     <Description.Group>
       <Description.Item>
@@ -143,7 +143,7 @@
     </Description.Group>
   </Card>
 
-  <Card class="flex-0 flex flex-col">
+  <Card class="flex-0 flex flex-col mt-0">
     <CharacterAttributesEditor
       bind:attributes
       {baseAttributes}
