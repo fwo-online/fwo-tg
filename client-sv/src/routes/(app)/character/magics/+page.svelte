@@ -68,13 +68,12 @@
     </div>
   </Card>
 
-  <Card class="flex-1 flex flex-col">
-    {#if mode === "info"}
+  {#if mode === "info"}
+    <Card header={selectedMagic?.displayName} class="flex-1 flex flex-col mt-0">
       <div class="flex flex-col flex-1 justify-between">
         {#if selectedMagic}
           {@const currentLevel = character().magics?.[selectedMagic.name] ?? 0}
           <div class="flex flex-col gap-2 mb-4">
-            <span class="font-semibold">{selectedMagic.displayName}</span>
             <span class="text-sm">{selectedMagic.description}</span>
             <div class="flex justify-between text-sm opacity-50">
               <span>Уровень</span>
@@ -95,31 +94,40 @@
           <div class="text-sm opacity-50">Магия не выбрана</div>
         {/if}
 
-        <Button class="is-primary w-full" onclick={() => (mode = "learn")}>
+        <Button
+          class="is-primary w-full"
+          onclick={() => {
+            mode = "learn";
+            selectedMagic = undefined;
+          }}
+        >
           Изучение магий
         </Button>
       </div>
-    {:else}
+    </Card>
+  {:else}
+    <Card header="Изучение магии" class="flex-1 flex flex-col mt-0">
       <div class="flex flex-col flex-1 justify-between">
         <div class="flex flex-col gap-2">
-          <div class="flex justify-between items-center">
-            <span class="text-sm font-semibold">Изучение магии</span>
+          <div class="flex justify-end items-center">
             <span class="text-sm">У тебя {character().bonus}💡</span>
           </div>
           <span class="text-xs opacity-75">
-            Выбери уровень магии, который хочешь изучить. Будет изучена случайная
-            магия выбранного уровня
+            Выбери уровень магии, который хочешь изучить. Будет изучена
+            случайная магия выбранного уровня
           </span>
 
-          <div class="flex flex-col gap-2 mt-2">
+          <div class="grid grid-cols-4 gap-2 mt-2">
             {#each times(4, (i) => i + 1) as lvl (lvl)}
               <Button
-                class={[{ "is-primary": !isDisabled(lvl) }]}
+                class={["px-1! py-2!", { "is-primary": !isDisabled(lvl) }]}
                 disabled={isDisabled(lvl)}
                 onclick={() => handleLearn(lvl)}
               >
-                <div class="flex justify-between items-center text-sm">
-                  <span>Уровень {lvl}</span>
+                <div
+                  class="flex flex-col items-center justify-center text-xs whitespace-nowrap leading-tight"
+                >
+                  <span>{lvl} LVL</span>
                   <span>
                     {data.availableMagicLevels[lvl]
                       ? `${getLearnMagicCost(lvl)}💡`
@@ -131,10 +139,16 @@
           </div>
         </div>
 
-        <Button class="w-full mt-2" onclick={() => (mode = "info")}>
+        <Button
+          class="w-full mt-2"
+          onclick={() => {
+            mode = "info";
+            selectedMagic = data.magics[0];
+          }}
+        >
           Информация
         </Button>
       </div>
-    {/if}
-  </Card>
+    </Card>
+  {/if}
 </div>
