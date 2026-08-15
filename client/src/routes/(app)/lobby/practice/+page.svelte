@@ -3,7 +3,7 @@
   import Card from "$lib/components/Card.svelte";
   import { useLobbyQueue } from "$lib/lobby/useLobbyQueue.svelte";
 
-  const { isSearching, toggleSearch } = useLobbyQueue("practice");
+  const queue = useLobbyQueue("practice");
 </script>
 
 <Card header="Тренировка">
@@ -12,10 +12,10 @@
     представляют серьёзной угрозы, но позволяют освоиться с боевой системой.
   </h5>
   <div class="flex flex-col">
-    {#if isSearching}
-      <Button class="is-warning" onclick={toggleSearch}>Отмена</Button>
+    {#if queue.isSearching}
+      <Button class="is-warning" onclick={queue.toggleSearch}>Отмена</Button>
     {:else}
-      <Button onclick={toggleSearch}>Начать тренировку</Button>
+      <Button onclick={queue.toggleSearch}>Начать тренировку</Button>
     {/if}
   </div>
 </Card>

@@ -6,7 +6,7 @@
   import { onSocket } from "$lib/utils/on-socket";
   import { openTelegramLink } from "@tma.js/sdk-svelte";
 
-  const { toggleSearch, isSearching, searchers } = useLobbyQueue("ladder");
+  const queue = useLobbyQueue("ladder");
 
   let channelLinkVisible = $state(false);
 
@@ -28,7 +28,7 @@
     </div>
     <div class="flex flex-col mt-4">
       <h5>Ищут игру</h5>
-      <LobbyList {searchers} />
+      <LobbyList searchers={queue.searchers} />
     </div>
   </Card>
 
@@ -43,12 +43,12 @@
         </Button>
       </div>
     {/if}
-    {#if isSearching}
-      <Button class="is-warning" onclick={toggleSearch}>
+    {#if queue.isSearching}
+      <Button class="is-warning" onclick={queue.toggleSearch}>
         Остановить поиск игры
       </Button>
     {:else}
-      <Button onclick={toggleSearch}>Начать поиск игры</Button>
+      <Button onclick={queue.toggleSearch}>Начать поиск игры</Button>
     {/if}
   </div>
 </div>
