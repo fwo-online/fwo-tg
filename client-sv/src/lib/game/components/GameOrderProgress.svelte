@@ -5,15 +5,17 @@
   const ordersStartTime = $derived(game.ordersStartTime);
   const threshold = 1000;
 
-  let remainTime = $derived(ordersTime);
+  let remainTime = $state(0);
 
   $effect(() => {
-    const interval = setInterval(
-      () =>
-        (remainTime = ordersStartTime + ordersTime - Date.now() - threshold),
-      100,
-    );
-
+    const update = () => {
+      remainTime = Math.max(
+        0,
+        ordersStartTime + ordersTime - Date.now() - threshold,
+      );
+    };
+    update();
+    const interval = setInterval(update, 100);
     return () => clearInterval(interval);
   });
 </script>

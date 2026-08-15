@@ -1,71 +1,92 @@
 <script lang="ts">
+  import {
+    type Action,
+    type GameStatus,
+    getClanName,
+    type Player,
+    reservedClanName,
+  } from "@fwo/shared";
+  import { mapValues, omit } from "es-toolkit";
   import { Description } from "$lib/components/Description";
   import { getCharacterContext } from "$lib/constext/character";
-  import GamePlayer from "$lib/game/components/GamePlayer.svelte";
+  import GameSelectablePlayer from "$lib/game/components/GameSelectablePlayer.svelte";
   import { game } from "$lib/game/utils/state.svelte";
-  import { reservedClanName, type GameStatus } from "@fwo/shared";
-  import { mapValues, omit } from "es-toolkit";
+
+  let {
+    selected = $bindable(),
+    selectable = [],
+    selectedAction,
+  }: {
+    selected: string | undefined;
+    selectable?: Player[];
+    selectedAction: Action | undefined;
+  } = $props();
 
   const character = getCharacterContext();
-  const clan = $derived(game.players[character().id].clan);
+  const characterID = $derived(character().id);
+  const clan = $derived(game.players[characterID]?.clan);
 
   const alliesStatus = $derived(
     clan
-      ? game.statusByClan[clan.name]
-      : game.statusByClan[reservedClanName]?.filter(
-          ({ id }) => character().id === id,
-        ),
+      ? (game.statusByClan[getClanName(clan)] ?? [])
+      : (game.statusByClan[reservedClanName]?.filter(
+          ({ id }) => characterID === id,
+        ) ?? []),
   );
+
   const enemiesStatus: Record<string, GameStatus[]> = $derived(
     clan
-      ? omit(game.statusByClan, [clan.name])
-      : mapValues(game.statusByClan, (statuses, clan) => {
-          if (clan === reservedClanName) {
-            return statuses?.filter(({ id }) => id !== character().id);
+      ? (omit(game.statusByClan, [clan.name]) as Record<string, GameStatus[]>)
+      : (mapValues(game.statusByClan, (statuses, clanName) => {
+          if (clanName === reservedClanName) {
+            return statuses?.filter(({ id }) => id !== characterID) ?? [];
           }
-          return statuses;
-        }),
+          return statuses ?? [];
+        }) as Record<string, GameStatus[]>),
   );
 
   const enemiesStatusEntries = $derived(Object.entries(enemiesStatus));
-
-  $inspect(enemiesStatusEntries);
+  const selectableSet = $derived(new Set(selectable.map(({ id }) => id)));
 </script>
 
-<Description.Group header={clan?.name ?? ""}>
-  {#each alliesStatus as status (status.name)}
-    <Description.Item>
-      {@const player = game.players[status.id]}
-      <GamePlayer
+{#snippet Status(status: GameStatus, ally: boolean)}
+  {@const player = game.players[status.id]}
+  {#if player}
+    {@const disabled = !selectableSet.has(player.id)}
+    <Description.Item selectable={!!selectedAction} {disabled}>
+      <GameSelectablePlayer
+        bind:value={selected}
+        id={player.id}
         characterClass={player.class}
         name={player.name}
         isBot={player.isBot}
+        {disabled}
       />
       {#snippet after()}
-        {#if status.hp}❤️{status.hp}{/if}
-        {#if status.mp}💧{status.mp}{/if}
-        {#if status.en}🔋{status.en}{/if}
+        <div class="flex items-center gap-2 font-mono text-xs">
+          {#if status.hp !== undefined}<span>❤️{status.hp}</span>{/if}
+          {#if ally}
+            {#if status.mp !== undefined}<span>💧{status.mp}</span>{/if}
+            {#if status.en !== undefined}<span>🔋{status.en}</span>{/if}
+          {/if}
+        </div>
       {/snippet}
     </Description.Item>
+  {/if}
+{/snippet}
+
+<Description.Group header={clan?.name ?? ""}>
+  {#each alliesStatus as status (status.id)}
+    {@render Status(status, true)}
   {/each}
 
-  {#each enemiesStatusEntries as [clan, statuses] (clan)}
-    {#if statuses.length}
+  {#each enemiesStatusEntries as [clanName, statuses] (clanName)}
+    {#if statuses && statuses.length > 0}
       <Description.Group
-        header={clan === reservedClanName ? "Без клана" : clan}
+        header={clanName === reservedClanName ? "Без клана" : clanName}
       >
-        {#each statuses as status (status.name)}
-          <Description.Item>
-            {@const player = game.players[status.id]}
-            <GamePlayer
-              characterClass={player.class}
-              name={player.name}
-              isBot={player.isBot}
-            />
-            {#snippet after()}
-              {#if status.hp}❤️{status.hp}{/if}
-            {/snippet}
-          </Description.Item>
+        {#each statuses as status (status.id)}
+          {@render Status(status, false)}
         {/each}
       </Description.Group>
     {/if}

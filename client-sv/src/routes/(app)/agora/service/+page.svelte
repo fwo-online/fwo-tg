@@ -4,9 +4,10 @@
   import { makeRequest } from "$lib/utils/make-request.svelte";
   import { client, createRequest } from "$lib/api";
   import { invalidate } from "$app/navigation";
-  import { InvoiceType, invoiceTypes } from "@fwo/shared";
+  import { InvoiceType, invoiceTypes, ItemComponent } from "@fwo/shared";
   import { invoice } from "@tma.js/sdk-svelte";
   import { popup } from "$lib/components/Popup/popup.svelte";
+  import { componentsImageMap } from "$lib/constants/components";
 
   let resetLoading = $state(false);
   let nameLoading = $state(false);
@@ -113,28 +114,50 @@
   const donateCfg = invoiceTypes[InvoiceType.Donation];
 </script>
 
+{#snippet arcanitesButton(
+  cost: number | string,
+  onClick: () => void,
+  loading: boolean,
+)}
+  <Button class="flex-1" disabled={loading} onclick={onClick}>
+    <div class="flex justify-center">
+      {cost}
+      <img
+        height="20"
+        width="20"
+        src={componentsImageMap[ItemComponent.Arcanite]}
+        alt={ItemComponent.Arcanite.toString()}
+      />
+    </div>
+  </Button>
+{/snippet}
+
+{#snippet starsButton(
+  cost: number | string,
+  onClick: () => void,
+  loading: boolean,
+)}
+  <Button class="flex-1" disabled={loading} onclick={onClick}>
+    {cost}⭐
+  </Button>
+{/snippet}
+
 <Card header="Седой торговец">
   <h5 class="mb-4">Продавец необычных услуг и уникальных возможностей</h5>
 
   <div class="flex flex-col gap-8">
     <Card header={resetCfg.title}>
       <div class="flex gap-2">
-        <Button
-          class="flex-1"
-          disabled={resetLoading}
-          onclick={resetAttributesByComponents}
-        >
-          <div class="flex justify-center">
-            {resetCfg.components.arcanite} 🪨
-          </div>
-        </Button>
-        <Button
-          class="flex-1"
-          disabled={resetLoading}
-          onclick={resetAttributesByStars}
-        >
-          {resetCfg.stars}⭐
-        </Button>
+        {@render arcanitesButton(
+          resetCfg.components.arcanite,
+          resetAttributesByComponents,
+          resetLoading,
+        )}
+        {@render starsButton(
+          resetCfg.stars,
+          resetAttributesByStars,
+          resetLoading,
+        )}
       </div>
     </Card>
 
@@ -146,22 +169,12 @@
           bind:value={nickname}
         />
         <div class="flex gap-2">
-          <Button
-            class="flex-1"
-            disabled={nameLoading || !nickname}
-            onclick={changeNameByComponents}
-          >
-            <div class="flex justify-center">
-              {nameCfg.components.arcanite} 🪨
-            </div>
-          </Button>
-          <Button
-            class="flex-1"
-            disabled={nameLoading || !nickname}
-            onclick={changeNameByStars}
-          >
-            {nameCfg.stars}⭐
-          </Button>
+          {@render arcanitesButton(
+            nameCfg.components.arcanite,
+            changeNameByComponents,
+            nameLoading,
+          )}
+          {@render starsButton(nameCfg.stars, changeNameByStars, resetLoading)}
         </div>
       </div>
     </Card>
@@ -181,13 +194,7 @@
           bind:value={donateAmount}
         />
         <div class="flex gap-2">
-          <Button
-            class="flex-1"
-            disabled={donateLoading || !donateAmount}
-            onclick={donateByStars}
-          >
-            {donateAmount}⭐
-          </Button>
+          {@render starsButton(donateAmount, donateByStars, donateLoading)}
         </div>
       </div>
     </Card>

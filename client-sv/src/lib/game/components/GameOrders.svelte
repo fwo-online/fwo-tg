@@ -1,38 +1,58 @@
 <script lang="ts">
-  import Button from "$lib/components/Button.svelte";
+  import { removeOrder } from "$lib/game/utils/order-actions.svelte";
   import { game } from "$lib/game/utils/state.svelte";
 
   type Props = {
+    readonly?: boolean;
     isPending?: boolean;
-  } & (
-    | { readonly: true; onRemove?: never }
-    | { readonly?: never; onRemove: (id: string) => void }
-  );
+    onRemove?: (id: string) => void;
+  };
 
-  const props: Props = $props();
+  const {
+    readonly = false,
+    isPending,
+    onRemove,
+  }: Props = $props();
 
   const orders = $derived(game.orders);
+  const pending = $derived(isPending ?? removeOrder.pending);
+
+  function handleRemove(id: string) {
+    if (onRemove) {
+      onRemove(id);
+    } else {
+      removeOrder.run(id);
+    }
+  }
 </script>
 
-{#if orders.length}
-  {#each orders as order}
-    {@const target = game.players[order.target]}
-    <div class="flex justify-between items-center text-sm">
-      <span class="mt-2">
-        <i>{order.action.displayName}</i> на <b>{target.name}</b>
-        ({order.power}%)
-      </span>
-      {#if !props.readonly}
-        <Button
-          class="p-0 h-6 w-6 after:hidden"
-          disabled={props.isPending}
-          onclick={() => props.onRemove(order.id)}
-        >
-          ✖
-        </Button>
-      {/if}
+<div class="flex items-center gap-1.5 overflow-x-auto py-1 min-h-[34px] no-scrollbar">
+  {#if orders.length}
+    {#each orders as order (order.id)}
+      {@const target = game.players[order.target]}
+      <div
+        class="inline-flex items-center gap-1.5 px-2 py-0.5 text-xs rounded border border-current/20 bg-black/5 dark:bg-white/10 shrink-0 font-mono select-none"
+      >
+        <span class="font-bold">{order.action.displayName}</span>
+        <span class="opacity-50">→</span>
+        <span class="font-semibold">{target?.name ?? "..."}</span>
+        <span class="opacity-80">({order.power}%)</span>
+        {#if !readonly && !game.ready}
+          <button
+            type="button"
+            class="ml-0.5 text-xs opacity-60 hover:opacity-100 transition-opacity cursor-pointer leading-none p-0.5 disabled:opacity-30"
+            disabled={pending}
+            onclick={() => handleRemove(order.id)}
+            title="Удалить приказ"
+          >
+            ✕
+          </button>
+        {/if}
+      </div>
+    {/each}
+  {:else}
+    <div class="text-xs opacity-50 px-1 italic">
+      Нет выбранных действий
     </div>
-  {/each}
-{:else}
-  Выберите действия
-{/if}
+  {/if}
+</div>

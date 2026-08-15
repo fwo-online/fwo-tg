@@ -1,43 +1,38 @@
 import { type Action, getClanName, type Player, reservedClanName } from '@fwo/shared';
-import { groupBy, omit, pick } from 'es-toolkit';
 
 type Params = {
-  action: Action;
+  action?: Action;
   players: Record<string, Player>;
   characterID: string;
 };
 
-export const getAvaiableTargets = ({ action, players, characterID }: Params) => {
+export const getAvailableTargets = ({ action, players, characterID }: Params): Player[] => {
   const clanID = getClanName(players[characterID]?.clan);
   const alivePlayers = Object.values(players).filter(({ alive }) => alive);
-  const byClan = groupBy(alivePlayers, ({ clan }) => getClanName(clan));
 
-  switch (action.orderType) {
-    case 'all':
-    case 'any':
-      return byClan;
+  switch (action?.orderType) {
     case 'enemy':
       return clanID === reservedClanName
-        ? {
-            ...byClan,
-            [clanID]: byClan[clanID]?.filter(({ id }) => id !== characterID) ?? [],
-          }
-        : omit(byClan, [clanID]);
+        ? alivePlayers.filter((player) => player.id !== characterID)
+        : alivePlayers.filter((player) => player.clan?.id !== clanID);
+
     case 'self':
-      return {
-        [clanID]: byClan[clanID]?.filter(({ id }) => id === characterID) ?? [],
-      };
+      return alivePlayers.filter((player) => player.id === characterID);
+
     case 'teamExceptSelf':
-      return {
-        [clanID]: byClan[clanID]?.filter(({ id }) => id !== characterID) ?? [],
-      };
+      return clanID === reservedClanName
+        ? []
+        : alivePlayers.filter((player) => player.clan?.id === clanID && player.id !== characterID);
+
     case 'team':
       return clanID === reservedClanName
-        ? {
-            [clanID]: byClan[clanID]?.filter(({ id }) => id === characterID) ?? [],
-          }
-        : pick(byClan, [clanID]);
+        ? alivePlayers.filter((player) => player.id === characterID)
+        : alivePlayers.filter((player) => player.clan?.id === clanID);
+
     default:
-      return byClan;
+      return alivePlayers;
   }
 };
+
+/** @deprecated alias for typo compatibility */
+export const getAvaiableTargets = getAvailableTargets;

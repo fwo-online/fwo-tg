@@ -5,13 +5,21 @@
   } from "$lib/components/Renderable.svelte";
   import { themeParams, useSignal } from "@tma.js/sdk-svelte";
   import type { Snippet } from "svelte";
-  import type { ClassValue } from "svelte/elements";
+  import type { ClassValue, HTMLAttributes } from "svelte/elements";
+
+  type Props = HTMLAttributes<HTMLDivElement> & {
+    header?: Renderable;
+    class?: ClassValue;
+    children?: Snippet;
+  };
 
   let {
     header,
     children,
+    class: className,
     ...props
-  }: { header?: Renderable; class?: ClassValue; children?: Snippet } = $props();
+  }: Props = $props();
+
   const isDark = useSignal(themeParams.isDark);
 </script>
 
@@ -22,10 +30,11 @@
 {/snippet}
 
 <div
+  {...props}
   class={[
     "nes-container is-rounded p-2",
     { "with-title": !!header, "is-dark": $isDark },
-    props.class,
+    className,
   ]}
 >
   {#if header}
