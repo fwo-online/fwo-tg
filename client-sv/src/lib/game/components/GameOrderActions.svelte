@@ -69,7 +69,9 @@
               onclick={() => handleSelect(action)}
             >
               <div class="flex flex-col items-center gap-0.5">
-                <span class="text-xs font-bold">{map[action.name] ?? action.name}</span>
+                <span class="text-xs font-bold">
+                  {map[action.name] ?? action.name}</span
+                >
               </div>
             </Button>
           {/each}

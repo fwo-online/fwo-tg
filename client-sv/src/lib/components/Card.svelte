@@ -13,12 +13,7 @@
     children?: Snippet;
   };
 
-  let {
-    header,
-    children,
-    class: className,
-    ...props
-  }: Props = $props();
+  let { header, children, class: className, ...props }: Props = $props();
 
   const isDark = useSignal(themeParams.isDark);
 </script>

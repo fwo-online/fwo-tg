@@ -40,7 +40,9 @@
     </div>
 
     <!-- Center: Status and Action selection -->
-    <div class="flex-1 min-h-0 p-3 pt-2 pb-1 flex flex-col gap-2 overflow-hidden">
+    <div
+      class="flex-1 min-h-0 p-3 pt-2 pb-1 flex flex-col gap-2 overflow-hidden"
+    >
       <Card class="flex-1 min-h-0 overflow-auto">
         <GameStatus
           bind:selected={selectedTarget}
@@ -53,13 +55,15 @@
         <div class="shrink-0">
           <GameOrderActions bind:selectedAction bind:selectedTarget />
         </div>
+      {:else}
+        <div>Ожидание стадии заказов...</div>
       {/if}
     </div>
 
     <!-- Bottom: Thumb zone (Orders Chips + Toolbar) -->
     {#if game.canOrder}
       <div
-        class="shrink-0 px-3 py-2 border-t border-black/10 dark:border-white/15 flex flex-col gap-1.5 bg-[var(--tg-theme-secondary-bg-color)]"
+        class="shrink-0 px-3 py-2 border-t border-black/10 dark:border-white/15 flex flex-col gap-1.5 bg-(--tg-theme-secondary-bg-color)"
       >
         <!-- Order Chips -->
         <GameOrders />

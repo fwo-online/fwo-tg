@@ -8,11 +8,7 @@
     onRemove?: (id: string) => void;
   };
 
-  const {
-    readonly = false,
-    isPending,
-    onRemove,
-  }: Props = $props();
+  const { readonly = false, isPending, onRemove }: Props = $props();
 
   const orders = $derived(game.orders);
   const pending = $derived(isPending ?? removeOrder.pending);
@@ -26,7 +22,9 @@
   }
 </script>
 
-<div class="flex items-center gap-1.5 overflow-x-auto py-1 min-h-[34px] no-scrollbar">
+<div
+  class="flex items-center gap-1.5 overflow-x-auto py-1 min-h-8.5 no-scrollbar"
+>
   {#if orders.length}
     {#each orders as order (order.id)}
       {@const target = game.players[order.target]}
@@ -51,8 +49,6 @@
       </div>
     {/each}
   {:else}
-    <div class="text-xs opacity-50 px-1 italic">
-      Нет выбранных действий
-    </div>
+    <div class="text-xs opacity-50 px-1 italic">Нет выбранных действий</div>
   {/if}
 </div>

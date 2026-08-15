@@ -9,6 +9,7 @@ import type {
 import { onMount } from 'svelte';
 import { goto, invalidate } from '$app/navigation';
 import { popup } from '$lib/components/Popup/popup.svelte';
+import { getCharacterContext } from '$lib/constext/character';
 import { getSocket } from '$lib/constext/socket';
 import { showGameResult } from '$lib/game/utils/result.svelte';
 import { onSocket } from '$lib/utils/on-socket';
@@ -55,6 +56,7 @@ export function resetGame() {
 
 export function initGameState() {
   const socket = getSocket();
+  const character = getCharacterContext();
 
   const handlePlayers = ({
     players,
@@ -116,6 +118,20 @@ export function initGameState() {
     showGameResult(results);
   };
 
+  const handlePreKick = () => {
+    popup.info({
+      message: 'Вы будете выброшены из игры в следующем раунде, если не сделаете заказ',
+    });
+  };
+
+  const handleKick = async ({ player }: Parameters<ServerToClientMessage['game:kick']>[0]) => {
+    if (player.id === character().id) {
+      await invalidate('app:character');
+      goto('/');
+      popup.info({ message: 'Вы были выброшены из игры' });
+    }
+  };
+
   onMount(() => {
     if (socket.connected) {
       handleStartGame();
@@ -129,4 +145,6 @@ export function initGameState() {
   onSocket('game:startOrders', handleStartOrders);
   onSocket('game:endOrders', handleEndOrders);
   onSocket('game:end', handleEndGame);
+  onSocket('game:preKick', handlePreKick);
+  onSocket('game:kick', handleKick);
 }
