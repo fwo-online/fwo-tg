@@ -16,7 +16,7 @@ export default defineConfig({
           filename.split(/[/\\]/).includes('node_modules') ? undefined : true,
       },
       adapter: adapter({
-        fallback: '200.html', // may differ from host to host
+        fallback: 'index.html', // may differ from host to host
       }),
     }),
   ],
