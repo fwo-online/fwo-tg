@@ -1,5 +1,4 @@
 <script lang="ts">
-  import classNames from "classnames";
   import { themeParams, useSignal } from "@tma.js/sdk-svelte";
   import type { HTMLInputAttributes } from "svelte/elements";
 
@@ -33,7 +32,7 @@
   bind:value
   style:border-image-source={getBorderSvg($textColor)}
   style:--slider-progress={`${progress}%`}
-  class={classNames("nes-slider nes-input", className)}
+  class={["nes-slider nes-input", className]}
   {...restProps}
   {max}
   {min}
