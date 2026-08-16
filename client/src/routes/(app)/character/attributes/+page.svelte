@@ -16,8 +16,12 @@
   import Card from "$lib/components/Card.svelte";
   import CharacterAttributesEditor from "$lib/character/components/CharacterAttributesEditor.svelte";
   import { invalidate } from "$app/navigation";
+  import type { PageProps } from "./$types";
 
+  const { data }: PageProps = $props();
   const character = getCharacterContext();
+
+  let dynamicAttributes = $derived(data.dynamicAttributes);
   let loading = $state(false);
 
   const loadAttributes = async (attributes: CharacterAttributes) => {
@@ -41,7 +45,11 @@
   let attributes = $state({ ...character().attributes });
   const baseDynamicAttributes = $derived(character().dynamicAttributes);
 
-  const dynamicAttributes = $derived(await loadAttributes(attributes));
+  $effect(() => {
+    loadAttributes(attributes).then((res) => {
+      dynamicAttributes = res;
+    });
+  });
 </script>
 
 {#snippet stat(path: PathsOf<Attributes>)}
