@@ -89,7 +89,7 @@
               >
                 <div class="flex w-full justify-between items-center">
                   <span>{action.displayName}</span>
-                  <span class="font-mono">{action.cost}💧</span>
+                  <span>{action.cost}💧</span>
                 </div>
               </Button>
             {/each}
@@ -108,7 +108,7 @@
               >
                 <div class="flex w-full justify-between items-center">
                   <span>{action.displayName}</span>
-                  <span class="font-mono">{action.cost}🔋</span>
+                  <span>{action.cost}🔋</span>
                 </div>
               </Button>
             {/each}

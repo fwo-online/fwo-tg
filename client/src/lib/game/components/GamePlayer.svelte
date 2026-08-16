@@ -22,7 +22,7 @@
 
 <div class={["inline-flex items-center justify-start gap-1.5", className]}>
   {#if lvl}
-    <span class="text-xs font-mono opacity-60">[{lvl}]</span>
+    <span class="text-xs opacity-60">[{lvl}]</span>
   {/if}
   {#if !isBot}
     <CharacterImage {characterClass} small />

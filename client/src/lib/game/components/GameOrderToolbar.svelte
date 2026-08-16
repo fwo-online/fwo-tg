@@ -43,7 +43,7 @@
 
   <!-- Power indicator badge -->
   <div
-    class="flex items-center gap-1 text-xs font-bold px-2 py-1 rounded border border-current/20 font-mono select-none"
+    class="flex items-center gap-1 text-xs font-bold px-2 py-1 rounded border border-current/20 select-none"
   >
     <span>⚡</span>
     <span class={power === 0 ? "opacity-40" : "text-amber-500 font-bold"}>

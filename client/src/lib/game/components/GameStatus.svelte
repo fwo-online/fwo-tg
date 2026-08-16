@@ -63,7 +63,7 @@
         {disabled}
       />
       {#snippet after()}
-        <div class="flex items-center gap-2 font-mono text-xs">
+        <div class="flex items-center gap-2 text-xs">
           {#if status.hp !== undefined}<span>❤️{status.hp}</span>{/if}
           {#if ally}
             {#if status.mp !== undefined}<span>💧{status.mp}</span>{/if}

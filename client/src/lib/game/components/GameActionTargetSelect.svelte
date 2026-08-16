@@ -37,7 +37,7 @@
 
 <div class="flex flex-col gap-2 mt-2">
   <div class="flex items-center gap-2">
-    <span class="text-xs font-mono">0%</span>
+    <span class="text-xs">0%</span>
     <Slider
       class="flex-1"
       type="range"
@@ -51,7 +51,7 @@
         power = Math.min(powerRemain, val);
       }}
     />
-    <span class="text-xs font-mono">{powerRemain}%</span>
+    <span class="text-xs">{powerRemain}%</span>
   </div>
 
   <div class="flex gap-2">

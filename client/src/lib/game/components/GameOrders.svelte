@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Button from "$lib/components/Button.svelte";
   import { removeOrder } from "$lib/game/utils/order-actions.svelte";
   import { game } from "$lib/game/utils/state.svelte";
 
@@ -29,14 +30,14 @@
     {#each orders as order (order.id)}
       {@const target = game.players[order.target]}
       <div
-        class="inline-flex items-center gap-1.5 px-2 py-0.5 text-xs rounded border border-current/20 bg-black/5 dark:bg-white/10 shrink-0 font-mono select-none"
+        class="inline-flex items-center gap-1.5 px-2 py-0.5 text-xs rounded border border-current/20 bg-black/5 dark:bg-white/10 shrink-0 select-none"
       >
         <span class="font-bold">{order.action.displayName}</span>
         <span class="opacity-50">→</span>
         <span class="font-semibold">{target?.name ?? "..."}</span>
         <span class="opacity-80">({order.power}%)</span>
         {#if !readonly && !game.ready}
-          <button
+          <Button
             type="button"
             class="ml-0.5 text-xs opacity-60 hover:opacity-100 transition-opacity cursor-pointer leading-none p-0.5 disabled:opacity-30"
             disabled={pending}
@@ -44,7 +45,7 @@
             title="Удалить приказ"
           >
             ✕
-          </button>
+          </Button>
         {/if}
       </div>
     {/each}
