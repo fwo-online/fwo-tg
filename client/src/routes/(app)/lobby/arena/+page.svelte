@@ -1,10 +1,10 @@
 <script lang="ts">
+  import { openTelegramLink } from "@tma.js/sdk-svelte";
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
   import LobbyList from "$lib/lobby/components/LobbyList.svelte";
   import { useLobbyQueue } from "$lib/lobby/useLobbyQueue.svelte";
   import { onSocket } from "$lib/utils/on-socket";
-  import { openTelegramLink } from "@tma.js/sdk-svelte";
 
   const queue = useLobbyQueue("ladder");
 

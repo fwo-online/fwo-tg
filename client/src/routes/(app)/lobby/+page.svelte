@@ -1,8 +1,8 @@
 <script lang="ts">
+  import { towerRequiredLvl } from "@fwo/shared";
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
   import { getCharacterContext } from "$lib/constext/character";
-  import { towerRequiredLvl } from "@fwo/shared";
 
   const character = getCharacterContext();
 

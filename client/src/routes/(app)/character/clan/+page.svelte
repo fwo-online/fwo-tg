@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
   import { onMount } from "svelte";
-  import Card from "$lib/components/Card.svelte";
+  import { goto } from "$app/navigation";
   import ClanOverview from "$lib/clan/components/ClanOverview.svelte";
+  import Card from "$lib/components/Card.svelte";
   import type { PageProps } from "./$types";
 
   let { data }: PageProps = $props();

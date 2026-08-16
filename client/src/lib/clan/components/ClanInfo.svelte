@@ -1,9 +1,9 @@
 <script lang="ts">
-  import ClanPlayers from "./ClanPlayers.svelte";
   import type { CharacterPublic, Clan } from "@fwo/shared";
   import { client, createRequest } from "$lib/api";
-  import Button from "$lib/components/Button.svelte";
   import { cancelClanRequest, createClanRequest } from "$lib/clan/clan.svelte";
+  import Button from "$lib/components/Button.svelte";
+  import ClanPlayers from "./ClanPlayers.svelte";
 
   type Props = {
     clan: Clan;

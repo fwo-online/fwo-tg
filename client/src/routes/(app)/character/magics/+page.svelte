@@ -1,12 +1,12 @@
 <script lang="ts">
+  import type { Magic } from "@fwo/shared";
+  import { canLearnMagic, getLearnMagicCost } from "@fwo/shared";
+  import { times } from "es-toolkit/compat";
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
   import { getCharacterContext } from "$lib/constext/character";
-  import { canLearnMagic, getLearnMagicCost } from "@fwo/shared";
-  import type { Magic } from "@fwo/shared";
-  import { times } from "es-toolkit/compat";
-  import type { PageProps } from "./$types";
   import { learnMagic } from "$lib/magic/utils/learn-magic.svelte";
+  import type { PageProps } from "./$types";
 
   const { data }: PageProps = $props();
   const character = getCharacterContext();

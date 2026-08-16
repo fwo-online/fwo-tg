@@ -1,11 +1,13 @@
 <script lang="ts">
   import type { CharacterPublic } from "@fwo/shared";
 
-  let {
-    character,
-    position,
-    extraClass,
-  }: { character: CharacterPublic; position?: number; extraClass?: string } = $props();
+  type Props = {
+    character: CharacterPublic;
+    position?: number;
+    extraClass?: string;
+  };
+
+  let { character, position, extraClass }: Props = $props();
 </script>
 
 <div class={["flex flex-1", extraClass]}>

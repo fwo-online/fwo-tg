@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { ItemWithID } from "@fwo/shared";
+  import { groupBy } from "es-toolkit";
   import CharacterComponents from "$lib/character/components/CharacterComponents.svelte";
   import {
     equipItem,
@@ -9,8 +11,6 @@
   import { wearList, wearListTranslations } from "$lib/constants/item";
   import { getCharacterContext } from "$lib/constext/character";
   import ItemInfo from "$lib/item/components/ItemInfo.svelte";
-  import type { ItemWithID } from "@fwo/shared";
-  import { groupBy } from "es-toolkit";
 
   const character = getCharacterContext();
   const equipment = $derived(character().equipment);

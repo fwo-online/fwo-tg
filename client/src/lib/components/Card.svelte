@@ -1,11 +1,11 @@
 <script lang="ts">
-  import {
-    renderable,
-    type Renderable,
-  } from "$lib/components/Renderable.svelte";
   import { themeParams, useSignal } from "@tma.js/sdk-svelte";
   import type { Snippet } from "svelte";
   import type { ClassValue, HTMLAttributes } from "svelte/elements";
+  import {
+    type Renderable,
+    renderable,
+  } from "$lib/components/Renderable.svelte";
 
   type Props = HTMLAttributes<HTMLDivElement> & {
     header?: Renderable;
@@ -43,18 +43,18 @@
 
 <style>
   .nes-container {
+    background-color: var(--tg-theme-secondary-bg-color);
     border-image-outset: 2 !important;
     border-image-repeat: stretch !important;
-    background-color: var(--tg-theme-secondary-bg-color);
   }
 
   .nes-container.with-title > svg {
     position: absolute;
-    transform: translate(-12px, -24px);
     z-index: 1;
+    overflow: visible;
     font-size: 14px;
     font-weight: bold;
-    overflow: visible;
+    transform: translate(-12px, -24px);
   }
 
   .nes-container.with-title .nes-container__outline {

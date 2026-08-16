@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Card from "$lib/components/Card.svelte";
-  import Button from "$lib/components/Button.svelte";
   import { createClan } from "$lib/clan/clan.svelte";
+  import Button from "$lib/components/Button.svelte";
+  import Card from "$lib/components/Card.svelte";
 
   let name = $state("");
 </script>

@@ -1,11 +1,11 @@
 <script lang="ts">
-  import favicon from "$lib/assets/favicon.svg";
-  import type { LayoutProps } from "./$types";
   import { goto } from "$app/navigation";
   import { navigating } from "$app/state";
-  import { setSocket } from "$lib/constext/socket";
-  import { setCharactertContext } from "$lib/constext/character";
+  import favicon from "$lib/assets/favicon.svg";
   import PopupHost from "$lib/components/Popup/PopupHost.svelte";
+  import { setCharactertContext } from "$lib/constext/character";
+  import { setSocket } from "$lib/constext/socket";
+  import type { LayoutProps } from "./$types";
 
   import "./layout.css";
 

@@ -1,11 +1,11 @@
 <script lang="ts">
-  import Button from "$lib/components/Button.svelte";
-  import Card from "$lib/components/Card.svelte";
   import {
-    keys,
     type CharacterAttributeKey,
     type CharacterAttributes,
+    keys,
   } from "@fwo/shared";
+  import Button from "$lib/components/Button.svelte";
+  import Card from "$lib/components/Card.svelte";
 
   const ATTRIBUTES_KEYS: CharacterAttributeKey[] = [
     "str",

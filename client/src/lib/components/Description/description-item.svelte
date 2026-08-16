@@ -1,9 +1,8 @@
 <script lang="ts">
   import {
-    renderable,
     type Renderable,
+    renderable,
   } from "$lib/components/Renderable.svelte";
-  import { themeParams, useSignal } from "@tma.js/sdk-svelte";
 
   const {
     disabled,
@@ -43,12 +42,13 @@
   }
 
   .selectable::after {
-    content: "";
+    --s: 4px;
+    --b: 2px;
     position: absolute;
     inset: -2px;
 
-    --s: 4px;
-    --b: 2px;
+    pointer-events: none;
+    content: "";
 
     background:
       linear-gradient(var(--tg-theme-text-color), var(--tg-theme-text-color))
@@ -67,8 +67,6 @@
         right bottom / var(--s) var(--b) no-repeat,
       linear-gradient(var(--tg-theme-text-color), var(--tg-theme-text-color))
         right bottom / var(--b) var(--s) no-repeat;
-
-    pointer-events: none;
     transform-origin: center;
     animation: corners 1s ease-in-out infinite;
   }

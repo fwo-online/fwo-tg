@@ -2,14 +2,13 @@
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
   import { getCharacterContext } from "$lib/constext/character";
-  import type { PageProps } from "./$types";
   import { learnSkill } from "$lib/skill/utils/learn-skill.svelte";
+  import type { PageProps } from "./$types";
 
   const { data }: PageProps = $props();
   const character = getCharacterContext();
 
   let selectedSkill = $derived(data.skills[0]);
-  let isSubmitting = $state(false);
 
   const currentLevel = $derived(character().skills[selectedSkill.name] ?? 0);
   const requiredLevel = $derived(
@@ -21,9 +20,7 @@
   const canAfford = $derived(
     nextCost !== undefined && character().bonus >= nextCost,
   );
-  const canLearn = $derived(
-    !isMaxLevel && isUnlocked && canAfford && !isSubmitting,
-  );
+  const canLearn = $derived(!isMaxLevel && isUnlocked && canAfford);
 </script>
 
 <div class="h-full flex flex-col">

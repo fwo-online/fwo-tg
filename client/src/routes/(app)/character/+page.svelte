@@ -1,12 +1,12 @@
 <script lang="ts">
+  import { isArcher, isWarrior } from "@fwo/shared";
+  import characterBackground from "$lib/assets/images/characterBackground.png";
+  import CharacterExp from "$lib/character/components/CharacterExp.svelte";
+  import CharacterImage from "$lib/character/components/CharacterImage.svelte";
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
   import { characterClassNameMap } from "$lib/constants/character";
   import { getCharacterContext } from "$lib/constext/character";
-  import { isArcher, isWarrior } from "@fwo/shared";
-  import characterBackground from "$lib/assets/images/characterBackground.png";
-  import CharacterImage from "$lib/character/components/CharacterImage.svelte";
-  import CharacterExp from "$lib/character/components/CharacterExp.svelte";
 
   const character = getCharacterContext();
 </script>

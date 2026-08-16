@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!**/dist", "!**/out", "!**/tsconfig.json", "!**/.svelte-kit"]
+    "includes": ["**", "!**/dist", "!**/out", "!**/build", "!**/tsconfig.json", "!**/.svelte-kit"]
   },
   "formatter": {
     "enabled": true,

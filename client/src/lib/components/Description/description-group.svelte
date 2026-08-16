@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import {
-    renderable,
     type Renderable,
+    renderable,
   } from "$lib/components/Renderable.svelte";
 
   interface Props {

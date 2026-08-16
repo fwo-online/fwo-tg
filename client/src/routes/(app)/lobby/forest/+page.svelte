@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
   import { onMount } from "svelte";
+  import { goto } from "$app/navigation";
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
-  import { getSocket } from "$lib/constext/socket";
   import { popup } from "$lib/components/Popup/popup.svelte";
+  import { getSocket } from "$lib/constext/socket";
 
   const socket = getSocket();
 

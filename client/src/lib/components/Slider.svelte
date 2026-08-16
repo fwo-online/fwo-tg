@@ -42,33 +42,33 @@
 <style>
   .nes-slider {
     position: relative;
-    appearance: none;
     height: 4px;
     padding: 2px;
-    border-image-repeat: stretch !important;
+    appearance: none;
     cursor: pointer;
+    border-image-repeat: stretch !important;
   }
 
   .nes-slider::-webkit-slider-thumb {
     position: relative;
-    cursor: pointer;
-    appearance: none;
+    z-index: 10;
     width: 20px;
     height: 32px;
-    border: 4px solid var(--tg-theme-text-color);
+    appearance: none;
+    cursor: pointer;
     background-color: var(--tg-theme-button-color);
-    z-index: 10;
+    border: 4px solid var(--tg-theme-text-color);
   }
 
   .nes-slider::before {
-    pointer-events: none;
-    content: "";
     position: absolute;
     display: block;
     width: calc(100% - 4px);
+    height: 100%;
+    pointer-events: none;
+    content: "";
+    background-color: var(--tg-theme-subtitle-text-color);
     transform: scaleX(var(--slider-progress));
     transform-origin: left;
-    height: 100%;
-    background-color: var(--tg-theme-subtitle-text-color);
   }
 </style>

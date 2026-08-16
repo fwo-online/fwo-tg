@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { InvoiceType, invoiceTypes, ItemComponent } from "@fwo/shared";
-  import { invalidate } from "$app/navigation";
+  import { InvoiceType, ItemComponent, invoiceTypes } from "@fwo/shared";
   import { invoice } from "@tma.js/sdk-svelte";
+  import type { Attachment } from "svelte/attachments";
+  import { invalidate } from "$app/navigation";
+  import { client, createRequest } from "$lib/api";
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
-  import { client, createRequest } from "$lib/api";
   import { popup } from "$lib/components/Popup/popup.svelte";
   import { componentsImageMap } from "$lib/constants/components";
   import { createRequestRunner } from "$lib/utils/create-request.svelte";
-  import type { Attachment } from "svelte/attachments";
 
   let nickname = $state("");
   let donateAmount = $state("50");

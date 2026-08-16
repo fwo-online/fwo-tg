@@ -1,5 +1,4 @@
 import type { CharacterPublic } from '@fwo/shared';
-import { clanAcceptCostPerLvl, clanForgeCostMultiplier, clanLvlCost } from '@fwo/shared';
 import { invalidate } from '$app/navigation';
 import { client, createRequest } from '$lib/api';
 import { popup } from '$lib/components/Popup/popup.svelte';

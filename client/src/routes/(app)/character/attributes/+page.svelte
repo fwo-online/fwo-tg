@@ -1,8 +1,4 @@
 <script lang="ts">
-  import { client, createRequest } from "$lib/api";
-  import { mapValues } from "es-toolkit";
-  import { Description } from "$lib/components/Description";
-  import { getCharacterContext } from "$lib/constext/character";
   import {
     type Attributes,
     type CharacterAttributes,
@@ -11,13 +7,17 @@
     isPriest,
     isWarrior,
   } from "@fwo/shared";
-  import { formatNumber } from "$lib/utils/format-number";
+  import { mapValues } from "es-toolkit";
   import { get } from "es-toolkit/compat";
-  import Card from "$lib/components/Card.svelte";
-  import CharacterAttributesEditor from "$lib/character/components/CharacterAttributesEditor.svelte";
   import { invalidate } from "$app/navigation";
-  import type { PageProps } from "./$types";
+  import { client, createRequest } from "$lib/api";
+  import CharacterAttributesEditor from "$lib/character/components/CharacterAttributesEditor.svelte";
+  import Card from "$lib/components/Card.svelte";
+  import { Description } from "$lib/components/Description";
+  import { getCharacterContext } from "$lib/constext/character";
   import { createRequestRunner } from "$lib/utils/create-request.svelte";
+  import { formatNumber } from "$lib/utils/format-number";
+  import type { PageProps } from "./$types";
 
   const { data }: PageProps = $props();
   const character = getCharacterContext();

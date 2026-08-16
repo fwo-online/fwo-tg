@@ -1,14 +1,15 @@
 <script lang="ts" generics="T extends Item | ItemWithID">
+  // biome-ignore lint/correctness/noUnusedImports: generic
+  import type { Item, ItemWithID } from "@fwo/shared";
+  import { sum } from "es-toolkit";
+  import type { Snippet } from "svelte";
+  import { characterClassNameMap } from "$lib/constants/character";
+  import { getCharacterContext } from "$lib/constext/character";
   import ItemAttributes from "$lib/item/components/ItemAttributes.svelte";
   import ItemCharacterAttributes from "$lib/item/components/ItemCharacterAttributes.svelte";
   import ItemComponents from "$lib/item/components/ItemComponents.svelte";
   import ItemPassive from "$lib/item/components/ItemPassive.svelte";
-  import type { Item, ItemWithID } from "@fwo/shared";
   import { getItemTypes } from "$lib/item/utils/item-type";
-  import { sum } from "es-toolkit";
-  import { getCharacterContext } from "$lib/constext/character";
-  import { characterClassNameMap } from "$lib/constants/character";
-  import type { Snippet } from "svelte";
 
   type Props = {
     item: T;

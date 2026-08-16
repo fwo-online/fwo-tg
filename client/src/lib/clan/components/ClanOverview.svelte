@@ -1,7 +1,14 @@
 <script lang="ts">
-  import Button from "$lib/components/Button.svelte";
-  import ClanPlayers from "./ClanPlayers.svelte";
   import type { CharacterPublic, Clan } from "@fwo/shared";
+  import {
+    clanAcceptCostPerLvl,
+    clanForgeCostMultiplier,
+    clanLvlCost,
+  } from "@fwo/shared";
+  import Button from "$lib/components/Button.svelte";
+  import DescriptionGroup from "$lib/components/Description/description-group.svelte";
+  import DescriptionItem from "$lib/components/Description/description-item.svelte";
+  import { getCharacterContext } from "$lib/constext/character";
   import {
     acceptClanRequest,
     addClanGold,
@@ -9,14 +16,7 @@
     rejectClanRequest,
     upgradeClanLvl,
   } from "../clan.svelte";
-  import DescriptionGroup from "$lib/components/Description/description-group.svelte";
-  import DescriptionItem from "$lib/components/Description/description-item.svelte";
-  import {
-    clanAcceptCostPerLvl,
-    clanForgeCostMultiplier,
-    clanLvlCost,
-  } from "@fwo/shared";
-  import { getCharacterContext } from "$lib/constext/character";
+  import ClanPlayers from "./ClanPlayers.svelte";
 
   let {
     clan,

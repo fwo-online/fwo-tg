@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
   import { onMount } from "svelte";
+  import { goto } from "$app/navigation";
+  import ClanInfo from "$lib/clan/components/ClanInfo.svelte";
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
-  import ClanInfo from "$lib/clan/components/ClanInfo.svelte";
   import { getCharacterContext } from "$lib/constext/character";
   import type { PageProps } from "./$types";
 

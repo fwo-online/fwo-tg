@@ -5,7 +5,11 @@
   import DescriptionItem from "$lib/components/Description/description-item.svelte";
   import Player from "./Player.svelte";
 
-  let { searchers }: { searchers: CharacterPublic[] } = $props();
+  type Props = {
+    searchers: CharacterPublic[];
+  };
+
+  let { searchers }: Props = $props();
 
   const searchersByClan = $derived(
     groupBy(searchers, ({ clan }) => clan?.name ?? reservedClanName),

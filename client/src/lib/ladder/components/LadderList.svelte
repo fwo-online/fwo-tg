@@ -4,7 +4,9 @@
   import { getCharacterContext } from "$lib/constext/character";
   import LadderListItem from "./LadderListItem.svelte";
 
-  let { ladderList }: { ladderList: CharacterPublic[] } = $props();
+  type Props = { ladderList: CharacterPublic[] };
+
+  let { ladderList }: Props = $props();
 
   const character = getCharacterContext();
   const characterPosition = $derived(
@@ -13,10 +15,7 @@
 </script>
 
 <Card class="mb-4 mt-4 bg-(--tg-theme-bg-color)!">
-  <LadderListItem
-    character={character()}
-    position={characterPosition + 1}
-  />
+  <LadderListItem character={character()} position={characterPosition + 1} />
 </Card>
 <div class="flex flex-col gap-4 p-4">
   {#each ladderList as char, index (char.id)}

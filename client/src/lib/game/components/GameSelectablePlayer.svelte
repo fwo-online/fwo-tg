@@ -32,11 +32,7 @@
     {disabled}
   />
   <span class="flex items-center">
-    <GamePlayer
-      {characterClass}
-      {name}
-      {isBot}
-    />
+    <GamePlayer {characterClass} {name} {isBot} />
   </span>
 </label>
 

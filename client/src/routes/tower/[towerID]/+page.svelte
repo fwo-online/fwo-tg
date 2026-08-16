@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import type { CharacterPublic } from "@fwo/shared";
   import { playersClanName } from "@fwo/shared";
-  import { getSocket } from "$lib/constext/socket";
-  import { getCharacterContext } from "$lib/constext/character";
-  import { onSocket } from "$lib/utils/on-socket";
+  import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
+  import { getCharacterContext } from "$lib/constext/character";
+  import { getSocket } from "$lib/constext/socket";
   import Player from "$lib/lobby/components/Player.svelte";
+  import { onSocket } from "$lib/utils/on-socket";
 
   const socket = getSocket();
   const character = getCharacterContext();

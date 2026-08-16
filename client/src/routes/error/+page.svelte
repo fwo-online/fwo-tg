@@ -1,14 +1,11 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
 
-  let {
-    error,
-    action,
-  }: { error?: string | Error; action?: Snippet } = $props();
+  type Props = { error?: string | Error; action?: Snippet };
 
-  const description = $derived(
-    error instanceof Error ? error.message : error,
-  );
+  let { error, action }: Props = $props();
+
+  const description = $derived(error instanceof Error ? error.message : error);
 </script>
 
 <div class="flex flex-col justify-between h-screen">

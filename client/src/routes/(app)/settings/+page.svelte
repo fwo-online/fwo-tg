@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { NotificationType } from "@fwo/shared";
+  import { themeParams, useSignal } from "@tma.js/sdk-svelte";
   import { invalidate } from "$app/navigation";
   import { client, createRequest } from "$lib/api";
   import { activateCharacter } from "$lib/character/utils/activate-character";
@@ -8,8 +10,6 @@
   import { characterClassNameMap } from "$lib/constants/character";
   import { getCharacterContext } from "$lib/constext/character";
   import { createRequestRunner } from "$lib/utils/create-request.svelte";
-  import type { NotificationType } from "@fwo/shared";
-  import { themeParams, useSignal } from "@tma.js/sdk-svelte";
   import type { PageProps } from "./$types";
 
   const notificationTypes = [

@@ -1,15 +1,15 @@
 <script lang="ts">
+  import { itemMarketRequiredLevel } from "@fwo/shared";
+  import { groupBy } from "es-toolkit";
+  import { invalidate } from "$app/navigation";
+  import { client, createRequest } from "$lib/api";
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
-  import ItemInfo from "$lib/item/components/ItemInfo.svelte";
-  import { getCharacterContext } from "$lib/constext/character";
-  import { client, createRequest } from "$lib/api";
-  import { invalidate } from "$app/navigation";
-  import { itemMarketRequiredLevel } from "@fwo/shared";
   import { wearList, wearListTranslations } from "$lib/constants/item";
-  import { groupBy } from "es-toolkit";
-  import type { PageProps } from "./$types";
+  import { getCharacterContext } from "$lib/constext/character";
+  import ItemInfo from "$lib/item/components/ItemInfo.svelte";
   import { createRequestRunner } from "$lib/utils/create-request.svelte";
+  import type { PageProps } from "./$types";
 
   let { data }: PageProps = $props();
   const character = getCharacterContext();

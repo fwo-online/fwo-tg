@@ -1,13 +1,13 @@
 <script lang="ts">
-  import Button from "$lib/components/Button.svelte";
-  import {
-    state,
-    dialog,
-    setDialog,
-    close,
-  } from "$lib/components/Popup/popup.svelte";
   import { themeParams, useSignal } from "@tma.js/sdk-svelte";
   import type { MouseEventHandler, SvelteHTMLElements } from "svelte/elements";
+  import Button from "$lib/components/Button.svelte";
+  import {
+    close,
+    dialog,
+    setDialog,
+    state,
+  } from "$lib/components/Popup/popup.svelte";
 
   const { children, ...restProps }: SvelteHTMLElements["dialog"] = $props();
 
@@ -75,12 +75,12 @@
 
 <style>
   .nes-dialog {
-    margin: auto;
+    min-width: 50vw;
+    max-width: 85% !important;
     padding: 0;
+    margin: auto;
+    white-space: pre-wrap;
     background-color: var(--tg-theme-secondary-bg-color);
     border-image-repeat: stretch !important;
-    max-width: 85% !important;
-    white-space: pre-wrap;
-    min-width: 50vw;
   }
 </style>

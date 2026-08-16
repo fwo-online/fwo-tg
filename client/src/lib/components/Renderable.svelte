@@ -6,7 +6,7 @@
   const isSnippet = (snippet: Renderable): snippet is Snippet =>
     typeof snippet === "function";
 
-  export { renderable, type Renderable };
+  export { type Renderable, renderable };
 </script>
 
 {#snippet renderable(children: Renderable)}

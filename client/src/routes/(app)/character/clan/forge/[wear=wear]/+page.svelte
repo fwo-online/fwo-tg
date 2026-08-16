@@ -1,6 +1,6 @@
 <script lang="ts">
-  import ForgeList from "$lib/forge/components/ForgeList.svelte";
   import { wearListTranslations } from "$lib/constants/item";
+  import ForgeList from "$lib/forge/components/ForgeList.svelte";
   import type { PageProps } from "./$types";
 
   const { data }: PageProps = $props();

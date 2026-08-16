@@ -1,21 +1,17 @@
 <script lang="ts">
   import type { CharacterClass } from "@fwo/shared";
-  import CharacterImage from "$lib/character/components/CharacterImage.svelte";
   import type { Snippet } from "svelte";
+  import CharacterImage from "$lib/character/components/CharacterImage.svelte";
 
-  let {
-    characterClass,
-    name,
-    lvl,
-    isBot = false,
-    append,
-  }: {
+  type Props = {
     characterClass: CharacterClass;
     name: string;
     lvl?: number;
     isBot?: boolean;
     append?: Snippet;
-  } = $props();
+  };
+
+  let { characterClass, name, lvl, isBot = false, append }: Props = $props();
 </script>
 
 <div class="inline-flex justify-start gap-2">

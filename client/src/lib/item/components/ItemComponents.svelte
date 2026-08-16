@@ -1,10 +1,10 @@
 <script lang="ts">
+  import type { Item, ItemComponent } from "@fwo/shared";
   import {
     componentsImageMap,
     getItemComponents,
   } from "$lib/constants/components";
   import { getCharacterContext } from "$lib/constext/character";
-  import type { Item, ItemComponent } from "@fwo/shared";
 
   type Props = {
     item: Item;
@@ -36,8 +36,12 @@
           alt={component.toString()}
           class="inline-block"
         />
-        <span class={{ "text-red-500 font-semibold": !hasComponents(component) }}>
-          {item.craft?.components[component]}/{characterComponents[component] ?? 0}
+        <span
+          class={{ "text-red-500 font-semibold": !hasComponents(component) }}
+        >
+          {item.craft?.components[component]}
+          /
+          {characterComponents[component] ?? 0}
         </span>
       </div>
     {/each}

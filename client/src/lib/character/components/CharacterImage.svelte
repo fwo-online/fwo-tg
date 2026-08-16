@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { drawCharacterImage } from "$lib/character/utils/draw-character-image";
   import type { CharacterClass } from "@fwo/shared";
+  import { drawCharacterImage } from "$lib/character/utils/draw-character-image";
 
   type Props = {
     characterClass: CharacterClass;

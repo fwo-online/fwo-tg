@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
   import { themeParams, useSignal } from "@tma.js/sdk-svelte";
   import type { MouseEventHandler, SvelteHTMLElements } from "svelte/elements";
+  import { goto } from "$app/navigation";
 
   type Props = SvelteHTMLElements["button"] & {
     href?: string;

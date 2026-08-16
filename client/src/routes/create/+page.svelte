@@ -1,13 +1,13 @@
 <script lang="ts">
+  import { CharacterClass } from "@fwo/shared";
+  import { client, createRequest } from "$lib/api";
+  import CharacterImage from "$lib/character/components/CharacterImage.svelte";
+  import { activateCharacter } from "$lib/character/utils/activate-character";
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
-  import CharacterImage from "$lib/character/components/CharacterImage.svelte";
-  import { client, createRequest } from "$lib/api";
   import { characterClassNameMap } from "$lib/constants/character";
-  import { CharacterClass } from "@fwo/shared";
-  import type { PageProps } from "./$types";
   import { createRequestRunner } from "$lib/utils/create-request.svelte";
-  import { activateCharacter } from "$lib/character/utils/activate-character";
+  import type { PageProps } from "./$types";
 
   const { data }: PageProps = $props();
 

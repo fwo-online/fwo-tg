@@ -22,7 +22,8 @@
 
   {#if passive.quest}
     <span class="text-xs opacity-75">
-      {QUEST_DESCRIPTION[passive.quest.type]}: {passive.quest.progress}/{passive.quest.goal}
+      {QUEST_DESCRIPTION[passive.quest.type]}:
+      {passive.quest.progress}/{passive.quest.goal}
     </span>
   {/if}
 </div>

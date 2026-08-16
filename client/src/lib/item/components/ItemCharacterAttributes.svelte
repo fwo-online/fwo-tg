@@ -44,7 +44,12 @@
       {#each activeAttributes as attribute (attribute)}
         {@const value = itemAttributes[attribute] ?? 0}
         {@const isRequired = checkRequirement(attribute)}
-        <span class={["flex items-center gap-1", { "text-red-500 font-semibold": isRequired }]}>
+        <span
+          class={[
+            "flex items-center gap-1",
+            { "text-red-500 font-semibold": isRequired },
+          ]}
+        >
           <span class="opacity-75">{attribute.toUpperCase()}</span>
           <span>{showPlus && value ? "+" : ""}{value}</span>
         </span>

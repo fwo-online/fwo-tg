@@ -15,24 +15,24 @@
 <style>
   .exp {
     position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     height: 100%;
-    z-index: 1;
     padding-inline: 4px;
   }
 
   .exp::before {
-    content: "";
     position: absolute;
+    z-index: -1;
     width: 100%;
     height: 100%;
-    transform: scaleX(var(--exp-progress));
-    transform-origin: left;
+    content: "";
     background: var(--tg-theme-accent-text-color);
     box-shadow: inset 0 -4px #006bb3;
-    z-index: -1;
+    transform: scaleX(var(--exp-progress));
+    transform-origin: left;
   }
 </style>

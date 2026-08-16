@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Card from "$lib/components/Card.svelte";
-  import type { PageProps } from "./$types";
-  import { getCharacterContext } from "$lib/constext/character";
   import Button from "$lib/components/Button.svelte";
+  import Card from "$lib/components/Card.svelte";
+  import { getCharacterContext } from "$lib/constext/character";
   import PassiveSkillDescription from "$lib/passive-skill/components/PassiveSkillDescription.svelte";
+  import type { PageProps } from "./$types";
 
   const { data }: PageProps = $props();
   let selectedSkill = $derived(data.passiveSkills[0]);
