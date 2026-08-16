@@ -27,7 +27,7 @@ export const useBackButton = () => {
       backButton.mount();
     }
 
-    const isRoot = rootPaths.includes(page.url.pathname);
+    const isRoot = rootPaths.includes(page.url.hash);
 
     if (isRoot) {
       backButton.hide();
