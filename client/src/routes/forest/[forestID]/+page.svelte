@@ -71,16 +71,17 @@
   const isWaiting = $derived(status?.state === ForestState.Waiting);
   const isEvent = $derived(status?.state === ForestState.Event);
 
-  onSocket("forest:end", (_reason: any, result: any) => {
+  onSocket("forest:end", (_reason, result) => {
+    character().forest = undefined;
     goto("#/");
     // game result handled by game guard
   });
 
-  onSocket("forest:updateStatus", (s: any) => {
+  onSocket("forest:updateStatus", (s) => {
     status = s;
   });
 
-  onSocket("forest:eventResolved", (result: any) => {
+  onSocket("forest:eventResolved", (result) => {
     lastResult = result;
     loading = false;
   });
@@ -101,7 +102,6 @@
 
   const handleExit = async () => {
     await socket.emitWithAck("forest:exit");
-    goto("#/");
   };
 
   const clearLastResult = () => {

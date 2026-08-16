@@ -4,6 +4,7 @@
   import { useBackButton } from "$lib/hooks/useBackButton.svelte";
   import { page } from "$app/state";
   import { useSettingsButton } from "$lib/hooks/useSettingsButton.svelte";
+  import { useForestGuard } from "$lib/hooks/useForestGuard.svelte";
 
   let { children } = $props();
 
@@ -25,6 +26,7 @@
   useBackButton();
   useSettingsButton();
   useGameGuard();
+  useForestGuard();
 </script>
 
 <div class="h-full overflow-hidden flex flex-col flex-1">
