@@ -2,12 +2,12 @@
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
   import { getCharacterContext } from "$lib/constext/character";
-  import { makeRequest } from "$lib/utils/make-request.svelte";
   import { client, createRequest } from "$lib/api";
   import { getItemPrice, type Item } from "@fwo/shared";
   import { invalidate } from "$app/navigation";
   import { popup } from "$lib/components/Popup/popup.svelte";
   import ItemInfo from "$lib/item/components/ItemInfo.svelte";
+  import { createRequestRunner } from "$lib/utils/create-request.svelte";
 
   type Props = {
     items: Item[];
@@ -18,13 +18,7 @@
   let { items, title = "Кузница", clanForge = false }: Props = $props();
 
   const character = getCharacterContext();
-
-  let selectedItemCode = $state<string | undefined>(items[0]?.code);
-  const selectedItem = $derived<Item | undefined>(
-    items.find((i) => i.code === selectedItemCode) ?? items[0],
-  );
-
-  let isSubmitting = $state(false);
+  let selectedItem = $derived(items[0]);
 
   const canForge = (item: Item) => {
     const c = character();
@@ -36,27 +30,20 @@
     );
   };
 
-  const handleForge = async (item: Item) => {
-    isSubmitting = true;
-    try {
-      await makeRequest(async () => {
-        if (clanForge) {
-          await createRequest(client.clan.forge.item[":code"].$post)({
-            param: { code: item.code },
-          });
-        } else {
-          await createRequest(client.inventory.forge[":code"].$post)({
-            param: { code: item.code },
-          });
-        }
-
-        popup.info({ message: `Ты создал ${item.info.name}` });
+  const forgeItem = createRequestRunner(async (item: Item) => {
+    if (clanForge) {
+      await createRequest(client.clan.forge.item[":code"].$post)({
+        param: { code: item.code },
       });
-      await invalidate("app:character");
-    } finally {
-      isSubmitting = false;
+    } else {
+      await createRequest(client.inventory.forge[":code"].$post)({
+        param: { code: item.code },
+      });
     }
-  };
+
+    popup.info({ message: `Ты создал ${item.info.name}` });
+    await invalidate("app:character");
+  });
 </script>
 
 <div class="h-full flex flex-col">
@@ -70,7 +57,7 @@
                 "flex-1 text-start",
                 { "is-primary": selectedItem?.code === item.code },
               ]}
-              onclick={() => (selectedItemCode = item.code)}
+              onclick={() => (selectedItem = item)}
             >
               <div class="flex justify-between items-center text-sm">
                 <span>{item.info.name}</span>
@@ -94,8 +81,8 @@
           <div class="flex items-center justify-between gap-3 mt-1">
             <Button
               class="flex-1 is-primary py-1.5!"
-              disabled={!canForge(item) || isSubmitting}
-              onclick={() => handleForge(item)}
+              disabled={!canForge(item) || forgeItem.pending}
+              onclick={() => forgeItem.run(item)}
             >
               Создать за {getItemPrice(item.price, item.tier)}💰
             </Button>

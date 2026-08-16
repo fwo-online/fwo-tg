@@ -11,7 +11,7 @@
   const character = getCharacterContext();
 </script>
 
-<div class="h-full flex flex-col justify-between gap-2">
+<div class="h-full flex flex-col gap-2">
   <Card header={character().name} class="relative bg-transparent!">
     <img
       src={characterBackground}

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { invalidate } from "$app/navigation";
   import { client, createRequest } from "$lib/api";
+  import { activateCharacter } from "$lib/character/utils/activate-character";
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
   import { popup } from "$lib/components/Popup/popup.svelte";
@@ -8,27 +9,20 @@
   import { getCharacterContext } from "$lib/constext/character";
   import { createRequestRunner } from "$lib/utils/create-request.svelte";
   import { makeRequest } from "$lib/utils/make-request.svelte";
-  import type { Character, NotificationType } from "@fwo/shared";
+  import type { NotificationType } from "@fwo/shared";
   import { themeParams, useSignal } from "@tma.js/sdk-svelte";
-  import { onMount } from "svelte";
+  import type { PageProps } from "./$types";
 
   const notificationTypes = [
     { key: "gameStart" as const, label: "Начало игры" },
     { key: "afkWarning" as const, label: "AFK" },
   ];
 
+  const { data }: PageProps = $props();
   const character = getCharacterContext();
   const isDark = useSignal(themeParams.isDark);
 
-  let myCharacters = $state.raw<Character[]>([]);
-
   const isClanOwner = $derived(character().clan?.owner === character().id);
-
-  onMount(async () => {
-    try {
-      myCharacters = await createRequest(client.character.my.$get)({});
-    } catch {}
-  });
 
   const toggleNotification = createRequestRunner(
     async (type: NotificationType, enabled: boolean) => {
@@ -38,15 +32,6 @@
       await invalidate("app:character");
     },
   );
-
-  const handleActivate = async (id: string) => {
-    await makeRequest(async () => {
-      await createRequest(client.character[":id"].activate.$patch)({
-        param: { id },
-      });
-      window.location.reload();
-    });
-  };
 
   const removeCharacter = () => {
     popup.confirm({
@@ -112,10 +97,10 @@
     </div>
   </Card>
 
-  {#if myCharacters.length > 0}
+  {#if data.characters.length > 0}
     <Card header="Персонажи">
       <div class="flex flex-col gap-2 mb-4">
-        {#each myCharacters as char (char.id)}
+        {#each data.characters as char (char.id)}
           <div class="flex items-center justify-between">
             <div>
               <span class="font-semibold">{char.name}</span>
@@ -125,8 +110,8 @@
               </span>
             </div>
             <Button
-              disabled={char.active}
-              onclick={() => handleActivate(char.id)}
+              disabled={char.active || activateCharacter.pending}
+              onclick={() => activateCharacter.run(char.id)}
             >
               {char.active ? "Активен" : "Сменить"}
             </Button>

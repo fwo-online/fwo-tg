@@ -2,11 +2,12 @@
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
   import CharacterImage from "$lib/character/components/CharacterImage.svelte";
-  import { makeRequest } from "$lib/utils/make-request.svelte";
   import { client, createRequest } from "$lib/api";
   import { characterClassNameMap } from "$lib/constants/character";
   import { CharacterClass } from "@fwo/shared";
   import type { PageProps } from "./$types";
+  import { createRequestRunner } from "$lib/utils/create-request.svelte";
+  import { activateCharacter } from "$lib/character/utils/activate-character";
 
   const { data }: PageProps = $props();
 
@@ -25,25 +26,14 @@
       (selected - 1 + characterClassList.length) % characterClassList.length;
   };
 
-  const onCreate = async () => {
-    await makeRequest(async () => {
-      const character = await createRequest(client.character.$post)({
-        json: { name, class: characterClassList[selected] },
-      });
-      if (character) {
-        window.location.href = "/";
-      }
+  const createCharacter = createRequestRunner(async () => {
+    const character = await createRequest(client.character.$post)({
+      json: { name, class: characterClassList[selected] },
     });
-  };
-
-  const handleActivate = async (id: string) => {
-    await makeRequest(async () => {
-      await createRequest(client.character[":id"].activate.$patch)({
-        param: { id },
-      });
-      window.location.reload();
-    });
-  };
+    if (character) {
+      window.location.href = "/";
+    }
+  });
 </script>
 
 {#if data.characters?.length === 0}
@@ -79,7 +69,11 @@
         bind:value={name}
         placeholder="Введите имя персонажа"
       />
-      <Button class="is-primary" disabled={!name} onclick={onCreate}>
+      <Button
+        class="is-primary"
+        disabled={!name || createCharacter.pending}
+        onclick={() => createCharacter.run()}
+      >
         Создать
       </Button>
     </div>
@@ -99,7 +93,10 @@
           {#if char.active}
             <Button href="#/character">Войти</Button>
           {:else}
-            <Button onclick={() => handleActivate(char.id)}>Сменить</Button>
+            <Button
+              disabled={activateCharacter.pending}
+              onclick={() => activateCharacter.run(char.id)}>Сменить</Button
+            >
           {/if}
         </div>
       {/each}
@@ -149,7 +146,11 @@
           bind:value={name}
           placeholder="Введите имя персонажа"
         />
-        <Button class="is-primary" disabled={!name} onclick={onCreate}>
+        <Button
+          class="is-primary"
+          disabled={!name || createCharacter.pending}
+          onclick={() => createCharacter.run()}
+        >
           Создать
         </Button>
       </div>
