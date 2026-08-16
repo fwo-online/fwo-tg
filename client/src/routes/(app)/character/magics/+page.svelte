@@ -6,7 +6,6 @@
   import type { Magic } from "@fwo/shared";
   import { times } from "es-toolkit/compat";
   import type { PageProps } from "./$types";
-  import { popup } from "$lib/components/Popup/popup.svelte";
   import { learnMagic } from "$lib/magic/utils/learn-magic.svelte";
 
   const { data }: PageProps = $props();
@@ -25,23 +24,6 @@
     !canLearnMagic(character().lvl, lvl) ||
     !data.availableMagicLevels[lvl] ||
     learnMagic.pending;
-
-  const handleLearn = async (lvl: number) => {
-    popup.confirm({
-      message: `Стоимость изучения ${getLearnMagicCost(lvl)}💡`,
-      onConfirm: async () => {
-        const magic = await learnMagic.run(lvl);
-        if (magic) {
-          popup.info({
-            title: "Успешное изучение",
-            message: magic.displayName,
-          });
-          selectedMagic = magic;
-          mode = "info";
-        }
-      },
-    });
-  };
 </script>
 
 <div class="h-full flex flex-col">
@@ -120,9 +102,14 @@
           <div class="grid grid-cols-4 gap-2 mt-2">
             {#each times(4, (i) => i + 1) as lvl (lvl)}
               <Button
+                {@attach learnMagic.attach(
+                  {
+                    confirm: `Стоимость изучения ${getLearnMagicCost(lvl)}💡`,
+                  },
+                  lvl,
+                )}
                 class={["px-1! py-2!", { "is-primary": !isDisabled(lvl) }]}
                 disabled={isDisabled(lvl)}
-                onclick={() => handleLearn(lvl)}
               >
                 <div
                   class="flex flex-col items-center justify-center text-xs whitespace-nowrap leading-tight"

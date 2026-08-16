@@ -5,22 +5,11 @@
 
   type Props = {
     readonly?: boolean;
-    isPending?: boolean;
-    onRemove?: (id: string) => void;
   };
 
-  const { readonly = false, isPending, onRemove }: Props = $props();
+  const { readonly = false }: Props = $props();
 
   const orders = $derived(game.orders);
-  const pending = $derived(isPending ?? removeOrder.pending);
-
-  function handleRemove(id: string) {
-    if (onRemove) {
-      onRemove(id);
-    } else {
-      removeOrder.run(id);
-    }
-  }
 </script>
 
 <div
@@ -38,10 +27,9 @@
         <span class="opacity-80">({order.power}%)</span>
         {#if !readonly && !game.ready}
           <Button
+            {@attach removeOrder.attach({}, order.id)}
             type="button"
             class="ml-0.5 text-xs opacity-60 hover:opacity-100 transition-opacity cursor-pointer leading-none p-0.5 disabled:opacity-30"
-            disabled={pending}
-            onclick={() => handleRemove(order.id)}
             title="Удалить приказ"
           >
             ✕

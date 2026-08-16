@@ -17,10 +17,7 @@
   const items = $derived(character().items);
   const itemsByWear = $derived(groupBy(items, ({ wear }) => wear));
 
-  let selectedItemId = $state<string | undefined>(character().items[0]?.id);
-  const selectedItem = $derived<ItemWithID | undefined>(
-    items.find((i) => i.id === selectedItemId) ?? items[0],
-  );
+  let selectedItem = $state<ItemWithID | undefined>(character().items[0]);
 
   const isEquipped = (item: ItemWithID) => {
     return equipment.some((id) => id === item.id);
@@ -50,7 +47,7 @@
                       "flex-1",
                       { "is-primary": selectedItem?.id === item.id },
                     ]}
-                    onclick={() => (selectedItemId = item.id)}
+                    onclick={() => (selectedItem = item)}
                   >
                     <div class="flex justify-between items-center text-sm">
                       <span>{item.info.name}</span>
@@ -77,17 +74,15 @@
         {#snippet footer(item)}
           {#if equipped}
             <Button
+              {@attach unEquipItem.attach({}, item)}
               class="w-full py-1.5!"
-              disabled={unEquipItem.pending}
-              onclick={() => unEquipItem.run(item)}
             >
               Снять
             </Button>
           {:else}
             <Button
+              {@attach equipItem.attach({}, item)}
               class="w-full is-primary py-1.5!"
-              disabled={equipItem.pending}
-              onclick={() => equipItem.run(item)}
             >
               Надеть
             </Button>

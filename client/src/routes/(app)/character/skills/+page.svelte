@@ -62,9 +62,11 @@
           </Button>
         {:else}
           <Button
+            {@attach learnSkill.attach(
+              { disabled: () => !canLearn },
+              selectedSkill,
+            )}
             class="flex-1"
-            onclick={() => learnSkill.run(selectedSkill)}
-            disabled={!canLearn || learnSkill.pending}
           >
             {#if learnSkill.pending}
               Изучение...

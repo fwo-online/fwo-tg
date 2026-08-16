@@ -70,9 +70,8 @@
         placeholder="Введите имя персонажа"
       />
       <Button
+        {@attach createCharacter.attach({ disabled: () => !name })}
         class="is-primary"
-        disabled={!name || createCharacter.pending}
-        onclick={() => createCharacter.run()}
       >
         Создать
       </Button>
@@ -93,10 +92,9 @@
           {#if char.active}
             <Button href="#/character">Войти</Button>
           {:else}
-            <Button
-              disabled={activateCharacter.pending}
-              onclick={() => activateCharacter.run(char.id)}>Сменить</Button
-            >
+            <Button {@attach activateCharacter.attach({}, char.id)}>
+              Сменить
+            </Button>
           {/if}
         </div>
       {/each}
@@ -147,9 +145,8 @@
           placeholder="Введите имя персонажа"
         />
         <Button
+          {@attach createCharacter.attach({ disabled: () => !name })}
           class="is-primary"
-          disabled={!name || createCharacter.pending}
-          onclick={() => createCharacter.run()}
         >
           Создать
         </Button>

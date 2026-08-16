@@ -1,125 +1,96 @@
 <script lang="ts">
+  import { InvoiceType, invoiceTypes, ItemComponent } from "@fwo/shared";
+  import { invalidate } from "$app/navigation";
+  import { invoice } from "@tma.js/sdk-svelte";
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
-  import { makeRequest } from "$lib/utils/make-request.svelte";
   import { client, createRequest } from "$lib/api";
-  import { invalidate } from "$app/navigation";
-  import { InvoiceType, invoiceTypes, ItemComponent } from "@fwo/shared";
-  import { invoice } from "@tma.js/sdk-svelte";
   import { popup } from "$lib/components/Popup/popup.svelte";
   import { componentsImageMap } from "$lib/constants/components";
+  import { createRequestRunner } from "$lib/utils/create-request.svelte";
+  import type { Attachment } from "svelte/attachments";
 
-  let resetLoading = $state(false);
-  let nameLoading = $state(false);
-  let donateLoading = $state(false);
   let nickname = $state("");
   let donateAmount = $state("50");
 
-  // Reset attributes
-  const resetAttributesByStars = async () => {
-    resetLoading = true;
-    await makeRequest(async () => {
-      const inv = await createRequest(
-        client.serviceShop["reset-attributes"].invoice.$post,
-      )({});
-      if (inv?.url) {
-        const status = await invoice.openUrl(inv.url);
-        if (status === "paid") {
-          await invalidate("app:character");
-          popup.info({ message: "Характеристики успешно сброшены" });
-        }
-      }
-    });
-    resetLoading = false;
-  };
+  const resetAttributesByStars = createRequestRunner(async () => {
+    const res = await createRequest(
+      client.serviceShop["reset-attributes"].invoice.$post,
+    )({});
 
-  const resetAttributesByComponents = () => {
-    popup.confirm({
-      message: "Вы уверены, что хотите сбросить характеристики?",
-      onConfirm: async () => {
-        resetLoading = true;
-        const res = await makeRequest(() =>
-          createRequest(client.serviceShop["reset-attributes"].$post)({}),
-        );
-        if (res) {
-          popup.info({ message: "Характеристики успешно сброшены" });
-          await invalidate("app:character");
-        }
-        resetLoading = false;
-      },
-    });
-  };
+    if (!res?.url) {
+      return;
+    }
 
-  // Change name
-  const changeNameByStars = async () => {
-    if (!nickname) return;
-    nameLoading = true;
-    await makeRequest(async () => {
-      const inv = await createRequest(
-        client.serviceShop["change-name"].invoice.$post,
-      )({ json: { name: nickname } });
-      if (inv?.url) {
-        const status = await invoice.openUrl(inv.url);
-        if (status === "paid") {
-          await invalidate("app:character");
-          popup.info({ message: "Имя успешно изменено" });
-        }
-      }
-    });
-    nameLoading = false;
-  };
+    const status = await invoice.openUrl(res.url);
+    if (status === "paid") {
+      await invalidate("app:character");
+      popup.info({ message: "Характеристики успешно сброшены" });
+    }
+  });
 
-  const changeNameByComponents = () => {
-    if (!nickname) return;
-    popup.confirm({
-      message: "Вы уверены, что хотите изменить имя?",
-      onConfirm: async () => {
-        nameLoading = true;
-        const res = await makeRequest(() =>
-          createRequest(client.serviceShop["change-name"].$post)({
-            json: { name: nickname },
-          }),
-        );
-        if (res) {
-          await invalidate("app:character");
-          popup.info({ message: "Имя успешно изменено" });
-        }
-        nameLoading = false;
-      },
-    });
-  };
+  const resetAttributesByComponents = createRequestRunner(async () => {
+    await createRequest(client.serviceShop["reset-attributes"].$post)({});
 
-  // Donation
-  const donateByStars = async () => {
+    popup.info({ message: "Характеристики успешно сброшены" });
+    await invalidate("app:character");
+  });
+
+  const changeNameByStars = createRequestRunner(async () => {
+    const res = await createRequest(
+      client.serviceShop["change-name"].invoice.$post,
+    )({ json: { name: nickname } });
+
+    if (!res?.url) {
+      return;
+    }
+
+    const status = await invoice.openUrl(res.url);
+    if (status === "paid") {
+      await invalidate("app:character");
+      popup.info({ message: "Имя успешно изменено" });
+    }
+  });
+
+  const changeNameByComponents = createRequestRunner(async () => {
+    const res = await createRequest(client.serviceShop["change-name"].$post)({
+      json: { name: nickname },
+    });
+
+    if (res) {
+      await invalidate("app:character");
+      popup.info({ message: "Имя успешно изменено" });
+    }
+  });
+
+  const donateByStars = createRequestRunner(async () => {
     const amount = Number(donateAmount);
-    if (Number.isNaN(amount) || !amount) return;
-    donateLoading = true;
-    await makeRequest(async () => {
-      const inv = await createRequest(client.serviceShop.donate.invoice.$post)({
-        json: { amount },
-      });
-      if (inv?.url) {
-        const status = await invoice.openUrl(inv.url);
-        if (status === "paid") {
-          await invalidate("app:character");
-          popup.info({ message: "Пожертвование успешно отправлено!" });
-        }
-      }
+    if (Number.isNaN(amount) || !amount) {
+      return;
+    }
+
+    const inv = await createRequest(client.serviceShop.donate.invoice.$post)({
+      json: { amount },
     });
-    donateLoading = false;
-  };
+
+    if (!inv?.url) {
+      return;
+    }
+
+    const status = await invoice.openUrl(inv.url);
+    if (status === "paid") {
+      await invalidate("app:character");
+      popup.info({ message: "Пожертвование успешно отправлено!" });
+    }
+  });
 
   const resetCfg = invoiceTypes[InvoiceType.ResetAttributes];
   const nameCfg = invoiceTypes[InvoiceType.ChangeName];
   const donateCfg = invoiceTypes[InvoiceType.Donation];
 </script>
 
-{#snippet arcanitesButton(
-  cost: number | string,
-  onClick: () => void,
-  loading: boolean,
-)}
-  <Button class="flex-1" disabled={loading} onclick={onClick}>
+{#snippet arcanitesButton(cost: number | string, attachment: Attachment)}
+  <Button {@attach attachment} class="flex-1">
     <div class="flex justify-center">
       {cost}
       <img
@@ -132,12 +103,8 @@
   </Button>
 {/snippet}
 
-{#snippet starsButton(
-  cost: number | string,
-  onClick: () => void,
-  loading: boolean,
-)}
-  <Button class="flex-1" disabled={loading} onclick={onClick}>
+{#snippet starsButton(cost: number | string, attachment: Attachment)}
+  <Button {@attach attachment} class="flex-1">
     {cost}⭐
   </Button>
 {/snippet}
@@ -152,14 +119,11 @@
       <div class="flex gap-2">
         {@render arcanitesButton(
           resetCfg.components.arcanite,
-          resetAttributesByComponents,
-          resetLoading,
+          resetAttributesByComponents.attach({
+            confirm: "Вы уверены, что хотите сбросить характеристики?",
+          }),
         )}
-        {@render starsButton(
-          resetCfg.stars,
-          resetAttributesByStars,
-          resetLoading,
-        )}
+        {@render starsButton(resetCfg.stars, resetAttributesByStars.attach())}
       </div>
     </Card>
 
@@ -173,10 +137,17 @@
         <div class="flex gap-2">
           {@render arcanitesButton(
             nameCfg.components.arcanite,
-            changeNameByComponents,
-            nameLoading,
+            changeNameByComponents.attach({
+              confirm: "Вы уверены, что хотите изменить имя?",
+              disabled: () => !nickname,
+            }),
           )}
-          {@render starsButton(nameCfg.stars, changeNameByStars, resetLoading)}
+          {@render starsButton(
+            nameCfg.stars,
+            changeNameByStars.attach({
+              disabled: () => !nickname,
+            }),
+          )}
         </div>
       </div>
     </Card>
@@ -196,7 +167,7 @@
           bind:value={donateAmount}
         />
         <div class="flex gap-2">
-          {@render starsButton(donateAmount, donateByStars, donateLoading)}
+          {@render starsButton(donateAmount, donateByStars.attach())}
         </div>
       </div>
     </Card>

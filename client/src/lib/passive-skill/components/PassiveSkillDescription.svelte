@@ -45,9 +45,8 @@
       <Button class="flex-1" disabled>Максимальный уровень</Button>
     {:else}
       <Button
+        {@attach learnPassiveSkill.attach({ disabled: () => !canLearn }, skill)}
         class="flex-1"
-        onclick={() => learnPassiveSkill.run(skill)}
-        disabled={!canLearn || learnPassiveSkill.pending}
       >
         {#if learnPassiveSkill.pending}
           Изучение...

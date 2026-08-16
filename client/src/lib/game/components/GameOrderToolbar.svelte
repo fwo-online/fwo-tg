@@ -22,9 +22,8 @@
   <div class="flex items-center gap-1.5">
     <!-- Repeat button -->
     <Button
+      {@attach repeatOrders.attach({ disabled: () => !canRepeat })}
       class="p-0! h-8! w-8! text-sm flex items-center justify-center after:hidden"
-      disabled={!canRepeat}
-      onclick={() => repeatOrders.run()}
       title="Повторить действия"
     >
       🔄
@@ -32,9 +31,8 @@
 
     <!-- Clear / Reset button -->
     <Button
+      {@attach resetOrders.attach({ disabled: () => !canReset })}
       class="p-0! h-8! w-8! text-sm flex items-center justify-center after:hidden"
-      disabled={!canReset}
-      onclick={() => resetOrders.run()}
       title="Очистить действия"
     >
       🗑
@@ -53,6 +51,7 @@
 
   <!-- Ready toggle button -->
   <Button
+    {@attach toggleReady.attach({ disabled: () => !game.canOrder })}
     class={[
       "p-0! h-8! w-8! text-sm flex items-center justify-center after:hidden",
       {
@@ -61,8 +60,6 @@
         invisible: !game.canOrder,
       },
     ]}
-    disabled={toggleReady.pending || !game.canOrder}
-    onclick={() => toggleReady.run()}
     title={game.ready ? "Продолжить ход" : "Завершить ход"}
   >
     {#if game.ready}

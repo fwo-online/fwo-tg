@@ -64,17 +64,15 @@
   <div class="mt-2">
     {#if requested}
       <Button
+        {@attach cancelClanRequest.attach({}, clan.id)}
         class="is-primary w-full py-1.5!"
-        disabled={cancelClanRequest.pending}
-        onclick={() => cancelClanRequest.run(clan.id)}
       >
         Отменить заявку
       </Button>
     {:else}
       <Button
+        {@attach createClanRequest.attach({}, clan.id)}
         class="is-primary w-full py-1.5!"
-        disabled={createClanRequest.pending}
-        onclick={() => createClanRequest.run(clan.id)}
       >
         Отправить заявку
       </Button>

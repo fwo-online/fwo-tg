@@ -17,21 +17,24 @@
   import CharacterAttributesEditor from "$lib/character/components/CharacterAttributesEditor.svelte";
   import { invalidate } from "$app/navigation";
   import type { PageProps } from "./$types";
+  import { createRequestRunner } from "$lib/utils/create-request.svelte";
 
   const { data }: PageProps = $props();
   const character = getCharacterContext();
 
   let dynamicAttributes = $derived(data.dynamicAttributes);
-  let loading = $state(false);
 
-  const loadAttributes = async (attributes: CharacterAttributes) => {
-    loading = true;
-    return await createRequest(client.character["dynamic-attributes"].$get)({
-      query: mapValues(attributes, (n) => n.toString()),
-    }).finally(() => {
-      loading = false;
-    });
-  };
+  const loadAttributes = createRequestRunner(
+    async (attributes: CharacterAttributes) => {
+      const res = await createRequest(
+        client.character["dynamic-attributes"].$get,
+      )({
+        query: mapValues(attributes, (n) => n.toString()),
+      });
+
+      dynamicAttributes = res;
+    },
+  );
 
   const save = async (attributes: CharacterAttributes) => {
     await createRequest(client.character.attributes.$patch)({
@@ -46,9 +49,7 @@
   const baseDynamicAttributes = $derived(character().dynamicAttributes);
 
   $effect(() => {
-    loadAttributes(attributes).then((res) => {
-      dynamicAttributes = res;
-    });
+    loadAttributes.run(attributes);
   });
 </script>
 
@@ -161,7 +162,7 @@
       bind:attributes
       {baseAttributes}
       {free}
-      disabled={loading}
+      disabled={loadAttributes.pending}
       {save}
     />
   </Card>

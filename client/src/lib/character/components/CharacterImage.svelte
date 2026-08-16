@@ -2,10 +2,12 @@
   import { drawCharacterImage } from "$lib/character/utils/draw-character-image";
   import type { CharacterClass } from "@fwo/shared";
 
-  const {
-    characterClass,
-    small,
-  }: { characterClass: CharacterClass; small?: boolean } = $props();
+  type Props = {
+    characterClass: CharacterClass;
+    small?: boolean;
+  };
+
+  const { characterClass, small }: Props = $props();
   let canvas: HTMLCanvasElement;
 
   const width = $derived(small ? 20 : 100);

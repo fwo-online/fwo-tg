@@ -11,7 +11,11 @@
   } from "../clan.svelte";
   import DescriptionGroup from "$lib/components/Description/description-group.svelte";
   import DescriptionItem from "$lib/components/Description/description-item.svelte";
-  import { clanLvlCost } from "@fwo/shared";
+  import {
+    clanAcceptCostPerLvl,
+    clanForgeCostMultiplier,
+    clanLvlCost,
+  } from "@fwo/shared";
   import { getCharacterContext } from "$lib/constext/character";
 
   let {
@@ -45,8 +49,9 @@
     <h5>Уровень {clan.lvl}</h5>
     {#if isOwner && clan.lvl < clanLvlCost.length}
       <Button
-        disabled={upgradeClanLvl.pending}
-        onclick={() => upgradeClanLvl.run(clan.lvl)}
+        {@attach upgradeClanLvl.attach({
+          confirm: `Стоимость следующего уровня ${clanLvlCost[clan.lvl]}💰`,
+        })}
       >
         Повысить уровень
       </Button>
@@ -71,8 +76,10 @@
             <Button
               class="is-success"
               disabled={!goldToAdd || addClanGold.pending}
-              onclick={handleAddGold}>✔</Button
+              onclick={handleAddGold}
             >
+              ✔
+            </Button>
             <Button class="is-error" onclick={() => (adding = false)}>✖</Button
             >
           </div>
@@ -89,9 +96,12 @@
       <Button href="#/character/clan/forge">Перейти в кузницу</Button>
     {:else if isOwner}
       <Button
-        onclick={() => openClanForge.run(clan.lvl)}
-        disabled={openClanForge.pending}>Открыть кузницу</Button
+        {@attach openClanForge.attach({
+          confirm: `Стоимость открытия кузницы ${clanLvlCost[clan.lvl - 1] * clanForgeCostMultiplier}💰. Кузница закроется через месяц`,
+        })}
       >
+        Открыть кузницу
+      </Button>
     {:else}
       <Button href="#/character/clan/forge" disabled>Перейти в кузницу</Button>
     {/if}
@@ -121,15 +131,22 @@
             {#snippet after()}
               <div class="flex gap-2">
                 <Button
+                  {@attach acceptClanRequest.attach(
+                    {
+                      confirm: `Стоимость принятия заявки ${requester.lvl * clanAcceptCostPerLvl}💰`,
+                    },
+                    requester,
+                  )}
                   class="is-success"
-                  onclick={() => acceptClanRequest.run(requester)}
-                  disabled={acceptClanRequest.pending}>✔</Button
                 >
+                  ✔
+                </Button>
                 <Button
+                  {@attach rejectClanRequest.attach({}, requester)}
                   class="is-error"
-                  onclick={() => rejectClanRequest.run(requester)}
-                  disabled={rejectClanRequest.pending}>✖</Button
                 >
+                  ✖
+                </Button>
               </div>
             {/snippet}
           </DescriptionItem>

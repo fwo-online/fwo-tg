@@ -37,8 +37,21 @@ const info = (options: Omit<PopupOptions, 'type'>) => show({ type: 'info', ...op
 
 const confirm = (options: Omit<PopupOptions, 'type'>) => show({ type: 'confirm', ...options });
 
+const confirmAsync = (
+  options: Omit<PopupOptions, 'type' | 'onConfirm' | 'onCancel'>,
+): Promise<boolean> => {
+  return new Promise((resolve) => {
+    popup.confirm({
+      ...options,
+      onConfirm: () => resolve(true),
+      onCancel: () => resolve(false),
+    });
+  });
+};
+
 export const popup = {
   info,
   confirm,
+  confirmAsync,
   close,
 };

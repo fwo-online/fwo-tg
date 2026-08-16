@@ -8,7 +8,6 @@
   import { characterClassNameMap } from "$lib/constants/character";
   import { getCharacterContext } from "$lib/constext/character";
   import { createRequestRunner } from "$lib/utils/create-request.svelte";
-  import { makeRequest } from "$lib/utils/make-request.svelte";
   import type { NotificationType } from "@fwo/shared";
   import { themeParams, useSignal } from "@tma.js/sdk-svelte";
   import type { PageProps } from "./$types";
@@ -33,45 +32,25 @@
     },
   );
 
-  const removeCharacter = () => {
-    popup.confirm({
-      title: "Удаление персонажа",
-      message: "Персонаж будет удалён навсегда",
-      onConfirm: async () => {
-        await makeRequest(async () => {
-          await createRequest(client.character.$delete)({});
-          window.location.reload();
-        });
-      },
-    });
-  };
+  const removeCharacter = createRequestRunner(async () => {
+    await createRequest(client.character.$delete)({});
+    window.location.reload();
+  });
 
-  const removeClan = () => {
-    popup.confirm({
-      title: "Удаление клана",
-      message: "Клан будет удалён навсегда",
-      onConfirm: async () => {
-        await makeRequest(async () => {
-          await createRequest(client.clan.$delete)({});
-          await invalidate("app:character");
-        });
-        popup.info({ message: "Клан был удалён" });
-      },
-    });
-  };
+  const removeClan = createRequestRunner(async () => {
+    await createRequest(client.clan.$delete)({});
+    await invalidate("app:character");
 
-  const leaveClan = () => {
-    popup.confirm({
-      message: "Выход из клана",
-      onConfirm: async () => {
-        await makeRequest(async () => {
-          await createRequest(client.clan.leave.$post)({});
-          await invalidate("app:character");
-        });
-        popup.info({ message: "Ты покинул клан" });
-      },
-    });
-  };
+    popup.info({ message: "Клан был удалён" });
+  });
+
+  const leaveClan = createRequestRunner(async () => {
+    await createRequest(client.clan.leave.$post)({});
+    await invalidate("app:clan");
+    await invalidate("app:character");
+
+    popup.info({ message: "Ты покинул клан" });
+  });
 </script>
 
 <div class="h-full overflow-y-auto flex flex-col gap-4">
@@ -110,8 +89,10 @@
               </span>
             </div>
             <Button
-              disabled={char.active || activateCharacter.pending}
-              onclick={() => activateCharacter.run(char.id)}
+              {@attach activateCharacter.attach(
+                { disabled: () => !!char.active },
+                char.id,
+              )}
             >
               {char.active ? "Активен" : "Сменить"}
             </Button>
@@ -120,7 +101,12 @@
       </div>
       <div class="flex flex-col gap-2">
         <Button class="is-primary" href="#/create">Создать нового</Button>
-        <Button class="is-error" onclick={removeCharacter}>
+        <Button
+          {@attach removeCharacter.attach({
+            confirm: "Удалить персонажа? Персонаж будет удалён навсегда!",
+          })}
+          class="is-error"
+        >
           Удалить текущего персонажа
         </Button>
       </div>
@@ -131,10 +117,18 @@
     <Card header="Управление аккаунтом">
       <div class="flex flex-col gap-2">
         {#if isClanOwner}
-          <Button onclick={removeClan}>Удалить клан</Button>
+          <Button
+            {@attach removeClan.attach({
+              confirm: "Удалить клан? Клан будет удалён навсегда!",
+            })}
+          >
+            Удалить клан
+          </Button>
         {/if}
         {#if !isClanOwner}
-          <Button onclick={leaveClan}>Покинуть клан</Button>
+          <Button {@attach leaveClan.attach({ confirm: "Выйти из клана?" })}>
+            Покинуть клан
+          </Button>
         {/if}
       </div>
     </Card>

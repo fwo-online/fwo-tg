@@ -5,6 +5,7 @@
 </script>
 
 <Button
+  {@attach toggleReady.attach()}
   class={[
     "mb-2",
     {
@@ -13,8 +14,6 @@
       invisible: !game.canOrder,
     },
   ]}
-  disabled={toggleReady.pending}
-  onclick={() => toggleReady.run()}
 >
   {#if game.ready}
     Продолжить ход

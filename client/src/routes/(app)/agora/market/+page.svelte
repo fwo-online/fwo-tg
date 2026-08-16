@@ -9,7 +9,6 @@
   import { wearList, wearListTranslations } from "$lib/constants/item";
   import { groupBy } from "es-toolkit";
   import type { PageProps } from "./$types";
-  import { popup } from "$lib/components/Popup/popup.svelte";
   import { createRequestRunner } from "$lib/utils/create-request.svelte";
 
   let { data }: PageProps = $props();
@@ -18,25 +17,11 @@
   let selectedMarketItem = $derived(data.marketItems[0]);
 
   const buyItem = createRequestRunner(async (itemId: string) => {
-    await new Promise((resolve, reject) => {
-      popup.confirm({
-        message: "Вы уверены, что хотите купить этот предмет?",
-        onConfirm: async () => {
-          try {
-            createRequest(client.market[":id"].$post)({
-              param: { id: itemId },
-            });
-            resolve(true);
-          } catch (e) {
-            reject(e);
-          }
-        },
-        onCancel: reject,
-      });
-    }).then(async () => {
-      await invalidate("app:market-items");
-      await invalidate("app:character");
+    await createRequest(client.market[":id"].$post)({
+      param: { id: itemId },
     });
+    await invalidate("app:market-items");
+    await invalidate("app:character");
   });
 
   const deleteItem = createRequestRunner(async (itemId: string) => {
@@ -103,9 +88,8 @@
           <div class="flex flex-col gap-1.5 mt-1">
             {#if selectedMarketItem.seller.id === character().id}
               <Button
+                {@attach deleteItem.attach({}, selectedMarketItem.id)}
                 class="w-full py-1.5!"
-                disabled={deleteItem.pending}
-                onclick={() => deleteItem.run(selectedMarketItem.id)}
               >
                 Снять с продажи
               </Button>
@@ -120,10 +104,15 @@
               {:else}
                 <div class="flex items-center justify-between gap-3">
                   <Button
+                    {@attach buyItem.attach(
+                      {
+                        confirm: "Вы уверены, что хотите купить этот предмет?",
+                        disabled: () =>
+                          character().gold < selectedMarketItem.price,
+                      },
+                      selectedMarketItem.id,
+                    )}
                     class="flex-1 is-primary py-1.5!"
-                    disabled={buyItem.pending ||
-                      character().gold < selectedMarketItem.price}
-                    onclick={() => buyItem.run(selectedMarketItem.id)}
                   >
                     Купить за {selectedMarketItem.price}💰
                   </Button>

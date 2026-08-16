@@ -80,9 +80,11 @@
         {#snippet footer(item)}
           <div class="flex items-center justify-between gap-3 mt-1">
             <Button
+              {@attach forgeItem.attach(
+                { disabled: () => !canForge(item) },
+                item,
+              )}
               class="flex-1 is-primary py-1.5!"
-              disabled={!canForge(item) || forgeItem.pending}
-              onclick={() => forgeItem.run(item)}
             >
               Создать за {getItemPrice(item.price, item.tier)}💰
             </Button>

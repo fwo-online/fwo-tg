@@ -14,11 +14,7 @@
   />
 
   <div class="mt-4 flex flex-col">
-    <Button
-      class="is-primary"
-      disabled={createClan.pending}
-      onclick={() => createClan.run(name)}
-    >
+    <Button {@attach createClan.attach({}, name)} class="is-primary">
       Создать клан за 100💰
     </Button>
   </div>
