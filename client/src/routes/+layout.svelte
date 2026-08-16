@@ -14,7 +14,7 @@
 
   if (!data.character) {
     redirecting = true;
-    goto("/create", { replaceState: true }).finally(() => {
+    goto("#/create", { replaceState: true }).finally(() => {
       redirecting = false;
     });
   }

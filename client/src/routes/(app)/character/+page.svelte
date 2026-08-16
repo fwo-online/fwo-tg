@@ -40,24 +40,24 @@
 
   <div class="flex gap-2 flex-col">
     <div class="flex gap-2">
-      <Button class="flex-1" href="/character/attributes">
+      <Button class="flex-1" href="#/character/attributes">
         Характеристики
       </Button>
 
       {#if isArcher(character()) || isWarrior(character())}
-        <Button class="flex-1" href="/character/skills">Умения</Button>
+        <Button class="flex-1" href="#/character/skills">Умения</Button>
       {:else}
-        <Button class="flex-1" href="/character/magics">Магии</Button>
+        <Button class="flex-1" href="#/character/magics">Магии</Button>
       {/if}
     </div>
 
-    <Button href="/character/passiveSkills">Пассивные навыки</Button>
+    <Button href="#/character/passiveSkills">Пассивные навыки</Button>
 
-    <Button href="/character/inventory">Инвентарь</Button>
+    <Button href="#/character/inventory">Инвентарь</Button>
     {#if character().clan}
-      <Button href="/character/clan">Клан</Button>
+      <Button href="#/character/clan">Клан</Button>
     {:else}
-      <Button href="/character/clan/list">Кланы</Button>
+      <Button href="#/character/clan/list">Кланы</Button>
     {/if}
   </div>
 </div>

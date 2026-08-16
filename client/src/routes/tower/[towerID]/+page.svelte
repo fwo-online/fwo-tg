@@ -20,7 +20,7 @@
   let acceptedList = $state.raw<string[]>([]);
   let accepted = $derived(acceptedList.includes(characterID));
 
-  onSocket("tower:end", () => goto("/"));
+  onSocket("tower:end", () => goto("#/"));
   onSocket("tower:updateTime", (t: number, l: number) => {
     timeSpent = t;
     timeLeft = l;
@@ -41,7 +41,7 @@
       timeSpent = res.timeSpent;
       timeLeft = res.timeLeft;
     } else {
-      goto("/");
+      goto("#/");
     }
   });
 </script>

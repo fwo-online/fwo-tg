@@ -86,14 +86,14 @@
   <div class="flex justify-between items-center">
     <h5>Кузница {clan.forge.lvl} ур.</h5>
     {#if clan.forge.active}
-      <Button href="/character/clan/forge">Перейти в кузницу</Button>
+      <Button href="#/character/clan/forge">Перейти в кузницу</Button>
     {:else if isOwner}
       <Button
         onclick={() => openClanForge.run(clan.lvl)}
         disabled={openClanForge.pending}>Открыть кузницу</Button
       >
     {:else}
-      <Button href="/character/clan/forge" disabled>Перейти в кузницу</Button>
+      <Button href="#/character/clan/forge" disabled>Перейти в кузницу</Button>
     {/if}
   </div>
 

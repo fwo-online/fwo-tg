@@ -86,7 +86,7 @@
 
     {#if character().lvl >= itemMarketRequiredLevel}
       <div class="mt-2">
-        <Button class="w-full is-primary py-1!" href="/agora/market/create">
+        <Button class="w-full is-primary py-1!" href="#/agora/market/create">
           Продать предмет
         </Button>
       </div>

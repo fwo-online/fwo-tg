@@ -20,7 +20,7 @@
       if (res.error) {
         error = res.message || "Не удалось войти в лес";
       } else {
-        goto(`/forest/${res.forestId}`);
+        goto(`#/forest/${res.forestId}`);
       }
     } catch {
       error = "Ошибка соединения";

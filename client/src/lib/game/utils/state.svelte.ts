@@ -74,7 +74,7 @@ export function initGameState() {
       game.clans = res.clans;
     } else {
       await invalidate('app:character');
-      goto('/');
+      goto('#/');
       popup.info({ title: 'Не удалось подключиться к игре', message: res.message });
     }
   };
@@ -114,7 +114,7 @@ export function initGameState() {
   };
 
   const handleEndGame = (results: Parameters<ServerToClientMessage['game:end']>[0]) => {
-    goto('/');
+    goto('#/');
     showGameResult(results);
   };
 
@@ -127,7 +127,7 @@ export function initGameState() {
   const handleKick = async ({ player }: Parameters<ServerToClientMessage['game:kick']>[0]) => {
     if (player.id === character().id) {
       await invalidate('app:character');
-      goto('/');
+      goto('#/');
       popup.info({ message: 'Вы были выброшены из игры' });
     }
   };

@@ -6,6 +6,6 @@
   let { data }: PageProps = $props();
 
   if (data.character) {
-    goto("/character");
+    goto("#/character");
   }
 </script>

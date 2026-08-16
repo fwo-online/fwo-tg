@@ -72,7 +72,7 @@
   const isEvent = $derived(status?.state === ForestState.Event);
 
   onSocket("forest:end", (_reason: any, result: any) => {
-    goto("/");
+    goto("#/");
     // game result handled by game guard
   });
 
@@ -86,7 +86,7 @@
   });
 
   onSocket("forest:battleStart", (gameID: string) => {
-    goto(`/game/${gameID}`);
+    goto(`#/game/${gameID}`);
   });
 
   const handleAction = async (action: ForestEventAction) => {
@@ -101,7 +101,7 @@
 
   const handleExit = async () => {
     await socket.emitWithAck("forest:exit");
-    goto("/");
+    goto("#/");
   };
 
   const clearLastResult = () => {
@@ -111,7 +111,7 @@
   onMount(async () => {
     const res = await socket.emitWithAck("forest:connect");
     if (res.error) {
-      goto("/");
+      goto("#/");
     } else {
       status = res;
     }

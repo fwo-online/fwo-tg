@@ -2,7 +2,7 @@ import { backButton } from '@tma.js/sdk-svelte';
 import { goto } from '$app/navigation';
 import { page } from '$app/state';
 
-const rootPaths = ['/', '/character', '/lobby', '/agora'];
+const rootPaths = ['#/', '#/character', '#/lobby', '#/agora'];
 
 export const useBackButton = () => {
   function handleBack() {
@@ -11,9 +11,9 @@ export const useBackButton = () => {
     } else {
       const parts = page.url.pathname.split('/').filter(Boolean);
       if (parts.length > 1) {
-        goto(`/${parts[0]}`);
+        goto(`#/${parts[0]}`);
       } else {
-        goto('/character');
+        goto('#/character');
       }
     }
   }

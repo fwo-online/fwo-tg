@@ -41,7 +41,7 @@
     if (Number.isNaN(price) || !price) return;
 
     await createItem.run(itemId, price);
-    goto("/agora/market");
+    goto("#/agora/market");
   };
 </script>
 

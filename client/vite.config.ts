@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     sveltekit({
+      router: { type: 'hash' },
       compilerOptions: {
         experimental: {
           async: true,

@@ -9,15 +9,15 @@
 
   const tabs = [
     {
-      path: "/character",
+      path: "#/character",
       text: "Персонаж",
     },
     {
-      path: "/lobby",
+      path: "#/lobby",
       text: "Мир",
     },
     {
-      path: "/agora",
+      path: "#/agora",
       text: "Рынок",
     },
   ];

@@ -9,7 +9,7 @@ export const useGameGuard = () => {
 
   const navigateToGame = (gameID: string) => {
     character().game = gameID;
-    goto(`/game/${gameID}`);
+    goto(`#/game/${gameID}`);
   };
 
   onSocket('game:start', navigateToGame);
@@ -24,7 +24,7 @@ export const useGameGuard = () => {
     }
 
     if (pathname.startsWith('/game')) {
-      goto('/');
+      goto('#/');
     }
   });
 };

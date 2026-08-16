@@ -24,7 +24,7 @@
 <div class="h-full overflow-hidden flex flex-col">
   <Card header="Арена">
     <div class="flex flex-col mb-8">
-      <Button href="/lobby/ladder">Рейтинг</Button>
+      <Button href="#/lobby/ladder">Рейтинг</Button>
     </div>
     <div class="flex flex-col mt-4">
       <h5>Ищут игру</h5>

@@ -134,7 +134,7 @@
         {/each}
       </div>
       <div class="flex flex-col gap-2">
-        <Button class="is-primary" href="/create">Создать нового</Button>
+        <Button class="is-primary" href="#/create">Создать нового</Button>
         <Button class="is-error" onclick={removeCharacter}>
           Удалить текущего персонажа
         </Button>

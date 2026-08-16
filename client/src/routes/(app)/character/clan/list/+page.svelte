@@ -19,7 +19,7 @@
 
   onMount(() => {
     if (character().clan) {
-      goto("/character/clan");
+      goto("#/character/clan");
     }
   });
 </script>
@@ -54,7 +54,7 @@
       </div>
 
       <div class="mt-2">
-        <Button class="w-full is-primary py-1!" href="/character/clan/create">
+        <Button class="w-full is-primary py-1!" href="#/character/clan/create">
           Создать клан
         </Button>
       </div>

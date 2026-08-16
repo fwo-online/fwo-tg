@@ -4,7 +4,7 @@ import { goto } from '$app/navigation';
 
 export const useSettingsButton = () => {
   function toSettings() {
-    goto('/settings');
+    goto('#/settings');
   }
 
   onMount(() => {

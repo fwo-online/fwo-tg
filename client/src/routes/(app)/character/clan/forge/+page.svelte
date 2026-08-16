@@ -12,7 +12,7 @@
 
   <div class="flex-1 overflow-y-auto flex flex-col gap-2 mt-2">
     {#each wearList as wear (wear)}
-      <Button href={`/character/clan/forge/${wear}`}>
+      <Button href={`#/character/clan/forge/${wear}`}>
         {wearListTranslations[wear]}
       </Button>
     {/each}

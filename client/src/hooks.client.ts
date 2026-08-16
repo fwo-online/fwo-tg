@@ -4,4 +4,5 @@ import { initTMA } from '$lib/init';
 
 export const init: ClientInit = async () => {
   await initTMA(retrieveLaunchParams().startParam === 'debug' || import.meta.env.DEV);
+  window.location.replace('/#');
 };

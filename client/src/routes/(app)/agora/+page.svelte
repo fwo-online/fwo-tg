@@ -5,8 +5,8 @@
 
 <Card header="Рынок">
   <div class="flex flex-col gap-2">
-    <Button href="/agora/forge">Кузница</Button>
-    <Button href="/agora/market">Барахолка</Button>
-    <Button href="/agora/service">Седой торговец</Button>
+    <Button href="#/agora/forge">Кузница</Button>
+    <Button href="#/agora/market">Барахолка</Button>
+    <Button href="#/agora/service">Седой торговец</Button>
   </div>
 </Card>

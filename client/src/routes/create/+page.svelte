@@ -97,7 +97,7 @@
             </span>
           </div>
           {#if char.active}
-            <Button href="/character">Войти</Button>
+            <Button href="#/character">Войти</Button>
           {:else}
             <Button onclick={() => handleActivate(char.id)}>Сменить</Button>
           {/if}

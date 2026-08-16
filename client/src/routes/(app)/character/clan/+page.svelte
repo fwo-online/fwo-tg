@@ -9,7 +9,7 @@
 
   onMount(() => {
     if (!data.clan) {
-      goto("/character/clan/list");
+      goto("#/character/clan/list");
     }
   });
 </script>
