@@ -47,7 +47,7 @@
                   {@const equipped = isEquipped(item)}
                   <Button
                     class={[
-                      "w-full",
+                      "flex-1",
                       { "is-primary": selectedItem?.id === item.id },
                     ]}
                     onclick={() => (selectedItemId = item.id)}

@@ -95,7 +95,7 @@
 
   <Card
     header={selectedMarketItem?.item.info.name}
-    class="flex-1 flex flex-col"
+    class="flex-1 flex flex-col mt-0"
   >
     {#if selectedMarketItem}
       <ItemInfo item={selectedMarketItem.item}>

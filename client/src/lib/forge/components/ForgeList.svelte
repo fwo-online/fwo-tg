@@ -67,7 +67,7 @@
           {#each items as item (item.code)}
             <Button
               class={[
-                "w-full text-start",
+                "flex-1 text-start",
                 { "is-primary": selectedItem?.code === item.code },
               ]}
               onclick={() => (selectedItemCode = item.code)}
