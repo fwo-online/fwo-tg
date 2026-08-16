@@ -12,7 +12,7 @@ export const useForestGuard = () => {
     goto(`#/forest/${forestID}`);
   };
 
-  onSocket('game:start', navigateToForest);
+  onSocket('forest:start', navigateToForest);
 
   onMount(() => {
     const currentForest = character().forest;

@@ -86,7 +86,7 @@
     loading = false;
   });
 
-  onSocket("forest:battleStart", (gameID: string) => {
+  onSocket("forest:battleStart", (gameID) => {
     goto(`#/game/${gameID}`);
   });
 

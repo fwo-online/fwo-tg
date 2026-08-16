@@ -7,7 +7,7 @@
   import GameOrders from "$lib/game/components/GameOrders.svelte";
   import GameOrderToolbar from "$lib/game/components/GameOrderToolbar.svelte";
   import GameStatus from "$lib/game/components/GameStatus.svelte";
-  import { getAvaiableTargets } from "$lib/game/utils/order-target";
+  import { getAvailableTargets } from "$lib/game/utils/order-target";
   import { game, initGameState } from "$lib/game/utils/state.svelte";
 
   initGameState();
@@ -19,7 +19,7 @@
   const players = $derived(game.players);
 
   const availableTargets = $derived(
-    getAvaiableTargets({
+    getAvailableTargets({
       action: selectedAction,
       players,
       characterID,

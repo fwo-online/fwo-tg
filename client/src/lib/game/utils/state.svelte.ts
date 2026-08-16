@@ -1,11 +1,4 @@
-import type {
-  Action,
-  ClanPublic,
-  GameStatus,
-  Order,
-  Player,
-  ServerToClientMessage,
-} from '@fwo/shared';
+import type { Action, ClanPublic, GameStatus, Order, Player } from '@fwo/shared';
 import { onMount } from 'svelte';
 import { goto, invalidate } from '$app/navigation';
 import { popup } from '$lib/components/Popup/popup.svelte';
@@ -58,15 +51,7 @@ export function initGameState() {
   const socket = getSocket();
   const character = getCharacterContext();
 
-  const handlePlayers = ({
-    players,
-    clans,
-  }: Parameters<ServerToClientMessage['game:players']>[0]) => {
-    game.players = players;
-    game.clans = clans;
-  };
-
-  const handleStartGame = async () => {
+  const startGame = async () => {
     const res = await socket.emitWithAck('game:connected');
 
     if (!res.error) {
@@ -79,72 +64,60 @@ export function initGameState() {
     }
   };
 
-  const handleStartRound = ({
-    round,
-    status,
-  }: Parameters<ServerToClientMessage['game:startRound']>[0]) => {
+  onMount(() => {
+    if (socket.connected) {
+      startGame();
+    } else {
+      socket.once('connect', startGame);
+    }
+  });
+
+  onSocket('game:players', ({ players, clans }) => {
+    game.players = players;
+    game.clans = clans;
+  });
+
+  onSocket('game:startRound', ({ round, status }) => {
     game.round = round;
     game.statusByClan = status;
-  };
+  });
 
-  const handleStartOrders = ({
-    actions,
-    magics,
-    skills,
-    orders,
-    power,
-    ordersTime,
-    ordersStartTime,
-    ready,
-  }: Parameters<ServerToClientMessage['game:startOrders']>[0]) => {
-    game.actions = actions;
-    game.magics = magics;
-    game.skills = skills;
-    game.orders = orders;
-    game.power = power;
-    game.ordersStartTime = ordersStartTime;
-    game.ordersTime = ordersTime;
-    game.ready = ready;
-    game.canOrder = true;
-  };
+  onSocket(
+    'game:startOrders',
+    ({ actions, magics, skills, orders, power, ordersTime, ordersStartTime, ready }) => {
+      game.actions = actions;
+      game.magics = magics;
+      game.skills = skills;
+      game.orders = orders;
+      game.power = power;
+      game.ordersStartTime = ordersStartTime;
+      game.ordersTime = ordersTime;
+      game.ready = ready;
+      game.canOrder = true;
+    },
+  );
 
-  const handleEndOrders = () => {
+  onSocket('game:endOrders', () => {
     game.canOrder = false;
     game.orders = [];
-  };
+  });
 
-  const handleEndGame = (results: Parameters<ServerToClientMessage['game:end']>[0]) => {
-    goto('#/');
+  onSocket('game:end', (results) => {
     showGameResult(results);
-  };
+    goto('#/');
+  });
 
-  const handlePreKick = () => {
+  onSocket('game:preKick', () => {
     popup.info({
       message: 'Вы будете выброшены из игры в следующем раунде, если не сделаете заказ',
     });
-  };
+  });
 
-  const handleKick = async ({ player }: Parameters<ServerToClientMessage['game:kick']>[0]) => {
+  onSocket('game:kick', async ({ player }) => {
     if (player.id === character().id) {
       await invalidate('app:character');
       goto('#/');
       popup.info({ message: 'Вы были выброшены из игры' });
     }
-  };
-
-  onMount(() => {
-    if (socket.connected) {
-      handleStartGame();
-    } else {
-      socket.once('connect', handleStartGame);
-    }
   });
-
-  onSocket('game:players', handlePlayers);
-  onSocket('game:startRound', handleStartRound);
-  onSocket('game:startOrders', handleStartOrders);
-  onSocket('game:endOrders', handleEndOrders);
-  onSocket('game:end', handleEndGame);
-  onSocket('game:preKick', handlePreKick);
-  onSocket('game:kick', handleKick);
 }

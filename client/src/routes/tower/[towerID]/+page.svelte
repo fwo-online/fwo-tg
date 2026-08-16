@@ -24,6 +24,7 @@
     character().tower = undefined;
     await goto("#/");
   });
+
   onSocket("tower:updateTime", (t: number, l: number) => {
     timeSpent = t;
     timeLeft = l;

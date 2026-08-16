@@ -33,6 +33,3 @@ export const getAvailableTargets = ({ action, players, characterID }: Params): P
       return alivePlayers;
   }
 };
-
-/** @deprecated alias for typo compatibility */
-export const getAvaiableTargets = getAvailableTargets;

@@ -3,6 +3,7 @@
     renderable,
     type Renderable,
   } from "$lib/components/Renderable.svelte";
+  import { themeParams, useSignal } from "@tma.js/sdk-svelte";
 
   const {
     disabled,
@@ -50,14 +51,22 @@
     --b: 2px;
 
     background:
-      linear-gradient(#fff, #fff) left top / var(--s) var(--b) no-repeat,
-      linear-gradient(#fff, #fff) left top / var(--b) var(--s) no-repeat,
-      linear-gradient(#fff, #fff) right top / var(--s) var(--b) no-repeat,
-      linear-gradient(#fff, #fff) right top / var(--b) var(--s) no-repeat,
-      linear-gradient(#fff, #fff) left bottom / var(--s) var(--b) no-repeat,
-      linear-gradient(#fff, #fff) left bottom / var(--b) var(--s) no-repeat,
-      linear-gradient(#fff, #fff) right bottom / var(--s) var(--b) no-repeat,
-      linear-gradient(#fff, #fff) right bottom / var(--b) var(--s) no-repeat;
+      linear-gradient(var(--tg-theme-text-color), var(--tg-theme-text-color))
+        left top / var(--s) var(--b) no-repeat,
+      linear-gradient(var(--tg-theme-text-color), var(--tg-theme-text-color))
+        left top / var(--b) var(--s) no-repeat,
+      linear-gradient(var(--tg-theme-text-color), var(--tg-theme-text-color))
+        right top / var(--s) var(--b) no-repeat,
+      linear-gradient(var(--tg-theme-text-color), var(--tg-theme-text-color))
+        right top / var(--b) var(--s) no-repeat,
+      linear-gradient(var(--tg-theme-text-color), var(--tg-theme-text-color))
+        left bottom / var(--s) var(--b) no-repeat,
+      linear-gradient(var(--tg-theme-text-color), var(--tg-theme-text-color))
+        left bottom / var(--b) var(--s) no-repeat,
+      linear-gradient(var(--tg-theme-text-color), var(--tg-theme-text-color))
+        right bottom / var(--s) var(--b) no-repeat,
+      linear-gradient(var(--tg-theme-text-color), var(--tg-theme-text-color))
+        right bottom / var(--b) var(--s) no-repeat;
 
     pointer-events: none;
     transform-origin: center;

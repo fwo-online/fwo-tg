@@ -5,6 +5,7 @@
   import { page } from "$app/state";
   import { useSettingsButton } from "$lib/hooks/useSettingsButton.svelte";
   import { useForestGuard } from "$lib/hooks/useForestGuard.svelte";
+  import { useTowerGuard } from "$lib/hooks/useTowerGuard.svelte";
 
   let { children } = $props();
 
@@ -27,6 +28,7 @@
   useSettingsButton();
   useGameGuard();
   useForestGuard();
+  useTowerGuard();
 </script>
 
 <div class="h-full overflow-hidden flex flex-col flex-1">

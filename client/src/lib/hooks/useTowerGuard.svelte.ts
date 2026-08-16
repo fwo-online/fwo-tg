@@ -9,10 +9,10 @@ export const useTowerGuard = () => {
 
   const navigateToTower = (gameID: string) => {
     character().game = gameID;
-    goto(`#/game/${gameID}`);
+    goto(`#/tower/${gameID}`);
   };
 
-  onSocket('game:start', navigateToTower);
+  onSocket('tower:start', navigateToTower);
 
   onMount(() => {
     const currentTower = character().tower;
