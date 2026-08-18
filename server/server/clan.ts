@@ -24,7 +24,7 @@ export const clan = new Hono()
 
     return c.json(clan, 200);
   })
-  .post('/:id/create-request', vValidator('param', idSchema), async (c) => {
+  .post('/:id/create-request', vValidator('param', idSchema, handleValidationError), async (c) => {
     const character = c.get('character');
     const { id } = c.req.valid('param');
 
@@ -32,7 +32,7 @@ export const clan = new Hono()
 
     return c.json({}, 200);
   })
-  .post('/:id/cancel-request', vValidator('param', idSchema), async (c) => {
+  .post('/:id/cancel-request', vValidator('param', idSchema, handleValidationError), async (c) => {
     const character = c.get('character');
     const { id } = c.req.valid('param');
 
@@ -48,14 +48,18 @@ export const clan = new Hono()
 
     return c.json(ClanService.toObject(clan), 200);
   })
-  .post('/add-gold', vValidator('json', v.object({ gold: v.number() })), async (c) => {
-    const character = c.get('character');
-    const { gold } = c.req.valid('json');
+  .post(
+    '/add-gold',
+    vValidator('json', v.object({ gold: v.number() }), handleValidationError),
+    async (c) => {
+      const character = c.get('character');
+      const { gold } = c.req.valid('json');
 
-    const clan = await withValidation(ClanService.addGold(character.clan.id, character.id, gold));
+      const clan = await withValidation(ClanService.addGold(character.clan.id, character.id, gold));
 
-    return c.json(clan, 200);
-  })
+      return c.json(clan, 200);
+    },
+  )
   .post('/leave', async (c) => {
     const character = c.get('character');
 
@@ -81,7 +85,7 @@ export const clan = new Hono()
 
     return c.json({}, 200);
   })
-  .post('/accept/:id', vValidator('param', idSchema), async (c) => {
+  .post('/accept/:id', vValidator('param', idSchema, handleValidationError), async (c) => {
     const character = c.get('character');
     const { id } = c.req.valid('param');
 
@@ -89,7 +93,7 @@ export const clan = new Hono()
 
     return c.json(clan, 200);
   })
-  .post('/reject/:id', vValidator('param', idSchema), async (c) => {
+  .post('/reject/:id', vValidator('param', idSchema, handleValidationError), async (c) => {
     const character = c.get('character');
     const { id } = c.req.valid('param');
 

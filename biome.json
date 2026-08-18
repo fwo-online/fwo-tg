@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.5/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.7/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!**/dist", "!**/out", "!**/tsconfig.json"]
+    "includes": ["**", "!**/dist", "!**/out", "!**/build", "!**/tsconfig.json", "!**/.svelte-kit"]
   },
   "formatter": {
     "enabled": true,
@@ -17,9 +17,13 @@
   },
   "assist": { "actions": { "source": { "organizeImports": "on", "useSortedProperties": "on" } } },
   "linter": {
+    "domains": {
+      "project": "recommended",
+      "svelte": "recommended",
+      "types": "recommended"
+    },
     "enabled": true,
     "rules": {
-      "recommended": true,
       "complexity": {
         "noForEach": "off",
         "noStaticOnlyClass": "off",
@@ -46,5 +50,8 @@
     "formatter": {
       "quoteStyle": "single"
     }
+  },
+  "html": {
+    "experimentalFullSupportEnabled": true
   }
 }
