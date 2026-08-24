@@ -1,5 +1,5 @@
 import type { CharacterClass, ItemWithID } from '@fwo/shared';
-import _ from 'lodash';
+import { keyBy } from 'es-toolkit';
 import type { Model, Types } from 'mongoose';
 import mongoose, { Schema } from 'mongoose';
 import arena from '@/arena';
@@ -22,7 +22,7 @@ export class Item {
       console.log('Generate items...');
       const items = await generateItems();
       console.log('Items loaded: ', Date.now() - timer, 'ms');
-      arena.items = _.keyBy(items, ({ code }) => code);
+      arena.items = keyBy(items, ({ code }) => code);
     } catch (e) {
       console.error(e);
     } finally {

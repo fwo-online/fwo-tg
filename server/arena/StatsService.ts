@@ -1,5 +1,5 @@
 import type { CharacterDynamicAttributes, Item, ItemComponent, PhysAttributes } from '@fwo/shared';
-import { get, set } from 'lodash';
+import { get, set } from 'es-toolkit/compat';
 import { floatNumber } from '@/utils/floatNumber';
 
 export type Stats = CharacterDynamicAttributes & {

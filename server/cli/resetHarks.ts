@@ -1,4 +1,4 @@
-import { times } from 'lodash';
+import { times } from 'es-toolkit/compat';
 import { profsData, profsList } from '@/data/profs';
 import { connect } from '@/models';
 import { CharModel } from '@/models/character';
