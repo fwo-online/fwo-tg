@@ -5,6 +5,7 @@ import { logger } from 'hono/logger';
 import { ladder } from '@/server/ladder';
 import { market } from '@/server/market';
 import { serviceShop } from '@/server/serviceShop';
+import { achievements } from './achievement';
 import { character } from './character';
 import { clan } from './clan';
 import { contracts } from './contracts';
@@ -29,7 +30,8 @@ export const app = new Hono()
   .route('/serviceShop', serviceShop)
   .route('/ladder', ladder)
   .route('/market', market)
-  .route('/contracts', contracts);
+  .route('/contracts', contracts)
+  .route('/achievements', achievements)
 
 export default app;
 

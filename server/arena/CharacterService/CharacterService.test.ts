@@ -25,7 +25,7 @@ describe('CharacterService', () => {
     });
 
     expect(character.resources.free).toEqual(8);
-    await character.resources.addResources({ exp: 3000 });
+    await character.resources.addResources({ exp: 3000, skipVigor: true });
 
     await character.attributes.increaseAttributes({
       ...character.charObj.harks,
@@ -33,7 +33,7 @@ describe('CharacterService', () => {
     });
     expect(character.resources.free).toEqual(16);
 
-    await character.resources.addResources({ exp: 6000 });
+    await character.resources.addResources({ exp: 6000, skipVigor: true });
 
     expect(character.resources.free).toEqual(26);
   });

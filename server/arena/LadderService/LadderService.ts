@@ -131,7 +131,7 @@ export class LadderService {
       await Promise.all(
         results.map(async (result) => {
           const character = await CharacterService.getCharacterById(result.player.id);
-          await character.performance.addGameStat(result, result.psr);
+          await character.performance.setPsr(result.psr);
         }),
       );
 

@@ -49,7 +49,10 @@ export class ForestService extends EventEmitter<{
     super();
   }
 
-  static emitter = new EventEmitter<{ start: [ForestService] }>();
+  static emitter = new EventEmitter<{
+    start: [ForestService];
+    end: [forest: ForestService, reason: 'death' | 'maxTime' | 'exit', result: GameResult];
+  }>();
 
   get id() {
     return this.forest.id;
@@ -67,7 +70,7 @@ export class ForestService extends EventEmitter<{
     return ForestPhase.Deep;
   }
 
-  private getEventsCount() {
+  getEventsCount() {
     return this.forest.events.length;
   }
 
@@ -422,7 +425,8 @@ export class ForestService extends EventEmitter<{
     await this.character.resources.addResources({ gold, exp, components });
 
     // Обновление лесных контрактов (после завершения, одним накопленным счётчиком)
-    await this.character.quests.updateForestContractProgress(this.getEventsCount());
+    const eventsCount = this.getEventsCount();
+    await this.character.quests.updateForestContractProgress(eventsCount);
 
     const result: GameResult = {
       player: this.player.toObject(),
@@ -435,6 +439,7 @@ export class ForestService extends EventEmitter<{
 
     delete arena.forests?.[this.id];
 
+    ForestService.emitter.emit('end', this, reason, result);
     this.emit('end', this, reason, result);
     this.removeAllListeners();
   }

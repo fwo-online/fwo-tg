@@ -38,4 +38,11 @@ export type Character = {
   components: Record<ItemComponent, number>;
   notificationSettings?: NotificationSettings;
   active?: boolean;
+  activeTitle?: string;
+  unlockedTitles?: string[];
+  vigor?: {
+    energy: number;
+    maxEnergy: number;
+    bonusPercent: number;
+  };
 };
