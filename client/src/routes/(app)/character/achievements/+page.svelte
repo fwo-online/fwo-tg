@@ -1,24 +1,18 @@
 <script lang="ts">
   import type { AchievementCategory, AchievementPublic } from "@fwo/shared";
+  import { invalidate } from "$app/navigation";
   import { client, createRequest } from "$lib/api";
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
   import { getCharacterContext } from "$lib/constext/character";
+  import { createRequestRunner } from "$lib/utils/create-request.svelte";
   import type { PageProps } from "./$types";
 
   const { data }: PageProps = $props();
   const character = getCharacterContext();
 
   let activeCategory = $state<AchievementCategory | "all">("all");
-  let achievementsList = $state<AchievementPublic[]>([]);
-  let isClaiming = $state<string | null>(null);
-  let isSettingTitle = $state<boolean>(false);
-
-  $effect(() => {
-    if (data?.achievements) {
-      achievementsList = data.achievements;
-    }
-  });
+  let achievementsList = $derived(data.achievements);
 
   const categories: { key: AchievementCategory | "all"; label: string }[] = [
     { key: "all", label: "Все" },
@@ -40,41 +34,24 @@
     achievementsList.filter((a) => a.completed).length
   );
 
-  async function handleClaim(achievementId: string) {
-    if (isClaiming) return;
-    isClaiming = achievementId;
+  const claimAchievement = createRequestRunner(async (id: string) => {
+    await createRequest(client.achievements.claim.$post)({
+      json: { id },
+    });
 
-    try {
-      await createRequest(client.achievements.claim.$post)({
-        json: { id: achievementId },
-      });
+    await invalidate("app:achievements");
+  })
 
-      achievementsList = achievementsList.map((a) =>
-        a.id === achievementId ? { ...a, claimed: true, completed: true } : a
-      );
-    } catch (e) {
-      console.error("Failed to claim achievement:", e);
-    } finally {
-      isClaiming = null;
-    }
-  }
 
-  async function handleSelectTitle(title: string | null) {
-    if (isSettingTitle) return;
-    isSettingTitle = true;
+  const selectTitle = createRequestRunner(async (title: string | null) => {
+    await createRequest(client.achievements["set-title"].$post)({
+      json: { title },
+    });
 
-    try {
-      await createRequest(client.achievements["set-title"].$post)({
-        json: { title },
-      });
-      // Обновляем локальное состояние чара
-      character().activeTitle = title || undefined;
-    } catch (e) {
-      console.error("Failed to set title:", e);
-    } finally {
-      isSettingTitle = false;
-    }
-  }
+    await invalidate("app:character");
+    await invalidate("app:achievements");
+  })
+
 </script>
 
 <div class="h-full flex flex-col gap-2">
@@ -91,18 +68,16 @@
       {#if (character().unlockedTitles ?? []).length > 0}
         <div class="flex flex-wrap gap-1 mt-1">
           <Button
+            {@attach selectTitle.attach({ disabled: () => !character().activeTitle}, null)}
             class="text-xs py-1 px-2 {character().activeTitle ? '' : 'is-primary'}"
-            onclick={() => handleSelectTitle(null)}
-            disabled={isSettingTitle || !character().activeTitle}
           >
             Без титула
           </Button>
 
           {#each character().unlockedTitles ?? [] as title}
             <Button
+              {@attach selectTitle.attach({}, title)}
               class="text-xs py-1 px-2 {character().activeTitle === title ? 'is-success' : ''}"
-              onclick={() => handleSelectTitle(title)}
-              disabled={isSettingTitle}
             >
               [{title}]
             </Button>
@@ -118,8 +93,8 @@
 
   <!-- Список достижений -->
   <Card
-    header={`Достижения (${completedCount}/${achievementsList.length})`}
-    class="flex-1 flex flex-col overflow-hidden"
+    // header={`Достижения (${completedCount}/${achievementsList.length})`}
+    class="flex-1 flex flex-col"
   >
     <!-- Табы категорий -->
     <div class="flex overflow-x-auto gap-1 pb-1 mb-2 shrink-0">
@@ -157,11 +132,10 @@
               <span class="text-emerald-400 text-xs font-bold whitespace-nowrap">✓ Получено</span>
             {:else if ach.completed}
               <Button
+                {@attach claimAchievement.attach({}, ach.id)}
                 class="is-success text-xs py-1 px-2 animate-pulse whitespace-nowrap"
-                onclick={() => handleClaim(ach.id)}
-                disabled={isClaiming === ach.id}
               >
-                {isClaiming === ach.id ? "..." : "Забрать!"}
+                Забрать!
               </Button>
             {:else}
               <span class="text-[11px] opacity-50 whitespace-nowrap">
@@ -195,6 +169,4 @@
       {/each}
     </div>
   </Card>
-
-  <Button href="#/character" class="shrink-0">Назад</Button>
 </div>
