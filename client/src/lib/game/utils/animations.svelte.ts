@@ -1,4 +1,5 @@
 import type { CombatEvent, CombatEventType } from '@fwo/shared';
+import { triggerHaptic } from '$lib/utils/haptics';
 
 export type FloatingText = {
   id: string;
@@ -73,17 +74,23 @@ class CombatAnimationStore {
         text = isCrit ? `💥 -${effect ?? 0}` : `-${effect ?? 0}`;
         targetState.shaking = true;
         targetState.flash = 'damage';
+        triggerHaptic(isCrit ? 'heavy' : 'medium');
       } else if (type === 'heal') {
         text = `+${effect ?? 0} 💚`;
         targetState.flash = 'heal';
+        triggerHaptic('success');
       } else if (type === 'dodge') {
         text = '💨 УВОРОТ';
+        triggerHaptic('soft');
       } else if (type === 'block') {
         text = '🛡️ БЛОК';
+        triggerHaptic('rigid');
       } else if (type === 'miss') {
         text = '❌ ПРОМАХ';
+        triggerHaptic('soft');
       } else {
         text = `✨ ${action}`;
+        triggerHaptic('light');
       }
 
       // Reset shake & flash after animation duration

@@ -54,7 +54,8 @@
 {#snippet Status(status: GameStatus, ally: boolean)}
   {@const player = game.players[status.id]}
   {#if player}
-    {@const disabled = !selectableSet.has(player.id)}
+    {@const isDead = status.hp !== undefined && status.hp <= 0}
+    {@const disabled = !selectableSet.has(player.id) || isDead}
     {@const anim = combatAnim.get(player.id)}
     <div
       class={[
@@ -64,6 +65,7 @@
           "fwo-anim-hit-flash": anim.flash === "damage",
           "fwo-anim-heal-flash": anim.flash === "heal",
           "fwo-anim-lunge": anim.lunge,
+          "fwo-dead-card": isDead,
         },
       ]}
     >
@@ -79,17 +81,22 @@
         />
         {#snippet after()}
           <div class="flex items-center gap-2 text-xs font-mono">
-            {#if status.hp !== undefined}
-              <span class="inline-flex items-center gap-0.5">
-                <span>❤️</span>
-                <span class={status.hp <= 0 ? "text-red-500 font-bold" : ""}>
-                  {status.hp}
-                </span>
+            {#if isDead}
+              <span class="text-red-500 font-bold flex items-center gap-1">
+                <span>💀</span>
+                <span class="text-[10px] uppercase opacity-75">Повержен</span>
               </span>
-            {/if}
-            {#if ally}
-              {#if status.mp !== undefined}<span>💧{status.mp}</span>{/if}
-              {#if status.en !== undefined}<span>🔋{status.en}</span>{/if}
+            {:else}
+              {#if status.hp !== undefined}
+                <span class="inline-flex items-center gap-0.5">
+                  <span>❤️</span>
+                  <span>{status.hp}</span>
+                </span>
+              {/if}
+              {#if ally}
+                {#if status.mp !== undefined}<span>💧{status.mp}</span>{/if}
+                {#if status.en !== undefined}<span>🔋{status.en}</span>{/if}
+              {/if}
             {/if}
           </div>
         {/snippet}
