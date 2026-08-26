@@ -21,11 +21,11 @@ export type RoundOptions = {
 };
 
 const defaultTimeoutsMap: RoundTimeouts = {
-  [RoundStatus.INIT]: config.roundTimeout,
-  [RoundStatus.START_ROUND]: config.roundTimeout / 2,
+  [RoundStatus.INIT]: 1500,
+  [RoundStatus.START_ROUND]: 600,
   [RoundStatus.START_ORDERS]: config.ordersTime,
-  [RoundStatus.END_ORDERS]: config.roundTimeout / 2,
-  [RoundStatus.END_ROUND]: config.roundTimeout / 2,
+  [RoundStatus.END_ORDERS]: 500,
+  [RoundStatus.END_ROUND]: 1500,
 };
 
 const ROUND_SERVICE_EVENT = 'Round';

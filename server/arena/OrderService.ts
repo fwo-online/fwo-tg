@@ -296,6 +296,6 @@ export default class Orders {
       if (isEveryReady) {
         this.roundService.endOrders();
       }
-    }, 2000);
+    }, 300);
   }
 }

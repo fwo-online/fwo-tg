@@ -15,6 +15,15 @@ const handleResponse = (res: OrderResponse) => {
     game.actions = actions;
     game.magics = magics;
     game.skills = skills;
+
+    if (res.power === 0 && !game.ready) {
+      const socket = getSocket();
+      socket.emitWithAck('game:order:ready', true).then((readyRes) => {
+        if (!readyRes.error) {
+          game.ready = readyRes.ready;
+        }
+      });
+    }
   }
 };
 
@@ -34,12 +43,20 @@ export const repeatOrders = createRequestRunner(async () => {
 
 export const resetOrders = createRequestRunner(async () => {
   const socket = getSocket();
+  if (game.ready) {
+    await socket.emitWithAck('game:order:ready', false);
+    game.ready = false;
+  }
   const res = await socket.emitWithAck('game:order:reset');
   handleResponse(res);
 });
 
 export const removeOrder = createRequestRunner(async (orderID: string) => {
   const socket = getSocket();
+  if (game.ready) {
+    await socket.emitWithAck('game:order:ready', false);
+    game.ready = false;
+  }
   const res = await socket.emitWithAck('game:order:remove', orderID);
   handleResponse(res);
 });

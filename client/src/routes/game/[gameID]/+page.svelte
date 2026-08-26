@@ -7,6 +7,7 @@
   import GameOrders from "$lib/game/components/GameOrders.svelte";
   import GameOrderToolbar from "$lib/game/components/GameOrderToolbar.svelte";
   import GameStatus from "$lib/game/components/GameStatus.svelte";
+  import RoundBattleLogTicker from "$lib/game/components/RoundBattleLogTicker.svelte";
   import { getAvailableTargets } from "$lib/game/utils/order-target";
   import { game, initGameState } from "$lib/game/utils/state.svelte";
 
@@ -30,13 +31,14 @@
 <div class="flex flex-col h-full overflow-hidden">
   {#if game.round}
     <!-- Top: Game info & Timer -->
-    <div class="flex flex-col gap-2 p-3 pb-0 shrink-0">
+    <div class="flex flex-col gap-1.5 p-3 pb-0 shrink-0">
       <div class="flex items-center gap-2">
         <h3 class="text-sm font-bold text-nowrap">Раунд {game.round}</h3>
         {#if game.canOrder}
           <GameOrderProgress />
         {/if}
       </div>
+      <RoundBattleLogTicker />
     </div>
 
     <!-- Center: Status and Action selection -->

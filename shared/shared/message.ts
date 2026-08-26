@@ -2,7 +2,7 @@ import type { Character } from '@/character';
 import type { CharacterPublic } from '@/character/characterPublic';
 import type { ClanPublic } from '@/clan';
 import type { ForestEventAction, ForestEventResult, ForestEventType, ForestStatus } from '@/forest';
-import type { GameResult, GameStatus, GameType } from '@/game';
+import type { GameResult, GameStatus, GameType, RoundResultPayload } from '@/game';
 import type { Action } from './action';
 import type { Order } from './orderSchema';
 import type { Player } from './player';
@@ -90,6 +90,7 @@ export type ServerToClientMessage = Message<{
     },
   ];
   'game:endOrders': [];
+  'game:roundResult': [payload: RoundResultPayload];
   'game:startRound': [
     {
       round: number;

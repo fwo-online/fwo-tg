@@ -8,6 +8,7 @@ import type { OrderResult } from '@/arena/OrderService';
 import type { Player } from '@/arena/PlayersService';
 import { RoundStatus } from '@/arena/RoundService';
 import ActionsHelper from '@/helpers/actionsHelper';
+import { serializeCombatEvents } from '@/helpers/combatEventsHelper';
 import { activeConnections } from '@/server/utils/activeConnectons';
 import { normalizeGameOrders } from '@/server/utils/normalizeGameOrders';
 import type { Server, Socket } from '@/server/ws';
@@ -59,7 +60,14 @@ export const onCreate = (io: Server) => {
       io.to(getRoom(game)).emit('game:players', { players, clans });
     });
 
-    game.on('endRound', ({ dead }) => {
+    game.on('endRound', ({ dead, log }) => {
+      const events = serializeCombatEvents(log);
+      io.to(getRoom(game)).emit('game:roundResult', {
+        round: game.round.count,
+        events,
+        deadPlayerIds: dead.map((p) => p.id),
+      });
+
       dead.forEach((player) => {
         io.in(getRoom(game, player.id)).emit('game:end', []);
 

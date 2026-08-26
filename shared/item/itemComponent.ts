@@ -18,6 +18,6 @@ export const itemComponentName: Record<ItemComponent, string> = {
 
 export function componentsToString(components?: Partial<Record<ItemComponent, number>>): string {
   return Object.entries(components ?? {})
-    .map(([component, value]) => `${value ?? 0} ${itemComponentName[component]}`)
+    .map(([component, value]) => `${value ?? 0} ${itemComponentName[component as ItemComponent]}`)
     .join(', ');
 }

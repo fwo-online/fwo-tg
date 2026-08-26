@@ -9,7 +9,9 @@
   import { mapValues, omit } from "es-toolkit";
   import { Description } from "$lib/components/Description";
   import { getCharacterContext } from "$lib/constext/character";
+  import FloatingCombatText from "$lib/game/components/FloatingCombatText.svelte";
   import GameSelectablePlayer from "$lib/game/components/GameSelectablePlayer.svelte";
+  import { combatAnim } from "$lib/game/utils/animations.svelte";
   import { game } from "$lib/game/utils/state.svelte";
 
   let {
@@ -53,25 +55,46 @@
   {@const player = game.players[status.id]}
   {#if player}
     {@const disabled = !selectableSet.has(player.id)}
-    <Description.Item selectable={!!selectedAction} {disabled}>
-      <GameSelectablePlayer
-        bind:value={selected}
-        id={player.id}
-        characterClass={player.class}
-        name={player.name}
-        isBot={player.isBot}
-        {disabled}
-      />
-      {#snippet after()}
-        <div class="flex items-center gap-2 text-xs">
-          {#if status.hp !== undefined}<span>❤️{status.hp}</span>{/if}
-          {#if ally}
-            {#if status.mp !== undefined}<span>💧{status.mp}</span>{/if}
-            {#if status.en !== undefined}<span>🔋{status.en}</span>{/if}
-          {/if}
-        </div>
-      {/snippet}
-    </Description.Item>
+    {@const anim = combatAnim.get(player.id)}
+    <div
+      class={[
+        "relative rounded transition-colors duration-200 px-0.5",
+        {
+          "fwo-anim-shake": anim.shaking,
+          "fwo-anim-hit-flash": anim.flash === "damage",
+          "fwo-anim-heal-flash": anim.flash === "heal",
+          "fwo-anim-lunge": anim.lunge,
+        },
+      ]}
+    >
+      <FloatingCombatText items={anim.floatingTexts} />
+      <Description.Item selectable={!!selectedAction} {disabled}>
+        <GameSelectablePlayer
+          bind:value={selected}
+          id={player.id}
+          characterClass={player.class}
+          name={player.name}
+          isBot={player.isBot}
+          {disabled}
+        />
+        {#snippet after()}
+          <div class="flex items-center gap-2 text-xs font-mono">
+            {#if status.hp !== undefined}
+              <span class="inline-flex items-center gap-0.5">
+                <span>❤️</span>
+                <span class={status.hp <= 0 ? "text-red-500 font-bold" : ""}>
+                  {status.hp}
+                </span>
+              </span>
+            {/if}
+            {#if ally}
+              {#if status.mp !== undefined}<span>💧{status.mp}</span>{/if}
+              {#if status.en !== undefined}<span>🔋{status.en}</span>{/if}
+            {/if}
+          </div>
+        {/snippet}
+      </Description.Item>
+    </div>
   {/if}
 {/snippet}
 

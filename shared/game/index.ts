@@ -41,3 +41,34 @@ export type PublicGameStatus = {
 export type GameType = 'tower' | 'ladder' | 'practice';
 
 export const towerRequiredLvl = 5;
+
+export type CombatEventType =
+  | 'damage'
+  | 'heal'
+  | 'buff'
+  | 'debuff'
+  | 'dodge'
+  | 'block'
+  | 'miss';
+
+export type CombatEvent = {
+  id: string;
+  initiatorId: string;
+  initiatorName: string;
+  targetId: string;
+  targetName: string;
+  action: string;
+  actionType: string;
+  effect?: number;
+  effectType?: string;
+  type: CombatEventType;
+  isCrit?: boolean;
+  message?: string;
+};
+
+export type RoundResultPayload = {
+  round: number;
+  events: CombatEvent[];
+  deadPlayerIds: string[];
+};
+

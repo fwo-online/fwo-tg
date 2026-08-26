@@ -4,6 +4,7 @@ import { goto, invalidate } from '$app/navigation';
 import { popup } from '$lib/components/Popup/popup.svelte';
 import { getCharacterContext } from '$lib/constext/character';
 import { getSocket } from '$lib/constext/socket';
+import { combatAnim } from '$lib/game/utils/animations.svelte';
 import { showGameResult } from '$lib/game/utils/result.svelte';
 import { onSocket } from '$lib/utils/on-socket';
 
@@ -44,6 +45,7 @@ const createGameState = (): GameState => ({
 export const game = $state(createGameState());
 
 export function resetGame() {
+  combatAnim.reset();
   Object.assign(game, createGameState());
 }
 
@@ -96,6 +98,10 @@ export function initGameState() {
       game.canOrder = true;
     },
   );
+
+  onSocket('game:roundResult', ({ events }) => {
+    combatAnim.playEvents(events);
+  });
 
   onSocket('game:endOrders', () => {
     game.canOrder = false;

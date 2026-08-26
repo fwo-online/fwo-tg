@@ -240,11 +240,7 @@ export async function createTowerGame(tower: TowerService, isBoss: boolean) {
 
 export const createPracticeGame = async (player: string) => {
   const character = arena.characters[player];
-  const game = await createGame(
-    [player],
-    { round: { timeouts: { [RoundStatus.INIT]: 2000, [RoundStatus.START_ROUND]: 5000 } } },
-    character.owner,
-  );
+  const game = await createGame([player], undefined, character.owner);
 
   if (!game) {
     return;
@@ -277,9 +273,7 @@ export const createPracticeGame = async (player: string) => {
 export async function createForestGame(player: Player, enemy: Player) {
   const game = await createGame(
     [],
-    {
-      round: { timeouts: { [RoundStatus.INIT]: 1000, [RoundStatus.START_ROUND]: 3000 } },
-    },
+    undefined,
     enemy.isBot ? player.owner : undefined,
   );
 

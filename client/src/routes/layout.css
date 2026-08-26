@@ -139,3 +139,75 @@ code {
   font-family: 'PixeloidMono';
   src: url('/fonts/PixeloidMono.woff2') format('woff2');
 }
+
+/* Combat Animations */
+@keyframes fwo-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+@keyframes fwo-float-damage {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.7);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -8px) scale(1.15);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(-50%, -22px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -34px) scale(0.85);
+  }
+}
+
+@keyframes fwo-flash-hit {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: rgba(239, 68, 68, 0.35); }
+}
+
+@keyframes fwo-flash-heal {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: rgba(34, 197, 94, 0.35); }
+}
+
+@keyframes fwo-lunge {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(8px); }
+}
+
+.fwo-anim-shake {
+  animation: fwo-shake 0.35s ease-in-out;
+}
+
+.fwo-anim-hit-flash {
+  animation: fwo-flash-hit 0.35s ease-out;
+}
+
+.fwo-anim-heal-flash {
+  animation: fwo-flash-heal 0.4s ease-out;
+}
+
+.fwo-anim-lunge {
+  animation: fwo-lunge 0.25s ease-out;
+}
+
+.fwo-floating-text {
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  pointer-events: none;
+  animation: fwo-float-damage 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  z-index: 50;
+  white-space: nowrap;
+  font-family: 'PixeloidMono', monospace;
+  text-shadow: 1px 1px 0px #000, -1px -1px 0px #000, 1px -1px 0px #000, -1px 1px 0px #000;
+}
+
