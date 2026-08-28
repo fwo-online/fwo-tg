@@ -40,6 +40,7 @@ fwo-tg/
 - **[Клиент](docs/agents/client-patterns.md)** — роутинг, Zustand-сторы, ApiClient, хуки
 - **[Система эффектов](docs/agents/effects-system.md)** — Affect/Effect/LongEffect/Passive, PlayerAffects, EffectService, глобальные флаги
 - **[Multiple Characters](docs/agents/multiple-characters.md)** — добавленная фича: несколько персонажей, `active`, кеш, клиентский UX
+- **[Rust Боевой Движок](docs/agents/rust-engine.md)** — архитектура нативного движка (@fwo/engine), NAPI-мост, боевой конвейер, система хуков, выводы и целевой дизайн
 
 ## Конвенции
 
