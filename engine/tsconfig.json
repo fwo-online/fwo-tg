@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["ESNext"],
+    "strict": true,
+    "strictNullChecks": true,
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "types": ["node", "bun"],
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./out",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "resolveJsonModule": true
+  },
+  "include": ["index.ts", "index.d.ts"]
+}

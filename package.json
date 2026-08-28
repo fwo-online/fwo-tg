@@ -7,9 +7,11 @@
   "workspaces": [
     "server",
     "client",
-    "shared"
+    "shared",
+    "engine"
   ],
   "scripts": {
+    "build:engine": "bun --filter '@fwo/engine' build:debug",
     "start": "NODE_ENV=production bun server/fwo.ts",
     "dev": "bun run --filter '@fwo/*' dev",
     "test": "bun run --filter '@fwo/*' test",

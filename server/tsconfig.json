@@ -1,7 +1,12 @@
 {
-  "references": [{
-    "path": "../shared/tsconfig.json"
-  }],
+  "references": [
+    {
+      "path": "../shared/tsconfig.json"
+    },
+    {
+      "path": "../engine/tsconfig.json"
+    }
+  ],
   "compilerOptions": {
     "composite": true,
     "emitDeclarationOnly": true,

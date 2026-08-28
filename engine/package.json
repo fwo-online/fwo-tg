@@ -1,0 +1,28 @@
+{
+  "name": "@fwo/engine",
+  "version": "0.1.0",
+  "main": "./index.ts",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "default": "./index.ts",
+      "types": "./index.d.ts"
+    }
+  },
+  "napi": {
+    "name": "fwo-engine",
+    "triples": {
+      "defaults": true,
+      "additional": []
+    }
+  },
+  "scripts": {
+    "build": "napi build --platform --release",
+    "build:debug": "napi build --platform",
+    "types": "tsc",
+    "test": "cargo test"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^3.0.0"
+  }
+}
