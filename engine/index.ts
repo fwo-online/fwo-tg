@@ -108,6 +108,7 @@ export const rollRndmExpr = (diceStr: string): number => binding.rollRndmExpr(di
 export const checkPseudoChance = (chancePercent: number, failStreak: number): boolean =>
   binding.checkPseudoChance(chancePercent, failStreak);
 export const getEngineStatus = (): EngineStatus => binding.getEngineStatus();
+export const executeRound = (input: RoundInput): RoundOutput => binding.executeRound(input);
 export const executeSingleAction = (input: RoundInput): RoundOutput =>
   binding.executeSingleAction(input);
 
@@ -118,5 +119,6 @@ export default {
   rollRndmExpr,
   checkPseudoChance,
   getEngineStatus,
+  executeRound,
   executeSingleAction,
 };

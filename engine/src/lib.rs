@@ -4,6 +4,7 @@ pub mod actions;
 pub mod combat;
 pub mod domain;
 pub mod rng;
+pub mod round;
 
 use actions::registry::ActionRegistry;
 use domain::defs::BattleDefs;
@@ -63,13 +64,12 @@ pub struct RoundInput {
     pub orders: Vec<Order>,
 }
 
-#[napi(object)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RoundOutput {
-    pub next_state: BattleState,
-    pub events: Vec<BattleEvent>,
-    pub is_game_end: bool,
-    pub end_reason: Option<String>,
+pub use round::RoundOutput;
+
+/// Выполняет полный раунд боя по стадиям со старением эффектов и проверкой победы
+#[napi]
+pub fn execute_round(input: RoundInput) -> RoundOutput {
+    round::execute_round_stages(&input.defs, input.state, &input.orders)
 }
 
 /// Выполняет боевые действия через диспетчер и возвращает обновленное состояние и список событий
