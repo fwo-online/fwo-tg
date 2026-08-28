@@ -1,5 +1,12 @@
 #![deny(clippy::all)]
 
+pub mod domain;
+pub mod rng;
+
+use domain::defs::BattleDefs;
+use domain::events::BattleEvent;
+use domain::order::Order;
+use domain::state::BattleState;
 use napi_derive::napi;
 use serde::{Deserialize, Serialize};
 
@@ -11,6 +18,21 @@ pub fn ping(msg: String) -> String {
 #[napi]
 pub fn float_number(val: f64) -> f64 {
     (val * 100.0).round() / 100.0
+}
+
+#[napi]
+pub fn roll_dice_expr(dice_str: String) -> f64 {
+    rng::dice::roll_dice(&dice_str)
+}
+
+#[napi]
+pub fn roll_rndm_expr(dice_str: String) -> i32 {
+    rng::dice::roll_rndm(&dice_str)
+}
+
+#[napi]
+pub fn check_pseudo_chance(chance_percent: f64, fail_streak: u32) -> bool {
+    rng::streak::check_pseudo_random_chance(chance_percent, fail_streak)
 }
 
 #[napi(object)]
@@ -30,6 +52,23 @@ pub fn get_engine_status() -> EngineStatus {
     }
 }
 
+#[napi(object)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RoundInput {
+    pub defs: BattleDefs,
+    pub state: BattleState,
+    pub orders: Vec<Order>,
+}
+
+#[napi(object)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RoundOutput {
+    pub next_state: BattleState,
+    pub events: Vec<BattleEvent>,
+    pub is_game_end: bool,
+    pub end_reason: Option<String>,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -46,4 +85,3 @@ mod tests {
         assert_eq!(float_number(1.999), 2.0);
     }
 }
-
