@@ -1,5 +1,6 @@
 #![deny(clippy::all)]
 
+pub mod combat;
 pub mod domain;
 pub mod rng;
 
@@ -67,6 +68,32 @@ pub struct RoundOutput {
     pub events: Vec<BattleEvent>,
     pub is_game_end: bool,
     pub end_reason: Option<String>,
+}
+
+/// Выполняет боевое действие через пайплайн и возвращает обновленное состояние и список событий
+#[napi]
+pub fn execute_single_action(input: RoundInput) -> RoundOutput {
+    let mut state = input.state;
+    let mut all_events = Vec::new();
+
+    for order in &input.orders {
+        let (_result, events) = combat::pipeline::execute_physical_attack(&input.defs, &mut state, order);
+        all_events.extend(events);
+    }
+
+    let alive_players = state.alive_player_ids();
+    let is_game_end = alive_players.len() <= 1;
+
+    RoundOutput {
+        next_state: state,
+        events: all_events,
+        is_game_end,
+        end_reason: if is_game_end {
+            Some("LAST_PLAYER_STANDING".to_string())
+        } else {
+            None
+        },
+    }
 }
 
 #[cfg(test)]

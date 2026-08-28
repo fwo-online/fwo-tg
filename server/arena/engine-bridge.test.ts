@@ -4,6 +4,7 @@ import {
   type BattleState,
   type Order,
   checkPseudoChance,
+  executeSingleAction,
   floatNumber,
   getEngineStatus,
   ping,
@@ -49,19 +50,31 @@ describe('Rust Engine NAPI Bridge', () => {
     expect(checkPseudoChance(10, 50)).toBe(true);
   });
 
-  it('should typecheck domain structures properly', () => {
+  it('should execute physical attack through Rust combat pipeline', () => {
     const defs: BattleDefs = {
       players: [
         {
           id: 0,
-          nick: 'Player1',
-          clanId: 'Alpha',
-          weapon: { weaponType: 'cut', minHit: 1, maxHit: 5 },
+          nick: 'Attacker',
+          clanId: 'ClanA',
+          weapon: { weaponType: 'cut', minHit: 10, maxHit: 10 },
           skills: { attack: 1 },
-          magics: { fireBall: 2 },
-          passives: { sweepingBlow: 1 },
-          resists: { phys: 0.1 },
-          baseStats: { 'phys.attack': 20 },
+          magics: {},
+          passives: {},
+          resists: {},
+          baseStats: { 'phys.attack': 20 }, // +20% -> 12 damage
+          maxTarget: 1,
+        },
+        {
+          id: 1,
+          nick: 'Defender',
+          clanId: 'ClanB',
+          weapon: { weaponType: 'cut', minHit: 5, maxHit: 5 },
+          skills: {},
+          magics: {},
+          passives: {},
+          resists: { phys: 0.1 }, // -10% resist -> 12 * 0.9 = 10.8
+          baseStats: {},
           maxTarget: 1,
         },
       ],
@@ -81,20 +94,126 @@ describe('Rust Engine NAPI Bridge', () => {
           failStreaks: {},
           affects: [],
         },
+        {
+          hp: 100,
+          maxHp: 100,
+          mp: 50,
+          maxMp: 50,
+          energy: 100,
+          maxEnergy: 100,
+          expEarned: 0,
+          isAlive: true,
+          failStreaks: {},
+          affects: [],
+        },
       ],
       round: 1,
       noDamageStreak: 0,
     };
 
-    const order: Order = {
-      initiator: 0,
-      target: 1,
-      action: 'attack',
-      proc: 100,
+    const orders: Order[] = [
+      {
+        initiator: 0,
+        target: 1,
+        action: 'attack',
+        proc: 100,
+      },
+    ];
+
+    const output = executeSingleAction({ defs, state, orders });
+
+    // 10.8 damage applied to Defender
+    expect(output.nextState.players[1].hp).toBe(89.2);
+    // Attacker gained 10.8 * 8 = 86 exp
+    expect(output.nextState.players[0].expEarned).toBe(86);
+    expect(output.events.length).toBe(1);
+    expect(output.events[0].eventType).toBe('damage');
+    expect(output.events[0].value).toBe(10.8);
+    expect(output.events[0].exp).toBe(86);
+  });
+
+  it('should handle Dodge in Rust combat pipeline without dealing damage', () => {
+    const defs: BattleDefs = {
+      players: [
+        {
+          id: 0,
+          nick: 'Attacker',
+          clanId: 'ClanA',
+          weapon: { weaponType: 'cut', minHit: 10, maxHit: 10 },
+          skills: {},
+          magics: {},
+          passives: {},
+          resists: {},
+          baseStats: {},
+          maxTarget: 1,
+        },
+        {
+          id: 1,
+          nick: 'Dodger',
+          clanId: 'ClanB',
+          weapon: { weaponType: 'cut', minHit: 5, maxHit: 5 },
+          skills: {},
+          magics: {},
+          passives: {},
+          resists: {},
+          baseStats: {},
+          maxTarget: 1,
+        },
+      ],
     };
 
-    expect(defs.players[0].nick).toBe('Player1');
-    expect(state.players[0].hp).toBe(100);
-    expect(order.action).toBe('attack');
+    const state: BattleState = {
+      players: [
+        {
+          hp: 100,
+          maxHp: 100,
+          mp: 50,
+          maxMp: 50,
+          energy: 100,
+          maxEnergy: 100,
+          expEarned: 0,
+          isAlive: true,
+          failStreaks: {},
+          affects: [],
+        },
+        {
+          hp: 100,
+          maxHp: 100,
+          mp: 50,
+          maxMp: 50,
+          energy: 100,
+          maxEnergy: 100,
+          expEarned: 0,
+          isAlive: true,
+          failStreaks: {},
+          affects: [
+            {
+              actionKey: 'dodge',
+              initiatorId: 1,
+              affectType: 'Round',
+              duration: 1,
+              value: 0,
+              proc: 1,
+            },
+          ],
+        },
+      ],
+      round: 1,
+      noDamageStreak: 0,
+    };
+
+    const orders: Order[] = [
+      {
+        initiator: 0,
+        target: 1,
+        action: 'attack',
+        proc: 100,
+      },
+    ];
+
+    const output = executeSingleAction({ defs, state, orders });
+    expect(output.nextState.players[1].hp).toBe(100); // 0 damage!
+    expect(output.events.length).toBe(1);
+    expect(output.events[0].eventType).toBe('dodged');
   });
 });
