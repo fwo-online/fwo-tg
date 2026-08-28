@@ -1,9 +1,11 @@
 #![deny(clippy::all)]
 
+pub mod actions;
 pub mod combat;
 pub mod domain;
 pub mod rng;
 
+use actions::registry::ActionRegistry;
 use domain::defs::BattleDefs;
 use domain::events::BattleEvent;
 use domain::order::Order;
@@ -70,14 +72,15 @@ pub struct RoundOutput {
     pub end_reason: Option<String>,
 }
 
-/// Выполняет боевое действие через пайплайн и возвращает обновленное состояние и список событий
+/// Выполняет боевые действия через диспетчер и возвращает обновленное состояние и список событий
 #[napi]
 pub fn execute_single_action(input: RoundInput) -> RoundOutput {
     let mut state = input.state;
     let mut all_events = Vec::new();
+    let registry = ActionRegistry::new();
 
     for order in &input.orders {
-        let (_result, events) = combat::pipeline::execute_physical_attack(&input.defs, &mut state, order);
+        let (_result, events) = actions::dispatcher::dispatch_action(&input.defs, &mut state, order, &registry);
         all_events.extend(events);
     }
 

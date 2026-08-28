@@ -216,4 +216,160 @@ describe('Rust Engine NAPI Bridge', () => {
     expect(output.events.length).toBe(1);
     expect(output.events[0].eventType).toBe('dodged');
   });
+
+  it('should cast fireBall, consume MP and deal magic damage', () => {
+    const defs: BattleDefs = {
+      players: [
+        {
+          id: 0,
+          nick: 'Mage',
+          clanId: 'ClanA',
+          weapon: { weaponType: 'cut', minHit: 1, maxHit: 5 },
+          skills: {},
+          magics: { fireBall: 1 },
+          passives: {},
+          resists: {},
+          baseStats: {},
+          maxTarget: 1,
+        },
+        {
+          id: 1,
+          nick: 'Target',
+          clanId: 'ClanB',
+          weapon: { weaponType: 'cut', minHit: 1, maxHit: 5 },
+          skills: {},
+          magics: {},
+          passives: {},
+          resists: {},
+          baseStats: {},
+          maxTarget: 1,
+        },
+      ],
+    };
+
+    const state: BattleState = {
+      players: [
+        {
+          hp: 100,
+          maxHp: 100,
+          mp: 50,
+          maxMp: 50,
+          energy: 100,
+          maxEnergy: 100,
+          expEarned: 0,
+          isAlive: true,
+          failStreaks: {},
+          affects: [],
+        },
+        {
+          hp: 100,
+          maxHp: 100,
+          mp: 50,
+          maxMp: 50,
+          energy: 100,
+          maxEnergy: 100,
+          expEarned: 0,
+          isAlive: true,
+          failStreaks: {},
+          affects: [],
+        },
+      ],
+      round: 1,
+      noDamageStreak: 0,
+    };
+
+    const orders: Order[] = [
+      {
+        initiator: 0,
+        target: 1,
+        action: 'fireBall',
+        proc: 100,
+      },
+    ];
+
+    const output = executeSingleAction({ defs, state, orders });
+    expect(output.nextState.players[0].mp).toBe(26); // 50 - 24 MP
+    expect(output.nextState.players[1].hp).toBeLessThan(100);
+    expect(output.events.length).toBe(1);
+    expect(output.events[0].eventType).toBe('damage');
+    expect(output.events[0].actionKey).toBe('fireBall');
+  });
+
+  it('should cast lightHeal on ally, consume MP and restore HP', () => {
+    const defs: BattleDefs = {
+      players: [
+        {
+          id: 0,
+          nick: 'Healer',
+          clanId: 'ClanA',
+          weapon: { weaponType: 'cut', minHit: 1, maxHit: 5 },
+          skills: {},
+          magics: { lightHeal: 1 },
+          passives: {},
+          resists: {},
+          baseStats: {},
+          maxTarget: 1,
+        },
+        {
+          id: 1,
+          nick: 'Ally',
+          clanId: 'ClanA',
+          weapon: { weaponType: 'cut', minHit: 1, maxHit: 5 },
+          skills: {},
+          magics: {},
+          passives: {},
+          resists: {},
+          baseStats: {},
+          maxTarget: 1,
+        },
+      ],
+    };
+
+    const state: BattleState = {
+      players: [
+        {
+          hp: 100,
+          maxHp: 100,
+          mp: 50,
+          maxMp: 50,
+          energy: 100,
+          maxEnergy: 100,
+          expEarned: 0,
+          isAlive: true,
+          failStreaks: {},
+          affects: [],
+        },
+        {
+          hp: 60, // 60/100 HP
+          maxHp: 100,
+          mp: 50,
+          maxMp: 50,
+          energy: 100,
+          maxEnergy: 100,
+          expEarned: 0,
+          isAlive: true,
+          failStreaks: {},
+          affects: [],
+        },
+      ],
+      round: 1,
+      noDamageStreak: 0,
+    };
+
+    const orders: Order[] = [
+      {
+        initiator: 0,
+        target: 1,
+        action: 'lightHeal',
+        proc: 100,
+      },
+    ];
+
+    const output = executeSingleAction({ defs, state, orders });
+    expect(output.nextState.players[0].mp).toBe(45); // 50 - 5 MP
+    expect(output.nextState.players[1].hp).toBeGreaterThan(60);
+    expect(output.nextState.players[0].expEarned).toBeGreaterThan(0);
+    expect(output.events.length).toBe(1);
+    expect(output.events[0].eventType).toBe('heal');
+  });
 });
