@@ -103,7 +103,9 @@ export function initGameState() {
   });
 
   onSocket('game:end', (results) => {
-    showGameResult(results);
+    const charID = character().id;
+    const result = results.find((result) => result.player.id === charID);
+    showGameResult(result);
     goto('#/');
   });
 

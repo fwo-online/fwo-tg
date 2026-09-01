@@ -5,6 +5,7 @@
 
   let { data }: PageProps = $props();
 
+  // svelte-ignore state_referenced_locally
   if (data.character) {
     goto("#/character");
   }
