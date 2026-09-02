@@ -30,6 +30,7 @@
     "es-toolkit": "catalog:",
     "hono": "catalog:",
     "nes.css": "^2.3.0",
+    "runed": "^0.37.1",
     "socket.io-client": "^4.8.3"
   }
 }

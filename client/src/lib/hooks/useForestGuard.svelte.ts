@@ -15,6 +15,12 @@ export const useForestGuard = () => {
   onSocket('forest:start', navigateToForest);
 
   onMount(() => {
+    const currentGame = character().game;
+
+    if (currentGame) {
+      return;
+    }
+
     const currentForest = character().forest;
     const pathname = page.url.pathname;
 

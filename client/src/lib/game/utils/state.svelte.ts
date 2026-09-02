@@ -102,10 +102,11 @@ export function initGameState() {
     game.orders = [];
   });
 
-  onSocket('game:end', (results) => {
+  onSocket('game:end', async (results) => {
     const charID = character().id;
     const result = results.find((result) => result.player.id === charID);
     showGameResult(result);
+    await invalidate('app:character');
     goto('#/');
   });
 

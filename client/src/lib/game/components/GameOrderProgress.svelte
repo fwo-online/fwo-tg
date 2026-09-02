@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { useInterval } from "runed";
   import { game } from "$lib/game/utils/state.svelte";
 
   const ordersTime = $derived(game.ordersTime);
@@ -7,16 +8,13 @@
 
   let remainTime = $state(0);
 
-  $effect(() => {
-    const update = () => {
+  useInterval(() => 100, {
+    callback: () => {
       remainTime = Math.max(
         0,
         ordersStartTime + ordersTime - Date.now() - threshold,
       );
-    };
-    update();
-    const interval = setInterval(update, 100);
-    return () => clearInterval(interval);
+    },
   });
 </script>
 
