@@ -12,7 +12,9 @@
 
   const visibleSkills = $derived(
     data.passiveSkills.filter(
-      (skill) => passiveSkills[skill.name] || skill.bonusCost.length,
+      (skill) =>
+        (passiveSkills[skill.name] || skill.bonusCost.length) &&
+        (!skill.classList || character().class in skill.classList),
     ),
   );
 </script>

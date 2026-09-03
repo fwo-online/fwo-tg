@@ -32,6 +32,7 @@ export type PassiveSkill = {
   chance: number[];
   effect: number[];
   bonusCost: number[];
+  classList?: Partial<Record<CharacterClass, number>>;
 };
 
 export enum CostType {

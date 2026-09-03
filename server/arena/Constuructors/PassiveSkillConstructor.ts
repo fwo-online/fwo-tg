@@ -1,3 +1,4 @@
+import type { ProfsLvl } from '@/data/profs';
 import type { ActionKey } from '@/arena/ActionService';
 import { BaseAction } from '@/arena/Constuructors/BaseAction';
 import MiscService from '../MiscService';
@@ -11,6 +12,7 @@ export interface PassiveSkillAttributes {
   bonusCost: number[];
   displayName: string;
   description: string;
+  profList?: ProfsLvl;
 }
 
 /**
@@ -24,6 +26,7 @@ export abstract class PassiveSkillConstructor extends BaseAction {
   chance: number[];
   effect: number[];
   bonusCost: number[];
+  profList?: ProfsLvl;
   actionType: ActionType = 'passive';
 
   constructor(attributes: PassiveSkillAttributes) {
@@ -35,6 +38,7 @@ export abstract class PassiveSkillConstructor extends BaseAction {
     this.bonusCost = attributes.bonusCost;
     this.displayName = attributes.displayName;
     this.description = attributes.description;
+    this.profList = attributes.profList;
   }
 
   override cast(initiator: Player) {
