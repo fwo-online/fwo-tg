@@ -192,12 +192,15 @@ export default class MagicService {
    */
   static getBranchMagics(character: CharacterService, branchId: MagicBranchId) {
     const allMagics = MagicService.getMagicListByProf(character.prof);
-    return allMagics.filter((m) => {
-      return m.branches?.includes(branchId);
-    });
+    return allMagics
+      .filter((m) => {
+        return m.branches?.includes(branchId);
+      })
+      .sort((a, b) => a.lvl - b.lvl);
   }
 
   /**
+   * @deprecated
    * Изучение магии со случайным выбором (обратная совместимость)
    * @param lvl круг проучиваемой магии
    */
@@ -226,6 +229,7 @@ export default class MagicService {
   }
 
   /**
+   * @deprecated
    * Возвращает доступные магии на данном круге для изучения
    * @param lvl круг проучиваемой магии
    */
@@ -244,6 +248,7 @@ export default class MagicService {
     });
   }
 
+  /** @deprecated */
   static getAvaiableLevels(character: CharacterService) {
     const magics = MagicService.getMagicListByProf(character.class);
 
@@ -266,7 +271,7 @@ export default class MagicService {
    * @param magId строка идентификатор магии
    */
   static getMagicById(magic: string, prof?: string) {
-    return arena.magics[magic as keyof (typeof arena)['magics']].toObject(prof);
+    return arena.magics[magic as keyof (typeof arena)['magics']].toObject();
   }
 
   /**
@@ -284,10 +289,11 @@ export default class MagicService {
 
         return magic.lvl === lvl && magic.profList.includes(prof);
       })
-      .map((magic) => magic.toObject(prof));
+      .map((magic) => magic.toObject())
+      .sort((a, b) => a.lvl - b.lvl);
   }
 
   static getMagicListByIds(magics: string[], prof?: string) {
-    return magics.map((m) => MagicService.getMagicById(m, prof));
+    return magics.map((m) => MagicService.getMagicById(m, prof)).sort((a, b) => a.lvl - b.lvl);
   }
 }

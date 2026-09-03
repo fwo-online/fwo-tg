@@ -1,7 +1,7 @@
+import type { MagicBranchId } from '@fwo/shared';
 import { vValidator } from '@hono/valibot-validator';
 import { Hono } from 'hono';
 import * as v from 'valibot';
-import type { MagicBranchId } from '@fwo/shared';
 import MagicService from '@/arena/MagicService';
 import { characterMiddleware, userMiddleware } from '@/server/middlewares';
 import { handleValidationError } from '@/server/utils/handleValidationError';
@@ -28,11 +28,11 @@ export const magic = new Hono()
       return c.json(result);
     },
   )
-  .post('/reset', async (c) => {
-    const character = c.get('character');
-    const result = await withValidation(MagicService.resetMagics(character));
-    return c.json(result);
-  })
+  // .post('/reset', async (c) => {
+  //   const character = c.get('character');
+  //   const result = await withValidation(MagicService.resetMagics(character));
+  //   return c.json(result);
+  // })
   .post(
     '/learn/:name',
     vValidator('param', v.object({ name: v.string() }), handleValidationError),
@@ -71,10 +71,15 @@ export const magic = new Hono()
     async (c) => {
       const { ids } = c.req.valid('query');
       const character = c.get('character');
-      const targetIds = ids ? normalizeToArray(ids) : Object.keys(character.magics);
-      const magics = MagicService.getMagicListByIds(targetIds, character.prof);
+      const targetIds = normalizeToArray(ids);
 
-      return c.json(magics);
+      if (!targetIds.length) {
+        const magics = MagicService.getMagicListByProf(character.prof);
+        return c.json(magics);
+      } else {
+        const magics = MagicService.getMagicListByIds(targetIds, character.prof);
+        return c.json(magics);
+      }
     },
   )
   .post(

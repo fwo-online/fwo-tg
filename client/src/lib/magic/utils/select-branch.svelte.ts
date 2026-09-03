@@ -8,6 +8,7 @@ export const selectBranch = createRequestRunner(async (branch: string) => {
     json: { branch },
   });
 
+  await invalidate('app:branches-info');
   await invalidate('app:character');
 
   popup.info({
