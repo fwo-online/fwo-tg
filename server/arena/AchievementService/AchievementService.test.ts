@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'bun:test';
+import { beforeEach, describe, expect, it, spyOn } from 'bun:test';
 import { CharacterClass } from '@fwo/shared';
 import arena from '@/arena';
 import type { CharacterService } from '@/arena/CharacterService';
@@ -130,9 +130,29 @@ describe('AchievementService (Stats-Based) & Vigor', () => {
   //     character: char,
   //     damage: 1500,
   //   });
-
+  // 
   //   const list = AchievementService.getAchievements(char);
   //   const boss50k = list.find((a) => a.id === 'boss_damage_50k');
   //   expect(boss50k?.progress).toBe(1500);
   // });
+
+  it('should forward claimedAchievements to updateCharacter during saveToDb', async () => {
+    let passedUpdatePayload: any = null;
+    const characterApi = await import('@/api/character');
+    const updateSpy = spyOn(characterApi, 'updateCharacter').mockImplementation((_id, query) => {
+      passedUpdatePayload = query;
+      return Promise.resolve({} as any);
+    });
+
+    // Restore real saveToDb for this character
+    (char.saveToDb as any).mockRestore?.();
+
+    await char.performance.addStat('wins', 10);
+    await AchievementService.claim(char, 'arena_wins_10');
+
+    expect(passedUpdatePayload).toBeDefined();
+    expect(passedUpdatePayload.claimedAchievements).toContain('arena_wins_10');
+
+    updateSpy.mockRestore();
+  });
 });

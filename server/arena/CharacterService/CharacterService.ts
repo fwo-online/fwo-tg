@@ -455,7 +455,7 @@ export class CharacterService {
         contractsGeneratedAt: this.charObj.contractsGeneratedAt,
         activeTitle: this.charObj.activeTitle,
         unlockedTitles: this.charObj.unlockedTitles,
-        achievements: this.charObj.achievements,
+        claimedAchievements: this.charObj.claimedAchievements,
         vigor: this.charObj.vigor,
       });
     } catch (e) {
