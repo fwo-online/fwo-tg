@@ -30,11 +30,11 @@ describe('PassiveSkillService', () => {
     });
     const warrior = arena.characters[warriorDoc.id];
 
-    expect(
+    await expect(
       PassiveSkillService.learnPassiveSkill(warrior, 'ricochet'),
     ).rejects.toThrow('Умение недоступно для твоего класса');
 
-    expect(
+    await expect(
       PassiveSkillService.learnPassiveSkill(warrior, 'criticalStrike'),
     ).rejects.toThrow('Умение недоступно для твоего класса');
   });
@@ -54,7 +54,7 @@ describe('PassiveSkillService', () => {
     }
 
     // 7th level should fail
-    expect(
+    await expect(
       PassiveSkillService.learnPassiveSkill(char, 'criticalStrike'),
     ).rejects.toThrow('имеет максимальный уровень');
   });
