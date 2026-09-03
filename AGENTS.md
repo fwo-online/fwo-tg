@@ -39,6 +39,9 @@ fwo-tg/
 - **[Сервер](docs/agents/server-patterns.md)** — CharacterService, API layer, `arena.characters` кеш, middleware
 - **[Клиент](docs/agents/client-patterns.md)** — роутинг, Zustand-сторы, ApiClient, хуки
 - **[Система эффектов](docs/agents/effects-system.md)** — Affect/Effect/LongEffect/Passive, PlayerAffects, EffectService, глобальные флаги
+- **[Система магий](docs/agents/magic-system.md)** — каталог заклинаний кругов 1–7, статус реализации, механика изучения
+- **[План: Ветки магий](docs/specs/magic-branches-plan.md)** — новая система специализаций (1–2 ветки), целенаправленное изучение без рандома
+- **[Подклассы и улучшение класса](docs/agents/subclasses.md)** — 16 комбинаций классов, 8-й круг магии, активные и пассивные умения
 - **[Multiple Characters](docs/agents/multiple-characters.md)** — добавленная фича: несколько персонажей, `active`, кеш, клиентский UX
 
 ## Конвенции
