@@ -1,7 +1,7 @@
 # План реализации: Ветки магий и целенаправленное изучение
 
-> Статус: **В планировании**  
-> Связанные документы: [`docs/agents/magic-system.md`](../agents/magic-system.md), [`server/arena/MagicService.ts`](../../server/arena/MagicService.ts), [`shared/actions/index.ts`](../../shared/actions/index.ts)
+> Статус: **РЕАЛИЗОВАНО** (Все этапы 1–5 завершены)  
+> Связанные документы: [`docs/agents/magic-system.md`](../agents/magic-system.md), [`server/arena/MagicService.ts`](../../server/arena/MagicService.ts), [`shared/actions/branches.ts`](../../shared/actions/branches.ts)
 
 ---
 
@@ -127,10 +127,18 @@
 
    export const SECOND_BRANCH_MIN_CHAR_LVL = 5;
    ```
-2. **Метаданные заклинания**:
-   - Добавить поле `branch?: MagicBranchId` в `Magic` интерфейс (для кругов 1–7).
-   - Добавить поле `subclassReq?: SubclassId` в `Magic` интерфейс (для круга 8).
-   - Справочник привязки: `MAGIC_TO_BRANCH: Record<string, MagicBranchId>`.
+2. **Метаданные заклинания и гибридные школы**:
+   - Поле `branches?: MagicBranchId[]` прямо в параметрах магии (`MagicArgs` в `server/arena/Constuructors/MagicConstructor.ts` и в конкретных файлах `server/arena/magics/`).
+   - Заклинание может принадлежать **сразу нескольким школам (гибридное)**. Персонажу достаточно иметь **хотя бы одну** из этих веток, чтобы выучить заклинание:
+     - `dispel`: `['protection', 'inquisition']` (снятие дебаффов со своих / снятие баффов с врагов)
+     - `secondLife`: `['holy', 'protection']` (святое воскрешение / защитный бафф спасения от смерти)
+     - `exorcism`: `['protection', 'inquisition']` (очищение соратников / изгнание скверны)
+     - `lightHeal`: `['holy', 'protection']` для Жреца; `['arcana']` для Мага
+     - `bodySpirit`: `['inquisition', 'holy']` (карающее выжигание HP врага + пополнение маны)
+     - `frostTouch`: `['elements', 'darkness']` (стихийный урон холодом + периодический DoT увядания)
+     - `blight`: `['darkness', 'arcana']` (некротический срез HP + ментальное истощение)
+     - `vampirism`: `['darkness', 'arcana']` (высасывание здоровья + перенос энергии)
+   - В интерфейсе `Magic` возвращается `branches: MagicBranchId[]` и `branch: MagicBranchId`.
 
 ### 5.2. Слой Базы Данных (`server/models/character.ts`)
 
@@ -190,10 +198,36 @@
 
 ---
 
-## 6. Этапы реализации
+## 6. Итоги реализации (Все этапы завершены)
 
-1. **Шаг 1 (Shared + Models)**: Добавление типов веток, констант, поля `branch` у заклинаний и `magicBranches` в модель `Character`.
-2. **Шаг 2 (Server Business Logic)**: Реализация методов `selectBranch`, `learnSpecificMagic`, `resetMagics` в `MagicService` и покрытие unit-тестами.
-3. **Шаг 3 (Server HTTP API)**: Обновление роутера `/magic` в `server/server/magic.ts`.
-4. **Шаг 4 (Client UI)**: Рефакторинг страницы `client/src/routes/(app)/character/magics/+page.svelte` под выбор веток и целевое изучение.
-5. **Шаг 5 (Тестирование и баланс)**: Проверка сценариев выбора 1-й ветки, изучения магий, разблокировки 2-й ветки на 5-м уровне и сброса.
+1. [x] **Шаг 1 (Shared + Models)**:
+   - В `@fwo/shared` добавлены типы `MageBranch`, `PriestBranch`, `MagicBranchId`, метаданные `MAGIC_BRANCHES`, лимиты `MAX_MAGIC_BRANCHES = 2`, `SECOND_BRANCH_MIN_CHAR_LVL = 5` и задел под 16 подклассов улучшения класса (`SUBCLASSES`).
+   - В схему `Character` (shared и mongoose) добавлено поле `magicBranches: string[]`.
+   - В `Magic` добавлен массив `branches?: MagicBranchId[]`.
+   - Поле `branches` добавлено напрямую в `MagicArgs` и в параметры всех 37 реализованных файлов магий в `server/arena/magics/`.
+   - Полностью удален промежуточный словарь `MAGIC_TO_BRANCHES`: каждое заклинание самодостаточно декларирует свои специализации.
+2. [x] **Шаг 2 (Server Business Logic)**:
+   - В `CharacterService` добавлены геттер `magicBranches`, методы `setMagicBranches`, `resetMagics`, сохранение в базу и выгрузка клиенту.
+   - В `CharacterResources` добавлена поддержка добавления `bonus` для корректного 100% возврата очков при респеке.
+   - В `MagicService` реализованы:
+     - `selectBranch(character, branchId)` — выбор специализации с валидацией класса, лимита в 2 ветки и требования 5-го уровня для 2-го слота.
+     - `learnSpecificMagic(character, magicName)` — детерминированное изучение (100% шанс успеха, списание `bonus = lvl ** 2`, проверка круга магии, лимит 3 ранга).
+     - `resetMagics(character)` — полный сброс изученных магий и веток со 100% возвратом потраченных бонусов.
+     - `getBranchesInfo(character)` — метаданные, статус выбора, доступность выбора 2-й ветки.
+     - `getBranchMagics(character, branchId)` — список заклинаний конкретной ветки с поддержкой гибридных магий.
+   - **Гибридные заклинания (мульти-школы)**: заклинания могут принадлежать нескольким школам (`dispel`, `secondLife`, `exorcism`, `lightHeal`, `bodySpirit`, `frostTouch`, `blight`, `vampirism`, `mediumAura`). Для изучения достаточно иметь хотя бы одну из школ заклинания.
+3. [x] **Шаг 3 (Server HTTP API)**:
+   - В `server/server/magic.ts` зарегистрированы RPC-эндпоинты:
+     - `GET /branches`
+     - `POST /branch`
+     - `POST /learn/:name`
+     - `POST /reset`
+     - `GET /branch/:branchId`
+4. [x] **Шаг 4 (Client UI — Svelte 5)**:
+   - Созданы раннеры `selectBranch`, `learnSpecificMagic`, `resetMagics`.
+   - Обновлена страница `client/src/routes/(app)/character/magics/+page.svelte`:
+     - 3 режима: «Магии» (каталог изученных с подробностями и школами), «Ветки» (выбор 1-й и 2-й ветки, индикатор слотов, прогресс), «Изучение» (целенаправленная прокачка с отображением цен в бонусах, текущего ранга 1-3 и бейджей «гибрид»).
+     - Кнопка сброса магий с предупреждением и подтверждением.
+5. [x] **Шаг 5 (Тестирование и верификация)**:
+   - Написаны 17 unit-тестов в `server/arena/MagicService.test.ts` (выбор веток, гейт 5-го уровня, лимит 2 веток, целенаправленное изучение, максимальный ранг 3, полный возврат бонусов, гибридные школы).
+   - Все 148 тестов сервера и сборка фронтенда проходят без ошибок.

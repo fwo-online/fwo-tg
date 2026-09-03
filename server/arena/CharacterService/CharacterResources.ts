@@ -41,7 +41,12 @@ export class CharacterResources {
     return this.charObj.free;
   }
 
-  private addExp(value: number): { leveledUp: boolean; oldLvl: number; newLvl: number; freeAdded: number } {
+  private addExp(value: number): {
+    leveledUp: boolean;
+    oldLvl: number;
+    newLvl: number;
+    freeAdded: number;
+  } {
     const oldLvl = this.character.lvl;
 
     this.charObj.bonus += Math.round(value / 100);
@@ -59,7 +64,7 @@ export class CharacterResources {
       leveledUp: lvlDifference > 0,
       oldLvl,
       newLvl,
-      freeAdded
+      freeAdded,
     };
   }
 
@@ -78,8 +83,14 @@ export class CharacterResources {
     this.charObj.free += free;
   }
 
-  async addResources({ components, gold, exp, free }: Partial<Resources>) {
-    let levelUpInfo: { leveledUp: boolean; oldLvl: number; newLvl: number; freeAdded: number } | undefined;
+  private addBonus(bonus: number) {
+    this.charObj.bonus += bonus;
+  }
+
+  async addResources({ components, gold, exp, free, bonus }: Partial<Resources>) {
+    let levelUpInfo:
+      | { leveledUp: boolean; oldLvl: number; newLvl: number; freeAdded: number }
+      | undefined;
 
     if (components) {
       this.addComponents(components);
@@ -95,6 +106,10 @@ export class CharacterResources {
 
     if (free) {
       this.addFree(free);
+    }
+
+    if (bonus) {
+      this.addBonus(bonus);
     }
 
     await this.character.saveToDb();

@@ -1,4 +1,7 @@
 import type { CharacterClass } from '@/character';
+import type { MagicBranchId } from './branches';
+
+export * from './branches';
 
 export type Magic = {
   name: string;
@@ -10,6 +13,8 @@ export type Magic = {
   lvl: number;
   orderType: OrderType;
   effectType?: EffectType;
+  branch?: MagicBranchId;
+  branches?: MagicBranchId[];
 };
 
 export type Skill = {
@@ -90,5 +95,5 @@ export function canLearnMagic(characterLvl: number, magicLvl: number) {
 }
 
 export function getLearnMagicCost(magicLvl: number) {
-  return magicLvl ** 2;
+  return magicLvl ** 2 * 10;
 }

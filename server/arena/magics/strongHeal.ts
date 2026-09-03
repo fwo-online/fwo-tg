@@ -19,6 +19,7 @@ class StrongHeal extends HealMagic {
       chance: [100, 100, 100],
       effect: ['1d6+4', '1d5+5', '1d4+6'],
       profList: ['p'],
+      branches: ['holy'],
     });
   }
 

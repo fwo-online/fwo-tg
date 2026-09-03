@@ -25,6 +25,7 @@ const params: DmgMagicArgs = Object.freeze({
   effect: ['1d10+5', '1d10+10', '1d10+15'],
   dmgType: 'physical',
   profList: ['m'],
+  branches: ['darkness', 'arcana'],
 });
 
 class Blight extends CommonMagic {

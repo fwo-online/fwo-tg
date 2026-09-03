@@ -23,6 +23,7 @@ class MagicArmor extends CommonMagic {
       chance: [100, 100, 100],
       effect: ['1d2+3', '1d2+4', '1d2+5'],
       profList: ['m'],
+      branches: ['arcana'],
     });
   }
 

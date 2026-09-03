@@ -20,6 +20,7 @@ class SecondLife extends CommonMagic {
       magType: 'good',
       chance: ['1d60+30', '1d70+40', '1d80+50'], //  effect: ['1d4+2', '1d3+3', '1d2+4'],
       profList: ['p'],
+      branches: ['holy', 'protection'],
       effect: [],
     });
   }

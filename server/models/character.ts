@@ -1,4 +1,10 @@
-import type { CharacterAttributes, CharacterClass, Contract, ItemComponent, ItemWear } from '@fwo/shared';
+import type {
+  CharacterAttributes,
+  CharacterClass,
+  Contract,
+  ItemComponent,
+  ItemWear,
+} from '@fwo/shared';
 import mongoose, { type Model, Schema, type Types } from 'mongoose';
 import type { Clan } from '@/models/clan';
 import type { Item } from '@/models/item';
@@ -30,6 +36,7 @@ export interface Char {
   lastForest: Date | null;
   psr: number;
   magics: Record<string, number>;
+  magicBranches: string[];
   skills: Record<string, number>;
   passiveSkills: Record<string, number>;
   bonus: number;
@@ -111,6 +118,7 @@ const character = new Schema<Char, CharModel>({
   lastFight: { type: Date, default: null },
   psr: { type: Number, default: 0 },
   magics: { type: Object, default: {} },
+  magicBranches: { type: [String], default: [] },
   bonus: { type: Number, default: 0 },
   skills: { type: Object, default: {} },
   passiveSkills: { type: Object, default: {} },
@@ -171,16 +179,19 @@ const character = new Schema<Char, CharModel>({
   lastForest: { type: Schema.Types.Date, default: null },
   contracts: {
     type: [
-      new Schema({
-        type: { type: String, required: true },
-        tier: { type: Number, required: true },
-        goal: { type: Number, required: true },
-        progress: { type: Number, default: 0 },
-        claimed: { type: Boolean, default: false },
-        exp: { type: Number, required: true },
-        gold: { type: Number, required: true },
-        components: { type: Schema.Types.Map, of: Number, default: {} },
-      }, { _id: false }),
+      new Schema(
+        {
+          type: { type: String, required: true },
+          tier: { type: Number, required: true },
+          goal: { type: Number, required: true },
+          progress: { type: Number, default: 0 },
+          claimed: { type: Boolean, default: false },
+          exp: { type: Number, required: true },
+          gold: { type: Number, required: true },
+          components: { type: Schema.Types.Map, of: Number, default: {} },
+        },
+        { _id: false },
+      ),
     ],
     default: [],
   },

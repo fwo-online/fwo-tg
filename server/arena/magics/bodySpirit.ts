@@ -22,6 +22,7 @@ class Blessing extends DmgMagic {
       chance: [92, 94, 95],
       effect: ['1d4', '1d5+2', '1d6+3'],
       profList: ['p'],
+      branches: ['inquisition', 'holy'],
     });
   }
 

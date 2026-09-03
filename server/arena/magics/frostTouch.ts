@@ -25,6 +25,7 @@ const params: DmgMagicArgs = Object.freeze({
   effect: ['1d2', '1d2+1', '1d2+2'],
   dmgType: EffectType.Frost,
   profList: ['m'],
+  branches: ['elements', 'darkness'],
 });
 
 class FrostTouch extends CommonMagic {

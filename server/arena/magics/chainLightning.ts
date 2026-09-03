@@ -24,6 +24,7 @@ class ChainLightning extends AoeDmgMagic {
       effect: ['1d3+1', '1d3+2', '1d3+3'],
       dmgType: 'lighting',
       profList: ['m'],
+      branches: ['elements'],
     });
   }
 

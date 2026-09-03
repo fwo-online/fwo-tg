@@ -24,6 +24,7 @@ const params: DmgMagicArgs = Object.freeze({
   chance: ['1d80+20', '1d40+60', '1d20+80'],
   effect: ['1d1+10', '1d1+20', '1d1+30'],
   profList: ['m'],
+  branches: ['arcana'],
   dmgType: EffectType.Clear,
 });
 

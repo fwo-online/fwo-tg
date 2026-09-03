@@ -24,6 +24,7 @@ class Exorcism extends CommonMagic {
       magType: 'good',
       chance: ['1d60+30', '1d30+55', '1d10+70'],
       profList: ['p'],
+      branches: ['protection', 'inquisition'],
       effect: [],
     });
   }

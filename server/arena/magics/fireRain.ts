@@ -24,6 +24,7 @@ class FireRain extends AoeDmgMagic {
       effect: ['1d2', '1d2+2', '1d2+4'],
       dmgType: 'fire',
       profList: ['m'],
+      branches: ['elements'],
     });
   }
 

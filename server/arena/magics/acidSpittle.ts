@@ -23,6 +23,7 @@ class AcidSpittle extends DmgMagic {
       effect: ['1d3+3', '1d3+4', '1d3+5'],
       dmgType: 'acid',
       profList: ['m'],
+      branches: ['darkness'],
     });
   }
 

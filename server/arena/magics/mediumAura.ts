@@ -16,6 +16,7 @@ const params: MagicArgs = Object.freeze({
   chance: [100, 100, 100],
   effect: ['1d4+4', '1d3+5', '1d2+6'],
   profList: ['m'],
+  branches: ['arcana', 'protection'],
 });
 
 class MediumAura extends Aura {
