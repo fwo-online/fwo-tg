@@ -6,7 +6,6 @@
   import type { PageProps } from "./$types";
 
   const { data }: PageProps = $props();
-  let selectedSkill = $derived(data.passiveSkills[0]);
   const character = getCharacterContext();
   const passiveSkills = $derived(character().passiveSkills);
 
@@ -17,6 +16,8 @@
         (!skill.classList || character().class in skill.classList),
     ),
   );
+
+  let selectedSkill = $derived(visibleSkills[0]);
 </script>
 
 <div class="h-full flex flex-col">
