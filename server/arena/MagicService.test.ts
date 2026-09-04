@@ -85,7 +85,7 @@ describe('MagicService with branches', () => {
 
     it('should throw if selecting third branch', async () => {
       await MagicService.selectBranch(mage, 'elements');
-      await mage.resources.addResources({ exp: 100000 });
+      await mage.resources.addResources({ exp: 1000000 });
       await MagicService.selectBranch(mage, 'darkness');
 
       expect(MagicService.selectBranch(mage, 'arcana')).rejects.toThrow(
