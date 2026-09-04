@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, spyOn } from 'bun:test';
 import { CharacterClass } from '@fwo/shared';
+import { registerGlobals } from '@/utils/registerGlobals';
 import TestUtils from '@/utils/testUtils';
 import { CharacterService } from './CharacterService/CharacterService';
 import MagicService from './MagicService';
-import { registerGlobals } from '@/utils/registerGlobals';
 
 registerGlobals();
 
@@ -63,20 +63,20 @@ describe('MagicService with branches', () => {
       expect(MagicService.selectBranch(mage, 'elements')).rejects.toThrow('Эта ветка уже выбрана');
     });
 
-    it('should throw if selecting second branch before level 5', async () => {
+    it('should throw if selecting second branch before level 10', async () => {
       await MagicService.selectBranch(mage, 'elements');
       // mage is lvl 1
       expect(mage.lvl).toBe(1);
       expect(MagicService.selectBranch(mage, 'darkness')).rejects.toThrow(
-        'Вторая ветка открывается на 5-м уровне персонажа',
+        'Вторая ветка открывается на 10-м уровне персонажа',
       );
     });
 
-    it('should allow selecting second branch at level 5+', async () => {
+    it('should allow selecting second branch at level 10+', async () => {
       await MagicService.selectBranch(mage, 'elements');
       // Level up to 5: need 1000 * 3 * lvl
-      await mage.resources.addResources({ exp: 100000 });
-      expect(mage.lvl).toBeGreaterThanOrEqual(5);
+      await mage.resources.addResources({ exp: 10000000 });
+      expect(mage.lvl).toBeGreaterThanOrEqual(10);
 
       const result = await MagicService.selectBranch(mage, 'darkness');
       expect(result.branches).toEqual(['elements', 'darkness']);
@@ -107,7 +107,7 @@ describe('MagicService with branches', () => {
 
       expect(learned.name).toBe('magicArrow');
       expect(mage.magics.magicArrow).toBe(1);
-      expect(mage.resources.bonus).toBe(initialBonus - 1);
+      expect(mage.resources.bonus).toBe(initialBonus - 10);
     });
 
     it('should throw if magic is not from selected branch', async () => {
@@ -164,7 +164,7 @@ describe('MagicService with branches', () => {
         // @ts-expect-error
         spyOn(darkMage, 'saveToDb').mockImplementation(async () => darkMage.charObj);
         await MagicService.selectBranch(darkMage, 'darkness');
-        await darkMage.resources.addResources({ bonus: 20 });
+        await darkMage.resources.addResources({ bonus: 200 });
 
         const learnedInDarkness = await MagicService.learnSpecificMagic(darkMage, 'frostTouch');
         expect(learnedInDarkness.name).toBe('frostTouch');
@@ -173,7 +173,7 @@ describe('MagicService with branches', () => {
 
       it('should allow priest with protection branch to learn dispel (hybrid with inquisition)', async () => {
         await MagicService.selectBranch(priest, 'protection');
-        await priest.resources.addResources({ exp: 10000, bonus: 50 }); // lvl up to 3+
+        await priest.resources.addResources({ exp: 10000, bonus: 500 }); // lvl up to 3+
         expect(priest.lvl).toBeGreaterThanOrEqual(3);
 
         const dispel = await MagicService.learnSpecificMagic(priest, 'dispel');
@@ -197,16 +197,16 @@ describe('MagicService with branches', () => {
       await mage.resources.addResources({ bonus: 50 });
 
       const initialBonus = mage.resources.bonus;
-      await MagicService.learnSpecificMagic(mage, 'magicArrow'); // -1
-      await MagicService.learnSpecificMagic(mage, 'magicArrow'); // -1
-      expect(mage.resources.bonus).toBe(initialBonus - 2);
+      await MagicService.learnSpecificMagic(mage, 'magicArrow'); // -10
+      await MagicService.learnSpecificMagic(mage, 'magicArrow'); // -10
+      expect(mage.resources.bonus).toBe(initialBonus - 20);
 
       const resetResult = await MagicService.resetMagics(mage);
       // 2 from magicArrow (lvl 2 * 1) + 1 from starter lightHeal (lvl 1 * 1) = 3
-      expect(resetResult.refundedBonus).toBe(3);
+      expect(resetResult.refundedBonus).toBe(20);
       expect(mage.magics).toEqual({});
       expect(mage.magicBranches).toEqual([]);
-      expect(mage.resources.bonus).toBe(initialBonus + 1);
+      expect(mage.resources.bonus).toBe(initialBonus);
     });
   });
 });
