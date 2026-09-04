@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'bun:test';
 import { reservedClanName } from '@fwo/shared';
-import { times } from 'lodash';
+import { times } from 'es-toolkit/compat';
 import type { Char } from '@/models/character';
 import type { Clan } from '@/models/clan';
 import TestUtils from '@/utils/testUtils';

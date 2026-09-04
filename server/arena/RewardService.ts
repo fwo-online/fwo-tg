@@ -1,6 +1,6 @@
 import { type GameResult, ItemComponent, reservedClanName } from '@fwo/shared';
 import { differenceBy, mapValues, noop, shuffle } from 'es-toolkit';
-import { times } from 'lodash';
+import { times } from 'es-toolkit/compat';
 import { CharacterService } from '@/arena/CharacterService';
 import type GameService from '@/arena/GameService';
 import type { HistoryService } from '@/arena/HistoryService';

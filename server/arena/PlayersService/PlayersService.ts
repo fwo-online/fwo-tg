@@ -1,5 +1,5 @@
 import { reservedClanName } from '@fwo/shared';
-import { keyBy } from 'lodash';
+import { keyBy } from 'es-toolkit';
 import Player from './PlayerService';
 
 export default class PlayersService {
