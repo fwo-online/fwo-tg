@@ -24,6 +24,8 @@ class Ricochet extends PassiveSkillConstructor {
       chance: [15, 20, 25, 30, 40, 50],
       effect: [20, 30, 40, 50, 60, 70],
       bonusCost: [10, 20, 30, 40, 60, 80],
+      branch: 'barrage',
+      branches: ['barrage', 'marksman'],
     });
   }
 

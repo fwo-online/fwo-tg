@@ -1,0 +1,7 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`secondAttack should fire a second arrow on ranged weapon attack 1`] = `
+"*Игрок 1* атаковал *Игрок 2* _Оружием_ и нанёс *7.2* урона
+\\[ Игрок 2 💥 💔-7.2/-2.08 📖58 ]
+_🏹 Вторая атака_ *Игрок 1* выпустил вторую стрелу по *Игрок 2* нанеся *2.88* урона"
+`;

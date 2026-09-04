@@ -12,7 +12,8 @@ class Lacerate extends PassiveSkillConstructor {
       description: 'Шанс на 🩸Кровотечение при атаке режущим оружием',
       chance: [15, 20, 30],
       effect: [100, 100, 100],
-      bonusCost: [],
+      bonusCost: [10, 20, 30],
+      branch: 'duelist',
     });
   }
 

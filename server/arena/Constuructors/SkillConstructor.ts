@@ -1,4 +1,4 @@
-import type { OrderType } from '@fwo/shared';
+import type { BranchKey, OrderType } from '@fwo/shared';
 import type { ActionKey } from '@/arena/ActionService';
 import { BaseAction } from '@/arena/Constuructors/BaseAction';
 import type { Profs } from '../../data';
@@ -22,6 +22,8 @@ interface SkillArgs {
   effect: number[];
   profList: Profs.ProfsLvl;
   bonusCost: number[];
+  branch?: BranchKey;
+  branches?: BranchKey[];
 }
 
 /**

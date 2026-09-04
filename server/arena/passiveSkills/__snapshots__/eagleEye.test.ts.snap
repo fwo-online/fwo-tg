@@ -1,0 +1,6 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`eagleEye should increase ranged weapon damage 1`] = `
+"*Игрок 1* атаковал *Игрок 2* _Оружием_ и нанёс *8* урона
+\\[ Игрок 2 💥 💔-8/0 📖64 ]"
+`;

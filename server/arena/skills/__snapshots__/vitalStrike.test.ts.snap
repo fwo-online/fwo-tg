@@ -1,0 +1,6 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`vitalStrike should deal increased physical damage to target 1`] = `
+"*Игрок 1* использовал _🗡️ Точный выпад_ по *Игрок 2* нанеся *9.36* урона
+\\[ Игрок 2  💔-9.36/-1.36 📖25 ]"
+`;

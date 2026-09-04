@@ -17,12 +17,6 @@ export default class PassiveSkillService {
     const passiveSkill = PassiveSkillService.passiveSkills[id];
     const charPassiveSkillLvl = char.passiveSkills[id] ?? 0;
 
-    if ('branch' in passiveSkill && passiveSkill.branch) {
-      if (!char.branches.includes(passiveSkill.branch)) {
-        throw new ValidationError('Умение принадлежит невыбранной ветке специализации');
-      }
-    }
-
     if (passiveSkill.profList) {
       if (!(char.prof in passiveSkill.profList)) {
         throw new ValidationError('Умение недоступно для твоего класса');
@@ -32,6 +26,20 @@ export default class PassiveSkillService {
       if (char.lvl < requiredLvl) {
         throw new ValidationError('Твой уровень ниже уровня умения');
       }
+    }
+
+    if (char.branches?.length > 0) {
+      if ('branches' in passiveSkill && passiveSkill.branches?.length) {
+        if (!passiveSkill.branches.some((b: any) => char.branches.includes(b))) {
+          throw new ValidationError('Умение принадлежит невыбранной ветке специализации');
+        }
+      } else if ('branch' in passiveSkill && passiveSkill.branch) {
+        if (!char.branches.includes(passiveSkill.branch)) {
+          throw new ValidationError('Умение принадлежит невыбранной ветке специализации');
+        }
+      }
+    } else if (!passiveSkill.profList && ('branch' in passiveSkill && passiveSkill.branch || 'branches' in passiveSkill && passiveSkill.branches?.length)) {
+      throw new ValidationError('Умение принадлежит невыбранной ветке специализации');
     }
 
     if (charPassiveSkillLvl + 1 > passiveSkill.bonusCost.length) {
@@ -57,6 +65,7 @@ export default class PassiveSkillService {
       chance: passiveSkill.chance,
       classList: passiveSkill.profList,
       branch: 'branch' in passiveSkill ? (passiveSkill.branch as any) : undefined,
+      branches: 'branches' in passiveSkill ? (passiveSkill.branches as any) : undefined,
     };
   }
 

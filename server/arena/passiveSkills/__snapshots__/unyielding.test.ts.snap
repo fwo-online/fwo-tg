@@ -1,0 +1,6 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`unyielding should reduce incoming damage when HP < 30% 1`] = `
+"*Игрок 2* рубанул *Игрок 1* _Оружием_ и нанёс *6* урона
+\\[ Игрок 1 💥 💔-6/-4 📖48 ]"
+`;

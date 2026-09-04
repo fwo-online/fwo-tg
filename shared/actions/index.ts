@@ -28,6 +28,8 @@ export type Skill = {
   costType: CostType;
   chance: number[];
   effect: number[];
+  branch?: BranchKey;
+  branches?: BranchKey[];
 };
 
 export type PassiveSkill = {
@@ -39,6 +41,7 @@ export type PassiveSkill = {
   bonusCost: number[];
   classList?: Partial<Record<CharacterClass, number>>;
   branch?: BranchKey;
+  branches?: BranchKey[];
 };
 
 export enum CostType {

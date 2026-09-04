@@ -1,0 +1,6 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`aimedShot should deal high precision ranged damage 1`] = `
+"*Игрок 1* использовал _🎯 Прицельный выстрел_ по *Игрок 2* нанеся *10.8* урона
+\\[ Игрок 2  💔-10.8/-2.8 📖25 ]"
+`;

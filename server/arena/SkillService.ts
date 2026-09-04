@@ -18,8 +18,28 @@ export default class SkillService {
     const charSkillLvl = char.skills[id] ?? 0;
     const skillLvl = skill.profList[char.prof] ?? 0;
 
-    if (skillLvl > char.lvl) {
-      throw new ValidationError('Твой уровень ниже уровня умения');
+    if (skill.profList) {
+      if (!(char.prof in skill.profList)) {
+        throw new ValidationError('Умение недоступно для твоего класса');
+      }
+
+      if (skillLvl > char.lvl) {
+        throw new ValidationError('Твой уровень ниже уровня умения');
+      }
+    }
+
+    if (char.branches?.length > 0) {
+      if ('branches' in skill && skill.branches?.length) {
+        if (!skill.branches.some((b) => char.branches.includes(b))) {
+          throw new ValidationError('Умение принадлежит невыбранной ветке специализации');
+        }
+      } else if ('branch' in skill && skill.branch) {
+        if (!char.branches.includes(skill.branch)) {
+          throw new ValidationError('Умение принадлежит невыбранной ветке специализации');
+        }
+      }
+    } else if (!skill.profList && ('branch' in skill && skill.branch || 'branches' in skill && skill.branches?.length)) {
+      throw new ValidationError('Умение принадлежит невыбранной ветке специализации');
     }
     if (skill.bonusCost[charSkillLvl] > char.resources.bonus) {
       throw new ValidationError('Не хватает бонусов');
@@ -49,6 +69,8 @@ export default class SkillService {
       orderType: skill.orderType,
       chance: skill.chance,
       effect: skill.effect,
+      branch: 'branch' in skill ? skill.branch : undefined,
+      branches: 'branches' in skill ? (skill.branches as any) : undefined,
     };
   }
 

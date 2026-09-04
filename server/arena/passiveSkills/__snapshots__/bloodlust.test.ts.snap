@@ -1,0 +1,7 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`bloodlust should restore energy and HP on killing enemy 1`] = `
+"*Игрок 1* рубанул *Игрок 2* _Оружием_ и нанёс *7.2* урона
+\\[ Игрок 2 💥 💔-7.2/-6.2 📖58 ]
+_🪓 Жажда битвы_ *Игрок 1* утолил жажду битвы \\[ ⚡+10 EN ]"
+`;

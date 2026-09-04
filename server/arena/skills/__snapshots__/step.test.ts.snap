@@ -1,0 +1,6 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`step should trip target and apply attack reduction debuff 1`] = `
+"*Игрок 1* сделал _🏃 Подножка_ противнику *Игрок 2* \\[ 🏃-3.6% атаки ]
+\\[ Игрок 2  💔-3.6/4.4 📖20 ]"
+`;

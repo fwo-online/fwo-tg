@@ -1,0 +1,6 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`piercingShot should deal damage penetrating target defence 1`] = `
+"*Игрок 1* использовал _🎯 Бронебойный выстрел_ по *Игрок 2* нанеся *7.2* урона
+\\[ Игрок 2  💔-7.2/0.8 📖25 ]"
+`;

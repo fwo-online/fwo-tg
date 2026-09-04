@@ -1,0 +1,6 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`arrowRain should deal damage to all enemies in team 1`] = `
+"*Игрок 1* обрушил _🏹 Град стрел_ на врагов
+\\[ Игрок 2  💔-40/5.12 📖35 ]"
+`;

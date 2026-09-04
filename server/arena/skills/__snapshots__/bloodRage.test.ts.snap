@@ -1,0 +1,6 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`bloodRage should sacrifice HP and grant damage bonus buff 1`] = `
+"*Игрок 1* впал в _🪓 Кровавая ярость_ \\[ 🪓+20% урона на 2 раунда ]
+\\[ 📖25 ]"
+`;

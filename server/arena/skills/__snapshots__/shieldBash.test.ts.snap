@@ -1,0 +1,6 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`shieldBash should deal damage and stun target 1`] = `
+"*Игрок 1* использовал _🛡️ Удар щитом_ по *Игрок 2* нанеся *9.2* урона
+\\[ Игрок 2  💔-9.2/-1.2 📖25 ]"
+`;

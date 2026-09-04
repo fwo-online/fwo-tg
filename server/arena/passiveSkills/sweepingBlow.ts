@@ -17,7 +17,9 @@ class SweepingBlow extends PassiveSkillConstructor {
       description: 'Атака по цели имеет шанс нанести урон другой цели',
       chance: [10, 25, 50],
       effect: [25, 50, 75],
-      bonusCost: [],
+      bonusCost: [10, 20, 30],
+      branch: 'berserker',
+      branches: ['berserker', 'duelist'],
     });
   }
 

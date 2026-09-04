@@ -1,0 +1,6 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`fieldMedic should heal ally with energy 1`] = `
+"*Игрок 1* использовал _🏃 Полевая перевязка_ на *Игрок 1* исцелив *6* HP
+\\[  ]"
+`;

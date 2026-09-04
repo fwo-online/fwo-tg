@@ -15,6 +15,7 @@ export interface PassiveSkillAttributes {
   description: string;
   profList?: ProfsLvl;
   branch?: BranchKey;
+  branches?: BranchKey[];
 }
 
 /**
@@ -30,6 +31,7 @@ export abstract class PassiveSkillConstructor extends BaseAction {
   bonusCost: number[];
   profList?: ProfsLvl;
   branch?: BranchKey;
+  branches?: BranchKey[];
   actionType: ActionType = 'passive';
 
   constructor(attributes: PassiveSkillAttributes) {
@@ -43,6 +45,7 @@ export abstract class PassiveSkillConstructor extends BaseAction {
     this.description = attributes.description;
     this.profList = attributes.profList;
     this.branch = attributes.branch;
+    this.branches = attributes.branches;
   }
 
   override cast(initiator: Player) {

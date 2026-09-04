@@ -1,0 +1,7 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`riposte should counterattack when receiving physical damage 1`] = `
+"*Игрок 2* рубанул *Игрок 1* _Оружием_ и нанёс *7.2* урона
+\\[ Игрок 1 💥 💔-7.2/0.8 📖58 ]
+_🗡️ Контрудар_ *Игрок 1* провёл контрудар по *Игрок 2* нанеся *2.16* урона"
+`;

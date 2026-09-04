@@ -12,7 +12,9 @@ class HuntersMark extends PassiveSkillConstructor {
       description: 'Атака по цели имеет шанс пометить цель, следующая атака наносит больше урона',
       chance: [33, 50, 75],
       effect: [10, 25, 50],
-      bonusCost: [],
+      bonusCost: [10, 20, 30],
+      branch: 'marksman',
+      branches: ['marksman', 'scout'],
     });
   }
 

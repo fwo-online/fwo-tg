@@ -1,0 +1,6 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`fireArrow should deal damage and apply burning DoT effect 1`] = `
+"*Игрок 1* использовал _🏹 Зажигательная стрела_ по *Игрок 2* нанеся *7.2* урона
+\\[ Игрок 2  💔-7.2/0.8 📖25 ]"
+`;

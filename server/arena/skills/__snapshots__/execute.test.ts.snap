@@ -1,0 +1,6 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`execute should deal damage and deal bonus damage when target HP is below 35% 1`] = `
+"*Игрок 1* использовал _🪓 Казнь_ по *Игрок 2* нанеся *10.8* урона
+\\[ Игрок 2  💔-10.8/-8.8 📖30 ]"
+`;

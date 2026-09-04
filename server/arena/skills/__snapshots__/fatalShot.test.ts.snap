@@ -1,0 +1,6 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`fatalShot should deal double damage when target is below 35% HP 1`] = `
+"*Игрок 1* использовал _🎯 Смертоносный выстрел_ по *Игрок 2* нанеся *10.8* урона
+\\[ Игрок 2  💔-10.8/-8.8 📖30 ]"
+`;

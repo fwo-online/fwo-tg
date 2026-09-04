@@ -22,6 +22,7 @@ class Disarm extends Skill {
       effect: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6],
       profList: { w: 3, l: 5 },
       bonusCost: [10, 20, 30, 40, 60, 80],
+      branches: ['duelist', 'scout'],
     });
   }
 

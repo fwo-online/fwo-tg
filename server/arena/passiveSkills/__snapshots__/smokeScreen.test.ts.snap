@@ -1,0 +1,7 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`smokeScreen should trigger smoke screen when damaged 1`] = `
+"*Игрок 2* рубанул *Игрок 1* _Оружием_ и нанёс *7.2* урона
+\\[ Игрок 1 💥 💔-7.2/0.8 📖58 ]
+_🏃 Дымовая завеса_ *Игрок 1* бросил дымовую шашку \\[ 🏃-20% урона врагов ]"
+`;

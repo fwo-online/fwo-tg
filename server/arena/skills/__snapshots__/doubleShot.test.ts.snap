@@ -1,0 +1,6 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`doubleShot should fire arrows dealing damage 1`] = `
+"*Игрок 1* использовал _🏹 Залп стрел_ нанеся *4.32* урона
+\\[ Игрок 2  💔-4.32/3.68 📖25 ]"
+`;

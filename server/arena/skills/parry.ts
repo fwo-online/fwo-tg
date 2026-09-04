@@ -32,6 +32,7 @@ class Parry extends Skill {
       effect: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6],
       profList: { w: 1 },
       bonusCost: [10, 20, 30, 40, 60, 80],
+      branch: 'duelist',
     });
   }
 
