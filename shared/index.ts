@@ -1,3 +1,4 @@
+export * from './achievement';
 export * from './actions';
 export * from './character';
 export * from './clan';

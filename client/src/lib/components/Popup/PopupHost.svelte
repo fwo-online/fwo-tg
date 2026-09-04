@@ -24,7 +24,6 @@
   };
 
   const handleConfirm = async () => {
-    console.log(state);
     if (state?.onConfirm) {
       await state.onConfirm(close);
       close();

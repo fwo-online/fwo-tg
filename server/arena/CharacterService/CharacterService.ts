@@ -155,6 +155,40 @@ export class CharacterService {
     this.charObj.towerAvailable = value;
   }
 
+  get activeTitle() {
+    return this.charObj.activeTitle;
+  }
+
+  set activeTitle(value: string | undefined) {
+    this.charObj.activeTitle = value;
+  }
+
+  get unlockedTitles(): string[] {
+    return this.charObj.unlockedTitles ?? [];
+  }
+
+  get vigor() {
+    this.checkVigorReset();
+    return this.charObj.vigor;
+  }
+
+  private checkVigorReset() {
+    if (!this.charObj.vigor) {
+      this.charObj.vigor = { energy: 100, lastResetDate: new Date() };
+      return;
+    }
+    const last = new Date(this.charObj.vigor.lastResetDate);
+    const now = new Date();
+    const isSameDay =
+      last.getUTCFullYear() === now.getUTCFullYear() &&
+      last.getUTCMonth() === now.getUTCMonth() &&
+      last.getUTCDate() === now.getUTCDate();
+    if (!isSameDay) {
+      this.charObj.vigor.energy = 100;
+      this.charObj.vigor.lastResetDate = now;
+    }
+  }
+
   async changeNickname(newNickname: string) {
     this.charObj.nickname = newNickname;
     await this.saveToDb();
@@ -419,6 +453,10 @@ export class CharacterService {
         notificationSettings: this.charObj.notificationSettings,
         contracts: this.charObj.contracts,
         contractsGeneratedAt: this.charObj.contractsGeneratedAt,
+        activeTitle: this.charObj.activeTitle,
+        unlockedTitles: this.charObj.unlockedTitles,
+        claimedAchievements: this.charObj.claimedAchievements,
+        vigor: this.charObj.vigor,
       });
     } catch (e) {
       console.error('Fail on CharSave:', e);
@@ -487,6 +525,13 @@ export class CharacterService {
       >,
       notificationSettings: this.charObj.notificationSettings,
       active: this.charObj.active,
+      activeTitle: this.charObj.activeTitle || undefined,
+      unlockedTitles: this.unlockedTitles,
+      vigor: {
+        energy: this.vigor?.energy ?? 100,
+        maxEnergy: 100,
+        bonusPercent: (this.vigor?.energy ?? 100) > 0 ? 100 : 0,
+      },
       ...this.inventory.toObject(),
     };
   }

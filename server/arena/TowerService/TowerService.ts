@@ -21,7 +21,7 @@ export class TowerService extends EventEmitter<{
   battleStart: [game: GameService, isBoss: boolean];
   battleEnd: [game: GameService, victory: boolean];
   updateTime: [timeSpent: number, timeLeft: number];
-  end: [];
+  end: [tower: TowerService, win: boolean];
 }> {
   timeSpent = 0;
   timeLeft = timeLeft;
@@ -42,7 +42,10 @@ export class TowerService extends EventEmitter<{
     this.state = TowerState.Waiting;
   }
 
-  static emitter = new EventEmitter<{ start: [TowerService] }>();
+  static emitter = new EventEmitter<{
+    start: [TowerService];
+    end: [tower: TowerService, win: boolean];
+  }>();
 
   get id() {
     return this.tower.id;
@@ -258,7 +261,8 @@ export class TowerService extends EventEmitter<{
 
     delete arena.towers?.[this.id];
 
-    this.emit('end');
+    TowerService.emitter.emit('end', this, win);
+    this.emit('end', this, win);
     this.removeAllListeners();
   }
 

@@ -124,14 +124,17 @@ ${Object.entries(resultsByClan)
   .join('\n\n')}`);
 
     try {
-      const promises = results.map((result) => {
+      const promises = results.map(async (result) => {
         const character = arena.characters[result.player.id];
-        return character.quests.updateQuestProgress(result);
+        if (character) {
+          await character.quests.updateQuestProgress(result);
+          await character.performance.addGameStat(result);
+        }
       });
 
       await Promise.all(promises);
     } catch (e) {
-      console.error('Failed to updateQuestProgress:', e);
+      console.error('Failed to updateQuestProgress or game stats:', e);
     }
     // Отправка поздравлений с новым уровнем
     const levelUpPromises = results

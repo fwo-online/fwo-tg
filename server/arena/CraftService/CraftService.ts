@@ -1,11 +1,16 @@
+import EventEmitter from 'node:events';
 import type { CharacterService } from '@/arena/CharacterService';
 import ValidationError from '@/arena/errors/ValidationError';
 import { ItemService } from '@/arena/ItemService';
 import MiscService from '@/arena/MiscService';
-import { baseItemCostModifier, baseCraftChance, getItemPrice } from '@fwo/shared';
+import { baseItemCostModifier, baseCraftChance, getItemPrice, type Item } from '@fwo/shared';
 import { mapValues } from 'es-toolkit';
 
 export class CraftService {
+  static emitter = new EventEmitter<{
+    craft: [{ character: CharacterService; item: Item }];
+  }>();
+
   static checkChance(tier: number, modifier = 0) {
     if (tier === 1) {
       return true;
@@ -56,9 +61,12 @@ export class CraftService {
     });
 
     const item = await ItemService.createItem(baseItem, character.charObj);
+    const itemObj = item.toObject();
 
-    await character.inventory.addItem(item.toObject());
+    await character.inventory.addItem(itemObj);
 
-    return item.toObject();
+    CraftService.emitter.emit('craft', { character, item: itemObj });
+
+    return itemObj;
   }
 }

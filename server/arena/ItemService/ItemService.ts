@@ -1,5 +1,6 @@
 import type { CharacterClass, Item, ItemWithID } from '@fwo/shared';
 import { matches } from 'es-toolkit/compat';
+import type { Document } from 'mongoose';
 import arena from '@/arena';
 import { ActionService } from '@/arena/ActionService';
 import { filterByClass, filterByWear } from '@/arena/ItemService/utils';
@@ -37,7 +38,7 @@ export class ItemService {
     return arena.items[code];
   }
 
-  static async createItem(item: Item, createdBy: Char): Promise<ItemWithID> {
+  static async createItem(item: Item, createdBy: Char): Promise<Document<ItemWithID>> {
     return ItemModel.create({
       ...item,
       createdBy,

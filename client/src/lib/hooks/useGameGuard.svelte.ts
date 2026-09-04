@@ -16,14 +16,14 @@ export const useGameGuard = () => {
 
   onMount(() => {
     const currentGame = character().game;
-    const pathname = page.url.pathname;
+    const hash = page.url.hash;
 
     if (currentGame) {
       navigateToGame(currentGame);
       return;
     }
 
-    if (pathname.startsWith('/game')) {
+    if (hash.startsWith('#/game')) {
       goto('#/');
     }
   });

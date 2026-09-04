@@ -12,7 +12,10 @@
 </script>
 
 <div class="h-full flex flex-col gap-2">
-  <Card header={character().name} class="relative bg-transparent!">
+  <Card
+    header={`${character().activeTitle ? `[${character().activeTitle}] ` : ""}${character().name}`}
+    class="relative bg-transparent!"
+  >
     <img
       src={characterBackground}
       class="absolute top-0 left-0 right-0 bottom-0 w-full h-full object-cover object-bottom"
@@ -30,6 +33,11 @@
       <Card class="py-0 px-0 min-w-32">
         <CharacterExp />
       </Card>
+      {#if character().vigor}
+        <Card class="py-0 px-1 text-[11px] {character().vigor?.energy ? 'text-amber-300' : 'text-neutral-400'}">
+          ⚡ {character().vigor?.energy ?? 0}% {character().vigor?.energy ? '(+100% XP)' : ''}
+        </Card>
+      {/if}
     </div>
     <div class="w-full flex items-start justify-between gap-2">
       <Card class="py-0.5 px-2">{character().gold}💰</Card>
@@ -50,6 +58,8 @@
         <Button class="flex-1" href="#/character/magics">Магии</Button>
       {/if}
     </div>
+
+    <Button href="#/character/achievements">🏆 Достижения и титулы</Button>
 
     <Button href="#/character/passiveSkills">Пассивные навыки</Button>
 

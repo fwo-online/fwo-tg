@@ -6,6 +6,7 @@
     ForestState,
     type ForestStatus,
   } from "@fwo/shared";
+  import { useInterval } from "runed";
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import Button from "$lib/components/Button.svelte";
@@ -67,9 +68,30 @@
   let status = $state.raw<ForestStatus | null>(null);
   let lastResult = $state.raw<any>(null);
   let loading = $state(false);
-
+  let remainingSeconds = $state(0);
   const isWaiting = $derived(status?.state === ForestState.Waiting);
   const isEvent = $derived(status?.state === ForestState.Event);
+
+  const interval = useInterval(200, {
+    immediate: false,
+    callback: () => {
+      if (status?.currentEvent?.expiresAt) {
+        const expiresAt = new Date(status.currentEvent.expiresAt).getTime();
+        remainingSeconds = Math.max(
+          0,
+          Math.ceil((expiresAt - Date.now()) / 1000),
+        );
+      }
+    },
+  });
+
+  $effect(() => {
+    if (isEvent) {
+      interval.resume();
+    } else {
+      interval.pause();
+    }
+  });
 
   onSocket("forest:end", (_reason, result) => {
     character().forest = undefined;
@@ -193,19 +215,13 @@
           {EVENT_DESCRIPTIONS[status.currentEvent.type]}
         </p>
         <div class="text-xs mb-4">
-          Осталось времени: {Math.max(
-            0,
-            Math.ceil(
-              (new Date(status.currentEvent.expiresAt).getTime() - Date.now()) /
-                1000,
-            ),
-          )} сек
+          Осталось времени: {remainingSeconds} сек
         </div>
         <div class="flex flex-col gap-2">
           {#each status.currentEvent.availableActions as action (action)}
             <Button
               onclick={() => handleAction(action)}
-              disabled={loading}
+              disabled={loading || remainingSeconds === 0}
               class={action === ForestEventAction.PassBy ? "" : "is-primary"}
             >
               {ACTION_LABELS[action]}
