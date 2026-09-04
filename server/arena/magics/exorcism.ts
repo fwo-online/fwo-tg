@@ -1,9 +1,7 @@
 import { OrderType } from '@fwo/shared';
-import { Magic } from '@/arena/Constuructors/MagicConstructor';
 import { bold, italic } from '../../utils/formatString';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
-import arena from '../index';
 
 /**
  * Экзорцизм
@@ -31,14 +29,7 @@ class Exorcism extends CommonMagic {
 
   run() {
     const { target } = this.params;
-    target.affects.filterAffects((affect) => {
-      const action = arena.actions[affect.action];
-      if (action instanceof Magic) {
-        return action.magType !== 'bad' || affect.type !== 'long-effect';
-      }
-
-      return true;
-    });
+    target.affects.removeBadEffects();
   }
 
   customMessage(args: SuccessArgs) {

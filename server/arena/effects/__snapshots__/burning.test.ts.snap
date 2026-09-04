@@ -1,0 +1,11 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`burning should deal specified damage value when provided 1`] = `
+"⏳1 _🔥 Горение_ (*Игрок 1*) наносит урон огнём игроку *Игрок 2*
+\\[ Игрок 2 🔥 💔-3/5 📖32 ]"
+`;
+
+exports[`burning should deal fire damage when ticking 1`] = `
+"⏳2 _🔥 Горение_ (*Игрок 1*) наносит урон огнём игроку *Игрок 2*
+\\[ Игрок 2 🔥 💔-1.51/6.49 📖20 ]"
+`;

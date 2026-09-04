@@ -1,0 +1,7 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`phaseShift should absorb incoming magic damage 1`] = `
+"*Игрок 1* выстреливает _Магической стрелой_ в *Игрок 2*
+\\[ Игрок 2 ✨ 💔-0/8 📖8 ]
+_🔮 Фазовый сдвиг_ *Игрок 2* рассеял магию *Игрок 1* \\[ 🔮 Поглощено: 1.56 ]"
+`;

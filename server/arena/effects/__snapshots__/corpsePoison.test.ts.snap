@@ -1,0 +1,11 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`corpsePoison should deal specified damage value when provided 1`] = `
+"⏳1 _🧪 Трупный яд_ (*Игрок 1*) наносит урон ядом игроку *Игрок 2*
+\\[ Игрок 2 ☣ 💔-3/5 📖32 ]"
+`;
+
+exports[`corpsePoison should deal acid damage when ticking 1`] = `
+"⏳2 _🧪 Трупный яд_ (*Игрок 1*) наносит урон ядом игроку *Игрок 2*
+\\[ Игрок 2 ☣ 💔-1.51/6.49 📖20 ]"
+`;

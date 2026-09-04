@@ -1,10 +1,12 @@
-import type { Action } from '@fwo/shared';
+import { type Action, type BranchKey, isInBranch } from '@fwo/shared';
 import arena from '@/arena';
 import MagicService from '@/arena/MagicService';
 import PassiveSkillService from '@/arena/PassiveSkillService';
 import SkillService from '@/arena/SkillService';
 
 export type ActionKey = keyof typeof arena.actions;
+
+export { isInBranch } from '@fwo/shared';
 
 export class ActionService {
   static isAction(maybeAction: string): maybeAction is ActionKey {

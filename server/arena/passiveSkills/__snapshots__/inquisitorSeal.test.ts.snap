@@ -1,0 +1,7 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`inquisitorSeal should burn MP/energy and apply silence 1`] = `
+"*Игрок 1* рубанул *Игрок 2* _Оружием_ и нанёс *7.2* урона
+\\[ Игрок 2 💥 💔-7.2/0.8 📖58 ]
+_⚖️ Печать инквизитора_ *Игрок 1* выжег 8 энергии/маны у *Игрок 2*"
+`;

@@ -1,6 +1,7 @@
 import arena from '@/arena';
 import MatchMakingService from '@/arena/MatchMakingService';
 import * as actions from '@/arena/actions';
+import * as effects from '@/arena/effects';
 import * as magics from '@/arena/magics';
 import * as passiveSkills from '@/arena/passiveSkills';
 import * as skills from '@/arena/skills';
@@ -10,5 +11,5 @@ export const registerGlobals = () => {
   arena.mm = MatchMakingService;
   arena.magics = magics;
   arena.skills = skills;
-  arena.actions = { ...actions, ...magics, ...skills, ...passiveSkills, ...weaponMastery };
+  arena.actions = { ...actions, ...magics, ...skills, ...passiveSkills, ...weaponMastery, ...effects };
 };

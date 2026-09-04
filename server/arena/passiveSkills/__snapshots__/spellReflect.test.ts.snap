@@ -1,0 +1,7 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`spellReflect should absorb hostile magic and reflect damage to caster 1`] = `
+"*Игрок 1* выстреливает _Магической стрелой_ в *Игрок 2*
+\\[ Игрок 2 ✨ 💔-0/8 📖8 ]
+_🪞 Отражение чар_ *Игрок 2* отразил заклинание в *Игрок 1* \\[ 🪞 Отражено: 1.56 ]"
+`;

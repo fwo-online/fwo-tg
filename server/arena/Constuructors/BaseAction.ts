@@ -1,4 +1,10 @@
-import type { ActionType, EffectType, OrderType } from '@fwo/shared';
+import {
+  type ActionType,
+  type BranchKey,
+  type EffectType,
+  isInBranch,
+  type OrderType,
+} from '@fwo/shared';
 import type { ActionKey } from '@/arena/ActionService';
 import { BaseActionContext } from '@/arena/Constuructors/BaseActionContext';
 import CastError from '@/arena/errors/CastError';
@@ -29,6 +35,8 @@ export abstract class BaseAction {
   orderType!: OrderType;
   actionType!: ActionType;
   effectType?: EffectType;
+  branch?: BranchKey;
+  branches?: BranchKey[] | readonly BranchKey[];
 
   context!: BaseActionContext = {};
   isAffect = false;
@@ -48,6 +56,10 @@ export abstract class BaseAction {
 
   get status() {
     return this.context.status;
+  }
+
+  isInBranch(branch: BranchKey): boolean {
+    return isInBranch(this, branch);
   }
 
   reset() {

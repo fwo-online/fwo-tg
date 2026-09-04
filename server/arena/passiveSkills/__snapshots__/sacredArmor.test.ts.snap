@@ -1,0 +1,7 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`sacredArmor should add defense buff on weapon attack 1`] = `
+"*Игрок 1* рубанул *Игрок 2* _Оружием_ и нанёс *7.2* урона
+\\[ Игрок 2 💥 💔-7.2/0.8 📖58 ]
+_🛡️ Священная броня_ *Игрок 1* укрепил броню \\[ 🛡️+15% защиты ]"
+`;

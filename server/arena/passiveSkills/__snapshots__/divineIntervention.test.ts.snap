@@ -1,0 +1,6 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`divineIntervention should restore HP and prevent death on lethal event 1`] = `
+"_🌟 Божественное спасение_ *Игрок 1* спасён божественным вмешательством \\[ 🌟+2/2 ]
+"
+`;

@@ -1,0 +1,7 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`mindClarity should save spell on cast fail and record affect 1`] = `
+"*Игрок 1* выстреливает _Магической стрелой_ в *Игрок 2*
+\\[ Игрок 2 ✨ 💔-1.56/6.44 📖20 ]
+_🧘 Ясность разума_ *Игрок 1* сохранил ясность разума \\[ 🧘 Заклинание спасено от срыва! ]"
+`;

@@ -271,3 +271,15 @@ export function isCrossArchetype(prof: CharacterClass | string, branchKey: Branc
 export function getBranchesByProf(prof: CharacterClass | string): BranchMeta[] {
   return Object.values(BRANCHES).filter((branch) => branch.prof === prof);
 }
+
+/**
+ * Проверка, принадлежит ли действие ветке
+ */
+export function isInBranch(
+  action: { branch?: BranchKey; branches?: readonly BranchKey[] | BranchKey[] },
+  branch: BranchKey,
+): boolean {
+  if (action.branch === branch) return true;
+  if (action.branches?.includes(branch)) return true;
+  return false;
+}

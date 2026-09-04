@@ -1,0 +1,7 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`soulHarvest should restore MP when defeating an enemy 1`] = `
+"*Игрок 1* рубанул *Игрок 2* _Оружием_ и нанёс *11.2* урона
+\\[ Игрок 2 💥 💔-11.2/-11.1 📖90 ]
+_💀 Жатва душ_ *Игрок 1* поглотил душу *Игрок 2* \\[ 💀 Восстановлено заклинание Тьмы! ]"
+`;

@@ -1,3 +1,5 @@
+import { OrderType } from '@fwo/shared';
+import arena from '@/arena';
 import type { ActionKey } from '@/arena/ActionService';
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import type { Affect, Effect, LongEffect, Passive } from '@/arena/Constuructors/interfaces/Affect';
@@ -30,6 +32,54 @@ export class PlayerAffects {
 
   filterAffects(predicate: (affect: Affect) => boolean) {
     this.#affects = this.#affects.filter(predicate);
+  }
+
+  isBadAffect(affect: Affect): boolean {
+    if (affect.type === 'passive') {
+      return false;
+    }
+
+    const action = arena.actions[affect.action];
+    if (action) {
+      if ('magType' in action && action.magType === 'bad') {
+        return true;
+      }
+      if (action.orderType === OrderType.Enemy) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  isGoodAffect(affect: Affect): boolean {
+    if (affect.type === 'passive') {
+      return false;
+    }
+
+    const action = arena.actions[affect.action];
+    if (action) {
+      if ('magType' in action && action.magType === 'good') {
+        return true;
+      }
+      if (
+        action.orderType === OrderType.Team ||
+        action.orderType === OrderType.Self ||
+        action.orderType === OrderType.TeamExceptSelf
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  removeBadEffects() {
+    this.filterAffects((affect) => !this.isBadAffect(affect));
+  }
+
+  removeGoodEffects() {
+    this.filterAffects((affect) => !this.isGoodAffect(affect));
   }
 
   getEffectsByAction<T extends ActionKey>(action: T) {

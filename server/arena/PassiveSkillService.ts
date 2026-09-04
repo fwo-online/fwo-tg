@@ -17,6 +17,12 @@ export default class PassiveSkillService {
     const passiveSkill = PassiveSkillService.passiveSkills[id];
     const charPassiveSkillLvl = char.passiveSkills[id] ?? 0;
 
+    if ('branch' in passiveSkill && passiveSkill.branch) {
+      if (!char.branches.includes(passiveSkill.branch)) {
+        throw new ValidationError('Умение принадлежит невыбранной ветке специализации');
+      }
+    }
+
     if (passiveSkill.profList) {
       if (!(char.prof in passiveSkill.profList)) {
         throw new ValidationError('Умение недоступно для твоего класса');
@@ -50,6 +56,7 @@ export default class PassiveSkillService {
       effect: passiveSkill.effect,
       chance: passiveSkill.chance,
       classList: passiveSkill.profList,
+      branch: 'branch' in passiveSkill ? (passiveSkill.branch as any) : undefined,
     };
   }
 

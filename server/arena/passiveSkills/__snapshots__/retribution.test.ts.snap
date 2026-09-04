@@ -1,0 +1,7 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`retribution should reflect percentage of damage back to attacker 1`] = `
+"*Игрок 1* рубанул *Игрок 2* _Оружием_ и нанёс *7.2* урона
+\\[ Игрок 2 💥 💔-7.2/0.8 📖58 ]
+_⚖️ Возмездие_ *Игрок 2* покарал *Игрок 1* \\[ ⚖️-1 HP ]"
+`;

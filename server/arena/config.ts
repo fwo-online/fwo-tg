@@ -90,6 +90,8 @@ export default {
     //
     [
       'bleeding',
+      'burning',
+      'corpsePoison',
       'fireBall',
       // 'ice_lance',
       'magicArrow',
