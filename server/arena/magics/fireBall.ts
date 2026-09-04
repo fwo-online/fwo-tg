@@ -1,6 +1,6 @@
 import { OrderType } from '@fwo/shared';
 import { shuffle } from 'es-toolkit';
-import { times } from 'lodash';
+import { times } from 'es-toolkit/compat';
 import { effectService } from '@/arena/EffectService';
 import { AoeDmgMagic } from '../Constuructors/AoeDmgMagicConstructor';
 import MiscService from '../MiscService';

@@ -72,7 +72,7 @@ export const onCreate = (io: Server) => {
     });
 
     game.on('startOrders', () => {
-      game.players.alivePlayers.forEach((player) => {
+      game.players.aliveNonBotPlayers.forEach((player) => {
         io.to(getRoom(game, player.id)).emit('game:startOrders', {
           ...ActionsHelper.buildActions(player, game),
           orders: [],
@@ -135,6 +135,8 @@ export const onConnection = (_io: Server, socket: Socket) => {
         ready: game.orders.readyIDs.has(player.id),
       });
     }
+
+    socket.join([getRoom(game), getRoom(game, player.id)]);
   });
 
   const handleOrder = (fn: (game: GameService, player: Player) => OrderResult): OrderResponse => {

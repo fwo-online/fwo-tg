@@ -1,13 +1,14 @@
-import _ from 'lodash';
+import { isNil } from 'es-toolkit';
+import { assignWith, isObject } from 'es-toolkit/compat';
 
 const sum = (a, b) => {
-  if (_.isObject(b)) {
-    return _.assignWith(a, b, sum);
+  if (isObject(b)) {
+    return assignWith(a, b, sum);
   }
-  if (_.isNil(a)) {
+  if (isNil(a)) {
     return +b;
   }
   return +a + +b;
 };
 
-export const assignWithSum = (a, b) => _.assignWith(a, b, sum);
+export const assignWithSum = (a, b) => assignWith(a, b, sum);

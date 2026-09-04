@@ -1,9 +1,8 @@
 import type { SuccessArgs } from '@/arena/Constuructors/types';
-import { brackets } from '@/utils/formatString';
+import { brackets, italic } from '@/utils/formatString';
 import { getDamageTypeIcon } from '@/utils/icons';
 
 export function formatExp(args: SuccessArgs): string {
-  console.log(args.action);
   const exp = args.initiator.isBot ? '' : `📖${args.exp}`;
   switch (args.actionType) {
     case 'phys':
@@ -13,9 +12,8 @@ export function formatExp(args: SuccessArgs): string {
       return brackets(
         [
           `${args.target.nick} ${getDamageTypeIcon(args.effectType)} 💔-${args.effect}/${args.hp} ${exp}`,
-          ...args.expArr.map(
-            ({ target, val, hp, exp }) =>
-              `${target.nick} ${getDamageTypeIcon(args.effectType)} 💔-${val}/${hp} 📖${exp}`,
+          ...args.expArr.map(({ target, val, hp, exp, reason }) =>
+            `${reason ? italic(reason) : ''} ${target.nick} ${getDamageTypeIcon(args.effectType)} 💔-${val}/${hp} 📖${exp}`.trimStart(),
           ),
         ].join('\n'),
       );

@@ -4,7 +4,6 @@ import { formatAction } from './format-action';
 import { formatExp } from './format-exp';
 
 export function formatCause(cause: SuccessArgs) {
-  console.log(cause.actionType, cause.action, cause.msg);
   switch (cause.actionType) {
     case 'dodge':
     case 'skill':

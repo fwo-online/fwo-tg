@@ -1,8 +1,8 @@
-import type { Char } from '@/models/character';
-import ValidationError from '@/arena/errors/ValidationError';
 import type { ItemComponent } from '@fwo/shared';
-import type { CharacterService } from '@/arena/CharacterService/CharacterService';
 import { forEach } from 'es-toolkit/compat';
+import type { CharacterService } from '@/arena/CharacterService/CharacterService';
+import ValidationError from '@/arena/errors/ValidationError';
+import type { Char } from '@/models/character';
 
 export interface Resources {
   exp: number;
@@ -10,6 +10,7 @@ export interface Resources {
   components: Partial<Record<ItemComponent, number>>;
   free: number;
   bonus: number;
+  skipVigor?: boolean;
 }
 
 export class CharacterResources {
@@ -41,16 +42,49 @@ export class CharacterResources {
     return this.charObj.free;
   }
 
-  private addExp(value: number): {
-    leveledUp: boolean;
-    oldLvl: number;
-    newLvl: number;
-    freeAdded: number;
-  } {
+  private addExp(
+    value: number,
+    skipVigor = false,
+  ): { leveledUp: boolean; oldLvl: number; newLvl: number; freeAdded: number } {
+    let effectiveExp = value;
+
+    if (!skipVigor && !this.character.isBot) {
+      const now = new Date();
+      if (!this.charObj.vigor) {
+        this.charObj.vigor = { energy: 100, lastResetDate: now };
+      } else {
+        const last = new Date(this.charObj.vigor.lastResetDate);
+        const isSameDay =
+          last.getUTCFullYear() === now.getUTCFullYear() &&
+          last.getUTCMonth() === now.getUTCMonth() &&
+          last.getUTCDate() === now.getUTCDate();
+        if (!isSameDay) {
+          this.charObj.vigor.energy = 100;
+          this.charObj.vigor.lastResetDate = now;
+        }
+      }
+
+      if (this.charObj.vigor.energy > 0) {
+        // Бонус бодрости: +100% опыта (2x) для коротких/активных сессий
+        effectiveExp = Math.round(value * 2);
+        this.charObj.vigor.energy = Math.max(0, this.charObj.vigor.energy - 10);
+      } else {
+        // Усталость / антибот: после исчерпания бодрости и превышения лимита
+        const dailyLimit = this.character.lvl * 20000;
+        if ((this.charObj.expLimit?.earn ?? 0) > dailyLimit) {
+          effectiveExp = Math.max(1, Math.round(value * 0.2)); // 80% штраф от непрерывного фарма
+        }
+      }
+
+      if (this.charObj.expLimit) {
+        this.charObj.expLimit.earn = (this.charObj.expLimit.earn ?? 0) + effectiveExp;
+      }
+    }
+
     const oldLvl = this.character.lvl;
 
-    this.charObj.bonus += Math.round(value / 100);
-    this.charObj.exp += value;
+    this.charObj.bonus += Math.round(effectiveExp / 100);
+    this.charObj.exp += effectiveExp;
 
     const newLvl = this.character.lvl;
     const lvlDifference = newLvl - oldLvl;
@@ -87,7 +121,7 @@ export class CharacterResources {
     this.charObj.bonus += bonus;
   }
 
-  async addResources({ components, gold, exp, free, bonus }: Partial<Resources>) {
+  async addResources({ components, gold, exp, free, bonus, skipVigor }: Partial<Resources>) {
     let levelUpInfo:
       | { leveledUp: boolean; oldLvl: number; newLvl: number; freeAdded: number }
       | undefined;
@@ -101,7 +135,7 @@ export class CharacterResources {
     }
 
     if (exp) {
-      levelUpInfo = this.addExp(exp);
+      levelUpInfo = this.addExp(exp, skipVigor);
     }
 
     if (free) {

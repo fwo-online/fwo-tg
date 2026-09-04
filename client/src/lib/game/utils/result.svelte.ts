@@ -1,14 +1,8 @@
 import { componentsToString, type GameResult } from '@fwo/shared';
 import { invalidate } from '$app/navigation';
 import { popup } from '$lib/components/Popup/popup.svelte';
-import { getCharacterContext } from '$lib/constext/character';
 
-export const showGameResult = (results: GameResult[]) => {
-  const character = getCharacterContext();
-
-  const charID = character().id;
-  const result = results.find((result) => result.player.id === charID);
-
+export const showGameResult = (result: GameResult | undefined) => {
   if (!result) {
     return;
   }

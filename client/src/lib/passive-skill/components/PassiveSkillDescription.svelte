@@ -13,7 +13,7 @@
 
   const character = getCharacterContext();
 
-  const currentLevel = $derived(character().skills[skill.name] ?? 0);
+  const currentLevel = $derived(character().passiveSkills[skill.name] ?? 0);
   const nextCost = $derived(skill.bonusCost[currentLevel]);
 
   const isMaxLevel = $derived(currentLevel >= skill.bonusCost.length);

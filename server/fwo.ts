@@ -2,6 +2,7 @@ import { serve } from '@hono/node-server';
 import { isString } from 'es-toolkit';
 import { Server } from 'socket.io';
 import { initBot } from '@/bot';
+import { initAchievementSubscriber } from '@/arena/AchievementService';
 import { initGameChannel } from '@/helpers/channelHelper';
 import { scheduleResetTower } from '@/helpers/towerHelper';
 import { scheduleResetContracts } from '@/helpers/contractsHelper';
@@ -22,6 +23,7 @@ void connect(async () => {
   initGameChannel();
   scheduleResetTower();
   scheduleResetContracts();
+  initAchievementSubscriber();
 
   await initBot();
 });

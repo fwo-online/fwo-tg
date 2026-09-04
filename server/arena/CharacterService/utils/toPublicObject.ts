@@ -12,5 +12,6 @@ export function toPublicObject(char: Char): CharacterPublic {
     statistics: char.statistics,
     lvl: calculateLvl(char.exp),
     clan: char.clan ? ClanService.toPublicObject(char.clan) : undefined,
+    activeTitle: char.activeTitle || undefined,
   };
 }

@@ -20,7 +20,24 @@ export class CharacterPerformance {
     return structuredClone(this.charObj.statistics);
   }
 
-  async addGameStat(performance: GameResult, psr: number) {
+  async setPsr(psr: number) {
+    this.charObj.psr = Math.max(0, psr);
+    await this.character.saveToDb();
+  }
+
+  async addGameStat(performance: GameResult, psr?: number) {
+    if (!this.charObj.statistics) {
+      this.charObj.statistics = {
+        games: 0,
+        kills: 0,
+        death: 0,
+        runs: 0,
+        wins: 0,
+        damage: 0,
+        heal: 0,
+      };
+    }
+
     this.charObj.statistics.games += 1;
 
     if (!performance.alive) {
@@ -43,7 +60,9 @@ export class CharacterPerformance {
       this.charObj.statistics.heal += performance.heal;
     }
 
-    this.charObj.psr = Math.max(0, psr);
+    if (psr !== undefined) {
+      this.charObj.psr = Math.max(0, psr);
+    }
 
     await this.character.saveToDb();
   }
@@ -53,6 +72,22 @@ export class CharacterPerformance {
     this.charObj.statistics.runs += 1;
     this.charObj.psr = Math.max(0, this.charObj.psr - 15);
 
+    await this.character.saveToDb();
+  }
+
+  async addStat(key: keyof Char['statistics'], amount = 1) {
+    if (!this.charObj.statistics) {
+      this.charObj.statistics = {
+        games: 0,
+        kills: 0,
+        death: 0,
+        runs: 0,
+        wins: 0,
+        damage: 0,
+        heal: 0,
+      };
+    }
+    this.charObj.statistics[key] = (this.charObj.statistics[key] ?? 0) + amount;
     await this.character.saveToDb();
   }
 

@@ -15,15 +15,21 @@ export const useTowerGuard = () => {
   onSocket('tower:start', navigateToTower);
 
   onMount(() => {
+    const currentGame = character().game;
+
+    if (currentGame) {
+      return;
+    }
+
     const currentTower = character().tower;
-    const pathname = page.url.pathname;
+    const hash = page.url.hash;
 
     if (currentTower) {
       navigateToTower(currentTower);
       return;
     }
 
-    if (pathname.startsWith('/tower')) {
+    if (hash.startsWith('#/tower')) {
       goto('#/');
     }
   });

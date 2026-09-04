@@ -27,6 +27,10 @@ export interface Char {
     wins: number;
     damage: number;
     heal: number;
+    forestEvents?: number;
+    towerFloors?: number;
+    itemsCrafted?: number;
+    bossDamage?: number;
   };
   gold: number;
   free: number;
@@ -70,6 +74,13 @@ export interface Char {
   };
   contracts: Contract[];
   contractsGeneratedAt: Date | null;
+  activeTitle?: string;
+  unlockedTitles: string[];
+  claimedAchievements: string[];
+  vigor?: {
+    energy: number;
+    lastResetDate: Date;
+  };
 }
 
 export type CharModel = Model<Char> & typeof Char;
@@ -196,6 +207,16 @@ const character = new Schema<Char, CharModel>({
     default: [],
   },
   contractsGeneratedAt: { type: Schema.Types.Date, default: null },
+  activeTitle: { type: String, default: null },
+  unlockedTitles: { type: [String], default: [] },
+  claimedAchievements: { type: [String], default: [] },
+  vigor: {
+    type: new Schema({
+      energy: { type: Number, default: 100 },
+      lastResetDate: { type: Schema.Types.Date, default: Date.now },
+    }, { _id: false }),
+    default: () => ({ energy: 100, lastResetDate: new Date() }),
+  },
 });
 
 character.loadClass(Char);

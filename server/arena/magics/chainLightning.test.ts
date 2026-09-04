@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { CharacterClass } from '@fwo/shared';
-import { times } from 'lodash';
+import { times } from 'es-toolkit/compat';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import chainLightning from './chainLightning';

@@ -1,10 +1,9 @@
-import arena from '@/arena';
-import { generateItemsSets } from '@/helpers/itemHelper';
-import type { Item } from '@fwo/shared';
-import type { ItemSet } from '@fwo/shared';
-import _ from 'lodash';
+import type { Item, ItemSet } from '@fwo/shared';
+import { keyBy } from 'es-toolkit';
 import type { Model } from 'mongoose';
 import mongoose, { Document, Schema } from 'mongoose';
+import arena from '@/arena';
+import { generateItemsSets } from '@/helpers/itemHelper';
 
 export type ItemSetModel = Model<ItemSet> & typeof ItemSetDocument;
 
@@ -15,14 +14,14 @@ export class ItemSetDocument extends Document<Item> {
     try {
       const items = await this.find({});
       if (items.length) {
-        arena.itemsSets = _.keyBy(items, ({ code }) => code);
+        arena.itemsSets = keyBy(items, ({ code }) => code);
       } else {
         console.log('ItemsSets not found. Generating...');
         const itemsSets = await generateItemsSets();
         console.log('ItemsSets file Loaded: ', Date.now() - timer, 'ms');
 
         const createdItems = await ItemSetModel.create(itemsSets);
-        arena.itemsSets = _.keyBy(createdItems, ({ code }) => code);
+        arena.itemsSets = keyBy(createdItems, ({ code }) => code);
       }
     } catch (e) {
       console.error(e);
