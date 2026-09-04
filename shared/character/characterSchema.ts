@@ -24,7 +24,8 @@ export type Character = {
     wins: number;
   };
   magics: Record<string, number>;
-  magicBranches?: string[];
+  branches?: string[];
+  subclass?: string;
   skills: Record<string, number>;
   passiveSkills: Record<string, number>;
   attributes: CharacterAttributes;

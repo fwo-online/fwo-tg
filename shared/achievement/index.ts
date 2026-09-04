@@ -1,12 +1,6 @@
 import type { ItemComponent } from '@/item';
 
-export type AchievementCategory =
-  | 'combat'
-  | 'exploration'
-  | 'tower'
-  | 'craft'
-  | 'boss'
-  | 'mastery';
+export type AchievementCategory = 'combat' | 'exploration' | 'tower' | 'craft' | 'boss' | 'mastery';
 
 export type AchievementStatKey =
   | 'wins'

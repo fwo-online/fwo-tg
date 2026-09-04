@@ -1,4 +1,4 @@
-import type { MagicBranchId } from '@fwo/shared';
+import type { BranchKey } from '@fwo/shared';
 import { vValidator } from '@hono/valibot-validator';
 import { Hono } from 'hono';
 import * as v from 'valibot';
@@ -23,7 +23,7 @@ export const magic = new Hono()
       const { branch } = c.req.valid('json');
 
       const result = await withValidation(
-        MagicService.selectBranch(character, branch as MagicBranchId),
+        MagicService.selectBranch(character, branch as BranchKey),
       );
       return c.json(result);
     },
@@ -50,7 +50,7 @@ export const magic = new Hono()
     (c) => {
       const character = c.get('character');
       const { branchId } = c.req.valid('param');
-      const magics = MagicService.getBranchMagics(character, branchId as MagicBranchId);
+      const magics = MagicService.getBranchMagics(character, branchId as BranchKey);
 
       return c.json(magics);
     },

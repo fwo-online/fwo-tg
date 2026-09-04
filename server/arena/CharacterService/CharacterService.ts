@@ -104,8 +104,12 @@ export class CharacterService {
     return Object.freeze(this.charObj.magics);
   }
 
-  get magicBranches(): string[] {
-    return this.charObj.magicBranches ?? [];
+  get branches(): string[] {
+    return this.charObj.branches ?? [];
+  }
+
+  get subclass(): string | undefined {
+    return this.charObj.subclass;
   }
 
   get skills() {
@@ -391,14 +395,20 @@ export class CharacterService {
     await this.saveToDb();
   }
 
-  async setMagicBranches(branches: string[]) {
-    this.charObj.magicBranches = branches;
+  async setBranches(branches: string[]) {
+    this.charObj.branches = branches;
+    await this.saveToDb();
+  }
+
+  async setSubclass(subclass: string) {
+    this.charObj.subclass = subclass;
     await this.saveToDb();
   }
 
   async resetMagics() {
     this.charObj.magics = {};
-    this.charObj.magicBranches = [];
+    this.charObj.branches = [];
+    this.charObj.subclass = undefined;
     await this.saveToDb();
   }
 
@@ -457,7 +467,8 @@ export class CharacterService {
         gold,
         exp,
         magics: this.charObj.magics,
-        magicBranches: this.charObj.magicBranches,
+        branches: this.charObj.branches,
+        subclass: this.charObj.subclass,
         bonus,
         skills: this.charObj.skills,
         clan,
@@ -528,7 +539,8 @@ export class CharacterService {
       class: this.prof as CharacterClass,
       attributes: this.attributes.attributes,
       magics: this.magics,
-      magicBranches: this.magicBranches,
+      branches: this.branches,
+      subclass: this.subclass,
       skills: this.skills,
       passiveSkills: this.passiveSkills,
       clan: this.clan ? ClanService.toPublicObject(this.clan) : undefined,

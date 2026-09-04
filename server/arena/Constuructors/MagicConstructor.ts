@@ -1,4 +1,4 @@
-import type { CostType, MagicBranchId, Magic as MagicSchema, OrderType } from '@fwo/shared';
+import type { BranchKey, CostType, Magic as MagicSchema, OrderType } from '@fwo/shared';
 import type { ActionKey } from '@/arena/ActionService';
 import { BaseAction } from '@/arena/Constuructors/BaseAction';
 import MiscService from '@/arena/MiscService';
@@ -22,7 +22,7 @@ export interface MagicArgs {
   magType: 'bad' | 'good';
   chance: number[] | string[];
   profList: string[];
-  branches?: MagicBranchId[];
+  branches?: BranchKey[];
 }
 
 /**
@@ -35,7 +35,7 @@ export abstract class Magic extends BaseAction {
 
   isLong = false;
 
-  branches: MagicBranchId[] = [];
+  branches: BranchKey[] = [];
 
   /**
    * Создание магии

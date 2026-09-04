@@ -40,7 +40,8 @@ export interface Char {
   lastForest: Date | null;
   psr: number;
   magics: Record<string, number>;
-  magicBranches: string[];
+  branches: string[];
+  subclass?: string;
   skills: Record<string, number>;
   passiveSkills: Record<string, number>;
   bonus: number;
@@ -129,7 +130,8 @@ const character = new Schema<Char, CharModel>({
   lastFight: { type: Date, default: null },
   psr: { type: Number, default: 0 },
   magics: { type: Object, default: {} },
-  magicBranches: { type: [String], default: [] },
+  branches: { type: [String], default: [] },
+  subclass: { type: String, default: null },
   bonus: { type: Number, default: 0 },
   skills: { type: Object, default: {} },
   passiveSkills: { type: Object, default: {} },
@@ -211,10 +213,13 @@ const character = new Schema<Char, CharModel>({
   unlockedTitles: { type: [String], default: [] },
   claimedAchievements: { type: [String], default: [] },
   vigor: {
-    type: new Schema({
-      energy: { type: Number, default: 100 },
-      lastResetDate: { type: Schema.Types.Date, default: Date.now },
-    }, { _id: false }),
+    type: new Schema(
+      {
+        energy: { type: Number, default: 100 },
+        lastResetDate: { type: Schema.Types.Date, default: Date.now },
+      },
+      { _id: false },
+    ),
     default: () => ({ energy: 100, lastResetDate: new Date() }),
   },
 });

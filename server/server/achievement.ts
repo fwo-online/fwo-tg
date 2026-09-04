@@ -16,11 +16,7 @@ export const achievements = new Hono()
   })
   .post(
     '/claim',
-    vValidator(
-      'json',
-      v.object({ id: v.string() }),
-      handleValidationError,
-    ),
+    vValidator('json', v.object({ id: v.string() }), handleValidationError),
     async (c) => {
       const character = c.get('character');
       const { id } = c.req.valid('json');
@@ -32,11 +28,7 @@ export const achievements = new Hono()
   )
   .post(
     '/set-title',
-    vValidator(
-      'json',
-      v.object({ title: v.nullable(v.string()) }),
-      handleValidationError,
-    ),
+    vValidator('json', v.object({ title: v.nullable(v.string()) }), handleValidationError),
     async (c) => {
       const character = c.get('character');
       const { title } = c.req.valid('json');

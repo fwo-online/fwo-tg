@@ -49,7 +49,7 @@ describe('MagicService with branches', () => {
     it('should select first branch successfully', async () => {
       const result = await MagicService.selectBranch(mage, 'elements');
       expect(result.branches).toEqual(['elements']);
-      expect(mage.magicBranches).toEqual(['elements']);
+      expect(mage.branches).toEqual(['elements']);
     });
 
     it('should throw if branch belongs to another class', async () => {
@@ -80,7 +80,8 @@ describe('MagicService with branches', () => {
 
       const result = await MagicService.selectBranch(mage, 'darkness');
       expect(result.branches).toEqual(['elements', 'darkness']);
-      expect(mage.magicBranches).toEqual(['elements', 'darkness']);
+      expect(mage.branches).toEqual(['elements', 'darkness']);
+      expect(mage.subclass).toBe('m');
     });
 
     it('should throw if selecting third branch', async () => {
@@ -205,7 +206,7 @@ describe('MagicService with branches', () => {
       // 2 from magicArrow (lvl 2 * 1) + 1 from starter lightHeal (lvl 1 * 1) = 3
       expect(resetResult.refundedBonus).toBe(20);
       expect(mage.magics).toEqual({});
-      expect(mage.magicBranches).toEqual([]);
+      expect(mage.branches).toEqual([]);
       expect(mage.resources.bonus).toBe(initialBonus);
     });
   });

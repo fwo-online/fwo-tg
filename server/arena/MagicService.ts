@@ -1,10 +1,10 @@
 import {
+  BRANCHES,
+  type BranchKey,
   canLearnMagic,
   getBranchesByProf,
   getLearnMagicCost,
-  MAGIC_BRANCHES,
-  MAX_MAGIC_BRANCHES,
-  type MagicBranchId,
+  MAX_BRANCHES,
   SECOND_BRANCH_MIN_CHAR_LVL,
 } from '@fwo/shared';
 import { mapValues } from 'es-toolkit';
@@ -34,8 +34,8 @@ export default class MagicService {
   /**
    * Выбор ветки специализации магии
    */
-  static async selectBranch(character: CharacterService, branchId: MagicBranchId) {
-    const branchMeta = MAGIC_BRANCHES[branchId];
+  static async selectBranch(character: CharacterService, branchKey: BranchKey) {
+    const branchMeta = BRANCHES[branchKey];
     if (!branchMeta) {
       throw new ValidationError('Неизвестная ветка магии');
     }
@@ -44,15 +44,13 @@ export default class MagicService {
       throw new ValidationError('Эта ветка недоступна для вашего класса');
     }
 
-    const currentBranches = character.magicBranches;
-    if (currentBranches.includes(branchId)) {
+    const currentBranches = character.branches;
+    if (currentBranches.includes(branchKey)) {
       throw new ValidationError('Эта ветка уже выбрана');
     }
 
-    if (currentBranches.length >= MAX_MAGIC_BRANCHES) {
-      throw new ValidationError(
-        `Вы уже выбрали максимальное количество веток (${MAX_MAGIC_BRANCHES})`,
-      );
+    if (currentBranches.length >= MAX_BRANCHES) {
+      throw new ValidationError(`Вы уже выбрали максимальное количество веток (${MAX_BRANCHES})`);
     }
 
     if (currentBranches.length === 1 && character.lvl < SECOND_BRANCH_MIN_CHAR_LVL) {
@@ -61,8 +59,11 @@ export default class MagicService {
       );
     }
 
-    const updatedBranches = [...currentBranches, branchId];
-    await character.setMagicBranches(updatedBranches);
+    const updatedBranches = [...currentBranches, branchKey];
+    await character.setBranches(updatedBranches);
+    if (updatedBranches.length === 2) {
+      await character.setSubclass(branchMeta.prof);
+    }
 
     return {
       branches: updatedBranches,
@@ -84,13 +85,13 @@ export default class MagicService {
       throw new ValidationError('Заклинание недоступно для вашего класса');
     }
 
-    const magicBranches = magic.branches;
+    const spellBranches = magic.branches;
 
-    if (!magicBranches || magicBranches.length === 0) {
+    if (!spellBranches || spellBranches.length === 0) {
       throw new ValidationError('Заклинание не привязано к ветке магии');
     }
 
-    const hasMatchingBranch = magicBranches.some((b) => character.magicBranches.includes(b));
+    const hasMatchingBranch = spellBranches.some((b) => character.branches.includes(b));
 
     if (!hasMatchingBranch) {
       throw new ValidationError('Заклинание принадлежит невыбранной ветке специализации');
@@ -139,7 +140,7 @@ export default class MagicService {
     return {
       refundedBonus: totalRefundBonus,
       magics: character.magics,
-      magicBranches: character.magicBranches,
+      branches: character.branches,
     };
   }
 
@@ -148,10 +149,10 @@ export default class MagicService {
    */
   static getBranchesInfo(character: CharacterService) {
     const allBranches = getBranchesByProf(character.prof);
-    const selectedBranches = character.magicBranches;
+    const selectedBranches = character.branches;
     const canSelectSecondBranch =
       selectedBranches.length === 1 && character.lvl >= SECOND_BRANCH_MIN_CHAR_LVL;
-    const canSelectAny = selectedBranches.length < MAX_MAGIC_BRANCHES;
+    const canSelectAny = selectedBranches.length < MAX_BRANCHES;
 
     const branches = allBranches.map((branch) => {
       const isSelected = selectedBranches.includes(branch.id);
@@ -162,7 +163,7 @@ export default class MagicService {
         canSelect = false;
       } else if (!canSelectAny) {
         canSelect = false;
-        lockReason = `Достигнут лимит специализаций (${MAX_MAGIC_BRANCHES} ветки)`;
+        lockReason = `Достигнут лимит специализаций (${MAX_BRANCHES} ветки)`;
       } else if (selectedBranches.length === 1 && character.lvl < SECOND_BRANCH_MIN_CHAR_LVL) {
         canSelect = false;
         lockReason = `Откроется на ${SECOND_BRANCH_MIN_CHAR_LVL}-м уровне персонажа`;
@@ -182,7 +183,7 @@ export default class MagicService {
       branches,
       selectedBranches,
       canSelectSecondBranch,
-      maxBranches: MAX_MAGIC_BRANCHES,
+      maxBranches: MAX_BRANCHES,
       secondBranchMinLvl: SECOND_BRANCH_MIN_CHAR_LVL,
     };
   }
@@ -190,7 +191,7 @@ export default class MagicService {
   /**
    * Получить заклинания конкретной ветки
    */
-  static getBranchMagics(character: CharacterService, branchId: MagicBranchId) {
+  static getBranchMagics(character: CharacterService, branchId: BranchKey) {
     const allMagics = MagicService.getMagicListByProf(character.prof);
     return allMagics
       .filter((m) => {
@@ -239,8 +240,8 @@ export default class MagicService {
     return magicsByLvl.filter((magic) => {
       // Если у персонажа есть выбранные ветки, фильтруем по ним
       if (
-        character.magicBranches.length > 0 &&
-        !magic.branches?.some((b) => character.magicBranches.includes(b))
+        character.branches.length > 0 &&
+        !magic.branches?.some((b) => character.branches.includes(b))
       ) {
         return false;
       }
@@ -254,8 +255,8 @@ export default class MagicService {
 
     const magicsToLearn = magics.filter((magic) => {
       if (
-        character.magicBranches.length > 0 &&
-        !magic.branches?.some((b) => character.magicBranches.includes(b))
+        character.branches.length > 0 &&
+        !magic.branches?.some((b) => character.branches.includes(b))
       ) {
         return false;
       }

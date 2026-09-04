@@ -1,5 +1,5 @@
 import type { CharacterClass } from '@/character';
-import type { MagicBranchId } from './branches';
+import type { BranchKey } from './branches';
 
 export * from './branches';
 
@@ -13,8 +13,8 @@ export type Magic = {
   lvl: number;
   orderType: OrderType;
   effectType?: EffectType;
-  branch?: MagicBranchId;
-  branches?: MagicBranchId[];
+  branch?: BranchKey;
+  branches?: BranchKey[];
 };
 
 export type Skill = {

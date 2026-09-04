@@ -138,28 +138,32 @@
      - `frostTouch`: `['elements', 'darkness']` (стихийный урон холодом + периодический DoT увядания)
      - `blight`: `['darkness', 'arcana']` (некротический срез HP + ментальное истощение)
      - `vampirism`: `['darkness', 'arcana']` (высасывание здоровья + перенос энергии)
-   - В интерфейсе `Magic` возвращается `branches: MagicBranchId[]` и `branch: MagicBranchId`.
+     - `vampirism`: `['darkness', 'arcana']` (высасывание здоровья + перенос энергии)
+   - В интерфейсе `Magic` возвращается `branches: BranchKey[]` и `branch: BranchKey`.
 
 ### 5.2. Слой Базы Данных (`server/models/character.ts`)
 
 - Добавить в схему `Character` поле:
   ```typescript
-  magicBranches: {
+  branches: {
     type: [String],
     default: [],
+  },
+  subclass: {
+    type: String,
+    default: null,
   }
   ```
-- Обеспечить обратную совместимость для существующих персонажей: если персонаж уже имеет магии, при первом входе его ветки либо автоопределяются по изученным магам, либо дается бесплатный разовый респек.
 
 ### 5.3. Серверная бизнес-логика (`server/arena/MagicService.ts`)
 
 - Добавить методы:
-  - `selectBranch(character: CharacterService, branchId: MagicBranchId)`:
-    - Проверка принадлежности ветки классу персонажа.
-    - Проверка лимита: макс 2 ветки. Если выбирается 2-я — проверка уровня персонажа `>= SECOND_BRANCH_MIN_CHAR_LVL`.
+  - `selectBranch(character: CharacterService, branchKey: BranchKey)`:
+    - Проверка принадлежности ветки классу персонажа (или доступность для подкласса).
+    - Проверка лимита: макс 2 ветки. Если выбирается 2-я — проверка уровня персонажа `>= SECOND_BRANCH_MIN_CHAR_LVL` и сохранение класса в `character.subclass`.
   - `learnSpecificMagic(character: CharacterService, magicName: string)`:
     - Проверка наличия заклинания в `arena.magics`.
-    - Проверка принадлежности ветке из `character.magicBranches` (или подклассу для 8-го круга).
+    - Проверка принадлежности ветке из `character.branches` (или подклассу для 8-го круга).
     - Проверка `canLearnMagic(character.lvl, magic.lvl)`.
     - Проверка `(character.magics[magicName] ?? 0) < MAX_MAGIC_LVL`.
     - Списание `bonus` (`getLearnMagicCost(magic.lvl)`).
@@ -168,7 +172,8 @@
   - `resetMagics(character: CharacterService)`:
     - Подсчет всех потраченных очков `bonus`.
     - Очистка `character.magics = {}`.
-    - Очистка `character.magicBranches = []`.
+    - Очистка `character.branches = []`.
+    - Сброс `character.subclass = undefined`.
     - Возврат очков `bonus`.
 
 ### 5.4. HTTP API (`server/server/magic.ts`)
