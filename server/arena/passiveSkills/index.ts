@@ -1,4 +1,5 @@
 export { consussion } from './consussion';
+export { criticalStrike } from './criticalStrike';
 export { deathEcho } from './deathEcho';
 export { divineWill } from './divineWill';
 export { fatesMiss } from './fatesMiss';
@@ -8,5 +9,6 @@ export { lacerate } from './lacerate';
 export { markedShot } from './markedShot';
 export { nightcall } from './nightcall';
 export { nineLives } from './nineLives';
+export { ricochet } from './ricochet';
 export { staticProtect } from './staticProtect';
 export { sweepingBlow } from './sweepingBlow';

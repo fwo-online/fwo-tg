@@ -24,6 +24,7 @@ export type ExpArr = {
   exp?: number;
   val?: number;
   hp?: number;
+  reason?: string;
 }[];
 
 export type CustomMessageFn = (args: SuccessArgs) => string;

@@ -1,0 +1,8 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`ricochet should ricochet to other enemies without hitting the same target twice 1`] = `
+"*Игрок 1* атаковал *Игрок 2* _Оружием_ и нанёс *2.25* урона
+\\[ Игрок 2 💥 💔-2.25/47.75 📖18
+_🏹 Рикошет_ Игрок 3 💥 💔-1.57/48.43 📖13
+_🏹 Рикошет_ Игрок 4 💥 💔-1.1/48.9 📖9 ]"
+`;

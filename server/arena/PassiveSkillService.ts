@@ -1,3 +1,4 @@
+import type { PassiveSkill } from '@fwo/shared';
 import type { CharacterService } from './CharacterService';
 import ValidationError from './errors/ValidationError';
 import * as passiveSkills from './passiveSkills';
@@ -16,6 +17,17 @@ export default class PassiveSkillService {
     const passiveSkill = PassiveSkillService.passiveSkills[id];
     const charPassiveSkillLvl = char.passiveSkills[id] ?? 0;
 
+    if (passiveSkill.profList) {
+      if (!(char.prof in passiveSkill.profList)) {
+        throw new ValidationError('Умение недоступно для твоего класса');
+      }
+
+      const requiredLvl = passiveSkill.profList[char.prof] ?? 0;
+      if (char.lvl < requiredLvl) {
+        throw new ValidationError('Твой уровень ниже уровня умения');
+      }
+    }
+
     if (charPassiveSkillLvl + 1 > passiveSkill.bonusCost.length) {
       throw new ValidationError(`Умение ${passiveSkill.displayName} имеет максимальный уровень`);
     }
@@ -29,7 +41,7 @@ export default class PassiveSkillService {
     return id in this.passiveSkills;
   }
 
-  static toObject(passiveSkill: (typeof this.passiveSkills)[keyof typeof this.passiveSkills]) {
+  static toObject(passiveSkill: (typeof this.passiveSkills)[keyof typeof this.passiveSkills]): PassiveSkill {
     return {
       name: passiveSkill.name,
       displayName: passiveSkill.displayName,
@@ -37,6 +49,7 @@ export default class PassiveSkillService {
       bonusCost: passiveSkill.bonusCost,
       effect: passiveSkill.effect,
       chance: passiveSkill.chance,
+      classList: passiveSkill.profList,
     };
   }
 
