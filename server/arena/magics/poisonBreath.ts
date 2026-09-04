@@ -23,6 +23,7 @@ class PoisonBreath extends DmgMagic {
       effect: ['1d3+1', '1d3+2', '1d3+3'],
       dmgType: 'acid',
       profList: ['m'],
+      branches: ['darkness'],
     });
   }
 

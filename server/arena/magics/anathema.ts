@@ -24,6 +24,7 @@ class Anathema extends CommonMagic {
       magType: 'bad',
       chance: ['1d60+30', '1d30+55', '1d10+75'],
       profList: ['p'],
+      branches: ['inquisition'],
       effect: [],
     });
   }

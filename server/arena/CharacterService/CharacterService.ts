@@ -1,6 +1,14 @@
 import type { Character, CharacterClass, CharacterPublic, ItemComponent } from '@fwo/shared';
 import type { UpdateQuery } from 'mongoose';
-import { findCharacter, findCharacters, removeCharacter, updateCharacter, deactivateOtherCharacters, activateCharacter, activateAnyCharacter } from '@/api/character';
+import {
+  findCharacter,
+  findCharacters,
+  removeCharacter,
+  updateCharacter,
+  deactivateOtherCharacters,
+  activateCharacter,
+  activateAnyCharacter,
+} from '@/api/character';
 import arena from '@/arena';
 import { CharacterAttributes } from '@/arena/CharacterService/CharacterAttributes';
 import { CharacterPerformance } from '@/arena/CharacterService/CharacterPerformance';
@@ -94,6 +102,10 @@ export class CharacterService {
 
   get magics() {
     return Object.freeze(this.charObj.magics);
+  }
+
+  get magicBranches(): string[] {
+    return this.charObj.magicBranches ?? [];
   }
 
   get skills() {
@@ -379,6 +391,17 @@ export class CharacterService {
     await this.saveToDb();
   }
 
+  async setMagicBranches(branches: string[]) {
+    this.charObj.magicBranches = branches;
+    await this.saveToDb();
+  }
+
+  async resetMagics() {
+    this.charObj.magics = {};
+    this.charObj.magicBranches = [];
+    await this.saveToDb();
+  }
+
   /**
    * Получение нового умения
    * @param {string} skillId идентификатор умения
@@ -434,6 +457,7 @@ export class CharacterService {
         gold,
         exp,
         magics: this.charObj.magics,
+        magicBranches: this.charObj.magicBranches,
         bonus,
         skills: this.charObj.skills,
         clan,
@@ -504,6 +528,7 @@ export class CharacterService {
       class: this.prof as CharacterClass,
       attributes: this.attributes.attributes,
       magics: this.magics,
+      magicBranches: this.magicBranches,
       skills: this.skills,
       passiveSkills: this.passiveSkills,
       clan: this.clan ? ClanService.toPublicObject(this.clan) : undefined,

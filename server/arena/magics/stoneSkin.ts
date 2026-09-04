@@ -24,6 +24,7 @@ class StoneSkin extends CommonMagic {
       chance: [100, 100, 100],
       effect: ['1d4+2', '1d3+3', '1d2+4'],
       profList: ['p'],
+      branches: ['protection'],
     });
   }
 

@@ -24,6 +24,7 @@ class Entangle extends CommonMagic {
       chance: [100, 100, 100],
       effect: ['1d2+4', '1d2+5', '1d2+6'],
       profList: ['p'],
+      branches: ['inquisition'],
     });
   }
 

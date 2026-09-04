@@ -22,6 +22,7 @@ const params: MagicArgs = {
   magType: 'good',
   chance: [90, 96, 98],
   profList: ['m'],
+  branches: ['arcana'],
   effect: ['1d3', '1d5', '1d7'],
 };
 

@@ -26,6 +26,7 @@ class Vampirism extends DmgMagic {
       effect: ['1d2+1', '1d2+2', '1d2+3'],
       dmgType: 'clear',
       profList: ['m'],
+      branches: ['darkness', 'arcana'],
     });
   }
 

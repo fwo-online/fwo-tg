@@ -23,6 +23,7 @@ class MagicDefense extends CommonMagic {
       chance: [100, 100, 100],
       effect: ['1d4+4', '1d3+5', '1d2+6'],
       profList: ['p'],
+      branches: ['protection'],
     });
   }
 

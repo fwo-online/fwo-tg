@@ -25,6 +25,7 @@ class Rockfall extends DmgMagic {
       effect: ['1d2', '1d2+1', '1d2+2'],
       dmgType: 'physical',
       profList: ['p'],
+      branches: ['inquisition'],
     });
   }
 

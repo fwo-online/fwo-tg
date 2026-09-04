@@ -39,6 +39,13 @@ fwo-tg/
 - **[Сервер](docs/agents/server-patterns.md)** — CharacterService, API layer, `arena.characters` кеш, middleware
 - **[Клиент](docs/agents/client-patterns.md)** — роутинг, Zustand-сторы, ApiClient, хуки
 - **[Система эффектов](docs/agents/effects-system.md)** — Affect/Effect/LongEffect/Passive, PlayerAffects, EffectService, глобальные флаги
+- **[Система магий](docs/agents/magic-system.md)** — каталог заклинаний кругов 1–7, статус реализации, механика изучения
+- **[Ветки магий и изучение](docs/specs/magic-branches-plan.md)** — система специализаций (1–2 ветки), целенаправленное изучение без рандома, гибридные школы (реализовано)
+- **[Proposal: Пассивки магов и жрецов](docs/specs/magic-passives-proposal.md)** — концепт 12 пассивных талантов для 6 магических веток (Стихии, Тьма, Аркана, Свет, Опека, Инквизиция)
+- **[Умения Воина и Лучника](docs/agents/warrior-archer-skills.md)** — активные умения, 6 видов мастерства оружия, боевые пассивки, сравнение с классикой
+- **[Подклассы и улучшение класса](docs/agents/subclasses.md)** — 16 комбинаций классов, 8-й круг магии, активные и пассивные умения
+- **[Proposal: Матрица подклассов из веток](docs/specs/subclasses-branch-matrix-proposal.md)** — полная матрица 66 комбинаций 12 веток с сохранением всех 16 исторических классов FWO
+- **[Proposal: Кросс-архетипные гибриды и свитки](docs/specs/hybrid-cross-class-mechanics-proposal.md)** — механика свитков магии и боевых уловок при выборе чужого архетипа, разделение Мана vs Энергия
 - **[Multiple Characters](docs/agents/multiple-characters.md)** — добавленная фича: несколько персонажей, `active`, кеш, клиентский UX
 
 ## Конвенции

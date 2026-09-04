@@ -27,6 +27,7 @@ class MagicArrow extends DmgMagic {
       effect: ['1d2', '1d2+1', '1d2+2'],
       dmgType: 'clear',
       profList: ['m'],
+      branches: ['elements'],
     });
   }
 

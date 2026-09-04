@@ -20,6 +20,7 @@ class PhysicalSadness extends DmgMagic {
       effect: ['1d1', '1d2', '1d1+1'],
       dmgType: 'physical',
       profList: ['p'],
+      branches: ['inquisition'],
     });
   }
 

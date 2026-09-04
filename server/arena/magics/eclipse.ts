@@ -20,6 +20,7 @@ const params = Object.freeze({
   magType: 'bad',
   chance: ['1d80+20', '1d40+60', '1d20+80'],
   profList: ['p'],
+  branches: ['inquisition'],
   effect: [],
 });
 

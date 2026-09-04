@@ -1,7 +1,7 @@
 import { CharacterService } from '@/arena/CharacterService';
-import type { Server, Socket } from '@/server/ws';
-import { validateToken } from '@/server/utils/validateToken';
 import { checkActiveConnection } from '@/server/utils/activeConnectons';
+import { validateToken } from '@/server/utils/validateToken';
+import type { Server, Socket } from '@/server/ws';
 
 export const middleware = async (io: Server, socket: Socket, next: (err?: Error) => void) => {
   const [type, value] = socket.handshake.auth.authorization?.split(' ') ?? [];
@@ -34,6 +34,8 @@ export const middleware = async (io: Server, socket: Socket, next: (err?: Error)
 
 export const onConnection = (_io: Server, socket: Socket) => {
   const { character } = socket.data;
+
+  // character.resources.addResources({ exp: 1000000 });
 
   socket.on('character', async (callback) => {
     callback(character.toObject());

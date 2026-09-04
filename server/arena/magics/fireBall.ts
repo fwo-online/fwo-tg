@@ -26,6 +26,7 @@ class FireBall extends AoeDmgMagic {
       effect: ['1d3+5', '1d3+6', '1d3+7'],
       dmgType: 'fire',
       profList: ['m'],
+      branches: ['elements'],
     });
   }
 

@@ -2,7 +2,7 @@ import type { Harks } from '.';
 
 export const profsList = ['m', 'w', 'p', 'l'] as const;
 
-export type Prof = typeof profsList[number];
+export type Prof = (typeof profsList)[number];
 
 export type ProfsLvl = Partial<Record<Prof, number>>;
 
@@ -12,12 +12,16 @@ type ProfItem = {
   name: string;
   icon: string;
   mag?: Record<string, number>;
-}
+};
 
 export const profsData: Record<Prof, ProfItem> = {
   w: {
     hark: {
-      str: 10, dex: 8, int: 3, wis: 3, con: 6,
+      str: 10,
+      dex: 8,
+      int: 3,
+      wis: 3,
+      con: 6,
     },
     descr: 'стронг',
     name: 'Воин',
@@ -25,7 +29,11 @@ export const profsData: Record<Prof, ProfItem> = {
   },
   l: {
     hark: {
-      str: 3, dex: 10, int: 8, wis: 3, con: 6,
+      str: 3,
+      dex: 10,
+      int: 8,
+      wis: 3,
+      con: 6,
     },
     descr: 'резкий',
     name: 'Лучник',
@@ -33,10 +41,11 @@ export const profsData: Record<Prof, ProfItem> = {
   },
   m: {
     hark: {
-      str: 3, dex: 3, int: 8, wis: 10, con: 6,
-    },
-    mag: {
-      lightHeal: 1,
+      str: 3,
+      dex: 3,
+      int: 8,
+      wis: 10,
+      con: 6,
     },
     descr: 'волшебный',
     name: 'Маг',
@@ -44,10 +53,11 @@ export const profsData: Record<Prof, ProfItem> = {
   },
   p: {
     hark: {
-      str: 3, dex: 3, int: 10, wis: 8, con: 6,
-    },
-    mag: {
-      lightHeal: 1,
+      str: 3,
+      dex: 3,
+      int: 10,
+      wis: 8,
+      con: 6,
     },
     descr: 'хилит',
     name: 'Жрец',

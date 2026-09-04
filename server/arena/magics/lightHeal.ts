@@ -19,6 +19,7 @@ class LightHeal extends HealMagic {
       chance: [100, 100, 100],
       effect: ['1d2', '1d2+1', '1d2+2'],
       profList: ['m', 'p'],
+      branches: ['holy', 'protection', 'arcana'],
     });
   }
 

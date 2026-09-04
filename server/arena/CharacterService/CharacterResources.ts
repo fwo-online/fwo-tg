@@ -1,8 +1,8 @@
-import type { Char } from '@/models/character';
-import ValidationError from '@/arena/errors/ValidationError';
 import type { ItemComponent } from '@fwo/shared';
-import type { CharacterService } from '@/arena/CharacterService/CharacterService';
 import { forEach } from 'es-toolkit/compat';
+import type { CharacterService } from '@/arena/CharacterService/CharacterService';
+import ValidationError from '@/arena/errors/ValidationError';
+import type { Char } from '@/models/character';
 
 export interface Resources {
   exp: number;
@@ -42,7 +42,10 @@ export class CharacterResources {
     return this.charObj.free;
   }
 
-  private addExp(value: number, skipVigor = false): { leveledUp: boolean; oldLvl: number; newLvl: number; freeAdded: number } {
+  private addExp(
+    value: number,
+    skipVigor = false,
+  ): { leveledUp: boolean; oldLvl: number; newLvl: number; freeAdded: number } {
     let effectiveExp = value;
 
     if (!skipVigor && !this.character.isBot) {
@@ -114,8 +117,14 @@ export class CharacterResources {
     this.charObj.free += free;
   }
 
-  async addResources({ components, gold, exp, free, skipVigor }: Partial<Resources>) {
-    let levelUpInfo: { leveledUp: boolean; oldLvl: number; newLvl: number; freeAdded: number } | undefined;
+  private addBonus(bonus: number) {
+    this.charObj.bonus += bonus;
+  }
+
+  async addResources({ components, gold, exp, free, bonus, skipVigor }: Partial<Resources>) {
+    let levelUpInfo:
+      | { leveledUp: boolean; oldLvl: number; newLvl: number; freeAdded: number }
+      | undefined;
 
     if (components) {
       this.addComponents(components);
@@ -131,6 +140,10 @@ export class CharacterResources {
 
     if (free) {
       this.addFree(free);
+    }
+
+    if (bonus) {
+      this.addBonus(bonus);
     }
 
     await this.character.saveToDb();
