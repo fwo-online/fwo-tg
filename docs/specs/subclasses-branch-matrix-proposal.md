@@ -1,7 +1,7 @@
 # Proposal: Матрица подклассов на основе комбинации веток специализаций
 
 > Статус: **Proposal (На согласовании)**  
-> Связанные документы: [`docs/agents/subclasses.md`](../agents/subclasses.md), [`docs/agents/warrior-archer-skills.md`](../agents/warrior-archer-skills.md), [`docs/agents/magic-system.md`](../agents/magic-system.md)
+> Связанные документы: [`docs/specs/hybrid-cross-class-mechanics-proposal.md`](./hybrid-cross-class-mechanics-proposal.md), [`docs/agents/subclasses.md`](../agents/subclasses.md), [`docs/agents/warrior-archer-skills.md`](../agents/warrior-archer-skills.md), [`docs/agents/magic-system.md`](../agents/magic-system.md)
 
 ---
 
