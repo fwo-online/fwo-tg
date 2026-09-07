@@ -1,4 +1,5 @@
 import type { ActionType, EffectType, OrderType } from '@fwo/shared';
+import { sum } from 'es-toolkit';
 import type { ActionKey } from '@/arena/ActionService';
 import { BaseActionContext } from '@/arena/Constuructors/BaseActionContext';
 import CastError from '@/arena/errors/CastError';
@@ -16,12 +17,37 @@ export type BaseActionParams = {
   game: GameService;
 };
 
-export type BaseActionStatus = {
-  effect: number;
-  exp: number;
-  expArr: ExpArr;
-  affects: SuccessArgs[];
-};
+export class BaseActionStatus {
+  effect = 0;
+  exp = 0;
+  expArr: ExpArr = [];
+  affects: SuccessArgs[] = [];
+  #effectParts: Partial<Record<EffectType, number>> = {};
+
+  constructor() {
+    this.reset();
+  }
+
+  setEffectPart(effectType: EffectType, value: number) {
+    this.#effectParts = {
+      ...this.#effectParts,
+      [effectType]: value,
+    };
+    this.effect = sum(Object.values(this.#effectParts));
+  }
+
+  get effectParts() {
+    return this.#effectParts;
+  }
+
+  reset() {
+    this.effect = 0;
+    this.exp = 0;
+    this.expArr = [];
+    this.affects = [];
+    this.#effectParts = {};
+  }
+}
 
 export abstract class BaseAction {
   name!: ActionKey;
@@ -38,7 +64,7 @@ export abstract class BaseAction {
   abstract run(initiator: Player, target: Player, game: GameService): void;
 
   createContext(initiator: Player, target: Player, game: GameService) {
-    this.context = new BaseActionContext({ initiator, target, game });
+    this.context = new BaseActionContext({ initiator, target, game }, new BaseActionStatus());
     return this.context;
   }
 
@@ -80,6 +106,7 @@ export abstract class BaseAction {
       orderType: this.orderType,
       expArr: status.expArr,
       affects: status.affects,
+      effectParts: status.effectParts,
       // @ts-expect-error todo вынести кастомные сообщения в отдельный сервис
       msg: this.customMessage?.bind(this),
     };

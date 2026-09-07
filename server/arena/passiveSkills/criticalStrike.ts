@@ -52,7 +52,13 @@ class CriticalStrike extends PassiveSkillConstructor {
       return;
     }
 
-    ctx.status.effect = floatNumber(ctx.status.effect * 2);
+    if (!action.effectType) {
+      return;
+    }
+
+    const effect = ctx.status.effectParts[action.effectType] ?? 0;
+
+    ctx.status.setEffectPart(action.effectType, floatNumber(effect * 2));
 
     ctx.addAffect(this, this.context);
   }

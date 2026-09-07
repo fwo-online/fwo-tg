@@ -129,13 +129,13 @@ export default class TestUtils {
       info: { name: 'Оружие', case: 'Оружием' },
       type: weapon.type || 'chop',
       wear: ItemWear.MainHand,
-      hit: { min: 1, max: 12 },
+      hit: { physical: { min: 1, max: 12 } },
       ...weapon,
     });
   }
 
   static getBaseStatus(): BaseActionStatus {
-    return { effect: 0, exp: 0, expArr: [], affects: [] };
+    return { effect: 0, exp: 0, expArr: [], affects: [], effectParts: {} };
   }
 
   static normalizeRoundHistory(history: HistoryItem[]) {

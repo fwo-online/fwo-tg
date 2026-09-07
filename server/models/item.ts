@@ -63,6 +63,7 @@ const item = new Schema<Item, ItemModel>(
     magic: { type: Object },
     heal: { type: Object },
     hit: { type: Object },
+    resists: { type: Object },
     craft: { type: Object },
     modifiers: { type: Object },
     tier: { type: Number },

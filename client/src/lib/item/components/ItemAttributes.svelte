@@ -12,7 +12,11 @@
     {
       key: "base",
       attributes: [
-        { name: "Урон", key: "hit" },
+        { name: "💥 Урон", key: "hit.physical" },
+        { name: "🔥 Урон огнём", key: "hit.fire" },
+        { name: "❄️ Урон холодом", key: "hit.frost" },
+        { name: "⚡ Урон молнией", key: "hit.lightning" },
+        { name: "☣ Урон кислотой", key: "hit.acid" },
         { name: "Здоровье", key: "base.hp" },
         { name: "Энергия", key: "base.en" },
         { name: "Мана", key: "base.mp" },
@@ -35,6 +39,16 @@
     {
       key: "heal",
       attributes: [{ name: "Лечение", key: "heal" }],
+    },
+    {
+      key: "resists",
+      attributes: [
+        { name: "🛡️ Сопротивление физ., %", key: "resists.physical" },
+        { name: "🛡️ Сопротивление огню, %", key: "resists.fire" },
+        { name: "🛡️ Сопротивление холоду, %", key: "resists.frost" },
+        { name: "🛡️ Сопротивление молнии, %", key: "resists.lightning" },
+        { name: "🛡️ Сопротивление кислоте, %", key: "resists.acid" },
+      ],
     },
   ];
 

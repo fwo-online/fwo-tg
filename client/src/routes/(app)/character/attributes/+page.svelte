@@ -73,9 +73,45 @@
       <Description.Item>
         Урон
         {#snippet after()}
-          {@render stat("hit.min")} - {@render stat("hit.max")}
+          {@render stat("hit.physical.min")} - {@render stat("hit.physical.max")}
         {/snippet}
       </Description.Item>
+
+      {#if dynamicAttributes.hit?.fire && (dynamicAttributes.hit.fire.min > 0 || dynamicAttributes.hit.fire.max > 0)}
+        <Description.Item>
+          🔥 Огонь
+          {#snippet after()}
+            {@render stat("hit.fire.min")} - {@render stat("hit.fire.max")}
+          {/snippet}
+        </Description.Item>
+      {/if}
+
+      {#if dynamicAttributes.hit?.frost && (dynamicAttributes.hit.frost.min > 0 || dynamicAttributes.hit.frost.max > 0)}
+        <Description.Item>
+          ❄️ Холод
+          {#snippet after()}
+            {@render stat("hit.frost.min")} - {@render stat("hit.frost.max")}
+          {/snippet}
+        </Description.Item>
+      {/if}
+
+      {#if dynamicAttributes.hit?.lightning && (dynamicAttributes.hit.lightning.min > 0 || dynamicAttributes.hit.lightning.max > 0)}
+        <Description.Item>
+          ⚡ Молния
+          {#snippet after()}
+            {@render stat("hit.lightning.min")} - {@render stat("hit.lightning.max")}
+          {/snippet}
+        </Description.Item>
+      {/if}
+
+      {#if dynamicAttributes.hit?.acid && (dynamicAttributes.hit.acid.min > 0 || dynamicAttributes.hit.acid.max > 0)}
+        <Description.Item>
+          ☣ Кислота
+          {#snippet after()}
+            {@render stat("hit.acid.min")} - {@render stat("hit.acid.max")}
+          {/snippet}
+        </Description.Item>
+      {/if}
       <Description.Item>
         Атака
         {#snippet after()}

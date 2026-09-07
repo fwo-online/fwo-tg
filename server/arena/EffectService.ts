@@ -1,3 +1,5 @@
+import { type EffectType, keys } from '@fwo/shared';
+import { isEmptyObject } from 'es-toolkit';
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import type { Player } from '@/arena/PlayersService';
 import { floatNumber } from '@/utils/floatNumber';
@@ -67,9 +69,23 @@ export class EffectService {
   }
 
   private applyResists(ctx: BaseActionContext, action: BaseAction) {
-    if (action?.effectType) {
-      ctx.status.effect *= ctx.target.resists[action.effectType] || 1;
+    /** @todo перейти на геттер для effect для умений наносящих урон */
+    if (isEmptyObject(ctx.status.effectParts)) {
+      if (action?.effectType) {
+        ctx.status.effect *= this.getResist(ctx.target, action.effectType);
+      }
+    } else {
+      keys(ctx.status.effectParts).forEach((effectType) => {
+        const effect = ctx.status.effectParts[effectType];
+        if (effect) {
+          ctx.status.setEffectPart(effectType, effect * this.getResist(ctx.target, effectType));
+        }
+      });
     }
+  }
+
+  private getResist(target: Player, type: EffectType): number {
+    return target.stats.val('resists')[type] ?? 1;
   }
 
   private checkTargetIsDead(target: Player, ctx: BaseActionContext, action: BaseAction) {

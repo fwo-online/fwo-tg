@@ -1,3 +1,5 @@
+import { entries } from '@fwo/shared';
+import { isEmptyObject } from 'es-toolkit';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
 import { brackets, italic } from '@/utils/formatString';
 import { getDamageTypeIcon } from '@/utils/icons';
@@ -9,9 +11,20 @@ export function formatExp(args: SuccessArgs): string {
     case 'dmg-magic':
     case 'dmg-magic-long':
     case 'aoe-dmg-magic': {
+      let dmgPart = '💔 ';
+      if (args.effectParts) {
+        if (!isEmptyObject(args.effectParts)) {
+          dmgPart += entries(args.effectParts)
+            .map(([effectType, val]) => `${getDamageTypeIcon(effectType)}-${val}`)
+            .join(' ');
+        } else {
+          dmgPart = `${getDamageTypeIcon(args.effectType)} 💔-${args.effect}`;
+        }
+      }
+
       return brackets(
         [
-          `${args.target.nick} ${getDamageTypeIcon(args.effectType)} 💔-${args.effect}/${args.hp} ${exp}`,
+          `${args.target.nick} ${dmgPart}/${args.hp} ${exp}`.trimEnd(),
           ...args.expArr.map(({ target, val, hp, exp, reason }) =>
             `${reason ? italic(reason) : ''} ${target.nick} ${getDamageTypeIcon(args.effectType)} 💔-${val}/${hp} 📖${exp}`.trimStart(),
           ),

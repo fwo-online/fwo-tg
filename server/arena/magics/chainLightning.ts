@@ -1,4 +1,4 @@
-import { OrderType } from '@fwo/shared';
+import { EffectType, OrderType } from '@fwo/shared';
 import { shuffle } from 'es-toolkit';
 import { effectService } from '@/arena/EffectService';
 import { AoeDmgMagic } from '../Constuructors/AoeDmgMagicConstructor';
@@ -22,7 +22,7 @@ class ChainLightning extends AoeDmgMagic {
       magType: 'bad',
       chance: [92, 94, 95],
       effect: ['1d3+1', '1d3+2', '1d3+3'],
-      dmgType: 'lighting',
+      dmgType: EffectType.Lightning,
       profList: ['m'],
       branches: ['elements'],
     });

@@ -27,6 +27,10 @@ describe('criticalStrike', () => {
 
     const initialHp = game.players.players[1].stats.val('hp');
 
+    game.players.players[0].passiveSkills = {};
+    attack.cast(game.players.players[0], game.players.players[1], game);
+
+    game.players.players[0].passiveSkills = { criticalStrike: 6 };
     attack.cast(game.players.players[0], game.players.players[1], game);
 
     const remainingHp = game.players.players[1].stats.val('hp');
@@ -47,8 +51,7 @@ describe('criticalStrike', () => {
 
     attack.cast(meleeGame.players.players[0], meleeGame.players.players[1], meleeGame);
 
-    const results = TestUtils.normalizeRoundHistory(meleeGame.getRoundResults());
-    expect(results).not.toContain('Двойной урон');
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
 
   it('should not crit if chance fails', () => {

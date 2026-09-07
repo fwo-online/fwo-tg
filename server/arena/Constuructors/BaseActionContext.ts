@@ -1,6 +1,6 @@
-import type {
-  BaseAction,
-  BaseActionParams,
+import {
+  type BaseAction,
+  type BaseActionParams,
   BaseActionStatus,
 } from '@/arena/Constuructors/BaseAction';
 import type PlayerService from '@/arena/PlayersService/PlayerService';
@@ -11,9 +11,9 @@ export class BaseActionContext {
   parentCtx?: BaseActionContext;
   private overridedTarget?: PlayerService;
 
-  constructor(params: BaseActionParams) {
+  constructor(params: BaseActionParams, status: BaseActionStatus) {
     this.params = params;
-    this.status = { effect: 0, exp: 0, expArr: [], affects: [] };
+    this.status = status;
   }
 
   get target() {
@@ -44,15 +44,18 @@ export class BaseActionContext {
   }
 
   reset() {
-    this.status = { effect: 0, exp: 0, expArr: [], affects: [] };
+    this.status.reset();
   }
 
   cloneWith(target: PlayerService) {
-    const clone = new BaseActionContext({
-      initiator: this.initiator,
-      target,
-      game: this.game,
-    });
+    const clone = new BaseActionContext(
+      {
+        initiator: this.initiator,
+        target,
+        game: this.game,
+      },
+      new BaseActionStatus(),
+    );
 
     clone.parentCtx = this;
 

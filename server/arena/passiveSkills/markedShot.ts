@@ -22,7 +22,7 @@ class MarkedShot extends PassiveSkillConstructor {
   }
 
   onBeforeDamageRecieve(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
-    if (action.actionType !== 'phys') {
+    if (action.actionType !== 'phys' || !action.effectType) {
       return;
     }
 
@@ -33,7 +33,12 @@ class MarkedShot extends PassiveSkillConstructor {
     const { initiator, target, game } = ctx;
     this.createContext(initiator, target, game);
 
-    ctx.status.effect += floatNumber((ctx.status.effect * (affect.value ?? 1)) / 100);
+    const effect = ctx.status.effectParts[action.effectType] ?? 0;
+
+    ctx.status.setEffectPart(
+      action.effectType,
+      floatNumber(effect + (effect * (affect.value ?? 1)) / 100),
+    );
 
     ctx.addAffect(this, this.context);
   }
