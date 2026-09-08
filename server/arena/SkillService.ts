@@ -49,6 +49,8 @@ export default class SkillService {
       orderType: skill.orderType,
       chance: skill.chance,
       effect: skill.effect,
+      branch: skill.branch,
+      branches: skill.branches,
     };
   }
 

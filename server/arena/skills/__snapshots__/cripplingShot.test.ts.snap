@@ -1,0 +1,8 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`cripplingShot should reduce target dex and strip current dodge 1`] = `
+"*Игрок 1* использовал _🎯 Выстрел в колено_
+\\[ 📖25 ]
+*Игрок 1* атаковал *Игрок 2* _Оружием_ и нанёс *7.2* урона
+\\[ Игрок 2 💔 💥-7.2/0.8 📖58 ]"
+`;

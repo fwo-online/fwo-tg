@@ -1,5 +1,5 @@
 import type { CharacterClass } from '@/character';
-import type { MagicBranchId } from './branches';
+import type { BranchKey } from './branches';
 
 export * from './branches';
 
@@ -13,8 +13,8 @@ export type Magic = {
   lvl: number;
   orderType: OrderType;
   effectType?: EffectType;
-  branch?: MagicBranchId;
-  branches?: MagicBranchId[];
+  branch?: BranchKey;
+  branches?: BranchKey[];
 };
 
 export type Skill = {
@@ -28,6 +28,8 @@ export type Skill = {
   costType: CostType;
   chance: number[];
   effect: number[];
+  branch?: BranchKey;
+  branches?: BranchKey[];
 };
 
 export type PassiveSkill = {
@@ -38,6 +40,8 @@ export type PassiveSkill = {
   effect: number[];
   bonusCost: number[];
   classList?: Partial<Record<CharacterClass, number>>;
+  branch?: BranchKey;
+  branches?: BranchKey[];
 };
 
 export enum CostType {

@@ -1,3 +1,4 @@
+import type { BranchKey } from '@fwo/shared';
 import type { ProfsLvl } from '@/data/profs';
 import type { ActionKey } from '@/arena/ActionService';
 import { BaseAction } from '@/arena/Constuructors/BaseAction';
@@ -13,6 +14,8 @@ export interface PassiveSkillAttributes {
   displayName: string;
   description: string;
   profList?: ProfsLvl;
+  branch?: BranchKey;
+  branches?: BranchKey[];
 }
 
 /**
@@ -27,6 +30,8 @@ export abstract class PassiveSkillConstructor extends BaseAction {
   effect: number[];
   bonusCost: number[];
   profList?: ProfsLvl;
+  branch?: BranchKey;
+  branches: BranchKey[] = [];
   actionType: ActionType = 'passive';
 
   constructor(attributes: PassiveSkillAttributes) {
@@ -39,6 +44,8 @@ export abstract class PassiveSkillConstructor extends BaseAction {
     this.displayName = attributes.displayName;
     this.description = attributes.description;
     this.profList = attributes.profList;
+    this.branches = attributes.branches ?? (attributes.branch ? [attributes.branch] : []);
+    this.branch = attributes.branch ?? this.branches[0];
   }
 
   override cast(initiator: Player) {

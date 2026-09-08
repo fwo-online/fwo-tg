@@ -15,7 +15,11 @@ export class EffectService {
   }
 
   damage(ctx: BaseActionContext, action: BaseAction) {
-    ctx.initiator.affects.onBeforeDamageDeal(ctx, action);
+    ctx.initiator.affects.withOnCastFail(
+      () => ctx.initiator.affects.onBeforeDamageDeal(ctx, action),
+      ctx,
+      action,
+    );
     ctx.initiator.affects.withOnCastFail(
       () => ctx.target.affects.onBeforeDamageRecieve(ctx, action),
       ctx,

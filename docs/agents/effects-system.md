@@ -60,15 +60,14 @@ Passive    = BaseAffect & { type: 'passive' }        // Перманент
 
 ```typescript
 damage(ctx, action):
-  1. ctx.initiator.affects.onBeforeDamageDeal(ctx, action)     // атакующий: может заблокировать
-  2. ctx.initiator.affects.withOnCastFail(...)                  // перехват CastError
-  3. ctx.target.affects.onBeforeDamageRecieve(ctx, action)      // цель: может блокировать
-  4. this.applyDamage(ctx, action)                               // применение урона
-  5. ctx.target.affects.onDamageReceived(ctx, action)           // цель: пост-фактум
-  6. ctx.initiator.affects.onDamageDealt(ctx, action)           // атакующий: пост-фактум
+  1. ctx.initiator.affects.withOnCastFail(() => onBeforeDamageDeal)  // атакующий: подготовка урона / перехват промаха (miss)
+  2. ctx.initiator.affects.withOnCastFail(() => onBeforeDamageRecieve) // цель: защита/уклонение / перехват (dodge/shieldBlock)
+  3. this.applyDamage(ctx, action)                                   // применение урона
+  4. ctx.target.affects.onDamageReceived(ctx, action)               // цель: пост-фактум
+  5. ctx.initiator.affects.onDamageDealt(ctx, action)               // атакующий: пост-фактум (DoT, кураж)
 ```
 
-**Ключевой момент**: если `onBeforeDamageDeal` бросает `CastError` → цепочка прерывается, урон не наносится. Так работают блокирующие эффекты (затмение, магическая стена).
+**Ключевой момент**: если `onBeforeDamageDeal` или `onBeforeDamageRecieve` бросает `CastError`, он может быть перехвачен через `withOnCastFail` (пассивками вроде `eagleEye`, `rangeWeapon` или защитой `fieldMedic`). Если ошибка не перехвачена → цепочка прерывается, урон не наносится. Так работают блокирующие эффекты (затмение, магическая стена, промах).
 
 ## Паттерн: блокирующий эффект
 

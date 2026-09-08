@@ -1,0 +1,8 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`doubleShot should buff next ranged attack to hit secondary target 1`] = `
+"*Игрок 1* использовал _🏹 Залп стрел_
+\\[ 📖25 ]
+*Игрок 1* атаковал *Игрок 2* _Оружием_ и нанёс *7.2* урона
+\\[ Игрок 2 💔 💥-7.2/0.8 📖58 ]"
+`;

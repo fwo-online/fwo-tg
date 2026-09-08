@@ -1,7 +1,15 @@
+export { aimedShot } from './aimedShot';
 export { default as beastCall } from './beastCall';
 export { default as berserk } from './berserk';
+export { cripplingShot } from './cripplingShot';
 export { disarm } from './disarm';
 export { dodge } from './dodge';
+export { doubleShot } from './doubleShot';
+export { fireArrow } from './fireArrow';
+export { help } from './help';
 export { parry } from './parry';
+export { piercingShot } from './piercingShot';
+export { poisonArrow } from './poisonArrow';
 export { shieldBlock } from './shieldBlock';
+export { step } from './step';
 export { default as terrifyingHowl } from './terrifyingHowl';

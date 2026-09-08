@@ -1,4 +1,4 @@
-import type { OrderType } from '@fwo/shared';
+import type { BranchKey, OrderType } from '@fwo/shared';
 import type { ActionKey } from '@/arena/ActionService';
 import { BaseAction } from '@/arena/Constuructors/BaseAction';
 import type { Profs } from '../../data';
@@ -22,6 +22,8 @@ interface SkillArgs {
   effect: number[];
   profList: Profs.ProfsLvl;
   bonusCost: number[];
+  branch?: BranchKey;
+  branches?: BranchKey[];
 }
 
 /**
@@ -31,6 +33,9 @@ export interface Skill extends SkillArgs, CustomMessage {}
 
 export abstract class Skill extends BaseAction {
   actionType: ActionType = 'skill';
+  branch?: BranchKey;
+  branches: BranchKey[] = [];
+
   /**
    * Создание скила
    */
@@ -38,6 +43,8 @@ export abstract class Skill extends BaseAction {
     super();
 
     Object.assign(this, params);
+    this.branches = params.branches ?? (params.branch ? [params.branch] : []);
+    this.branch = params.branch ?? this.branches[0];
   }
 
   /**

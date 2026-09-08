@@ -1,0 +1,8 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`help should intercept damage intended for ally 1`] = `
+"*Игрок 1* прикрыл *Игрок 2* умением _🛡️ Спасение_ \\[ 🛡️-15% урона ]
+\\[ 📖30 ]
+*Игрок 3* рубанул *Игрок 2* _Оружием_ и нанёс *0* урона
+\\[ Игрок 2 💥 💔-0/8 📖0 ]"
+`;
