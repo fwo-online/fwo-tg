@@ -29,7 +29,7 @@ type BaseAffect = {
     ctx: BaseActionContext,
     action: BaseAction,
     reason: SuccessArgs | SuccessArgs[] | BreaksMessage,
-  ) => void | SuccessArgs | SuccessArgs[];
+  ) => void | SuccessArgs | SuccessArgs[] | boolean;
 };
 
 export type Passive = BaseAffect & {

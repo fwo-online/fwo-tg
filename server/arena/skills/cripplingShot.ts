@@ -1,20 +1,81 @@
-import { OrderType } from '@fwo/shared';
-import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
+import { type ActionType, OrderType } from '@fwo/shared';
+import { BaseAction, type BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
 import CastError from '@/arena/errors/CastError';
+import type { Player } from '@/arena/PlayersService';
 import { floatNumber } from '@/utils/floatNumber';
 import { bold, italic } from '@/utils/formatString';
 import { Skill } from '../Constuructors/SkillConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
 
-const weaponTypes = ['range'];
+export class CripplingShotDebuff extends BaseAction {
+  name = 'cripplingShot' as const;
+  displayName = '🎯 Выстрел в колено';
+  actionType: ActionType = 'skill';
+  orderType: OrderType = OrderType.Enemy;
+  isAffect = true;
+
+  apply(target: Player, initiator: Player, debuffPercent: number) {
+    if (target.stats.val('hp') <= 0) {
+      return;
+    }
+
+    this.applyDebuff(target, debuffPercent);
+
+    target.affects.addLongEffect({
+      action: this.name,
+      duration: 2,
+      initiator,
+      value: debuffPercent,
+      onCast: (_game, affect) => {
+        this.onCast(target, affect);
+      },
+      onBeforeAction: (actionCtx, actionToCast, affect) => {
+        this.onBeforeAction(actionCtx, actionToCast, affect);
+      },
+    });
+  }
+
+  applyDebuff(target: Player, debuffPercent: number) {
+    if (target.stats.val('hp') <= 0) {
+      return;
+    }
+
+    const curDex = target.stats.val('attributes.dex');
+    const dexReduction = floatNumber(curDex * (debuffPercent / 100));
+    target.stats.down('attributes.dex', dexReduction);
+  }
+
+  onCast(target: Player, affect: Affect) {
+    this.applyDebuff(target, affect.value ?? 25);
+  }
+
+  onBeforeAction(actionCtx: BaseActionContext, actionToCast: BaseAction, affect?: Affect) {
+    if (actionToCast.name === 'dodge') {
+      const { initiator: target, game } = actionCtx;
+      const caster = affect?.initiator ?? this.params?.initiator;
+      this.createContext(caster, target, game);
+      throw new CastError(this.getSuccessResult(this.context));
+    }
+  }
+
+  cast(): void {
+    //
+  }
+
+  run(): void {
+    //
+  }
+}
+
+export const cripplingShotDebuff = new CripplingShotDebuff();
 
 /**
  * 🎯 Выстрел в колено
  * «Когда-то и меня вела дорога приключений, а потом мне прострелили колено...»
  * Усиливает следующую атаку дальнего боя: сбивает увёртку цели, снижает её ловкость на 25–45% и лишает возможности уклоняться на 2 раунда.
  */
-class CripplingShot extends Skill {
+export class CripplingShot extends Skill {
   constructor() {
     super({
       name: 'cripplingShot',
@@ -32,17 +93,13 @@ class CripplingShot extends Skill {
       bonusCost: [10, 20, 30],
       branch: 'marksman',
       branches: ['marksman'],
+      weaponTypes: ['range'],
     });
   }
 
   run() {
     const { initiator } = this.params;
-    if (!initiator.weapon.isOfType(weaponTypes)) {
-      throw new CastError('NO_WEAPON');
-    }
-
-    const initiatorSkillLvl = initiator.skills[this.name] || 1;
-    const debuffPercent = this.effect[initiatorSkillLvl - 1] ?? 25;
+    const debuffPercent = this.getEffect(initiator);
 
     initiator.affects.addEffect({
       action: this.name,
@@ -60,41 +117,19 @@ class CripplingShot extends Skill {
     this.calculateExp();
   }
 
-  onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
-    if (action.actionType !== 'phys' || !ctx.initiator.weapon.isOfType(weaponTypes)) {
-      return;
-    }
-
+  onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction, _affect?: Affect) {
     // Сбивает текущую увёртку цели
-    ctx.target.affects.removeEffectsByAction('dodge');
+    if (action.isOfType('phys') && this.checkWeapon(ctx.initiator)) {
+      ctx.target.affects.removeEffectsByAction('dodge');
+    }
   }
 
   onDamageDealt(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
-    if (action.actionType !== 'phys' || !ctx.initiator.weapon.isOfType(weaponTypes)) {
-      return;
+    if (action.isOfType('phys') && this.checkWeapon(ctx.initiator)) {
+      const { initiator, target } = ctx;
+      const debuffPercent = affect.value ?? 25;
+      cripplingShotDebuff.apply(target, initiator, debuffPercent);
     }
-
-    const { initiator, target } = ctx;
-    if (target.stats.val('hp') <= 0) {
-      return;
-    }
-
-    const debuffPercent = affect.value ?? 25;
-    const curDex = target.stats.val('attributes.dex');
-    const dexReduction = floatNumber(curDex * (debuffPercent / 100));
-    target.stats.down('attributes.dex', dexReduction);
-
-    target.affects.addLongEffect({
-      action: cripplingShot.name,
-      duration: 2,
-      initiator,
-      value: debuffPercent,
-      onBeforeAction(actionCtx, actionToCast) {
-        if (actionToCast.name === 'dodge') {
-          throw new CastError('SKILL_FAIL');
-        }
-      },
-    });
   }
 
   customMessage(args: SuccessArgs) {

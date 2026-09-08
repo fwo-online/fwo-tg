@@ -3,8 +3,6 @@ import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConst
 import { bleeding } from '@/arena/magics';
 
 class Lacerate extends PassiveSkillConstructor {
-  weaponTypes = ['cut'];
-
   constructor() {
     super({
       name: 'lacerate',
@@ -13,6 +11,8 @@ class Lacerate extends PassiveSkillConstructor {
       chance: [15, 20, 30],
       effect: [100, 100, 100],
       bonusCost: [],
+      weaponTypes: ['cut'],
+      actionTypes: ['phys'],
     });
   }
 
@@ -30,24 +30,11 @@ class Lacerate extends PassiveSkillConstructor {
   }
 
   onDamageDealt(ctx: BaseActionContext, action: BaseAction) {
-    const { initiator, target, game } = ctx;
-    this.createContext(initiator, target, game);
-
-    if (action.actionType !== 'phys') {
+    if (!this.canTrigger(ctx, action)) {
       return;
     }
 
-    if (!initiator.weapon.isOfType(this.weaponTypes)) {
-      return;
-    }
-
-    if (!this.isActive(ctx)) {
-      return;
-    }
-
-    if (!this.checkChance(ctx)) {
-      return;
-    }
+    const { initiator, target } = ctx;
 
     target.affects.addLongEffect({
       action: 'bleeding',

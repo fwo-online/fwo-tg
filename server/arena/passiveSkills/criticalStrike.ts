@@ -1,12 +1,9 @@
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConstructor';
-import type { SuccessArgs } from '@/arena/Constuructors/types';
-import { floatNumber } from '@/utils/floatNumber';
+import type { ActionType, SuccessArgs } from '@/arena/Constuructors/types';
 import { italic } from '@/utils/formatString';
 
 class CriticalStrike extends PassiveSkillConstructor {
-  weaponTypes = ['range'];
-
   constructor() {
     super({
       name: 'criticalStrike',
@@ -16,6 +13,8 @@ class CriticalStrike extends PassiveSkillConstructor {
       chance: [10, 15, 20, 25, 30, 35],
       effect: [100, 100, 100, 100, 100, 100],
       bonusCost: [10, 20, 30, 40, 60, 80],
+      weaponTypes: ['range'],
+      actionTypes: ['phys'],
     });
   }
 
@@ -33,32 +32,11 @@ class CriticalStrike extends PassiveSkillConstructor {
   }
 
   onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction) {
-    if (action.actionType !== 'phys') {
+    if (!this.canTrigger(ctx, action) || !action.effectType) {
       return;
     }
 
-    const { initiator, target, game } = ctx.params;
-    this.createContext(initiator, target, game);
-
-    if (!initiator.weapon.isOfType(this.weaponTypes)) {
-      return;
-    }
-
-    if (!this.isActive(ctx)) {
-      return;
-    }
-
-    if (!this.checkChance(ctx)) {
-      return;
-    }
-
-    if (!action.effectType) {
-      return;
-    }
-
-    const effect = ctx.status.effectParts[action.effectType] ?? 0;
-
-    ctx.status.setEffectPart(action.effectType, floatNumber(effect * 2));
+    ctx.status.mulEffectPart(action.effectType, 2);
 
     ctx.addAffect(this, this.context);
   }

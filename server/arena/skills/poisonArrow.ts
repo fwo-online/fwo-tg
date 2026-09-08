@@ -2,13 +2,10 @@ import { EffectType, OrderType } from '@fwo/shared';
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
 import { poison } from '@/arena/effects';
-import CastError from '@/arena/errors/CastError';
 import { floatNumber } from '@/utils/floatNumber';
 import { bold, italic } from '@/utils/formatString';
 import { Skill } from '../Constuructors/SkillConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
-
-const weaponTypes = ['range'];
 
 /**
  * 🏹☠️ Отравленная стрела
@@ -32,58 +29,59 @@ class PoisonArrow extends Skill {
       bonusCost: [10, 20, 30],
       branch: 'barrage',
       branches: ['barrage'],
+      weaponTypes: ['range'],
     });
   }
 
   run() {
     const { initiator } = this.params;
-    if (!initiator.weapon.isOfType(weaponTypes)) {
-      throw new CastError('NO_WEAPON');
-    }
-
-    const initiatorSkillLvl = initiator.skills[this.name] || 1;
-    const poisonDmg = this.effect[initiatorSkillLvl - 1] ?? 20;
+    const effect = this.getEffect(initiator);
 
     initiator.affects.addEffect({
       action: this.name,
       initiator,
-      value: poisonDmg,
-      onBeforeDamageDeal(ctx, action, affect) {
-        if (action.actionType === 'phys' && ctx.initiator.weapon.isOfType(weaponTypes)) {
-          const acidBonus = floatNumber((affect.value ?? 20) * 0.5);
-          ctx.status.effect = floatNumber(ctx.status.effect + acidBonus);
-          const curAcid = ctx.status.effectParts[EffectType.Acid] ?? 0;
-          ctx.status.setEffectPart(EffectType.Acid, floatNumber(curAcid + acidBonus));
-        }
+      value: effect,
+      onBeforeDamageDeal(ctx, action) {
+        poisonArrow.onBeforeDamageDeal(ctx, action, this.value);
       },
       onDamageDealt(ctx, action, affect) {
-        if (action.actionType === 'phys' && ctx.initiator.weapon.isOfType(weaponTypes)) {
-          poisonArrow.applyPoison(ctx, affect);
-        }
+        poisonArrow.onDamageDealt(ctx, action, affect);
       },
     });
 
-    this.status.effect = poisonDmg;
+    this.status.effect = effect;
     this.calculateExp();
   }
 
-  applyPoison(ctx: BaseActionContext, affect: Affect) {
-    const { initiator, target } = ctx;
-    if (target.stats.val('hp') <= 0) return;
+  /**
+   * Добавляем огненный урон
+   */
+  onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction, value: number) {
+    if (action.isOfType('phys') && poisonArrow.checkWeapon(ctx.initiator)) {
+      ctx.status.addEffectPart(EffectType.Acid, floatNumber(value));
+    }
+  }
 
-    target.affects.addLongEffect({
-      action: poison.name,
-      duration: 2,
-      proc: initiator.proc,
-      initiator,
-      value: affect.value,
-      onCast(gameCtx, a) {
-        if (target.stats.val('hp') <= 0) return;
-        initiator.proc = this.proc;
-        poison.duration = this.duration;
-        poison.cast(initiator, target, gameCtx);
-      },
-    });
+  /**
+   * Добавляем горение
+   */
+  onDamageDealt(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
+    if (action.isOfType('phys') && poisonArrow.checkWeapon(ctx.initiator)) {
+      const { initiator, target } = ctx;
+
+      target.affects.addLongEffect({
+        action: poison.name,
+        duration: 2,
+        proc: initiator.proc,
+        initiator,
+        value: affect.value,
+        onCast(game) {
+          initiator.proc = this.proc;
+          poison.duration = this.duration;
+          poison.cast(initiator, target, game);
+        },
+      });
+    }
   }
 
   customMessage(args: SuccessArgs) {

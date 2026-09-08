@@ -52,3 +52,28 @@ export const findByTarget = (target: string) => {
     return result.target.nick === target;
   };
 };
+
+/**
+ * Возвращает массив SuccessArgs причин срыва/блокировки действия,
+ * исключая строковые BreaksMessage ('NO_ENERGY', 'CHANCE_FAIL' и т.д.).
+ */
+export const getFailReasons = (
+  reason: BreaksMessage | SuccessArgs | SuccessArgs[],
+): SuccessArgs[] => {
+  if (typeof reason === 'string') {
+    return [];
+  }
+
+  return Array.isArray(reason) ? reason : [reason];
+};
+
+/**
+ * Проверяет, вызвана ли ошибка каста указанным типом действия (например, 'dodge', 'protect').
+ */
+export const hasReasonActionType = (
+  reason: BreaksMessage | SuccessArgs | SuccessArgs[],
+  ...actionTypes: ActionType[]
+): boolean => {
+  return getFailReasons(reason).some((r) => actionTypes.includes(r.actionType));
+};
+

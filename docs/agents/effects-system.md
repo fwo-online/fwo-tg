@@ -93,6 +93,60 @@ onBeforeDamageDeal(ctx, action, affect) {
 }
 ```
 
+### Блокировка конкретных действий (`onBeforeAction`)
+Используется для запрета каста определенных скиллов или магий (например, блокировка `dodge` в `cripplingShotDebuff`, блокировка действий в `stun`/`asleep`, запрет магии в `silence`).
+
+Чтобы в логе боя и отчётах отображалась точная причина срыва действия, выбрасывается `CastError` с `SuccessArgs` блокирующего действия/дебаффа:
+
+```typescript
+onBeforeAction(actionCtx: BaseActionContext, actionToCast: BaseAction, affect?: Affect) {
+  if (actionToCast.name === 'dodge') {
+    const { initiator: target, game } = actionCtx;
+    const caster = affect?.initiator ?? this.params?.initiator;
+    this.createContext(caster, target, game);
+    throw new CastError(this.getSuccessResult(this.context));
+  }
+}
+```
+
+### Переприменение дебаффов характеристик в раундах (`onCast`)
+В конце каждого раунда характеристики персонажей сбрасываются до базовых через `StatsService.refresh()`. Поэтому для `long-effect`, снижающих статы (например, срез ловкости на 2 раунда в `cripplingShotDebuff`), логика дебаффа должна повторно накладываться в начале каждого последующего раунда через хук `onCast`:
+
+```typescript
+// В дебаффе:
+apply(target, initiator, debuffPercent) {
+  this.applyDebuff(target, debuffPercent); // раунд 1
+  target.affects.addLongEffect({
+    action: this.name,
+    duration: 2,
+    initiator,
+    value: debuffPercent,
+    onCast: (_game, affect) => this.onCast(target, affect), // раунд 2+
+    onBeforeAction: (actionCtx, actionToCast, affect) => this.onBeforeAction(actionCtx, actionToCast, affect),
+  });
+}
+
+onCast(target: Player, affect: Affect) {
+  this.applyDebuff(target, affect.value ?? 25);
+}
+```
+
+Движок боя (`EngineService`) вызывает `player.affects.onCast(game, stage)` при прохождении каждой стадии умения.
+
+### Игнорирование защиты цели (`onCastFail`)
+Хук `onCastFail` позволяет атакующему или защитнику отменить срыв действия. Например, «Прицельный выстрел» (`aimedShot`) игнорирует уклонение цели:
+
+```typescript
+onCastFail(ctx: BaseActionContext, action: BaseAction, reason: BreaksMessage | SuccessArgs | SuccessArgs[]): boolean {
+  if (action.actionType !== 'phys' || !this.checkWeapon(ctx.initiator)) {
+    return false;
+  }
+  // hasReasonActionType проверяет наличие 'dodge' в строке ошибки или объекте SuccessArgs
+  return hasReasonActionType(reason, 'dodge');
+}
+```
+Если метод возвращает `true`, срыв по причине уклонения отменяется, и цепочка урона продолжается. При этом увёртка цели остаётся активной против других нападающих в раунде.
+
 ## Правила
 
 1. **Всегда передавай `affect` 3-м параметром** в колбэк (glitch, madness, eclipse после рефакторинга)

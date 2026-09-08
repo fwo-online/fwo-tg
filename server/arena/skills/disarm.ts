@@ -29,8 +29,7 @@ class Disarm extends Skill {
 
   run() {
     const { initiator, target } = this.params;
-    const initiatorMagicLvl = initiator.skills[this.name];
-    const effect = this.effect[initiatorMagicLvl - 1] || 1;
+    const effect = this.getEffect(initiator) || 1;
     // изменяем
     const iDex = initiator.stats.val('attributes.dex') * effect;
     const tDex = target.stats.val('attributes.dex');
@@ -50,7 +49,7 @@ class Disarm extends Skill {
   }
 
   onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction) {
-    if (action.actionType !== 'phys') {
+    if (!action.isOfType('phys')) {
       return;
     }
 

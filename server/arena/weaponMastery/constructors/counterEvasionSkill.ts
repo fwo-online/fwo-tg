@@ -1,7 +1,7 @@
-import { isString } from 'es-toolkit';
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConstructor';
 import type { ActionType, BreaksMessage, SuccessArgs } from '@/arena/Constuructors/types';
+import { hasReasonActionType } from '@/arena/Constuructors/utils';
 
 abstract class CounterEvasionSkill extends PassiveSkillConstructor {
   abstract weaponTypes: string[];
@@ -20,11 +20,7 @@ abstract class CounterEvasionSkill extends PassiveSkillConstructor {
   }
 
   checkAffectCanBeHandled(affect: SuccessArgs | SuccessArgs[] | BreaksMessage) {
-    if (isString(affect) || Array.isArray(affect)) {
-      return false;
-    }
-
-    return this.affectedActionTypes.includes(affect.actionType);
+    return hasReasonActionType(affect, ...this.affectedActionTypes);
   }
 
   onCastFail(

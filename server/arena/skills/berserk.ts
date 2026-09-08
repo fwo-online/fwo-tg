@@ -29,8 +29,7 @@ class Berserk extends Skill {
 
   run() {
     const { initiator } = this.params;
-    const initiatorMagicLvl = initiator.skills[this.name];
-    const effect = this.effect[initiatorMagicLvl - 1] || 1;
+    const effect = this.getEffect(initiator) || 1;
     // изменяем
     initiator.stats.mul('hit.physical.max', effect);
     initiator.stats.mul('phys.attack', 1 / effect);

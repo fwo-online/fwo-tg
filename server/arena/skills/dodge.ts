@@ -56,7 +56,7 @@ class Dodge extends Skill {
   }
 
   onBeforeDamageRecieve(ctx: BaseActionContext, action: BaseAction, value: number) {
-    if (action.actionType !== 'phys') {
+    if (!action.isOfType('phys')) {
       return;
     }
 

@@ -1,13 +1,10 @@
-import { EffectType, OrderType, values } from '@fwo/shared';
+import { OrderType } from '@fwo/shared';
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
-import CastError from '@/arena/errors/CastError';
-import { floatNumber } from '@/utils/floatNumber';
 import { bold, italic } from '@/utils/formatString';
 import { Skill } from '../Constuructors/SkillConstructor';
-import type { SuccessArgs } from '../Constuructors/types';
-
-const weaponTypes = ['range'];
+import type { BreaksMessage, SuccessArgs } from '../Constuructors/types';
+import { hasReasonActionType } from '../Constuructors/utils';
 
 /**
  * 🎯 Прицельный выстрел
@@ -18,7 +15,7 @@ class AimedShot extends Skill {
     super({
       name: 'aimedShot',
       displayName: '🎯 Прицельный выстрел',
-      desc: 'Усиливает следующую атаку дальнего боя: наносит повышенный урон и лишает цель возможности уклониться',
+      desc: 'Усиливает следующую атаку дальнего боя: наносит повышенный урон и игнорирует увёртку цели',
       cost: [10, 12, 14],
       proc: 20,
       baseExp: 25,
@@ -31,17 +28,13 @@ class AimedShot extends Skill {
       bonusCost: [10, 20, 30],
       branch: 'marksman',
       branches: ['marksman'],
+      weaponTypes: ['range'],
     });
   }
 
   run() {
     const { initiator } = this.params;
-    if (!initiator.weapon.isOfType(weaponTypes)) {
-      throw new CastError('NO_WEAPON');
-    }
-
-    const initiatorSkillLvl = initiator.skills[this.name] || 1;
-    const multiplier = this.effect[initiatorSkillLvl - 1] ?? 1.25;
+    const multiplier = this.getEffect(initiator);
 
     initiator.affects.addEffect({
       action: this.name,
@@ -50,6 +43,9 @@ class AimedShot extends Skill {
       onBeforeDamageDeal(ctx, action, affect) {
         aimedShot.onBeforeDamageDeal(ctx, action, affect);
       },
+      onCastFail(ctx, action, reason) {
+        return aimedShot.onCastFail(ctx, action, reason);
+      },
     });
 
     this.status.effect = multiplier;
@@ -57,21 +53,24 @@ class AimedShot extends Skill {
   }
 
   onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
-    if (action.actionType !== 'phys' || !ctx.initiator.weapon.isOfType(weaponTypes)) {
+    if (action.actionType !== 'phys' || !this.checkWeapon(ctx.initiator)) {
       return;
     }
 
-    // Игнорирует и снимает увёртку цели
-    ctx.target.affects.removeEffectsByAction('dodge');
-
     const mult = affect.value ?? 1.25;
-    ctx.status.effect = floatNumber(ctx.status.effect * mult);
-    values(EffectType).forEach((effectType) => {
-      const part = ctx.status.effectParts[effectType];
-      if (part) {
-        ctx.status.setEffectPart(effectType, floatNumber(part * mult));
-      }
-    });
+    ctx.status.mulEffect(mult);
+  }
+
+  onCastFail(
+    ctx: BaseActionContext,
+    action: BaseAction,
+    reason: SuccessArgs | SuccessArgs[] | BreaksMessage,
+  ): boolean {
+    if (action.actionType !== 'phys' || !this.checkWeapon(ctx.initiator)) {
+      return false;
+    }
+
+    return hasReasonActionType(reason, 'dodge');
   }
 
   customMessage(args: SuccessArgs) {

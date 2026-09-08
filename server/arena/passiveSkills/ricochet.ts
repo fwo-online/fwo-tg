@@ -11,7 +11,6 @@ import { floatNumber } from '@/utils/floatNumber';
 import { italic } from '@/utils/formatString';
 
 class Ricochet extends PassiveSkillConstructor {
-  weaponTypes = ['range'];
   private lock = false;
 
   constructor() {
@@ -26,6 +25,8 @@ class Ricochet extends PassiveSkillConstructor {
       bonusCost: [10, 20, 30, 40, 60, 80],
       branch: 'barrage',
       branches: ['barrage', 'marksman'],
+      weaponTypes: ['range'],
+      actionTypes: ['phys'],
     });
   }
 
@@ -60,15 +61,7 @@ class Ricochet extends PassiveSkillConstructor {
     const { initiator, target, game } = ctx;
     this.createContext(initiator, target, game);
 
-    if (action.actionType !== 'phys') {
-      return;
-    }
-
-    if (!initiator.weapon.isOfType(this.weaponTypes)) {
-      return;
-    }
-
-    if (!this.isActive(ctx)) {
+    if (!this.checkAction(action) || !this.checkWeapon(initiator) || !this.isActive()) {
       return;
     }
 

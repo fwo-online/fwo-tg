@@ -2,13 +2,10 @@ import { EffectType, OrderType } from '@fwo/shared';
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
 import { burning } from '@/arena/effects';
-import CastError from '@/arena/errors/CastError';
 import { floatNumber } from '@/utils/floatNumber';
 import { bold, italic } from '@/utils/formatString';
 import { Skill } from '../Constuructors/SkillConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
-
-const weaponTypes = ['range'];
 
 /**
  * 🏹🔥 Зажигательная стрела
@@ -27,63 +24,64 @@ class FireArrow extends Skill {
       orderType: OrderType.Self,
       aoeType: 'target',
       chance: [80, 85, 90],
-      effect: [20, 30, 40],
+      effect: [2, 4, 6],
       profList: { l: 3 },
       bonusCost: [10, 20, 30],
       branch: 'barrage',
       branches: ['barrage'],
+      weaponTypes: ['range'],
     });
   }
 
   run() {
     const { initiator } = this.params;
-    if (!initiator.weapon.isOfType(weaponTypes)) {
-      throw new CastError('NO_WEAPON');
-    }
-
-    const initiatorSkillLvl = initiator.skills[this.name] || 1;
-    const burnDmg = this.effect[initiatorSkillLvl - 1] ?? 20;
+    const effect = this.getEffect(initiator);
 
     initiator.affects.addEffect({
       action: this.name,
       initiator,
-      value: burnDmg,
-      onBeforeDamageDeal(ctx, action, affect) {
-        if (action.actionType === 'phys' && ctx.initiator.weapon.isOfType(weaponTypes)) {
-          const fireBonus = floatNumber((affect.value ?? 20) * 0.5);
-          ctx.status.effect = floatNumber(ctx.status.effect + fireBonus);
-          const curFire = ctx.status.effectParts[EffectType.Fire] ?? 0;
-          ctx.status.setEffectPart(EffectType.Fire, floatNumber(curFire + fireBonus));
-        }
+      value: effect,
+      onBeforeDamageDeal(ctx, action) {
+        fireArrow.onBeforeDamageDeal(ctx, action, this.value);
       },
       onDamageDealt(ctx, action, affect) {
-        if (action.actionType === 'phys' && ctx.initiator.weapon.isOfType(weaponTypes)) {
-          fireArrow.applyBurning(ctx, affect);
-        }
+        fireArrow.onDamageDealt(ctx, action, affect);
       },
     });
 
-    this.status.effect = burnDmg;
+    this.status.effect = effect;
     this.calculateExp();
   }
 
-  applyBurning(ctx: BaseActionContext, affect: Affect) {
-    const { initiator, target } = ctx;
-    if (target.stats.val('hp') <= 0) return;
+  /**
+   * Добавляем огненный урон
+   */
+  onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction, value: number) {
+    if (action.isOfType('phys') && fireArrow.checkWeapon(ctx.initiator)) {
+      ctx.status.addEffectPart(EffectType.Fire, floatNumber(value));
+    }
+  }
 
-    target.affects.addLongEffect({
-      action: burning.name,
-      duration: 2,
-      proc: initiator.proc,
-      initiator,
-      value: affect.value,
-      onCast(gameCtx, a) {
-        if (target.stats.val('hp') <= 0) return;
-        initiator.proc = this.proc;
-        burning.duration = this.duration;
-        burning.cast(initiator, target, gameCtx);
-      },
-    });
+  /**
+   * Добавляем горение
+   */
+  onDamageDealt(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
+    if (action.isOfType('phys') && fireArrow.checkWeapon(ctx.initiator)) {
+      const { initiator, target } = ctx;
+
+      target.affects.addLongEffect({
+        action: burning.name,
+        duration: 2,
+        proc: initiator.proc,
+        initiator,
+        value: affect.value,
+        onCast(game) {
+          initiator.proc = this.proc;
+          burning.duration = this.duration;
+          burning.cast(initiator, target, game);
+        },
+      });
+    }
   }
 
   customMessage(args: SuccessArgs) {

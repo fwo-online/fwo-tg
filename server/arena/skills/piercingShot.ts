@@ -1,13 +1,10 @@
-import { EffectType, OrderType, values } from '@fwo/shared';
+import { OrderType } from '@fwo/shared';
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
-import CastError from '@/arena/errors/CastError';
 import { floatNumber } from '@/utils/floatNumber';
 import { bold, italic } from '@/utils/formatString';
 import { Skill } from '../Constuructors/SkillConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
-
-const weaponTypes = ['range'];
 
 /**
  * 🎯 Бронебойный выстрел
@@ -31,17 +28,13 @@ class PiercingShot extends Skill {
       bonusCost: [10, 20, 30],
       branch: 'marksman',
       branches: ['marksman'],
+      weaponTypes: ['range'],
     });
   }
 
   run() {
     const { initiator } = this.params;
-    if (!initiator.weapon.isOfType(weaponTypes)) {
-      throw new CastError('NO_WEAPON');
-    }
-
-    const initiatorSkillLvl = initiator.skills[this.name] || 1;
-    const penPercent = this.effect[initiatorSkillLvl - 1] ?? 50;
+    const penPercent = this.getEffect(initiator);
 
     initiator.affects.addEffect({
       action: this.name,
@@ -57,7 +50,7 @@ class PiercingShot extends Skill {
   }
 
   onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
-    if (action.actionType !== 'phys' || !ctx.initiator.weapon.isOfType(weaponTypes)) {
+    if (action.actionType !== 'phys' || !this.checkWeapon(ctx.initiator)) {
       return;
     }
 
@@ -71,14 +64,7 @@ class PiercingShot extends Skill {
       ctx.target.stats.down('phys.defence', defReduction);
     }
 
-    const bonus = floatNumber(ctx.status.effect * (penRatio * 0.15));
-    ctx.status.effect = floatNumber(ctx.status.effect + bonus);
-    values(EffectType).forEach((effectType) => {
-      const part = ctx.status.effectParts[effectType];
-      if (part) {
-        ctx.status.setEffectPart(effectType, floatNumber(part * (1 + penRatio * 0.15)));
-      }
-    });
+    ctx.status.mulEffect(1 + penRatio * 0.15);
   }
 
   customMessage(args: SuccessArgs) {

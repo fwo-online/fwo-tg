@@ -3,9 +3,7 @@ import type { DmgMagicArgs } from '@/arena/Constuructors/DmgMagicConstructor';
 import { LongDmgMagic } from '@/arena/Constuructors/LongDmgMagicConstructor';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
 import { effectService } from '@/arena/EffectService';
-import type GameService from '@/arena/GameService';
 import MiscService from '@/arena/MiscService';
-import type { Player } from '@/arena/PlayersService';
 import { bold, italic } from '@/utils/formatString';
 
 /**
@@ -30,13 +28,6 @@ const params: DmgMagicArgs = Object.freeze({
 });
 
 class Poison extends LongDmgMagic {
-  cast(initiator: Player, target: Player, game: GameService): void {
-    if (target.stats.val('hp') <= 0) {
-      return;
-    }
-    super.cast(initiator, target, game);
-  }
-
   override getEffectVal({ initiator } = this.params): number {
     const formula = this.effect[0];
     return MiscService.dice(formula) * (initiator.proc || 1);

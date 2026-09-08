@@ -7,7 +7,7 @@ export class HealMagic extends CommonMagic {
 
   run(): void {
     this.status.effect = this.effectVal();
-    effectService.heal(this.context);
+    effectService.heal(this.context, this);
   }
 
   /**

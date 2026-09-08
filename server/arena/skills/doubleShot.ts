@@ -2,13 +2,10 @@ import { EffectType, OrderType } from '@fwo/shared';
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
 import { effectService } from '@/arena/EffectService';
-import CastError from '@/arena/errors/CastError';
 import { floatNumber } from '@/utils/floatNumber';
 import { bold, italic } from '@/utils/formatString';
 import { Skill } from '../Constuructors/SkillConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
-
-const weaponTypes = ['range'];
 
 /**
  * 🏹 Залп стрел
@@ -32,24 +29,20 @@ class DoubleShot extends Skill {
       bonusCost: [10, 20, 30],
       branch: 'barrage',
       branches: ['barrage'],
+      weaponTypes: ['range'],
     });
   }
 
   run() {
     const { initiator } = this.params;
-    if (!initiator.weapon.isOfType(weaponTypes)) {
-      throw new CastError('NO_WEAPON');
-    }
-
-    const initiatorSkillLvl = initiator.skills[this.name] || 1;
-    const arrowPercent = this.effect[initiatorSkillLvl - 1] ?? 75;
+    const arrowPercent = this.getEffect(initiator);
 
     initiator.affects.addEffect({
       action: this.name,
       initiator,
       value: arrowPercent,
       onDamageDealt(ctx, action, affect) {
-        if (action.actionType === 'phys' && ctx.initiator.weapon.isOfType(weaponTypes)) {
+        if (action.actionType === 'phys' && doubleShot.checkWeapon(ctx.initiator)) {
           doubleShot.onDamageDealt(ctx, action, affect);
         }
       },

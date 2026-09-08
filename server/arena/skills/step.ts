@@ -31,8 +31,7 @@ class Step extends Skill {
 
   run() {
     const { initiator, target } = this.params;
-    const initiatorSkillLvl = initiator.skills[this.name] || 1;
-    const level = this.effect[initiatorSkillLvl - 1] ?? 0.6;
+    const level = this.getEffect(initiator);
 
     target.stats.mul('phys.defence', level);
     target.stats.mul('phys.attack', floatNumber(level + 0.2));
