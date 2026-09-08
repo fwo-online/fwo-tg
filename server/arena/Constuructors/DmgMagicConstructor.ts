@@ -1,25 +1,25 @@
+import type { EffectType } from '@fwo/shared';
 import { floatNumber } from '../../utils/floatNumber';
 import type { Player } from '../PlayersService';
-import type { MagicArgs } from './MagicConstructor';
-import { Magic } from './MagicConstructor';
-import type { ActionType, DamageType } from './types';
+import { Magic, type MagicArgs } from './MagicConstructor';
+import type { ActionType } from './types';
 
 export interface DmgMagicArgs extends MagicArgs {
-  dmgType: DamageType;
+  dmgType: EffectType;
 }
 
-export interface DmgMagic extends DmgMagicArgs, Magic {}
+export interface DmgMagic extends Magic {}
 /**
  * Общий конструктор не длительных магий
  */
 export abstract class DmgMagic extends Magic {
   actionType: ActionType = 'dmg-magic';
+
   /**
    * Создание магии
    */
   constructor({ dmgType, ...magObj }: DmgMagicArgs) {
     super(magObj);
-    this.dmgType = dmgType;
     this.effectType = dmgType;
   }
 
@@ -38,7 +38,7 @@ export abstract class DmgMagic extends Magic {
   modifyEffect(effect: number, { initiator, target } = this.params): number {
     effect = this.applyCasterModifiers(effect, initiator);
 
-    if (this.dmgType !== 'clear') {
+    if (this.effectType !== 'clear') {
       effect = this.applyTargetModifiers(effect, target);
     }
 

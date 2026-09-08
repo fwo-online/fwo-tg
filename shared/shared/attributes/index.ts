@@ -1,10 +1,10 @@
 import * as v from 'valibot';
 import { characterAttributesSchema } from '@/character/characterAttributesSchema';
-import { minMaxSchema } from './minMaxSchema';
-import { magicAttributesSchema } from './magicAttrututes';
-import { physAttributesSchema } from './physAttributes';
 import { baseAttributesSchema } from './baseAttributes';
-import { elementAttributesSchema } from './elementAttributes';
+import { elementAttributesSchema, elementDamageSchema } from './elementAttributes';
+import { magicAttributesSchema } from './magicAttrututes';
+import { minMaxSchema } from './minMaxSchema';
+import { physAttributesSchema } from './physAttributes';
 
 export const attributesSchema = v.object({
   attributes: v.optional(characterAttributesSchema, {
@@ -19,8 +19,22 @@ export const attributesSchema = v.object({
   base: v.optional(baseAttributesSchema, { hp: 0, mp: 0, en: 0 }),
   regen: v.optional(baseAttributesSchema, { hp: 0, mp: 0, en: 0 }),
   heal: v.optional(minMaxSchema, { min: 0, max: 0 }),
-  hit: v.optional(minMaxSchema, { min: 0, max: 0 }),
-  resists: v.optional(elementAttributesSchema, { fire: 0, frost: 0, acid: 0, lightning: 0 }),
+  hit: v.optional(elementDamageSchema, {
+    physical: { min: 0, max: 0 },
+    fire: { min: 0, max: 0 },
+    frost: { min: 0, max: 0 },
+    acid: { min: 0, max: 0 },
+    lightning: { min: 0, max: 0 },
+    clear: { min: 0, max: 0 },
+  }),
+  resists: v.optional(elementAttributesSchema, {
+    physical: 0,
+    fire: 0,
+    frost: 0,
+    acid: 0,
+    lightning: 0,
+    clear: 0,
+  }),
   maxTarget: v.optional(v.number()),
   spellLength: v.optional(v.number()),
 });

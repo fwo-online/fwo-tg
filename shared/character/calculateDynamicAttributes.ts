@@ -47,7 +47,14 @@ const calculateHit = ({ str, int }: CharacterAttributes, characterClass: Charact
       ? floatNumber((int - 2) / 10)
       : floatNumber((str - 3) / 10);
 
-  return { min: hit, max: hit };
+  return {
+    physical: { min: hit, max: hit },
+    fire: { min: 0, max: 0 },
+    frost: { min: 0, max: 0 },
+    acid: { min: 0, max: 0 },
+    lightning: { min: 0, max: 0 },
+    clear: { min: 0, max: 0 },
+  };
 };
 
 const calculateHeal = ({ int }: CharacterAttributes) => {
@@ -81,6 +88,6 @@ export const calculateDynamicAttributes = ({
     hit: calculateHit(attributes, charObj.class),
     maxTarget,
     spellLength,
-    resists: { acid: 0, fire: 0, frost: 0, lightning: 0 },
+    resists: { physical: 1, acid: 1, fire: 1, frost: 1, lightning: 1, clear: 1 },
   };
 };

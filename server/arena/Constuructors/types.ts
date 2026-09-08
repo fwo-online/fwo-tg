@@ -1,10 +1,10 @@
+import type { EffectType } from '@fwo/shared';
 import type GameService from '../GameService';
 import type { Player } from '../PlayersService';
 
 export type CostType = 'en' | 'mp';
 export type OrderType = 'all' | 'any' | 'enemy' | 'self' | 'team' | 'teamExceptSelf';
 export type AOEType = 'target' | 'team';
-export type DamageType = 'acid' | 'fire' | 'lighting' | 'frost' | 'physical' | 'clear';
 export type BreaksMessage =
   | 'NO_INITIATOR'
   | 'NO_TARGET'
@@ -47,11 +47,12 @@ export type SuccessArgs = {
   effect: number;
   hp: number;
   expArr: ExpArr;
-  effectType?: DamageType;
+  effectType?: EffectType;
   orderType: OrderType;
   affects?: SuccessArgs[];
   msg?: CustomMessageFn;
   duration?: number;
+  effectParts?: Partial<Record<EffectType, number>>;
 };
 
 export type ActionType =

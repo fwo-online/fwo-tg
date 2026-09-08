@@ -26,7 +26,7 @@ describe('fireBall', () => {
     game = new GameService([initiator.id, ...chars.map(({ id }) => id)]);
 
     game.players.players.forEach((player, index) => {
-      player.resists.fire = index % 3 ? 1 : 0.75;
+      player.stats.set('resists.fire', index % 3 ? 1 : 0.75);
     });
   });
 

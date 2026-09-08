@@ -1,7 +1,7 @@
-import { Character } from './characterSchema';
+import type { Attributes } from '@/shared/attributes';
 import type { CharacterAttributes } from './characterAttributesSchema';
 import { CharacterClass } from './characterClassSchema';
-import type { Attributes } from '@/shared/attributes';
+import type { Character } from './characterSchema';
 
 export const characterAttributesByClass: Record<CharacterClass, CharacterAttributes> = {
   [CharacterClass.Warrior]: {
@@ -52,9 +52,9 @@ export const isMage = (character: Character) => character.class === CharacterCla
 export const isPriest = (character: Character) => character.class === CharacterClass.Priest;
 export const isWarrior = (character: Character) => character.class === CharacterClass.Warrior;
 
+export * from './calculateDynamicAttributes';
 export * from './characterAttributesSchema';
 export * from './characterClassSchema';
+export * from './characterPublic';
 export * from './characterSchema';
 export * from './createCharacterSchema';
-export * from './characterPublic';
-export * from './calculateDynamicAttributes';

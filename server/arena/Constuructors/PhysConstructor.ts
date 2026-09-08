@@ -1,11 +1,10 @@
-import { EffectType } from '@fwo/shared';
+import { type ActionType, EffectType, values } from '@fwo/shared';
 import { BaseAction } from '@/arena/Constuructors/BaseAction';
 import { floatNumber } from '@/utils/floatNumber';
 import CastError from '../errors/CastError';
 import type GameService from '../GameService';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
-import type { ActionType } from './types';
 
 /**
  * Конструктор физической атаки
@@ -67,10 +66,17 @@ export default abstract class PhysConstructor extends BaseAction {
   calculateHit() {
     const { initiator } = this.params;
 
-    const { min, max } = initiator.stats.val('hit');
-    const hit = MiscService.randFloat(min, max);
+    const hit = initiator.stats.val('hit');
 
-    this.status.effect = floatNumber(hit * initiator.proc);
+    values(EffectType).forEach((effectType) => {
+      const minMax = hit[effectType];
+      if (minMax && (minMax.min > 0 || minMax.max > 0)) {
+        const hit = MiscService.randFloat(minMax.min ?? 0, minMax.max ?? 0);
+        const effect = floatNumber(hit * initiator.proc);
+
+        this.status.setEffectPart(effectType, effect);
+      }
+    });
   }
 
   getEffectExp({ initiator, target } = this.params, effect: number) {

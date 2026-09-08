@@ -4,7 +4,6 @@ import { type ActionKey, ActionService } from '@/arena/ActionService';
 import type { CharacterService } from '@/arena/CharacterService';
 import { ClanService } from '@/arena/ClanService';
 import FlagsConstructor from '@/arena/Constuructors/FlagsConstructor';
-import type { DamageType } from '@/arena/Constuructors/types';
 import ValidationError from '@/arena/errors/ValidationError';
 import { PlayerAffects } from '@/arena/PlayersService/PlayerAffects';
 import { PlayerOffHand } from '@/arena/PlayersService/PlayerOffHand';
@@ -13,8 +12,6 @@ import { StreakHelper } from '@/helpers/streakHelper';
 import type { Clan } from '@/models/clan';
 import { PlayerWeapon } from './PlayerWeapon';
 import { convertItemModifiers } from './utils';
-
-export type Resists = Record<DamageType, number>;
 
 export interface Chance {
   fail: Partial<Record<ActionKey, number>>;
@@ -41,7 +38,6 @@ export default class PlayerService {
     castChance: number;
   };
 
-  resists: Partial<Resists>;
   skills: Record<string, number>;
   magics: Record<string, number>;
   passiveSkills: Record<string, number>;
@@ -69,7 +65,7 @@ export default class PlayerService {
       chance: convertItemModifiers(params.inventory.modifiers),
       castChance: 0,
     }; // Объект модификаторов
-    this.resists = {}; // Объект резистов
+
     this.skills = structuredClone(params.skills) || {}; // Обькт доступных скилов
     this.magics = structuredClone(params.magics) || {}; // объект изученых магий
     this.passiveSkills = structuredClone(params.passiveSkills || {});

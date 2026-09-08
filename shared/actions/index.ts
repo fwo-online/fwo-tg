@@ -55,11 +55,11 @@ export enum OrderType {
 }
 
 export enum EffectType {
-  Acid = 'acid',
-  Fire = 'fire',
-  Lighting = 'lighting',
-  Frost = 'frost',
   Physical = 'physical',
+  Fire = 'fire',
+  Lightning = 'lightning',
+  Frost = 'frost',
+  Acid = 'acid',
   Clear = 'clear',
 }
 

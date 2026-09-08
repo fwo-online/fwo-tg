@@ -98,7 +98,7 @@ export default {
       'acidSpittle',
       'chainLightning',
       'fireRain',
-      // 'wild_lighting',
+      // 'wild_lightning',
       'rockfall',
       'physicalSadness',
     ],
