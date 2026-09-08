@@ -2,10 +2,5 @@
 
 exports[`poison should deal acid damage when ticking 1`] = `
 "⏳2 _☠️ Отравление_ (*Игрок 1*) наносит урон ядом игроку *Игрок 2*
-\\[ Игрок 2 ☣ 💔-1.51/6.49 📖20 ]"
-`;
-
-exports[`poison should deal specified damage value when provided 1`] = `
-"⏳1 _☠️ Отравление_ (*Игрок 1*) наносит урон ядом игроку *Игрок 2*
-\\[ Игрок 2 ☣ 💔-3/5 📖32 ]"
+\\[ Игрок 2 ☣ 💔-2.01/5.99 📖24 ]"
 `;

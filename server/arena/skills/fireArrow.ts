@@ -81,7 +81,7 @@ class FireArrow extends Skill {
         if (target.stats.val('hp') <= 0) return;
         initiator.proc = this.proc;
         burning.duration = this.duration;
-        burning.cast(initiator, target, gameCtx, a.value);
+        burning.cast(initiator, target, gameCtx);
       },
     });
   }

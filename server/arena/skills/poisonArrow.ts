@@ -81,7 +81,7 @@ class PoisonArrow extends Skill {
         if (target.stats.val('hp') <= 0) return;
         initiator.proc = this.proc;
         poison.duration = this.duration;
-        poison.cast(initiator, target, gameCtx, a.value);
+        poison.cast(initiator, target, gameCtx);
       },
     });
   }

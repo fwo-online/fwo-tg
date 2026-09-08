@@ -29,15 +29,4 @@ describe('poison', () => {
     expect(p2.stats.val('hp')).toBeLessThan(initialHp);
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
-
-  it('should deal specified damage value when provided', () => {
-    const [p1, p2] = game.players.players;
-    p1.proc = 1;
-    const initialHp = p2.stats.val('hp');
-    poison.duration = 1;
-    poison.cast(p1, p2, game, 3);
-
-    expect(p2.stats.val('hp')).toBe(initialHp - 3);
-    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
-  });
 });

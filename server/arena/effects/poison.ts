@@ -23,20 +23,17 @@ const params: DmgMagicArgs = Object.freeze({
   orderType: OrderType.Enemy,
   aoeType: 'target',
   magType: 'bad',
-  chance: [100, 100, 100],
-  effect: ['1d2', '1d3', '1d4'],
+  chance: [100],
+  effect: ['1d3'],
   dmgType: EffectType.Acid,
   profList: ['m', 'w', 'l', 'p'],
 });
 
 class Poison extends LongDmgMagic {
-  damageValue?: number;
-
-  cast(initiator: Player, target: Player, game: GameService, damage?: number): void {
+  cast(initiator: Player, target: Player, game: GameService): void {
     if (target.stats.val('hp') <= 0) {
       return;
     }
-    this.damageValue = damage;
     super.cast(initiator, target, game);
   }
 
@@ -46,16 +43,8 @@ class Poison extends LongDmgMagic {
   }
 
   run() {
-    this.status.effect =
-      this.damageValue !== undefined && this.damageValue > 0
-        ? this.damageValue
-        : this.effectVal();
+    this.status.effect = this.effectVal();
     effectService.damage(this.context, this);
-  }
-
-  override reset() {
-    super.reset();
-    this.damageValue = undefined;
   }
 
   customMessage(args: SuccessArgs): string {

@@ -23,40 +23,28 @@ const params: DmgMagicArgs = Object.freeze({
   orderType: OrderType.Enemy,
   aoeType: 'target',
   magType: 'bad',
-  chance: [100, 100, 100],
-  effect: ['1d2', '1d3', '1d4'],
+  chance: [100],
+  effect: ['1d3'],
   dmgType: EffectType.Fire,
   profList: ['m', 'w', 'l', 'p'],
 });
 
 class Burning extends LongDmgMagic {
-  damageValue?: number;
-
-  cast(initiator: Player, target: Player, game: GameService, damage?: number): void {
+  cast(initiator: Player, target: Player, game: GameService): void {
     if (target.stats.val('hp') <= 0) {
       return;
     }
-    this.damageValue = damage;
     super.cast(initiator, target, game);
   }
 
   override getEffectVal({ initiator } = this.params): number {
-    const lvl = initiator.getPassiveSkillLevel('ignition') || 1;
-    const formula = this.effect[lvl - 1] ?? this.effect[0];
+    const formula = this.effect[0];
     return MiscService.dice(formula) * (initiator.proc || 1);
   }
 
   run() {
-    this.status.effect =
-      this.damageValue !== undefined && this.damageValue > 0
-        ? this.damageValue
-        : this.effectVal();
+    this.status.effect = this.effectVal();
     effectService.damage(this.context, this);
-  }
-
-  override reset() {
-    super.reset();
-    this.damageValue = undefined;
   }
 
   customMessage(args: SuccessArgs): string {
@@ -66,3 +54,4 @@ class Burning extends LongDmgMagic {
 }
 
 export const burning = new Burning(params);
+export default burning;

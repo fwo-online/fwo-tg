@@ -2,10 +2,5 @@
 
 exports[`burning should deal fire damage when ticking 1`] = `
 "⏳2 _🔥 Горение_ (*Игрок 1*) наносит урон огнём игроку *Игрок 2*
-\\[ Игрок 2 🔥 💔-1.51/6.49 📖20 ]"
-`;
-
-exports[`burning should deal specified damage value when provided 1`] = `
-"⏳1 _🔥 Горение_ (*Игрок 1*) наносит урон огнём игроку *Игрок 2*
-\\[ Игрок 2 🔥 💔-3/5 📖32 ]"
+\\[ Игрок 2 🔥 💔-2.01/5.99 📖24 ]"
 `;
