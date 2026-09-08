@@ -4,28 +4,27 @@ import type { BreaksMessage, SuccessArgs } from '@/arena/Constuructors/types';
 import type GameService from '@/arena/GameService';
 import type { Player } from '@/arena/PlayersService';
 
+type BaseAffectHook = (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
+type BaseAffectHookWithResult = (
+  ctx: BaseActionContext,
+  action: BaseAction,
+  affect: Affect,
+) => void | SuccessArgs | SuccessArgs[];
+
 type BaseAffect = {
   initiator: Player;
   action: ActionKey;
   value?: number;
   proc?: number;
 
-  onBeforeAction?: (
-    ctx: BaseActionContext,
-    action: BaseAction,
-    affect: Affect,
-  ) => void | SuccessArgs | SuccessArgs[];
-  onBeforeReceive?: (
-    ctx: BaseActionContext,
-    action: BaseAction,
-    affect: Affect,
-  ) => void | SuccessArgs | SuccessArgs[];
+  onBeforeAction?: BaseAffectHookWithResult;
+  onBeforeReceive?: BaseAffectHookWithResult;
   onCast?: (game: GameService, affect: Affect) => void;
-  onBeforeDamageDeal?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
-  onBeforeDamageRecieve?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
-  onDamageDealt?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
-  onDamageReceived?: (ctx: BaseActionContext, action: BaseAction, affect: Affect) => void;
-  onHeal?: (ctx: BaseActionContext) => void;
+  onBeforeDamageDeal?: BaseAffectHook;
+  onBeforeDamageRecieve?: BaseAffectHook;
+  onDamageDealt?: BaseAffectHook;
+  onDamageReceived?: BaseAffectHook;
+  onBeforeHealDeal?: BaseAffectHook;
   onCastFail?: (
     ctx: BaseActionContext,
     action: BaseAction,

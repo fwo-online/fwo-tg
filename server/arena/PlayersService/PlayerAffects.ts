@@ -86,6 +86,12 @@ export class PlayerAffects {
     }
   }
 
+  onBeforeHealDeal(ctx: BaseActionContext, action: BaseAction) {
+    for (const affect of this.#affects) {
+      affect.onBeforeHealDeal?.(ctx, action, affect);
+    }
+  }
+
   onCast(game: GameService, action: ActionKey) {
     for (const affect of this.#affects) {
       if (action === affect.action) {

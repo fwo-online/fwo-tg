@@ -20,7 +20,7 @@ class HandsHeal extends Heal {
 
   run(): void {
     this.effectVal();
-    effectService.heal(this.context);
+    effectService.heal(this.context, this);
   }
 }
 

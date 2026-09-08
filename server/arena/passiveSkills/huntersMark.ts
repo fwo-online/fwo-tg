@@ -11,7 +11,7 @@ class HuntersMark extends PassiveSkillConstructor {
       displayName: '🎯 Метка охотника',
       description: 'Атака по цели имеет шанс пометить цель, следующая атака наносит больше урона',
       chance: [33, 50, 75],
-      effect: [10, 25, 50],
+      effect: [10, 20, 30],
       profList: { l: 1 },
       bonusCost: [10, 20, 30],
       branch: 'marksman',

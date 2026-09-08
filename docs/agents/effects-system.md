@@ -17,7 +17,7 @@ BaseAffect {
   onBeforeAction?, onBeforeReceive?, onCast?,
   onBeforeDamageDeal?, onBeforeDamageRecieve?,
   onDamageDealt?, onDamageReceived?,
-  onHeal?, onCastFail?
+  onBeforeHealDeal?, onCastFail?
 }
 
 Effect     = BaseAffect & { type: 'effect' }        // 1 раунд
@@ -33,14 +33,14 @@ Passive    = BaseAffect & { type: 'passive' }        // Перманент
 
 ### Методы
 
-| Метод | Описание |
-|---|---|
-| `addEffect(e)` | Добавить `{ ...e, type: 'effect' }` |
-| `addLongEffect(e)` | Добавить `{ ...e, type: 'long-effect' }` |
-| `addPassive(p)` | Добавить `{ ...p, type: 'passive' }` |
-| `getEffectsByAction(name)` | Найти все аффекты по action (не фильтрует по type!) |
-| `removeEffectsByAction(name)` | Удалить по action |
-| `refresh()` | Конец раунда: удаляет 'effect', декрементит 'long-effect', оставляет 'passive' |
+| Метод                         | Описание                                                                       |
+| ----------------------------- | ------------------------------------------------------------------------------ |
+| `addEffect(e)`                | Добавить `{ ...e, type: 'effect' }`                                            |
+| `addLongEffect(e)`            | Добавить `{ ...e, type: 'long-effect' }`                                       |
+| `addPassive(p)`               | Добавить `{ ...p, type: 'passive' }`                                           |
+| `getEffectsByAction(name)`    | Найти все аффекты по action (не фильтрует по type!)                            |
+| `removeEffectsByAction(name)` | Удалить по action                                                              |
+| `refresh()`                   | Конец раунда: удаляет 'effect', декрементит 'long-effect', оставляет 'passive' |
 
 ### Жизненный цикл
 
@@ -108,10 +108,10 @@ onBeforeDamageDeal(ctx, action, affect) {
 ```typescript
 this.flags = {
   noDamageRound: 0,
-  global: {},       // раньше было { isEclipsed: [...] }, убрано
+  global: {}, // раньше было { isEclipsed: [...] }, убрано
 };
 
-refreshRoundFlags()  // очистка в конце раунда (пока пустая)
+refreshRoundFlags(); // очистка в конце раунда (пока пустая)
 ```
 
 **Правило**: глобальные флаги — только если данные нужны вне контекста эффектов и не выводятся из состояния игроков. Эффекты — источник истины.
