@@ -20,7 +20,7 @@ class AimedShot extends Skill {
       displayName: '🎯 Прицельный выстрел',
       desc: 'Усиливает следующую атаку дальнего боя: наносит повышенный урон и лишает цель возможности уклониться',
       cost: [10, 12, 14],
-      proc: 10,
+      proc: 20,
       baseExp: 25,
       costType: 'en',
       orderType: OrderType.Self,

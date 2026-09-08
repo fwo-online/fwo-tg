@@ -21,7 +21,7 @@ class DoubleShot extends Skill {
       displayName: '🏹 Залп стрел',
       desc: 'Усиливает следующую атаку дальнего боя: лучник выпускает дополнительную стрелу по второй цели (или той же цели)',
       cost: [12, 14, 16],
-      proc: 10,
+      proc: 30,
       baseExp: 25,
       costType: 'en',
       orderType: OrderType.Self,
