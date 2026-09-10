@@ -47,7 +47,7 @@ class SurvivalInstinct extends PassiveSkillConstructor {
     }
 
     this.createContext(target, target, ctx.game);
-    if (!this.isActive(this.context)) {
+    if (!this.isActive(this.context.initiator)) {
       return;
     }
 

@@ -32,7 +32,7 @@ abstract class CounterEvasionSkill extends PassiveSkillConstructor {
 
     const { initiator, target, game } = ctx;
     this.createContext(initiator, target, game);
-    if (!this.isActive(ctx)) {
+    if (!this.isActive(ctx.initiator)) {
       return;
     }
 

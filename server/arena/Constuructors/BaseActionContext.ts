@@ -33,7 +33,7 @@ export class BaseActionContext {
   }
 
   overrideTarget(target: PlayerService) {
-    this.params.target = target;
+    this.overridedTarget = target;
   }
 
   addAffect(action: BaseAction, ctx = this) {
@@ -45,6 +45,10 @@ export class BaseActionContext {
 
   reset() {
     this.status.reset();
+  }
+
+  clone() {
+    return this.cloneWith(this.target);
   }
 
   cloneWith(target: PlayerService) {

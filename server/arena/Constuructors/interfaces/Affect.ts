@@ -30,6 +30,7 @@ type BaseAffect = {
     action: BaseAction,
     reason: SuccessArgs | SuccessArgs[] | BreaksMessage,
   ) => void | SuccessArgs | SuccessArgs[] | boolean;
+  onAfterCast?: BaseAffectHook;
 };
 
 export type Passive = BaseAffect & {

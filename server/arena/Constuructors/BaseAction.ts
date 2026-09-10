@@ -86,6 +86,11 @@ export abstract class BaseAction {
 
   abstract run(initiator: Player, target: Player, game: GameService): void;
 
+  cloneAction(): this {
+    const Constructor = this.constructor as new () => this;
+    return new Constructor();
+  }
+
   createContext(initiator: Player, target: Player, game: GameService) {
     this.context = new BaseActionContext({ initiator, target, game }, new BaseActionStatus());
     return this.context;
@@ -167,6 +172,8 @@ export abstract class BaseAction {
     if (!this.isAffect) {
       context.game.recordOrderResult(result);
     }
+
+    context.initiator.affects.onAfterCast(context, this);
   }
 
   onBeforeRun() {

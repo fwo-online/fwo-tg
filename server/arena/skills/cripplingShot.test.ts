@@ -1,9 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
-import type { FailArgs } from '../Constuructors/types';
 import { attack } from '../actions/attack';
-import { cripplingShot, cripplingShotDebuff } from './cripplingShot';
+import { cripplingShot } from './cripplingShot';
 import { dodge } from './dodge';
 
 // npm t arena/skills/cripplingShot.test.ts
@@ -65,15 +64,8 @@ describe('cripplingShot', () => {
 
     // Dodge should not be in affects because it threw CastError during cast
     expect(p2.affects.getEffectsByAction('dodge').length).toBe(0);
-    const roundResults = game.getRoundResults();
-    const lastResult = roundResults[roundResults.length - 1] as FailArgs;
-    expect(lastResult).toBeDefined();
-    expect(lastResult.reason).toMatchObject({
-      action: '🎯 Выстрел в колено',
-      actionType: 'skill',
-      initiator: p1,
-      target: p2,
-    });
+
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
 
   it('should reapply dex reduction in next round via onCast', () => {
@@ -94,16 +86,7 @@ describe('cripplingShot', () => {
     // Round 2 start: stage cripplingShot runs onCast for affected players
     p2.affects.onCast(game, 'cripplingShot');
     expect(p2.stats.val('attributes.dex')).toBeLessThan(initialDex);
-  });
 
-  it('should not apply debuff if target is dead', () => {
-    const [p1, p2] = game.players.players;
-    p2.stats.set('hp', 0);
-    const initialDex = p2.stats.val('attributes.dex');
-
-    cripplingShotDebuff.apply(p2, p1, 25);
-
-    expect(p2.stats.val('attributes.dex')).toBe(initialDex);
-    expect(p2.affects.getEffectsByAction('cripplingShot').length).toBe(0);
+    expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
 });

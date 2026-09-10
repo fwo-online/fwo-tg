@@ -16,6 +16,8 @@ class HuntersMark extends PassiveSkillConstructor {
       bonusCost: [10, 20, 30],
       branch: 'marksman',
       branches: ['marksman', 'scout'],
+      weaponTypes: ['range'],
+      actionTypes: ['phys'],
     });
   }
 
@@ -33,38 +35,23 @@ class HuntersMark extends PassiveSkillConstructor {
   }
 
   onDamageDealt(ctx: BaseActionContext, action: BaseAction) {
-    const { initiator, target, game } = ctx.params;
-    this.createContext(initiator, target, game);
+    const { initiator, target } = ctx.params;
 
-    if (action.actionType !== 'phys') {
-      return;
+    if (this.canTrigger(ctx, action)) {
+      target.affects.addLongEffect({
+        action: this.name,
+        proc: initiator.proc,
+        duration: 2,
+        initiator,
+        value: this.getEffect(ctx),
+        onBeforeDamageRecieve(ctx, action, affect) {
+          initiator.proc = this.proc;
+          markedShot.onBeforeDamageRecieve(ctx, action, affect);
+        },
+      });
+
+      ctx.addAffect(this, this.context);
     }
-
-    if (!initiator.weapon.isOfType(this.weaponTypes)) {
-      return;
-    }
-
-    if (!this.isActive()) {
-      return;
-    }
-
-    if (!this.checkChance()) {
-      return;
-    }
-
-    target.affects.addLongEffect({
-      action: this.name,
-      proc: initiator.proc,
-      duration: 2,
-      initiator,
-      value: this.getEffect({ initiator, target, game }),
-      onBeforeDamageRecieve(ctx, action, affect) {
-        initiator.proc = this.proc;
-        markedShot.onBeforeDamageRecieve(ctx, action, affect);
-      },
-    });
-
-    ctx.addAffect(this, this.context);
   }
 }
 

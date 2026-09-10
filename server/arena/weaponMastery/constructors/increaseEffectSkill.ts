@@ -22,7 +22,7 @@ abstract class IncreaseEffectSkill extends PassiveSkillConstructor {
 
     const { initiator, target, game } = ctx.params;
     this.createContext(initiator, target, game);
-    if (!this.isActive(ctx.params)) {
+    if (!this.isActive(ctx.initiator)) {
       return;
     }
 
@@ -30,11 +30,11 @@ abstract class IncreaseEffectSkill extends PassiveSkillConstructor {
       return;
     }
 
-    if (!this.checkChance(ctx.params)) {
+    if (!this.checkChance(ctx)) {
       return;
     }
 
-    ctx.status.effect *= 1 + this.getEffect(ctx.params) / 100;
+    ctx.status.effect *= 1 + this.getEffect(ctx) / 100;
 
     ctx.addAffect(this, this.context);
   }

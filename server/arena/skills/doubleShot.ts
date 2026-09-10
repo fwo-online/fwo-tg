@@ -1,22 +1,20 @@
-import { EffectType, OrderType } from '@fwo/shared';
+import { OrderType } from '@fwo/shared';
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
-import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
-import { effectService } from '@/arena/EffectService';
-import { floatNumber } from '@/utils/floatNumber';
 import { bold, italic } from '@/utils/formatString';
 import { Skill } from '../Constuructors/SkillConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
 
 /**
  * 🏹 Залп стрел
- * Усиливает следующую атаку дальнего боя: лучник выпускает дополнительную стрелу по второй цели (или той же цели)
+ * Усиливает следующую атаку дальнего боя: лучник выпускает дополнительную стрелу по второй цели
  */
 class DoubleShot extends Skill {
+  lock = false;
   constructor() {
     super({
       name: 'doubleShot',
       displayName: '🏹 Залп стрел',
-      desc: 'Усиливает следующую атаку дальнего боя: лучник выпускает дополнительную стрелу по второй цели (или той же цели)',
+      desc: 'Усиливает следующую атаку дальнего боя: лучник выпускает дополнительную стрелу по второй цели',
       cost: [12, 14, 16],
       proc: 30,
       baseExp: 25,
@@ -41,10 +39,8 @@ class DoubleShot extends Skill {
       action: this.name,
       initiator,
       value: arrowPercent,
-      onDamageDealt(ctx, action, affect) {
-        if (action.actionType === 'phys' && doubleShot.checkWeapon(ctx.initiator)) {
-          doubleShot.onDamageDealt(ctx, action, affect);
-        }
+      onDamageDealt(ctx, action) {
+        doubleShot.onDamageDealt(ctx, action, this.value);
       },
     });
 
@@ -52,17 +48,42 @@ class DoubleShot extends Skill {
     this.calculateExp();
   }
 
-  onDamageDealt(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
-    const { initiator, target, game } = ctx;
-    const aliveEnemies = game.players.getAliveEnemies(initiator);
-    const target2 = aliveEnemies.find((e) => e.id !== target.id) ?? target;
+  onDamageDealt(ctx: BaseActionContext, action: BaseAction, value: number) {
+    if (this.lock || action.actionType !== 'phys' || !doubleShot.checkWeapon(ctx.initiator)) {
+      return;
+    }
 
-    if (target2.stats.val('hp') > 0) {
-      const arrowPercent = (affect.value ?? 75) / 100;
-      const secondHitDmg = floatNumber(ctx.status.effect * arrowPercent);
-      const ctx2 = ctx.cloneWith(target2);
-      ctx2.status.setEffectPart(EffectType.Physical, secondHitDmg);
-      effectService.damage(ctx2, this);
+    const aliveEnemies = ctx.game.players
+      .getAliveEnemies(ctx.initiator)
+      .filter((player) => player.id !== ctx.target.id);
+
+    const randomTarget = ctx.game.players.getRandom(aliveEnemies);
+
+    if (!randomTarget) {
+      return;
+    }
+
+    const proc = ctx.initiator.proc;
+    this.lock = true;
+
+    try {
+      ctx.initiator.proc = ctx.initiator.proc * (value / 100);
+
+      const actionClone = action.cloneAction();
+      actionClone.isAffect = true;
+      actionClone.cast(ctx.initiator, randomTarget, ctx.game);
+      actionClone.context.addAffect(this);
+
+      ctx.initiator.affects.addEffect({
+        action: this.name,
+        initiator: ctx.initiator,
+        onAfterCast() {
+          ctx.game.recordOrderResult(actionClone.getSuccessResult());
+        },
+      });
+    } finally {
+      ctx.initiator.proc = proc;
+      this.lock = false;
     }
   }
 

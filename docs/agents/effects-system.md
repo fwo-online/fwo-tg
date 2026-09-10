@@ -17,7 +17,7 @@ BaseAffect {
   onBeforeAction?, onBeforeReceive?, onCast?,
   onBeforeDamageDeal?, onBeforeDamageRecieve?,
   onDamageDealt?, onDamageReceived?,
-  onBeforeHealDeal?, onCastFail?
+  onBeforeHealDeal?, onCastFail?, onAfterCast?
 }
 
 Effect     = BaseAffect & { type: 'effect' }        // 1 раунд
@@ -40,6 +40,7 @@ Passive    = BaseAffect & { type: 'passive' }        // Перманент
 | `addPassive(p)`               | Добавить `{ ...p, type: 'passive' }`                                           |
 | `getEffectsByAction(name)`    | Найти все аффекты по action (не фильтрует по type!)                            |
 | `removeEffectsByAction(name)` | Удалить по action                                                              |
+| `onAfterCast(ctx, action)`    | Вызывает `affect.onAfterCast?.(ctx, action, affect)` для всех аффектов         |
 | `refresh()`                   | Конец раунда: удаляет 'effect', декрементит 'long-effect', оставляет 'passive' |
 
 ### Жизненный цикл
@@ -110,24 +111,35 @@ onBeforeAction(actionCtx: BaseActionContext, actionToCast: BaseAction, affect?: 
 ```
 
 ### Переприменение дебаффов характеристик в раундах (`onCast`)
-В конце каждого раунда характеристики персонажей сбрасываются до базовых через `StatsService.refresh()`. Поэтому для `long-effect`, снижающих статы (например, срез ловкости на 2 раунда в `cripplingShotDebuff`), логика дебаффа должна повторно накладываться в начале каждого последующего раунда через хук `onCast`:
+В конце каждого раунда характеристики персонажей сбрасываются до базовых через `StatsService.refresh()`. Поэтому для `long-effect`, снижающих статы (например, срез ловкости на 2 раунда в `cripplingShot`), логика дебаффа должна повторно накладываться в начале каждого последующего раунда через хук `onCast`:
 
 ```typescript
-// В дебаффе:
-apply(target, initiator, debuffPercent) {
-  this.applyDebuff(target, debuffPercent); // раунд 1
-  target.affects.addLongEffect({
-    action: this.name,
-    duration: 2,
-    initiator,
-    value: debuffPercent,
-    onCast: (_game, affect) => this.onCast(target, affect), // раунд 2+
-    onBeforeAction: (actionCtx, actionToCast, affect) => this.onBeforeAction(actionCtx, actionToCast, affect),
-  });
+// В скилле (cripplingShot):
+onDamageDealt(ctx: BaseActionContext, action: BaseAction, value: number) {
+  if (action.isOfType('phys') && this.checkWeapon(ctx.initiator)) {
+    const { initiator, target } = ctx;
+    this.onCast(target, value); // применение в текущем раунде
+
+    target.affects.addLongEffect({
+      action: this.name,
+      duration: 2,
+      initiator,
+      value,
+      onCast() {
+        cripplingShot.onCast(target, this.value); // раунд 2+
+      },
+      onBeforeAction(ctx, action, affect) {
+        cripplingShot.onBeforeAction(ctx, action, affect);
+      },
+    });
+
+    ctx.addAffect(this);
+  }
 }
 
-onCast(target: Player, affect: Affect) {
-  this.applyDebuff(target, affect.value ?? 25);
+onCast(target: Player, value: number) {
+  const dex = target.stats.val('attributes.dex');
+  target.stats.down('attributes.dex', floatNumber(dex * (value / 100)));
 }
 ```
 
@@ -146,6 +158,22 @@ onCastFail(ctx: BaseActionContext, action: BaseAction, reason: BreaksMessage | S
 }
 ```
 Если метод возвращает `true`, срыв по причине уклонения отменяется, и цепочка урона продолжается. При этом увёртка цели остаётся активной против других нападающих в раунде.
+
+### Пост-обработка действий (`onAfterCast`)
+Хук `onAfterCast(ctx, action, affect)` вызывается в конце выполнения `BaseAction.next()` после фиксации результатов первого действия:
+```typescript
+context.initiator.affects.onAfterCast(context, this);
+```
+Используется для безопасного логирования вторичных действий без взаимного повреждения контекстов. Например, в «Залпе стрел» (`doubleShot`) вторая стрела кастуется как дочернее действие (`isAffect = true`), а её результат фиксируется в `roundResults` через `onAfterCast` сразу после записи основного выстрела:
+```typescript
+ctx.initiator.affects.addEffect({
+  action: this.name,
+  initiator: ctx.initiator,
+  onAfterCast() {
+    ctx.game.recordOrderResult(actionClone.getSuccessResult());
+  },
+});
+```
 
 ## Правила
 

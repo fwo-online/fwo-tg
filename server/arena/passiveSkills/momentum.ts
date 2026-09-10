@@ -1,8 +1,6 @@
-import { EffectType, values } from '@fwo/shared';
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConstructor';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
-import { floatNumber } from '@/utils/floatNumber';
 import { bold, brackets, italic } from '@/utils/formatString';
 
 const weaponTypes = ['range'];
@@ -21,13 +19,15 @@ class Momentum extends PassiveSkillConstructor {
     super({
       name: 'momentum',
       displayName: '🏹 Кураж',
-      description: 'Каждое попадание из оружия дальнего боя накапливает кураж: восстанавливает энергию и увеличивает урон атак',
+      description:
+        'Каждое попадание из оружия дальнего боя накапливает кураж: восстанавливает энергию и увеличивает урон атак',
       chance: [100, 100, 100],
       effect: [2, 3, 5],
       profList: { l: 1 },
       bonusCost: [10, 20, 30],
       branch: 'barrage',
       branches: ['barrage'],
+      actionTypes: ['phys'],
     });
   }
 
@@ -48,57 +48,42 @@ class Momentum extends PassiveSkillConstructor {
   }
 
   onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction) {
-    if (action.actionType !== 'phys') {
+    if (!this.canTrigger(ctx, action) || !action.effectType) {
       return;
     }
 
     const { initiator } = ctx.params;
-    if (!initiator.weapon.isOfType(this.weaponTypes)) {
-      return;
-    }
 
-    this.createContext(initiator, ctx.target, ctx.game);
-    if (!this.isActive(this.context)) {
-      return;
-    }
+    const stackAffect = initiator.affects
+      .getEffectsByAction(this.name)
+      .find(({ type }) => type === 'effect');
 
-    const stackAffect = initiator.affects.getEffectsByAction(this.name).find((a) => a.type === 'effect');
     const stacks = stackAffect?.value ?? 0;
     if (stacks <= 0) {
       return;
     }
 
-    const mult = 1 + stacks * BONUS_PER_STACK;
-    ctx.status.effect = floatNumber(ctx.status.effect * mult);
-    values(EffectType).forEach((effectType) => {
-      const part = ctx.status.effectParts[effectType];
-      if (part) {
-        ctx.status.setEffectPart(effectType, floatNumber(part * mult));
-      }
-    });
+    this.status.effect = 1 + stacks * BONUS_PER_STACK;
+
+    ctx.status.mulEffectPart(action.effectType, this.status.effect);
   }
 
   onDamageDealt(ctx: BaseActionContext, action: BaseAction) {
-    if (action.actionType !== 'phys') {
+    if (!this.canTrigger(ctx, action) || !action.effectType) {
       return;
     }
 
-    const { initiator, target, game } = ctx.params;
-    if (!initiator.weapon.isOfType(this.weaponTypes)) {
-      return;
-    }
+    const { initiator } = ctx.params;
 
-    this.createContext(initiator, target, game);
-    if (!this.isActive(this.context)) {
-      return;
-    }
+    this.status.effect = this.getEffect(this.context);
 
     // Восстанавливаем энергию
-    const enGain = this.getEffect(this.context) ?? 2;
-    initiator.stats.up('en', enGain);
+    initiator.stats.up('en', this.status.effect);
 
     // Добавляем / обновляем стак куража
-    const currentStack = initiator.affects.getEffectsByAction(this.name).find((a) => a.type === 'effect');
+    const currentStack = initiator.affects
+      .getEffectsByAction(this.name)
+      .find((a) => a.type === 'effect');
     if (currentStack) {
       currentStack.value = Math.min((currentStack.value ?? 0) + 1, MAX_STACKS);
     } else {
@@ -109,7 +94,6 @@ class Momentum extends PassiveSkillConstructor {
       });
     }
 
-    this.status.effect = enGain;
     ctx.addAffect(this, this.context);
   }
 

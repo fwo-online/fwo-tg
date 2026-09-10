@@ -1,6 +1,6 @@
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConstructor';
-import type { ActionType, SuccessArgs } from '@/arena/Constuructors/types';
+import type { SuccessArgs } from '@/arena/Constuructors/types';
 import { italic } from '@/utils/formatString';
 
 class CriticalStrike extends PassiveSkillConstructor {

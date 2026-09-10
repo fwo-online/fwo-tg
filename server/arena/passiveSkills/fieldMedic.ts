@@ -21,38 +21,8 @@ const params: PassiveSkillAttributes = {
   bonusCost: [10, 20, 30],
   branch: 'scout',
   branches: ['scout'],
+  actionTypes: ['heal'],
 };
-
-class FieldMedicBuff extends PassiveSkillConstructor {
-  run(): void {
-    //
-  }
-
-  onBeforeHealDeal(ctx: BaseActionContext, action: BaseAction) {
-    if (action.actionType !== 'heal') {
-      return;
-    }
-
-    const { initiator, target, game } = ctx.params;
-    this.createContext(initiator, target, game);
-
-    if (!this.isActive(this.context)) {
-      return;
-    }
-
-    const bonusPercent = this.getEffect(this.context);
-
-    ctx.status.effect *= 1 + bonusPercent / 100;
-
-    ctx.addAffect(this, ctx);
-  }
-
-  customMessage(args: SuccessArgs) {
-    const initiatorSkillLvl = args.initiator.getPassiveSkillLevel(this.name);
-    const effect = this.effect[initiatorSkillLvl - 1];
-    return `${italic(this.displayName)}: ${bold(args.initiator.nick)} 💖+${effect}%`;
-  }
-}
 
 class FieldMedic extends PassiveSkillConstructor {
   run() {
@@ -76,22 +46,32 @@ class FieldMedic extends PassiveSkillConstructor {
     action: BaseAction,
     _reason: SuccessArgs | SuccessArgs[] | BreaksMessage,
   ) {
-    if (action.actionType !== 'heal') {
-      return;
+    if (this.canTrigger(ctx, action)) {
+      return ctx.addAffect(this, this.context);
     }
-
-    const { initiator, target, game } = ctx.params;
-    this.createContext(initiator, target, game);
-
-    if (!this.isActive(this.context)) {
-      return;
-    }
-
-    return ctx.addAffect(this, this.context);
   }
 
   customMessage(args: SuccessArgs) {
     return `${italic(this.displayName)}: ${bold(args.initiator.nick)} завершил исцеление вопреки атакам врага`;
+  }
+}
+
+class FieldMedicBuff extends PassiveSkillConstructor {
+  run(): void {
+    //
+  }
+
+  onBeforeHealDeal(ctx: BaseActionContext, action: BaseAction) {
+    if (this.canTrigger(ctx, action)) {
+      ctx.status.effect *= 1 + this.getEffect(this.context) / 100;
+      ctx.addAffect(this, ctx);
+    }
+  }
+
+  customMessage(args: SuccessArgs) {
+    const initiatorSkillLvl = args.initiator.getPassiveSkillLevel(this.name);
+    const effect = this.effect[initiatorSkillLvl - 1];
+    return `${italic(this.displayName)}: ${bold(args.initiator.nick)} 💖+${effect}%`;
   }
 }
 

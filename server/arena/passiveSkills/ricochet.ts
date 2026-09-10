@@ -54,16 +54,11 @@ class Ricochet extends PassiveSkillConstructor {
   }
 
   onDamageDealt(ctx: BaseActionContext, action: BaseAction) {
-    if (this.lock) {
+    if (this.lock || !this.canTrigger(ctx, action) || !action.effectType) {
       return;
     }
 
     const { initiator, target, game } = ctx;
-    this.createContext(initiator, target, game);
-
-    if (!this.checkAction(action) || !this.checkWeapon(initiator) || !this.isActive()) {
-      return;
-    }
 
     const visitedTargetIds = new Set<string>([target.id]);
     let currentDamage = ctx.status.effect;
@@ -87,7 +82,7 @@ class Ricochet extends PassiveSkillConstructor {
         }
 
         const bounceCtx = ctx.cloneWith(nextTarget);
-        bounceCtx.status.effect = bounceDamage;
+        bounceCtx.status.setEffectPart(action.effectType, bounceDamage);
 
         const val = effectService.rawDamage(bounceCtx, action);
         bounceCtx.status.exp = attack.getEffectExp(bounceCtx, val);
@@ -95,7 +90,7 @@ class Ricochet extends PassiveSkillConstructor {
         ctx.status.expArr.push({
           initiator: ctx.initiator,
           target: bounceCtx.target,
-          exp: attack.getEffectExp(bounceCtx, val),
+          exp: bounceCtx.status.exp,
           hp: bounceCtx.target.stats.val('hp'),
           val,
           reason: this.displayName,

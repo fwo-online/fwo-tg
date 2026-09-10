@@ -1,7 +1,7 @@
 import type { BranchKey } from '@fwo/shared';
-import type { ProfsLvl } from '@/data/profs';
 import type { ActionKey } from '@/arena/ActionService';
-import { BaseAction, type BaseActionContext } from '@/arena/Constuructors/BaseAction';
+import { BaseAction, type BaseActionParams } from '@/arena/Constuructors/BaseAction';
+import type { ProfsLvl } from '@/data/profs';
 import MiscService from '../MiscService';
 import type { Player } from '../PlayersService';
 import type { ActionType } from './types';
@@ -18,6 +18,7 @@ export interface PassiveSkillAttributes {
   branches?: BranchKey[];
   weaponTypes?: string[];
   actionTypes?: ActionType[];
+  skipChance?: boolean;
 }
 
 /**
@@ -37,6 +38,7 @@ export abstract class PassiveSkillConstructor extends BaseAction {
   actionType: ActionType = 'passive';
   weaponTypes?: string[];
   actionTypes?: ActionType[];
+  skipChance: boolean;
 
   constructor(attributes: PassiveSkillAttributes) {
     super();
@@ -50,6 +52,7 @@ export abstract class PassiveSkillConstructor extends BaseAction {
     this.profList = attributes.profList;
     this.branches = attributes.branches ?? (attributes.branch ? [attributes.branch] : []);
     this.branch = attributes.branch ?? this.branches[0];
+    this.skipChance = attributes.skipChance ?? false;
     if (attributes.weaponTypes) {
       this.weaponTypes = attributes.weaponTypes;
     }
@@ -67,25 +70,25 @@ export abstract class PassiveSkillConstructor extends BaseAction {
     this.reset();
   }
 
-  isActive({ initiator } = this.params) {
+  isActive(initiator = this.context.initiator) {
     return Boolean(initiator.getPassiveSkillLevel(this.name));
   }
 
-  checkChance({ initiator, target, game } = this.params) {
-    return MiscService.rndm('1d100') <= this.getChance({ initiator, target, game });
+  checkChance(ctx = this.context) {
+    return MiscService.rndm('1d100') <= this.getChance(ctx);
   }
 
-  getChance({ initiator } = this.params) {
+  getChance({ initiator } = this.context) {
     const initiatorSkillLvl = initiator.getPassiveSkillLevel(this.name);
     return this.chance[initiatorSkillLvl - 1];
   }
 
-  getEffect({ initiator } = this.params) {
+  getEffect({ initiator } = this.context) {
     const initiatorSkillLvl = initiator.getPassiveSkillLevel(this.name);
     return this.effect[initiatorSkillLvl - 1];
   }
 
-  checkWeapon(initiator: Player = this.params.initiator): boolean {
+  checkWeapon(initiator = this.context.initiator): boolean {
     if (!this.weaponTypes?.length) {
       return true;
     }
@@ -99,7 +102,10 @@ export abstract class PassiveSkillConstructor extends BaseAction {
     return this.actionTypes.includes(action.actionType);
   }
 
-  canTrigger(ctx: BaseActionContext, action?: BaseAction): boolean {
+  /**
+   * @description применяет контекст, проверяет actionType, weaponType, активно ли умение и шанс
+   */
+  canTrigger(ctx: BaseActionParams, action?: BaseAction): boolean {
     if (!this.checkAction(action)) {
       return false;
     }
@@ -111,7 +117,7 @@ export abstract class PassiveSkillConstructor extends BaseAction {
       return false;
     }
 
-    if (!this.isActive(this.context)) {
+    if (!this.isActive(initiator)) {
       return false;
     }
 
