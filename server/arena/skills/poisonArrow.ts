@@ -81,6 +81,8 @@ class PoisonArrow extends Skill {
           poison.cast(initiator, target, game);
         },
       });
+
+      ctx.initiator.affects.removeEffectsByAction(this.name);
     }
   }
 

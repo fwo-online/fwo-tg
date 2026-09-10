@@ -59,6 +59,8 @@ class AimedShot extends Skill {
 
     const mult = affect.value ?? 1.25;
     ctx.status.mulEffect(mult);
+
+    ctx.initiator.affects.removeEffectsByAction(this.name);
   }
 
   onCastFail(

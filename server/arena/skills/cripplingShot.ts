@@ -81,6 +81,8 @@ export class CripplingShot extends Skill {
       });
 
       ctx.addAffect(this);
+
+      ctx.initiator.affects.removeEffectsByAction(this.name);
     }
   }
 

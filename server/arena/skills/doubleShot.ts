@@ -84,6 +84,8 @@ class DoubleShot extends Skill {
     } finally {
       ctx.initiator.proc = proc;
       this.lock = false;
+
+      ctx.initiator.affects.removeEffectsByAction(this.name);
     }
   }
 

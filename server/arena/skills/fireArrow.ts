@@ -81,6 +81,8 @@ class FireArrow extends Skill {
           burning.cast(initiator, target, game);
         },
       });
+
+      ctx.initiator.affects.removeEffectsByAction(this.name);
     }
   }
 

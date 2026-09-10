@@ -63,6 +63,8 @@ class PiercingShot extends Skill {
     ctx.target.stats.down('phys.defence', defReduction);
 
     ctx.addAffect(this, ctx);
+
+    ctx.initiator.affects.removeEffectsByAction(this.name);
   }
 
   customMessage(args: SuccessArgs) {
