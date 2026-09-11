@@ -79,13 +79,12 @@ class DoubleShot extends Skill {
         initiator: ctx.initiator,
         onAfterCast() {
           ctx.game.recordOrderResult(actionClone.getSuccessResult());
+          ctx.initiator.affects.removeEffectsByAction(this.action);
         },
       });
     } finally {
       ctx.initiator.proc = proc;
       this.lock = false;
-
-      ctx.initiator.affects.removeEffectsByAction(this.name);
     }
   }
 
