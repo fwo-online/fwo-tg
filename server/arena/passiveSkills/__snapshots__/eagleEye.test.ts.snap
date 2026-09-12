@@ -1,0 +1,7 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`eagleEye should counter miss when shooting with ranged weapon 1`] = `
+"*Игрок 1* атаковал *Игрок 2* _Оружием_ и нанёс *1.92* урона
+\\[ Игрок 2 💔 💥-1.92/6.08 📖15 ]
+_🎯 Орлиный глаз_ *Игрок 1* скорректировал выстрел и не промахнулся!"
+`;

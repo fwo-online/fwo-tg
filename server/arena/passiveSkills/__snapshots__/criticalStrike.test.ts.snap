@@ -1,5 +1,7 @@
 // Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
+exports[`criticalStrike should not crit if weapon is not range 1`] = `""`;
+
 exports[`criticalStrike should deal double damage on critical strike with ranged weapon 1`] = `
 "*Игрок 1* атаковал *Игрок 2* _Оружием_ и нанёс *2.25* урона
 \\[ Игрок 2 💔 💥-2.25/97.75 📖18 ]
@@ -7,5 +9,3 @@ exports[`criticalStrike should deal double damage on critical strike with ranged
 \\[ Игрок 2 💔 💥-4.5/93.25 📖36 ]
 _🎯 Двойной урон_"
 `;
-
-exports[`criticalStrike should not crit if weapon is not range 1`] = `""`;

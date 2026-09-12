@@ -15,7 +15,11 @@ export class EffectService {
   }
 
   damage(ctx: BaseActionContext, action: BaseAction) {
-    ctx.initiator.affects.onBeforeDamageDeal(ctx, action);
+    ctx.initiator.affects.withOnCastFail(
+      () => ctx.initiator.affects.onBeforeDamageDeal(ctx, action),
+      ctx,
+      action,
+    );
     ctx.initiator.affects.withOnCastFail(
       () => ctx.target.affects.onBeforeDamageRecieve(ctx, action),
       ctx,
@@ -39,9 +43,17 @@ export class EffectService {
     this.checkTargetIsDead(ctx.target, ctx, action);
   }
 
-  heal(ctx: BaseActionContext) {
+  heal(ctx: BaseActionContext, action: BaseAction) {
     const maxHP = ctx.target.stats.val('base.hp');
     const currentHP = ctx.target.stats.val('hp');
+    ctx.status.effect = floatNumber(Math.max(Math.min(ctx.status.effect, maxHP - currentHP), 0));
+
+    ctx.initiator.affects.withOnCastFail(
+      () => ctx.initiator.affects.onBeforeHealDeal(ctx, action),
+      ctx,
+      action,
+    );
+
     ctx.status.effect = floatNumber(Math.max(Math.min(ctx.status.effect, maxHP - currentHP), 0));
 
     this.applyHeal(ctx.target, ctx.status.effect);

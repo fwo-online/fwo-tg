@@ -1,0 +1,8 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`aimedShot should buff next ranged attack and deal increased damage 1`] = `
+"*Игрок 1* использовал _🎯 Прицельный выстрел_
+\\[ 📖25 ]
+*Игрок 1* атаковал *Игрок 2* _Оружием_ и нанёс *9* урона
+\\[ Игрок 2 💔 💥-9/-1 📖72 ]"
+`;

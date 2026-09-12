@@ -22,13 +22,14 @@ class Berserk extends Skill {
       effect: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6],
       profList: { w: 4 },
       bonusCost: [10, 20, 30, 40, 60, 80],
+      branch: 'berserker',
+      branches: ['berserker'],
     });
   }
 
   run() {
     const { initiator } = this.params;
-    const initiatorMagicLvl = initiator.skills[this.name];
-    const effect = this.effect[initiatorMagicLvl - 1] || 1;
+    const effect = this.getEffect(initiator) || 1;
     // изменяем
     initiator.stats.mul('hit.physical.max', effect);
     initiator.stats.mul('phys.attack', 1 / effect);

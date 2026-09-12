@@ -54,7 +54,7 @@ class DeathEcho extends PassiveSkillConstructor {
     this.createContext(initiator, target, game);
 
     if (this.checkChance()) {
-      throw new CastError(this.getSuccessResult({ initiator, target, game }));
+      throw new CastError(this.getSuccessResult(this.context));
     }
   }
 }

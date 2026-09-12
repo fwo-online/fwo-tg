@@ -4,8 +4,6 @@ import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConst
 import { stun } from '@/arena/effects';
 
 class Consussion extends PassiveSkillConstructor {
-  weaponTypes = ['stun'];
-
   constructor() {
     super({
       name: 'consussion',
@@ -14,6 +12,8 @@ class Consussion extends PassiveSkillConstructor {
       chance: [10, 15, 25],
       effect: [100, 100, 100],
       bonusCost: [],
+      weaponTypes: ['stun'],
+      actionTypes: ['phys'],
     });
   }
 
@@ -31,19 +31,11 @@ class Consussion extends PassiveSkillConstructor {
   }
 
   onDamageDealt(ctx: BaseActionContext, action: BaseAction) {
-    if (action.actionType !== 'phys') {
+    if (!this.canTrigger(ctx, action)) {
       return;
     }
 
-    const { initiator, target, game } = ctx.params;
-
-    if (!ctx.initiator.weapon.isOfType(this.weaponTypes)) {
-      return;
-    }
-
-    if (!this.isActive(ctx) || !this.checkChance(ctx)) {
-      return;
-    }
+    const { initiator, target } = ctx;
 
     target.affects.addEffect({
       action: stun.name,
@@ -53,7 +45,7 @@ class Consussion extends PassiveSkillConstructor {
       },
     });
 
-    ctx.addAffect(this, ctx);
+    ctx.addAffect(this, this.context);
   }
 }
 

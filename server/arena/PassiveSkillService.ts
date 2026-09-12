@@ -50,6 +50,8 @@ export default class PassiveSkillService {
       effect: passiveSkill.effect,
       chance: passiveSkill.chance,
       classList: passiveSkill.profList,
+      branch: passiveSkill.branch,
+      branches: passiveSkill.branches,
     };
   }
 

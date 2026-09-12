@@ -5,6 +5,7 @@ import type { CharacterService } from './CharacterService';
 import type GameService from './GameService';
 import type MatchMaking from './MatchMakingService';
 import type * as actions from './actions';
+import type * as effects from './effects';
 import type * as magics from './magics';
 import type * as passiveSkills from './passiveSkills';
 import type * as skills from './skills';
@@ -25,7 +26,8 @@ export default {
     typeof magics &
     typeof skills &
     typeof passiveSkills &
-    typeof weaponMastery,
+    typeof weaponMastery &
+    typeof effects,
   clans: new Map<string, Clan>(),
   monsters: {} as Record<string, MonsterService>,
   towers: {} as Partial<Record<string, TowerService>>,

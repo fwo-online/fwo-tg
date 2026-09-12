@@ -5,8 +5,6 @@ import { effectService } from '@/arena/EffectService';
 import { bold, brackets, italic } from '@/utils/formatString';
 
 class HealBonk extends PassiveSkillConstructor {
-  weaponTypes = ['heal'];
-
   constructor() {
     super({
       name: 'healBonk',
@@ -16,6 +14,8 @@ class HealBonk extends PassiveSkillConstructor {
       chance: [50, 75, 100],
       effect: [0.5, 1, 2],
       bonusCost: [],
+      weaponTypes: ['heal'],
+      actionTypes: ['phys'],
     });
   }
 
@@ -33,24 +33,11 @@ class HealBonk extends PassiveSkillConstructor {
   }
 
   onDamageDealt(ctx: BaseActionContext, action: BaseAction) {
-    const { initiator, target, game } = ctx.params;
-    this.createContext(initiator, target, game);
-
-    if (action.actionType !== 'phys') {
+    if (!this.canTrigger(ctx, action)) {
       return;
     }
 
-    if (!initiator.weapon.isOfType(this.weaponTypes)) {
-      return;
-    }
-
-    if (!this.isActive()) {
-      return;
-    }
-
-    if (!this.checkChance()) {
-      return;
-    }
+    const { initiator, game } = ctx;
 
     const allies = game.players.getAliveAllies(initiator);
     allies.push(initiator);
@@ -59,7 +46,7 @@ class HealBonk extends PassiveSkillConstructor {
     this.createContext(initiator, randomAlly, game);
     this.status.effect = ctx.status.effect * this.getEffect();
 
-    effectService.heal(this.context);
+    effectService.heal(this.context, this);
 
     ctx.addAffect(this, this.context);
   }

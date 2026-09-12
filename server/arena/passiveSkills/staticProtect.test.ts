@@ -27,19 +27,19 @@ describe('staticProtect', () => {
 
     game.players.players[0].stats.set('phys.attack', 10);
     attack.cast(game.players.players[0], game.players.players[1], game);
-    expect(staticProtect.getChance()).toBe(33);
+    expect(staticProtect.getChance()).toBe(67);
 
     game.players.players[0].stats.set('phys.attack', 25);
     attack.cast(game.players.players[0], game.players.players[1], game);
-    expect(staticProtect.getChance()).toBe(63);
+    expect(staticProtect.getChance()).toBe(37);
 
     game.players.players[0].stats.set('phys.attack', 50);
     attack.cast(game.players.players[0], game.players.players[1], game);
-    expect(staticProtect.getChance()).toBe(86);
+    expect(staticProtect.getChance()).toBe(14);
 
     game.players.players[0].stats.set('phys.attack', 100);
     attack.cast(game.players.players[0], game.players.players[1], game);
-    expect(staticProtect.getChance()).toBe(98);
+    expect(staticProtect.getChance()).toBe(2);
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });

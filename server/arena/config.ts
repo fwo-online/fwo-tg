@@ -80,6 +80,14 @@ export default {
     'parry',
     'disarm',
     'shieldBlock',
+    'aimedShot',
+    'piercingShot',
+    'cripplingShot',
+    'doubleShot',
+    'fireArrow',
+    'poisonArrow',
+    'step',
+    'help',
     [
       'protect',
       // 'regen_energy',
@@ -90,6 +98,8 @@ export default {
     //
     [
       'bleeding',
+      'burning',
+      'poison',
       'fireBall',
       // 'ice_lance',
       'magicArrow',

@@ -4,7 +4,7 @@ import type { AnyKeys } from 'mongoose';
 import { parse } from 'valibot';
 import arena from '@/arena';
 import { CharacterService } from '@/arena/CharacterService';
-import type { BaseActionStatus } from '@/arena/Constuructors/BaseAction';
+import { BaseActionStatus } from '@/arena/Constuructors/BaseAction';
 import { ForestService } from '@/arena/ForestService/ForestService';
 import GameService from '@/arena/GameService';
 import type { HistoryItem } from '@/arena/HistoryService';
@@ -135,7 +135,7 @@ export default class TestUtils {
   }
 
   static getBaseStatus(): BaseActionStatus {
-    return { effect: 0, exp: 0, expArr: [], affects: [], effectParts: {} };
+    return new BaseActionStatus();
   }
 
   static normalizeRoundHistory(history: HistoryItem[]) {

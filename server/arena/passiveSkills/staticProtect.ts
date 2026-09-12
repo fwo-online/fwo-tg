@@ -28,12 +28,13 @@ class StaticProtect extends PassiveSkillConstructor {
   }
 
   getChance({ initiator, target } = this.context) {
-    const attack = initiator.stats.val('phys.attack') * initiator.proc;
-    const protect = target.stats.val('static.defence');
+    console.log(target.nick, initiator.nick);
+    const attack = target.stats.val('phys.attack') * target.proc;
+    const protect = initiator.stats.val('static.defence');
 
     const ratio = attack / protect;
 
-    const chance = Math.round((1 - Math.exp(-2 * ratio)) * 100);
+    const chance = Math.round((1 - (1 - Math.exp(-2 * ratio))) * 100);
 
     console.debug(
       `staticProtect:: chance ${chance}, attack ${attack} protect ${protect} ratio ${ratio}`,
@@ -47,14 +48,10 @@ class StaticProtect extends PassiveSkillConstructor {
       return;
     }
     const { initiator, target, game } = ctx;
-    this.createContext(initiator, target, game);
+    const context = this.createContext(target, initiator, game);
 
-    if (!this.isActive({ initiator: target, target: initiator, game })) {
-      return;
-    }
-
-    if (!this.checkChance({ initiator: target, target: initiator, game })) {
-      throw new CastError(this.getSuccessResult({ initiator: target, target: initiator, game }));
+    if (this.canTrigger(context)) {
+      throw new CastError(this.getSuccessResult(context));
     }
   }
 }

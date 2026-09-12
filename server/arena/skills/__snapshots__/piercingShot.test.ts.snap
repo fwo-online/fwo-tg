@@ -1,0 +1,9 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`piercingShot should buff next ranged attack and penetrate armor 1`] = `
+"*Игрок 1* использовал _🎯 Бронебойный выстрел_
+\\[ 📖25 ]
+*Игрок 1* атаковал *Игрок 2* _Оружием_ и нанёс *7.2* урона
+\\[ Игрок 2 💔 💥-7.2/0.8 📖58 ]
+_🎯 Бронебойный выстрел_ *Игрок 1*: 📖0"
+`;

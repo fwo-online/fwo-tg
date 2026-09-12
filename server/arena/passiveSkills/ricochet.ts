@@ -11,7 +11,6 @@ import { floatNumber } from '@/utils/floatNumber';
 import { italic } from '@/utils/formatString';
 
 class Ricochet extends PassiveSkillConstructor {
-  weaponTypes = ['range'];
   private lock = false;
 
   constructor() {
@@ -24,6 +23,10 @@ class Ricochet extends PassiveSkillConstructor {
       chance: [15, 20, 25, 30, 40, 50],
       effect: [20, 30, 40, 50, 60, 70],
       bonusCost: [10, 20, 30, 40, 60, 80],
+      branch: 'barrage',
+      branches: ['barrage', 'marksman'],
+      weaponTypes: ['range'],
+      actionTypes: ['phys'],
     });
   }
 
@@ -51,24 +54,11 @@ class Ricochet extends PassiveSkillConstructor {
   }
 
   onDamageDealt(ctx: BaseActionContext, action: BaseAction) {
-    if (this.lock) {
+    if (this.lock || !this.canTrigger(ctx, action) || !action.effectType) {
       return;
     }
 
     const { initiator, target, game } = ctx;
-    this.createContext(initiator, target, game);
-
-    if (action.actionType !== 'phys') {
-      return;
-    }
-
-    if (!initiator.weapon.isOfType(this.weaponTypes)) {
-      return;
-    }
-
-    if (!this.isActive(ctx)) {
-      return;
-    }
 
     const visitedTargetIds = new Set<string>([target.id]);
     let currentDamage = ctx.status.effect;
@@ -92,7 +82,7 @@ class Ricochet extends PassiveSkillConstructor {
         }
 
         const bounceCtx = ctx.cloneWith(nextTarget);
-        bounceCtx.status.effect = bounceDamage;
+        bounceCtx.status.setEffectPart(action.effectType, bounceDamage);
 
         const val = effectService.rawDamage(bounceCtx, action);
         bounceCtx.status.exp = attack.getEffectExp(bounceCtx, val);
@@ -100,7 +90,7 @@ class Ricochet extends PassiveSkillConstructor {
         ctx.status.expArr.push({
           initiator: ctx.initiator,
           target: bounceCtx.target,
-          exp: attack.getEffectExp(bounceCtx, val),
+          exp: bounceCtx.status.exp,
           hp: bounceCtx.target.stats.val('hp'),
           val,
           reason: this.displayName,

@@ -1,4 +1,4 @@
-import type { OrderType } from '@fwo/shared';
+import type { BranchKey, OrderType } from '@fwo/shared';
 import type { ActionKey } from '@/arena/ActionService';
 import { BaseAction } from '@/arena/Constuructors/BaseAction';
 import type { Profs } from '../../data';
@@ -22,6 +22,9 @@ interface SkillArgs {
   effect: number[];
   profList: Profs.ProfsLvl;
   bonusCost: number[];
+  branch?: BranchKey;
+  branches?: BranchKey[];
+  weaponTypes?: string[];
 }
 
 /**
@@ -31,6 +34,10 @@ export interface Skill extends SkillArgs, CustomMessage {}
 
 export abstract class Skill extends BaseAction {
   actionType: ActionType = 'skill';
+  branch?: BranchKey;
+  branches: BranchKey[] = [];
+  weaponTypes?: string[];
+
   /**
    * Создание скила
    */
@@ -38,6 +45,11 @@ export abstract class Skill extends BaseAction {
     super();
 
     Object.assign(this, params);
+    this.branches = params.branches ?? (params.branch ? [params.branch] : []);
+    this.branch = params.branch ?? this.branches[0];
+    if (params.weaponTypes) {
+      this.weaponTypes = params.weaponTypes;
+    }
   }
 
   /**
@@ -49,6 +61,7 @@ export abstract class Skill extends BaseAction {
   cast(initiator: Player, target: Player, game: Game): void {
     try {
       this.createContext(initiator, target, game);
+      this.fitsCheck();
       this.getCost();
       this.checkChance();
       this.onBeforeRun();
@@ -62,12 +75,37 @@ export abstract class Skill extends BaseAction {
   }
 
   /**
+   * Проверка условий применения скилла (наличие подходящего оружия)
+   */
+  fitsCheck(): void {
+    const { initiator } = this.params;
+    if (this.weaponTypes?.length && !initiator.weapon.isOfType(this.weaponTypes)) {
+      throw new CastError('NO_WEAPON');
+    }
+  }
+
+  checkWeapon(initiator: Player = this.params.initiator): boolean {
+    if (!this.weaponTypes?.length) {
+      return true;
+    }
+    return initiator.weapon.isOfType(this.weaponTypes);
+  }
+
+  /**
+   * Получение эффекта скилла согласно его уровню у персонажа
+   */
+  getEffect(initiator: Player = this.params.initiator): number {
+    const initiatorSkillLvl = initiator.getSkillLevel(this.name) || 1;
+    return this.effect[initiatorSkillLvl - 1] ?? 0;
+  }
+
+  /**
    * Функция снимает требуемое кол-во en за использования скила
    */
   getCost(): void {
     const { initiator } = this.params;
     // достаем цену за использование согласно lvl скила у пользователя
-    const skillCost = this.cost[initiator.skills[this.name] - 1];
+    const skillCost = this.cost[(initiator.getSkillLevel(this.name) || 1) - 1];
     const remainingEnergy = initiator.stats.val(this.costType) - skillCost;
     if (remainingEnergy >= 0) {
       initiator.stats.set(this.costType, remainingEnergy);
@@ -90,9 +128,8 @@ export abstract class Skill extends BaseAction {
    * Собираем параметр шанса
    * @return шанс прохождения
    */
-  getChance(): number {
-    const { initiator } = this.params;
-    const initiatorSkillLvl = initiator.skills[this.name];
+  getChance(initiator: Player = this.params.initiator): number {
+    const initiatorSkillLvl = initiator.getSkillLevel(this.name) || 1;
     return this.chance[initiatorSkillLvl - 1];
   }
 

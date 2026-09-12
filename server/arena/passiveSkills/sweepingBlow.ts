@@ -7,7 +7,6 @@ import { formatExp } from '@/arena/LogService/utils/format-exp';
 import { italic } from '@/utils/formatString';
 
 class SweepingBlow extends PassiveSkillConstructor {
-  weaponTypes = ['cut'];
   private lock = false;
 
   constructor() {
@@ -18,6 +17,8 @@ class SweepingBlow extends PassiveSkillConstructor {
       chance: [10, 25, 50],
       effect: [25, 50, 75],
       bonusCost: [],
+      weaponTypes: ['cut'],
+      actionTypes: ['phys'],
     });
   }
 
@@ -56,24 +57,11 @@ class SweepingBlow extends PassiveSkillConstructor {
       return;
     }
 
-    const { initiator, target, game } = ctx;
-    this.createContext(initiator, target, game);
-
-    if (action.actionType !== 'phys') {
+    if (!this.canTrigger(ctx, action)) {
       return;
     }
 
-    if (!initiator.weapon.isOfType(this.weaponTypes)) {
-      return;
-    }
-
-    if (!this.isActive(ctx)) {
-      return;
-    }
-
-    if (!this.checkChance(ctx)) {
-      return;
-    }
+    const { initiator, game } = ctx;
 
     const randomTarget = this.getRandomTarget(ctx);
 
@@ -99,7 +87,6 @@ class SweepingBlow extends PassiveSkillConstructor {
   }
 
   customMessage(args: SuccessArgs) {
-    console.log('TEST');
     return `${italic(args.action)} ${formatExp({
       ...args,
       actionType: 'phys',

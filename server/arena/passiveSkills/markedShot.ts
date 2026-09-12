@@ -1,7 +1,6 @@
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
 import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConstructor';
-import { floatNumber } from '@/utils/floatNumber';
 
 class MarkedShot extends PassiveSkillConstructor {
   weaponTypes = ['range'];
@@ -14,6 +13,7 @@ class MarkedShot extends PassiveSkillConstructor {
       chance: [],
       effect: [],
       bonusCost: [],
+      actionTypes: ['phys'],
     });
   }
 
@@ -21,8 +21,16 @@ class MarkedShot extends PassiveSkillConstructor {
     //
   }
 
+  override checkChance() {
+    return true;
+  }
+
+  override isActive() {
+    return true;
+  }
+
   onBeforeDamageRecieve(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
-    if (action.actionType !== 'phys' || !action.effectType) {
+    if (!this.canTrigger(ctx, action) || !action.effectType) {
       return;
     }
 
@@ -30,15 +38,7 @@ class MarkedShot extends PassiveSkillConstructor {
       return;
     }
 
-    const { initiator, target, game } = ctx;
-    this.createContext(initiator, target, game);
-
-    const effect = ctx.status.effectParts[action.effectType] ?? 0;
-
-    ctx.status.setEffectPart(
-      action.effectType,
-      floatNumber(effect + (effect * (affect.value ?? 1)) / 100),
-    );
+    ctx.status.mulEffectPart(action.effectType, 1 + (affect.value ?? 1) / 100);
 
     ctx.addAffect(this, this.context);
   }

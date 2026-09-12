@@ -36,6 +36,29 @@ export class BaseActionStatus {
     this.effect = sum(Object.values(this.#effectParts));
   }
 
+  addEffectPart(effectType: EffectType, value: number) {
+    const current = this.#effectParts[effectType] ?? 0;
+    this.setEffectPart(effectType, floatNumber(current + value));
+  }
+
+  mulEffectPart(effectType: EffectType, multiplier: number) {
+    const current = this.#effectParts[effectType] ?? 0;
+    this.setEffectPart(effectType, floatNumber(current * multiplier));
+  }
+
+  mulEffect(multiplier: number) {
+    const entries = Object.entries(this.#effectParts) as [EffectType, number][];
+    if (entries.length > 0) {
+      for (const [type, val] of entries) {
+        if (val) {
+          this.setEffectPart(type, floatNumber(val * multiplier));
+        }
+      }
+    } else {
+      this.effect = floatNumber(this.effect * multiplier);
+    }
+  }
+
   get effectParts() {
     return this.#effectParts;
   }
@@ -62,6 +85,11 @@ export abstract class BaseAction {
   abstract cast(initiator: Player, target: Player, game: GameService): void;
 
   abstract run(initiator: Player, target: Player, game: GameService): void;
+
+  cloneAction(): this {
+    const Constructor = this.constructor as new () => this;
+    return new Constructor();
+  }
 
   createContext(initiator: Player, target: Player, game: GameService) {
     this.context = new BaseActionContext({ initiator, target, game }, new BaseActionStatus());
@@ -144,11 +172,17 @@ export abstract class BaseAction {
     if (!this.isAffect) {
       context.game.recordOrderResult(result);
     }
+
+    context.initiator.affects.onAfterCast(context, this);
   }
 
   onBeforeRun() {
     const { initiator } = this.context.params;
 
     initiator.affects.onBeforeAction(this.context, this);
+  }
+
+  isOfType(...args: ActionType[]) {
+    return args.includes(this.actionType);
   }
 }

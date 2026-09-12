@@ -17,7 +17,7 @@ BaseAffect {
   onBeforeAction?, onBeforeReceive?, onCast?,
   onBeforeDamageDeal?, onBeforeDamageRecieve?,
   onDamageDealt?, onDamageReceived?,
-  onHeal?, onCastFail?
+  onBeforeHealDeal?, onCastFail?, onAfterCast?
 }
 
 Effect     = BaseAffect & { type: 'effect' }        // 1 раунд
@@ -33,14 +33,15 @@ Passive    = BaseAffect & { type: 'passive' }        // Перманент
 
 ### Методы
 
-| Метод | Описание |
-|---|---|
-| `addEffect(e)` | Добавить `{ ...e, type: 'effect' }` |
-| `addLongEffect(e)` | Добавить `{ ...e, type: 'long-effect' }` |
-| `addPassive(p)` | Добавить `{ ...p, type: 'passive' }` |
-| `getEffectsByAction(name)` | Найти все аффекты по action (не фильтрует по type!) |
-| `removeEffectsByAction(name)` | Удалить по action |
-| `refresh()` | Конец раунда: удаляет 'effect', декрементит 'long-effect', оставляет 'passive' |
+| Метод                         | Описание                                                                       |
+| ----------------------------- | ------------------------------------------------------------------------------ |
+| `addEffect(e)`                | Добавить `{ ...e, type: 'effect' }`                                            |
+| `addLongEffect(e)`            | Добавить `{ ...e, type: 'long-effect' }`                                       |
+| `addPassive(p)`               | Добавить `{ ...p, type: 'passive' }`                                           |
+| `getEffectsByAction(name)`    | Найти все аффекты по action (не фильтрует по type!)                            |
+| `removeEffectsByAction(name)` | Удалить по action                                                              |
+| `onAfterCast(ctx, action)`    | Вызывает `affect.onAfterCast?.(ctx, action, affect)` для всех аффектов         |
+| `refresh()`                   | Конец раунда: удаляет 'effect', декрементит 'long-effect', оставляет 'passive' |
 
 ### Жизненный цикл
 
@@ -60,15 +61,14 @@ Passive    = BaseAffect & { type: 'passive' }        // Перманент
 
 ```typescript
 damage(ctx, action):
-  1. ctx.initiator.affects.onBeforeDamageDeal(ctx, action)     // атакующий: может заблокировать
-  2. ctx.initiator.affects.withOnCastFail(...)                  // перехват CastError
-  3. ctx.target.affects.onBeforeDamageRecieve(ctx, action)      // цель: может блокировать
-  4. this.applyDamage(ctx, action)                               // применение урона
-  5. ctx.target.affects.onDamageReceived(ctx, action)           // цель: пост-фактум
-  6. ctx.initiator.affects.onDamageDealt(ctx, action)           // атакующий: пост-фактум
+  1. ctx.initiator.affects.withOnCastFail(() => onBeforeDamageDeal)  // атакующий: подготовка урона / перехват промаха (miss)
+  2. ctx.initiator.affects.withOnCastFail(() => onBeforeDamageRecieve) // цель: защита/уклонение / перехват (dodge/shieldBlock)
+  3. this.applyDamage(ctx, action)                                   // применение урона
+  4. ctx.target.affects.onDamageReceived(ctx, action)               // цель: пост-фактум
+  5. ctx.initiator.affects.onDamageDealt(ctx, action)               // атакующий: пост-фактум (DoT, кураж)
 ```
 
-**Ключевой момент**: если `onBeforeDamageDeal` бросает `CastError` → цепочка прерывается, урон не наносится. Так работают блокирующие эффекты (затмение, магическая стена).
+**Ключевой момент**: если `onBeforeDamageDeal` или `onBeforeDamageRecieve` бросает `CastError`, он может быть перехвачен через `withOnCastFail` (пассивками вроде `eagleEye`, `rangeWeapon` или защитой `fieldMedic`). Если ошибка не перехвачена → цепочка прерывается, урон не наносится. Так работают блокирующие эффекты (затмение, магическая стена, промах).
 
 ## Паттерн: блокирующий эффект
 
@@ -94,6 +94,87 @@ onBeforeDamageDeal(ctx, action, affect) {
 }
 ```
 
+### Блокировка конкретных действий (`onBeforeAction`)
+Используется для запрета каста определенных скиллов или магий (например, блокировка `dodge` в `cripplingShotDebuff`, блокировка действий в `stun`/`asleep`, запрет магии в `silence`).
+
+Чтобы в логе боя и отчётах отображалась точная причина срыва действия, выбрасывается `CastError` с `SuccessArgs` блокирующего действия/дебаффа:
+
+```typescript
+onBeforeAction(actionCtx: BaseActionContext, actionToCast: BaseAction, affect?: Affect) {
+  if (actionToCast.name === 'dodge') {
+    const { initiator: target, game } = actionCtx;
+    const caster = affect?.initiator ?? this.params?.initiator;
+    this.createContext(caster, target, game);
+    throw new CastError(this.getSuccessResult(this.context));
+  }
+}
+```
+
+### Переприменение дебаффов характеристик в раундах (`onCast`)
+В конце каждого раунда характеристики персонажей сбрасываются до базовых через `StatsService.refresh()`. Поэтому для `long-effect`, снижающих статы (например, срез ловкости на 2 раунда в `cripplingShot`), логика дебаффа должна повторно накладываться в начале каждого последующего раунда через хук `onCast`:
+
+```typescript
+// В скилле (cripplingShot):
+onDamageDealt(ctx: BaseActionContext, action: BaseAction, value: number) {
+  if (action.isOfType('phys') && this.checkWeapon(ctx.initiator)) {
+    const { initiator, target } = ctx;
+    this.onCast(target, value); // применение в текущем раунде
+
+    target.affects.addLongEffect({
+      action: this.name,
+      duration: 2,
+      initiator,
+      value,
+      onCast() {
+        cripplingShot.onCast(target, this.value); // раунд 2+
+      },
+      onBeforeAction(ctx, action, affect) {
+        cripplingShot.onBeforeAction(ctx, action, affect);
+      },
+    });
+
+    ctx.addAffect(this);
+  }
+}
+
+onCast(target: Player, value: number) {
+  const dex = target.stats.val('attributes.dex');
+  target.stats.down('attributes.dex', floatNumber(dex * (value / 100)));
+}
+```
+
+Движок боя (`EngineService`) вызывает `player.affects.onCast(game, stage)` при прохождении каждой стадии умения.
+
+### Игнорирование защиты цели (`onCastFail`)
+Хук `onCastFail` позволяет атакующему или защитнику отменить срыв действия. Например, «Прицельный выстрел» (`aimedShot`) игнорирует уклонение цели:
+
+```typescript
+onCastFail(ctx: BaseActionContext, action: BaseAction, reason: BreaksMessage | SuccessArgs | SuccessArgs[]): boolean {
+  if (action.actionType !== 'phys' || !this.checkWeapon(ctx.initiator)) {
+    return false;
+  }
+  // hasReasonActionType проверяет наличие 'dodge' в строке ошибки или объекте SuccessArgs
+  return hasReasonActionType(reason, 'dodge');
+}
+```
+Если метод возвращает `true`, срыв по причине уклонения отменяется, и цепочка урона продолжается. При этом увёртка цели остаётся активной против других нападающих в раунде.
+
+### Пост-обработка действий (`onAfterCast`)
+Хук `onAfterCast(ctx, action, affect)` вызывается в конце выполнения `BaseAction.next()` после фиксации результатов первого действия:
+```typescript
+context.initiator.affects.onAfterCast(context, this);
+```
+Используется для безопасного логирования вторичных действий без взаимного повреждения контекстов. Например, в «Залпе стрел» (`doubleShot`) вторая стрела кастуется как дочернее действие (`isAffect = true`), а её результат фиксируется в `roundResults` через `onAfterCast` сразу после записи основного выстрела:
+```typescript
+ctx.initiator.affects.addEffect({
+  action: this.name,
+  initiator: ctx.initiator,
+  onAfterCast() {
+    ctx.game.recordOrderResult(actionClone.getSuccessResult());
+  },
+});
+```
+
 ## Правила
 
 1. **Всегда передавай `affect` 3-м параметром** в колбэк (glitch, madness, eclipse после рефакторинга)
@@ -109,10 +190,10 @@ onBeforeDamageDeal(ctx, action, affect) {
 ```typescript
 this.flags = {
   noDamageRound: 0,
-  global: {},       // раньше было { isEclipsed: [...] }, убрано
+  global: {}, // раньше было { isEclipsed: [...] }, убрано
 };
 
-refreshRoundFlags()  // очистка в конце раунда (пока пустая)
+refreshRoundFlags(); // очистка в конце раунда (пока пустая)
 ```
 
 **Правило**: глобальные флаги — только если данные нужны вне контекста эффектов и не выводятся из состояния игроков. Эффекты — источник истины.
