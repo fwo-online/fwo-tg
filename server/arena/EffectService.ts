@@ -54,6 +54,8 @@ export class EffectService {
       action,
     );
 
+    ctx.status.effect = floatNumber(Math.max(Math.min(ctx.status.effect, maxHP - currentHP), 0));
+
     this.applyHeal(ctx.target, ctx.status.effect);
 
     return ctx.status.effect;
