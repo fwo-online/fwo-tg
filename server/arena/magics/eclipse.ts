@@ -1,4 +1,5 @@
 import { OrderType } from '@fwo/shared';
+import type { MagicArgs } from '@/arena/Constuructors/MagicConstructor';
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 import CastError from '../errors/CastError';
@@ -7,7 +8,7 @@ import CastError from '../errors/CastError';
  * Затмение
  * Основное описание магии общее требовани есть в конструкторе
  */
-const params = Object.freeze({
+const params = Object.freeze<MagicArgs>({
   name: 'eclipse',
   displayName: 'Затмение',
   desc: 'Погружает арену во тьму, не позволяя атаковать',

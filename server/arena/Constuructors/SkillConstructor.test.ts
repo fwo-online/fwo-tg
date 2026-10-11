@@ -1,6 +1,6 @@
 import { OrderType } from '@fwo/shared';
 import { beforeEach, describe, expect, it } from 'bun:test';
-import type { GameService } from '@/arena';
+import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
 import { Skill } from './SkillConstructor';
 
@@ -68,6 +68,6 @@ describe('SkillConstructor', () => {
 
     const roundResults = game.getRoundResults();
     const lastResult = roundResults[roundResults.length - 1];
-    expect(lastResult?.reason).toBe('NO_WEAPON');
+    expect(lastResult && 'reason' in lastResult ? lastResult.reason : undefined).toBe('NO_WEAPON');
   });
 });

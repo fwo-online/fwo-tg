@@ -7,6 +7,7 @@ import { createTower } from '@/helpers/towerHelper';
 
 export type QueueItem = {
   id: string;
+  psr: number;
   startTime: number;
   queue: GameType;
 };

@@ -34,7 +34,7 @@ export class DonationHelper {
     const payments = await getPaymentsByInvoiceType(
       {
         createdAt: { $gte: fromDate },
-        user,
+        user: user as number,
       },
       InvoiceType.Donation,
     );

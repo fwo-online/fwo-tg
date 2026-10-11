@@ -11,7 +11,7 @@ const longLevel = 3;
  * Благословение
  * Основное описание магии общее требовани есть в конструкторе
  */
-const params: MagicArgs = Object.freeze({
+const params = Object.freeze<MagicArgs>({
   name: 'blessing',
   displayName: 'Благословение',
   desc: `Благословляет цель увеличивая её физические параметры. На ${longLevel} уровне становится длительной, увеличивая параметры цели в течение нескольких ходов`,

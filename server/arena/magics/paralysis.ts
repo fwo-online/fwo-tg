@@ -9,7 +9,7 @@ import CastError from '../errors/CastError';
  * Паралич
  * Основное описание магии общее требовани есть в конструкторе
  */
-const params: MagicArgs = Object.freeze({
+const params = Object.freeze<MagicArgs>({
   name: 'paralysis',
   displayName: 'Паралич',
   desc: 'Парализует цель',

@@ -1,5 +1,6 @@
 import type { PassiveSkill } from '@fwo/shared';
 import type { CharacterService } from './CharacterService';
+import type { PassiveSkillConstructor } from './Constuructors/PassiveSkillConstructor';
 import ValidationError from './errors/ValidationError';
 import * as passiveSkills from './passiveSkills';
 import * as weaponMastery from './weaponMastery';
@@ -7,7 +8,10 @@ import * as weaponMastery from './weaponMastery';
 export type PassiveSkillNames = keyof typeof weaponMastery | keyof typeof passiveSkills;
 
 export default class PassiveSkillService {
-  static passiveSkills = { ...weaponMastery, ...passiveSkills };
+  static passiveSkills: Record<PassiveSkillNames, PassiveSkillConstructor> = {
+    ...weaponMastery,
+    ...passiveSkills,
+  };
 
   static async learnPassiveSkill(char: CharacterService, id: string): Promise<CharacterService> {
     if (!this.isPassiveSkill(id)) {

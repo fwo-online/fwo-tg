@@ -8,7 +8,7 @@ import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
  * Глюки
  * Основное описание магии общее требовани есть в конструкторе
  */
-const params: MagicArgs = Object.freeze({
+const params = Object.freeze<MagicArgs>({
   name: 'glitch',
   displayName: 'Глюки',
   desc: 'Глюки, вводит цель в замешательство, цель атакуют любого из игроков',

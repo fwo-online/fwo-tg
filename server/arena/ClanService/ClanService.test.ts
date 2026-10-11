@@ -12,7 +12,7 @@ describe.skip('ClanService', () => {
 
   beforeEach(async () => {
     char = await TestUtils.createCharacter({ gold: 100_000 });
-    clan = await TestUtils.createClan(char.id);
+    clan = await TestUtils.createClan(char);
   });
 
   it('should create clan', async () => {
@@ -78,7 +78,7 @@ describe.skip('ClanService', () => {
 
   it('should level up', async () => {
     const char = await TestUtils.createCharacter();
-    const clan = await TestUtils.createClan(char.id, { gold: 100_000 });
+    const clan = await TestUtils.createClan(char, { gold: 100_000 });
     await ClanService.levelUp(clan.id);
 
     await expect(TestUtils.getClan(clan.id)).resolves.toMatchObject({
@@ -96,7 +96,7 @@ describe.skip('ClanService', () => {
 
   it('should throw if clan has max level', async () => {
     const char = await TestUtils.createCharacter();
-    const clan = await TestUtils.createClan(char.id, { lvl: 5, gold: 100_000 });
+    const clan = await TestUtils.createClan(char, { lvl: 5, gold: 100_000 });
 
     await expect(ClanService.levelUp(clan.id)).rejects.toMatchObject(new Error('Клан имеет максимальный уровень'));
     await expect(TestUtils.getClan(clan.id)).resolves.toMatchObject({
@@ -119,7 +119,7 @@ describe.skip('ClanService', () => {
   it('should remove user from requesters', async () => {
     const char = await TestUtils.createCharacter();
     const requester = await TestUtils.createCharacter();
-    const clan = await TestUtils.createClan(char.id, { requests: [requester.id], lvl: 2 });
+    const clan = await TestUtils.createClan(char, { requests: [requester], lvl: 2 });
 
     expect(clan.requests).toHaveLength(1);
 
@@ -153,7 +153,7 @@ describe.skip('ClanService', () => {
       TestUtils.createCharacter(),
       TestUtils.createCharacter(),
     ]);
-    const clan = await TestUtils.createClan(owner.id, { players: [player.id] });
+    const clan = await TestUtils.createClan(owner, { players: [player] });
     expect(clan?.players).toHaveLength(2);
 
     await ClanService.leaveClan(clan.id, player.id);
@@ -171,7 +171,7 @@ describe.skip('ClanService', () => {
       TestUtils.createCharacter(),
       TestUtils.createCharacter(),
     ]);
-    const clan = await TestUtils.createClan(owner.id, { requests: [player.id], gold: 1000 });
+    const clan = await TestUtils.createClan(owner, { requests: [player], gold: 1000 });
 
     await ClanService.acceptRequest(clan.id, player.id);
 
@@ -187,9 +187,9 @@ describe.skip('ClanService', () => {
       TestUtils.createCharacter(),
       TestUtils.createCharacter(),
     ]);
-    const clan = await TestUtils.createClan(owner.id, {
-      players: [player1.id],
-      requests: [player2.id],
+    const clan = await TestUtils.createClan(owner, {
+      players: [player1],
+      requests: [player2],
     });
 
     await expect(ClanService.acceptRequest(clan.id, player2.id)).rejects.toMatchObject(new Error('Клан уже сформирован'));
@@ -205,7 +205,7 @@ describe.skip('ClanService', () => {
       TestUtils.createCharacter(),
       TestUtils.createCharacter(),
     ]);
-    const clan = await TestUtils.createClan(owner.id, { requests: [player.id] });
+    const clan = await TestUtils.createClan(owner, { requests: [player] });
 
     await ClanService.rejectRequest(clan.id, player.id);
 

@@ -1,14 +1,15 @@
 import { isNil } from 'es-toolkit';
 import { assignWith, isObject } from 'es-toolkit/compat';
 
-const sum = (a, b) => {
+const sum = (a: unknown, b: unknown): unknown => {
   if (isObject(b)) {
     return assignWith(a, b, sum);
   }
   if (isNil(a)) {
-    return +b;
+    return +(b as number);
   }
-  return +a + +b;
+  return +(a as number) + +(b as number);
 };
 
-export const assignWithSum = (a, b) => assignWith(a, b, sum);
+export const assignWithSum = <T extends object, U extends object>(a: T, b: U): T & U =>
+  assignWith(a, b, sum) as T & U;

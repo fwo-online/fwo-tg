@@ -1,4 +1,5 @@
-import { type ActionType, EffectType, values } from '@fwo/shared';
+import { type ActionType, EffectType, type OrderType, values } from '@fwo/shared';
+import type { ActionKey } from '@/arena/ActionService';
 import { BaseAction } from '@/arena/Constuructors/BaseAction';
 import { floatNumber } from '@/utils/floatNumber';
 import CastError from '../errors/CastError';
@@ -19,7 +20,13 @@ export default abstract class PhysConstructor extends BaseAction {
   actionType: ActionType = 'phys';
   effectType = EffectType.Physical;
 
-  constructor(atkAct) {
+  constructor(atkAct: {
+    name: ActionKey;
+    displayName: string;
+    desc: string;
+    lvl: number;
+    orderType: OrderType;
+  }) {
     super();
 
     this.name = atkAct.name;

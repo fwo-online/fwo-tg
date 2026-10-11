@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { AchievementCategory } from "@fwo/shared";
+  import { entries, type AchievementCategory } from "@fwo/shared";
   import { invalidate } from "$app/navigation";
   import { client, createRequest } from "$lib/api";
   import Button from "$lib/components/Button.svelte";
@@ -188,7 +188,7 @@
             {/if}
 
             {#if ach.reward.components}
-              {#each Object.entries(ach.reward.components) as [component, amount]}
+              {#each entries(ach.reward.components) as [component, amount]}
                 <div class="flex items-center gap-1">
                   <img
                     height={18}

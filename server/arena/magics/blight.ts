@@ -10,7 +10,7 @@ import { LongDmgMagic } from '../Constuructors/LongDmgMagicConstructor';
  * Истощение
  * Основное описание магии общее требовани есть в конструкторе
  */
-const params: DmgMagicArgs = Object.freeze({
+const params = Object.freeze<DmgMagicArgs>({
   name: 'blight',
   displayName: 'Истощение',
   desc: 'Истощает цель, заставляя ей терять жизни.',

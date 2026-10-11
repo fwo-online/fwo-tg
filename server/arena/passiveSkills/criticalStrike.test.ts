@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { attack } from '@/arena/actions';
 import type GameService from '@/arena/GameService';
 import TestUtils from '@/utils/testUtils';
-import { criticalStrike } from './criticalStrike';
+
 
 describe('criticalStrike', () => {
   let game: GameService;

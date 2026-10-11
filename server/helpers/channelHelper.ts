@@ -1,5 +1,6 @@
 import arena from '@/arena';
 import { bot } from '@/bot';
+import type { Prof } from '@/data/profs';
 import { profsData } from '@/data/profs';
 import { bold, brackets } from '@/utils/formatString';
 
@@ -48,7 +49,8 @@ export async function broadcast(
       await bot.api.sendMessage(chat, data, { parse_mode: 'Markdown', message_thread_id });
     }
   } catch (e) {
-    console.error(`error: broadcast: ${e.message} for ${chat}`);
+    const message = Error.isError(e) ? e.message : String(e);
+    console.error(`error: broadcast: ${message} for ${chat}`);
   }
 }
 
@@ -71,7 +73,7 @@ export async function closeTopic(chat: string | number = BOT_CHAT_ID, thread: nu
 export const broadcastLevelUp = async (
   nickname: string,
   newLevel: number,
-  prof: string,
+  prof: Prof,
   clanName?: string,
 ) => {
   const profIcon = profsData[prof]?.icon || '⚔️';

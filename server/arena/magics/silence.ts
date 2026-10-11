@@ -8,7 +8,7 @@ import CastError from '../errors/CastError';
  * Безмолвие
  * Основное описание магии общее требовани есть в конструкторе
  */
-const params: MagicArgs = Object.freeze({
+const params = Object.freeze<MagicArgs>({
   name: 'silence',
   displayName: 'Безмолвие',
   desc: '',
@@ -52,7 +52,10 @@ class Silence extends CommonMagic {
     }
 
     throw new CastError(
-      effects.map(({ initiator }) => this.getSuccessResult({ initiator, target, game })),
+      effects.map(({ initiator }) => {
+        this.createContext(initiator, target, game);
+        return this.getSuccessResult();
+      }),
     );
   }
 }

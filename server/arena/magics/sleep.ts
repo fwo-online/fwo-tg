@@ -9,7 +9,7 @@ import { bold, italic } from '@/utils/formatString';
  * Сон
  * Основное описание магии общее требовани есть в конструкторе
  */
-const params: MagicArgs = Object.freeze({
+const params = Object.freeze<MagicArgs>({
   name: 'sleep',
   displayName: 'Усыпление',
   desc: 'Цель засыпает магическим сном и не может: атаковать, лечить, защищать, использовать скиллы',

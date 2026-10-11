@@ -28,7 +28,7 @@ export default class TestUtils {
     TestUtils.clanCount = 0;
   }
 
-  static async createCharacter(params?: Partial<Char & { weapon?: Partial<Item> }>) {
+  static async createCharacter(params?: Partial<Char & { lvl?: number; weapon?: Partial<Item> }>) {
     const prof: Prof = params?.prof ?? CharacterClass.Warrior;
     const char = new CharModel({
       owner: MiscService.randInt(1_000_000, 9_999_999).toString(),
@@ -48,7 +48,7 @@ export default class TestUtils {
     }
 
     arena.characters[char.id] = new CharacterService(char);
-    spyOn(arena.characters[char.id], 'saveToDb').mockImplementation(() => Promise.resolve());
+    spyOn(arena.characters[char.id], 'saveToDb').mockImplementation(() => Promise.resolve(undefined));
 
     return char;
   }
@@ -79,7 +79,7 @@ export default class TestUtils {
     return clan;
   }
 
-  static async createGame(params: Partial<Char & { weapon?: { type?: string } }>[]) {
+  static async createGame(params: Partial<Char & { lvl?: number; weapon?: Partial<Item> }>[]) {
     const players = await Promise.all(params.map((params) => TestUtils.createCharacter(params)));
 
     return new GameService(players.map(({ id }) => id));

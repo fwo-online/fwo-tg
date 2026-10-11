@@ -1,6 +1,6 @@
 import type { ActionType } from '@fwo/shared';
 import type { Player } from '@/arena/PlayersService';
-import type { FailArgs, SuccessArgs } from '../types';
+import type { BreaksMessage, FailArgs, SuccessArgs } from '../types';
 
 type Result = SuccessArgs | FailArgs;
 

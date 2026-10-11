@@ -9,7 +9,7 @@ import { ProtectConstructor } from '../Constuructors/ProtectConstructor';
  * Магическая стена
  * Основное описание магии общее требовани есть в конструкторе
  */
-const params: MagicArgs = Object.freeze({
+const params = Object.freeze<MagicArgs>({
   name: 'magicWall',
   displayName: 'Магическая стена',
   desc: 'Защищает цель, цель не может атаковать, нельзя использовать на себя',

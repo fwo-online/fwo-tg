@@ -1,3 +1,4 @@
+import type { CharacterClass } from '@fwo/shared';
 import { findCharacter, createCharacter, removeCharacter } from '@/api/character';
 import type { Profs } from '@/data';
 import { CharacterService } from '../arena/CharacterService';
@@ -28,12 +29,12 @@ export async function regChar({ tgId, prof, nickname, sex }: RegCharParams) {
     throw new Error('prof error');
   }
   return createCharacter({
-    prof,
+    prof: prof as CharacterClass,
     sex,
     owner: tgId.toString(),
     nickname,
     harks: profsData[prof].hark,
-    magics: profsData[prof].mag,
+    magics: profsData[prof].mag ?? {},
   });
 }
 /*
@@ -42,7 +43,7 @@ export async function regChar({ tgId, prof, nickname, sex }: RegCharParams) {
    */
 export async function remove(tgId?: number) {
   try {
-    const resp = await removeCharacter(tgId);
+    const resp = await removeCharacter(tgId?.toString());
     return resp;
   } catch {
     return false;
@@ -53,7 +54,7 @@ export async function getChar(tgId: number) {
   try {
     return await CharacterService.getCharacter(tgId.toString());
   } catch (e) {
-    if (e.message !== 'Персонаж не найден') {
+    if (!(e instanceof Error) || e.message !== 'Персонаж не найден') {
       console.log(e);
     }
   }

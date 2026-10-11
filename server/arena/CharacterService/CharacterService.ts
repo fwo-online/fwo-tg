@@ -1,13 +1,19 @@
-import type { Character, CharacterClass, CharacterPublic, ItemComponent } from '@fwo/shared';
+import type {
+  BranchKey,
+  Character,
+  CharacterClass,
+  CharacterPublic,
+  ItemComponent,
+} from '@fwo/shared';
 import type { UpdateQuery } from 'mongoose';
 import {
+  activateAnyCharacter,
+  activateCharacter,
+  deactivateOtherCharacters,
   findCharacter,
   findCharacters,
   removeCharacter,
   updateCharacter,
-  deactivateOtherCharacters,
-  activateCharacter,
-  activateAnyCharacter,
 } from '@/api/character';
 import arena from '@/arena';
 import { CharacterAttributes } from '@/arena/CharacterService/CharacterAttributes';
@@ -17,8 +23,11 @@ import { calculateLvl, calculateNextLvlExp } from '@/arena/CharacterService/util
 import { toPublicObject } from '@/arena/CharacterService/utils/toPublicObject';
 import { ClanService } from '@/arena/ClanService';
 import config from '@/arena/config';
+import ValidationError from '@/arena/errors/ValidationError';
 import type { Char } from '@/models/character';
+import type { Clan } from '@/models/clan';
 import type { Item } from '@/models/item';
+import { validateBranches } from '@/models/validateBranches';
 import { mergeNumbersWith } from '@/utils/mergeNumbersWith';
 import { CharacterInventory } from './CharacterInventory';
 import { CharacterResources } from './CharacterResources';
@@ -76,6 +85,11 @@ export class CharacterService {
     return this.charObj.prof as CharacterClass;
   }
 
+  get classes(): CharacterClass[] {
+    const secondProf = this.charObj.secondProf;
+    return secondProf && secondProf !== this.prof ? [this.prof, secondProf] : [this.prof];
+  }
+
   get lvl(): number {
     return calculateLvl(this.charObj.exp);
   }
@@ -104,15 +118,15 @@ export class CharacterService {
     return Object.freeze(this.charObj.magics);
   }
 
-  get magicBranches(): string[] {
-    return this.charObj.magicBranches ?? [];
+  get branches(): BranchKey[] {
+    return this.charObj.branches;
   }
 
   get skills() {
     return Object.freeze(this.charObj.skills);
   }
 
-  get passiveSkills() {
+  get passiveSkills(): Readonly<Record<string, number>> {
     const characterPassiveSkills = structuredClone(this.charObj.passiveSkills);
     const itemPassiveSkills = structuredClone(this.inventory.passiveSkills);
 
@@ -259,7 +273,7 @@ export class CharacterService {
   /**
    * @param {Clan} clan
    */
-  async joinClan(clan) {
+  async joinClan(clan: Clan) {
     this.charObj.clan = clan;
     await this.saveToDb();
     const char = await CharacterService.getCharacter(this.owner);
@@ -391,15 +405,18 @@ export class CharacterService {
     await this.saveToDb();
   }
 
-  async setMagicBranches(branches: string[]) {
-    this.charObj.magicBranches = branches;
-    await this.saveToDb();
-  }
+  async setBranches(branches: BranchKey[]) {
+    const error = validateBranches(branches, this.classes, this.lvl);
+    if (error) throw new ValidationError(error);
 
-  async resetMagics() {
-    this.charObj.magics = {};
-    this.charObj.magicBranches = [];
-    await this.saveToDb();
+    const previous = this.charObj.branches;
+    this.charObj.branches = [...branches];
+    try {
+      await this.saveToDb(true);
+    } catch (error) {
+      this.charObj.branches = previous;
+      throw error;
+    }
   }
 
   /**
@@ -442,7 +459,7 @@ export class CharacterService {
    * @todo важная функция которая сохраняет параметры чара в базу
    * @deprecated
    */
-  async saveToDb() {
+  async saveToDb(throwOnError = false) {
     try {
       if (this.isBot) {
         return;
@@ -457,7 +474,8 @@ export class CharacterService {
         gold,
         exp,
         magics: this.charObj.magics,
-        magicBranches: this.charObj.magicBranches,
+        branches: this.charObj.branches,
+        secondProf: this.charObj.secondProf,
         bonus,
         skills: this.charObj.skills,
         clan,
@@ -484,6 +502,7 @@ export class CharacterService {
       });
     } catch (e) {
       console.error('Fail on CharSave:', e);
+      if (throwOnError) throw e;
     }
   }
 
@@ -528,7 +547,8 @@ export class CharacterService {
       class: this.prof as CharacterClass,
       attributes: this.attributes.attributes,
       magics: this.magics,
-      magicBranches: this.magicBranches,
+      branches: this.branches,
+      secondProf: this.charObj.secondProf,
       skills: this.skills,
       passiveSkills: this.passiveSkills,
       clan: this.clan ? ClanService.toPublicObject(this.clan) : undefined,

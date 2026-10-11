@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, spyOn } from 'bun:test';
 import { CharacterClass } from '@fwo/shared';
+import { magic } from '@/server/magic';
 import { registerGlobals } from '@/utils/registerGlobals';
 import TestUtils from '@/utils/testUtils';
 import { CharacterService } from './CharacterService/CharacterService';
@@ -30,6 +31,25 @@ describe('MagicService with branches', () => {
   });
 
   describe('getBranchesInfo', () => {
+    it('does not offer physical branches in the magic selector', () => {
+      mage.charObj.secondProf = CharacterClass.Warrior;
+      expect(MagicService.getBranchesInfo(mage).branches.map((b) => b.id)).toEqual([
+        'elements',
+        'darkness',
+        'arcana',
+      ]);
+    });
+    it('lists branch choices from both unique classes', () => {
+      mage.charObj.secondProf = CharacterClass.Priest;
+      expect(MagicService.getBranchesInfo(mage).branches.map((b) => b.id)).toEqual([
+        'elements',
+        'darkness',
+        'arcana',
+        'holy',
+        'protection',
+        'inquisition',
+      ]);
+    });
     it('should return 3 branches for mage with all canSelect initially', () => {
       const info = MagicService.getBranchesInfo(mage);
       expect(info.branches).toHaveLength(3);
@@ -45,11 +65,45 @@ describe('MagicService with branches', () => {
     });
   });
 
+  it('lists each shared spell once across primary and secondary class catalogs', () => {
+    mage.charObj.secondProf = CharacterClass.Priest;
+    const healing = MagicService.getBranchMagics(mage, 'arcana');
+    expect(healing.filter((spell) => spell.name === 'lightHeal')).toHaveLength(1);
+  });
+
+  it('lists spells from both classes once for the full catalog', () => {
+    mage.charObj.secondProf = CharacterClass.Priest;
+    const names = MagicService.getMagicListForCharacter(mage).map((spell) => spell.name);
+    expect(names).toContain('magicArrow');
+    expect(names).toContain('mediumHeal');
+    expect(names.filter((name) => name === 'lightHeal')).toHaveLength(1);
+    expect(names).toHaveLength(new Set(names).size);
+  });
+
   describe('selectBranch', () => {
+    it('selects a branch from secondProf and shares the global level-10 slot', async () => {
+      mage.charObj.secondProf = CharacterClass.Priest;
+      const first = await MagicService.selectBranch(mage, 'holy');
+      expect(first.branches).toEqual(['holy']);
+      expect(mage.charObj.branches).toEqual(['holy']);
+      expect(mage.toObject().branches).toEqual(['holy']);
+      expect(MagicService.selectBranch(mage, 'elements')).rejects.toThrow(
+        'Вторая ветка открывается на 10-м уровне персонажа',
+      );
+      await mage.resources.addResources({ exp: 10000000 });
+      expect((await MagicService.selectBranch(mage, 'elements')).branches).toEqual([
+        'holy',
+        'elements',
+      ]);
+      expect(MagicService.selectBranch(mage, 'darkness')).rejects.toThrow(
+        'Вы уже выбрали максимальное количество веток (2)',
+      );
+    });
+
     it('should select first branch successfully', async () => {
       const result = await MagicService.selectBranch(mage, 'elements');
       expect(result.branches).toEqual(['elements']);
-      expect(mage.magicBranches).toEqual(['elements']);
+      expect(mage.branches).toEqual(['elements']);
     });
 
     it('should throw if branch belongs to another class', async () => {
@@ -80,7 +134,7 @@ describe('MagicService with branches', () => {
 
       const result = await MagicService.selectBranch(mage, 'darkness');
       expect(result.branches).toEqual(['elements', 'darkness']);
-      expect(mage.magicBranches).toEqual(['elements', 'darkness']);
+      expect(mage.branches).toEqual(['elements', 'darkness']);
     });
 
     it('should throw if selecting third branch', async () => {
@@ -98,6 +152,14 @@ describe('MagicService with branches', () => {
     beforeEach(async () => {
       await MagicService.selectBranch(mage, 'elements');
       await mage.resources.addResources({ bonus: 50 });
+    });
+
+    it('learns a selected spell from secondProf', async () => {
+      mage.charObj.secondProf = CharacterClass.Priest;
+      mage.charObj.branches = ['holy'];
+      mage.charObj.exp = 9000;
+      const learned = await MagicService.learnSpecificMagic(mage, 'mediumHeal');
+      expect(learned.name).toBe('mediumHeal');
     });
 
     it('should learn magic with 100% chance and deduct bonus', async () => {
@@ -191,22 +253,12 @@ describe('MagicService with branches', () => {
     });
   });
 
-  describe('resetMagics', () => {
-    it('should reset all learned magics and branches, and refund bonus', async () => {
-      await MagicService.selectBranch(mage, 'elements');
-      await mage.resources.addResources({ bonus: 50 });
-
-      const initialBonus = mage.resources.bonus;
-      await MagicService.learnSpecificMagic(mage, 'magicArrow'); // -10
-      await MagicService.learnSpecificMagic(mage, 'magicArrow'); // -10
-      expect(mage.resources.bonus).toBe(initialBonus - 20);
-
-      const resetResult = await MagicService.resetMagics(mage);
-      // 2 from magicArrow (lvl 2 * 1) + 1 from starter lightHeal (lvl 1 * 1) = 3
-      expect(resetResult.refundedBonus).toBe(20);
-      expect(mage.magics).toEqual({});
-      expect(mage.magicBranches).toEqual([]);
-      expect(mage.resources.bonus).toBe(initialBonus);
-    });
+  it('does not expose random learning, respec, or the legacy POST /magic/:lvl route', () => {
+    expect(MagicService).not.toHaveProperty('learnMagic');
+    expect(MagicService).not.toHaveProperty('getMagicsToLearn');
+    expect(MagicService).not.toHaveProperty('resetMagics');
+    expect(magic.routes.some((route) => route.method === 'POST' && route.path === '/:lvl')).toBe(
+      false,
+    );
   });
 });

@@ -1,3 +1,4 @@
+import type { BranchKey } from '@/actions/branches';
 import type { ClanPublic } from '@/clan';
 import type { ItemComponent, ItemWithID } from '@/item';
 import type { NotificationSettings } from '@/notifications/notificationSettingsSchema';
@@ -24,11 +25,12 @@ export type Character = {
     wins: number;
   };
   magics: Record<string, number>;
-  magicBranches?: string[];
+  branches: BranchKey[];
   skills: Record<string, number>;
   passiveSkills: Record<string, number>;
   attributes: CharacterAttributes;
   class: CharacterClass;
+  secondProf?: CharacterClass;
   dynamicAttributes: Attributes;
   game?: string;
   tower?: string;

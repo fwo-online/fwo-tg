@@ -13,7 +13,8 @@ export class ActionService {
 
   static isBaseAction(action: string) {
     if (ActionService.isAction(action)) {
-      return arena.actions[action].lvl === 0;
+      const baseAction = arena.actions[action];
+      return 'lvl' in baseAction && baseAction.lvl === 0;
     }
 
     return false;

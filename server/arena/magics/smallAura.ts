@@ -2,7 +2,7 @@ import { OrderType } from '@fwo/shared';
 import type { MagicArgs } from '@/arena/Constuructors/MagicConstructor';
 import { Aura, AuraEffect } from './aura';
 
-const params: MagicArgs = Object.freeze({
+const params = Object.freeze<MagicArgs>({
   name: 'smallAura',
   displayName: 'Малая аура',
   desc: 'Создает вокруг цели слабую ауру',

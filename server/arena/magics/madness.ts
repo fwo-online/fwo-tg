@@ -11,7 +11,7 @@ import type { Affect } from '../Constuructors/interfaces/Affect';
 
 const actionTypes: ActionType[] = ['phys'];
 
-const params: MagicArgs = Object.freeze({
+const params = Object.freeze<MagicArgs>({
   name: 'madness',
   displayName: 'Безумие',
   desc: 'Заставляет цель атаковать саму себя',

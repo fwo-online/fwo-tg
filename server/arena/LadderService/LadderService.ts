@@ -92,9 +92,7 @@ export class LadderService {
   }
 
   async setPSRForPlayers(results: GameResult[]) {
-    const winnersCount = sumBy(this.players.nonBotPlayers, (player) =>
-      player.performance.winner ? 1 : 0,
-    );
+    const winnersCount = sumBy(results, (result) => (result.winner ? 1 : 0));
     const winnersRatio = winnersCount / this.players.nonBotPlayers.length;
     const resultsByPlayer = keyBy(results, ({ player }) => player.id);
 
@@ -107,6 +105,7 @@ export class LadderService {
           winnersRatio,
         );
         player.stats.addPsr(psr);
+        resultsByPlayer[player.id].psr = psr;
       }),
     );
   }
@@ -131,6 +130,9 @@ export class LadderService {
       await Promise.all(
         results.map(async (result) => {
           const character = await CharacterService.getCharacterById(result.player.id);
+          if (result.psr === undefined) {
+            throw new Error(`Missing calculated PSR for player ${result.player.id}`);
+          }
           await character.performance.setPsr(result.psr);
         }),
       );

@@ -227,7 +227,11 @@ export class CharacterInventory {
   hasRequiredAttributes(item: Item) {
     return every(
       item.requiredAttributes,
-      (value, attr) => value <= this.character.attributes.attributes[attr],
+      (value, attr) =>
+        value <=
+        this.character.attributes.attributes[
+          attr as keyof typeof this.character.attributes.attributes
+        ],
     );
   }
 

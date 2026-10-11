@@ -10,7 +10,7 @@ export interface Payment {
   amount: number;
   currency: string;
   payload: string;
-  createdAt: string;
+  createdAt: Date;
 }
 
 export type PaymentModel = Model<Payment> & typeof Payment;

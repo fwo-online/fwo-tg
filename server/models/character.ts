@@ -1,13 +1,16 @@
 import type {
+  BranchKey,
   CharacterAttributes,
-  CharacterClass,
   Contract,
   ItemComponent,
   ItemWear,
 } from '@fwo/shared';
+import { CharacterClass } from '@fwo/shared';
 import mongoose, { type Model, Schema, type Types } from 'mongoose';
+import { calculateLvl } from '@/arena/CharacterService/utils/calculateLvl';
 import type { Clan } from '@/models/clan';
 import type { Item } from '@/models/item';
+import { validateBranches } from '@/models/validateBranches';
 
 export interface Char {
   _id: Types.ObjectId;
@@ -17,6 +20,7 @@ export interface Char {
   nickname: string;
   birthday: Date;
   prof: CharacterClass;
+  secondProf?: CharacterClass;
   exp: number;
   harks: CharacterAttributes;
   statistics: {
@@ -40,7 +44,7 @@ export interface Char {
   lastForest: Date | null;
   psr: number;
   magics: Record<string, number>;
-  magicBranches: string[];
+  branches: BranchKey[];
   skills: Record<string, number>;
   passiveSkills: Record<string, number>;
   bonus: number;
@@ -55,17 +59,18 @@ export interface Char {
     block: number;
     luck: number;
   };
-  expLimit?: {
+  expLimit: {
     earn: number;
     expiresAt: Date;
   };
+  favoriteMagicList: string[];
   deleted: boolean;
   active: boolean;
   items: Item[];
   equipment: Map<ItemWear, Item>;
   components: Map<ItemComponent, number>;
   towerAvailable: boolean;
-  notificationSettings?: {
+  notificationSettings: {
     gameStart: boolean;
     gameEnd: boolean;
     afkWarning: boolean;
@@ -100,6 +105,7 @@ const character = new Schema<Char, CharModel>({
   },
   birthday: { type: Date, default: Date.now },
   prof: { type: String, required: true },
+  secondProf: { type: String, enum: Object.values(CharacterClass) },
   exp: { type: Number, default: 0 },
   harks: {
     type: Object,
@@ -129,7 +135,19 @@ const character = new Schema<Char, CharModel>({
   lastFight: { type: Date, default: null },
   psr: { type: Number, default: 0 },
   magics: { type: Object, default: {} },
-  magicBranches: { type: [String], default: [] },
+  branches: {
+    type: [String],
+    default: [],
+    validate: {
+      validator(this: unknown, branches: unknown) {
+        const doc = this as Char;
+        const classes =
+          doc.secondProf && doc.secondProf !== doc.prof ? [doc.prof, doc.secondProf] : [doc.prof];
+        return !validateBranches(branches as BranchKey[], classes, calculateLvl(doc.exp));
+      },
+      message: 'Некорректный выбор веток',
+    },
+  },
   bonus: { type: Number, default: 0 },
   skills: { type: Object, default: {} },
   passiveSkills: { type: Object, default: {} },
@@ -211,10 +229,13 @@ const character = new Schema<Char, CharModel>({
   unlockedTitles: { type: [String], default: [] },
   claimedAchievements: { type: [String], default: [] },
   vigor: {
-    type: new Schema({
-      energy: { type: Number, default: 100 },
-      lastResetDate: { type: Schema.Types.Date, default: Date.now },
-    }, { _id: false }),
+    type: new Schema(
+      {
+        energy: { type: Number, default: 100 },
+        lastResetDate: { type: Schema.Types.Date, default: Date.now },
+      },
+      { _id: false },
+    ),
     default: () => ({ energy: 100, lastResetDate: new Date() }),
   },
 });

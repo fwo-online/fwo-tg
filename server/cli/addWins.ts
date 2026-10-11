@@ -9,7 +9,7 @@ const main = async () => {
   CharModel.bulkWrite(
     characters.map((character) => ({
       updateOne: {
-        filter: { id: character._id },
+        filter: { id: character._id as unknown as string },
         update: {
           $set: {
             psr: 0,

@@ -1,8 +1,8 @@
-import type { UpdateQuery } from 'mongoose';
+import type { AnyKeys, QueryFilter, UpdateQuery } from 'mongoose';
+import ValidationError from '@/arena/errors/ValidationError';
 import type { Char } from '@/models/character';
 import type { Clan } from '@/models/clan';
 import { ClanModel } from '@/models/clan';
-import ValidationError from '@/arena/errors/ValidationError';
 
 export async function getClans(): Promise<Clan[]> {
   const clans = await ClanModel.find()
@@ -24,7 +24,7 @@ export async function updateClan(id: string, query: UpdateQuery<Clan>): Promise<
 }
 
 export async function getClanByPlayerRequest(id: string): Promise<Clan | undefined> {
-  const clan = await ClanModel.findOne({ requests: id });
+  const clan = await ClanModel.findOne({ requests: id } as unknown as QueryFilter<Clan>);
   return clan?.toObject();
 }
 
@@ -39,7 +39,9 @@ export async function getClanById(id: string): Promise<Clan> {
 }
 
 export async function deleteClan(_id: string, owner: string): Promise<void> {
-  await ClanModel.deleteOne({ _id, owner }).orFail(new Error('Клан не найден'));
+  await ClanModel.deleteOne({ _id, owner } as unknown as QueryFilter<Clan>).orFail(
+    new Error('Клан не найден'),
+  );
 }
 
 export async function createClan(owner: string, name: string): Promise<Clan> {
@@ -52,7 +54,7 @@ export async function createClan(owner: string, name: string): Promise<Clan> {
     owner,
     name,
     players: [owner],
-  });
+  } as unknown as AnyKeys<Clan>);
   await createdClan.save();
 
   return getClanById(createdClan._id.toString());

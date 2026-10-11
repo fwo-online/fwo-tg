@@ -18,6 +18,10 @@ describe('attack', () => {
           hit: {
             physical: { min: 10, max: 10 },
             fire: { min: 2, max: 3 },
+            frost: { min: 0, max: 0 },
+            lightning: { min: 0, max: 0 },
+            acid: { min: 0, max: 0 },
+            clear: { min: 0, max: 0 },
           },
         },
       },

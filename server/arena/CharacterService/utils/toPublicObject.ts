@@ -8,6 +8,8 @@ export function toPublicObject(char: Char): CharacterPublic {
     id: char.id.toString(),
     name: char.nickname,
     class: char.prof as CharacterClass,
+    secondProf: char.secondProf,
+    branches: char.branches,
     psr: char.psr,
     statistics: char.statistics,
     lvl: calculateLvl(char.exp),

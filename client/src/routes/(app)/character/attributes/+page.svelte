@@ -54,7 +54,7 @@
 </script>
 
 {#snippet stat(path: PathsOf<Attributes>)}
-  {@const value = get(dynamicAttributes, path)}
+  {@const value = get(dynamicAttributes, path) ?? 0}
   {@const base = get(baseDynamicAttributes, path) ?? 0}
   {@const diff = value - base}
 

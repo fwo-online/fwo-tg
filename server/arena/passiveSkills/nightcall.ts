@@ -35,7 +35,7 @@ class NightCall extends PassiveSkillConstructor {
     this.createContext(initiator, target, game);
 
     throw new CastError({
-      ...this.getSuccessResult({ initiator, target, game }),
+      ...this.getSuccessResult(),
       actionType: 'passive',
     });
   }

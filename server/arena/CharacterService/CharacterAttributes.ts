@@ -41,7 +41,10 @@ export class CharacterAttributes {
   }
 
   async increaseAttributes(harks: HarksLvl) {
-    const isValid = every(harks, (value, key) => value >= this.charObj.harks[key]);
+    const isValid = every(
+      harks,
+      (value, key) => value >= this.charObj.harks[key as keyof typeof this.charObj.harks],
+    );
     if (!isValid) {
       throw new ValidationError('Аттрибут не может быть уменьшен');
     }

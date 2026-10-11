@@ -8,7 +8,6 @@
   import Card from "$lib/components/Card.svelte";
   import { getCharacterContext } from "$lib/constext/character";
   import { learnSpecificMagic } from "$lib/magic/utils/learn-specific-magic.svelte";
-  // import { resetMagics } from "$lib/magic/utils/reset-magics.svelte";
   import { selectBranch } from "$lib/magic/utils/select-branch.svelte";
   import type { PageProps } from "./$types";
 
@@ -126,18 +125,6 @@
             {/each}
           </div>
         </div>
-
-        <!-- <div class="mt-4 pt-2 border-t border-black/20 flex flex-col gap-2">
-          <Button
-            {@attach resetMagics.attach({
-              confirm:
-                "Сбросить все изученные магии и ветки специализации? Все потраченные бонусы 💡 вернутся на 100%!",
-            })}
-            class="is-error w-full text-xs! py-1!"
-          >
-            Сбросить магии и ветки
-          </Button>
-        </div> -->
       </div>
     </Card>
 

@@ -7,19 +7,10 @@ import {
   type MagicBranchId,
   SECOND_BRANCH_MIN_CHAR_LVL,
 } from '@fwo/shared';
-import { mapValues } from 'es-toolkit';
 import arena from '@/arena';
-import config from '@/arena/config';
 import ValidationError from '@/arena/errors/ValidationError';
-import MiscService from '@/arena/MiscService';
 import type { Prof } from '@/data/profs';
 import type { CharacterService } from './CharacterService';
-
-const chance = config.magic.learnChance;
-
-function learnChance() {
-  return chance > MiscService.dice('1d100');
-}
 
 /**
  * @class Сервис работы с магиями
@@ -40,11 +31,11 @@ export default class MagicService {
       throw new ValidationError('Неизвестная ветка магии');
     }
 
-    if (branchMeta.prof !== character.prof) {
+    if (!character.classes.some((cls) => cls === branchMeta.prof)) {
       throw new ValidationError('Эта ветка недоступна для вашего класса');
     }
 
-    const currentBranches = character.magicBranches;
+    const currentBranches = character.branches;
     if (currentBranches.includes(branchId)) {
       throw new ValidationError('Эта ветка уже выбрана');
     }
@@ -62,7 +53,7 @@ export default class MagicService {
     }
 
     const updatedBranches = [...currentBranches, branchId];
-    await character.setMagicBranches(updatedBranches);
+    await character.setBranches(updatedBranches);
 
     return {
       branches: updatedBranches,
@@ -80,17 +71,17 @@ export default class MagicService {
 
     const magic = arena.magics[magicName];
 
-    if (!magic.profList.includes(character.prof)) {
+    if (!character.classes.some((cls) => magic.profList.includes(cls))) {
       throw new ValidationError('Заклинание недоступно для вашего класса');
     }
 
-    const magicBranches = magic.branches;
+    const spellBranches = magic.branches;
 
-    if (!magicBranches || magicBranches.length === 0) {
+    if (!spellBranches || spellBranches.length === 0) {
       throw new ValidationError('Заклинание не привязано к ветке магии');
     }
 
-    const hasMatchingBranch = magicBranches.some((b) => character.magicBranches.includes(b));
+    const hasMatchingBranch = spellBranches.some((b) => character.branches.includes(b));
 
     if (!hasMatchingBranch) {
       throw new ValidationError('Заклинание принадлежит невыбранной ветке специализации');
@@ -117,38 +108,13 @@ export default class MagicService {
   }
 
   /**
-   * Сброс всех выученных магий и веток специализации с возвратом очков bonus
-   */
-  static async resetMagics(character: CharacterService) {
-    let totalRefundBonus = 0;
-
-    for (const [magicName, lvl] of Object.entries(character.magics)) {
-      if (MagicService.isMagic(magicName)) {
-        const magic = arena.magics[magicName];
-        const costPerLvl = getLearnMagicCost(magic.lvl);
-        totalRefundBonus += costPerLvl * lvl;
-      }
-    }
-
-    await character.resetMagics();
-
-    if (totalRefundBonus > 0) {
-      await character.resources.addResources({ bonus: totalRefundBonus });
-    }
-
-    return {
-      refundedBonus: totalRefundBonus,
-      magics: character.magics,
-      magicBranches: character.magicBranches,
-    };
-  }
-
-  /**
    * Информация о ветках персонажа: выбранные, доступные для выбора, заблокированные
    */
   static getBranchesInfo(character: CharacterService) {
-    const allBranches = getBranchesByProf(character.prof);
-    const selectedBranches = character.magicBranches;
+    const allBranches = character.classes
+      .flatMap((cls) => getBranchesByProf(cls))
+      .filter((branch) => branch.id in MAGIC_BRANCHES);
+    const selectedBranches = character.branches;
     const canSelectSecondBranch =
       selectedBranches.length === 1 && character.lvl >= SECOND_BRANCH_MIN_CHAR_LVL;
     const canSelectAny = selectedBranches.length < MAX_MAGIC_BRANCHES;
@@ -191,7 +157,13 @@ export default class MagicService {
    * Получить заклинания конкретной ветки
    */
   static getBranchMagics(character: CharacterService, branchId: MagicBranchId) {
-    const allMagics = MagicService.getMagicListByProf(character.prof);
+    const allMagics = [
+      ...new Map(
+        character.classes
+          .flatMap((cls) => MagicService.getMagicListByProf(cls))
+          .map((m) => [m.name, m]),
+      ).values(),
+    ];
     return allMagics
       .filter((m) => {
         return m.branches?.includes(branchId);
@@ -200,77 +172,10 @@ export default class MagicService {
   }
 
   /**
-   * @deprecated
-   * Изучение магии со случайным выбором (обратная совместимость)
-   * @param lvl круг проучиваемой магии
-   */
-  static async learnMagic(character: CharacterService, lvl: number) {
-    if (!canLearnMagic(character.lvl, lvl)) {
-      throw new ValidationError('Слишком низкий уровень персонажа');
-    }
-
-    const magicsToLearn = MagicService.getMagicsToLearn(character, lvl);
-    if (!magicsToLearn.length) {
-      throw new ValidationError('Нет магий для изучения');
-    }
-
-    const magic = magicsToLearn[MiscService.randInt(0, magicsToLearn.length)];
-
-    await character.resources.takeResources({ bonus: getLearnMagicCost(lvl) });
-
-    if (!learnChance()) {
-      throw new ValidationError('Не удалось выучить. Удача не на твоей стороне');
-    }
-
-    const charMagicLvl = character.magics[magic.name] || 0;
-    await character.learnMagic(magic.name, charMagicLvl + 1);
-
-    return magic;
-  }
-
-  /**
-   * @deprecated
-   * Возвращает доступные магии на данном круге для изучения
-   * @param lvl круг проучиваемой магии
-   */
-  static getMagicsToLearn(character: CharacterService, lvl: number) {
-    const magicsByLvl = MagicService.getMagicListByProf(character.prof, lvl);
-
-    return magicsByLvl.filter((magic) => {
-      // Если у персонажа есть выбранные ветки, фильтруем по ним
-      if (
-        character.magicBranches.length > 0 &&
-        !magic.branches?.some((b) => character.magicBranches.includes(b))
-      ) {
-        return false;
-      }
-      return (character.magics[magic.name] ?? 0) < MagicService.MAX_MAGIC_LVL;
-    });
-  }
-
-  /** @deprecated */
-  static getAvaiableLevels(character: CharacterService) {
-    const magics = MagicService.getMagicListByProf(character.class);
-
-    const magicsToLearn = magics.filter((magic) => {
-      if (
-        character.magicBranches.length > 0 &&
-        !magic.branches?.some((b) => character.magicBranches.includes(b))
-      ) {
-        return false;
-      }
-      return (character.magics[magic.name] ?? 0) < MagicService.MAX_MAGIC_LVL;
-    });
-
-    const magicsByLvl = Object.groupBy(magicsToLearn, ({ lvl }) => lvl);
-    return mapValues(magicsByLvl, (magics) => Boolean(magics?.length));
-  }
-
-  /**
    * Показываем описание магии
    * @param magId строка идентификатор магии
    */
-  static getMagicById(magic: string, prof?: string) {
+  static getMagicById(magic: string, _prof?: string) {
     return arena.magics[magic as keyof (typeof arena)['magics']].toObject();
   }
 
@@ -289,6 +194,13 @@ export default class MagicService {
 
         return magic.lvl === lvl && magic.profList.includes(prof);
       })
+      .map((magic) => magic.toObject())
+      .sort((a, b) => a.lvl - b.lvl);
+  }
+
+  static getMagicListForCharacter(character: CharacterService) {
+    return Object.values(arena.magics)
+      .filter((magic) => character.classes.some((cls) => magic.profList.includes(cls)))
       .map((magic) => magic.toObject())
       .sort((a, b) => a.lvl - b.lvl);
   }

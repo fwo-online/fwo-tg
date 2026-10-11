@@ -16,14 +16,12 @@ export type MonsterParams = Pick<
   Char,
   | 'nickname'
   | 'harks'
-  | 'magics'
-  | 'skills'
-  | 'passiveSkills'
   | 'items'
   | 'equipment'
   | 'exp'
   | 'prof'
->;
+> &
+  Partial<Pick<Char, 'magics' | 'skills' | 'passiveSkills'>>;
 
 export class MonsterService extends PlayerService {
   type: MonsterType;

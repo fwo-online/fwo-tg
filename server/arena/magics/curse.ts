@@ -7,7 +7,7 @@ import { LongMagic } from '../Constuructors/LongMagicConstructor';
  * Проклятие
  * Основное описание магии общее требовани есть в конструкторе
  */
-const params: MagicArgs = Object.freeze({
+const params = Object.freeze<MagicArgs>({
   name: 'curse',
   displayName: 'Проклятие',
   desc: 'Понижает атаку и защиту цели',

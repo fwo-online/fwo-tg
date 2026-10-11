@@ -28,11 +28,6 @@ export const magic = new Hono()
       return c.json(result);
     },
   )
-  // .post('/reset', async (c) => {
-  //   const character = c.get('character');
-  //   const result = await withValidation(MagicService.resetMagics(character));
-  //   return c.json(result);
-  // })
   .post(
     '/learn/:name',
     vValidator('param', v.object({ name: v.string() }), handleValidationError),
@@ -55,12 +50,6 @@ export const magic = new Hono()
       return c.json(magics);
     },
   )
-  .get('/available', (c) => {
-    const character = c.get('character');
-    const magicLevels = MagicService.getAvaiableLevels(character);
-
-    return c.json(magicLevels);
-  })
   .get(
     '/',
     vValidator(
@@ -74,27 +63,12 @@ export const magic = new Hono()
       const targetIds = normalizeToArray(ids);
 
       if (!targetIds.length) {
-        const magics = MagicService.getMagicListByProf(character.prof);
+        const magics = MagicService.getMagicListForCharacter(character);
         return c.json(magics);
       } else {
         const magics = MagicService.getMagicListByIds(targetIds, character.prof);
         return c.json(magics);
       }
-    },
-  )
-  .post(
-    '/:lvl',
-    vValidator(
-      'param',
-      v.object({ lvl: v.pipe(v.string(), v.decimal(), v.transform(Number)) }),
-      handleValidationError,
-    ),
-    async (c) => {
-      const character = c.get('character');
-      const { lvl } = c.req.valid('param');
-
-      const magic = await withValidation(MagicService.learnMagic(character, lvl));
-      return c.json(magic);
     },
   )
   .get('/:id', (c) => {

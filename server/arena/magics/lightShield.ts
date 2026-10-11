@@ -10,7 +10,7 @@ import type { Affect } from '../Constuructors/interfaces/Affect';
  * Световой щит
  * Основное описание магии общее требование есть в конструкторе
  */
-const params: DmgMagicArgs = Object.freeze({
+const params = Object.freeze<DmgMagicArgs>({
   name: 'lightShield',
   displayName: 'Световой щит',
   desc: 'Возвращает часть физического урона в виде чистого, атакующему цель под действием щита',

@@ -10,7 +10,7 @@ import type { SuccessArgs } from '../Constuructors/types';
  * Ледяное прикосновение
  * Основное описание магии общее требовани есть в конструкторе
  */
-const params: DmgMagicArgs = Object.freeze({
+const params = Object.freeze<DmgMagicArgs>({
   name: 'frostTouch',
   displayName: 'Ледяное прикосновение',
   desc: 'Поражает цель ледяным касанием, отнимая жизни. (длительная)',

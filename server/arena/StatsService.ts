@@ -12,6 +12,13 @@ export type Stats = CharacterDynamicAttributes & {
 
 type StatsPath = PathsOf<Stats>;
 type StatsPathPartial = PathsOf<Stats, true>;
+type StatsValueAtPath<T, P extends string> = P extends keyof T
+  ? T[P]
+  : P extends `${infer Key}.${infer Rest}`
+    ? Key extends keyof T
+      ? StatsValueAtPath<T[Key], Rest>
+      : never
+    : never;
 
 /**
  * Класс для хранения stats
@@ -111,8 +118,8 @@ export default class StatsService {
    * Функция возвращающее значение атрибута
    * @param atr str/atk/prt/dex
    */
-  val<T extends StatsPathPartial>(atr: T) {
-    return get(this.inRound, atr);
+  val<T extends StatsPathPartial>(atr: T): StatsValueAtPath<Stats, T> {
+    return get(this.inRound, atr) as StatsValueAtPath<Stats, T>;
   }
 
   /**

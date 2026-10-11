@@ -79,7 +79,7 @@ export abstract class BaseAction {
   actionType!: ActionType;
   effectType?: EffectType;
 
-  context!: BaseActionContext = {};
+  context: BaseActionContext = {} as BaseActionContext;
   isAffect = false;
 
   abstract cast(initiator: Player, target: Player, game: GameService): void;

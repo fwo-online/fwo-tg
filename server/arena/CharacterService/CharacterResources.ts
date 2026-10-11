@@ -104,8 +104,9 @@ export class CharacterResources {
 
   private addComponents(components: Partial<Record<ItemComponent, number>>) {
     forEach(components, (value, key) => {
-      const oldValue = this.charObj.components.get(key) ?? 0;
-      this.charObj.components.set(key, oldValue + (value ?? 0));
+      const component = key as ItemComponent;
+      const oldValue = this.charObj.components.get(component) ?? 0;
+      this.charObj.components.set(component, oldValue + (value ?? 0));
     });
   }
 
@@ -202,7 +203,7 @@ export class CharacterResources {
   /** @throws {ValidationError} */
   private validateComponents(components: Partial<Record<ItemComponent, number>>) {
     forEach(components, (value, key) => {
-      if ((this.components.get(key) ?? 0) < (value ?? 0)) {
+      if ((this.components.get(key as ItemComponent) ?? 0) < (value ?? 0)) {
         throw new ValidationError('Недостаточно компонентов');
       }
     });

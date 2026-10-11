@@ -5,7 +5,7 @@ import { Magic, type MagicArgs } from './MagicConstructor';
 import type { ActionType } from './types';
 
 export interface DmgMagicArgs extends MagicArgs {
-  dmgType: EffectType;
+  dmgType: EffectType | `${EffectType}`;
 }
 
 export interface DmgMagic extends Magic {}
@@ -20,7 +20,7 @@ export abstract class DmgMagic extends Magic {
    */
   constructor({ dmgType, ...magObj }: DmgMagicArgs) {
     super(magObj);
-    this.effectType = dmgType;
+    this.effectType = dmgType as EffectType;
   }
 
   /**
