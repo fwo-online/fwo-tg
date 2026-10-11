@@ -3,6 +3,9 @@ import type { BranchKey } from './branches';
 
 export * from './branches';
 
+/** Catalog origin: only learnable actions belong in the character learning catalog. */
+export type ActionSourceCategory = 'learnable' | 'itemOnly' | 'combatInternal' | 'monsterOnly';
+
 export type Magic = {
   name: string;
   description: string;

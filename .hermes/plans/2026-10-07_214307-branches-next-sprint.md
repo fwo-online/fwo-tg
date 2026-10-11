@@ -2,6 +2,8 @@
 
 > **Для Hermes:** выполнять план последовательно, небольшими задачами, с TDD и отдельной проверкой каждого серверного контракта. Существующие audit/spec-документы не изменять; расхождения фиксировать в решениях, коде и тестах.
 
+> **Текущий этап проверки:** писать unit- и service-тесты. HTTP-интеграционные тесты отложены до отдельного этапа после стабилизации сервисов; не выдавать прохождение service-тестов за проверку HTTP-авторизации и middleware.
+
 **Goal:** заменить `magicBranches` единой валидируемой моделью `branches: BranchKey[]`, добавить одну опциональную дополнительную профессию без отдельной прогрессии, закрыть обходы авторизации для магий, активных и пассивных умений, реализовать выбор веток и полный branch-aware каталог для магических и физических классов, а также выпустить общий UI для Лучника и Воина.
 
 **Architecture:** текущая профессия остаётся первичной в `prof: CharacterClass`; модель получает опциональное `secondProf?: CharacterClass`, а getter `classes` возвращает `[prof]` и добавляет `secondProf`, если он задан. Это совместимый шов для проверки принадлежности ветки, а не реализация смешанной прогрессии: независимые уровни, отдельная экономика и полноценная механика комбинаций классов остаются будущей работой. Персонаж хранит один глобальный массив `branches` максимум из двух элементов; второй слот открывается на 10-м уровне. Единый каталоговый/access validator используется для магий, active skills и passive skills.
@@ -74,7 +76,7 @@ get classes(): CharacterClass[]; // [prof] плюс secondProf, если он з
 - Reconciliation всех документированных branch abilities и каталогов, включая отсутствующие Warrior abilities; если объём велик, разделить на несколько задач, но не переносить их в non-goals.
 - Защищённые branch-aware HTTP read/write API и закрытие legacy bypass.
 - Archer/Warrior UI на общем selector/catalog контракте.
-- Unit, HTTP, failure-path и regression tests.
+- Unit, service-level failure-path и regression tests; HTTP-интеграционные тесты отложены.
 
 ### Не входит
 
@@ -120,12 +122,14 @@ get classes(): CharacterClass[]; // [prof] плюс secondProf, если он з
 
 ### Task 2: Расширить shared character и branch contract
 
+**Статус:** shared-контракт и его unit-тесты реализованы; использование общих helpers в остальных сервисах относится к следующим задачам.
+
 **Файлы:**
 - Modify: `shared/character/characterSchema.ts`
 - Modify: `shared/character/characterPublic.ts` при необходимости публичного DTO
 - Modify: `shared/actions/branches.ts`
 - Modify: `shared/actions/index.ts`
-- Create/modify: `shared/actions/branches.test.ts`
+- Create/modify: `shared/actions/branches.test.js` (`shared/tsconfig.json` не подключает `bun:test` types).
 
 **Действия:**
 - Добавить typed `secondProf?: CharacterClass` (nullable/отсутствующий только когда второй профессии нет) и getter/эквивалентный shared helper `classes`, реализующий `[prof]` плюс дополнительный класс без дублей.
@@ -214,7 +218,7 @@ get classes(): CharacterClass[]; // [prof] плюс secondProf, если он з
 - Старые `/magic/branches` и `/magic/branch` временно делегируют тот же service, но не принимают произвольный `string` cast.
 - Не добавлять `/branch/reset`, `/magic/reset` или иной respec endpoint.
 
-**Тесты:** wrong class, unknown branch, duplicate, уровень 9/10, третья ветка, alias API, unauthorized character middleware, invalid body и выбор ветки новым персонажем с `branches: []`.
+**Тесты на текущем этапе:** service-тесты на wrong class, unknown branch, duplicate, уровень 9/10, третью ветку и выбор новым персонажем с `branches: []`. Тесты alias API, middleware и invalid HTTP body отложены.
 
 ### Task 7: Перенести branch enforcement в magic и закрыть magic bypass
 
@@ -256,7 +260,8 @@ get classes(): CharacterClass[]; // [prof] плюс secondProf, если он з
 - Modify: `server/arena/MagicService.ts`
 - Modify: `server/arena/SkillService.ts`
 - Modify: `server/arena/PassiveSkillService.ts`
-- Create: `server/server/action-read-api.test.ts`
+
+HTTP-интеграционные тесты read API — отдельный следующий этап, не текущий scope тестирования.
 
 **Действия:**
 - `GET` list/`/:id` возвращает только записи допустимого source и релевантных `character.classes`; unknown ID даёт controlled 400/ValidationError.
@@ -272,7 +277,8 @@ get classes(): CharacterClass[]; // [prof] плюс secondProf, если он з
 - Modify: `server/server/skill.ts`
 - Modify: `server/server/passiveSkill.ts`
 - Modify: `server/server/utils/withValidation.ts` при необходимости error envelope
-- Create: `server/server/action-write-api.test.ts`
+
+HTTP-интеграционные тесты write API — отдельный следующий этап, не текущий scope тестирования.
 
 **Проверки:**
 - Все routes используют `userMiddleware` + `characterMiddleware` и не принимают произвольный character id из body.
@@ -319,7 +325,7 @@ get classes(): CharacterClass[]; // [prof] плюс secondProf, если он з
 - Не показывать learn button для non-learnable source; после learn перечитать character/catalog, чтобы resource/rank/lock state оставались server truth.
 - Обработать empty catalog, invalid selected action, refresh с исчезнувшим action и duplicate labels.
 
-### Task 13: Завершить HTTP/catalog regression matrix
+### Task 13: Завершить service/catalog regression matrix
 
 **Файлы:**
 - Modify/create: `server/arena/branches.contract.test.ts`
@@ -328,8 +334,6 @@ get classes(): CharacterClass[]; // [prof] плюс secondProf, если он з
 - Modify: `server/arena/MagicService.test.ts`
 - Modify: `server/arena/SkillService.test.ts`
 - Modify: `server/arena/PassiveSkillService.test.ts`
-- Modify: `server/server/action-read-api.test.ts`
-- Modify: `server/server/action-write-api.test.ts`
 - Modify: `server/arena/catalog-invariants.test.ts`
 
 **Обязательная матрица:**
@@ -339,9 +343,9 @@ get classes(): CharacterClass[]; // [prof] плюс secondProf, если он з
 - active, passive, magic, hybrid action; learnable, item-only, internal, monster-only;
 - current rank 0/max/malformed, missing catalog metadata, insufficient resource;
 - создание нового персонажа с `branches: []`, отсутствие `magicBranches` в новых схемах/DTO/client paths, сохранение `magics`, `skills`, `passiveSkills` и ресурсов при выборе ветки; без тестов преобразования существующих записей;
-- HTTP auth/middleware, invalid body, unknown id и legacy bypass closure.
+- service-level unknown id, invalid action и legacy bypass closure. HTTP auth/middleware и invalid body проверить позже в отдельном HTTP-этапе.
 
-HTTP tests вызывают реальный exported Hono `app` (`server/server/index.ts`) с test middleware/auth setup, а не только unit-call service. Не добавлять concurrency/transaction acceptance: это будущая отдельная работа.
+Service-тесты не заменяют проверку реального Hono `app` и middleware; это отдельный отложенный этап. Не добавлять concurrency/transaction acceptance: это будущая отдельная работа.
 
 ### Task 14: Final client/server integration verification
 
@@ -360,7 +364,6 @@ HTTP tests вызывают реальный exported Hono `app` (`server/server
 cd /home/evgewa/projects/fwo-tg/server
 bun test arena/branches.contract.test.ts arena/BranchService.test.ts arena/ActionAccessService.test.ts
 bun test arena/MagicService.test.ts arena/SkillService.test.ts arena/PassiveSkillService.test.ts
-bun test server/action-read-api.test.ts server/action-write-api.test.ts
 bun test
 bun run types
 bun run lint
@@ -380,7 +383,7 @@ bun run lint
 bun run build
 ```
 
-В hand-off указать реальные команды, workdir и pass/fail counts. Перед merge проверить `git diff -- docs/agents docs/specs`: audit/spec-документы не должны быть изменены этим спринтом. Отдельно отметить, что persistence/concurrency hardening и respec не выдаются за выполненные задачи.
+В hand-off указать реальные команды, workdir и pass/fail counts. Отдельно отметить, что HTTP-интеграционные тесты и проверка middleware отложены: service-тесты их не покрывают. Перед merge проверить `git diff -- docs/agents docs/specs`: audit/spec-документы не должны быть изменены этим спринтом. Persistence/concurrency hardening и respec не выдавать за выполненные задачи.
 
 ## 5. Acceptance criteria
 
@@ -394,7 +397,7 @@ bun run build
 - Archer UI поддерживает выбор `marksman`/`barrage`/`scout`, branch-aware active/passive catalogs, rank/cost/level/lock state, server errors и pending protection; тот же shared UI/API корректен для Warrior и магических веток.
 - В sprint нет respec/reset endpoint, service, UI или acceptance requirement.
 - Atomic persistence/concurrency hardening, включая новую Mongo transaction/optimistic concurrency infrastructure, явно оставлены отдельным future follow-up и не заявлены как результат этого sprint.
-- Targeted/full Bun tests, `bun run types`, `bun run lint`, client check/build/lint и root gates проходят; audit/spec docs не изменены.
+- Targeted/full Bun service/unit tests, `bun run types`, `bun run lint`, client check/build/lint и root gates проходят; audit/spec docs не изменены. HTTP-интеграционные тесты не входят в текущий quality gate и остаются отдельной задачей.
 
 ## 6. Риски и оставшиеся решения
 

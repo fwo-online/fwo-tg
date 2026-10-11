@@ -140,6 +140,75 @@ export const BRANCHES: Record<BranchKey, BranchMeta> = {
   ...MAGIC_BRANCHES,
 };
 
+export function isBranchKey(value: unknown): value is BranchKey {
+  return typeof value === 'string' && Object.hasOwn(BRANCHES, value);
+}
+
+export type BranchSelectionReason =
+  | 'INVALID_BRANCHES'
+  | 'UNKNOWN_BRANCH'
+  | 'DUPLICATE_BRANCH'
+  | 'TOO_MANY_BRANCHES'
+  | 'FOREIGN_CLASS_BRANCH'
+  | 'SECOND_BRANCH_LEVEL'
+  | 'ALREADY_SELECTED';
+
+/** Return the controlled reason for an invalid complete selection, if any. */
+export function getBranchSelectionReason(
+  branches: unknown,
+  classes: readonly CharacterClass[],
+  level: number,
+): BranchSelectionReason | undefined {
+  if (!Array.isArray(branches)) return 'INVALID_BRANCHES';
+  if (branches.length > MAX_BRANCHES) return 'TOO_MANY_BRANCHES';
+  if (new Set(branches).size !== branches.length) return 'DUPLICATE_BRANCH';
+  for (const branch of branches) {
+    if (!isBranchKey(branch)) return 'UNKNOWN_BRANCH';
+    if (!classes.includes(BRANCHES[branch].prof as CharacterClass)) return 'FOREIGN_CLASS_BRANCH';
+  }
+  if (branches.length === MAX_BRANCHES && level < SECOND_BRANCH_MIN_CHAR_LVL) {
+    return 'SECOND_BRANCH_LEVEL';
+  }
+}
+
+export interface BranchSelectionContext {
+  prof: CharacterClass;
+  secondProf?: CharacterClass;
+  branches: unknown;
+  level: number;
+}
+
+export type BranchSelectionState =
+  | { selected: boolean; canSelect: true; reason?: never }
+  | { selected: boolean; canSelect: false; reason: BranchSelectionReason };
+
+/** Selection status for a candidate branch, without mutating the character. */
+export function getBranchSelectionState(
+  branch: unknown,
+  context: BranchSelectionContext,
+): BranchSelectionState {
+  const classes = getUniqueClasses(context.prof, context.secondProf);
+  const existingReason = getBranchSelectionReason(context.branches, classes, context.level);
+  if (existingReason) return { selected: false, canSelect: false, reason: existingReason };
+  const selected = (context.branches as BranchKey[]).includes(branch as BranchKey);
+  if (selected) return { selected: true, canSelect: false, reason: 'ALREADY_SELECTED' };
+  const reason = getBranchSelectionReason(
+    [...(context.branches as BranchKey[]), branch],
+    classes,
+    context.level,
+  );
+  return reason
+    ? { selected: false, canSelect: false, reason }
+    : { selected: false, canSelect: true };
+}
+
+export function getUniqueClasses(
+  prof: CharacterClass,
+  secondProf?: CharacterClass,
+): CharacterClass[] {
+  return secondProf && secondProf !== prof ? [prof, secondProf] : [prof];
+}
+
 /**
  * Получить список всех веток для класса
  */
