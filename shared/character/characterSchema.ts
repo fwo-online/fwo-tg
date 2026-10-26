@@ -41,9 +41,7 @@ export type Character = {
   active?: boolean;
   activeTitle?: string;
   unlockedTitles?: string[];
-  vigor?: {
+  vigor: {
     energy: number;
-    maxEnergy: number;
-    bonusPercent: number;
   };
 };

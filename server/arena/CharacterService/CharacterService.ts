@@ -1,13 +1,13 @@
 import type { Character, CharacterClass, CharacterPublic, ItemComponent } from '@fwo/shared';
 import type { UpdateQuery } from 'mongoose';
 import {
+  activateAnyCharacter,
+  activateCharacter,
+  deactivateOtherCharacters,
   findCharacter,
   findCharacters,
   removeCharacter,
   updateCharacter,
-  deactivateOtherCharacters,
-  activateCharacter,
-  activateAnyCharacter,
 } from '@/api/character';
 import arena from '@/arena';
 import { CharacterAttributes } from '@/arena/CharacterService/CharacterAttributes';
@@ -86,18 +86,6 @@ export class CharacterService {
 
   get nickname() {
     return this.charObj.nickname;
-  }
-
-  set expEarnedToday(value) {
-    this.charObj.expLimit.earn = value;
-  }
-
-  get expEarnedToday() {
-    return this.charObj.expLimit.earn;
-  }
-
-  get expLimitToday() {
-    return this.lvl * config.lvlRatio * 2000;
   }
 
   get magics() {
@@ -179,40 +167,9 @@ export class CharacterService {
     return this.charObj.unlockedTitles ?? [];
   }
 
-  get vigor() {
-    this.checkVigorReset();
-    return this.charObj.vigor;
-  }
-
-  private checkVigorReset() {
-    if (!this.charObj.vigor) {
-      this.charObj.vigor = { energy: 100, lastResetDate: new Date() };
-      return;
-    }
-    const last = new Date(this.charObj.vigor.lastResetDate);
-    const now = new Date();
-    const isSameDay =
-      last.getUTCFullYear() === now.getUTCFullYear() &&
-      last.getUTCMonth() === now.getUTCMonth() &&
-      last.getUTCDate() === now.getUTCDate();
-    if (!isSameDay) {
-      this.charObj.vigor.energy = 100;
-      this.charObj.vigor.lastResetDate = now;
-    }
-  }
-
   async changeNickname(newNickname: string) {
     this.charObj.nickname = newNickname;
     await this.saveToDb();
-  }
-
-  resetExpLimit() {
-    const date = new Date();
-    if (date > this.charObj.expLimit.expiresAt) {
-      date.setUTCHours(24, 0, 0, 0);
-      this.charObj.expLimit.expiresAt = date;
-      this.charObj.expLimit.earn = 0;
-    }
   }
 
   /**
@@ -449,7 +406,7 @@ export class CharacterService {
       }
       console.log('Saving char :: id', this.id);
       const { clan, lastFight, lastTower, towerAvailable } = this;
-      const { gold, components, exp, free, bonus } = this.resources;
+      const { gold, components, exp, free, bonus, vigor } = this.resources;
       const { items, equipment } = this.inventory;
 
       return await updateCharacter(this.id, {
@@ -465,7 +422,6 @@ export class CharacterService {
         components,
         penalty: this.charObj.penalty,
         free,
-        expLimit: this.charObj.expLimit,
         statistics: this.charObj.statistics,
         psr: this.charObj.psr,
         harks: this.charObj.harks,
@@ -480,7 +436,7 @@ export class CharacterService {
         activeTitle: this.charObj.activeTitle,
         unlockedTitles: this.charObj.unlockedTitles,
         claimedAchievements: this.charObj.claimedAchievements,
-        vigor: this.charObj.vigor,
+        vigor,
       });
     } catch (e) {
       console.error('Fail on CharSave:', e);
@@ -553,9 +509,7 @@ export class CharacterService {
       activeTitle: this.charObj.activeTitle || undefined,
       unlockedTitles: this.unlockedTitles,
       vigor: {
-        energy: this.vigor?.energy ?? 100,
-        maxEnergy: 100,
-        bonusPercent: (this.vigor?.energy ?? 100) > 0 ? 100 : 0,
+        energy: this.resources.vigor?.energy ?? 100,
       },
       ...this.inventory.toObject(),
     };

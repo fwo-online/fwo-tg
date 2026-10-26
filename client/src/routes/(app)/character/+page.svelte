@@ -34,8 +34,9 @@
         <CharacterExp />
       </Card>
       {#if character().vigor}
-        <Card class="py-0 px-1 text-[11px] {character().vigor?.energy ? 'text-amber-300' : 'text-neutral-400'}">
-          ⚡ {character().vigor?.energy ?? 0}% {character().vigor?.energy ? '(+100% XP)' : ''}
+        {@const energy = character().vigor.energy}
+        <Card class="py-0 px-1 text-[11px] {energy ? 'text-amber-300' : 'text-neutral-400'}">
+          ⚡ {energy}% {energy > 75 ? '(+100% XP)' : energy === 0 ? '(-80%)' : ""}
         </Card>
       {/if}
     </div>

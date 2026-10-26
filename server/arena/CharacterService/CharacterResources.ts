@@ -1,5 +1,4 @@
-import type { ItemComponent } from '@fwo/shared';
-import { forEach } from 'es-toolkit/compat';
+import { entries, type ItemComponent } from '@fwo/shared';
 import type { CharacterService } from '@/arena/CharacterService/CharacterService';
 import ValidationError from '@/arena/errors/ValidationError';
 import type { Char } from '@/models/character';
@@ -10,7 +9,7 @@ export interface Resources {
   components: Partial<Record<ItemComponent, number>>;
   free: number;
   bonus: number;
-  skipVigor?: boolean;
+  vigor: number;
 }
 
 export class CharacterResources {
@@ -42,49 +41,39 @@ export class CharacterResources {
     return this.charObj.free;
   }
 
-  private addExp(
-    value: number,
-    skipVigor = false,
-  ): { leveledUp: boolean; oldLvl: number; newLvl: number; freeAdded: number } {
-    let effectiveExp = value;
+  get vigor() {
+    this.checkVigorReset();
+    return this.charObj.vigor;
+  }
 
-    if (!skipVigor && !this.character.isBot) {
-      const now = new Date();
-      if (!this.charObj.vigor) {
-        this.charObj.vigor = { energy: 100, lastResetDate: now };
-      } else {
-        const last = new Date(this.charObj.vigor.lastResetDate);
-        const isSameDay =
-          last.getUTCFullYear() === now.getUTCFullYear() &&
-          last.getUTCMonth() === now.getUTCMonth() &&
-          last.getUTCDate() === now.getUTCDate();
-        if (!isSameDay) {
-          this.charObj.vigor.energy = 100;
-          this.charObj.vigor.lastResetDate = now;
-        }
-      }
-
-      if (this.charObj.vigor.energy > 0) {
-        // Бонус бодрости: +100% опыта (2x) для коротких/активных сессий
-        effectiveExp = Math.round(value * 2);
-        this.charObj.vigor.energy = Math.max(0, this.charObj.vigor.energy - 10);
-      } else {
-        // Усталость / антибот: после исчерпания бодрости и превышения лимита
-        const dailyLimit = this.character.lvl * 20000;
-        if ((this.charObj.expLimit?.earn ?? 0) > dailyLimit) {
-          effectiveExp = Math.max(1, Math.round(value * 0.2)); // 80% штраф от непрерывного фарма
-        }
-      }
-
-      if (this.charObj.expLimit) {
-        this.charObj.expLimit.earn = (this.charObj.expLimit.earn ?? 0) + effectiveExp;
-      }
+  private checkVigorReset() {
+    if (!this.charObj.vigor) {
+      this.charObj.vigor = { energy: 100, lastResetDate: new Date() };
+      return;
     }
+    const last = new Date(this.charObj.vigor.lastResetDate);
+    const now = new Date();
+    const isSameDay =
+      last.getUTCFullYear() === now.getUTCFullYear() &&
+      last.getUTCMonth() === now.getUTCMonth() &&
+      last.getUTCDate() === now.getUTCDate();
 
+    if (!isSameDay) {
+      this.charObj.vigor.energy = 100;
+      this.charObj.vigor.lastResetDate = now;
+    }
+  }
+
+  private addExp(value: number): {
+    leveledUp: boolean;
+    oldLvl: number;
+    newLvl: number;
+    freeAdded: number;
+  } {
     const oldLvl = this.character.lvl;
 
-    this.charObj.bonus += Math.round(effectiveExp / 100);
-    this.charObj.exp += effectiveExp;
+    this.charObj.bonus += Math.round(value / 100);
+    this.charObj.exp += value;
 
     const newLvl = this.character.lvl;
     const lvlDifference = newLvl - oldLvl;
@@ -103,8 +92,8 @@ export class CharacterResources {
   }
 
   private addComponents(components: Partial<Record<ItemComponent, number>>) {
-    forEach(components, (value, key) => {
-      const oldValue = this.charObj.components.get(key) ?? 0;
+    entries(components).forEach(([key, value]) => {
+      const oldValue = this.charObj.components.getOrInsert(key, 0);
       this.charObj.components.set(key, oldValue + (value ?? 0));
     });
   }
@@ -121,10 +110,16 @@ export class CharacterResources {
     this.charObj.bonus += bonus;
   }
 
-  async addResources({ components, gold, exp, free, bonus, skipVigor }: Partial<Resources>) {
+  async addResources({ components, gold, exp, free, bonus, vigor }: Partial<Resources>) {
     let levelUpInfo:
       | { leveledUp: boolean; oldLvl: number; newLvl: number; freeAdded: number }
       | undefined;
+
+    if (vigor) {
+      this.checkVigorReset();
+      this.charObj.vigor.energy = Math.max(0, this.charObj.vigor.energy + vigor);
+      this.charObj.vigor.lastResetDate = new Date();
+    }
 
     if (components) {
       this.addComponents(components);
@@ -135,7 +130,7 @@ export class CharacterResources {
     }
 
     if (exp) {
-      levelUpInfo = this.addExp(exp, skipVigor);
+      levelUpInfo = this.addExp(exp);
     }
 
     if (free) {
@@ -201,7 +196,7 @@ export class CharacterResources {
 
   /** @throws {ValidationError} */
   private validateComponents(components: Partial<Record<ItemComponent, number>>) {
-    forEach(components, (value, key) => {
+    entries(components).forEach(([key, value]) => {
       if ((this.components.get(key) ?? 0) < (value ?? 0)) {
         throw new ValidationError('Недостаточно компонентов');
       }
