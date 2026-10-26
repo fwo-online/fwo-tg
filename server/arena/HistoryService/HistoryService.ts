@@ -17,6 +17,10 @@ type PlayerPerformance = Record<string, { damage: number; heal: number; abilitie
 export class HistoryService {
   private roundsHistoryMap = new Map<number, HistoryItem[]>();
 
+  get roundsCount() {
+    return this.roundsHistoryMap.size;
+  }
+
   getHistoryForRound(round: number) {
     return this.roundsHistoryMap.get(round) ?? [];
   }
