@@ -5,6 +5,7 @@ import {
   monstersClanName,
   reservedClanName,
 } from '@fwo/shared';
+import { sleep } from 'bun';
 import { Types } from 'mongoose';
 import { createGame as createGameApi } from '@/api/game';
 import arena from '@/arena';
@@ -129,6 +130,28 @@ ${Object.entries(resultsByClan)
         if (character) {
           await character.quests.updateQuestProgress(result);
           await character.performance.addGameStat(result);
+
+          if (!result.levelUp) {
+            return;
+          }
+
+          const { newLevel, freePoints } = result.levelUp;
+
+          // Личное сообщение
+          void sendLevelUpCongratulations(
+            result.player.owner,
+            result.player.name,
+            newLevel,
+            freePoints,
+          ).catch((e) => console.error('Failed to send personal level up message:', e));
+
+          // Сообщение в канал
+          void broadcastLevelUp(
+            result.player.name,
+            newLevel,
+            result.player.class,
+            result.player.clan?.name,
+          ).catch((e) => console.error('Failed to broadcast level up:', e));
         }
       });
 
@@ -136,48 +159,22 @@ ${Object.entries(resultsByClan)
     } catch (e) {
       console.error('Failed to updateQuestProgress or game stats:', e);
     }
-    // Отправка поздравлений с новым уровнем
-    const levelUpPromises = results
-      .filter((result) => result.levelUp)
-      .map(async (result) => {
-        if (!result.levelUp) return;
 
-        const { newLevel, freePoints } = result.levelUp;
+    await sleep(10000);
 
-        // Личное сообщение
-        await sendLevelUpCongratulations(
-          result.player.owner,
-          result.player.name,
-          newLevel,
-          freePoints,
-        ).catch((e) => console.error('Failed to send personal level up message:', e));
+    if (DonationHelper.shouldAnnounce()) {
+      const donators = await DonationHelper.getDonators();
 
-        // Сообщение в канал
-        await broadcastLevelUp(
-          result.player.name,
-          newLevel,
-          result.player.class,
-          result.player.clan?.name,
-        ).catch((e) => console.error('Failed to broadcast level up:', e));
-      });
-
-    await Promise.all(levelUpPromises);
-
-    setTimeout(async () => {
-      if (DonationHelper.shouldAnnounce()) {
-        const donators = await DonationHelper.getDonators();
-
-        if (donators.length) {
-          await broadcast.send(`${bold('Поддержавшие проект в этом месяце:')}
+      if (donators.length) {
+        await broadcast.send(`${bold('Поддержавшие проект в этом месяце:')}
   ${donators.map((donator) => `⭐ ${bold(donator.nickname)}`).join('\n')}
 
   Спасибо за поддержку!`);
-          DonationHelper.resetLastAnnouncement();
-        }
+        DonationHelper.resetLastAnnouncement();
       }
+    }
 
-      await broadcast.close();
-    }, 10000);
+    await broadcast.close();
   });
 
   return game.createGame(gameDoc);

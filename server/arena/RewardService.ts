@@ -96,6 +96,19 @@ export abstract class RewardService {
     });
   }
 
+  calculateExp(character: CharacterService, value: number) {
+    if (character.resources.vigor.energy > 75) {
+      // Бонус бодрости: +100% опыта (2x) для коротких/активных сессий
+      return Math.round(value * 2);
+    }
+    if (character.resources.vigor.energy === 0) {
+      // Усталость / антибот: после исчерпания бодрости и превышения лимита
+      return Math.max(1, Math.round(value * 0.2)); // 80% штраф от непрерывного фарма
+    }
+
+    return value;
+  }
+
   /**
    * Метод сохраняющий накопленную статистику игроков в базу и сharObj
    */
@@ -112,10 +125,13 @@ export abstract class RewardService {
         this.players.nonBotPlayers.map(async (player) => {
           const char = await CharacterService.getCharacterById(player.id);
 
+          const exp = this.calculateExp(char, player.stats.collect.exp);
+
           const levelUpInfo = await char.resources.addResources({
             gold: player.stats.collect.gold,
-            exp: player.stats.collect.exp,
+            exp,
             components: player.stats.collect.components,
+            vigor: -this.history.roundsCount,
           });
 
           if (levelUpInfo?.leveledUp) {
