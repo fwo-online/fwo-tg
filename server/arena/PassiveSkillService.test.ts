@@ -2,6 +2,7 @@ import { describe, expect, it } from 'bun:test';
 import { CharacterClass } from '@fwo/shared';
 import arena from '@/arena';
 import PassiveSkillService from '@/arena/PassiveSkillService';
+import BranchService from '@/arena/BranchService';
 import TestUtils from '@/utils/testUtils';
 
 describe('PassiveSkillService', () => {
@@ -13,6 +14,8 @@ describe('PassiveSkillService', () => {
     });
     const char = arena.characters[charDoc.id];
 
+    await expect(PassiveSkillService.learnPassiveSkill(char, 'ricochet')).rejects.toThrow('невыбранной');
+    await BranchService.selectBranch(char, 'marksman');
     await PassiveSkillService.learnPassiveSkill(char, 'ricochet');
     expect(char.passiveSkills.ricochet).toBe(1);
     expect(char.resources.bonus).toBe(90); // 100 - 10 (lvl 1 cost)
@@ -20,6 +23,19 @@ describe('PassiveSkillService', () => {
     await PassiveSkillService.learnPassiveSkill(char, 'criticalStrike');
     expect(char.passiveSkills.criticalStrike).toBe(1);
     expect(char.resources.bonus).toBe(80); // 90 - 10 (lvl 1 cost)
+  });
+
+  it('keeps shared weapon mastery branch-free and checks bonus', async () => {
+    const doc = await TestUtils.createCharacter({ prof: CharacterClass.Warrior, bonus: 30 });
+    const char = arena.characters[doc.id];
+    await PassiveSkillService.learnPassiveSkill(char, 'chopWeapon');
+    expect(char.charObj.passiveSkills.chopWeapon).toBe(1);
+    await expect(PassiveSkillService.learnPassiveSkill(char, 'chopWeapon')).rejects.toThrow('бонусов');
+    const archerDoc = await TestUtils.createCharacter({ prof: CharacterClass.Archer, bonus: 100 });
+    const archer = arena.characters[archerDoc.id];
+    await expect(PassiveSkillService.learnPassiveSkill(archer, 'fieldMedic')).rejects.toThrow('невыбранной');
+    await BranchService.selectBranch(archer, 'scout');
+    await PassiveSkillService.learnPassiveSkill(archer, 'fieldMedic');
   });
 
   it('should reject non-archer from learning archer-specific passive skills', async () => {

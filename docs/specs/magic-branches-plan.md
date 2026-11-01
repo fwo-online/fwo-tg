@@ -77,7 +77,7 @@
 
 ## 4. Правила выбора веток и прокачки (Вариант А)
 
-1. **Лимит веток**: Персонаж может иметь **максимум 2 активные ветки** (`magicBranches`).
+1. **Лимит веток**: Персонаж может иметь **максимум 2 активные ветки** (`branches`).
 2. **Слоты веток**:
    - **Слот 1 (Основная ветка)**: Доступен сразу (с 1-го уровня персонажа). Игрок выбирает одну из трех веток своего класса.
    - **Слот 2 (Вторая ветка)**: Открывается при достижении **5-го уровня персонажа** (на этом уровне персонажу становится доступен 3-й круг магии: `ceil(5/2) = 3`).
@@ -91,8 +91,8 @@
      - У персонажа хватает очков `bonus`: `character.bonus >= getLearnMagicCost(magic.lvl)`.
    - При подтверждении списываются очки `bonus`, уровень магии повышается на +1 со **100% шансом**.
 4. **Сброс веток (Респек)**:
-   - Игрок может нажать кнопку «Сбросить магии».
-   - Сброс очищает `magicBranches`, обнуляет `character.magics` и возвращает все потраченные очки `bonus` (за фиксированную плату золотом / арканитом).
+   - Кнопка «Сбросить магии» пока не опубликована.
+   - Сброс магий очищает магические записи в `branches`, обнуляет `character.magics` и возвращает потраченные очки `bonus`; физические ветки не затрагиваются. HTTP-сброс пока не включен.
 
 ---
 
@@ -144,12 +144,12 @@
 
 - Добавить в схему `Character` поле:
   ```typescript
-  magicBranches: {
+  branches: {
     type: [String],
     default: [],
   }
   ```
-- Обеспечить обратную совместимость для существующих персонажей: если персонаж уже имеет магии, при первом входе его ветки либо автоопределяются по изученным магам, либо дается бесплатный разовый респек.
+- Перед развертыванием на существующей базе выполнить `cd server && bun run migrate-branches`: одноразовая миграция переносит `magicBranches` в `branches` без постоянного слоя совместимости.
 
 ### 5.3. Серверная бизнес-логика (`server/arena/MagicService.ts`)
 
@@ -159,7 +159,7 @@
     - Проверка лимита: макс 2 ветки. Если выбирается 2-я — проверка уровня персонажа `>= SECOND_BRANCH_MIN_CHAR_LVL`.
   - `learnSpecificMagic(character: CharacterService, magicName: string)`:
     - Проверка наличия заклинания в `arena.magics`.
-    - Проверка принадлежности ветке из `character.magicBranches` (или подклассу для 8-го круга).
+    - Проверка принадлежности ветке из `character.branches` (или подклассу для 8-го круга).
     - Проверка `canLearnMagic(character.lvl, magic.lvl)`.
     - Проверка `(character.magics[magicName] ?? 0) < MAX_MAGIC_LVL`.
     - Списание `bonus` (`getLearnMagicCost(magic.lvl)`).
@@ -168,15 +168,15 @@
   - `resetMagics(character: CharacterService)`:
     - Подсчет всех потраченных очков `bonus`.
     - Очистка `character.magics = {}`.
-    - Очистка `character.magicBranches = []`.
+    - Очистка только магических записей в `character.branches`.
     - Возврат очков `bonus`.
 
 ### 5.4. HTTP API (`server/server/magic.ts`)
 
-- `POST /magic/branch` — выбор ветки (body: `{ branch: MagicBranchId }`).
+- `POST /branches` — выбор ветки (body: `{ branch: BranchKey }`).
 - `POST /magic/learn/:magicName` — изучение конкретного заклинания.
-- `POST /magic/reset` — сброс всех веток и магий с возвратом бонусов.
-- `GET /magic/branches` — статус веток персонажа (выбранные, доступные для выбора, заблокированные, прогресс).
+- `POST /magic/reset` — пока не опубликован; сброс магий и магических веток с возвратом бонусов.
+- `GET /branches` — статус веток персонажа (выбранные, доступные для выбора, заблокированные).
 
 ### 5.5. Клиентский интерфейс (`client/src/routes/(app)/character/magics/`)
 
@@ -201,13 +201,13 @@
 ## 6. Итоги реализации (Все этапы завершены)
 
 1. [x] **Шаг 1 (Shared + Models)**:
-   - В `@fwo/shared` добавлены типы `MageBranch`, `PriestBranch`, `MagicBranchId`, метаданные `MAGIC_BRANCHES`, лимиты `MAX_MAGIC_BRANCHES = 2`, `SECOND_BRANCH_MIN_CHAR_LVL = 5` и задел под 16 подклассов улучшения класса (`SUBCLASSES`).
-   - В схему `Character` (shared и mongoose) добавлено поле `magicBranches: string[]`.
+   - В `@fwo/shared` добавлены типы `MageBranch`, `PriestBranch`, `MagicBranchId`, метаданные `MAGIC_BRANCHES`, лимиты `MAX_BRANCHES = 2`, `SECOND_BRANCH_MIN_CHAR_LVL = 5` и задел под 16 подклассов улучшения класса (`SUBCLASSES`).
+   - В схему `Character` (shared и mongoose) добавлено поле `branches: BranchKey[]`.
    - В `Magic` добавлен массив `branches?: MagicBranchId[]`.
    - Поле `branches` добавлено напрямую в `MagicArgs` и в параметры всех 37 реализованных файлов магий в `server/arena/magics/`.
    - Полностью удален промежуточный словарь `MAGIC_TO_BRANCHES`: каждое заклинание самодостаточно декларирует свои специализации.
 2. [x] **Шаг 2 (Server Business Logic)**:
-   - В `CharacterService` добавлены геттер `magicBranches`, методы `setMagicBranches`, `resetMagics`, сохранение в базу и выгрузка клиенту.
+   - В `CharacterService` добавлены геттер `branches`, методы `setBranches`, `resetMagics`, сохранение в базу и выгрузка клиенту.
    - В `CharacterResources` добавлена поддержка добавления `bonus` для корректного 100% возврата очков при респеке.
    - В `MagicService` реализованы:
      - `selectBranch(character, branchId)` — выбор специализации с валидацией класса, лимита в 2 ветки и требования 5-го уровня для 2-го слота.

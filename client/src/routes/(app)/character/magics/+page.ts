@@ -5,7 +5,7 @@ export const load: PageLoad = async ({ depends }) => {
   depends('app:branches-info');
   const [magics, branchesInfo] = await Promise.all([
     createRequest(client.magic.$get)({ query: {} }),
-    createRequest(client.magic.branches.$get)({}),
+    createRequest(client.branches.$get)({}),
   ]);
 
   const branchMagicsEntries = branchesInfo.branches.map((branch) => {

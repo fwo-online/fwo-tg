@@ -25,8 +25,7 @@ export type MagicBranchMeta = BranchMeta & {
   prof: 'm' | 'p';
 };
 
-export const SECOND_BRANCH_MIN_CHAR_LVL = 10;
-export const MAX_MAGIC_BRANCHES = 2;
+export const SECOND_BRANCH_MIN_CHAR_LVL = 5;
 export const MAX_BRANCHES = 2;
 
 export const ARCHER_BRANCHES: Record<ArcherBranch, BranchMeta> = {

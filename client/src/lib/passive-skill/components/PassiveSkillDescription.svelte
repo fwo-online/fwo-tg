@@ -20,8 +20,13 @@
   const canAfford = $derived(
     nextCost !== undefined && character().bonus >= nextCost,
   );
+  const requiredLevel = $derived(skill.classList?.[character().class] ?? 0);
+  const isUnlocked = $derived(character().lvl >= requiredLevel);
+  const hasBranch = $derived(
+    !skill.branches?.length || skill.branches.some((branch) => character().branches.includes(branch)),
+  );
   const canLearn = $derived(
-    !isMaxLevel && canAfford && !learnPassiveSkill.pending,
+    !isMaxLevel && isUnlocked && hasBranch && canAfford && !learnPassiveSkill.pending,
   );
 </script>
 
@@ -43,6 +48,10 @@
       <Button class="flex-1" disabled>Умение нельзя изучить</Button>
     {:else if isMaxLevel}
       <Button class="flex-1" disabled>Максимальный уровень</Button>
+    {:else if !isUnlocked}
+      <Button class="flex-1" disabled>Откроется на уровне {requiredLevel}</Button>
+    {:else if !hasBranch}
+      <Button class="flex-1" disabled>Для улучшения выберите ветку умения</Button>
     {:else}
       <Button
         {@attach learnPassiveSkill.attach({ disabled: () => !canLearn }, skill)}

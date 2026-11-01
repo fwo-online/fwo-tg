@@ -49,7 +49,7 @@ describe('MagicService with branches', () => {
     it('should select first branch successfully', async () => {
       const result = await MagicService.selectBranch(mage, 'elements');
       expect(result.branches).toEqual(['elements']);
-      expect(mage.magicBranches).toEqual(['elements']);
+      expect(mage.branches).toEqual(['elements']);
     });
 
     it('should throw if branch belongs to another class', async () => {
@@ -63,24 +63,23 @@ describe('MagicService with branches', () => {
       expect(MagicService.selectBranch(mage, 'elements')).rejects.toThrow('Эта ветка уже выбрана');
     });
 
-    it('should throw if selecting second branch before level 10', async () => {
+    it('should throw if selecting second branch before level 5', async () => {
       await MagicService.selectBranch(mage, 'elements');
       // mage is lvl 1
       expect(mage.lvl).toBe(1);
       expect(MagicService.selectBranch(mage, 'darkness')).rejects.toThrow(
-        'Вторая ветка открывается на 10-м уровне персонажа',
+        'Вторая ветка открывается на 5-м уровне персонажа',
       );
     });
 
-    it('should allow selecting second branch at level 10+', async () => {
+    it('should allow selecting second branch at level 5+', async () => {
       await MagicService.selectBranch(mage, 'elements');
-      // Level up to 5: need 1000 * 3 * lvl
-      await mage.resources.addResources({ exp: 10000000 });
-      expect(mage.lvl).toBeGreaterThanOrEqual(10);
+      await mage.resources.addResources({ exp: 100000 });
+      expect(mage.lvl).toBeGreaterThanOrEqual(5);
 
       const result = await MagicService.selectBranch(mage, 'darkness');
       expect(result.branches).toEqual(['elements', 'darkness']);
-      expect(mage.magicBranches).toEqual(['elements', 'darkness']);
+      expect(mage.branches).toEqual(['elements', 'darkness']);
     });
 
     it('should throw if selecting third branch', async () => {
@@ -205,7 +204,7 @@ describe('MagicService with branches', () => {
       // 2 from magicArrow (lvl 2 * 1) + 1 from starter lightHeal (lvl 1 * 1) = 3
       expect(resetResult.refundedBonus).toBe(20);
       expect(mage.magics).toEqual({});
-      expect(mage.magicBranches).toEqual([]);
+      expect(mage.branches).toEqual([]);
       expect(mage.resources.bonus).toBe(initialBonus);
     });
   });

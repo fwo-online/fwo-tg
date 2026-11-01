@@ -1,6 +1,7 @@
 import type { PassiveSkill } from '@fwo/shared';
 import type { CharacterService } from './CharacterService';
 import ValidationError from './errors/ValidationError';
+import BranchService from './BranchService';
 import * as passiveSkills from './passiveSkills';
 import * as weaponMastery from './weaponMastery';
 
@@ -28,8 +29,15 @@ export default class PassiveSkillService {
       }
     }
 
+    if (!BranchService.hasSelectedBranch(char, passiveSkill)) {
+      throw new ValidationError('Умение принадлежит невыбранной ветке специализации');
+    }
+
     if (charPassiveSkillLvl + 1 > passiveSkill.bonusCost.length) {
       throw new ValidationError(`Умение ${passiveSkill.displayName} имеет максимальный уровень`);
+    }
+    if (passiveSkill.bonusCost[charPassiveSkillLvl] > char.resources.bonus) {
+      throw new ValidationError('Не хватает бонусов');
     }
     await char.resources.takeResources({ bonus: passiveSkill.bonusCost[charPassiveSkillLvl] });
 

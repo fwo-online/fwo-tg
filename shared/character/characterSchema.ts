@@ -4,6 +4,7 @@ import type { NotificationSettings } from '@/notifications/notificationSettingsS
 import type { Attributes } from '@/shared/attributes';
 import type { CharacterAttributes } from './characterAttributesSchema';
 import type { CharacterClass } from './characterClassSchema';
+import type { BranchKey } from '@/actions';
 
 export type Character = {
   id: string;
@@ -24,7 +25,7 @@ export type Character = {
     wins: number;
   };
   magics: Record<string, number>;
-  magicBranches?: string[];
+  branches: BranchKey[];
   skills: Record<string, number>;
   passiveSkills: Record<string, number>;
   attributes: CharacterAttributes;

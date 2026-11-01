@@ -3,12 +3,13 @@
     canLearnMagic,
     getLearnMagicCost,
     SECOND_BRANCH_MIN_CHAR_LVL,
+    type BranchKey,
   } from "@fwo/shared";
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
   import { getCharacterContext } from "$lib/constext/character";
   import { learnSpecificMagic } from "$lib/magic/utils/learn-specific-magic.svelte";
-  // import { resetMagics } from "$lib/magic/utils/reset-magics.svelte";
+
   import { selectBranch } from "$lib/magic/utils/select-branch.svelte";
   import type { PageProps } from "./$types";
 
@@ -18,17 +19,12 @@
   let mode = $state<"branches" | "learn">("learn");
 
   // Выбранная ветка для вкладки изучения
-  let activeLearnBranch = $state<string>(
-    data.branchesInfo.selectedBranches[0] ??
-      data.branchesInfo.branches[0]?.id ??
-      "",
+  let activeLearnBranch = $state<BranchKey | "">("");
+  const currentLearnBranch = $derived(
+    activeLearnBranch && data.branchesInfo.selectedBranches.includes(activeLearnBranch)
+      ? activeLearnBranch
+      : (data.branchesInfo.selectedBranches[0] ?? ""),
   );
-
-  $effect(() => {
-    if (!activeLearnBranch && data.branchesInfo.selectedBranches[0]) {
-      activeLearnBranch = data.branchesInfo.selectedBranches[0];
-    }
-  });
 
   const selectedBranchesCount = $derived(
     data.branchesInfo.selectedBranches.length,
@@ -127,17 +123,7 @@
           </div>
         </div>
 
-        <!-- <div class="mt-4 pt-2 border-t border-black/20 flex flex-col gap-2">
-          <Button
-            {@attach resetMagics.attach({
-              confirm:
-                "Сбросить все изученные магии и ветки специализации? Все потраченные бонусы 💡 вернутся на 100%!",
-            })}
-            class="is-error w-full text-xs! py-1!"
-          >
-            Сбросить магии и ветки
-          </Button>
-        </div> -->
+
       </div>
     </Card>
 
@@ -177,7 +163,7 @@
               <Button
                 class={[
                   "flex-1 text-xs! py-1! px-1!",
-                  { "is-primary": activeLearnBranch === branchId },
+                  { "is-primary": currentLearnBranch === branchId },
                 ]}
                 onclick={() => (activeLearnBranch = branchId)}
               >
@@ -188,7 +174,7 @@
           </div>
 
           <!-- Список заклинаний активной ветки -->
-          {@const spells = data.branchMagics[activeLearnBranch] ?? []}
+          {@const spells = data.branchMagics[currentLearnBranch] ?? []}
           <div class="flex flex-col gap-2 overflow-y-auto pr-1">
             {#each spells as spell (spell.name)}
               {@const currentRank = character().magics?.[spell.name] ?? 0}

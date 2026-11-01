@@ -4,7 +4,7 @@ import { popup } from '$lib/components/Popup/popup.svelte';
 import { createRequestRunner } from '$lib/utils/create-request.svelte';
 
 export const selectBranch = createRequestRunner(async (branch: string) => {
-  const result = await createRequest(client.magic.branch.$post)({
+  const result = await createRequest(client.branches.$post)({
     json: { branch },
   });
 
