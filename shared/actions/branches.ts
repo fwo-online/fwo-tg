@@ -118,6 +118,16 @@ export const PRIEST_BRANCHES: Record<PriestBranch, BranchMeta> = Object.freeze({
   },
 });
 
+export const MAGIC_BRANCHES: Record<MagicBranchId, BranchMeta> = Object.freeze({
+  ...MAGE_BRANCHES,
+  ...PRIEST_BRANCHES,
+});
+
+export const PHYSICAL_BRANCHES: Record<PhysicalBranchId, BranchMeta> = Object.freeze({
+  ...WARRIOR_BRANCHES,
+  ...ARCHER_BRANCHES,
+});
+
 export const BRANCHES: Record<BranchKey, BranchMeta> = Object.freeze({
   ...WARRIOR_BRANCHES,
   ...ARCHER_BRANCHES,

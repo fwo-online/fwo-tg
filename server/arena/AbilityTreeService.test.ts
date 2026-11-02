@@ -1,5 +1,11 @@
 import { beforeAll, describe, expect, it } from 'bun:test';
-import { BRANCHES, getAbilityState, MAX_MAGIC_LVL, SECOND_BRANCH_MIN_CHAR_LVL } from '@fwo/shared';
+import {
+  BRANCHES,
+  CharacterClass,
+  getAbilityState,
+  MAX_MAGIC_LVL,
+  SECOND_BRANCH_MIN_CHAR_LVL,
+} from '@fwo/shared';
 import arena from '@/arena';
 import AbilityTreeService from './AbilityTreeService';
 import BranchService from './BranchService';
@@ -36,21 +42,29 @@ const character = (
 };
 
 const allAbilities = (tree: ReturnType<typeof AbilityTreeService.getTree>) =>
-  tree.classes.flatMap((group) => group.branches.flatMap((branch) => branch.abilities));
+  Object.values(tree).flatMap((group) => group.branches.flatMap((branch) => branch.abilities));
 
 describe('read-only ability tree', () => {
   it('exposes all twelve branches grouped by class without changing the own-class catalog', () => {
     const mage = character('m');
     const tree = AbilityTreeService.getTree(mage);
-    expect(tree.classes.map((group) => group.prof)).toEqual(['w', 'l', 'm', 'p']);
-    expect(tree.classes.flatMap((group) => group.branches.map((branch) => branch.id))).toEqual(
-      Object.values(BRANCHES).map((branch) => branch.id),
+    expect(Object.values(tree).map((group) => group.class)).toEqual(Object.values(CharacterClass));
+    expect(
+      Object.values(tree).flatMap((group) => group.branches.map((branch) => branch.id)),
+    ).toEqual(
+      Object.values(CharacterClass).flatMap((characterClass) =>
+        Object.values(BRANCHES)
+          .filter((branch) => branch.class === characterClass)
+          .map((branch) => branch.id),
+      ),
     );
     expect(BranchService.getBranchesInfo(mage).branches).toHaveLength(3);
-    expect(tree.classes.find((group) => group.prof === 'm')?.branches[0]).toMatchObject({
+    expect(tree[CharacterClass.Mage]?.branches[0]).toMatchObject({
       id: 'elements',
     });
-    for (const group of tree.classes.filter((group) => group.prof !== 'm')) {
+    for (const group of Object.values(tree).filter(
+      (group) => group.class !== CharacterClass.Mage,
+    )) {
       expect(
         group.branches
           .flatMap((branch) => branch.abilities)
@@ -58,7 +72,7 @@ describe('read-only ability tree', () => {
       ).toBe(true);
     }
     expect(
-      tree.classes
+      Object.values(tree)
         .flatMap((group) => group.branches)
         .map((branch) => branch.abilities.length)
         .some(Boolean),
@@ -69,7 +83,7 @@ describe('read-only ability tree', () => {
     const mage = character('m', ['elements']);
     const before = JSON.stringify(mage);
     const tree = AbilityTreeService.getTree(mage);
-    const own = tree.classes.find((group) => group.prof === 'm');
+    const own = tree[CharacterClass.Mage];
     expect(own).toBeDefined();
     if (!own) throw new Error('Mage group missing');
     expect(
@@ -94,7 +108,7 @@ describe('read-only ability tree', () => {
     ]) {
       for (const branch of magic.branches ?? []) {
         expect(
-          tree.classes
+          Object.values(tree)
             .flatMap((group) => group.branches)
             .find((b) => b.id === branch)
             ?.abilities.some((a) => a.kind === 'magic' && a.name === magic.name),
@@ -107,19 +121,22 @@ describe('read-only ability tree', () => {
     ]) {
       for (const branch of skill.branches ?? []) {
         expect(
-          tree.classes
+          Object.values(tree)
             .flatMap((group) => group.branches)
             .find((b) => b.id === branch)
             ?.abilities.some((a) => a.kind === 'skill' && a.name === skill.name),
         ).toBe(true);
       }
     }
-    for (const passive of PassiveSkillService.getPassiveSkillList().filter(
-      (p) => p.bonusCost.length,
-    )) {
+    for (const passive of [
+      ...PassiveSkillService.getPassiveSkillListByClass(CharacterClass.Warrior),
+      ...PassiveSkillService.getPassiveSkillListByClass(CharacterClass.Archer),
+      ...PassiveSkillService.getPassiveSkillListByClass(CharacterClass.Mage),
+      ...PassiveSkillService.getPassiveSkillListByClass(CharacterClass.Priest),
+    ]) {
       for (const branch of passive.branches ?? []) {
         expect(
-          tree.classes
+          Object.values(tree)
             .flatMap((group) => group.branches)
             .find((b) => b.id === branch)
             ?.abilities.some((a) => a.kind === 'passive' && a.name === passive.name),
@@ -142,22 +159,20 @@ describe('read-only ability tree', () => {
 
   it('never offers foreign abilities and keeps shared spells within the owning branch class', () => {
     const tree = AbilityTreeService.getTree(character('m', ['elements'], 30));
-    const foreign = tree.classes.filter((group) => group.prof !== 'm');
+    const foreign = Object.values(tree).filter((group) => group.class !== CharacterClass.Mage);
     expect(
       foreign.every((group) =>
         group.branches.flatMap((b) => b.abilities).every((ability) => !ability.canLearn),
       ),
     ).toBe(true);
     expect(
-      tree.classes
-        .find((group) => group.prof === 'p')
-        ?.branches.flatMap((b) => b.abilities)
+      tree[CharacterClass.Priest]?.branches
+        .flatMap((b) => b.abilities)
         .find((a) => a.name === 'lightHeal')?.canLearn,
     ).toBe(false);
     expect(
-      tree.classes
-        .find((group) => group.prof === 'm')
-        ?.branches.flatMap((b) => b.abilities)
+      tree[CharacterClass.Mage]?.branches
+        .flatMap((b) => b.abilities)
         .find((a) => a.name === 'lightHeal')?.canLearn,
     ).toBe(false);
   });
@@ -165,9 +180,7 @@ describe('read-only ability tree', () => {
   it('unifies bonusCost, classList, rank, maxRank, nextCost, and requiredLevel across magic, skill, and passive', () => {
     const mage = character('m', ['elements'], 1, 15, { magicArrow: 1 });
     const tree = AbilityTreeService.getTree(mage);
-    const elements = tree.classes
-      .find((g) => g.prof === 'm')
-      ?.branches.find((b) => b.id === 'elements');
+    const elements = tree[CharacterClass.Mage]?.branches.find((b) => b.id === 'elements');
 
     const magicArrow = elements?.abilities.find((a) => a.name === 'magicArrow');
     expect(magicArrow).toBeDefined();

@@ -1,9 +1,10 @@
-import type {
-  BranchKey,
-  Character,
-  CharacterClass,
-  CharacterPublic,
-  ItemComponent,
+import {
+  type BranchKey,
+  type Character,
+  type CharacterClass,
+  type CharacterPublic,
+  type ItemComponent,
+  MAGIC_BRANCHES,
 } from '@fwo/shared';
 import type { UpdateQuery } from 'mongoose';
 import {
@@ -399,6 +400,13 @@ export class CharacterService {
 
   async setBranches(branches: BranchKey[]) {
     this.charObj.branches = branches;
+    await this.saveToDb();
+  }
+
+  async resetMagics() {
+    this.charObj.magics = {};
+    // Reset of spells must not discard physical specializations.
+    this.charObj.branches = this.branches.filter((branch) => !(branch in MAGIC_BRANCHES));
     await this.saveToDb();
   }
 

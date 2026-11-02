@@ -11,11 +11,12 @@
 | Ветки | `shared/actions/branches.ts` | Общие `BranchKey`, `MagicBranchId`, `BRANCHES`, `getBranchesByProf`, `MAX_BRANCHES`, `SECOND_BRANCH_MIN_CHAR_LVL` (магические и физические классы) |
 | Конструкторы заклинаний | `server/arena/Constuructors/` | `MagicConstructor` (хранит `branches: MagicBranchId[]`) и специализированные конструкторы |
 | Реализации заклинаний | `server/arena/magics/` | Заклинания объявляют специализации в `branches: [...]` |
-| Сервис веток | `server/arena/BranchService.ts` | `selectBranch`, `getBranchesInfo`, `toObject` (статус каждой ветки), `hasSelectedBranch` (проверка ветки при изучении физических умений) |
+| Сервис веток | `server/arena/BranchService.ts` | `selectBranch`, `getBranchesInfo` (метаданные веток класса), `hasSelectedBranch` (проверка ветки при изучении физических умений) |
+| Сервис дерева способностей | `server/arena/AbilityTreeService.ts` | `getTree` (единое дерево способностей всех классов: магии, скиллы, пассивки с расчетом рангов и цен), `getClassAbilities` |
 | Сервис магии | `server/arena/MagicService.ts` | `learnSpecificMagic`, `getBranchMagics`, `resetMagics` (сброс магических веток и возврат бонусов); выбор ветки здесь не выполняется |
 | Порядок ходов (стадии) | `server/arena/config.ts` | Массив `stages` (очередность исполнения действий в раунде) |
-| HTTP API | `server/server/branches.ts`, `server/server/magic.ts` | `GET/POST /branches`, `GET /magic`, `GET /magic/:id`, `POST /magic/learn/:name`; HTTP-сброс не опубликован |
-| Клиентский UI | `client/src/routes/(app)/character/magics/`, `client/src/lib/skill/components/BranchPicker.svelte` | «Ветки (N/2)» и «Изучение»; общий выбор веток используется также страницами активных и пассивных умений |
+| HTTP API | `server/server/branches.ts`, `server/server/magic.ts` | `GET/POST /branches`, `GET /branches/tree`, `GET /magic`, `GET /magic/:id`, `POST /magic/learn/:name`; HTTP-сброс не опубликован |
+| Клиентский UI | `client/src/routes/(app)/character/magics/`, `client/src/routes/(app)/character/abilities/`, `client/src/lib/skill/components/BranchPicker.svelte` | «Ветки (N/2)», «Изучение» и общий экран способностей с карточками `AbilityCard`, подсветкой рангов `RankedValues` и единым раннером `learnAbility` |
 
 ---
 
@@ -50,7 +51,7 @@
 | `2ma` | Маг   | Сильная аура      | `server/arena/magics/strongAura.ts`   | ✅ Реализована | Аура на себя, сильная физ. защита                             |
 | `2mb` | Маг   | Глюки             | `server/arena/magics/glitch.ts`       | ✅ Реализована | Атака случайного игрока                                       |
 | `2mc` | Маг   | Вампиризм         | `server/arena/magics/vampirism.ts`    | ✅ Реализована | В коде указан `lvl: 3`, но механика полностью готова          |
-| `2pa` | Жрец  | Средняя аура      | `server/arena/magics/mediumAura.ts`   | ✅ Реализована | В коде указан `lvl: 1, profList: ['m']` (расхождение конфига) |
+| `2pa` | Жрец  | Средняя аура      | `server/arena/magics/mediumAura.ts`   | ✅ Реализована | Мульти-школа: `arcana` (Маг) и `protection` (Опека Жреца); `profList: ['m', 'p']` |
 | `2pb` | Жрец  | Магическая защита | `server/arena/magics/magicDefense.ts` | ✅ Реализована | Шанс срыва враждебных заклинаний                              |
 | `2pc` | Жрец  | Среднее лечение   | `server/arena/magics/mediumHeal.ts`   | ✅ Реализована | Среднее исцеление                                             |
 | `2pd` | Жрец  | Снятие магии      | `server/arena/magics/dispel.ts`       | ✅ Реализована | В коде `displayName: 'Рассеивание'`; снимает длительные магии |
@@ -156,11 +157,15 @@
 
 `BranchService.selectBranch` отклоняет неизвестную/чужую классу ветку, повторный выбор, превышение лимита и вторую ветку до 10-го уровня; успешный выбор сохраняется через `character.setBranches`.
 
-**Контракт HTTP:** `GET /branches` возвращает только `{ branches: [...] }`: это ветки класса из `getBranchesByProf`, каждая с метаданными и `isSelected`, `canSelect`, `lockReason` (причина блокировки, когда применимо). Выбранные идентификаторы находятся в `character.branches`, а не в отдельном поле `selectedBranches` ответа. `POST /branches` принимает JSON `{ "branch": "elements" }` (идентификатор своей ветки) и возвращает `{ branches, selectedBranch }`. Эндпоинтов `/magic/branches`, `/magic/branch`, `/magic/branch/:branchId` нет.
+**Контракт HTTP:**
+- `GET /branches` возвращает `{ branches: [...] }`: чистый список метаданных веток текущего класса из `getBranchesByProf(character.prof)`. Состояние веток (`isSelected`, `lockReason`) вычисляется на клиенте на основе реактивного `character().branches`.
+- `POST /branches` валидирует `v.picklist(keys(BRANCHES))`, принимает `{ "branch": "elements" }` и возвращает `{ branches, selectedBranch }`.
+- `GET /branches/tree` — полное дерево способностей всех классов (`Record<CharacterClass, { class: CharacterClass, branches: Array<BranchMeta & { abilities: TreeAbility[] }> }>`), возвращаемое сервисом `AbilityTreeService.getTree(character)`. Каждая способность декорирована вычисленными свойствами `rank`, `maxRank`, `nextCost`, `requiredLevel`, `canLearn`, `lockReason`.
+- Эндпоинтов `/magic/branches`, `/magic/branch`, `/magic/branch/:branchId` нет.
 
-### 2. Целенаправленное изучение (`MagicService.learnSpecificMagic`)
+### 2. Целенаправленное изучение (`MagicService.learnSpecificMagic` / `learnAbility`)
 
-1. Игрок выбирает конкретное заклинание из доступных в активных ветках.
+1. Игрок выбирает конкретное заклинание из доступных в активных ветках (через экран `/character/magics` или объединенное дерево `/character/abilities`).
 2. Проверяется соответствие классу персонажа.
 3. Проверяется принадлежность заклинания хотя бы одной из активных веток персонажа (`magic.branches.some(...)`).
 4. Проверяется доступность круга магии по уровню персонажа (`canLearnMagic(character.lvl, magic.lvl)`).
@@ -168,7 +173,7 @@
 6. За каждое повышение ранга списывается `getLearnMagicCost(magic.lvl) = magic.lvl ** 2 * 10` бонусов (1-й круг: 10💡, 2-й: 40💡, 3-й: 90💡, 4-й: 160💡, 5-й: 250💡 и т.д.).
 7. Уровень заклинания повышается со **100% шансом** (без рандома и промахов).
 
-Клиент получает каталог через `GET /magic` (опционально `ids`), описание через `GET /magic/:id`, изучает через `POST /magic/learn/:name`. Каталог и списки по веткам формируются на странице из `GET /magic` и `GET /branches`; отдельного HTTP-метода для магий ветки нет.
+Клиент получает каталог через `GET /magic` (опционально `ids`), описание через `GET /magic/:id`, дерево через `GET /branches/tree`, изучает через `POST /magic/learn/:name` (напрямую или через клиентский хелпер `learnAbility`). Отдельного HTTP-метода для магий ветки нет.
 
 ### 3. Гибридные школы (мульти-школьные заклинания)
 
