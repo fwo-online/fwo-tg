@@ -10,14 +10,16 @@ import type { CharacterService } from './CharacterService';
 import ValidationError from './errors/ValidationError';
 
 export default class BranchService {
-  static async selectBranch(character: CharacterService, branchId: string) {
-    const branchMeta = BRANCHES[branchId as BranchKey];
-    if (!branchMeta) throw new ValidationError('Неизвестная ветка');
-    if (branchMeta.prof !== character.prof) {
+  static async selectBranch(character: CharacterService, branchKey: BranchKey) {
+    const branch = BRANCHES[branchKey];
+    if (!branch) {
+      throw new ValidationError('Неизвестная ветка');
+    }
+    if (branch.class !== character.prof) {
       throw new ValidationError('Эта ветка недоступна для вашего класса');
     }
     const selectedBranches = character.branches;
-    if (selectedBranches.includes(branchId as BranchKey)) {
+    if (selectedBranches.includes(branchKey)) {
       throw new ValidationError('Эта ветка уже выбрана');
     }
     if (selectedBranches.length >= MAX_BRANCHES) {
@@ -28,9 +30,9 @@ export default class BranchService {
         `Вторая ветка открывается на ${SECOND_BRANCH_MIN_CHAR_LVL}-м уровне персонажа`,
       );
     }
-    const branches = [...selectedBranches, branchMeta.id];
+    const branches = [...selectedBranches, branch.id];
     await character.setBranches(branches);
-    return { branches, selectedBranch: branchMeta };
+    return { branches, selectedBranch: branch };
   }
 
   static getBranchesInfo(character: CharacterService) {

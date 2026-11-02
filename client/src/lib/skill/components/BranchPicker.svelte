@@ -34,7 +34,7 @@
         {@const branchActions = actions.filter((action) => action.branches?.includes(branch.id))}
         {@const isSelected = character().branches.includes(branch.id)}
         {@const lockReason =
-          branch.prof !== character().class
+          branch.class !== character().class
             ? "Недоступно для вашего класса"
             : character().branches.length >= MAX_BRANCHES
               ? `Достигнут лимит специализаций (${MAX_BRANCHES} ветки)`

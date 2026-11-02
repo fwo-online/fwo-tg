@@ -1,8 +1,6 @@
 import type { CharacterClass } from '@/character';
 import { type BranchKey, getAbilityBranches, hasSelectedBranchForProf } from './branches';
 
-export * from './branches';
-
 export const MAX_MAGIC_LVL = 3;
 
 export interface BaseAbility {
@@ -177,3 +175,5 @@ export function getAbilityState(
     lockReason,
   };
 }
+
+export * from './branches';

@@ -1,3 +1,4 @@
+import { BRANCHES, keys } from '@fwo/shared';
 import { vValidator } from '@hono/valibot-validator';
 import { Hono } from 'hono';
 import * as v from 'valibot';
@@ -13,11 +14,13 @@ export const branches = new Hono()
   .get('/', (c) => c.json(BranchService.getBranchesInfo(c.get('character'))))
   .post(
     '/',
-    vValidator('json', v.object({ branch: v.string() }), handleValidationError),
+    vValidator('json', v.object({ branch: v.picklist(keys(BRANCHES)) }), handleValidationError),
     async (c) => {
-      const result = await withValidation(
-        BranchService.selectBranch(c.get('character'), c.req.valid('json').branch),
-      );
+      const { branch } = c.req.valid('json');
+      const character = c.get('character');
+
+      const result = await withValidation(BranchService.selectBranch(character, branch));
+
       return c.json(result);
     },
   );

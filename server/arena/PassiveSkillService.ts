@@ -1,7 +1,7 @@
-import type { PassiveSkill } from '@fwo/shared';
+import type { CharacterClass, PassiveSkill } from '@fwo/shared';
+import BranchService from './BranchService';
 import type { CharacterService } from './CharacterService';
 import ValidationError from './errors/ValidationError';
-import BranchService from './BranchService';
 import * as passiveSkills from './passiveSkills';
 import * as weaponMastery from './weaponMastery';
 
@@ -60,7 +60,9 @@ export default class PassiveSkillService {
     return id in this.passiveSkills;
   }
 
-  static toObject(passiveSkill: (typeof this.passiveSkills)[keyof typeof this.passiveSkills]): PassiveSkill {
+  static toObject(
+    passiveSkill: (typeof this.passiveSkills)[keyof typeof this.passiveSkills],
+  ): PassiveSkill {
     return {
       name: passiveSkill.name,
       displayName: passiveSkill.displayName,
@@ -86,5 +88,12 @@ export default class PassiveSkillService {
     return ids
       .filter((id) => !hiddenFromCatalog.has(id as PassiveSkillNames))
       .map(PassiveSkillService.getPassiveSkillById);
+  }
+
+  static getPassiveSkillListByClass(characterClass: CharacterClass) {
+    return PassiveSkillService.getPassiveSkillList().filter(
+      (passiveSkill) =>
+        passiveSkill.bonusCost.length > 0 && (passiveSkill.classList?.[characterClass] ?? 0) > 0,
+    );
   }
 }

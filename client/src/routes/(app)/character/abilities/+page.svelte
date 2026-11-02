@@ -1,5 +1,6 @@
 <script lang="ts">
   import {
+    CharacterClass,
     getAbilityState,
     MAX_BRANCHES,
     SECOND_BRANCH_MIN_CHAR_LVL,
@@ -18,9 +19,7 @@
 
   let currentProf = $derived(character().class);
 
-  const currentClassGroup = $derived(
-    data.tree.classes.find((group) => group.prof === currentProf) ?? data.tree.classes[0],
-  );
+  const currentClassGroup = $derived(data.tree[currentProf]);
 
   let selectedBranch = $derived(
     currentClassGroup.branches.find((b) => character().branches.includes(b.id)) || currentClassGroup.branches[0]
@@ -28,7 +27,7 @@
 
   const isBranchSelected = $derived(character().branches.includes(selectedBranch.id));
   const branchLockReason = $derived.by(() => {
-    if (selectedBranch.prof !== character().class) {
+    if (selectedBranch.class !== character().class) {
       return 'Недоступно для вашего класса';
     }
     if (character().branches.length >= MAX_BRANCHES) {
@@ -45,17 +44,17 @@
 <div class="h-full flex flex-col gap-1.5 min-h-0">
   <!-- Табы классов -->
   <div class="grid grid-cols-4 gap-1" role="tablist" aria-label="Классы">
-    {#each data.tree.classes as group (group.prof)}
+    {#each Object.values(CharacterClass) as characterClass (characterClass)}
       <Button
         class={[
           'text-xs! py-1! px-1! truncate',
-          { 'is-primary': currentProf === group.prof },
+          { 'is-primary': currentProf === characterClass },
         ]}
         onclick={() => {
-          currentProf = group.prof;
+          currentProf = characterClass;
         }}
       >
-        {characterClassNameMap[group.prof]}{group.prof !== character().class ? ' 🔒' : ''}
+        {characterClassNameMap[characterClass]}{characterClass !== character().class ? ' 🔒' : ''}
       </Button>
     {/each}
   </div>

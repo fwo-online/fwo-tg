@@ -1,4 +1,4 @@
-import type { CharacterClass } from '@/character';
+import { CharacterClass } from '@/character/characterClassSchema';
 
 export type WarriorBranch = 'guardian' | 'berserker' | 'duelist';
 export type ArcherBranch = 'marksman' | 'barrage' | 'scout';
@@ -16,134 +16,120 @@ export interface BranchMeta {
   name: string;
   description: string;
   icon: string;
-  prof: CharacterClass | `${CharacterClass}`;
-  archetype?: Archetype;
+  class: CharacterClass;
 }
-
-export type MagicBranchMeta = BranchMeta & {
-  id: MagicBranchId;
-  prof: 'm' | 'p';
-};
 
 export const SECOND_BRANCH_MIN_CHAR_LVL = 10;
 export const MAX_BRANCHES = 2;
 
-export const ARCHER_BRANCHES: Record<ArcherBranch, BranchMeta> = {
+export const ARCHER_BRANCHES: Record<ArcherBranch, BranchMeta> = Object.freeze({
   marksman: {
     id: 'marksman',
     name: 'Снайпер',
     description: 'Прицельные выстрелы, пробитие брони и щитов, выстрел в колено и метка охотника',
     icon: '🎯',
-    prof: 'l',
-    archetype: 'physical',
+    class: CharacterClass.Archer,
   },
   barrage: {
     id: 'barrage',
     name: 'Шквал',
     description: 'Залпы стрел, стихийный урон (огонь и яд), рикошеты и боевой кураж',
     icon: '🏹',
-    prof: 'l',
-    archetype: 'physical',
+    class: CharacterClass.Archer,
   },
   scout: {
     id: 'scout',
     name: 'Следопыт',
     description: 'Ловкость, уклонение, подножка, полевая медицина и выживаемость',
     icon: '🏃',
-    prof: 'l',
-    archetype: 'physical',
+    class: CharacterClass.Archer,
   },
-};
+});
 
-export const WARRIOR_BRANCHES: Record<WarriorBranch, BranchMeta> = {
+export const WARRIOR_BRANCHES: Record<WarriorBranch, BranchMeta> = Object.freeze({
   guardian: {
     id: 'guardian',
     name: 'Оплот',
     description: 'Глухая оборона, щиты, броня и защита соратников',
     icon: '🛡️',
-    prof: 'w',
-    archetype: 'physical',
+    class: CharacterClass.Warrior,
   },
   berserker: {
     id: 'berserker',
     name: 'Ярость',
     description: 'Сокрушительный урон, ярость, кливы и жертва здоровьем',
     icon: '🪓',
-    prof: 'w',
-    archetype: 'physical',
+    class: CharacterClass.Warrior,
   },
   duelist: {
     id: 'duelist',
     name: 'Дуэлянт',
     description: 'Мастерское фехтование, парирование, обезоруживание и яды',
     icon: '🗡️',
-    prof: 'w',
-    archetype: 'physical',
+    class: CharacterClass.Warrior,
   },
-};
+});
 
-export const MAGIC_BRANCHES: Record<MagicBranchId, MagicBranchMeta> = {
+export const MAGE_BRANCHES: Record<MageBranch, BranchMeta> = Object.freeze({
   elements: {
     id: 'elements',
     name: 'Стихии',
     description: 'Прямой и массовый урон огнем, холодом и молнией',
     icon: '⚡',
-    prof: 'm',
-    archetype: 'magical',
+    class: CharacterClass.Mage,
   },
   darkness: {
     id: 'darkness',
     name: 'Тьма',
     description: 'Яды, кислоты, вампиризм, истощение здоровья и некромантия',
     icon: '💀',
-    prof: 'm',
-    archetype: 'magical',
+    class: CharacterClass.Mage,
   },
   arcana: {
     id: 'arcana',
     name: 'Искажение',
     description: 'Защитные ауры, щиты, иллюзии и контроль разума (сон, сайленс, безумие)',
     icon: '🔮',
-    prof: 'm',
-    archetype: 'magical',
+    class: CharacterClass.Mage,
   },
+});
+
+export const PRIEST_BRANCHES: Record<PriestBranch, BranchMeta> = Object.freeze({
   holy: {
     id: 'holy',
     name: 'Свет',
     description: 'Прямое и групповое исцеление, регенерация и воскрешение',
     icon: '✨',
-    prof: 'p',
-    archetype: 'magical',
+    class: CharacterClass.Priest,
   },
   protection: {
     id: 'protection',
     name: 'Опека',
     description: 'Благословения, каменная кожа, защитные барьеры и очищение союзников',
     icon: '🛡️',
-    prof: 'p',
-    archetype: 'magical',
+    class: CharacterClass.Priest,
   },
   inquisition: {
     id: 'inquisition',
     name: 'Инквизиция',
     description: 'Проклятия, паралич, развеивание баффов, сжигание маны и карающий урон',
     icon: '⚖️',
-    prof: 'p',
-    archetype: 'magical',
+    class: CharacterClass.Priest,
   },
-};
+});
 
-export const BRANCHES: Record<BranchKey, BranchMeta> = {
+export const BRANCHES: Record<BranchKey, BranchMeta> = Object.freeze({
   ...WARRIOR_BRANCHES,
   ...ARCHER_BRANCHES,
-  ...MAGIC_BRANCHES,
-};
+  ...MAGE_BRANCHES,
+  ...PRIEST_BRANCHES,
+});
 
 /**
  * Получить список всех веток для класса
  */
 export function getBranchesByProf(prof: CharacterClass | string): BranchMeta[] {
-  return Object.values(BRANCHES).filter((branch) => branch.prof === prof);
+  return Object.values(BRANCHES).filter((branch) => branch.class === prof);
 }
 
 /**
@@ -180,6 +166,6 @@ export function hasSelectedBranchForProf(
   const branches = getAbilityBranches(action);
   return (
     branches.length === 0 ||
-    branches.some((branch) => BRANCHES[branch].prof === prof && selectedBranches.includes(branch))
+    branches.some((branch) => BRANCHES[branch].class === prof && selectedBranches.includes(branch))
   );
 }
