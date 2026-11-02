@@ -1,13 +1,20 @@
-import type { Character, CharacterClass, CharacterPublic, ItemComponent } from '@fwo/shared';
+import {
+  type BranchKey,
+  type Character,
+  type CharacterClass,
+  type CharacterPublic,
+  type ItemComponent,
+  MAGIC_BRANCHES,
+} from '@fwo/shared';
 import type { UpdateQuery } from 'mongoose';
 import {
+  activateAnyCharacter,
+  activateCharacter,
+  deactivateOtherCharacters,
   findCharacter,
   findCharacters,
   removeCharacter,
   updateCharacter,
-  deactivateOtherCharacters,
-  activateCharacter,
-  activateAnyCharacter,
 } from '@/api/character';
 import arena from '@/arena';
 import { CharacterAttributes } from '@/arena/CharacterService/CharacterAttributes';
@@ -104,8 +111,8 @@ export class CharacterService {
     return Object.freeze(this.charObj.magics);
   }
 
-  get magicBranches(): string[] {
-    return this.charObj.magicBranches ?? [];
+  get branches(): BranchKey[] {
+    return this.charObj.branches ?? [];
   }
 
   get skills() {
@@ -391,14 +398,15 @@ export class CharacterService {
     await this.saveToDb();
   }
 
-  async setMagicBranches(branches: string[]) {
-    this.charObj.magicBranches = branches;
+  async setBranches(branches: BranchKey[]) {
+    this.charObj.branches = branches;
     await this.saveToDb();
   }
 
   async resetMagics() {
     this.charObj.magics = {};
-    this.charObj.magicBranches = [];
+    // Reset of spells must not discard physical specializations.
+    this.charObj.branches = this.branches.filter((branch) => !(branch in MAGIC_BRANCHES));
     await this.saveToDb();
   }
 
@@ -457,7 +465,7 @@ export class CharacterService {
         gold,
         exp,
         magics: this.charObj.magics,
-        magicBranches: this.charObj.magicBranches,
+        branches: this.charObj.branches,
         bonus,
         skills: this.charObj.skills,
         clan,
@@ -528,7 +536,7 @@ export class CharacterService {
       class: this.prof as CharacterClass,
       attributes: this.attributes.attributes,
       magics: this.magics,
-      magicBranches: this.magicBranches,
+      branches: this.branches,
       skills: this.skills,
       passiveSkills: this.passiveSkills,
       clan: this.clan ? ClanService.toPublicObject(this.clan) : undefined,

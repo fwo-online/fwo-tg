@@ -1,10 +1,11 @@
+import type { BranchKey } from '@fwo/shared';
 import { invalidate } from '$app/navigation';
 import { client, createRequest } from '$lib/api';
 import { popup } from '$lib/components/Popup/popup.svelte';
 import { createRequestRunner } from '$lib/utils/create-request.svelte';
 
-export const selectBranch = createRequestRunner(async (branch: string) => {
-  const result = await createRequest(client.magic.branch.$post)({
+export const selectBranch = createRequestRunner(async (branch: BranchKey) => {
+  const result = await createRequest(client.branches.$post)({
     json: { branch },
   });
 

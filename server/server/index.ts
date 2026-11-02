@@ -6,6 +6,7 @@ import { ladder } from '@/server/ladder';
 import { market } from '@/server/market';
 import { serviceShop } from '@/server/serviceShop';
 import { achievements } from './achievement';
+import { branches } from './branches';
 import { character } from './character';
 import { clan } from './clan';
 import { contracts } from './contracts';
@@ -24,6 +25,7 @@ export const app = new Hono()
   .route('/inventory', inventory)
   .route('/shop', shop)
   .route('/magic', magic)
+  .route('/branches', branches)
   .route('/skill', skill)
   .route('/clan', clan)
   .route('/passiveSkill', passiveSkill)
@@ -31,7 +33,7 @@ export const app = new Hono()
   .route('/ladder', ladder)
   .route('/market', market)
   .route('/contracts', contracts)
-  .route('/achievements', achievements)
+  .route('/achievements', achievements);
 
 export default app;
 

@@ -6,15 +6,17 @@
 
 ## Архитектура и файлы
 
-| Слой / Компонент        | Путь                                        | Назначение                                                                                                                                                                            |
-| ----------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Ветки и подклассы       | `shared/actions/branches.ts`                | Типы `MagicBranchId`, метаданные `MAGIC_BRANCHES`, лимиты, 16 подклассов улучшения класса                                                                                             |
-| Конструкторы заклинаний | `server/arena/Constuructors/`               | `MagicConstructor` (хранит `branches: MagicBranchId[]`), `CommonMagicConstructor`, `DmgMagicConstructor`, `AoeDmgMagicConstructor`, `LongMagicConstructor`, `LongDmgMagicConstructor` |
-| Реализации заклинаний   | `server/arena/magics/`                      | 37 файлов заклинаний. Каждое заклинание само объявляет свои специализации в параметрах `branches: [...]`                                                                              |
-| Сервис магии            | `server/arena/MagicService.ts`              | Выбор специализаций (`selectBranch`), целевое изучение (`learnSpecificMagic`), респек со 100% возвратом бонусов (`resetMagics`), фильтрация по активным веткам                        |
-| Порядок ходов (стадии)  | `server/arena/config.ts`                    | Массив `stages` (определяет очередность исполнения действий в раунде)                                                                                                                 |
-| HTTP API                | `server/server/magic.ts`                    | Эндпоинты `/magic/branches`, `/magic/branch`, `/magic/learn/:name`, `/magic/reset`, `/magic/branch/:branchId`                                                                         |
-| Клиентский UI           | `client/src/routes/(app)/character/magics/` | Вкладки «Магии», «Ветки (N/2)», «Изучение» с выбором специализаций, прокачкой заклинаний до 3 ранга и бейджами гибридных магий                                                        |
+| Слой / Компонент | Путь | Назначение |
+| --- | --- | --- |
+| Ветки | `shared/actions/branches.ts` | Общие `BranchKey`, `MagicBranchId`, `BRANCHES`, `getBranchesByProf`, `MAX_BRANCHES`, `SECOND_BRANCH_MIN_CHAR_LVL` (магические и физические классы) |
+| Конструкторы заклинаний | `server/arena/Constuructors/` | `MagicConstructor` (хранит `branches: MagicBranchId[]`) и специализированные конструкторы |
+| Реализации заклинаний | `server/arena/magics/` | Заклинания объявляют специализации в `branches: [...]` |
+| Сервис веток | `server/arena/BranchService.ts` | `selectBranch`, `getBranchesInfo` (метаданные веток класса), `hasSelectedBranch` (проверка ветки при изучении физических умений) |
+| Сервис дерева способностей | `server/arena/AbilityTreeService.ts` | `getTree` (единое дерево способностей всех классов: магии, скиллы, пассивки с расчетом рангов и цен), `getClassAbilities` |
+| Сервис магии | `server/arena/MagicService.ts` | `learnSpecificMagic`, `getBranchMagics`, `resetMagics` (сброс магических веток и возврат бонусов); выбор ветки здесь не выполняется |
+| Порядок ходов (стадии) | `server/arena/config.ts` | Массив `stages` (очередность исполнения действий в раунде) |
+| HTTP API | `server/server/branches.ts`, `server/server/magic.ts` | `GET/POST /branches`, `GET /branches/tree`, `GET /magic`, `GET /magic/:id`, `POST /magic/learn/:name`; HTTP-сброс не опубликован |
+| Клиентский UI | `client/src/routes/(app)/character/magics/`, `client/src/routes/(app)/character/abilities/`, `client/src/lib/skill/components/BranchPicker.svelte` | «Ветки (N/2)», «Изучение» и общий экран способностей с карточками `AbilityCard`, подсветкой рангов `RankedValues` и единым раннером `learnAbility` |
 
 ---
 
@@ -49,7 +51,7 @@
 | `2ma` | Маг   | Сильная аура      | `server/arena/magics/strongAura.ts`   | ✅ Реализована | Аура на себя, сильная физ. защита                             |
 | `2mb` | Маг   | Глюки             | `server/arena/magics/glitch.ts`       | ✅ Реализована | Атака случайного игрока                                       |
 | `2mc` | Маг   | Вампиризм         | `server/arena/magics/vampirism.ts`    | ✅ Реализована | В коде указан `lvl: 3`, но механика полностью готова          |
-| `2pa` | Жрец  | Средняя аура      | `server/arena/magics/mediumAura.ts`   | ✅ Реализована | В коде указан `lvl: 1, profList: ['m']` (расхождение конфига) |
+| `2pa` | Жрец  | Средняя аура      | `server/arena/magics/mediumAura.ts`   | ✅ Реализована | Мульти-школа: `arcana` (Маг) и `protection` (Опека Жреца); `profList: ['m', 'p']` |
 | `2pb` | Жрец  | Магическая защита | `server/arena/magics/magicDefense.ts` | ✅ Реализована | Шанс срыва враждебных заклинаний                              |
 | `2pc` | Жрец  | Среднее лечение   | `server/arena/magics/mediumHeal.ts`   | ✅ Реализована | Среднее исцеление                                             |
 | `2pd` | Жрец  | Снятие магии      | `server/arena/magics/dispel.ts`       | ✅ Реализована | В коде `displayName: 'Рассеивание'`; снимает длительные магии |
@@ -121,7 +123,7 @@
 
 ### Круг 8 (Истинная магия подклассов)
 
-Доступна для комбинаций соответствующих классов (двойных классов при улучшении класса). Полная документация по подклассам и навыкам: [`docs/agents/subclasses.md`](subclasses.md).
+Проект для двойных классов при улучшении класса; заклинания 8-го круга пока не реализованы и не доступны для изучения. Полная документация по подклассам и навыкам: [`docs/agents/subclasses.md`](subclasses.md).
 
 | Код    | Подкласс     | Комбинация            | Заклинание      | Файл | Статус            | Механика / Описание                                                                         |
 | ------ | ------------ | --------------------- | --------------- | ---- | ----------------- | ------------------------------------------------------------------------------------------- |
@@ -150,18 +152,28 @@
   - **Маг**: Стихии (`elements`), Тьма (`darkness`), Искажение/Аркана (`arcana`).
   - **Жрец**: Свет (`holy`), Опека (`protection`), Инквизиция (`inquisition`).
 - **Слот 1**: Доступен с 1-го уровня персонажа.
-- **Слот 2**: Открывается при достижении 5-го уровня персонажа (`SECOND_BRANCH_MIN_CHAR_LVL = 5`).
-- **Лимит**: Максимум 2 активные ветки на персонажа (`MAX_MAGIC_BRANCHES = 2`). Третья ветка блокируется.
+- **Слот 2**: Открывается при достижении 10-го уровня персонажа (`SECOND_BRANCH_MIN_CHAR_LVL = 10`); лимит и слоты общие с физическими ветками в `character.branches`.
+- **Лимит**: Максимум 2 активные ветки на персонажа (`MAX_BRANCHES = 2`). Третья ветка блокируется.
 
-### 2. Целенаправленное изучение (`MagicService.learnSpecificMagic`)
+`BranchService.selectBranch` отклоняет неизвестную/чужую классу ветку, повторный выбор, превышение лимита и вторую ветку до 10-го уровня; успешный выбор сохраняется через `character.setBranches`.
 
-1. Игрок выбирает конкретное заклинание из доступных в активных ветках.
+**Контракт HTTP:**
+- `GET /branches` возвращает `{ branches: [...] }`: чистый список метаданных веток текущего класса из `getBranchesByProf(character.prof)`. Состояние веток (`isSelected`, `lockReason`) вычисляется на клиенте на основе реактивного `character().branches`.
+- `POST /branches` валидирует `v.picklist(keys(BRANCHES))`, принимает `{ "branch": "elements" }` и возвращает `{ branches, selectedBranch }`.
+- `GET /branches/tree` — полное дерево способностей всех классов (`Record<CharacterClass, { class: CharacterClass, branches: Array<BranchMeta & { abilities: TreeAbility[] }> }>`), возвращаемое сервисом `AbilityTreeService.getTree(character)`. Каждая способность декорирована вычисленными свойствами `rank`, `maxRank`, `nextCost`, `requiredLevel`, `canLearn`, `lockReason`.
+- Эндпоинтов `/magic/branches`, `/magic/branch`, `/magic/branch/:branchId` нет.
+
+### 2. Целенаправленное изучение (`MagicService.learnSpecificMagic` / `learnAbility`)
+
+1. Игрок выбирает конкретное заклинание из доступных в активных ветках (через экран `/character/magics` или объединенное дерево `/character/abilities`).
 2. Проверяется соответствие классу персонажа.
 3. Проверяется принадлежность заклинания хотя бы одной из активных веток персонажа (`magic.branches.some(...)`).
 4. Проверяется доступность круга магии по уровню персонажа (`canLearnMagic(character.lvl, magic.lvl)`).
 5. Проверяется лимит развития заклинания (`MAX_MAGIC_LVL = 3`).
-6. Списываются очки бонусов: `cost = lvl ** 2 * 10` (1-й круг: 10💡, 2-й: 40💡, 3-й: 90💡, 4-й: 160💡, 5-й: 250💡 и т.д.).
+6. За каждое повышение ранга списывается `getLearnMagicCost(magic.lvl) = magic.lvl ** 2 * 10` бонусов (1-й круг: 10💡, 2-й: 40💡, 3-й: 90💡, 4-й: 160💡, 5-й: 250💡 и т.д.).
 7. Уровень заклинания повышается со **100% шансом** (без рандома и промахов).
+
+Клиент получает каталог через `GET /magic` (опционально `ids`), описание через `GET /magic/:id`, дерево через `GET /branches/tree`, изучает через `POST /magic/learn/:name` (напрямую или через клиентский хелпер `learnAbility`). Отдельного HTTP-метода для магий ветки нет.
 
 ### 3. Гибридные школы (мульти-школьные заклинания)
 
@@ -185,11 +197,6 @@
 ### 4. Сброс магий (Респек — `MagicService.resetMagics`)
 
 - Очищает изученные заклинания (`character.magics = {}`).
-- Очищает выбранные специализации (`character.magicBranches = []`).
-- Производит 100% возврат всех потраченных бонусов:
-  `refundBonus = sum(lvl ** 2 * rank)`.
-- Позволяет игроку свободно перераспределить специализации и заклинания.
-
-### 5. Обратная совместимость (`MagicService.learnMagic`)
-
-Случайное изучение круга сохранено для совместимости, но учитывает выбранные ветки персонажа (если ветки выбраны, фильтрует случайный пул только заклинаниями активных веток).
+- Очищает магические специализации из `character.branches`, сохраняя физические ветки (HTTP-сброс пока не опубликован).
+- Возвращает бонусы за известные изученные заклинания: `refundBonus = sum(getLearnMagicCost(круг) * ранг)`.
+- Метод существует на сервере, но `POST /magic/reset` и кнопка сброса на клиенте отсутствуют. Случайного изучения через `MagicService.learnMagic` тоже нет; `CharacterService.learnMagic` — запись уже выбранного заклинания и ранга.

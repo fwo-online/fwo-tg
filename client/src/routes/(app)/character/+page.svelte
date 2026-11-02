@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { isArcher, isWarrior } from "@fwo/shared";
   import characterBackground from "$lib/assets/images/characterBackground.png";
   import CharacterExp from "$lib/character/components/CharacterExp.svelte";
   import CharacterImage from "$lib/character/components/CharacterImage.svelte";
@@ -52,16 +51,10 @@
         Характеристики
       </Button>
 
-      {#if isArcher(character()) || isWarrior(character())}
-        <Button class="flex-1" href="#/character/skills">Умения</Button>
-      {:else}
-        <Button class="flex-1" href="#/character/magics">Магии</Button>
-      {/if}
+      <Button class="flex-1" href="#/character/abilities">Способности</Button>
     </div>
 
     <Button href="#/character/achievements">🏆 Достижения и титулы</Button>
-
-    <Button href="#/character/passiveSkills">Пассивные навыки</Button>
 
     <Button href="#/character/inventory">Инвентарь</Button>
     {#if character().clan}
