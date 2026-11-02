@@ -1,15 +1,142 @@
-import { describe, expect, it } from 'bun:test';
-import { CharacterClass } from '@fwo/shared';
+import { beforeEach, describe, expect, it } from 'bun:test';
+import { BRANCHES, CharacterClass } from '@fwo/shared';
 import arena from '@/arena';
+import type { CharacterService } from './CharacterService/CharacterService';
 import TestUtils from '@/utils/testUtils';
 import BranchService from './BranchService';
 import MagicService from './MagicService';
 
 describe('BranchService', () => {
+  it('owns branch selection without a MagicService forwarding method', () => {
+    expect(Object.hasOwn(MagicService, 'selectBranch')).toBe(false);
+  });
+
+  describe('selectBranch for mage', () => {
+    let mage: CharacterService;
+
+    beforeEach(async () => {
+      const doc = await TestUtils.createCharacter({ prof: CharacterClass.Mage });
+      mage = arena.characters[doc.id];
+    });
+
+    it('selects a first branch', async () => {
+      const result = await BranchService.selectBranch(mage, 'elements');
+      expect(result.branches).toEqual(['elements']);
+      expect(mage.branches).toEqual(['elements']);
+    });
+
+    it('rejects a branch from another class', async () => {
+      await expect(BranchService.selectBranch(mage, 'holy')).rejects.toThrow(
+        'Эта ветка недоступна для вашего класса',
+      );
+    });
+
+    it('rejects mage branches for a priest', async () => {
+      const doc = await TestUtils.createCharacter({ prof: CharacterClass.Priest });
+      const priest = arena.characters[doc.id];
+      await expect(BranchService.selectBranch(priest, 'elements')).rejects.toThrow(
+        'Эта ветка недоступна для вашего класса',
+      );
+    });
+
+    it('rejects a duplicate branch', async () => {
+      await BranchService.selectBranch(mage, 'elements');
+      await expect(BranchService.selectBranch(mage, 'elements')).rejects.toThrow('Эта ветка уже выбрана');
+    });
+
+    it('rejects a second branch before level 5', async () => {
+      await BranchService.selectBranch(mage, 'elements');
+      expect(mage.lvl).toBe(1);
+      await expect(BranchService.selectBranch(mage, 'darkness')).rejects.toThrow(
+        'Вторая ветка открывается на 5-м уровне персонажа',
+      );
+    });
+
+    it('allows a second branch at level 5', async () => {
+      await BranchService.selectBranch(mage, 'elements');
+      await mage.resources.addResources({ exp: 100000 });
+      expect(mage.lvl).toBeGreaterThanOrEqual(5);
+      const result = await BranchService.selectBranch(mage, 'darkness');
+      expect(result.branches).toEqual(['elements', 'darkness']);
+      expect(mage.branches).toEqual(['elements', 'darkness']);
+    });
+
+    it('rejects a third branch', async () => {
+      await BranchService.selectBranch(mage, 'elements');
+      await mage.resources.addResources({ exp: 1000000 });
+      await BranchService.selectBranch(mage, 'darkness');
+      await expect(BranchService.selectBranch(mage, 'arcana')).rejects.toThrow(
+        'Вы уже выбрали максимальное количество веток (2)',
+      );
+    });
+  });
+
+  it('returns only the branch catalog for a mage', async () => {
+    const doc = await TestUtils.createCharacter({ prof: CharacterClass.Mage });
+    const char = arena.characters[doc.id];
+    const info = BranchService.getBranchesInfo(char);
+
+    expect(Object.keys(info)).toEqual(['branches']);
+    expect(info.branches).toHaveLength(3);
+    expect(info.branches.map((b) => b.id)).toEqual(['elements', 'darkness', 'arcana']);
+    expect(info.branches[0]).toEqual(BranchService.toObject(BRANCHES.elements, char));
+    expect(info.branches.every((b) => !b.isSelected && b.canSelect && b.lockReason === undefined)).toBe(true);
+    expect(char.branches).toEqual([]);
+  });
+
+  it('returns the priest branch catalog', async () => {
+    const doc = await TestUtils.createCharacter({ prof: CharacterClass.Priest });
+    const info = BranchService.getBranchesInfo(arena.characters[doc.id]);
+
+    expect(info.branches).toHaveLength(3);
+    expect(info.branches.map((b) => b.id)).toEqual(['holy', 'protection', 'inquisition']);
+  });
+
+  it('reports selected, level-locked, unlocked, and limit-locked branch statuses', async () => {
+    const doc = await TestUtils.createCharacter({ prof: CharacterClass.Mage });
+    const char = arena.characters[doc.id];
+    await BranchService.selectBranch(char, 'elements');
+
+    const locked = BranchService.getBranchesInfo(char);
+    expect(Object.keys(locked)).toEqual(['branches']);
+    expect(char.branches).toEqual(['elements']);
+    expect(locked.branches.find((b) => b.id === 'elements')).toMatchObject({
+      isSelected: true,
+      canSelect: false,
+    });
+    expect(locked.branches.find((b) => b.id === 'elements')?.lockReason).toBeUndefined();
+    expect(locked.branches.find((b) => b.id === 'darkness')).toMatchObject({
+      isSelected: false,
+      canSelect: false,
+      lockReason: 'Откроется на 5-м уровне персонажа',
+    });
+
+    await char.resources.addResources({ exp: 100000 });
+    expect(char.lvl).toBeGreaterThanOrEqual(5);
+    expect(BranchService.getBranchesInfo(char).branches.find((b) => b.id === 'darkness')).toMatchObject({
+      isSelected: false,
+      canSelect: true,
+    });
+
+    await BranchService.selectBranch(char, 'darkness');
+    const atLimit = BranchService.getBranchesInfo(char);
+    expect(Object.keys(atLimit)).toEqual(['branches']);
+    expect(char.branches).toEqual(['elements', 'darkness']);
+    expect(atLimit.branches.find((b) => b.id === 'arcana')).toMatchObject({
+      isSelected: false,
+      canSelect: false,
+      lockReason: 'Достигнут лимит специализаций (2 ветки)',
+    });
+  });
+
   it('selects only first-class branches', async () => {
     const doc = await TestUtils.createCharacter({ prof: CharacterClass.Warrior });
     const char = arena.characters[doc.id];
-    expect(BranchService.getBranchesInfo(char).branches.map((b) => b.id)).toEqual(['guardian', 'berserker', 'duelist']);
+    expect(BranchService.getBranchesInfo(char).branches.map((b) => b.id)).toEqual([
+      'guardian',
+      'berserker',
+      'duelist',
+    ]);
     await expect(BranchService.selectBranch(char, 'marksman')).rejects.toThrow('недоступна');
     await BranchService.selectBranch(char, 'guardian');
     expect(char.toObject().branches).toEqual(['guardian']);
@@ -20,7 +147,9 @@ describe('BranchService', () => {
     const doc = await TestUtils.createCharacter({ prof: CharacterClass.Archer });
     const char = arena.characters[doc.id];
     await BranchService.selectBranch(char, 'scout');
-    expect(BranchService.getBranchesInfo(char).branches.find((b) => b.id === 'barrage')?.canSelect).toBe(false);
+    expect(
+      BranchService.getBranchesInfo(char).branches.find((b) => b.id === 'barrage')?.canSelect,
+    ).toBe(false);
     await expect(BranchService.selectBranch(char, 'barrage')).rejects.toThrow('5-м уровне');
     await char.resources.addResources({ exp: 100000 });
     expect(char.lvl).toBeGreaterThanOrEqual(5);

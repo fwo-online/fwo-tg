@@ -28,11 +28,11 @@
 <div class="h-full flex flex-col">
   <div class="grid grid-cols-2 gap-1 mb-1">
     <Button onclick={() => (mode = "learn")} class={{ "is-primary": mode === "learn" }}>Изучение</Button>
-    <Button onclick={() => (mode = "branches")} class={{ "is-primary": mode === "branches" }}>Ветки ({data.branchesInfo.selectedBranches.length}/2)</Button>
+    <Button onclick={() => (mode = "branches")} class={{ "is-primary": mode === "branches" }}>Ветки ({character().branches.length}/2)</Button>
   </div>
   {#if mode === "branches"}
     <Card header="Ветки пассивных умений" class="overflow-y-auto">
-      <BranchPicker branches={data.branchesInfo.branches} selected={data.branchesInfo.selectedBranches} actions={data.passiveSkills} />
+      <BranchPicker branches={data.branchesInfo.branches} actions={data.passiveSkills} />
     </Card>
   {:else}
   <Card header="Пассивные умения" class="mb-1">

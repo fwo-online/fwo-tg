@@ -33,7 +33,7 @@ export const app = new Hono()
   .route('/ladder', ladder)
   .route('/market', market)
   .route('/contracts', contracts)
-  .route('/achievements', achievements)
+  .route('/achievements', achievements);
 
 export default app;
 

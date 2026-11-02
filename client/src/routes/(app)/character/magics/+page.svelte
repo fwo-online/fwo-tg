@@ -1,16 +1,15 @@
 <script lang="ts">
   import {
+    type BranchKey,
     canLearnMagic,
     getLearnMagicCost,
-    SECOND_BRANCH_MIN_CHAR_LVL,
-    type BranchKey,
   } from "@fwo/shared";
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
   import { getCharacterContext } from "$lib/constext/character";
   import { learnSpecificMagic } from "$lib/magic/utils/learn-specific-magic.svelte";
 
-  import { selectBranch } from "$lib/magic/utils/select-branch.svelte";
+  import BranchPicker from "$lib/skill/components/BranchPicker.svelte";
   import type { PageProps } from "./$types";
 
   const { data }: PageProps = $props();
@@ -21,14 +20,12 @@
   // Выбранная ветка для вкладки изучения
   let activeLearnBranch = $state<BranchKey | "">("");
   const currentLearnBranch = $derived(
-    activeLearnBranch && data.branchesInfo.selectedBranches.includes(activeLearnBranch)
+    activeLearnBranch && character().branches.includes(activeLearnBranch)
       ? activeLearnBranch
-      : (data.branchesInfo.selectedBranches[0] ?? ""),
+      : (character().branches[0] ?? ""),
   );
 
-  const selectedBranchesCount = $derived(
-    data.branchesInfo.selectedBranches.length,
-  );
+  const selectedBranchesCount = $derived(character().branches.length);
 </script>
 
 <div class="h-full flex flex-col gap-1">
@@ -54,77 +51,14 @@
       header="Специализация магии"
       class="flex-1 flex flex-col mt-2 min-h-0"
     >
-      <div
-        class="flex flex-col flex-1 justify-between pr-1 max-h-full overflow-hidden"
-      >
-        <div class="flex flex-col gap-2 max-h-full">
-          <div class="text-xs opacity-75 leading-tight">
-            Выберите до 2 веток специализации. 1-я ветка доступна сразу, 2-я — с
-            {SECOND_BRANCH_MIN_CHAR_LVL} уровня. Невыбранная 3-я ветка блокируется.
-          </div>
-
-          <div class="flex flex-col gap-2.5 mt-1 overflow-auto">
-            {#each data.branchesInfo.branches as branch (branch.id)}
-              <div
-                class={[
-                  "p-2 border-2 border-black/20 rounded flex flex-col gap-1.5",
-                  {
-                    "bg-blue-900/20 border-blue-500!": branch.isSelected,
-                    "opacity-60": !branch.isSelected && !branch.canSelect,
-                  },
-                ]}
-              >
-                <div class="flex items-center justify-between gap-2">
-                  <span class="font-bold text-sm shrink-0">
-                    {branch.icon}
-                    {branch.name}
-                  </span>
-                  {#if branch.isSelected}
-                    <span class="text-xs font-semibold text-green-400">
-                      ✓ Выбрана
-                    </span>
-                  {:else if branch.canSelect}
-                    <Button
-                      {@attach selectBranch.attach(
-                        {
-                          confirm: `Выбрать ветку «${branch.name}»? Это зафиксирует специализацию!`,
-                        },
-                        branch.id,
-                      )}
-                      class="is-primary text-xs! py-0.5! px-2!"
-                    >
-                      Выбрать
-                    </Button>
-                  {:else}
-                    <span class="text-[10px] text-red-400">
-                      {branch.lockReason ?? "Недоступно"}
-                    </span>
-                  {/if}
-                </div>
-
-                <span class="text-xs opacity-80 leading-snug">
-                  {branch.description}
-                </span>
-
-                <!-- Список заклинаний ветки -->
-                {#if data.branchMagics[branch.id]?.length}
-                  <div class="flex flex-wrap gap-1 mt-1">
-                    {#each data.branchMagics[branch.id] as spell (spell.name)}
-                      <span
-                        class="text-[10px] bg-black/20 px-1 py-0.5 rounded opacity-75"
-                      >
-                        {spell.lvl}к: {spell.displayName}
-                      </span>
-                    {/each}
-                  </div>
-                {/if}
-              </div>
-            {/each}
-          </div>
-        </div>
-
-
-      </div>
+      <BranchPicker
+        branches={data.branchesInfo.branches}
+        actions={data.magics.map((spell) => ({
+          ...spell,
+          displayName: `${spell.lvl}к: ${spell.displayName}`,
+        }))}
+        confirmSelection={(branch) => `Выбрать ветку «${branch.name}»? Это зафиксирует специализацию!`}
+      />
     </Card>
 
     <!-- РЕЖИМ 2: ИЗУЧЕНИЕ ЗАКЛИНАНИЙ -->
@@ -156,7 +90,7 @@
         {:else}
           <!-- Вкладки выбранных веток -->
           <div class="flex gap-1 mb-2">
-            {#each data.branchesInfo.selectedBranches as branchId (branchId)}
+            {#each character().branches as branchId (branchId)}
               {@const branchMeta = data.branchesInfo.branches.find(
                 (b) => b.id === branchId,
               )}

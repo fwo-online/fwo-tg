@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, spyOn } from 'bun:test';
 import { CharacterClass } from '@fwo/shared';
 import { registerGlobals } from '@/utils/registerGlobals';
 import TestUtils from '@/utils/testUtils';
+import BranchService from './BranchService';
 import { CharacterService } from './CharacterService/CharacterService';
 import MagicService from './MagicService';
 
@@ -29,73 +30,9 @@ describe('MagicService with branches', () => {
     spyOn(priest, 'saveToDb').mockImplementation(async () => priest.charObj);
   });
 
-  describe('getBranchesInfo', () => {
-    it('should return 3 branches for mage with all canSelect initially', () => {
-      const info = MagicService.getBranchesInfo(mage);
-      expect(info.branches).toHaveLength(3);
-      expect(info.branches.map((b) => b.id)).toEqual(['elements', 'darkness', 'arcana']);
-      expect(info.branches.every((b) => b.canSelect)).toBe(true);
-      expect(info.selectedBranches).toHaveLength(0);
-    });
-
-    it('should return 3 branches for priest', () => {
-      const info = MagicService.getBranchesInfo(priest);
-      expect(info.branches).toHaveLength(3);
-      expect(info.branches.map((b) => b.id)).toEqual(['holy', 'protection', 'inquisition']);
-    });
-  });
-
-  describe('selectBranch', () => {
-    it('should select first branch successfully', async () => {
-      const result = await MagicService.selectBranch(mage, 'elements');
-      expect(result.branches).toEqual(['elements']);
-      expect(mage.branches).toEqual(['elements']);
-    });
-
-    it('should throw if branch belongs to another class', async () => {
-      expect(MagicService.selectBranch(mage, 'holy')).rejects.toThrow(
-        'Эта ветка недоступна для вашего класса',
-      );
-    });
-
-    it('should throw if selecting already selected branch', async () => {
-      await MagicService.selectBranch(mage, 'elements');
-      expect(MagicService.selectBranch(mage, 'elements')).rejects.toThrow('Эта ветка уже выбрана');
-    });
-
-    it('should throw if selecting second branch before level 5', async () => {
-      await MagicService.selectBranch(mage, 'elements');
-      // mage is lvl 1
-      expect(mage.lvl).toBe(1);
-      expect(MagicService.selectBranch(mage, 'darkness')).rejects.toThrow(
-        'Вторая ветка открывается на 5-м уровне персонажа',
-      );
-    });
-
-    it('should allow selecting second branch at level 5+', async () => {
-      await MagicService.selectBranch(mage, 'elements');
-      await mage.resources.addResources({ exp: 100000 });
-      expect(mage.lvl).toBeGreaterThanOrEqual(5);
-
-      const result = await MagicService.selectBranch(mage, 'darkness');
-      expect(result.branches).toEqual(['elements', 'darkness']);
-      expect(mage.branches).toEqual(['elements', 'darkness']);
-    });
-
-    it('should throw if selecting third branch', async () => {
-      await MagicService.selectBranch(mage, 'elements');
-      await mage.resources.addResources({ exp: 1000000 });
-      await MagicService.selectBranch(mage, 'darkness');
-
-      expect(MagicService.selectBranch(mage, 'arcana')).rejects.toThrow(
-        'Вы уже выбрали максимальное количество веток (2)',
-      );
-    });
-  });
-
   describe('learnSpecificMagic', () => {
     beforeEach(async () => {
-      await MagicService.selectBranch(mage, 'elements');
+      await BranchService.selectBranch(mage, 'elements');
       await mage.resources.addResources({ bonus: 50 });
     });
 
@@ -162,7 +99,7 @@ describe('MagicService with branches', () => {
         const darkMage = await CharacterService.getCharacterById(darkMageChar.id);
         // @ts-expect-error
         spyOn(darkMage, 'saveToDb').mockImplementation(async () => darkMage.charObj);
-        await MagicService.selectBranch(darkMage, 'darkness');
+        await BranchService.selectBranch(darkMage, 'darkness');
         await darkMage.resources.addResources({ bonus: 200 });
 
         const learnedInDarkness = await MagicService.learnSpecificMagic(darkMage, 'frostTouch');
@@ -171,7 +108,7 @@ describe('MagicService with branches', () => {
       });
 
       it('should allow priest with protection branch to learn dispel (hybrid with inquisition)', async () => {
-        await MagicService.selectBranch(priest, 'protection');
+        await BranchService.selectBranch(priest, 'protection');
         await priest.resources.addResources({ exp: 10000, bonus: 500 }); // lvl up to 3+
         expect(priest.lvl).toBeGreaterThanOrEqual(3);
 
@@ -192,7 +129,7 @@ describe('MagicService with branches', () => {
 
   describe('resetMagics', () => {
     it('should reset all learned magics and branches, and refund bonus', async () => {
-      await MagicService.selectBranch(mage, 'elements');
+      await BranchService.selectBranch(mage, 'elements');
       await mage.resources.addResources({ bonus: 50 });
 
       const initialBonus = mage.resources.bonus;

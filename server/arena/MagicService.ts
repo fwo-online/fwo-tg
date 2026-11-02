@@ -3,7 +3,6 @@ import arena from '@/arena';
 import ValidationError from '@/arena/errors/ValidationError';
 import type { Prof } from '@/data/profs';
 import type { CharacterService } from './CharacterService';
-import BranchService from './BranchService';
 
 /**
  * @class Сервис работы с магиями
@@ -13,13 +12,6 @@ export default class MagicService {
 
   static isMagic(maybeMagic: string): maybeMagic is keyof (typeof arena)['magics'] {
     return maybeMagic in arena.magics;
-  }
-
-  /**
-   * Выбор ветки специализации магии
-   */
-  static async selectBranch(character: CharacterService, branchId: MagicBranchId) {
-    return BranchService.selectBranch(character, branchId);
   }
 
   /**
@@ -96,13 +88,6 @@ export default class MagicService {
   }
 
   /**
-   * Информация о ветках персонажа: выбранные, доступные для выбора, заблокированные
-   */
-  static getBranchesInfo(character: CharacterService) {
-    return BranchService.getBranchesInfo(character);
-  }
-
-  /**
    * Получить заклинания конкретной ветки
    */
   static getBranchMagics(character: CharacterService, branchId: MagicBranchId) {
@@ -118,7 +103,7 @@ export default class MagicService {
    * Показываем описание магии
    * @param magId строка идентификатор магии
    */
-  static getMagicById(magic: string, prof?: string) {
+  static getMagicById(magic: string) {
     return arena.magics[magic as keyof (typeof arena)['magics']].toObject();
   }
 

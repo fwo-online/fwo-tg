@@ -2,8 +2,8 @@
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
   import { getCharacterContext } from "$lib/constext/character";
-  import { learnSkill } from "$lib/skill/utils/learn-skill.svelte";
   import BranchPicker from "$lib/skill/components/BranchPicker.svelte";
+  import { learnSkill } from "$lib/skill/utils/learn-skill.svelte";
   import type { PageProps } from "./$types";
 
   const { data }: PageProps = $props();
@@ -34,14 +34,14 @@
   const canLearn = $derived(!isMaxLevel && isUnlocked && hasBranch && canAfford);
 </script>
 
-<div class="h-full flex flex-col">
-  <div class="grid grid-cols-2 gap-1 mb-1">
-    <Button onclick={() => (mode = "learn")} class={{ "is-primary": mode === "learn" }}>Изучение</Button>
-    <Button onclick={() => (mode = "branches")} class={{ "is-primary": mode === "branches" }}>Ветки ({data.branchesInfo.selectedBranches.length}/2)</Button>
+<div class="h-full flex flex-col gap-1">
+  <div class="grid grid-cols-2 gap-1">
+    <Button onclick={() => (mode = "learn")} class={["text-xs! py-1! px-1!", { "is-primary": mode === "learn" }]}>Изучение</Button>
+    <Button onclick={() => (mode = "branches")} class={["text-xs! py-1! px-1!", { "is-primary": mode === "branches" }]}>Ветки ({character().branches.length}/2)</Button>
   </div>
   {#if mode === "branches"}
-    <Card header="Ветки умений" class="overflow-y-auto">
-      <BranchPicker branches={data.branchesInfo.branches} selected={data.branchesInfo.selectedBranches} actions={data.skills} />
+    <Card header="Ветки умений" class="flex-1 flex flex-col mt-2 min-h-0">
+      <BranchPicker branches={data.branchesInfo.branches} actions={data.skills} />
     </Card>
   {:else}
   <Card header="Умения" class="mb-1">
