@@ -7,6 +7,17 @@ import * as weaponMastery from './weaponMastery';
 
 export type PassiveSkillNames = keyof typeof weaponMastery | keyof typeof passiveSkills;
 
+const hiddenFromCatalog = new Set<PassiveSkillNames>([
+  'chopWeapon',
+  'cutWeapon',
+  'healingWeapon',
+  'rangeWeapon',
+  'stunWeapon',
+  'thrustWeapon',
+  'divineWill',
+  'fatesMiss',
+]);
+
 export default class PassiveSkillService {
   static passiveSkills = { ...weaponMastery, ...passiveSkills };
 
@@ -72,6 +83,8 @@ export default class PassiveSkillService {
   }
 
   static getPassiveSkillList(ids: string[] = Object.keys(PassiveSkillService.passiveSkills)) {
-    return ids.map(PassiveSkillService.getPassiveSkillById);
+    return ids
+      .filter((id) => !hiddenFromCatalog.has(id as PassiveSkillNames))
+      .map(PassiveSkillService.getPassiveSkillById);
   }
 }
