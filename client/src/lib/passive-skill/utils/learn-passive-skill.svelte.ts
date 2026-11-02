@@ -8,5 +8,5 @@ export const learnPassiveSkill = createRequestRunner(async (passiveSkill: Passiv
     param: { id: passiveSkill.name },
   });
 
-  invalidate('app:character');
+  await invalidate('app:character');
 });

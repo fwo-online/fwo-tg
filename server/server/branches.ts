@@ -1,6 +1,7 @@
 import { vValidator } from '@hono/valibot-validator';
 import { Hono } from 'hono';
 import * as v from 'valibot';
+import AbilityTreeService from '@/arena/AbilityTreeService';
 import BranchService from '@/arena/BranchService';
 import { characterMiddleware, userMiddleware } from '@/server/middlewares';
 import { handleValidationError } from '@/server/utils/handleValidationError';
@@ -8,6 +9,7 @@ import { withValidation } from '@/server/utils/withValidation';
 
 export const branches = new Hono()
   .use(userMiddleware, characterMiddleware)
+  .get('/tree', (c) => c.json(AbilityTreeService.getTree(c.get('character'))))
   .get('/', (c) => c.json(BranchService.getBranchesInfo(c.get('character'))))
   .post(
     '/',

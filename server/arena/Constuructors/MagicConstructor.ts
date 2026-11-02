@@ -1,4 +1,13 @@
-import type { CostType, MagicBranchId, Magic as MagicSchema, OrderType } from '@fwo/shared';
+import {
+  type CharacterClass,
+  type CostType,
+  getLearnMagicCost,
+  getRequiredMagicCharLvl,
+  MAX_MAGIC_LVL,
+  type MagicBranchId,
+  type Magic as MagicSchema,
+  type OrderType,
+} from '@fwo/shared';
 import type { ActionKey } from '@/arena/ActionService';
 import { BaseAction } from '@/arena/Constuructors/BaseAction';
 import MiscService from '@/arena/MiscService';
@@ -197,6 +206,12 @@ export abstract class Magic extends BaseAction {
   }
 
   toObject(): MagicSchema {
+    const cost = getLearnMagicCost(this.lvl);
+    const reqLvl = getRequiredMagicCharLvl(this.lvl);
+    const classList: Partial<Record<CharacterClass, number>> = Object.fromEntries(
+      this.profList.map((prof) => [prof as CharacterClass, reqLvl]),
+    );
+
     return {
       name: this.name,
       displayName: this.displayName,
@@ -207,6 +222,8 @@ export abstract class Magic extends BaseAction {
       effectType: this.effectType,
       lvl: this.lvl,
       orderType: this.orderType,
+      bonusCost: Array.from({ length: MAX_MAGIC_LVL }, () => cost),
+      classList,
       branch: this.branches[0],
       branches: this.branches,
     };

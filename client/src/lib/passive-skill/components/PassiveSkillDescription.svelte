@@ -2,6 +2,7 @@
   import type { PassiveSkill } from "@fwo/shared";
 
   import Button from "$lib/components/Button.svelte";
+  import RankedValues from "$lib/components/RankedValues.svelte";
   import { getCharacterContext } from "$lib/constext/character";
   import { learnPassiveSkill } from "$lib/passive-skill/utils/learn-passive-skill.svelte";
 
@@ -32,13 +33,9 @@
 
 <div class="flex flex-col flex-1 justify-between">
   <div class="flex flex-col gap-2 mb-4">
-    <div class="flex gap-2 text-sm opacity-50">
-      <span>Шанс (%):</span>
-      <span>{skill.chance.join("/")}</span>
-    </div>
-    <div class="flex gap-2 text-sm opacity-50">
-      <span>Эффект (%):</span>
-      <span>{skill.effect.join("/")}</span>
+    <div class="flex flex-col gap-1 text-sm">
+      <RankedValues label="Шанс" values={skill.chance} rank={currentLevel} unit="%" />
+      <RankedValues label="Эффект" values={skill.effect} rank={currentLevel} unit="%" />
     </div>
     <span class="text-sm">{skill.description}</span>
   </div>

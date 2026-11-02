@@ -157,3 +157,29 @@ export function isInBranch(
   if (action.branches?.includes(branch)) return true;
   return false;
 }
+
+/**
+ * Получить нормализованный массив веток способности
+ */
+export function getAbilityBranches(action: {
+  branch?: BranchKey;
+  branches?: readonly BranchKey[] | BranchKey[];
+}): BranchKey[] {
+  if (action.branches?.length) return [...action.branches];
+  return action.branch ? [action.branch] : [];
+}
+
+/**
+ * Проверка, есть ли у персонажа выбранная ветка своего класса для данной способности
+ */
+export function hasSelectedBranchForProf(
+  prof: CharacterClass | string,
+  selectedBranches: readonly BranchKey[],
+  action: { branch?: BranchKey; branches?: readonly BranchKey[] | BranchKey[] },
+): boolean {
+  const branches = getAbilityBranches(action);
+  return (
+    branches.length === 0 ||
+    branches.some((branch) => BRANCHES[branch].prof === prof && selectedBranches.includes(branch))
+  );
+}
