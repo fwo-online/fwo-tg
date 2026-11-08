@@ -1,10 +1,22 @@
-import type { PassiveSkill } from '@fwo/shared';
+import type { CharacterClass, PassiveSkill } from '@fwo/shared';
+import BranchService from './BranchService';
 import type { CharacterService } from './CharacterService';
 import ValidationError from './errors/ValidationError';
 import * as passiveSkills from './passiveSkills';
 import * as weaponMastery from './weaponMastery';
 
 export type PassiveSkillNames = keyof typeof weaponMastery | keyof typeof passiveSkills;
+
+const hiddenFromCatalog = new Set<PassiveSkillNames>([
+  'chopWeapon',
+  'cutWeapon',
+  'healingWeapon',
+  'rangeWeapon',
+  'stunWeapon',
+  'thrustWeapon',
+  'divineWill',
+  'fatesMiss',
+]);
 
 export default class PassiveSkillService {
   static passiveSkills = { ...weaponMastery, ...passiveSkills };
@@ -28,8 +40,15 @@ export default class PassiveSkillService {
       }
     }
 
+    if (!BranchService.hasSelectedBranch(char, passiveSkill)) {
+      throw new ValidationError('Умение принадлежит невыбранной ветке специализации');
+    }
+
     if (charPassiveSkillLvl + 1 > passiveSkill.bonusCost.length) {
       throw new ValidationError(`Умение ${passiveSkill.displayName} имеет максимальный уровень`);
+    }
+    if (passiveSkill.bonusCost[charPassiveSkillLvl] > char.resources.bonus) {
+      throw new ValidationError('Не хватает бонусов');
     }
     await char.resources.takeResources({ bonus: passiveSkill.bonusCost[charPassiveSkillLvl] });
 
@@ -41,7 +60,9 @@ export default class PassiveSkillService {
     return id in this.passiveSkills;
   }
 
-  static toObject(passiveSkill: (typeof this.passiveSkills)[keyof typeof this.passiveSkills]): PassiveSkill {
+  static toObject(
+    passiveSkill: (typeof this.passiveSkills)[keyof typeof this.passiveSkills],
+  ): PassiveSkill {
     return {
       name: passiveSkill.name,
       displayName: passiveSkill.displayName,
@@ -64,6 +85,15 @@ export default class PassiveSkillService {
   }
 
   static getPassiveSkillList(ids: string[] = Object.keys(PassiveSkillService.passiveSkills)) {
-    return ids.map(PassiveSkillService.getPassiveSkillById);
+    return ids
+      .filter((id) => !hiddenFromCatalog.has(id as PassiveSkillNames))
+      .map(PassiveSkillService.getPassiveSkillById);
+  }
+
+  static getPassiveSkillListByClass(characterClass: CharacterClass) {
+    return PassiveSkillService.getPassiveSkillList().filter(
+      (passiveSkill) =>
+        passiveSkill.bonusCost.length > 0 && (passiveSkill.classList?.[characterClass] ?? 0) > 0,
+    );
   }
 }

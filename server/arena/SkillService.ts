@@ -2,6 +2,7 @@ import type { CostType, Skill } from '@fwo/shared';
 import type { Prof } from '@/data/profs';
 import type { CharacterService } from './CharacterService';
 import ValidationError from './errors/ValidationError';
+import BranchService from './BranchService';
 import * as skills from './skills';
 
 export type SkillsNames = keyof typeof skills;
@@ -17,6 +18,11 @@ export default class SkillService {
     const skill = SkillService.skills[id];
     const charSkillLvl = char.skills[id] ?? 0;
     const skillLvl = skill.profList[char.prof] ?? 0;
+
+    if (!(char.prof in skill.profList)) throw new ValidationError('Умение недоступно для твоего класса');
+    if (!BranchService.hasSelectedBranch(char, skill)) {
+      throw new ValidationError('Умение принадлежит невыбранной ветке специализации');
+    }
 
     if (skillLvl > char.lvl) {
       throw new ValidationError('Твой уровень ниже уровня умения');

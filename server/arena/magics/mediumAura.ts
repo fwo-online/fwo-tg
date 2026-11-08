@@ -15,7 +15,7 @@ const params: MagicArgs = Object.freeze({
   magType: 'good',
   chance: [100, 100, 100],
   effect: ['1d4+4', '1d3+5', '1d2+6'],
-  profList: ['m'],
+  profList: ['m', 'p'],
   branches: ['arcana', 'protection'],
 });
 

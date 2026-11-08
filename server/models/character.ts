@@ -4,6 +4,7 @@ import type {
   Contract,
   ItemComponent,
   ItemWear,
+  BranchKey,
 } from '@fwo/shared';
 import mongoose, { type Model, Schema, type Types } from 'mongoose';
 import type { Clan } from '@/models/clan';
@@ -40,7 +41,7 @@ export interface Char {
   lastForest: Date | null;
   psr: number;
   magics: Record<string, number>;
-  magicBranches: string[];
+  branches: BranchKey[];
   skills: Record<string, number>;
   passiveSkills: Record<string, number>;
   bonus: number;
@@ -129,7 +130,7 @@ const character = new Schema<Char, CharModel>({
   lastFight: { type: Date, default: null },
   psr: { type: Number, default: 0 },
   magics: { type: Object, default: {} },
-  magicBranches: { type: [String], default: [] },
+  branches: { type: [String], default: [] },
   bonus: { type: Number, default: 0 },
   skills: { type: Object, default: {} },
   passiveSkills: { type: Object, default: {} },

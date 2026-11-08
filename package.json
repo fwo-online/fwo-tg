@@ -16,6 +16,7 @@
     "generate:items": "bun server/cli/generateItems.ts",
     "reset-harks": "bun server/cli/resetHarks.ts",
     "reset-items": "bun server/cli/updateItems.ts",
+    "reset-abilities": "bun server/cli/resetAbilities.ts",
     "add-items": "bun server/cli/addItems.ts",
     "add-wins": "bun server/cli/addWins.ts",
     "lint": "bun run --filter '@fwo/*' lint",
