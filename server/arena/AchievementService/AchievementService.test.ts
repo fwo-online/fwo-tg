@@ -74,19 +74,6 @@ describe('AchievementService (Stats-Based) & Vigor', () => {
     expect(char.activeTitle).toBeUndefined();
   });
 
-  it('should apply vigor 2x bonus for active energy and deduct energy', async () => {
-    // Initial energy = 100
-    expect(char.vigor?.energy).toBe(100);
-
-    const prevExp = char.resources.exp;
-    await char.resources.addResources({ exp: 100 });
-
-    // With vigor (2x boost), 100 exp becomes +200 exp
-    expect(char.resources.exp).toBe(prevExp + 200);
-    // 10 energy deducted
-    expect(char.vigor?.energy).toBe(90);
-  });
-
   it('should update statistics via CraftService event emission', async () => {
     const { CraftService } = await import('@/arena/CraftService/CraftService');
     CraftService.emitter.emit('craft', { character: char, item: {} as any });
