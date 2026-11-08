@@ -56,10 +56,6 @@ export interface Char {
     block: number;
     luck: number;
   };
-  expLimit?: {
-    earn: number;
-    expiresAt: Date;
-  };
   deleted: boolean;
   active: boolean;
   items: Item[];
@@ -78,7 +74,7 @@ export interface Char {
   activeTitle?: string;
   unlockedTitles: string[];
   claimedAchievements: string[];
-  vigor?: {
+  vigor: {
     energy: number;
     lastResetDate: Date;
   };
@@ -152,16 +148,6 @@ const character = new Schema<Char, CharModel>({
       luck: 0,
     },
   },
-  expLimit: {
-    type: new Schema({
-      earn: Number,
-      expiresAt: Date,
-    }),
-    default: {
-      earn: 0,
-      expiresAt: new Date(),
-    },
-  },
   items: [{ type: Schema.Types.ObjectId, ref: 'Item' }],
   equipment: {
     type: Schema.Types.Map,
@@ -212,10 +198,13 @@ const character = new Schema<Char, CharModel>({
   unlockedTitles: { type: [String], default: [] },
   claimedAchievements: { type: [String], default: [] },
   vigor: {
-    type: new Schema({
-      energy: { type: Number, default: 100 },
-      lastResetDate: { type: Schema.Types.Date, default: Date.now },
-    }, { _id: false }),
+    type: new Schema(
+      {
+        energy: { type: Number, default: 100 },
+        lastResetDate: { type: Schema.Types.Date, default: Date.now },
+      },
+      { _id: false },
+    ),
     default: () => ({ energy: 100, lastResetDate: new Date() }),
   },
 });
