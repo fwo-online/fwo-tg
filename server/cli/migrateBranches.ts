@@ -13,47 +13,6 @@ async function main() {
   }
 
   try {
-    // Use the raw collection because magicBranches is no longer in the schema.
-    const branches = await CharModel.collection.updateMany(
-      {
-        magicBranches: { $type: 'array' },
-        $expr: {
-          $or: [
-            { $eq: [{ $type: '$branches' }, 'missing'] },
-            { $eq: [{ $type: '$branches' }, 'null'] },
-            { $isArray: '$branches' },
-          ],
-        },
-      },
-      [
-        {
-          $set: {
-            branches: {
-              $reduce: {
-                input: '$magicBranches',
-                initialValue: { $ifNull: ['$branches', []] },
-                in: {
-                  $cond: [
-                    { $in: ['$$this', '$$value'] },
-                    '$$value',
-                    { $concatArrays: ['$$value', ['$$this']] },
-                  ],
-                },
-              },
-            },
-          },
-        },
-        { $unset: 'magicBranches' },
-      ],
-    );
-    console.log(`Migrated branches on ${branches.modifiedCount} characters`);
-    const remaining = await CharModel.collection.countDocuments({
-      magicBranches: { $exists: true },
-    });
-    if (remaining > 0) {
-      console.warn(`${remaining} characters have invalid branch data and need manual review`);
-    }
-
     // MongoDB $round uses banker's rounding; XP is non-negative, so adding
     // 0.5 and flooring matches Math.round(exp / 100) in CharacterResources.
     const result = await CharModel.collection.updateMany(validExperience, [
