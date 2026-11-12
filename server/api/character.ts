@@ -3,8 +3,8 @@ import { Types } from 'mongoose';
 import type { Char } from '@/models/character';
 import { CharModel } from '@/models/character';
 import type { Clan } from '@/models/clan';
-import { ItemModel, type Item } from '@/models/item';
-import { ItemWear } from '@fwo/shared';
+import type { Item } from '@/models/item';
+import type { ItemWear } from '@fwo/shared';
 
 export async function findCharacter(query: QueryFilter<Char>) {
   const character = await CharModel.findOne({ ...query, deleted: false })
@@ -45,15 +45,7 @@ export async function removeCharacter(_id?: string) {
 export async function createCharacter(
   charObj: Pick<Char, 'nickname' | 'prof' | 'sex' | 'owner' | 'harks' | 'magics'>,
 ) {
-  await CharModel.updateMany(
-    { owner: charObj.owner, deleted: false, active: true },
-    { active: false },
-  );
-  const character = await CharModel.create(charObj);
-  const item = await ItemModel.firstCreate(character);
-  await updateCharacter(character.id, { items: [item], equipment: { [ItemWear.MainHand]: item } });
-
-  return findCharacter({ _id: character.id });
+  return CharModel.create(charObj);
 }
 
 export async function updateCharacter(id: string, query: UpdateQuery<Char>) {
@@ -62,17 +54,19 @@ export async function updateCharacter(id: string, query: UpdateQuery<Char>) {
   );
 }
 
-export async function deactivateOtherCharacters(owner: string, excludeId: string) {
+export async function deactivateOtherCharacters(owner: string, excludeId?: string) {
   return CharModel.updateMany(
-    { owner, _id: { $ne: new Types.ObjectId(excludeId) }, deleted: false },
+    {
+      owner,
+      ...(excludeId ? { _id: { $ne: new Types.ObjectId(excludeId) } } : { active: true }),
+      deleted: false,
+    },
     { active: false },
   );
 }
 
 export async function activateCharacter(id: string) {
-  return CharModel.findByIdAndUpdate(id, { active: true }).orFail(
-    new Error('Персонаж не найден'),
-  );
+  return CharModel.findByIdAndUpdate(id, { active: true }).orFail(new Error('Персонаж не найден'));
 }
 
 export async function activateAnyCharacter(owner: string) {
