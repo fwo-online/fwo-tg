@@ -11,6 +11,7 @@ import {
   activateAnyCharacter,
   activateCharacter,
   deactivateOtherCharacters,
+  createCharacter,
   findCharacter,
   findCharacters,
   removeCharacter,
@@ -25,7 +26,7 @@ import { toPublicObject } from '@/arena/CharacterService/utils/toPublicObject';
 import { ClanService } from '@/arena/ClanService';
 import config from '@/arena/config';
 import type { Char } from '@/models/character';
-import type { Item } from '@/models/item';
+import { ItemModel, type Item } from '@/models/item';
 import { mergeNumbersWith } from '@/utils/mergeNumbersWith';
 import { CharacterInventory } from './CharacterInventory';
 import { CharacterResources } from './CharacterResources';
@@ -271,11 +272,39 @@ export class CharacterService {
     this.charObj.lastForest = value;
   }
 
+  /** Создать активного персонажа со стартовым снаряжением. */
+  static async createCharacter(
+    charObj: Pick<Char, 'nickname' | 'prof' | 'sex' | 'owner' | 'harks' | 'magics'>,
+  ) {
+    await deactivateOtherCharacters(charObj.owner);
+    // Synchronize existing instances before creating the new active character.
+    for (const cached of Object.values(arena.characters)) {
+      if (cached.owner === charObj.owner) {
+        cached.charObj.active = false;
+      }
+    }
+
+    const character = await createCharacter(charObj);
+    const item = await ItemModel.firstCreate(character);
+    await updateCharacter(character.id, {
+      items: [item],
+      equipment: { [ItemWear.MainHand]: item },
+    });
+
+    return findCharacter({ _id: character.id });
+  }
+
   /**
    * Загрузка чара в память
    * @param {string} owner идентификатор пользователя в TG (tgId)
    */
   static async getCharacter(owner: string) {
+    for (const cached of Object.values(arena.characters)) {
+      if (cached.owner === owner && cached.charObj.active) {
+        return cached;
+      }
+    }
+
     const charFromDb = await findCharacter({ owner, active: true });
 
     const cachedChar = arena.characters[charFromDb.id];

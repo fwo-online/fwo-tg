@@ -1,7 +1,5 @@
-import { findCharacter, createCharacter, removeCharacter } from '@/api/character';
-import type { Profs } from '@/data';
+import { findCharacter, removeCharacter } from '@/api/character';
 import { CharacterService } from '../arena/CharacterService';
-import { profsData } from '../data/profs';
 
 /*
   @func проверка ника
@@ -16,26 +14,6 @@ export async function checkNick(nickname: string) {
   }
 }
 
-type RegCharParams = {
-  tgId: number;
-  prof: Profs.Prof;
-  nickname: string;
-  sex: 'm' | 'f';
-};
-
-export async function regChar({ tgId, prof, nickname, sex }: RegCharParams) {
-  if (!profsData[prof]) {
-    throw new Error('prof error');
-  }
-  return createCharacter({
-    prof,
-    sex,
-    owner: tgId.toString(),
-    nickname,
-    harks: profsData[prof].hark,
-    magics: profsData[prof].mag,
-  });
-}
 /*
   @func удаления
   @return Boolean

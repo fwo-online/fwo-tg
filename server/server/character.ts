@@ -3,7 +3,6 @@ import { vValidator } from '@hono/valibot-validator';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import * as v from 'valibot';
-import { createCharacter } from '@/api/character';
 import { CharacterService } from '@/arena/CharacterService';
 import { profsData } from '@/data/profs';
 import { handleValidationError } from '@/server/utils/handleValidationError';
@@ -17,7 +16,7 @@ export const character = new Hono()
     const createCharacterDto = await c.req.valid('json');
     const user = c.get('user');
     const { id } = await withValidation(
-      createCharacter({
+      CharacterService.createCharacter({
         owner: user.id.toString(),
         nickname: createCharacterDto.name,
         prof: createCharacterDto.class,
