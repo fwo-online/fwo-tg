@@ -1,5 +1,4 @@
 import { OrderType } from '@fwo/shared';
-import { effectService } from '@/arena/EffectService';
 import { bold } from '../../utils/formatString';
 import { CommonMagic } from '../Constuructors/CommonMagicConstructor';
 import type { SuccessArgs } from '../Constuructors/types';
@@ -29,8 +28,8 @@ class Entangle extends CommonMagic {
   }
 
   run() {
-    this.status.effect = this.effectVal();
-    effectService.damage(this.context, this);
+    const { target } = this.params;
+    target.stats.down('phys.defence', this.effectVal());
   }
 
   // eslint-disable-next-line class-methods-use-this
