@@ -87,8 +87,7 @@ export abstract class BaseAction {
   abstract run(initiator: Player, target: Player, game: GameService): void;
 
   cloneAction(): this {
-    const Constructor = this.constructor as new () => this;
-    return new Constructor();
+    return Object.assign(Object.create(Object.getPrototypeOf(this)), this);
   }
 
   createContext(initiator: Player, target: Player, game: GameService) {

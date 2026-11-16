@@ -10,7 +10,7 @@ import type { SuccessArgs } from '../Constuructors/types';
  * Ледяное прикосновение
  * Основное описание магии общее требовани есть в конструкторе
  */
-const params: DmgMagicArgs = Object.freeze({
+const params = Object.freeze<DmgMagicArgs>({
   name: 'frostTouch',
   displayName: 'Ледяное прикосновение',
   desc: 'Поражает цель ледяным касанием, отнимая жизни. (длительная)',
@@ -38,10 +38,8 @@ class FrostTouch extends CommonMagic {
       initiator,
       proc: initiator.proc,
       duration: initiator.stats.val('spellLength'),
-      onCast(game) {
-        initiator.proc = this.proc;
-        frostTouchEffect.duration = this.duration;
-        frostTouchEffect.cast(initiator, target, game);
+      onCast(game, affect) {
+        frostTouchEffect.castLongEffect(initiator, target, game, affect);
       },
     });
   }
