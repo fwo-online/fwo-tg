@@ -68,7 +68,7 @@ class Ricochet extends PassiveSkillConstructor {
     try {
       this.lock = true;
 
-      while (MiscService.rndm('1d100') <= currentChance) {
+      do {
         const nextTarget = this.getNextTarget(game, initiator, visitedTargetIds);
         if (!nextTarget) {
           break;
@@ -98,7 +98,7 @@ class Ricochet extends PassiveSkillConstructor {
 
         currentDamage = bounceDamage;
         currentChance = Math.round(currentChance * 0.5);
-      }
+      } while (MiscService.rndm('1d100') <= currentChance);
     } finally {
       this.lock = false;
     }
