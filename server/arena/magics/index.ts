@@ -3,7 +3,6 @@
  */
 export { default as acidSpittle } from './acidSpittle';
 export { default as anathema } from './anathema';
-export { default as bleeding } from './bleeding';
 export { blessing } from './blessing';
 export { blight } from './blight';
 export { default as bodySpirit } from './bodySpirit';

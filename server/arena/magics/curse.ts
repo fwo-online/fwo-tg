@@ -7,7 +7,7 @@ import { LongMagic } from '../Constuructors/LongMagicConstructor';
  * Проклятие
  * Основное описание магии общее требовани есть в конструкторе
  */
-const params: MagicArgs = Object.freeze({
+const params = Object.freeze<MagicArgs>({
   name: 'curse',
   displayName: 'Проклятие',
   desc: 'Понижает атаку и защиту цели',
@@ -33,10 +33,8 @@ class Curse extends CommonMagic {
       duration: initiator.stats.val('spellLength'),
       initiator,
       proc: initiator.proc,
-      onCast(game) {
-        initiator.proc = this.proc;
-        curseEffect.duration = this.duration;
-        curseEffect.cast(initiator, target, game);
+      onCast(game, affect) {
+        curseEffect.castLongEffect(initiator, target, game, affect);
       },
     });
   }

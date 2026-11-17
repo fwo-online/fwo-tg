@@ -11,7 +11,7 @@ const longLevel = 3;
  * Благословение
  * Основное описание магии общее требовани есть в конструкторе
  */
-const params: MagicArgs = Object.freeze({
+const params = Object.freeze<MagicArgs>({
   name: 'blessing',
   displayName: 'Благословение',
   desc: `Благословляет цель увеличивая её физические параметры. На ${longLevel} уровне становится длительной, увеличивая параметры цели в течение нескольких ходов`,
@@ -39,14 +39,11 @@ class Blessing extends CommonMagic {
         duration: initiator.stats.val('spellLength'),
         proc: initiator.proc,
         initiator,
-        onCast(game) {
-          initiator.proc = this.proc;
-          blessingEffect.duration = this.duration;
-          blessingEffect.cast(initiator, target, game);
+        onCast(game, affect) {
+          blessingEffect.castLongEffect(initiator, target, game, affect);
         },
       });
     } else {
-      blessingEffect.duration = 0;
       blessingEffect.cast(initiator, target, game);
     }
   }

@@ -9,7 +9,7 @@ import type { Player } from '../PlayersService';
 const minProtect = 5;
 const maxProtect = 20;
 
-const params: MagicArgs = {
+const params = Object.freeze<MagicArgs>({
   name: 'dustShield',
   displayName: 'Щит праха',
   desc: `Щит из праха повышает защиту кастера на величину, результат деления количества повреждений предыдущего раунда на количество атакеров, но не больше ${maxProtect} и не меньше ${minProtect}.`,
@@ -24,7 +24,7 @@ const params: MagicArgs = {
   profList: ['m'],
   branches: ['arcana'],
   effect: ['1d3', '1d5', '1d7'],
-};
+});
 
 class DustShield extends Magic {
   run(initiator: Player, target: Player): void {
@@ -33,10 +33,8 @@ class DustShield extends Magic {
       duration: initiator.stats.val('spellLength'),
       proc: initiator.proc,
       initiator,
-      onCast(game) {
-        initiator.proc = this.proc;
-        dustShieldEffect.duration = this.duration;
-        dustShieldEffect.cast(initiator, target, game);
+      onCast(game, affect) {
+        dustShieldEffect.castLongEffect(initiator, target, game, affect);
       },
     });
   }

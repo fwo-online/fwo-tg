@@ -75,10 +75,8 @@ class PoisonArrow extends Skill {
         proc: initiator.proc,
         initiator,
         value: affect.value,
-        onCast(game) {
-          initiator.proc = this.proc;
-          poison.duration = this.duration;
-          poison.cast(initiator, target, game);
+        onCast(game, affect) {
+          poison.castLongEffect(initiator, target, game, affect);
         },
       });
 

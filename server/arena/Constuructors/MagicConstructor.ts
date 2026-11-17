@@ -100,6 +100,10 @@ export abstract class Magic extends BaseAction {
    * @param initiator Объект кастера
    */
   getCost(initiator: Player): void {
+    if (this.isLong) {
+      return;
+    }
+
     const costValue = +initiator.stats.val(this.costType) - this.cost;
     if (costValue >= 0) {
       initiator.stats.set(this.costType, costValue);

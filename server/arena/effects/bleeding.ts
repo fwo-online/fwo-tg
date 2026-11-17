@@ -1,4 +1,4 @@
-import { OrderType } from '@fwo/shared';
+import { EffectType, OrderType } from '@fwo/shared';
 import { LongDmgMagic } from '@/arena/Constuructors/LongDmgMagicConstructor';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
 import { effectService } from '@/arena/EffectService';
@@ -20,7 +20,7 @@ class Bleeding extends LongDmgMagic {
       magType: 'bad',
       chance: [100, 100, 100],
       effect: ['1d2', '2d4', '3d9'],
-      dmgType: 'physical',
+      dmgType: EffectType.Physical,
       profList: ['w'],
     });
   }
@@ -39,4 +39,4 @@ class Bleeding extends LongDmgMagic {
   }
 }
 
-export default new Bleeding();
+export const bleeding = new Bleeding();

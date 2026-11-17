@@ -1,6 +1,6 @@
 import type { BaseAction, BaseActionContext } from '@/arena/Constuructors/BaseAction';
 import { PassiveSkillConstructor } from '@/arena/Constuructors/PassiveSkillConstructor';
-import { bleeding } from '@/arena/magics';
+import { bleeding } from '@/arena/effects';
 
 class Lacerate extends PassiveSkillConstructor {
   constructor() {
@@ -37,14 +37,12 @@ class Lacerate extends PassiveSkillConstructor {
     const { initiator, target } = ctx;
 
     target.affects.addLongEffect({
-      action: 'bleeding',
+      action: bleeding.name,
       duration: initiator.stats.val('spellLength'),
       proc: initiator.proc,
       initiator,
-      onCast(game) {
-        initiator.proc = this.proc;
-        bleeding.duration = this.duration;
-        bleeding.cast(initiator, target, game);
+      onCast(game, affect) {
+        bleeding.castLongEffect(initiator, target, game, affect);
       },
     });
 

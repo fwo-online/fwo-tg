@@ -27,12 +27,8 @@ describe('frostTouch', () => {
     game.players.players[0].stats.set('mp', 99);
 
     frostTouch.cast(game.players.players[0], game.players.players[1], game);
-    const effects = game.players.players[1].affects.getEffectsByAction(frostTouch.name);
 
-    effects[0].onCast?.(
-      game,
-      game.players.players[1].affects.affects[0],
-    );
+    game.players.players[1].affects.onCast?.(game, frostTouch.name);
 
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });

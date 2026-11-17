@@ -1,4 +1,4 @@
-import { OrderType } from '@fwo/shared';
+import { EffectType, OrderType } from '@fwo/shared';
 import { CommonMagic } from '@/arena/Constuructors/CommonMagicConstructor';
 import type { DmgMagicArgs } from '@/arena/Constuructors/DmgMagicConstructor';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
@@ -10,7 +10,7 @@ import { LongDmgMagic } from '../Constuructors/LongDmgMagicConstructor';
  * Истощение
  * Основное описание магии общее требовани есть в конструкторе
  */
-const params: DmgMagicArgs = Object.freeze({
+const params = Object.freeze<DmgMagicArgs>({
   name: 'blight',
   displayName: 'Истощение',
   desc: 'Истощает цель, заставляя ей терять жизни.',
@@ -23,7 +23,7 @@ const params: DmgMagicArgs = Object.freeze({
   magType: 'bad',
   chance: [92, 94, 95],
   effect: ['1d10+5', '1d10+10', '1d10+15'],
-  dmgType: 'physical',
+  dmgType: EffectType.Physical,
   profList: ['m'],
   branches: ['darkness', 'arcana'],
 });
@@ -37,10 +37,8 @@ class Blight extends CommonMagic {
       duration: initiator.stats.val('spellLength'),
       proc: initiator.proc,
       initiator,
-      onCast(game) {
-        initiator.proc = this.proc;
-        blightEffect.duration = this.duration;
-        blightEffect.cast(initiator, target, game);
+      onCast(game, affect) {
+        blightEffect.castLongEffect(initiator, target, game, affect);
       },
     });
   }

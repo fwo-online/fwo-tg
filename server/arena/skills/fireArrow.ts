@@ -75,10 +75,8 @@ class FireArrow extends Skill {
         proc: initiator.proc,
         initiator,
         value: affect.value,
-        onCast(game) {
-          initiator.proc = this.proc;
-          burning.duration = this.duration;
-          burning.cast(initiator, target, game);
+        onCast(game, affect) {
+          burning.castLongEffect(initiator, target, game, affect);
         },
       });
 

@@ -1,64 +1,17 @@
 import type { ActionType } from '@fwo/shared';
-import type { BaseActionContext } from '@/arena/Constuructors/BaseAction';
-import type { SuccessArgs } from '@/arena/Constuructors/types';
-import type Game from '../GameService';
-import type { Player } from '../PlayersService';
+import { WithLongEffect } from '@/arena/Constuructors/mixins/WithLongEffect';
 import { CommonMagic } from './CommonMagicConstructor';
-
-export type LongItem = {
-  initiator: string;
-  target: string;
-  duration: number;
-  proc: number;
-  round: number;
-};
-
-export interface LongMagic extends CommonMagic {}
 
 /**
  * Общий конструктор не длительных магий
  */
-export abstract class LongMagic extends CommonMagic {
+export abstract class LongMagic extends WithLongEffect(CommonMagic) {
   actionType: ActionType = 'magic-long';
-  isLong = true;
-  duration = 0;
 
-  /**
-   * Добавляем в основной каст postRun для записи длительной магии в массив
-   * @param initiator  initiator
-   * @param target  target
-   * @param game  Game
-   */
-  cast(initiator: Player, target: Player, game: Game): void {
-    try {
-      this.createContext(initiator, target, game);
-
-      this.checkChance();
-      this.onBeforeRun();
-      this.run(initiator, target, game); // вызов кастомного обработчика
-      this.calculateExp();
-      this.next(this.context);
-    } catch (e) {
-      if (this.isAffect) {
-        throw e;
-      }
-
-      this.handleCastError(e);
-    } finally {
-      this.reset();
-    }
-  }
-
-  override getSuccessResult(context?: BaseActionContext): SuccessArgs {
-    return {
-      ...super.getSuccessResult(context),
-      duration: this.duration,
-    };
-  }
   /**
    * Для длителных бафов exp считаем по BaseExp*effect
    */
-  getEffectExp(effect: number, baseExp = 0) {
+  override getEffectExp(effect: number, baseExp = 0) {
     return Math.round((baseExp * this.params.initiator.proc * effect) / 4);
   }
 }

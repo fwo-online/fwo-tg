@@ -11,7 +11,7 @@ const actionTypes: ActionType[] = ['phys', 'protect', 'heal', 'skill'];
  * 💤 Сон
  * Основное описание магии общее требовани есть в конструкторе
  */
-const params: MagicArgs = Object.freeze({
+const params = Object.freeze<MagicArgs>({
   name: 'asleep',
   displayName: '💤 Сон',
   desc: 'Цель засыпает магическим сном и не может: атаковать, лечить, защищать, использовать скиллы',
@@ -33,7 +33,7 @@ class Asleep extends LongMagic {
   onBeforeAction(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
     if (actionTypes.includes(action.actionType)) {
       const { initiator, game } = ctx.params;
-      this.cast(affect.initiator, initiator, game);
+      this.castLongEffect(affect.initiator, initiator, game, affect);
     }
   }
 
