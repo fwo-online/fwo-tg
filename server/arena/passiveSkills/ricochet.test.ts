@@ -1,6 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { afterEach, beforeEach, describe, expect, it, spyOn } from 'bun:test';
+import { EffectType } from '@fwo/shared';
 import { attack } from '@/arena/actions';
 import type GameService from '@/arena/GameService';
+import MiscService from '@/arena/MiscService';
+import { ricochet } from '@/arena/passiveSkills/ricochet';
 import TestUtils from '@/utils/testUtils';
 
 describe('ricochet', () => {
@@ -20,6 +23,55 @@ describe('ricochet', () => {
   afterEach(() => {
     TestUtils.restoreRandom();
   });
+
+  it.each([
+    { level: 6, rolls: [51], damage: [] },
+    { level: 6, rolls: [50, 26], damage: [70] },
+    { level: 6, rolls: [50, 51], damage: [70] },
+    { level: 6, rolls: [50, 25, 14], damage: [70, 49] },
+    { level: 6, rolls: [50, 25, 13, 8], damage: [70, 49, 34.3] },
+    { level: 1, rolls: [16], damage: [] },
+    { level: 1, rolls: [15, 9], damage: [20] },
+  ])(
+    'uses one initial chance roll and halves subsequent chances: %j',
+    async ({ level, rolls, damage }) => {
+      const bounceGame = await TestUtils.createGame([
+        { passiveSkills: { ricochet: level }, weapon: { type: 'range' } },
+        { weapon: {} },
+        { weapon: {} },
+        { weapon: {} },
+        { weapon: {} },
+        { weapon: {} },
+      ]);
+      const [initiator, target, ...otherTargets] = bounceGame.players.players;
+      for (const player of bounceGame.players.players) {
+        player.stats.set('hp', 1000);
+        player.stats.set('resists.physical', 1);
+      }
+
+      const ctx = attack.createContext(initiator, target, bounceGame);
+      ctx.status.setEffectPart(EffectType.Physical, 100);
+      let rollIndex = 0;
+      const rndm = spyOn(MiscService, 'rndm').mockImplementation(() => rolls[rollIndex++] ?? 100);
+
+      try {
+        ricochet.onDamageDealt(ctx, attack);
+
+        expect(ctx.status.expArr.map(({ val }) => val)).toEqual([...damage]);
+        const targets = ctx.status.expArr.map(({ target }) => target);
+        expect(new Set(targets).size).toBe(damage.length);
+        for (const [index, bounceTarget] of targets.entries()) {
+          expect(otherTargets).toContain(bounceTarget);
+          expect(bounceTarget.stats.val('hp')).toBeCloseTo(1000 - damage[index]);
+        }
+        expect(target.stats.val('hp')).toBe(1000);
+        expect(initiator.stats.val('hp')).toBe(1000);
+        expect(rndm.mock.calls).toEqual(rolls.map(() => ['1d100']));
+      } finally {
+        rndm.mockRestore();
+      }
+    },
+  );
 
   it('should ricochet to other enemies without hitting the same target twice', () => {
     game.players.players[0].proc = 1;
