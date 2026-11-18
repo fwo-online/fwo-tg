@@ -4,12 +4,13 @@ import type { Affect, Effect, LongEffect, Passive } from '@/arena/Constuructors/
 import type { BreaksMessage, SuccessArgs } from '@/arena/Constuructors/types';
 import { isCastError } from '@/arena/errors/CastError';
 import type GameService from '@/arena/GameService';
+import { getStageRank } from '@/arena/stages';
 
 export class PlayerAffects {
   #affects: Affect[] = [];
 
   get affects(): ReadonlyArray<Affect> {
-    return this.#affects;
+    return this.#affects.toSorted((a, b) => getStageRank(a.action) - getStageRank(b.action));
   }
 
   addEffect<T extends Omit<Effect, 'type'>>(effect: T) {
@@ -33,7 +34,7 @@ export class PlayerAffects {
   }
 
   getEffectsByAction<T extends ActionKey>(action: T) {
-    return this.#affects.filter((effect) => effect.action === action);
+    return this.affects.filter((effect) => effect.action === action);
   }
 
   refresh() {
@@ -57,43 +58,49 @@ export class PlayerAffects {
   }
 
   onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction) {
-    for (const affect of this.#affects) {
+    for (const affect of this.affects) {
       affect.onBeforeDamageDeal?.(ctx, action, affect);
     }
   }
 
   onBeforeDamageRecieve(ctx: BaseActionContext, action: BaseAction) {
-    for (const affect of this.#affects) {
+    for (const affect of this.affects) {
+      const target = ctx.target;
       affect.onBeforeDamageRecieve?.(ctx, action, affect);
+      // При смене цели глюками или спасением запускаем проверку для новой цели
+      if (ctx.target.id !== target.id) {
+        ctx.target.affects.onBeforeDamageRecieve(ctx, action);
+        return;
+      }
     }
   }
 
   onDamageReceived(ctx: BaseActionContext, action: BaseAction) {
-    for (const affect of this.#affects) {
+    for (const affect of this.affects) {
       affect.onDamageReceived?.(ctx, action, affect);
     }
   }
 
   onDamageDealt(ctx: BaseActionContext, action: BaseAction) {
-    for (const affect of this.#affects) {
+    for (const affect of this.affects) {
       affect.onDamageDealt?.(ctx, action, affect);
     }
   }
 
   onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
-    for (const affect of this.#affects) {
+    for (const affect of this.affects) {
       this.withOnCastFail(() => affect.onBeforeAction?.(ctx, action, affect), ctx, action);
     }
   }
 
   onBeforeHealDeal(ctx: BaseActionContext, action: BaseAction) {
-    for (const affect of this.#affects) {
+    for (const affect of this.affects) {
       affect.onBeforeHealDeal?.(ctx, action, affect);
     }
   }
 
   onCast(game: GameService, action: ActionKey) {
-    for (const affect of this.#affects) {
+    for (const affect of this.affects) {
       if (action === affect.action) {
         affect.onCast?.(game, affect);
       }
@@ -105,7 +112,7 @@ export class PlayerAffects {
     action: BaseAction,
     reason: SuccessArgs | SuccessArgs[] | BreaksMessage,
   ) {
-    for (const affect of this.#affects) {
+    for (const affect of this.affects) {
       const result = affect.onCastFail?.(ctx, action, reason);
       if (result) {
         return true;
@@ -116,7 +123,7 @@ export class PlayerAffects {
   }
 
   onAfterCast(ctx: BaseActionContext, action: BaseAction) {
-    for (const affect of this.#affects) {
+    for (const affect of this.affects) {
       affect.onAfterCast?.(ctx, action, affect);
     }
   }

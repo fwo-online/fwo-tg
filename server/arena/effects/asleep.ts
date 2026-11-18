@@ -52,7 +52,7 @@ class Asleep extends LongMagic {
     );
   }
 
-  onDamageReceived({ params: { target } }: BaseActionContext, action: BaseAction) {
+  onDamageReceived({ target }: BaseActionContext, action: BaseAction) {
     if (action.actionType === 'phys') {
       target.affects.removeEffectsByAction(this.name);
     }
