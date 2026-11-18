@@ -38,7 +38,7 @@ class Help extends Skill {
     const { initiator, target } = this.params;
 
     target.affects.removeEffectsByAction(this.name);
-    console.log(target.affects.getEffectsByAction(this.name).length);
+
     target.affects.addEffect({
       action: this.name,
       proc: initiator.proc,
@@ -52,7 +52,7 @@ class Help extends Skill {
   }
 
   onBeforeDamageRecieve(ctx: BaseActionContext, action: BaseAction, affect: Affect) {
-    if (action.actionType !== 'phys' || !affect.value) {
+    if (action.actionType !== 'phys') {
       return;
     }
 

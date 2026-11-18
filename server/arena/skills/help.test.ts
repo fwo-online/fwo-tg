@@ -161,7 +161,6 @@ describe('help', () => {
     expect(ally.stats.val('hp')).toBe(100);
     expect(tank.stats.val('hp')).toBe(100);
     expect(allyDefence).toHaveBeenCalledTimes(1);
-    expect(ally.affects.getEffectsByAction('help')[0].value).toBe(1);
     allyDefence.mockRestore();
   });
 
@@ -188,7 +187,6 @@ describe('help', () => {
     expect(ally.stats.val('hp')).toBe(100);
     expect(wall.value).toBe(wallValue);
     expect(block.value).toBeLessThan(parryValue);
-    expect(ally.affects.getEffectsByAction('help')[0].value).toBe(1);
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
   });
 
@@ -221,7 +219,6 @@ describe('help', () => {
     expect(tank.affects.getEffectsByAction('paralysis')).toHaveLength(1);
     expect(tank.affects.getEffectsByAction('parry')).toHaveLength(0);
     expect(ally.affects.getEffectsByAction('magicWall')).toHaveLength(2);
-    expect(ally.affects.getEffectsByAction('help')[0].value).toBe(1);
     expect(tank.stats.val('hp')).toBe(90);
     expect(ally.stats.val('hp')).toBe(100);
     const history = TestUtils.normalizeRoundHistory(game.getRoundResults());
@@ -395,7 +392,6 @@ describe('help', () => {
       expect(deals).toHaveLength(hit);
       for (const [index, target] of [ally, tank].entries()) {
         expect(target.affects.getEffectsByAction('help')[0]).toBe(guards[index]);
-        expect(guards[index].value).toBe(1);
       }
     }
   });
@@ -460,7 +456,6 @@ describe('help', () => {
       const ctx = damage(type);
       expect(ctx.target).toBe(ally);
       expect(tank.stats.val('hp')).toBe(100);
-      expect(ally.affects.getEffectsByAction('help')[0].value).toBe(1);
     });
   }
 
@@ -474,6 +469,5 @@ describe('help', () => {
 
     expect(ally.stats.val('hp')).toBe(90);
     expect(tank.stats.val('hp')).toBe(100);
-    expect(ally.affects.getEffectsByAction('help')[0].value).toBe(1);
   });
 });
