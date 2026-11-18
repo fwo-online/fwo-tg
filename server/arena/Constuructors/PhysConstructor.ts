@@ -57,14 +57,14 @@ export default abstract class PhysConstructor extends BaseAction {
    * Проверка флагов влияющих на физический урон
    */
   fitsCheck() {
-    const { initiator } = this.params;
+    const { initiator } = this.context;
     if (!initiator.weapon.hasWeapon()) {
       throw new CastError('NO_WEAPON');
     }
   }
 
   calculateHit() {
-    const { initiator } = this.params;
+    const { initiator } = this.context;
 
     const hit = initiator.stats.val('hit');
 
@@ -79,7 +79,7 @@ export default abstract class PhysConstructor extends BaseAction {
     });
   }
 
-  getEffectExp({ initiator, target } = this.params, effect: number) {
+  getEffectExp({ initiator, target } = this.context, effect: number) {
     const effects = initiator.affects.getEffectsByAction('glitch');
     if (initiator.isAlly(target) && !effects.length) {
       return 0;
@@ -91,7 +91,7 @@ export default abstract class PhysConstructor extends BaseAction {
   /**
    * Рассчитываем полученный exp
    */
-  calculateExp(params = this.params) {
-    this.status.exp = this.getEffectExp(params, this.status.effect);
+  calculateExp(context = this.context) {
+    this.status.exp = this.getEffectExp(context, this.status.effect);
   }
 }
