@@ -36,7 +36,6 @@ class Help extends Skill {
 
   run() {
     const { initiator, target } = this.params;
-    const charges = this.getEffect(initiator);
 
     target.affects.removeEffectsByAction(this.name);
     console.log(target.affects.getEffectsByAction(this.name).length);
@@ -44,7 +43,6 @@ class Help extends Skill {
       action: this.name,
       proc: initiator.proc,
       initiator,
-      value: charges,
       onBeforeDamageRecieve(ctx, action, affect) {
         help.onBeforeDamageRecieve(ctx, action, affect);
       },
