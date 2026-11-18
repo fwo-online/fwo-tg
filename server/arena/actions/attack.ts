@@ -23,10 +23,7 @@ class Attack extends PhysConstructor {
    * Кастомный обработчик атаки
    */
   run() {
-    if (!this.params) {
-      return;
-    }
-    const { initiator, target } = this.params;
+    const { initiator, target } = this.context;
 
     target.affects.addEffect({
       action: this.name,
@@ -45,7 +42,7 @@ class Attack extends PhysConstructor {
       return;
     }
 
-    const { initiator, game } = ctx.params;
+    const { initiator, game } = ctx;
     this.createContext(affect.initiator, initiator, game);
 
     throw new CastError(this.getSuccessResult(this.context));
