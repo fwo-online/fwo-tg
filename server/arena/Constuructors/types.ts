@@ -77,4 +77,5 @@ export interface FailArgs {
   action: string;
   initiator: Player;
   target: Player;
+  affects?: SuccessArgs[];
 }
