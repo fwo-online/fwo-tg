@@ -4,12 +4,17 @@ import type { Affect, Effect, LongEffect, Passive } from '@/arena/Constuructors/
 import type { BreaksMessage, SuccessArgs } from '@/arena/Constuructors/types';
 import { isCastError } from '@/arena/errors/CastError';
 import type GameService from '@/arena/GameService';
+import { getStageRank } from '@/arena/stages';
 
 export class PlayerAffects {
   #affects: Affect[] = [];
 
   get affects(): ReadonlyArray<Affect> {
-    return this.#affects;
+    return this.#affects.toSorted((a, b) => getStageRank(a.action) - getStageRank(b.action));
+  }
+
+  has(affect: Affect) {
+    return this.#affects.includes(affect);
   }
 
   addEffect<T extends Omit<Effect, 'type'>>(effect: T) {
@@ -33,7 +38,7 @@ export class PlayerAffects {
   }
 
   getEffectsByAction<T extends ActionKey>(action: T) {
-    return this.#affects.filter((effect) => effect.action === action);
+    return this.affects.filter((effect) => effect.action === action);
   }
 
   refresh() {
@@ -56,44 +61,69 @@ export class PlayerAffects {
     });
   }
 
+  private *iterateAffects(getAffects: () => PlayerAffects = () => this) {
+    const processed = new Set<Affect>();
+
+    while (true) {
+      const affects = getAffects();
+
+      for (const affect of affects.affects) {
+        if (processed.has(affect) || !affects.has(affect)) {
+          continue;
+        }
+
+        processed.add(affect);
+        yield affect;
+
+        if (getAffects() !== affects) {
+          break;
+        }
+      }
+
+      if (getAffects() === affects) {
+        return;
+      }
+    }
+  }
+
   onBeforeDamageDeal(ctx: BaseActionContext, action: BaseAction) {
-    for (const affect of this.#affects) {
+    for (const affect of this.iterateAffects()) {
       affect.onBeforeDamageDeal?.(ctx, action, affect);
     }
   }
 
   onBeforeDamageRecieve(ctx: BaseActionContext, action: BaseAction) {
-    for (const affect of this.#affects) {
+    for (const affect of this.iterateAffects(() => ctx.target.affects)) {
       affect.onBeforeDamageRecieve?.(ctx, action, affect);
     }
   }
 
   onDamageReceived(ctx: BaseActionContext, action: BaseAction) {
-    for (const affect of this.#affects) {
+    for (const affect of this.iterateAffects()) {
       affect.onDamageReceived?.(ctx, action, affect);
     }
   }
 
   onDamageDealt(ctx: BaseActionContext, action: BaseAction) {
-    for (const affect of this.#affects) {
+    for (const affect of this.iterateAffects()) {
       affect.onDamageDealt?.(ctx, action, affect);
     }
   }
 
   onBeforeAction(ctx: BaseActionContext, action: BaseAction) {
-    for (const affect of this.#affects) {
+    for (const affect of this.iterateAffects()) {
       this.withOnCastFail(() => affect.onBeforeAction?.(ctx, action, affect), ctx, action);
     }
   }
 
   onBeforeHealDeal(ctx: BaseActionContext, action: BaseAction) {
-    for (const affect of this.#affects) {
+    for (const affect of this.iterateAffects()) {
       affect.onBeforeHealDeal?.(ctx, action, affect);
     }
   }
 
   onCast(game: GameService, action: ActionKey) {
-    for (const affect of this.#affects) {
+    for (const affect of this.iterateAffects()) {
       if (action === affect.action) {
         affect.onCast?.(game, affect);
       }
@@ -105,7 +135,7 @@ export class PlayerAffects {
     action: BaseAction,
     reason: SuccessArgs | SuccessArgs[] | BreaksMessage,
   ) {
-    for (const affect of this.#affects) {
+    for (const affect of this.iterateAffects()) {
       const result = affect.onCastFail?.(ctx, action, reason);
       if (result) {
         return true;
@@ -116,7 +146,7 @@ export class PlayerAffects {
   }
 
   onAfterCast(ctx: BaseActionContext, action: BaseAction) {
-    for (const affect of this.#affects) {
+    for (const affect of this.iterateAffects()) {
       affect.onAfterCast?.(ctx, action, affect);
     }
   }

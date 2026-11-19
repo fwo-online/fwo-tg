@@ -109,7 +109,7 @@ export abstract class BaseAction {
 
   getFailResult(
     reason: BreaksMessage | SuccessArgs | SuccessArgs[],
-    params = this.params,
+    params: BaseActionParams = this.context,
   ): FailArgs {
     return {
       actionType: this.actionType,
@@ -158,7 +158,7 @@ export abstract class BaseAction {
       const result = this.getFailResult(error.reason);
       this.giveExp(result.reason);
 
-      this.params.game.recordOrderResult(this.getFailResult(error.reason));
+      this.params.game.recordOrderResult(result);
     } else {
       console.error(error);
     }

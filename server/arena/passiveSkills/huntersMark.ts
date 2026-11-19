@@ -35,7 +35,7 @@ class HuntersMark extends PassiveSkillConstructor {
   }
 
   onDamageDealt(ctx: BaseActionContext, action: BaseAction) {
-    const { initiator, target } = ctx.params;
+    const { initiator, target } = ctx;
 
     if (this.canTrigger(ctx, action)) {
       target.affects.addLongEffect({
