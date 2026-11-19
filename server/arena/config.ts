@@ -37,6 +37,7 @@ export default {
     m: 'staff',
   }, // Порядок выполнения магия (ОЧЕНЬ ОПАСНО!)
   stages: [
+    'concussion', // Reapply saved stat reductions before this round's actions.
     'silence',
     'magicDefense',
     // 'mass_silence',

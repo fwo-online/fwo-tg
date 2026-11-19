@@ -16,3 +16,4 @@ export { fieldMedic } from './fieldMedic';
 export { staticProtect } from './staticProtect';
 export { survivalInstinct } from './survivalInstinct';
 export { sweepingBlow } from './sweepingBlow';
+export { weightyArgument } from './weightyArgument';

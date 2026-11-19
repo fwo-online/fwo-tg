@@ -50,6 +50,6 @@ export function formatExp(args: SuccessArgs): string {
     case 'passive':
       return '';
     default:
-      return brackets(exp);
+      return args.exp ? brackets(exp) : '';
   }
 }
