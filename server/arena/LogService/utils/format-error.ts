@@ -1,7 +1,7 @@
 import type { BreaksMessage, FailArgs } from '@/arena/Constuructors/types';
 import { normalizeToArray } from '@/utils/array';
-import { formatCause } from './format-cause';
 import { bold, italic } from '@/utils/formatString';
+import { formatCause } from './format-cause';
 /**
  * msg
  * @todo WIP, функция должна будет принимать как значения урона т.п так и
@@ -11,6 +11,7 @@ import { bold, italic } from '@/utils/formatString';
  */
 export function formatError(msgObj: FailArgs): string {
   const { action, actionType, reason, target, initiator } = msgObj;
+  const formattedAffects = msgObj.affects?.map(formatCause) ?? [];
 
   if (typeof reason === 'string') {
     const TEXT: Record<BreaksMessage | 'default', Record<'en' | 'ru', string>> = {
@@ -68,15 +69,15 @@ export function formatError(msgObj: FailArgs): string {
 
     if (!text) {
       console.log(reason);
-      return TEXT.default.ru;
+      return [TEXT.default.ru, ...formattedAffects].join('\n');
     }
     // @todo сейчас battleLog на стороне клиента не понимает типы магий, и
     // просто отображает полученную строку
-    return text.ru;
+    return [text.ru, ...formattedAffects].join('\n');
   }
 
   const normalizedReason = normalizeToArray(reason);
-  const formattedReason = normalizedReason.map(formatCause).join('\n');
+  const formattedReason = [...normalizedReason.map(formatCause), ...formattedAffects].join('\n');
 
   switch (actionType) {
     case 'phys':

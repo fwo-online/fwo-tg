@@ -117,6 +117,7 @@ export abstract class BaseAction {
       action: this.displayName,
       initiator: params.initiator,
       target: params.target,
+      affects: [...this.context.rootCtx.status.affects],
     };
   }
 

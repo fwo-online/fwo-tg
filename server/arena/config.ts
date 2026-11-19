@@ -65,6 +65,7 @@ export default {
     ['blessing', 'curse', 'entangle', 'beastCall'], // ???
     ['blight', 'bodySpirit'],
     // 'mirror_reflection',
+    'help', // Intercept before receive defences; also precedes same-round paralysis.
     ['smallAura', 'magicArmor', 'strongAura', 'dustShield', 'mediumAura', 'stoneSkin', 'magicWall'], // ???
     // 'cats_claw',
     // 'vampiric_aura',
@@ -87,7 +88,6 @@ export default {
     'fireArrow',
     'poisonArrow',
     'step',
-    'help',
     [
       'protect',
       // 'regen_energy',
