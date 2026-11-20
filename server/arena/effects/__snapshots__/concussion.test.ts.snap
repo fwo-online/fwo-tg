@@ -6,16 +6,16 @@ exports[`concussion reduces both attacks for two rounds and then restores them 1
 `;
 
 exports[`concussion reduces both attacks for two rounds and then restores them 2`] = `
-"⏳2 _Контузия_: *Игрок 2*
+"⏳1 _Контузия_: *Игрок 2*
 
 *Игрок 2* дал по башке *Игрок 1* _Оружием_ и нанёс *10* урона
 \\[ Игрок 1 💔 💥-10/90 📖80 ]"
 `;
 
 exports[`concussion allows repeated applications with separate long effects and clears both after two rounds 1`] = `
-"⏳2 _Контузия_: *Игрок 2*
+"⏳1 _Контузия_: *Игрок 2*
 
-⏳2 _Контузия_: *Игрок 2*
+⏳1 _Контузия_: *Игрок 2*
 
 *Игрок 2* дал по башке *Игрок 1* _Оружием_ и нанёс *10* урона
 \\[ Игрок 1 💔 💥-10/90 📖80 ]"

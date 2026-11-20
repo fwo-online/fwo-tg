@@ -4,6 +4,7 @@ import type GameService from '@/arena/GameService';
 import type { Player } from '@/arena/PlayersService';
 import type { SuccessArgs } from '@/arena/Constuructors/types';
 import { bold, italic } from '@/utils/formatString';
+import type { Affect } from '@/arena/Constuructors/interfaces/Affect';
 
 /** Fixed two-round stat debuff, shared by all sources of concussion. */
 class Concussion extends LongMagic {
@@ -29,9 +30,9 @@ class Concussion extends LongMagic {
   }
 
   /** Explicit power only: no magic chance, resource cost, proc or magic rank scaling. */
-  cast(initiator: Player, target: Player, game: GameService, power = 0) {
+  cast(initiator: Player, target: Player, game: GameService, affect?: Affect) {
     this.createContext(initiator, target, game);
-    this.status.effect = power;
+    this.status.effect = affect?.value ?? 0;
     this.run();
     game.recordOrderResult(this.getSuccessResult());
   }

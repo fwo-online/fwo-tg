@@ -47,7 +47,6 @@ describe('concussion', () => {
 
   it('reduces both attacks for two rounds and then restores them', () => {
     const [initiator, target] = game.players.players;
-    concussion.cast(initiator, target, game, 10);
 
     target.affects.addLongEffect({
       action: concussion.name,
@@ -55,9 +54,11 @@ describe('concussion', () => {
       value: 10,
       duration: 2,
       onCast: (game, affect) => {
-        concussion.cast(initiator, target, game, affect.value);
+        concussion.castLongEffect(initiator, target, game, affect);
       },
     });
+    const affect1 = target.affects.getEffectsByAction(concussion.name).at(-1);
+    affect1?.onCast?.(game, affect1);
     expect(target.stats.val('phys.attack')).toBe(90);
     expect(target.stats.val('magic.attack')).toBe(90);
     expect(TestUtils.normalizeRoundHistory(game.getRoundResults())).toMatchSnapshot();
@@ -81,27 +82,32 @@ describe('concussion', () => {
 
   it('allows repeated applications with separate long effects and clears both after two rounds', () => {
     const [initiator, target] = game.players.players;
-    concussion.cast(initiator, target, game, 10);
     target.affects.addLongEffect({
       action: concussion.name,
       initiator,
       value: 10,
       duration: 2,
       onCast: (game, affect) => {
-        concussion.cast(initiator, target, game, affect.value);
+        concussion.castLongEffect(initiator, target, game, affect);
       },
     });
+    const affect1 = target.affects.getEffectsByAction(concussion.name).at(-1);
+    affect1?.onCast?.(game, affect1);
+
     expect(target.stats.val('phys.attack')).toBe(90);
-    concussion.cast(initiator, target, game, 10);
+
     target.affects.addLongEffect({
       action: concussion.name,
       initiator,
       value: 10,
       duration: 2,
       onCast: (game, affect) => {
-        concussion.cast(initiator, target, game, affect.value);
+        concussion.castLongEffect(initiator, target, game, affect);
       },
     });
+    const affect2 = target.affects.getEffectsByAction(concussion.name).at(-1);
+    affect2?.onCast?.(game, affect2);
+
     expect(target.stats.val('phys.attack')).toBe(81);
     expect(target.stats.val('magic.attack')).toBe(81);
 

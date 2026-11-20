@@ -11,6 +11,8 @@ export function WithLongEffect<TBase extends AbstractConstructor<BaseAction>>(Ba
     isLong = true;
     duration = 0;
 
+    abstract override cast(initiator: Player, target: Player, game: Game, affect?: Affect): void;
+
     castLongEffect(initiator: Player, target: Player, game: Game, affect: Affect) {
       const clone = this.cloneAction();
       const oldProc = initiator.proc;
@@ -20,7 +22,7 @@ export function WithLongEffect<TBase extends AbstractConstructor<BaseAction>>(Ba
         if (affect.type === 'long-effect') {
           clone.duration = affect.duration;
         }
-        clone.cast(initiator, target, game);
+        clone.cast(initiator, target, game, affect);
       } finally {
         initiator.proc = oldProc;
       }

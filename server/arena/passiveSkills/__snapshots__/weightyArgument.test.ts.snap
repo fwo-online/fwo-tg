@@ -1,13 +1,17 @@
 // Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`weightyArgument applies concussion with a real attack for the current and following round 1`] = `
-"*Игрок 1* дал по башке *Игрок 2* _Оружием_ и нанёс *10* урона
+"⏳2 _Контузия_: *Игрок 2*
+
+*Игрок 1* дал по башке *Игрок 2* _Оружием_ и нанёс *10* урона
 \\[ Игрок 2 💔 💥-10/90 📖80 ]
 _Веский аргумент_: *Игрок 2* получает _Контузия_"
 `;
 
 exports[`weightyArgument applies concussion from physical raw splash with a stun weapon 1`] = `
-"*Игрок 1* дал по башке *Игрок 2* _Оружием_ и нанёс *10* урона
+"⏳2 _Контузия_: *Игрок 2*
+
+*Игрок 1* дал по башке *Игрок 2* _Оружием_ и нанёс *10* урона
 \\[ Игрок 2 💥 💔-10/90 📖80 ]
 _Веский аргумент_: *Игрок 2* получает _Контузия_"
 `;

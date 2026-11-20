@@ -45,17 +45,19 @@ class WeightyArgument extends PassiveSkillConstructor {
     const { initiator, target, game } = ctx;
     const value = this.getEffect(ctx);
 
-    concussion.cast(initiator, target, game, value);
-
     target.affects.addLongEffect({
       action: concussion.name,
       initiator,
       value,
       duration: 2,
       onCast: (game, affect) => {
-        concussion.cast(initiator, target, game, affect.value);
+        concussion.castLongEffect(initiator, target, game, affect);
       },
     });
+
+    const affect = target.affects.getEffectsByAction(concussion.name).at(-1);
+
+    affect?.onCast?.(game, affect);
 
     ctx.addAffect(this, this.context);
   }
