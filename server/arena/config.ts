@@ -78,6 +78,7 @@ export default {
     // @todo Тут пойду ВСЕ скилы, очередность в процессе
     // SKILLS:
     'berserk',
+    'shakeUp',
     'dodge',
     'parry',
     'disarm',
