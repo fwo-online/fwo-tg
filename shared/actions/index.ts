@@ -25,7 +25,7 @@ export type Magic = BaseAbility & {
 export type Skill = BaseAbility & {
   classList: Partial<Record<CharacterClass, number>>;
   orderType: OrderType;
-  cost: number;
+  cost: number[];
   costType: CostType;
   chance: number[];
   effect: number[];
