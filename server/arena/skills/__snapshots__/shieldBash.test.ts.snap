@@ -1,0 +1,14 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`shieldBash stuns without damage and cancels subsequent actions until round cleanup 1`] = `
+"*Игрок 1* оглушил *Игрок 2* умением _Удар щитом_
+
+*Игрок 2* пытался атаковать *Игрок 1*, но у него не получилось
+_💫 Оглушение_ *Игрок 1*
+*Игрок 2* пытался использовать _Лечение руками_ на *Игрок 2*, но у него не получилось
+_💫 Оглушение_ *Игрок 1*"
+`;
+
+exports[`shieldBash rejects a missing shield before charging energy or rolling chance 1`] = `"*Игрок 1* пытался использовать щит, но у него не окалось его в руках"`;
+
+exports[`shieldBash charges energy but does not stun when the skill chance fails 1`] = `"*Игрок 1* пытался использовать умение _Удар щитом_, но у него не вышло"`;

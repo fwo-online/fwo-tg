@@ -59,6 +59,7 @@ export default {
     // 'pray',
     'sleep', // ?!?!?!?!!? why there?
     'terrifyingHowl',
+    'shieldBash',
     'lightShield',
     // 'sphere',
     // 'mana_burn',
