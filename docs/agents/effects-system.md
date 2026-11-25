@@ -232,6 +232,13 @@ onCast(target: Player, value: number) {
 
 Движок боя (`EngineService`) вызывает `player.affects.onCast(game, stage)` при прохождении каждой стадии умения.
 
+**«Контузия» (`concussion`) — длительный стат-дебафф с передачей сохранённого payload:**
+- Источник — [`weightyArgument`](../../server/arena/passiveSkills/weightyArgument.ts) или [`shakeUp`](../../server/arena/skills/shakeUp.ts) — сначала вызывает `target.affects.addLongEffect` с `action: concussion.name`, `initiator`, `value` (сила в процентах), фиксированной `duration: 2` и `onCast`. Затем источник немедленно вызывает callback новой записи, чтобы эффект сработал уже в текущем раунде.
+- Callback вызывает `concussion.castLongEffect(initiator, target, game, affect)`. [`WithLongEffect`](../../server/arena/Constuructors/mixins/WithLongEffect.ts) клонирует действие, копирует оставшуюся длительность и передаёт **весь `affect` четвёртым аргументом** в `clone.cast(initiator, target, game, affect)`. [`concussion.cast`](../../server/arena/effects/concussion.ts) читает `affect.value` и умножает только боевые `phys.attack` и `magic.attack` на `1 - power / 100`: это не прямое снижение конечного урона, не `stun` и не блокировка действий.
+- Специальный `cast` не выполняет обычные магические проверки, списание ресурсов или масштабирование от магии/`proc`. Он не создаёт и не обновляет записи длительных эффектов, но **явно пишет результат** через `game.recordOrderResult(this.getSuccessResult())`, несмотря на `isAffect = true`. Лог показывает `⏳2 Контузия` при наложении и `⏳1 Контузия` в следующем раунде.
+- Текущий раунд входит в два: в конце N `PlayerService.reset()` восстанавливает статы и уменьшает длительность `2 → 1`; ранняя стадия `concussion` в [`config.stages`](../../server/arena/config.ts) раунда N+1 вызывает `onCast` оставшейся записи и повторно применяет её сохранённую силу без новой регистрации. В конце N+1 длительность `1 → 0`, запись удаляется и статы восстановлены.
+- Разные записи применяются независимо, обычным последовательным перемножением. Проверка «у цели уже есть Контузия — пропустить без RNG и продления» находится **только в пассивке `weightyArgument`**, до проверки её шанса. Активная `shakeUp` такой проверки не делает и может добавить ещё одну запись.
+
 ### Игнорирование защиты цели (`onCastFail`)
 Хук `onCastFail` позволяет атакующему или защитнику отменить срыв действия. Например, «Прицельный выстрел» (`aimedShot`) игнорирует уклонение цели:
 

@@ -37,6 +37,7 @@ export default {
     m: 'staff',
   }, // Порядок выполнения магия (ОЧЕНЬ ОПАСНО!)
   stages: [
+    'concussion', // Reapply saved stat reductions before this round's actions.
     'silence',
     'magicDefense',
     // 'mass_silence',
@@ -58,6 +59,7 @@ export default {
     // 'pray',
     'sleep', // ?!?!?!?!!? why there?
     'terrifyingHowl',
+    'shieldBash',
     'lightShield',
     // 'sphere',
     // 'mana_burn',
@@ -77,6 +79,7 @@ export default {
     // @todo Тут пойду ВСЕ скилы, очередность в процессе
     // SKILLS:
     'berserk',
+    'shakeUp',
     'dodge',
     'parry',
     'disarm',

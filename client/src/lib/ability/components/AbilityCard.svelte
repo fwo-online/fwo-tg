@@ -58,7 +58,14 @@
   <p class="opacity-85 leading-snug">{ability.description}</p>
 
   <div class="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px]">
-    {#if 'cost' in ability}
+    {#if ability.kind === 'skill' && ability.cost?.length}
+      <RankedValues
+        label={ability.costType === 'mp' ? '💧' : '⚡'}
+        values={ability.cost}
+        rank={state.rank}
+        unit={` ${ability.costType.toUpperCase()}`}
+      />
+    {:else if ability.kind === 'magic' && ability.cost !== undefined}
       <span class="opacity-65">
         {ability.costType === 'mp' ? '💧' : '⚡'}{ability.cost} {ability.costType.toUpperCase()}
       </span>

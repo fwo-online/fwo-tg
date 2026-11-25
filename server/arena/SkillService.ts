@@ -50,7 +50,7 @@ export default class SkillService {
       description: skill.desc,
       classList: skill.profList,
       bonusCost: skill.bonusCost,
-      cost: skill.cost[0],
+      cost: skill.cost,
       costType: skill.costType as CostType,
       orderType: skill.orderType,
       chance: skill.chance,
@@ -75,6 +75,6 @@ export default class SkillService {
   }
 
   static getSkillList(ids: string[]) {
-    return ids.map(SkillService.getSkillById);
+    return ids.map((id) => SkillService.getSkillById(id));
   }
 }

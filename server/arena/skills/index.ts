@@ -10,6 +10,8 @@ export { help } from './help';
 export { parry } from './parry';
 export { piercingShot } from './piercingShot';
 export { poisonArrow } from './poisonArrow';
+export { shakeUp } from './shakeUp';
+export { shieldBash } from './shieldBash';
 export { shieldBlock } from './shieldBlock';
 export { step } from './step';
 export { default as terrifyingHowl } from './terrifyingHowl';
