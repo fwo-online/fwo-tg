@@ -96,7 +96,7 @@ export class ForestService extends EventEmitter<{
       throw new Error(`Character ${this.playerId} not found`);
     }
 
-    this.forest = await ForestModel.create({
+    this.forest = new ForestModel({
       player: this.playerId,
       state: ForestState.Waiting,
     });
@@ -155,7 +155,7 @@ export class ForestService extends EventEmitter<{
       escaping: this.escaping,
     };
     this.forest.state = ForestState.Event;
-    await this.forest.save();
+    // await this.forest.save();
 
     this.emit('event', this, eventType);
     this.emitStatus();
@@ -206,7 +206,7 @@ export class ForestService extends EventEmitter<{
     console.debug(`Forest debug:: ${this.id} starting battle`);
 
     this.forest.state = ForestState.Battle;
-    await this.forest.save();
+    // await this.forest.save();
 
     this.currentGame = game;
     this.character.gameId = game.info.id;
@@ -231,7 +231,7 @@ export class ForestService extends EventEmitter<{
     // Обновляем HP игрока после боя
     const player = game.players.getById(this.playerId);
     if (player) {
-      await this.forest.save();
+      // await this.forest.save();
     }
 
     this.emit('battleEnd', game, playerAlive);
@@ -244,7 +244,7 @@ export class ForestService extends EventEmitter<{
       // Игрок выжил, увеличиваем счётчик побед
       this.forest.battlesWon++;
       this.forest.state = ForestState.Waiting;
-      await this.forest.save();
+      // await this.forest.save();
       this.scheduleNextEvent();
       this.emitStatus();
     }
@@ -279,7 +279,7 @@ export class ForestService extends EventEmitter<{
       }
     }
 
-    await this.forest.save();
+    // await this.forest.save();
   }
 
   async handleEventTimeout() {
@@ -406,7 +406,7 @@ export class ForestService extends EventEmitter<{
 
     this.forest.state = ForestState.Finished;
     this.forest.ended = true;
-    await this.forest.save();
+    // await this.forest.save();
 
     // Обновляем персонажа
     this.character.forestID = '';
